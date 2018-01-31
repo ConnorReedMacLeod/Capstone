@@ -1,2 +1,2 @@
 # Capstone
-Look at me.  I'm the README now.
+Once more with feeling.
