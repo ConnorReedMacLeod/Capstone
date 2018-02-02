@@ -7,10 +7,14 @@ public class Character : MonoBehaviour {
 	public Material matChr;
 	public string sName;
 
+	const int indexCharBorder = 0;
+	const int indexCharPortrait = 1;
+
 	void InitMaterial(){
 		string sMatPath = "Materials/Characters/mat" + sName;
 		matChr = Resources.Load(sMatPath, typeof(Material)) as Material;
-		GetComponent<Renderer> ().material = matChr;
+
+		GetComponentsInChildren<Renderer> ()[indexCharPortrait].material = matChr;
 	}
 
 	void Initialize(){
