@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Arena : MonoBehaviour {
 
-	public float fChrScale;
+	public float fChrScaleX;
+	public float fChrScaleY;
+	public float fChrScaleZ;
+
 
 	public GameObject baseChr;
 
@@ -19,9 +22,10 @@ public class Arena : MonoBehaviour {
 	List<GameObject> lstChrPlayer2;
 
 	GameObject CreateChr(CHARTYPE type, Vector3 pos){
+		Debug.Log (baseChr);
+		GameObject newObj = Instantiate (baseChr, pos, Quaternion.identity, GetComponent<Transform>());
+		newObj.GetComponent<Transform> ().localScale = new Vector3 (fChrScaleX, fChrScaleY, fChrScaleZ);
 
-		GameObject newObj = Instantiate (baseChr, pos, Quaternion.Euler(90, 0, 0), GetComponent<Transform>());
-		newObj.GetComponent<Transform> ().localScale = new Vector3 (fChrScale, fChrScale, fChrScale);
 
 		switch(type){
 		case CHARTYPE.KATARA:
@@ -46,12 +50,12 @@ public class Arena : MonoBehaviour {
 	public void SetPlayers(Player player1, Player player2){
 		//Make this better
 		for (int i = 0; i < player1.nChrs; i++) {
-			Debug.Log (i);
+			//Debug.Log (i);
 			lstChrPlayer1.Add(CreateChr (player1.arChrTypeSelection[i], new Vector3(-3.0f, -3.0f + 3.0f*i, 0)));
 		}
 
 		for (int i = 0; i < player2.nChrs; i++) {
-			Debug.Log (i);
+			//Debug.Log (i);
 			lstChrPlayer2.Add(CreateChr (player2.arChrTypeSelection[i], new Vector3(3.0f, -3.0f + 3.0f*i, 0)));
 		}
 	}
@@ -64,8 +68,6 @@ public class Arena : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
-
 
 
 
