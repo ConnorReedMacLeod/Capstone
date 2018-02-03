@@ -12,8 +12,8 @@ public class Player {
 	// Use this for initialization
 	public Player () {
 		arChrTypeSelection = new Arena.CHARTYPE[MAXCHRS];
-		arChrTypeSelection[0] = Arena.CHARTYPE.KATARA;
-		arChrTypeSelection[1] = Arena.CHARTYPE.LANCER;
+		arChrTypeSelection[0] = Arena.CHARTYPE.SKELCOWBOY;
+		arChrTypeSelection[1] = Arena.CHARTYPE.SKELCOWBOY;
 		arChrTypeSelection[2] = Arena.CHARTYPE.SKELCOWBOY;
 		nChrs = 3;
 	}
