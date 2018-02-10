@@ -4,16 +4,9 @@ using UnityEngine;
 
 public class ChrKatara : Character {
 
-	// Use this for initialization
-	void Start (){
-		
+	public ChrKatara(int _idOwner, int _id): base(_idOwner, _id){
 		sName = "Katara";
 		Debug.Log ("I'm " + sName);
-		base.Start ();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
 }
