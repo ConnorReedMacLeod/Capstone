@@ -4,18 +4,27 @@ using UnityEngine;
 
 public class Player {
 
-	static int MAXCHRS = 6;
+	public int id;
+	public static int MAXCHRS = 3;
+	public static int MAXPLAYERS = 2;
 	public Character[] arChr;
-	public Arena.CHARTYPE[] arChrTypeSelection;
+	public Character.CHARTYPE[] arChrTypeSelection;
 	public int nChrs;
 
-	// Use this for initialization
-	public Player () {
-		arChrTypeSelection = new Arena.CHARTYPE[MAXCHRS];
-		arChrTypeSelection[0] = Arena.CHARTYPE.SKELCOWBOY;
-		arChrTypeSelection[1] = Arena.CHARTYPE.SKELCOWBOY;
-		arChrTypeSelection[2] = Arena.CHARTYPE.SKELCOWBOY;
+	public void setChrs(){
+		//placeholder until character selection is available
+		arChrTypeSelection[0] = Character.CHARTYPE.KATARA;
+		arChrTypeSelection[1] = Character.CHARTYPE.LANCER;
+		arChrTypeSelection[2] = Character.CHARTYPE.SKELCOWBOY;
 		nChrs = 3;
+	}
+
+	// Use this for initialization
+	public Player (int _id) {
+		id = _id;
+		arChrTypeSelection = new Character.CHARTYPE[MAXCHRS];
+
+
 	}
 
 }

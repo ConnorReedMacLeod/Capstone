@@ -2,37 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Character : MonoBehaviour {
+public class Character : Subject {
 
-	public Material matChr;
+	public enum CHARTYPE {
+		LANCER, KATARA, SKELCOWBOY
+	};
+
+	Arena arena;
+
+	public int id;
+	public int idOwner;
+
 	public string sName;
 
-	const int indexCharBorder = 0;
-	const int indexCharPortrait = 1;
+	public float fX;
+	public float fY;
 
-	void InitMaterial(){
-		string sMatPath = "Materials/Characters/mat" + sName;
-		matChr = Resources.Load(sMatPath, typeof(Material)) as Material;
-
-		GetComponentsInChildren<Renderer> ()[indexCharPortrait].material = matChr;
+	public void SetPosition(float _fX, float _fY){
+		fX = _fX;
+		fY = _fY;
 	}
 
-	void Initialize(){
-		InitMaterial ();
+	public Character(int _idOwner, int _id){
+		idOwner = _idOwner;
+		id = _id;
+
 	}
 
-	public Character(){
-		
-	}
-
-	// Use this for initialization
-	public void Start () {
-		Debug.Log ("Base Character Starting");
-		Initialize ();
-	}
-	
-	// Update is called once per frame
-	public void Update () {
-		
+	public void Start (){
+		SetPosition(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f));
 	}
 }
