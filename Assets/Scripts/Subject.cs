@@ -15,7 +15,7 @@ public class Subject {
 	}
 
 	public void NotifyObs(){
-		foreach (Observer obs in lstObservers) {
+		foreach (Observer obs in lstObservers.ToArray()) {
 			obs.UpdateObs ();
 		}
 	}

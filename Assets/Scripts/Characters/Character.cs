@@ -37,13 +37,11 @@ public class Character : Subject {
 	}
 
 	public void Select(){
-		Debug.Log (sName + " has been selected");
 		bSelected = true;
 		NotifyObs ();
 	}
 
 	public void Deselect (){
-		Debug.Log (sName + " is unselected");
 		bSelected = false;
 		NotifyObs ();
 	}

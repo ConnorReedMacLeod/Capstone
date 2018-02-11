@@ -5,11 +5,13 @@ using UnityEngine;
 public class StateTargetSelected : StateTarget {
 
 	override public void OnEnter(){
-		//TODO:: bring up action wheel
+		
+		Debug.Assert(contTarg.selected != null);
+
 	}
 
 	override public void OnLeave(){
-		//TODO:: remove action wheel
+		
 	}
 
 	override public void OnClickArena(Vector3 pos){

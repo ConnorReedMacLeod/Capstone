@@ -6,12 +6,13 @@ public class ViewChr : Observer {
 
 	public Character mod;
 
-	public ViewArena viewArena;
-
 	//keep some local variables to keep track of things that have changed
 	bool lastbSelected;
 	Vector3 lastPos;
 
+	public GameObject pfActionWheel;
+	public GameObject objActionWheel;
+	public ViewActionWheel viewActionWheel;
 
 	const int indexCharBorder = 0;
 	const int indexCharPortrait = 1;
@@ -31,14 +32,14 @@ public class ViewChr : Observer {
 		GetComponentsInChildren<Renderer> ()[indexCharPortrait].material = matChr;
 	}
 
-	void setBorder(string _sName){
+	void SetBorder(string _sName){
 		string sMatPath = "Materials/mat" + _sName;
 		Material matBorder = Resources.Load(sMatPath, typeof(Material)) as Material;
 
 		GetComponentsInChildren<Renderer> ()[indexCharBorder].material = matBorder;
 	}
 
-	public void setModel(Character _mod){
+	public void SetModel(Character _mod){
 		mod = _mod;
 		mod.Subscribe (this);
 
@@ -55,13 +56,37 @@ public class ViewChr : Observer {
 		}
 	}
 
+	void AddActionWheel(){
+		Debug.Assert (objActionWheel == null);
+		Debug.Assert (viewActionWheel == null);
+		objActionWheel = Instantiate (pfActionWheel, transform);
+		//viewActionWheel = objActionWheel.AddComponent<ViewActionWheel> ();
+		viewActionWheel = objActionWheel.GetComponent<ViewActionWheel>();
+		viewActionWheel.setModel (mod);
+	}
+
+	void RemoveActionWheel(){
+		Debug.Assert (objActionWheel != null);
+		Debug.Assert (viewActionWheel != null);
+		Destroy (objActionWheel);
+		objActionWheel = null;
+		viewActionWheel = null;
+	}
+
 	void UpdateStatus(){
+		//If our selected status has changed
 		if (lastbSelected != mod.bSelected) {
 			lastbSelected = mod.bSelected;
 			if (lastbSelected) {
-				setBorder ("ChrBorderSelected");
+				SetBorder ("ChrBorderSelected");
+
+				AddActionWheel ();
+
 			} else {
-				setBorder ("ChrBorder");
+				SetBorder ("ChrBorder");
+
+				RemoveActionWheel ();
+
 			}
 
 		}

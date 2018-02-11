@@ -6,6 +6,5 @@ public class ChrSkelCowboy : Character {
 
 	public ChrSkelCowboy(int _idOwner, int _id): base(_idOwner, _id){
 		sName = "SkelCowboy";
-		Debug.Log ("I'm " + sName);
 	}
 }
