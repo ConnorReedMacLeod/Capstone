@@ -9,10 +9,11 @@ public class ViewArena : Observer {
 	public ViewChr [][] arviewChr;
 
 	public GameObject pfChr;
+	public GameObject pfActionWheel;
 
 	public GameObject objChrContainer;
 
-	public void setModel(Arena _mod){
+	public void SetModel(Arena _mod){
 		mod = _mod;
 		mod.Subscribe (this);
 
@@ -23,8 +24,10 @@ public class ViewArena : Observer {
 		GameObject newObjChr = Instantiate (pfChr, this.transform);
 		ViewChr newViewChr = newObjChr.AddComponent<ViewChr> () as ViewChr;
 
+		newViewChr.pfActionWheel = pfActionWheel;
+
 		//Let the view know which character it's representing
-		newViewChr.setModel (chr);
+		newViewChr.SetModel (chr);
 
 		//Add it to the list of Character views
 		arviewChr [chr.idOwner] [chr.id] = newViewChr;
