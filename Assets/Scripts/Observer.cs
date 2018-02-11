@@ -5,6 +5,10 @@ using UnityEngine;
 public class Observer : Element {
 
 	virtual public void UpdateObs(){
+		UpdateObs ("");
+	}
+
+	virtual public void UpdateObs(string updateType){
 
 	}
 }
