@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Observer : Element {
 
-	public void UpdateObs(){
+	virtual public void UpdateObs(){
 
 	}
 }

@@ -48,8 +48,12 @@ public class Model : Element {
 		}
 		arChrs [idOwner] [id] = newChr;
 
+		//Initially set a random position for the new character *** CHANGE THIS AT SOME POINT ***
+		newChr.SetPosition(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f));
+
 		//Let the Arena View know that there's a new Character to represent
 		app.view.viewArena.RegisterChar(newChr);
+
 	}
 
 	void initAllChrs(){

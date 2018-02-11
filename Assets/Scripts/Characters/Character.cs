@@ -17,10 +17,22 @@ public class Character : Subject {
 
 	public float fX;
 	public float fY;
+	public float fZ;
+
+	public float fwidth;
+	public float fheight;
 
 	public void SetPosition(float _fX, float _fY){
+		SetPosition (_fX, _fY, 0);
+	}
+
+	public void SetPosition(float _fX, float _fY, float _fZ){
 		fX = _fX;
 		fY = _fY;
+		fZ = _fZ;
+		Debug.Log (fX);
+
+		NotifyObs ();
 	}
 
 	public Character(int _idOwner, int _id){
@@ -28,8 +40,5 @@ public class Character : Subject {
 		id = _id;
 
 	}
-
-	public void Start (){
-		SetPosition(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f));
-	}
+		
 }
