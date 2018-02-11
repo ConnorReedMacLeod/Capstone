@@ -14,7 +14,7 @@ public class Subject {
 		lstObservers.Remove (newObs);
 	}
 
-	void NotifyObs(){
+	public void NotifyObs(){
 		foreach (Observer obs in lstObservers) {
 			obs.UpdateObs ();
 		}
