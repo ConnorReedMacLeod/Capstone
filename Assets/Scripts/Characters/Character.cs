@@ -10,6 +10,8 @@ public class Character : Subject {
 
 	Arena arena;
 
+	public bool selected;
+
 	public int id;
 	public int idOwner;
 
@@ -30,14 +32,27 @@ public class Character : Subject {
 		fX = _fX;
 		fY = _fY;
 		fZ = _fZ;
-		Debug.Log (fX);
 
+		NotifyObs ();
+	}
+
+	public void Select(){
+		Debug.Log (sName + " has been selected");
+		selected = true;
+		NotifyObs ();
+	}
+
+	public void UnSelect (){
+		Debug.Log (sName + " is unselected");
+		selected = false;
 		NotifyObs ();
 	}
 
 	public Character(int _idOwner, int _id){
 		idOwner = _idOwner;
 		id = _id;
+
+		selected = false;
 
 	}
 		
