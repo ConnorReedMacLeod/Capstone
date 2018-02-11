@@ -41,6 +41,13 @@ public class ViewArena : Observer {
 		}
 	}
 		
+	public void OnMouseDown(){
+		//TODO:: Actually generate the correct mouse coordinates to pass along
+		//       Note - these must be relative to the arena
+
+		//float[] mousePos = {0f,0f,0f};
+		app.Notify (Notification.ClickArena, this, Vector3.zero);
+	}
 
 	public void Start(){
 

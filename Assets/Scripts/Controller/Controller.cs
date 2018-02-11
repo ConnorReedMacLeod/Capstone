@@ -6,15 +6,7 @@ using UnityEngine;
 // Map actions taken with the view to changes in the model
 // Can maintain information about game state
 
-public class Controller : Element {
+abstract public class Controller : Element {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	abstract public void OnNotification (string eventType, Object target, params object[] args);
 }

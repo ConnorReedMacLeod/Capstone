@@ -34,9 +34,12 @@ public class ViewChr : Observer {
 	}
 
 	override public void UpdateObs(){
-		Debug.Log ("I have been Updated");
 		// Set position correctly
 		transform.localPosition = new Vector3 (mod.fX, mod.fY, 0);
+	}
+
+	public void OnMouseDown(){
+		app.Notify (Notification.ClickChr, this);
 	}
 
 	public void Start(){
