@@ -14,7 +14,7 @@ public class StateTargetSelected : StateTarget {
 
 	override public void OnClickArena(Vector3 pos){
 		//requires the position that was clicked
-		contTarg.selected.UnSelect();
+		contTarg.selected.Deselect();
 
 		contTarg.selected = null;
 
@@ -26,7 +26,7 @@ public class StateTargetSelected : StateTarget {
 			return; //nothing should be done here I don't think
 
 		//requires the selected character
-		contTarg.selected.UnSelect();
+		contTarg.selected.Deselect();
 
 		contTarg.selected = chr;
 		chr.Select();

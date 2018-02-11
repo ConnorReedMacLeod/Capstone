@@ -10,41 +10,41 @@ public class Character : Subject {
 
 	Arena arena;
 
-	public bool selected;
+	public bool bSelected;
 
 	public int id;
 	public int idOwner;
 
 	public string sName;
 
-	public float fX;
-	public float fY;
-	public float fZ;
+	// TODO:: Reconsider making this pos range from -0.5 to 0.5
+	//        it's nice for avoiding some standard units of measurement,
+	//        but it means there's only oen map size
+	public Vector3 pos;
 
 	public float fwidth;
 	public float fheight;
 
+	// Just to make it nicer to type
 	public void SetPosition(float _fX, float _fY){
-		SetPosition (_fX, _fY, 0);
+		SetPosition (new Vector3 (_fX, _fY, 0));
 	}
 
-	public void SetPosition(float _fX, float _fY, float _fZ){
-		fX = _fX;
-		fY = _fY;
-		fZ = _fZ;
+	public void SetPosition(Vector3 _pos){
+		pos = _pos;
 
 		NotifyObs ();
 	}
 
 	public void Select(){
 		Debug.Log (sName + " has been selected");
-		selected = true;
+		bSelected = true;
 		NotifyObs ();
 	}
 
-	public void UnSelect (){
+	public void Deselect (){
 		Debug.Log (sName + " is unselected");
-		selected = false;
+		bSelected = false;
 		NotifyObs ();
 	}
 
@@ -52,7 +52,7 @@ public class Character : Subject {
 		idOwner = _idOwner;
 		id = _id;
 
-		selected = false;
+		bSelected = false;
 
 	}
 		

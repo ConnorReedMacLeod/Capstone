@@ -49,6 +49,8 @@ public class ViewArena : Observer {
 		app.Notify (Notification.ClickArena, this, Vector3.zero);
 	}
 
+
+
 	public void Start(){
 
 	}

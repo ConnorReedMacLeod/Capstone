@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class ViewChr : Observer {
 
-	//Is this actually overwriting the base mod? Hope so
 	public Character mod;
-	public Material matChr;
 
-	public ViewArena viewArena; //need to link this up to parent
+	public ViewArena viewArena;
+
+	//keep some local variables to keep track of things that have changed
+	bool lastbSelected;
+	Vector3 lastPos;
 
 
 	const int indexCharBorder = 0;
@@ -22,20 +24,55 @@ public class ViewChr : Observer {
 				transform.localScale.z / transform.parent.localScale.z);
 	}
 
+	void setPortrait(string _sName){
+		string sMatPath = "Materials/Characters/mat" + _sName;
+		Material matChr = Resources.Load(sMatPath, typeof(Material)) as Material;
+
+		GetComponentsInChildren<Renderer> ()[indexCharPortrait].material = matChr;
+	}
+
+	void setBorder(string _sName){
+		string sMatPath = "Materials/mat" + _sName;
+		Material matBorder = Resources.Load(sMatPath, typeof(Material)) as Material;
+
+		GetComponentsInChildren<Renderer> ()[indexCharBorder].material = matBorder;
+	}
+
 	public void setModel(Character _mod){
 		mod = _mod;
 		mod.Subscribe (this);
 
-		string sMatPath = "Materials/Characters/mat" + mod.sName;
-		matChr = Resources.Load(sMatPath, typeof(Material)) as Material;
+		// Set the portrait to be this new character
+		setPortrait (mod.sName);
+	}
 
-		GetComponentsInChildren<Renderer> ()[indexCharPortrait].material = matChr;
+	void UpdatePos(){
+		if (lastPos != mod.pos) {
+			lastPos = mod.pos;
 
+			//TODO:: Will probably update this to be some animation
+			transform.localPosition = lastPos;
+		}
+	}
+
+	void UpdateStatus(){
+		if (lastbSelected != mod.bSelected) {
+			lastbSelected = mod.bSelected;
+			if (lastbSelected) {
+				setBorder ("ChrBorderSelected");
+			} else {
+				setBorder ("ChrBorder");
+			}
+
+		}
 	}
 
 	override public void UpdateObs(){
-		// Set position correctly
-		transform.localPosition = new Vector3 (mod.fX, mod.fY, 0);
+		// Detect if the position has been changed
+		UpdatePos();
+
+		// Detect if selected status has changed
+		UpdateStatus();
 	}
 
 	public void OnMouseDown(){
