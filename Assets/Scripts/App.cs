@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 // Base class of all elements
@@ -28,7 +29,8 @@ public class App : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+		controllers = (GetComponentsInChildren<Controller> ()).ToList();
+
 	}
 
 }

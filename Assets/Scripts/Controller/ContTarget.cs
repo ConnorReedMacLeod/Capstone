@@ -17,7 +17,7 @@ public class ContTarget : Controller {
 
 		switch (eventType) {
 		case Notification.ClickAct:
-			curState.OnClickAct();
+			curState.OnClickAct(((ViewAction)target).mod, (int)args[0]);
 			break;
 		case Notification.ClickArena:
 			Vector3 clickPos = (Vector3)args [0];

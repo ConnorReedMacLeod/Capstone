@@ -11,7 +11,7 @@ public class StateTargetSelected : StateTarget {
 	}
 
 	override public void OnLeave(){
-		
+
 	}
 
 	override public void OnClickArena(Vector3 pos){
@@ -36,6 +36,13 @@ public class StateTargetSelected : StateTarget {
 		contTarg.SetState (new StateTargetSelected (contTarg));
 		//perhaps a bit silly since we're already in this state,
 		// but we want to reinitiallize the action wheel
+	}
+
+	override public void OnClickAct(Character chr, int idAct){
+		Debug.Log (chr + " is using action " + idAct);
+
+		//contTarg.SetState (new StateTargetTargetting (contTarg));
+
 	}
 
 	public StateTargetSelected(ContTarget _contTarg): base(_contTarg){
