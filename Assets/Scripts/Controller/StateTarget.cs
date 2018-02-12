@@ -21,7 +21,7 @@ public class StateTarget {
 
 	}
 
-	public virtual void OnClickAct(){
+	public virtual void OnClickAct(Character chr, int idAct){
 
 	}
 

@@ -15,7 +15,10 @@ public class Subject {
 	}
 
 	public void NotifyObs(){
-		foreach (Observer obs in lstObservers.ToArray()) {
+		List<Observer> copiedList = new List<Observer> (lstObservers);
+		foreach (Observer obs in copiedList) {
+			if (obs == null)
+				continue;//in case this object has been removed by the results of previous update iterations
 			obs.UpdateObs ();
 		}
 	}
