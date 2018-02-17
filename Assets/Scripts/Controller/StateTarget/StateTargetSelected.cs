@@ -7,6 +7,7 @@ public class StateTargetSelected : StateTarget {
 	override public void OnEnter(){
 		
 		Debug.Assert(contTarg.selected != null);
+		contTarg.selected.Select ();
 
 	}
 
@@ -27,7 +28,7 @@ public class StateTargetSelected : StateTarget {
 		if (contTarg.selected == chr)
 			return; //nothing should be done here I don't think
 
-		//requires the selected character
+		//change the selected character
 		contTarg.selected.Deselect();
 
 		contTarg.selected = chr;
@@ -41,7 +42,11 @@ public class StateTargetSelected : StateTarget {
 	override public void OnClickAct(Character chr, int idAct){
 		Debug.Log (chr + " is using action " + idAct);
 
-		//contTarg.SetState (new StateTargetTargetting (contTarg));
+		contTarg.selected.Targetting ();
+		contTarg.selected.nUsingAction = idAct;
+
+		contTarg.ResetTar ();
+		contTarg.SetTargetArgState ();
 
 	}
 
