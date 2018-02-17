@@ -15,7 +15,6 @@ public class StateTargetIdle : StateTarget {
 	override public void OnClickChr(Character chr){
 		//requires the selected character
 		contTarg.selected = chr;
-		chr.Select();
 
 		contTarg.SetState (new StateTargetSelected (contTarg));
 	}
