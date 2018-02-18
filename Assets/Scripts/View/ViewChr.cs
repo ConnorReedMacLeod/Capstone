@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class ViewChr : Observer {
 
+	bool bStarted;// so that updates aren't looked at until after this has been initialized
+
 	public Character mod;
 
 	//keep some local variables to keep track of things that have changed
-	bool lastbSelected;
+	Character.STATESELECT lastStateSelect;
 	Vector3 lastPos;
 
 	public GameObject pfActionWheel;
@@ -74,22 +76,45 @@ public class ViewChr : Observer {
 	}
 
 	void UpdateStatus(){
+
+		// Don't accept udpates until after initialized
+		if (!bStarted)
+			return;
+
 		//If our selected status has changed
-		if (lastbSelected != mod.bSelected) {
-			lastbSelected = mod.bSelected;
-			if (lastbSelected) {
+		if (lastStateSelect != mod.stateSelect) {
+			 
+			switch (mod.stateSelect) {
+			case Character.STATESELECT.SELECTED:
+				//Need to add the action wheel
 				SetBorder ("ChrBorderSelected");
-
 				AddActionWheel ();
+				break;
 
-			} else {
-				SetBorder ("ChrBorder");
-
+			case Character.STATESELECT.TARGGETING:
+				//Need to remove action wheel
 				RemoveActionWheel ();
+				break;
 
+			case Character.STATESELECT.UNSELECTED:
+				//Determine which state we came from
+				if (lastStateSelect == Character.STATESELECT.SELECTED) {
+					// then we just deselected
+					SetBorder ("ChrBorder");
+					RemoveActionWheel ();
+				} else if (lastStateSelect == Character.STATESELECT.TARGGETING) {
+					// then we finished selecting targets
+					SetBorder ("ChrBorder");
+				}
+				break;
+			default: 
+				Debug.LogError ("UNRECOGNIZED VIEW CHAR SELECT STATE!");
+				return;
 			}
 
+			lastStateSelect = mod.stateSelect;
 		}
+
 	}
 
 	override public void UpdateObs(){
@@ -106,5 +131,8 @@ public class ViewChr : Observer {
 
 	public void Start(){
 		Unscale ();
+		bStarted = true;
+
+		lastStateSelect = Character.STATESELECT.UNSELECTED;
 	}
 }
