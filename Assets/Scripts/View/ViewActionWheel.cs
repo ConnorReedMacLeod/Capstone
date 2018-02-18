@@ -30,6 +30,6 @@ public class ViewActionWheel : Observer {
 	}
 
 	public void Start(){
-        Debug.Log("Pour quois?");
+        
 	}
 }

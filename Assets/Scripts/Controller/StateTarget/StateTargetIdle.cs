@@ -12,7 +12,7 @@ public class StateTargetIdle : StateTarget {
 		contTarg.selected = null;
 	}
 
-	override public void OnClickChr(Character chr){
+	override public void OnClickChr(Character chr, Vector3 pos){
 		//requires the selected character
 		contTarg.selected = chr;
 

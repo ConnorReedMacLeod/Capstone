@@ -5,12 +5,12 @@ using UnityEngine;
 //Used for targgeting a specific character
 public class StateTargetPos : StateTarget {
 
-	TargetArgChr tarArg;
+	TargetArgPos tarArg;
 
 	override public void OnEnter(){
 
 		Debug.Assert(contTarg.selected != null);
-		tarArg = (TargetArgChr)contTarg.selected.arActions [contTarg.selected.nUsingAction].arArgs[contTarg.nTarCount];
+		tarArg = (TargetArgPos)contTarg.selected.arActions [contTarg.selected.nUsingAction].arArgs[contTarg.nTarCount];
 
 	}
 
@@ -22,31 +22,29 @@ public class StateTargetPos : StateTarget {
 
 	override public void OnClickArena(Vector3 pos){
 
-		Debug.Log (pos + " was selected");
-
-		/*
-		//clear any targetting 
-		//TODO:: maybe only reset the targets to whatever was selected before?
-		contTarg.selected.arActions [contTarg.selected.nUsingAction].Reset ();
-
-		contTarg.selected.Deselect();
-
-		contTarg.selected = null;
-
-		contTarg.SetState (new StateTargetIdle (contTarg));*/
-	}
-
-	override public void OnClickChr(Character chr){
-
-		if (tarArg.setTar (chr)) {
-			Debug.Log ("Target successfully set to " + chr);
+		if (tarArg.setTar (pos)) {
+			Debug.Log ("Target successfully set to " + pos);
 
 			//move to next target
 			contTarg.IncTar ();
 
 			contTarg.SetTargetArgState ();
 		} else {
-			Debug.Log (chr + " is not a valid target");
+			Debug.Log (pos + " is not a valid target");
+		}
+	}
+
+	override public void OnClickChr(Character chr, Vector3 pos){
+		//TODO:: this was just copied from above - prolly don't do that...
+		if (tarArg.setTar (pos)) {
+			Debug.Log ("Target successfully set to " + pos);
+
+			//move to next target
+			contTarg.IncTar ();
+
+			contTarg.SetTargetArgState ();
+		} else {
+			Debug.Log (pos + " is not a valid target");
 		}
 
 
@@ -54,7 +52,7 @@ public class StateTargetPos : StateTarget {
 
 	override public void OnClickAct(Character chr, int idAct){
 		// shouldn't be possible since no actions should be out
-		Debug.LogError("SOMEHOW CLICKED AN ACTION WHILE TRYING TO TARGET A CHR");
+		Debug.LogError("SOMEHOW CLICKED AN ACTION WHILE TRYING TO TARGET A POS");
 	}
 
 	public StateTargetPos(ContTarget _contTarg): base(_contTarg){

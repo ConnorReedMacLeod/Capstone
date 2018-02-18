@@ -31,7 +31,7 @@ public class StateTargetChr : StateTarget {
 		contTarg.SetState (new StateTargetIdle (contTarg));
 	}
 
-	override public void OnClickChr(Character chr){
+	override public void OnClickChr(Character chr, Vector3 pos){
 
 		if (tarArg.setTar (chr)) {
 			Debug.Log ("Target successfully set to " + chr);
