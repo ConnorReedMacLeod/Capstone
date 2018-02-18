@@ -30,7 +30,7 @@ public class ContTarget : Controller {
 			break;
 
 		case Notification.ClickChr:
-			curState.OnClickChr (((ViewChr)target).mod);
+			curState.OnClickChr (((ViewChr)target).mod, (Vector3)args[0]);
 			break;
 
 		default:
@@ -73,6 +73,10 @@ public class ContTarget : Controller {
 
 			Debug.Log (selected.sName + " just finished targetting their ability");
 
+			/*JUST FOR TESTING*/
+			selected.arActions[selected.nUsingAction].Execute();
+			/**/
+
 			// Can now go back idle and wait for the next targetting
 			SetState (new StateTargetIdle (this));
 		} else {
@@ -82,9 +86,13 @@ public class ContTarget : Controller {
 
 			StateTarget newState;
 
-			switch (sArgType) {
+			switch (sArgType) { //TODO:: Maybe make this not rely on a string comparison... bleh
 			case "TargetArgChr":
 				newState = new StateTargetChr (this);
+				break;
+
+			case "TargetArgPos":
+				newState = new StateTargetPos (this);
 				break;
 
 			default:

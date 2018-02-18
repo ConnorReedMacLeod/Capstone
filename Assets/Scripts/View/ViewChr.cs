@@ -126,7 +126,8 @@ public class ViewChr : Observer {
 	}
 
 	public void OnMouseDown(){
-		app.Notify (Notification.ClickChr, this);
+		
+		app.Notify (Notification.ClickChr, this, app.view.viewArena.GetArenaPos(Input.mousePosition));
 	}
 
 	public void Start(){

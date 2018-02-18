@@ -66,8 +66,9 @@ public class Character : Subject {
 	}
 
 	public void SetActions(){//TODO:: probably add some parameter for this at some point like an array of ids
-		for (int i = 0; i < nActions; i++) {
+		for (int i = 0; i < nActions; i+=2) {
 			arActions [i] = new ActionFireball (this);
+			arActions [i+1] = new ActionMove (this);
 		}
 	}
 
