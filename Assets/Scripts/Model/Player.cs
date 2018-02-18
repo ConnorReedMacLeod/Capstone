@@ -11,6 +11,8 @@ public class Player {
 	public Character.CHARTYPE[] arChrTypeSelection;
 	public int nChrs;
 
+	public Mana mana;
+
 	public void setChrs(){
 		//placeholder until character selection is available
 		arChrTypeSelection[0] = Character.CHARTYPE.KATARA;
