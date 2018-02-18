@@ -25,8 +25,8 @@ public class StateTarget {
 
 	}
 
-	public virtual void OnClickChr(Character chr){
-		//requires the selected character
+	public virtual void OnClickChr(Character chr, Vector3 pos){
+		//requires the selected character and it's position in the arena
 
 	}
 
