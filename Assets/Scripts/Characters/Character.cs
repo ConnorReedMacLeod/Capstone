@@ -19,6 +19,9 @@ public class Character : Subject {
 	public int id;
 	public int idOwner;
 
+	public int nCurHealth;
+	public int nMaxHealth;
+
 	public string sName;
 
 	// TODO:: Reconsider making this pos range from -0.5 to 0.5

@@ -9,6 +9,6 @@ public class Observer : Element {
 	}
 
 	virtual public void UpdateObs(string updateType){
-
+		//TODO:: Consider actually implementing string messages to let the observer know what it should update
 	}
 }
