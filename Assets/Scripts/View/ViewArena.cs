@@ -49,6 +49,7 @@ public class ViewArena : Observer {
 		//       Note - these must be relative to the arena
 
 		//float[] mousePos = {0f,0f,0f};
+		//Debug.Log (Camera.main.ScreenToWorldPoint(Input.mousePosition));
 		app.Notify (Notification.ClickArena, this, Vector3.zero);
 	}
 
