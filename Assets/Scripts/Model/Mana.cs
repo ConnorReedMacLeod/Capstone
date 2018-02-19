@@ -1,4 +1,9 @@
 ﻿//BEN HICKS
+
+//TODO::
+//Right now, the code only allows mana in the mana pool to be spent.
+//Instead, the mana pool shuold be changed so that it indicates what mana is available to be used for effort.
+//Coloured mana can be taken from anywhere, prioritizing mana outside the mana pool.
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
