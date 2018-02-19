@@ -148,14 +148,21 @@ public class Mana : Subject {
         //Removes mana to pay for cost
 		for (int i = 0; i < arCost.Length; i++) {
 			for (int j = 0; j < arCost [i]; j++) {
-				if (arManaPool [i] > 0) {
+                
+                //Pays for coloured mana
+                if (arManaPool [i] > 0) {
 					arManaPool [i]--;
 					qManaPool.Remove ((MANATYPE)i);
+
+                //Pays for effort mana
 				} else if (i == (int)MANATYPE.EFFORT) {
-					//Then remove any type of mana (whatever was added longest ago)
+
+					//Uses mana in order of most recently added to mana pool
 					arManaPool [(int)(qManaPool.First.Value)]--;
 					qManaPool.RemoveFirst ();
-				} else {
+                
+                //Catches non-existant mana types
+                } else {
 					Debug.LogError ("RAN OUT OF MANA TO SPEND!");
 					return false;
 				}
@@ -164,8 +171,6 @@ public class Mana : Subject {
 
 		return true;
 	}
-
-
 
 
 	public Mana () {
