@@ -16,11 +16,15 @@ public class Character : Subject {
 
 	Arena arena;
 
+	public int nRecharge;
+
 	public int id;
-	public int idOwner;
+	public Player playOwner;
 
 	public int nCurHealth;
 	public int nMaxHealth;
+
+
 
 	public string sName;
 
@@ -38,6 +42,19 @@ public class Character : Subject {
 	public bool bSetAction; // is an action set for the Chr to execute
 
 	public STATESELECT stateSelect;
+
+	public void ChangeRecharge(int _nChange){
+		if (_nChange + nRecharge < 0) {
+			// Don't let reductions go negative
+			nRecharge = 0;
+		} else {
+			nRecharge += _nChange;
+		}
+	}
+
+	public void TimeTick(){
+		ChangeRecharge (-1);
+	}
 
 	// Just to make it nicer to type
 	public void SetPosition(float _fX, float _fY){
@@ -65,14 +82,36 @@ public class Character : Subject {
 		NotifyObs ();
 	}
 
-	public void SetActions(){//TODO:: probably add some parameter for this at some point like an array of ids
-		for (int i = 0; i < nActions; i++) {
-			arActions [i] = new ActionFireball (this);
-		}
+	public void ExecuteAction(){
+		Debug.Assert (ValidAction ());
+
+		arActions [nUsingAction].Execute ();
 	}
 
-	public Character(int _idOwner, int _id){
-		idOwner = _idOwner;
+	public bool ValidAction(){
+		return (bSetAction && arActions [nUsingAction].VerifyLegal ());
+	}
+
+	public void SetRestAction(){
+		if (nUsingAction != -1) {
+			arActions [nUsingAction].Reset ();
+		}
+
+		bSetAction = true;
+		nUsingAction = 7;//TODO::Make this consistent
+
+	}
+
+	public void SetActions(){//TODO:: probably add some parameter for this at some point like an array of ids
+		for (int i = 0; i < nActions; i+=2) {
+			arActions [i] = new ActionFireball (this);
+			arActions [i+1] = new ActionMove (this);
+		}
+		arActions [7] = new ActionRest (this);
+	}
+
+	public Character(Player _playOwner, int _id){
+		playOwner = _playOwner;
 		id = _id;
 
 		arActions = new Action[nActions];

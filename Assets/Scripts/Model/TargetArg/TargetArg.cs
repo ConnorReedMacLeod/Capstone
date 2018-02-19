@@ -6,8 +6,6 @@ public abstract class TargetArg {
 
 	public Character chrOwner;
 
-	public StateTarget stateTarget;
-
 	public abstract bool VerifyLegal();
 
 	public void setOwner(Character _chrOwner){
