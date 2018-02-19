@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ChrKatara : Character {
 
-	public ChrKatara(int _idOwner, int _id): base(_idOwner, _id){
+	public ChrKatara(Player _playOwner, int _id): base(_playOwner, _id){
 		sName = "Katara";
 	}
 
