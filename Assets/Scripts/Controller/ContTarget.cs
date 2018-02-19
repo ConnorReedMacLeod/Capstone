@@ -30,7 +30,7 @@ public class ContTarget : Controller {
 			break;
 
 		case Notification.ClickChr:
-			curState.OnClickChr (((ViewChr)target).mod);
+			curState.OnClickChr (((ViewChr)target).mod, (Vector3)args[0]);
 			break;
 
 		default:
@@ -61,6 +61,7 @@ public class ContTarget : Controller {
 
 		if (nTarCount < 0) {
 			//Then we've cancelled the targetting action so go back to... idle?
+			selected.bSetAction = false;
 			selected.nUsingAction = -1;
 			selected.Deselect ();
 
@@ -68,10 +69,12 @@ public class ContTarget : Controller {
 		} else if (nTarCount == selected.arActions [selected.nUsingAction].nArgs) {
 			//Then we've filled of the targetting arguments
 
-			// TODO: Let the timeline know that the action is filled
+			selected.bSetAction = true;
 			selected.Deselect ();
 
-			Debug.Log (selected.sName + " just finished targetting their ability");
+			/*JUST FOR TESTING
+			selected.arActions[selected.nUsingAction].Execute();
+			*/
 
 			// Can now go back idle and wait for the next targetting
 			SetState (new StateTargetIdle (this));
@@ -82,9 +85,13 @@ public class ContTarget : Controller {
 
 			StateTarget newState;
 
-			switch (sArgType) {
+			switch (sArgType) { //TODO:: Maybe make this not rely on a string comparison... bleh
 			case "TargetArgChr":
 				newState = new StateTargetChr (this);
+				break;
+
+			case "TargetArgPos":
+				newState = new StateTargetPos (this);
 				break;
 
 			default:
