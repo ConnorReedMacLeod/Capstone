@@ -23,28 +23,26 @@ public class StateTargetPos : StateTarget {
 	override public void OnClickArena(Vector3 pos){
 
 		if (tarArg.setTar (pos)) {
-			Debug.Log ("Target successfully set to " + pos);
 
 			//move to next target
 			contTarg.IncTar ();
 
 			contTarg.SetTargetArgState ();
 		} else {
-			Debug.Log (pos + " is not a valid target");
+			
 		}
 	}
 
 	override public void OnClickChr(Character chr, Vector3 pos){
 		//TODO:: this was just copied from above - prolly don't do that...
 		if (tarArg.setTar (pos)) {
-			Debug.Log ("Target successfully set to " + pos);
 
 			//move to next target
 			contTarg.IncTar ();
 
 			contTarg.SetTargetArgState ();
 		} else {
-			Debug.Log (pos + " is not a valid target");
+			
 		}
 
 

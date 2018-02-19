@@ -26,7 +26,7 @@ public class Player {
 		id = _id;
 		arChrTypeSelection = new Character.CHARTYPE[MAXCHRS];
 
-
+		mana = new Mana ();
 	}
 
 }
