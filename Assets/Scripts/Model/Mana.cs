@@ -15,6 +15,10 @@ public class Mana : Subject {
 	//for keeping track of the qorder in which mana was added
 	public LinkedList<MANATYPE> qManaPool;
 
+	//For adding just one of a single type of mana
+	public void AddMana(MANATYPE type){
+		AddMana (type, 1);
+	}
 
 	//For adding just a single type of mana
 	public void AddMana(MANATYPE type, int nAmount){
@@ -83,7 +87,7 @@ public class Mana : Subject {
 		return SpendMana (cost);
 	}
 
-	public bool SpendMana(int [] arCost){
+	public bool HasMana(int [] arCost){
 		Debug.Assert (arCost.Length == nManaTypes || arCost.Length == nManaTypes - 1);
 
 		int nTotalMana = 0;
@@ -104,6 +108,15 @@ public class Mana : Subject {
 				return false;
 			}
 		}
+
+		return true;
+	}
+
+	public bool SpendMana(int [] arCost){
+		Debug.Assert (arCost.Length == nManaTypes || arCost.Length == nManaTypes - 1);
+
+		if (!HasMana (arCost))
+			return false;
 
 		//We know we have enough mana to pay for this
 		for (int i = 0; i < arCost.Length; i++) {
@@ -128,7 +141,7 @@ public class Mana : Subject {
 
 
 
-	void Start () {
+	public Mana () {
 		arMana = new int[nManaTypes];
 		arManaPool = new int[nManaTypes];
 		qManaPool = new LinkedList<MANATYPE> ();
