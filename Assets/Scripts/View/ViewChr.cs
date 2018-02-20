@@ -129,7 +129,7 @@ public class ViewChr : Observer {
 		}
 	}
 
-    //Updates character, detecting if changes are needed to the character position or state
+    //Updates character view, detecting if changes are needed to the character position or state
 	override public void UpdateObs(){
 		UpdatePos();
 		UpdateStatus();
