@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TimelineEventPassive : MonoBehaviour {
+public class ViewTimelineEventPassive : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {

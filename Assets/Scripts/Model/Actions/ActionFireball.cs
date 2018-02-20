@@ -13,6 +13,9 @@ public class ActionFireball : Action {
 
 		arCost = new int[]{0,0,1,0,0};
 
+		nCd = 6;
+		nRecharge = 4;
+
 		SetArgOwners ();
 	}
 

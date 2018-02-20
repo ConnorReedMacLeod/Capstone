@@ -72,10 +72,6 @@ public class ContTarget : Controller {
 			selected.bSetAction = true;
 			selected.Deselect ();
 
-			/*JUST FOR TESTING
-			selected.arActions[selected.nUsingAction].Execute();
-			*/
-
 			// Can now go back idle and wait for the next targetting
 			SetState (new StateTargetIdle (this));
 		} else {

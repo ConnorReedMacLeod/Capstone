@@ -14,7 +14,6 @@ public class ViewArena : Observer {
 	public float fWidth;                //The Arena's width
 	public float fHeight;               //The Arena's height
 
-
     //Gets the Arena view's dimensions
     public void Start()
     {
