@@ -9,7 +9,7 @@ public class ActionFireball : Action {
 	public ActionFireball(Character _chrOwner): base(1, _chrOwner){//number of target arguments
 
 		//Since the base constructor initializes this array, we can start filling it
-		arArgs [0] = new TargetArgChr ((own, tar) => own.playOwner != tar.playOwner);
+		arArgs [0] = new TargetArgChr ((own, tar) => own.plyrOwner != tar.plyrOwner);
 
 		arCost = new int[]{0,0,1,0,0};
 

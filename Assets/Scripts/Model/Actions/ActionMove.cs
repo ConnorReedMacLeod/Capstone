@@ -24,7 +24,7 @@ public class ActionMove : Action {
 		// but at least it's eliminated from the targetting lambda
 		Vector3 tar = ((TargetArgPos)arArgs [0]).v3Tar;
 
-		chrOwner.SetPosition (new Vector3(tar.x, tar.y, chrOwner.pos.z));
+		chrOwner.SetPosition (new Vector3(tar.x, tar.y, chrOwner.v3Pos.z));
 
 		//NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
 

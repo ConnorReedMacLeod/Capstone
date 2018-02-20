@@ -52,7 +52,7 @@ public class ViewTimelineEventChr : ViewTimelineEvent {
 		base.Start ();
 
 		// Subject to change
-		if (mod.chrSubject.playOwner.id == 0) {
+		if (mod.chrSubject.plyrOwner.id == 0) {
 			this.SetMaterial ("MatTimelineEvent1");
 			transform.GetChild(indexEventPortrait).transform.localPosition = new Vector3 (-0.75f, -0.4f, -0.1f); 
 

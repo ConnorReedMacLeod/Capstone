@@ -57,7 +57,7 @@ public class ViewChr : Observer {
 		mod.Subscribe (this);
 		setPortrait (mod.sName);
 
-		if (mod.playOwner.id == 0) {
+		if (mod.plyrOwner.id == 0) {
 			this.transform.localScale = new Vector3 (-1, 1, 1);
 		}
 	}
