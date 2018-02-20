@@ -11,8 +11,6 @@ public class ViewArena : Observer {
 	public GameObject pfChr;
 	public GameObject pfActionWheel;
 
-	public GameObject objChrContainer;
-
 	public float fWidth;
 	public float fHeight;
 

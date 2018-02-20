@@ -52,6 +52,10 @@ public class Character : Subject {
 		}
 	}
 
+	public void NotifyNewRecharge(){
+		Timeline.Get ().AddEvent (this, nRecharge, Timeline.PRIORITY.NONE); 
+	}
+
 	public void TimeTick(){
 		ChangeRecharge (-1);
 	}
