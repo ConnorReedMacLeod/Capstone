@@ -24,7 +24,6 @@ public class ViewChr : Observer {
     {
         Unscale();
         bStarted = true;
-
         lastStateSelect = Character.STATESELECT.UNSELECTED;
     }
 
@@ -62,8 +61,8 @@ public class ViewChr : Observer {
     //Updates the character's position to match the model's position
 	void UpdatePos(){
         //Checks if character position has changed
-		if (v3LastPos != mod.pos) {
-			v3LastPos = mod.pos;
+		if (v3LastPos != mod.v3Pos) {
+			v3LastPos = mod.v3Pos;
 			//TODO:: Will probably update this to be some animation
 			transform.localPosition = v3LastPos;
 		}
