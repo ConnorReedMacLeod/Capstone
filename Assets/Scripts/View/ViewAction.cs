@@ -1,5 +1,4 @@
-﻿//BEN HICKS
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +6,6 @@ public class ViewAction : Observer {
 
 	public int id;                              //The action's unique identifier
 	public Character mod;                       //The action's model
-
 	public ViewActionWheel viewActionWheel;     //The action's ActionWheel segment's view
 
     //Sets the ActionWheel segment's material

@@ -1,11 +1,10 @@
-﻿//BEN HICKS
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Character : Subject {
 
-	public enum CHARTYPE {
+	public enum CHARTYPE {          //CHARTYPE's possible values include all characters in the game
 		LANCER, KATARA, SKELCOWBOY
 	};
 
