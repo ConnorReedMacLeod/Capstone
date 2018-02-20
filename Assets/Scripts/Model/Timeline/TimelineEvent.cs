@@ -5,8 +5,18 @@ using UnityEngine;
 //base class for any event that's in the timeline
 public class TimelineEvent : Subject { //I guess making it a subject works so that its view can update just on it
 
+	public int nPlace;
+
 	public Timeline.PRIORITY prior;
 	public float fDelay;
+
+	public void IncPlace(){
+		nPlace++;
+	}
+
+	public void DecPlace(){
+		nPlace--;
+	}
 
 	public TimelineEvent (Timeline.PRIORITY _prior = Timeline.PRIORITY.NONE){
 		

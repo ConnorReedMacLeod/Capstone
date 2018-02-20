@@ -57,6 +57,8 @@ public class Action { //This should probably be made abstract
 		nCurCD = nCd;
 		chrOwner.ChangeRecharge(nRecharge);
 
+		//Let the timeline know about the new slot
+		chrOwner.NotifyNewRecharge ();
 
 		if (chrOwner.playOwner.mana.SpendMana (arCost)) {
 			//Then the mana was paid properly
