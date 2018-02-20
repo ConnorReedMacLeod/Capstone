@@ -60,7 +60,7 @@ public class Action { //This should probably be made abstract
 		//Let the timeline know about the new slot
 		chrOwner.NotifyNewRecharge ();
 
-		if (chrOwner.playOwner.mana.SpendMana (arCost)) {
+		if (chrOwner.plyrOwner.mana.SpendMana (arCost)) {
 			//Then the mana was paid properly
 		} else {
 			Debug.LogError ("YOU DIDN'T ACTUALLY HAVE ENOUGH MANA");
@@ -72,7 +72,7 @@ public class Action { //This should probably be made abstract
 	public virtual bool VerifyLegal(){// Maybe this doesn't need to be virtual
 
 		//Check if you have enough mana
-		if (!chrOwner.playOwner.mana.HasMana (arCost)) {
+		if (!chrOwner.plyrOwner.mana.HasMana (arCost)) {
 			Debug.Log ("Not enough mana");
 			return false;
 		}
