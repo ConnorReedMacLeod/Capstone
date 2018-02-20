@@ -4,110 +4,111 @@ using UnityEngine;
 
 public class Character : Subject {
 
-	public enum CHARTYPE {
+	public enum CHARTYPE {          //CHARTYPE's possible values include all characters in the game
 		LANCER, KATARA, SKELCOWBOY
 	};
 
 	public enum STATESELECT{
-		SELECTED, // selected, but not setting action targets
-		TARGGETING, // selected and currently setting targets
-		UNSELECTED // not selected
+		SELECTED,                   //Initial selection of the character
+		TARGGETING,                 //Targetting of character actions
+		UNSELECTED                  //Default character state
 	}
 
-	Arena arena;
+	Arena arena;                    //The field of play
 
-	public int nRecharge;
+    public string sName;            //The character's name
+    public Player plyrOwner;        //The player who controls the character
+    public Vector3 v3Pos;           //The character's position
 
-	public int id;
-	public Player playOwner;
+    // TODO:: Reconsider making this pos range from -0.5 to 0.5
+    //        it's nice for avoiding some standard units of measurement,
+    //        but it means there's only one map size
 
-	public int nCurHealth;
-	public int nMaxHealth;
+    public int id;                  //The character's unique identifier
+    public int nRecharge;           //Number of turns a character must wait before their next acion
 
+	public int nCurHealth;          //The character's current health
+	public int nMaxHealth;          //The character's max health
 
+    public Action[] arActions;      //The characters actions
+    public static int nActions = 8; //Number of actions the character can perform
+	public int nUsingAction;        //The currently selected action for the character, either targetting or having been queued
+	public bool bSetAction;         //Whether or not the character has an action queued
 
-	public string sName;
+	public STATESELECT stateSelect; //The character's state
 
-	// TODO:: Reconsider making this pos range from -0.5 to 0.5
-	//        it's nice for avoiding some standard units of measurement,
-	//        but it means there's only one map size
-	public Vector3 pos;
-
-	public float fwidth;
-	public float fheight;
-
-	public static int nActions = 8;
-	public Action[] arActions;
-	public int nUsingAction;
-	public bool bSetAction; // is an action set for the Chr to execute
-
-	public STATESELECT stateSelect;
-
+    
+    //Changes the character's recharge by a given value
 	public void ChangeRecharge(int _nChange){
 		if (_nChange + nRecharge < 0) {
-			// Don't let reductions go negative
 			nRecharge = 0;
 		} else {
 			nRecharge += _nChange;
 		}
 	}
 
+
 	public void NotifyNewRecharge(){
 		Timeline.Get ().AddEvent (this, nRecharge, Timeline.PRIORITY.NONE); 
 	}
 
+  //Counts down the character's recharge with the timeline
 	public void TimeTick(){
 		ChangeRecharge (-1);
 	}
 
-	// Just to make it nicer to type
-	public void SetPosition(float _fX, float _fY){
+    //Sets the character's position
+    public void SetPosition(Vector3 _v3Pos){
+        v3Pos = _v3Pos;
+        NotifyObs();
+    }
+
+    //Sets the character's position without need for depth (z)
+    public void SetPosition(float _fX, float _fY){
 		SetPosition (new Vector3 (_fX, _fY, 0));
 	}
 
-	public void SetPosition(Vector3 _pos){
-		pos = _pos;
-
-		NotifyObs ();
-	}
-
+    //Sets character state to selected
 	public void Select(){
 		stateSelect = STATESELECT.SELECTED;
 		NotifyObs ();
 	}
 
+    //Sets character state to targetting
 	public void Targetting(){
 		stateSelect = STATESELECT.TARGGETING;
 		NotifyObs ();
 	}
 
+    //Set character state to unselected
 	public void Deselect (){
 		stateSelect = STATESELECT.UNSELECTED;
 		NotifyObs ();
 	}
 
+    //Performs the character's queued action
 	public void ExecuteAction(){
 		Debug.Assert (ValidAction ());
-
 		arActions [nUsingAction].Execute ();
 	}
 
+    //Checks if the character's selected action is ready and able to be performed
 	public bool ValidAction(){
 		//Debug.Log (bSetAction + " is the setaction");
 		return (bSetAction && arActions [nUsingAction].VerifyLegal ());
 	}
 
+    //Sets character's selected action to Rest
 	public void SetRestAction(){
 		Debug.Log ("Had to reset to a rest action");
 		if (nUsingAction != -1) {
 			arActions [nUsingAction].Reset ();
 		}
-
 		bSetAction = true;
 		nUsingAction = 7;//TODO::Make this consistent
-
 	}
 
+    //Defines all of a character's unique actions
 	public void SetActions(){//TODO:: probably add some parameter for this at some point like an array of ids
 		for (int i = 0; i < nActions; i+=2) {
 			arActions [i] = new ActionFireball (this);
@@ -116,8 +117,9 @@ public class Character : Subject {
 		arActions [7] = new ActionRest (this);
 	}
 
+    //Defines the character's controller and ID
 	public Character(Player _playOwner, int _id){
-		playOwner = _playOwner;
+		plyrOwner = _playOwner;
 		id = _id;
 
 		arActions = new Action[nActions];

@@ -4,29 +4,37 @@ using UnityEngine;
 
 public class ViewChr : Observer {
 
-	bool bStarted;// so that updates aren't looked at until after this has been initialized
+	bool bStarted;                          //Confirms the Start() method has executed
 
-	public Character mod;
+    public Character mod;                   //Character model
 
-	//keep some local variables to keep track of things that have changed
-	Character.STATESELECT lastStateSelect;
-	Vector3 lastPos;
+	Character.STATESELECT lastStateSelect;  //Tracks previous character state (SELECTED, TARGETTING, UNSELECTED)
+	Vector3 v3LastPos;                      //Tracks previous character position against the model position
 
-	public GameObject pfActionWheel;
-	public GameObject objActionWheel;
-	public ViewActionWheel viewActionWheel;
+	public GameObject pfActionWheel;        //ActionWheel prefab
+	public GameObject objActionWheel;       //ActionWheel object
+	public ViewActionWheel viewActionWheel; //ActionWheel view
 
-	const int indexCharBorder = 0;
-	const int indexCharPortrait = 1;
+	const int indexCharBorder = 0;          //The border surrounding the character's portrait
+	const int indexCharPortrait = 1;        //The character's portait
 
-	//undoes the scaling of the parent
-	public void Unscale(){
+
+    public void Start()
+    {
+        Unscale();
+        bStarted = true;
+        lastStateSelect = Character.STATESELECT.UNSELECTED;
+    }
+
+    //Undoes the image and border scaling set by the parent
+    public void Unscale(){
 		transform.localScale = new Vector3
 			(transform.localScale.x / transform.parent.localScale.x,
 				transform.localScale.y / transform.parent.localScale.y,
 				transform.localScale.z / transform.parent.localScale.z);
 	}
 
+    //Sets the material used for the character's portrait
 	void setPortrait(string _sName){
 		string sMatPath = "Materials/Characters/mat" + _sName;
 		Material matChr = Resources.Load(sMatPath, typeof(Material)) as Material;
@@ -35,6 +43,7 @@ public class ViewChr : Observer {
 
 	}
 
+    //Sets the material used for the character's border
 	void SetBorder(string _sName){
 		string sMatPath = "Materials/mat" + _sName;
 		Material matBorder = Resources.Load(sMatPath, typeof(Material)) as Material;
@@ -42,11 +51,10 @@ public class ViewChr : Observer {
 		GetComponentsInChildren<Renderer> ()[indexCharBorder].material = matBorder;
 	}
 
+    //Sets the character's model
 	public void SetModel(Character _mod){
 		mod = _mod;
 		mod.Subscribe (this);
-
-		// Set the portrait to be this new character
 		setPortrait (mod.sName);
 
 		if (mod.playOwner.id == 0) {
@@ -54,24 +62,27 @@ public class ViewChr : Observer {
 		}
 	}
 
+    //Updates the character's position to match the model's position
 	void UpdatePos(){
-		if (lastPos != mod.pos) {
-			lastPos = mod.pos;
-
+        //Checks if character position has changed
+		if (v3LastPos != mod.v3Pos) {
+			v3LastPos = mod.v3Pos;
 			//TODO:: Will probably update this to be some animation
-			transform.localPosition = lastPos;
+			transform.localPosition = v3LastPos;
 		}
 	}
 
+    //Spawns the ActionWheel
 	void AddActionWheel(){
 		Debug.Assert (objActionWheel == null);
 		Debug.Assert (viewActionWheel == null);
 		objActionWheel = Instantiate (pfActionWheel, transform);
-		//viewActionWheel = objActionWheel.AddComponent<ViewActionWheel> ();
+		///viewActionWheel = objActionWheel.AddComponent<ViewActionWheel> ();
 		viewActionWheel = objActionWheel.GetComponent<ViewActionWheel>();
 		viewActionWheel.setModel (mod);
 	}
 
+    //Despawns the ActionWheel
 	void RemoveActionWheel(){
 		Debug.Assert (objActionWheel != null);
 		Debug.Assert (viewActionWheel != null);
@@ -80,65 +91,55 @@ public class ViewChr : Observer {
 		viewActionWheel = null;
 	}
 
+    //Updates the character's state (SELECTED, TARGETTING, UNSELECTED)
 	void UpdateStatus(){
-
-		// Don't accept udpates until after initialized
+		//Refuses to accept udpates until after initialized
 		if (!bStarted)
 			return;
-
-		//If our selected status has changed
+		//Checks if character status has changed
 		if (lastStateSelect != mod.stateSelect) {
-			 
 			switch (mod.stateSelect) {
-			case Character.STATESELECT.SELECTED:
-				//Need to add the action wheel
+            
+            //On switch to selecteds, spawns the ActionWheel and highlights character border
+            case Character.STATESELECT.SELECTED:
 				SetBorder ("ChrBorderSelected");
 				AddActionWheel ();
 				break;
 
-			case Character.STATESELECT.TARGGETING:
-				//Need to remove action wheel
+            //On switch to targetting, despawns the ActionWheel
+            case Character.STATESELECT.TARGGETING:
 				RemoveActionWheel ();
 				break;
 
+            //On switch to unselected, make changes depending on previous state
 			case Character.STATESELECT.UNSELECTED:
-				//Determine which state we came from
-				if (lastStateSelect == Character.STATESELECT.SELECTED) {
-					// then we just deselected
+                //If previously SELECTED, unhighlights character border and despawns ActionWheel
+                if (lastStateSelect == Character.STATESELECT.SELECTED) {
 					SetBorder ("ChrBorder");
 					RemoveActionWheel ();
-				} else if (lastStateSelect == Character.STATESELECT.TARGGETING) {
-					// then we finished selecting targets
+                //If previously TARGETTING, unhilights character border
+                } else if (lastStateSelect == Character.STATESELECT.TARGGETING) {
 					SetBorder ("ChrBorder");
 				}
 				break;
+            
+            //Catches unrecognized character states
 			default: 
 				Debug.LogError ("UNRECOGNIZED VIEW CHAR SELECT STATE!");
 				return;
 			}
-
 			lastStateSelect = mod.stateSelect;
 		}
-
 	}
 
+    //Updates character view, detecting if changes are needed to the character position or state
 	override public void UpdateObs(){
-		// Detect if the position has been changed
 		UpdatePos();
-
-		// Detect if selected status has changed
 		UpdateStatus();
 	}
 
+    //Notifies application when the character view is clicked on
 	public void OnMouseDown(){
-		
 		app.Notify (Notification.ClickChr, this, app.view.viewArena.GetArenaPos(Input.mousePosition));
-	}
-
-	public void Start(){
-		Unscale ();
-		bStarted = true;
-
-		lastStateSelect = Character.STATESELECT.UNSELECTED;
 	}
 }
