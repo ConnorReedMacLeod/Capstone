@@ -47,7 +47,12 @@ public class Character : Subject {
 		}
 	}
 
-    //Counts down the character's recharge with the timeline
+
+	public void NotifyNewRecharge(){
+		Timeline.Get ().AddEvent (this, nRecharge, Timeline.PRIORITY.NONE); 
+	}
+
+  //Counts down the character's recharge with the timeline
 	public void TimeTick(){
 		ChangeRecharge (-1);
 	}
@@ -89,11 +94,13 @@ public class Character : Subject {
 
     //Checks if the character's selected action is ready and able to be performed
 	public bool ValidAction(){
+		//Debug.Log (bSetAction + " is the setaction");
 		return (bSetAction && arActions [nUsingAction].VerifyLegal ());
 	}
 
     //Sets character's selected action to Rest
 	public void SetRestAction(){
+		Debug.Log ("Had to reset to a rest action");
 		if (nUsingAction != -1) {
 			arActions [nUsingAction].Reset ();
 		}

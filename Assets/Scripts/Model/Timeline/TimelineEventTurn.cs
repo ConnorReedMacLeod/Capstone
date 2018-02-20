@@ -17,18 +17,20 @@ public class TimelineEventTurn : TimelineEvent {
 
 		fDelay = 4.0f;
 
+		state = STATE.READY;
+
 	}
 
 	public override void Evaluate(){
 
-		Debug.Log ("It's now turn " + nTurn);
+		//Debug.Log ("It's now turn " + nTurn);
 
 		//Give the mana to each player
 		for (int i = 0; i < Timeline.Get().mod.nPlayers; i++) {
 			Timeline.Get().mod.arPlayers [i].mana.AddMana (manaGen);
 		}
 
-		Debug.Log ("Giving out " + manaGen + " mana");
+		//Debug.Log ("Giving out " + manaGen + " mana");
 
 		//Let players know to update their cds/recharges
 		Timeline.Get().NotifyTick ();

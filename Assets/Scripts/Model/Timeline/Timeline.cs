@@ -6,7 +6,7 @@ public class Timeline : Subject {
 
 	private static Timeline instance;
 
-	public static int MAXTURNS = 10;
+	public static int MAXTURNS = 15;
 
 	public enum PRIORITY {
 		BOT, //beginning of turn
@@ -22,6 +22,16 @@ public class Timeline : Subject {
 	public LinkedList <TimelineEvent> listEvents;
 
 	public LinkedListNode <TimelineEvent> curEvent;
+
+	//This is so the view can know which event to update
+	//TODO:: Make this a class that wraps everything up nicely
+	public enum UPDATETYPE
+	{
+		NONE, //Nothing just happend, I swear
+		NEWEVENT //A New Event was added to the timeline
+	}
+	public UPDATETYPE lastUpdate;
+	public TimelineEvent eventLastAdded;
 
 	private Timeline(){}
 
@@ -63,11 +73,22 @@ public class Timeline : Subject {
 
 			if (newPos.Next.Value.prior > newEvent.prior) {
 				listEvents.AddAfter (newPos, newEvent);
+
+				//Let it know its position in the list
+				newEvent.nPlace = newPos.Value.nPlace;
+				IncPlace (newPos.Next);
+
 				break;
 			} else {
 				newPos = newPos.Next;
 			}
 		}
+
+		//So that the view can know what it should update
+		lastUpdate = UPDATETYPE.NEWEVENT;
+		eventLastAdded = newEvent;
+		NotifyObs ();
+		lastUpdate = UPDATETYPE.NONE;
 
 	}
 
@@ -75,14 +96,40 @@ public class Timeline : Subject {
 
 		for (int i = 0; i < MAXTURNS; i++) {
 			TimelineEventTurn newEvent = new TimelineEventTurn (i);
+			newEvent.nPlace = i;
 			newEvent.InitMana ();//TODO::Make this only semi-random
 			listEvents.AddLast (newEvent);
+
+			//TODO:: Do all of this at once
+			//Let the view know to update
+			lastUpdate = UPDATETYPE.NEWEVENT;
+			eventLastAdded = newEvent;
+			NotifyObs ();
+			lastUpdate = UPDATETYPE.NONE;
 
 		}
 
 		curEvent = listEvents.First;
 
 	}
+
+
+	public void IncPlace(LinkedListNode<TimelineEvent> curNode){
+
+		while (curNode != null) {
+			curNode.Value.IncPlace ();
+			curNode = curNode.Next;
+		}
+	}
+
+	public void DecPlace(LinkedListNode<TimelineEvent> curNode){
+
+		while (curNode != null) {
+			curNode.Value.DecPlace ();
+			curNode = curNode.Next;
+		}
+	}
+
 
 	//Initially give players turns 1 - 7
 	public void InitChars(){
@@ -100,13 +147,23 @@ public class Timeline : Subject {
 		InitTurns ();
 
 		InitChars ();
+
+
+
 	}
 		
 	public void EvaluateEvent(){
-		curEvent.Value.Evaluate ();
+		//Print ();
+		curEvent.Value.SetState(TimelineEvent.STATE.FINISHED);
 
 
 		curEvent = curEvent.Next;
+		curEvent.Value.SetState(TimelineEvent.STATE.CURRENT);
+
+		curEvent.Value.Evaluate ();
+
+
+
 	}
 
 	public void NotifyTick(){
@@ -133,5 +190,14 @@ public class Timeline : Subject {
 		}
 	}
 
+	public void Print(){
+		LinkedListNode<TimelineEvent> curNode = listEvents.First;
+		Debug.Log ("Printing entire Timeline model");
+		while (curNode != null) {
+			Debug.Log (curNode.Value.prior + " " + curNode.Value.nPlace);
 
+			curNode = curNode.Next;
+		}
+		Debug.Log ("Finished printing");
+	}
 }

@@ -14,6 +14,9 @@ public class Mana : Subject {
 		PHYSICAL, MENTAL, ENERGY, BLOOD, EFFORT
 	};
 
+	//Provide string names to each of the mana types
+	public static string[] arsManaTypes = { "Physical", "Mental", "Energy", "Blood", "Effort" };
+
 	public static int nManaTypes = 5; //Number of mana types (PHYSICAL, MENTAL, ENERGY, BLOOD, EFFORT)
 
 	public int[] arMana;        //Player's mana, total

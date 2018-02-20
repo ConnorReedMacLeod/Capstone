@@ -40,6 +40,7 @@ public class ViewChr : Observer {
 		Material matChr = Resources.Load(sMatPath, typeof(Material)) as Material;
 
 		GetComponentsInChildren<Renderer> ()[indexCharPortrait].material = matChr;
+
 	}
 
     //Sets the material used for the character's border
@@ -55,6 +56,10 @@ public class ViewChr : Observer {
 		mod = _mod;
 		mod.Subscribe (this);
 		setPortrait (mod.sName);
+
+		if (mod.playOwner.id == 0) {
+			this.transform.localScale = new Vector3 (-1, 1, 1);
+		}
 	}
 
     //Updates the character's position to match the model's position
