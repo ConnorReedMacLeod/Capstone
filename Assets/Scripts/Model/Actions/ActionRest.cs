@@ -11,7 +11,7 @@ public class ActionRest : Action {
 		arCost = new int[]{0,0,0,0,0};
 
 		nCd = 0;
-		nRecharge = 2;
+		nRecharge = 1;
 
 	}
 

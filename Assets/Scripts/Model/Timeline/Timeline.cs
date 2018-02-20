@@ -153,11 +153,17 @@ public class Timeline : Subject {
 	}
 		
 	public void EvaluateEvent(){
-		Print ();
-		curEvent.Value.Evaluate ();
+		//Print ();
+		curEvent.Value.SetState(TimelineEvent.STATE.FINISHED);
 
 
 		curEvent = curEvent.Next;
+		curEvent.Value.SetState(TimelineEvent.STATE.CURRENT);
+
+		curEvent.Value.Evaluate ();
+
+
+
 	}
 
 	public void NotifyTick(){

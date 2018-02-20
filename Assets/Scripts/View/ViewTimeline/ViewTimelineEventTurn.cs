@@ -12,19 +12,26 @@ public class ViewTimelineEventTurn : ViewTimelineEvent {
 	public void SetModel(TimelineEventTurn _mod){
 		mod = _mod;
 		mod.Subscribe (this);
+
+
 	}
 
-	public override Vector3 GetPosAfter(){
-		// This height is hardcoded - see the comment above the parent's Start method
-		return new Vector3(v3Pos.x, v3Pos.y - 0.5f - ViewTimeline.fEventGap, v3Pos.z);
+	public override float GetVertSpan (){
+		return 0.5f + ViewTimeline.fEventGap;
 	}
 
 	public override int GetPlace(){
 		return mod.nPlace;
 	}
 
+	public override TimelineEvent.STATE GetState (){
+		return mod.state;
+	}
+
 	public override void UpdateObs(){
 		SetPortrait (Mana.arsManaTypes [(int)mod.manaGen]);
+
+		base.UpdateObs ();
 	}
 
 	public override void Print (){

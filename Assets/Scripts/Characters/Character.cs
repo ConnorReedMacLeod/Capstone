@@ -93,10 +93,12 @@ public class Character : Subject {
 	}
 
 	public bool ValidAction(){
+		//Debug.Log (bSetAction + " is the setaction");
 		return (bSetAction && arActions [nUsingAction].VerifyLegal ());
 	}
 
 	public void SetRestAction(){
+		Debug.Log ("Had to reset to a rest action");
 		if (nUsingAction != -1) {
 			arActions [nUsingAction].Reset ();
 		}

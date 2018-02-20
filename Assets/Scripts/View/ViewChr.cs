@@ -32,6 +32,7 @@ public class ViewChr : Observer {
 		Material matChr = Resources.Load(sMatPath, typeof(Material)) as Material;
 
 		GetComponentsInChildren<Renderer> ()[indexCharPortrait].material = matChr;
+
 	}
 
 	void SetBorder(string _sName){
@@ -47,6 +48,10 @@ public class ViewChr : Observer {
 
 		// Set the portrait to be this new character
 		setPortrait (mod.sName);
+
+		if (mod.playOwner.id == 0) {
+			this.transform.localScale = new Vector3 (-1, 1, 1);
+		}
 	}
 
 	void UpdatePos(){

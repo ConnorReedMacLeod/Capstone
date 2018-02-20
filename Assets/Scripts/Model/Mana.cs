@@ -107,7 +107,7 @@ public class Mana : Subject {
 					Debug.Log ("Can pay effort with other types of mana");
 					break;
 				}
-				Debug.Log ("Can't pay this mana cost");
+				//Debug.Log ("Can't pay this mana cost");
 				return false;
 			}
 		}
