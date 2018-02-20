@@ -131,7 +131,17 @@ public class ViewTimeline : Observer {
 		}
 		//Print ();
 	}
+
+	public void ScrollEventHolder(float _diff){
+		Vector3 newPos = new Vector3 (objEventHolder.transform.position.x, 
+			objEventHolder.transform.position.y + _diff, objEventHolder.transform.position.z);
+		SetEventHolderPos (newPos);
+	}
 		
+	public void SetEventHolderPos(Vector3 newPos){
+		objEventHolder.transform.position = newPos;
+	}
+
 	//undoes the scaling of the parent
 	public void UnscaleEventHolder(){
 		objEventHolder.transform.localScale = new Vector3
@@ -153,7 +163,7 @@ public class ViewTimeline : Observer {
 
 	//TODO:: Set up all of the very first events concurrently, rather than one at a time
 	public void Start(){
-		Print ();
+		//Print ();
 		//Know what you should be representing
 		SetModel (Timeline.Get ());
 

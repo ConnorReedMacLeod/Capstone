@@ -40,7 +40,7 @@ public class StateTargetSelected : StateTarget {
 	}
 
 	override public void OnClickAct(Character chr, int idAct){
-		Debug.Log (chr + " is using action " + idAct);
+		//Debug.Log (chr + " is using action " + idAct);
 
 		contTarg.selected.Targetting ();
 		contTarg.selected.nUsingAction = idAct;

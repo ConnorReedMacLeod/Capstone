@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ViewTimelineEventChr : ViewTimelineEvent {
 
+	public string sLastName;
 
 	public TimelineEventChr mod;
 
@@ -14,20 +15,26 @@ public class ViewTimelineEventChr : ViewTimelineEvent {
 		mod.Subscribe (this);
 	}
 
-	//TODO:: Fix scaling - event images are anchored in the center which means
-	//       incrementing by the height doesn't work for different adjacent elements
-	//       Fix:  add the images to an empty parent and anchor them at the top
-	public override Vector3 GetPosAfter(){
-		// This height is hardcoded - see the comment above the parent's Start method
-		return new Vector3(v3Pos.x, v3Pos.y - 0.8f - ViewTimeline.fEventGap, v3Pos.z);
+	public override float GetVertSpan (){
+		return 0.8f + ViewTimeline.fEventGap;
 	}
 		
 	public override int GetPlace(){
 		return mod.nPlace;
 	}
 
+	public override TimelineEvent.STATE GetState (){
+		return mod.state;
+	}
+
 	public override void UpdateObs(){
-		SetPortrait (mod.chrSubject.sName);
+		if (sLastName != mod.chrSubject.sName) {
+			sLastName = mod.chrSubject.sName;
+			SetPortrait (sLastName);
+		}
+
+
+		base.UpdateObs ();
 	}
 
 	public override void Print (){
@@ -48,8 +55,10 @@ public class ViewTimelineEventChr : ViewTimelineEvent {
 		if (mod.chrSubject.playOwner.id == 0) {
 			this.SetMaterial ("MatTimelineEvent1");
 			transform.GetChild(indexEventPortrait).transform.localPosition = new Vector3 (-0.75f, -0.4f, -0.1f); 
+
 		} else {
 			this.SetMaterial ("MatTimelineEvent2");
+			transform.GetChild(indexEventPortrait).transform.localScale = new Vector3 (-0.7f, 0.7f, 1);
 		}
 	}
 }

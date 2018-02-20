@@ -73,16 +73,21 @@ public class Action { //This should probably be made abstract
 
 		//Check if you have enough mana
 		if (!chrOwner.playOwner.mana.HasMana (arCost)) {
+			Debug.Log ("Not enough mana");
 			return false;
 		}
 
 		//Check that the ability isn't on cooldown
-		if (nCd != 0) {
+		if (nCurCD != 0) {
+			Debug.Log ("Ability on cd");
 			return false;
 		}
 
 		for (int i = 0; i < nArgs; i++) {
-			arArgs[i].VerifyLegal ();
+			if (!arArgs [i].VerifyLegal ()) {
+				Debug.Log ("Argument " + i + " was invalid");
+				return false;
+			}
 		}
 		return true;
 	}
