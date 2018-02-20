@@ -135,6 +135,7 @@ public class ViewChr : Observer {
 		UpdateStatus();
 	}
 
+    //Notifies application when the character view is clicked on
 	public void OnMouseDown(){
 		app.Notify (Notification.ClickChr, this, app.view.viewArena.GetArenaPos(Input.mousePosition));
 	}
