@@ -6,7 +6,7 @@ public class ActionMove : Action {
 
 
 
-	public ActionMove(Character _chrOwner): base(1, _chrOwner){//number of target arguments
+	public ActionMove(Chr _chrOwner): base(1, _chrOwner){//number of target arguments
 
 		//Since the base constructor initializes this array, we can start filling it
 		arArgs [0] = new TargetArgPos ((own, pos) => true);// TODO:: Make a standard "can't move inside other people or outside of map" function

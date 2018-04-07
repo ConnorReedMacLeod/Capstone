@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+//Reponsible for keeping track of the order of events
+
+[RequireComponent(typeof(ViewTimeline))]
 public class Timeline : Subject {
 
-	private static Timeline instance;
-
 	public static int MAXTURNS = 15;
+
+	bool bStarted;
 
 	public enum PRIORITY {
 		BOT, //beginning of turn
@@ -17,36 +21,49 @@ public class Timeline : Subject {
 		TURN //marks a new turn
 	};
 
-	public Model mod;
+	public Match match;
 
 	public LinkedList <TimelineEvent> listEvents;
 
 	public LinkedListNode <TimelineEvent> curEvent;
 
-	//This is so the view can know which event to update
-	//TODO:: Make this a class that wraps everything up nicely
-	public enum UPDATETYPE
-	{
-		NONE, //Nothing just happend, I swear
-		NEWEVENT //A New Event was added to the timeline
-	}
-	public UPDATETYPE lastUpdate;
-	public TimelineEvent eventLastAdded;
+	public GameObject pfTimelineEventChr;
+	public GameObject pfTimelineEventTurn;
 
-	private Timeline(){}
+	public ViewTimeline view;
 
-	//Used to get a reference to the timeline from anywhere
-	public static Timeline Get(){
+	public static Timeline Get (){
+		GameObject go = GameObject.FindGameObjectWithTag ("Timeline");
+		if (go == null) {
+			Debug.LogError ("ERROR! NO OBJECT HAS A TIMELINE TAG!");
+		}
+		Timeline instance = go.GetComponent<Timeline> ();
 		if (instance == null) {
-			instance = new Timeline ();
+			Debug.LogError ("ERROR! TIMELINE TAGGED OBJECT DOES NOT HAVE A TIMELINE COMPONENT!");
 		}
 		return instance;
 	}
 
+	public void Start(){
+		if (bStarted == false) {
+			bStarted = true;
+
+			match = Match.Get ();
+
+			listEvents = new LinkedList<TimelineEvent> ();
+
+			view = GetComponent<ViewTimeline> ();
+			view.Start ();
+
+
+		}
+	}
+	
 
 	//Can have different AddEvents with different parameters that make the correct event type
-	public void AddEvent(Character chr, int nDelay, PRIORITY prior = PRIORITY.NONE){
+	public void AddEvent(Chr chr, int nDelay, PRIORITY prior = PRIORITY.NONE){
 		TimelineEventChr newEventChr = new TimelineEventChr (chr, prior);
+
 
 		InsertEvent (newEventChr, nDelay);
 	}
@@ -75,37 +92,30 @@ public class Timeline : Subject {
 				listEvents.AddAfter (newPos, newEvent);
 
 				//Let it know its position in the list
-				newEvent.nPlace = newPos.Value.nPlace;
-				IncPlace (newPos.Next);
+				newEvent.nodeEvent = newPos;
+				newEvent.NotifyObs ("MovedEvent", null);
+
+				UpdateEventPositions (newPos.Next);
 
 				break;
 			} else {
 				newPos = newPos.Next;
 			}
 		}
-
-		//So that the view can know what it should update
-		lastUpdate = UPDATETYPE.NEWEVENT;
-		eventLastAdded = newEvent;
-		NotifyObs ();
-		lastUpdate = UPDATETYPE.NONE;
-
 	}
 
 	public void InitTurns(){
 
+		Debug.Log (view.transEventContainer);
+
 		for (int i = 0; i < MAXTURNS; i++) {
-			TimelineEventTurn newEvent = new TimelineEventTurn (i);
-			newEvent.nPlace = i;
-			newEvent.InitMana ();//TODO::Make this only semi-random
+			GameObject goEvent = Instantiate (pfTimelineEventTurn, view.transEventContainer);
+			TimelineEventTurn newEvent = goEvent.GetComponent<TimelineEventTurn> ();
 			listEvents.AddLast (newEvent);
 
-			//TODO:: Do all of this at once
-			//Let the view know to update
-			lastUpdate = UPDATETYPE.NEWEVENT;
-			eventLastAdded = newEvent;
-			NotifyObs ();
-			lastUpdate = UPDATETYPE.NONE;
+			// Give a reference to the linked list node, and to the turn #
+			newEvent.Init (listEvents.Last, i);
+
 
 		}
 
@@ -114,18 +124,11 @@ public class Timeline : Subject {
 	}
 
 
-	public void IncPlace(LinkedListNode<TimelineEvent> curNode){
+	// Update the timeline position for curNode and for everything after it
+	public void UpdateEventPositions(LinkedListNode<TimelineEvent> curNode){
 
 		while (curNode != null) {
-			curNode.Value.IncPlace ();
-			curNode = curNode.Next;
-		}
-	}
-
-	public void DecPlace(LinkedListNode<TimelineEvent> curNode){
-
-		while (curNode != null) {
-			curNode.Value.DecPlace ();
+			curNode.Value.NotifyObs ("MoveEvent", null);
 			curNode = curNode.Next;
 		}
 	}
@@ -133,20 +136,18 @@ public class Timeline : Subject {
 
 	//Initially give players turns 1 - 7
 	public void InitChars(){
-		for (int i = 0; i < mod.nPlayers; i++) {
-			for (int j = 0; j < mod.arPlayers [i].nChrs; j++) {
-				AddEvent (mod.arChrs [i] [j], 2 * j + i + 1);
+		for (int i = 0; i < match.nPlayers; i++) {
+			for (int j = 0; j < match.arPlayers [i].nChrs; j++) {
+				AddEvent (match.arChrs [i] [j], 2 * j + i + 1);
 			}
 		}
 	}
 
-	public void InitTimeline(Model _mod){
-		mod = _mod;
+	public void InitTimeline(){
 
-		listEvents = new LinkedList<TimelineEvent> ();
 		InitTurns ();
 
-		InitChars ();
+		//InitChars ();
 
 
 
@@ -156,6 +157,8 @@ public class Timeline : Subject {
 		//Print ();
 		curEvent.Value.SetState(TimelineEvent.STATE.FINISHED);
 
+		//Let the timeline know to shift upward
+		NotifyObs ("FinishedEvent", curEvent.Value);
 
 		curEvent = curEvent.Next;
 		curEvent.Value.SetState(TimelineEvent.STATE.CURRENT);
@@ -165,28 +168,28 @@ public class Timeline : Subject {
 
 
 	}
+		
+	public void NewTurn(){
 
-	public void NotifyTick(){
-
-		for (int i = 0; i < mod.nPlayers; i++) {
+		for (int i = 0; i < match.nPlayers; i++) {
 			for (int j = 0; j < Player.MAXCHRS; j++) {
-				if (mod.arChrs [i] [j] == null) {
+				if (match.arChrs [i] [j] == null) {
 					continue; // A character isn't actually here (extra space for characters)
 				}
 
 				//Reduce the character's recharge
-				mod.arChrs [i] [j].TimeTick ();
+				match.arChrs [i] [j].TimeTick ();
 				//Reduce the cd of that character's actions
-				NotifyTickAction (mod.arChrs [i] [j]);
+				RechargeActions (match.arChrs [i] [j]);
 
 			}
 		}
 	}
 
-	public void NotifyTickAction(Character chr){
+	public void RechargeActions(Chr chr){
 
-		for (int i = 0; i < Character.nActions; i++) {
-			chr.arActions [i].TimeTick ();
+		for (int i = 0; i < Chr.nActions; i++) {
+			chr.arActions [i].Recharge ();
 		}
 	}
 
@@ -194,7 +197,7 @@ public class Timeline : Subject {
 		LinkedListNode<TimelineEvent> curNode = listEvents.First;
 		Debug.Log ("Printing entire Timeline model");
 		while (curNode != null) {
-			Debug.Log (curNode.Value.prior + " " + curNode.Value.nPlace);
+			Debug.Log (curNode.Value.prior + " " + curNode.Value.nodeEvent);
 
 			curNode = curNode.Next;
 		}

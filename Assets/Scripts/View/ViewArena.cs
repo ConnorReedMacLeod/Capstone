@@ -2,45 +2,48 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent (typeof(Arena))]
 public class ViewArena : Observer {
 
 	public Arena mod;                   //The Arena's model
 
-	public ViewChr [][] arviewChr;      //Array of characters in the Arena
-
-	public GameObject pfChr;            //Character prefab
-	public GameObject pfActionWheel;    //ActionWheel prefab
-
 	public float fWidth;                //The Arena's width
 	public float fHeight;               //The Arena's height
+
+	bool bStarted;
 
     //Gets the Arena view's dimensions
     public void Start()
     {
-        Vector3 size = GetComponent<Renderer>().bounds.size;
-        fWidth = size.x;
-        fHeight = size.y;
+
+		if (bStarted == false) {
+			bStarted = true;
+
+			// Find our model
+			InitModel ();
+			Vector3 size = GetComponent<Renderer> ().bounds.size;
+			fWidth = size.x;
+			fHeight = size.y;
+		}
     }
 
-    //Sets the Arena view's model
-    public void SetModel(Arena _mod){
-		mod = _mod;
+	//TODO:: decide if preloading variables on Startup is better,
+	//       or if using null-checking accessors everywhere is better
+	//Find the model, and do any setup for reflect it
+	public void InitModel(){
+		mod = GetComponent<Arena>();
 		mod.Subscribe (this);
-
 	}
 
     //Constructs the Arena view
     public ViewArena()
     {
-        arviewChr = new ViewChr[Player.MAXPLAYERS][];
-        for (int i = 0; i < Player.MAXPLAYERS; i++)
-        {
-            arviewChr[i] = new ViewChr[Player.MAXCHRS];
-        }
+
     }
 
+	/* *** TODO:: UNCOMMENT THIS TO FIGURE OUT WHERE TO KEEP TRACK OF CHARACTER POSITIONS IN THE ARENA *** 
     //Instantiates a character and gives it a new character view and an ActionWheel
-    public void RegisterChar(Character chr){
+	public void RegisterChar(Chr chr){
         //Instantiates the character
 		GameObject newObjChr = Instantiate (pfChr, this.transform);
         //Creates a character view
@@ -54,6 +57,7 @@ public class ViewArena : Observer {
         //Gives the character view an ActionWheel prefab
         newViewChr.pfActionWheel = pfActionWheel;
 	}  
+	*** *******************************************************************************************************/
 
     //Gets the mouse posititon within the Arena
 	public Vector3 GetArenaPos(Vector3 pos){
@@ -61,9 +65,10 @@ public class ViewArena : Observer {
 		return new Vector3 (worldPos.x / fWidth, worldPos.y / fHeight, worldPos.z);//TODO:: figure out a proper z coord
 	}
 
+	//TODO:: Update this to reflect selecting specific coordinates in the grid
     //Notifies application when the Arena view is clicked on
     public void OnMouseDown(){
 		///Debug.Log (GetArenaPos(Input.mousePosition));
-		app.Notify (Notification.ClickArena, this, GetArenaPos(Input.mousePosition));
+		Controller.Get().NotifyObs(Notification.ClickArena, this, GetArenaPos(Input.mousePosition));
 	}
 }

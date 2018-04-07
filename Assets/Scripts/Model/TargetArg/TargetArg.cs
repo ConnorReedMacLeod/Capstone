@@ -4,11 +4,11 @@ using UnityEngine;
 
 public abstract class TargetArg {
 
-	public Character chrOwner;
+	public Chr chrOwner;
 
 	public abstract bool VerifyLegal();
 
-	public void setOwner(Character _chrOwner){
+	public void setOwner(Chr _chrOwner){
 		chrOwner = _chrOwner;
 	}
 

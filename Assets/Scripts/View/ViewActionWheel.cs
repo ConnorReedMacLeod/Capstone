@@ -5,7 +5,7 @@ using UnityEngine;
 public class ViewActionWheel : Observer {
 
 	//Have a reference to the character so we know what abilities to represent
-	public Character mod;
+	public Chr mod;
 
 	public static int MAXACTIONS = 8;
 	public ViewAction[] arViewAction;
@@ -14,7 +14,7 @@ public class ViewActionWheel : Observer {
 		arViewAction = new ViewAction[MAXACTIONS];
 	}
 
-	public void setModel(Character _mod){
+	public void setModel(Chr _mod){
 		mod = _mod;
 		mod.Subscribe (this);
 
