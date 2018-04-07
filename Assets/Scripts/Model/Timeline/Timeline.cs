@@ -106,12 +106,11 @@ public class Timeline : Subject {
 
 	public void InitTurns(){
 
-		Debug.Log (view.transEventContainer);
-
 		for (int i = 0; i < MAXTURNS; i++) {
 			GameObject goEvent = Instantiate (pfTimelineEventTurn, view.transEventContainer);
 			TimelineEventTurn newEvent = goEvent.GetComponent<TimelineEventTurn> ();
 			listEvents.AddLast (newEvent);
+			newEvent.Start ();
 
 			// Give a reference to the linked list node, and to the turn #
 			newEvent.Init (listEvents.Last, i);
@@ -128,7 +127,7 @@ public class Timeline : Subject {
 	public void UpdateEventPositions(LinkedListNode<TimelineEvent> curNode){
 
 		while (curNode != null) {
-			curNode.Value.NotifyObs ("MoveEvent", null);
+			curNode.Value.NotifyObs ("MovedEvent", null);
 			curNode = curNode.Next;
 		}
 	}

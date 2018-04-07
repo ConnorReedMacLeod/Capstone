@@ -6,7 +6,7 @@ public class Subject : MonoBehaviour {
 
 	bool bStart;
 
-	List<Observer> lstObservers;
+	public List<Observer> lstObservers;
 
 	public void Subscribe(Observer newObs){
 		if (bStart == false) {
