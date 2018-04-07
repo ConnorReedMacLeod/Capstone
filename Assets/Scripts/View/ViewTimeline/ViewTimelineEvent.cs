@@ -2,7 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class ViewTimelineEvent : Observer {
+
+
+public abstract class ViewTimelineEvent<EventType> : Observer/*, ViewEventInterface*/
+	where EventType : TimelineEvent {
+
+	bool bStarted;
 
 	public Vector3 v3Pos;
 
@@ -11,6 +16,19 @@ public abstract class ViewTimelineEvent : Observer {
 	public float fWidth;
 	public float fHeight;
 
+	public EventType mod;
+
+	/*public EventType GetMod(){
+		return mod;
+	}*/
+
+
+	//Find the model, and do any setup for reflect it
+	public void InitModel(){
+		mod = GetComponent<EventType>();
+		mod.Subscribe (this);
+
+	}
 
 	//undoes the scaling of the parent
 	public void Unscale(){
@@ -35,49 +53,59 @@ public abstract class ViewTimelineEvent : Observer {
 		GetComponentInChildren<Renderer> ().material = matEvent;
 	}
 
-	public abstract int GetPlace ();
-	public abstract TimelineEvent.STATE GetState ();
+	public TimelineEvent.STATE GetState (){
+		return mod.state;
+	}
 
 	public void SetPos(Vector3 _v3Pos){
 		v3Pos = _v3Pos;
 		this.transform.localPosition = v3Pos;
 	}
 
-	public override void UpdateObs(){
+	public override void UpdateObs(string eventType, Object target, params object[] args){
 		//Anything that needs to be done across any type of event can be here
 		//Will generally just use the specific type's UpdateObs()
 
-		if (stateLast != GetState()) {
-			stateLast = GetState();
 
-			Renderer render = GetComponentsInChildren<Renderer>()[0];
-			render.material.EnableKeyword ("_EMISSION");
-
-			switch (stateLast){
-			case TimelineEvent.STATE.CURRENT:
-				render.material.SetColor ("_EmissionColor", Color.yellow);
-				break;
-			case TimelineEvent.STATE.FINISHED:
-				render.material.DisableKeyword ("_EMISSION");
-
-				//Let the timeline know to shift upward
-				app.view.viewTimeline.ScrollEventHolder(GetVertSpan());
-
-				break;
-			case TimelineEvent.STATE.READY:
-
-				break;
-			case TimelineEvent.STATE.UNREADY:
-
-				break;
-			default:
-				Debug.LogError ("UNRECOGNIZED TIMELINE EVENT STATE IN VIEW");
-				break;
+		switch (eventType) {
+		case "MovedEvent":
+			//Place this event based on the position of the previous node
+			if (mod.nodeEvent.Previous == null) {
+				//Then we're the first thing in the list
+				SetPos(Vector3.zero);
+			} else {
+				//Place ourselves right after the previous node
+				Debug.Log(mod.nodeEvent.Previous.Value.GetPosAfter ());
+				SetPos (mod.nodeEvent.Previous.Value.GetPosAfter ());
 			}
+			break;
+		default:
+			Debug.LogError ("UNRECOGNIZED VIEWTIMELINEEVENT MESSAGE");
+			break;
 		}
-	}
 
-	public abstract void Print ();
+		/* TODO:: READD IN THESE EFFECTS TO DIFFERENT TIMELINE EVENTS ****
+		Renderer render = GetComponentsInChildren<Renderer>()[0];
+		render.material.EnableKeyword ("_EMISSION");
+
+		switch (GetState()){
+		case TimelineEvent.STATE.CURRENT:
+			render.material.SetColor ("_EmissionColor", Color.yellow);
+			break;
+		case TimelineEvent.STATE.FINISHED:
+			render.material.DisableKeyword ("_EMISSION");
+			break;
+		case TimelineEvent.STATE.READY:
+
+			break;
+		case TimelineEvent.STATE.UNREADY:
+
+			break;
+		default:
+			Debug.LogError ("UNRECOGNIZED TIMELINE EVENT STATE IN VIEW");
+			break;
+		} ***********************************************************/
+	}
 
 
 	//TODO:: It is a problem that view Start methods might be called
@@ -85,11 +113,16 @@ public abstract class ViewTimelineEvent : Observer {
 	//       not call Notifys in Start methods - would require some reworking
 	public virtual void Start(){
 
-		/*
-		Vector3 size = GetComponentInChildren<Renderer> ().bounds.size;
+		if (bStarted == false) {
+			bStarted = true;
+
+			/*
+			Vector3 size = GetComponentInChildren<Renderer> ().bounds.size;
 	
-		fWidth = size.x;
-		fHeight = size.y;*/
+			fWidth = size.x;
+			fHeight = size.y;*/
+			InitModel ();
+		}
 	}
 
 }

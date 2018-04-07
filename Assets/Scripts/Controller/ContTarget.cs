@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContTarget : Controller {
+public class ContTarget : Observer {
 
 	public StateTarget curState;
 
-	public Character selected;
+	public Chr selected;
 
 	public int nTarCount;
 
 	//TODO:: Set up helper methods to make retrieving the current action and current target arg easy
-	//       Need to coinsider what happens if they don't exist though
+	//       Need to consider what happens if they don't exist though
 
-	override public void OnNotification(string eventType, Object target, params object[] args){
+	override public void UpdateObs(string eventType, Object target, params object[] args){
 
 		if (curState == null) {
 			Debug.LogError ("CONTTARGET HAS NO STATE");

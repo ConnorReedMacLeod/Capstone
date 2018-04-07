@@ -4,16 +4,34 @@ using UnityEngine;
 
 public class TimelineEventChr : TimelineEvent {
 
-	public Character chrSubject;
+	public Chr chrSubject;
 
+	//TODO:: CHANGE THIS TO AN INIT METHOD
 	// If no priority is given, assume neutral
-	public TimelineEventChr (Character _chrSubject, Timeline.PRIORITY _prior = Timeline.PRIORITY.NONE) : base (_prior){
+	public TimelineEventChr (Chr _chrSubject, Timeline.PRIORITY _prior = Timeline.PRIORITY.NONE) : base (_prior){
 
 		chrSubject = _chrSubject;
 
 		fDelay = 2.0f;
 
 	}
+
+	public ViewTimelineEvent<TimelineEventChr> view;
+
+	public override void InitView(){
+		view = GetComponent<ViewTimelineEvent<TimelineEventChr>>();
+		if (view == null){
+			Debug.LogError ("ERROR! COUDLN't FIND A VIEWTIMELINEEVENTCHR COMPONENT");
+		}
+	}
+
+	public override float GetVertSpan (){
+		return view.GetVertSpan ();
+	}
+	public override Vector3 GetPosAfter (){
+		return view.GetPosAfter ();
+	}
+
 
 	//TODO:: Lock out targetting for this ability while it's being executed
 	public override void Evaluate(){

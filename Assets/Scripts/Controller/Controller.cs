@@ -2,11 +2,39 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// This should control actions and logical flow of the game
-// Map actions taken with the view to changes in the model
+// These should control actions and logical flow of the game
+// map actions taken with the view to changes in the model
 // Can maintain information about game state
 
-abstract public class Controller : Element {
+// The container class for Controllers
+// Control flow:
+// Events are channeled into this container which then distributes
+// among the contained controllers
 
-	abstract public void OnNotification (string eventType, Object target, params object[] args);
+[RequireComponent (typeof(ContTarget))]
+public class Controller : Subject{
+
+
+	ContTarget contTarget;
+
+	public static Controller Get (){
+		GameObject go = GameObject.FindGameObjectWithTag ("Controller");
+		if (go == null) {
+			Debug.LogError ("ERROR! NO OBJECT HAS A CONTROLLER TAG!");
+		}
+		Controller instance = go.GetComponent<Controller> ();
+		if (instance == null) {
+			Debug.LogError ("ERROR! CONTROLLER TAGGED OBJECT DOES NOT HAVE A CONTROLLER COMPONENT!");
+		}
+		return instance;
+	}
+
+	public void Start () {
+		gameObject.tag = "Controller";
+
+		// Find all necessary controllers and register them as our observers
+		contTarget = GetComponent<ContTarget> ();
+		Subscribe (contTarget);
+	}
+
 }

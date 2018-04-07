@@ -2,8 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//TODO:: Find a way to get a type-specific reference of an Event's view
+
 //base class for any event that's in the timeline
-public class TimelineEvent : Subject { //I guess making it a subject works so that its view can update just on it
+// responsible for keeping track of its position relative
+// to the position before it
+public abstract class TimelineEvent : Subject {
+
+	public bool bStarted;
 
 	public enum STATE{
 		UNREADY, //Scheduled in the future, but not ready (no action selected)
@@ -14,17 +20,30 @@ public class TimelineEvent : Subject { //I guess making it a subject works so th
 
 	public STATE state;
 
-	public int nPlace;
-
 	public Timeline.PRIORITY prior;
 	public float fDelay;
 
-	public void IncPlace(){
-		nPlace++;
+	public LinkedListNode <TimelineEvent> nodeEvent;
+
+	public abstract void InitView ();
+	//Query the specific view's version of these methods
+	public abstract float GetVertSpan ();
+	public abstract Vector3 GetPosAfter ();
+
+	public void Start(){
+		if (bStarted == false) {
+			bStarted = true;
+
+			base.Start ();
+
+			InitView ();
+		}
 	}
 
-	public void DecPlace(){
-		nPlace--;
+	public virtual void Init(LinkedListNode<TimelineEvent> _nodeEvent){
+		nodeEvent = _nodeEvent;
+
+		NotifyObs ("MovedEvent", null);
 	}
 
 	public void SetState(STATE _state){
@@ -43,9 +62,8 @@ public class TimelineEvent : Subject { //I guess making it a subject works so th
 
 	public virtual void Evaluate(){
 
-		//TODO:: add some monobehaviour to the timeline to enable Invoke
-		//UPDATE:: I'm using the model to do this (maybe find something better?)
-		Timeline.Get ().mod.Invoke ("NextTimelineEvent", fDelay);
+		// Set up the next event to go off later
+		Invoke ("NextTimelineEvent", fDelay);
 	}
 
 }

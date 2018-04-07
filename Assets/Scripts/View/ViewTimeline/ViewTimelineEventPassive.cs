@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewTimelineEventPassive : MonoBehaviour {
+public class ViewTimelineEventPassive : ViewTimelineEvent<TimelineEventPassive> {
 
 	// Use this for initialization
 	void Start () {
@@ -12,5 +12,10 @@ public class ViewTimelineEventPassive : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
+	}
+
+	public override float GetVertSpan (){
+		//TODO:: ACTUALLY IMPLEMENT THIS
+		return 1.0f;
 	}
 }

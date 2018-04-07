@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class ViewAction : Observer {
 
 	public int id;                              //The action's unique identifier
-	public Character mod;                       //The action's model
+	public Chr mod;                      		//The action's model
 	public ViewActionWheel viewActionWheel;     //The action's ActionWheel segment's view
 
     //Sets the ActionWheel segment's material
@@ -15,8 +16,8 @@ public class ViewAction : Observer {
 		GetComponent<Renderer> ().material = matChr;
 	}
 
-    //Sets the action's model
-	public void SetModel (Character _mod){
+    //Let the Action button know which character and id it's representing
+	public void SetModel (Chr _mod){
 		mod = _mod;
 		mod.Subscribe (this);
 	}
@@ -30,6 +31,6 @@ public class ViewAction : Observer {
 
     //Notifies application when the action's ActionWheel segment is clicked
     public void OnMouseDown(){
-		app.Notify (Notification.ClickAct, this, id);
+		Controller.Get().NotifyObs(Notification.ClickAct, this, id);
 	}	
 }

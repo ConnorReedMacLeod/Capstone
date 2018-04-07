@@ -33,7 +33,7 @@ public class StateTargetPos : StateTarget {
 		}
 	}
 
-	override public void OnClickChr(Character chr, Vector3 pos){
+	override public void OnClickChr(Chr chr, Vector3 pos){
 		//TODO:: this was just copied from above - prolly don't do that...
 		if (tarArg.setTar (pos)) {
 
@@ -48,7 +48,7 @@ public class StateTargetPos : StateTarget {
 
 	}
 
-	override public void OnClickAct(Character chr, int idAct){
+	override public void OnClickAct(Chr chr, int idAct){
 		// shouldn't be possible since no actions should be out
 		Debug.LogError("SOMEHOW CLICKED AN ACTION WHILE TRYING TO TARGET A POS");
 	}

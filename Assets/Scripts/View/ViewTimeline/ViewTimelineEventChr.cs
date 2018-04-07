@@ -2,43 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewTimelineEventChr : ViewTimelineEvent {
+public class ViewTimelineEventChr : ViewTimelineEvent<TimelineEventChr> {
 
 	public string sLastName;
 
-	public TimelineEventChr mod;
-
 	private int indexEventPortrait = 1;
-
-	public void SetModel(TimelineEventChr _mod){
-		mod = _mod;
-		mod.Subscribe (this);
-	}
 
 	public override float GetVertSpan (){
 		return 0.8f + ViewTimeline.fEventGap;
 	}
-		
-	public override int GetPlace(){
-		return mod.nPlace;
-	}
 
-	public override TimelineEvent.STATE GetState (){
-		return mod.state;
-	}
-
-	public override void UpdateObs(){
+	public override void UpdateObs(string eventType, Object target, params object[] args){
 		if (sLastName != mod.chrSubject.sName) {
 			sLastName = mod.chrSubject.sName;
 			SetPortrait (sLastName);
 		}
 
 
-		base.UpdateObs ();
-	}
-
-	public override void Print (){
-		Debug.Log ("I am the " + mod.nPlace + "th node and I represent " + mod.chrSubject.sName);
+		base.UpdateObs (eventType, target, args);
 	}
 
 	void SetPortrait(string _sName){
