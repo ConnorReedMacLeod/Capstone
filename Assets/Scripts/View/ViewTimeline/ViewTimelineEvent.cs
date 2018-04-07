@@ -67,6 +67,8 @@ public abstract class ViewTimelineEvent<EventType> : Observer/*, ViewEventInterf
 		//Will generally just use the specific type's UpdateObs()
 
 
+
+
 		switch (eventType) {
 		case "MovedEvent":
 			//Place this event based on the position of the previous node
@@ -75,12 +77,11 @@ public abstract class ViewTimelineEvent<EventType> : Observer/*, ViewEventInterf
 				SetPos(Vector3.zero);
 			} else {
 				//Place ourselves right after the previous node
-				Debug.Log(mod.nodeEvent.Previous.Value.GetPosAfter ());
 				SetPos (mod.nodeEvent.Previous.Value.GetPosAfter ());
 			}
 			break;
 		default:
-			Debug.LogError ("UNRECOGNIZED VIEWTIMELINEEVENT MESSAGE");
+			
 			break;
 		}
 
@@ -115,6 +116,7 @@ public abstract class ViewTimelineEvent<EventType> : Observer/*, ViewEventInterf
 
 		if (bStarted == false) {
 			bStarted = true;
+
 
 			/*
 			Vector3 size = GetComponentInChildren<Renderer> ().bounds.size;

@@ -12,13 +12,17 @@ public class TimelineEventTurn : TimelineEvent {
 	public void InitMana(){
 		//TODO::Make this only semi-random
 		manaGen = (Mana.MANATYPE)Random.Range (0, Mana.nManaTypes - 1);
+		NotifyObs ("ManaTypeSet", null);
 	}
 
 	public override void InitView(){
+		Debug.Log ("TimelineEventTurn's InitView");
 		view = GetComponent<ViewTimelineEvent<TimelineEventTurn>>();
 		if (view == null){
 			Debug.LogError ("ERROR! COUDLN't FIND A VIEWTIMELINEEVENTTURN COMPONENT");
 		}
+		Subscribe (view);
+		view.Start ();
 	}
 
 	public override float GetVertSpan (){
