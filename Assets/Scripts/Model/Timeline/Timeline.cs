@@ -131,7 +131,7 @@ public class Timeline : Subject {
 		}
 
 		curEvent = listEvents.First;
-		curEvent.Value.state = TimelineEvent.STATE.CURRENT;
+		curEvent.Value.SetState(TimelineEvent.STATE.CURRENT);
 
 	}
 

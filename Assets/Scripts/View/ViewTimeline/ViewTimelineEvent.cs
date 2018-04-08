@@ -67,9 +67,6 @@ public abstract class ViewTimelineEvent<EventType> : Observer/*, ViewEventInterf
 		//Anything that needs to be done across any type of event can be here
 		//Will generally just use the specific type's UpdateObs()
 
-
-
-
 		switch (eventType) {
 		case "MovedEvent":
 			//Place this event based on the position of the previous node
@@ -81,32 +78,36 @@ public abstract class ViewTimelineEvent<EventType> : Observer/*, ViewEventInterf
 				SetPos (mod.nodeEvent.Previous.Value.GetPosAfter ());
 			}
 			break;
+
+		case "ChangedState":
+			
+			Renderer render = GetComponentsInChildren<Renderer>()[0];
+			render.material.EnableKeyword ("_EMISSION");
+
+			switch (GetState()){
+			case TimelineEvent.STATE.CURRENT:
+				//BUG:: The first event doesn't get highlighted - weird right?
+				render.material.SetColor ("_EmissionColor", Color.yellow);
+				break;
+			case TimelineEvent.STATE.FINISHED:
+				render.material.DisableKeyword ("_EMISSION");
+				break;
+			case TimelineEvent.STATE.READY:
+
+				break;
+			case TimelineEvent.STATE.UNREADY:
+
+				break;
+			default:
+				Debug.LogError ("UNRECOGNIZED TIMELINE EVENT STATE IN VIEW");
+				break;
+			}
+			break;
 		default:
 			
 			break;
 		}
 
-		/* TODO:: READD IN THESE EFFECTS TO DIFFERENT TIMELINE EVENTS ****
-		Renderer render = GetComponentsInChildren<Renderer>()[0];
-		render.material.EnableKeyword ("_EMISSION");
-
-		switch (GetState()){
-		case TimelineEvent.STATE.CURRENT:
-			render.material.SetColor ("_EmissionColor", Color.yellow);
-			break;
-		case TimelineEvent.STATE.FINISHED:
-			render.material.DisableKeyword ("_EMISSION");
-			break;
-		case TimelineEvent.STATE.READY:
-
-			break;
-		case TimelineEvent.STATE.UNREADY:
-
-			break;
-		default:
-			Debug.LogError ("UNRECOGNIZED TIMELINE EVENT STATE IN VIEW");
-			break;
-		} ***********************************************************/
 	}
 
 
