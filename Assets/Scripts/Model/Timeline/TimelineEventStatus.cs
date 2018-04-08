@@ -12,7 +12,6 @@ public class TimelineEventStatus : TimelineEvent {
 		if (view == null){
 			Debug.LogError ("ERROR! COUDLN't FIND A VIEWTIMELINEEVENTSTATUS COMPONENT");
 		}
-		Subscribe (view);
 		view.Start ();
 	}
 
