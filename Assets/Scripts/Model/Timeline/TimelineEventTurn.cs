@@ -16,7 +16,7 @@ public class TimelineEventTurn : TimelineEvent {
 	}
 
 	public override void InitView(){
-		Debug.Log ("TimelineEventTurn's InitView");
+		
 		view = GetComponent<ViewTimelineEvent<TimelineEventTurn>>();
 		if (view == null){
 			Debug.LogError ("ERROR! COUDLN't FIND A VIEWTIMELINEEVENTTURN COMPONENT");
@@ -55,7 +55,7 @@ public class TimelineEventTurn : TimelineEvent {
 			Timeline.Get().match.arPlayers [i].mana.AddMana (manaGen);
 		}
 
-		//Debug.Log ("Giving out " + manaGen + " mana");
+		Debug.Log ("Giving out " + manaGen + " mana");
 
 		//Let players know to update their cds/recharges
 		Timeline.Get().NewTurn();

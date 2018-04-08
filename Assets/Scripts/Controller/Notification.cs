@@ -9,4 +9,5 @@ public class Notification {
 	public const string ClickChr = "click.chr";
 	public const string ClickAct = "click.act";
 	public const string ClickArena = "click.arena";
+	public const string ClickExecute = "click.execute";
 }

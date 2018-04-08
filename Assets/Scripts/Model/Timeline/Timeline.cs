@@ -8,6 +8,8 @@ using UnityEngine;
 [RequireComponent(typeof(ViewTimeline))]
 public class Timeline : Subject {
 
+	public static Timeline instance;
+
 	public static int MAXTURNS = 15;
 
 	bool bStarted;
@@ -33,20 +35,24 @@ public class Timeline : Subject {
 	public ViewTimeline view;
 
 	public static Timeline Get (){
-		GameObject go = GameObject.FindGameObjectWithTag ("Timeline");
-		if (go == null) {
-			Debug.LogError ("ERROR! NO OBJECT HAS A TIMELINE TAG!");
-		}
-		Timeline instance = go.GetComponent<Timeline> ();
 		if (instance == null) {
-			Debug.LogError ("ERROR! TIMELINE TAGGED OBJECT DOES NOT HAVE A TIMELINE COMPONENT!");
+			GameObject go = GameObject.FindGameObjectWithTag ("Timeline");
+			if (go == null) {
+				Debug.LogError ("ERROR! NO OBJECT HAS A TIMELINE TAG!");
+			}
+			instance = go.GetComponent<Timeline> ();
+			if (instance == null) {
+				Debug.LogError ("ERROR! TIMELINE TAGGED OBJECT DOES NOT HAVE A TIMELINE COMPONENT!");
+			}
 		}
 		return instance;
 	}
 
-	public void Start(){
+	public override void Start(){
 		if (bStarted == false) {
 			bStarted = true;
+
+			this.Start ();
 
 			match = Match.Get ();
 
@@ -61,11 +67,19 @@ public class Timeline : Subject {
 	
 
 	//Can have different AddEvents with different parameters that make the correct event type
-	public void AddEvent(Chr chr, int nDelay, PRIORITY prior = PRIORITY.NONE){
-		TimelineEventChr newEventChr = new TimelineEventChr (chr, prior);
+	public void AddEventChr(Chr chr, int nDelay, PRIORITY prior = PRIORITY.NONE){
+		GameObject goEvent = Instantiate (pfTimelineEventChr, view.transEventContainer);
+		TimelineEventChr newEvent = goEvent.GetComponent<TimelineEventChr> ();
 
 
-		InsertEvent (newEventChr, nDelay);
+
+		newEvent.SetChr (chr);
+		newEvent.SetPriority (prior);
+
+		newEvent.Start ();
+
+		InsertEvent (newEvent, nDelay);
+
 	}
 
 
@@ -92,7 +106,7 @@ public class Timeline : Subject {
 				listEvents.AddAfter (newPos, newEvent);
 
 				//Let it know its position in the list
-				newEvent.nodeEvent = newPos;
+				newEvent.nodeEvent = newPos.Next;
 				newEvent.NotifyObs ("MovedEvent", null);
 
 				UpdateEventPositions (newPos.Next);
@@ -114,11 +128,10 @@ public class Timeline : Subject {
 
 			// Give a reference to the linked list node, and to the turn #
 			newEvent.Init (listEvents.Last, i);
-
-
 		}
 
 		curEvent = listEvents.First;
+		curEvent.Value.state = TimelineEvent.STATE.CURRENT;
 
 	}
 
@@ -137,7 +150,7 @@ public class Timeline : Subject {
 	public void InitChars(){
 		for (int i = 0; i < match.nPlayers; i++) {
 			for (int j = 0; j < match.arPlayers [i].nChrs; j++) {
-				AddEvent (match.arChrs [i] [j], 2 * j + i + 1);
+				AddEventChr (match.arChrs [i] [j], 2 * j + i + 1);
 			}
 		}
 	}
@@ -146,14 +159,15 @@ public class Timeline : Subject {
 
 		InitTurns ();
 
-		//InitChars ();
-
-
+		InitChars ();
 
 	}
 		
 	public void EvaluateEvent(){
 		//Print ();
+
+		curEvent.Value.Evaluate ();
+
 		curEvent.Value.SetState(TimelineEvent.STATE.FINISHED);
 
 		//Let the timeline know to shift upward
@@ -161,8 +175,6 @@ public class Timeline : Subject {
 
 		curEvent = curEvent.Next;
 		curEvent.Value.SetState(TimelineEvent.STATE.CURRENT);
-
-		curEvent.Value.Evaluate ();
 
 
 

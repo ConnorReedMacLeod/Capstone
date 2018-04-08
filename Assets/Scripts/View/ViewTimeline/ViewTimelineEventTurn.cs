@@ -7,7 +7,7 @@ public class ViewTimelineEventTurn : ViewTimelineEvent<TimelineEventTurn> {
 	private int indexEventPortrait = 1;
 
 	public override float GetVertSpan (){
-		return 0.5f + ViewTimeline.fEventGap;
+		return 0.4f + ViewTimeline.fEventGap;
 	}
 		
 	public override void UpdateObs(string eventType, Object target, params object[] args){
@@ -26,7 +26,7 @@ public class ViewTimelineEventTurn : ViewTimelineEvent<TimelineEventTurn> {
 
 	void SetPortrait(string _sType){
 		string sMatPath = "Materials/Mana/Mat" + _sType;
-		Debug.Log (sMatPath);
+
 		Material matChr = Resources.Load(sMatPath, typeof(Material)) as Material;
 
 		GetComponentsInChildren<Renderer> ()[indexEventPortrait].material = matChr;
