@@ -19,7 +19,6 @@ public class TimelineEventChr : TimelineEvent {
 		if (view == null){
 			Debug.LogError ("ERROR! COUDLN't FIND A VIEWTIMELINEEVENTCHR COMPONENT");
 		}
-		Subscribe (view);
 		view.Start ();
 	}
 

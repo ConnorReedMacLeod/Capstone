@@ -45,7 +45,6 @@ public class ViewTimeline : Observer {
 		case "FinishedEvent":
 			ScrollEventHolder (((TimelineEvent)target).GetVertSpan ());
 			break;
-
 		/*case Timeline.UPDATETYPE.NEWEVENT:
 			switch (mod.eventLastAdded.prior) {
 			case Timeline.PRIORITY.TURN:
