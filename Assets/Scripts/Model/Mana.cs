@@ -19,11 +19,16 @@ public class Mana : Subject {
 
 	public static int nManaTypes = 5; //Number of mana types (PHYSICAL, MENTAL, ENERGY, BLOOD, EFFORT)
 
-	public int[] arMana;        //Player's mana, total
-	public int[] arManaPool;    //Player's mana in mana pool
+	public int[] arMana;        //Player's mana totals for each type
+	public int[] arManaPool;    //Player's mana of each type in the pool
+	public int nManaPool; 		//Total amount of mana in mana pool
+
+	public Player plyr;			//Reference to the Player who owns this
 
 	//Tracks the order in which mana was added to the mana pool
 	public LinkedList<MANATYPE> qManaPool;
+
+
 
 	//For adding one mana of one type to player's total mana
 	public void AddMana(MANATYPE type){
@@ -54,7 +59,7 @@ public class Mana : Subject {
 
         //Checks if the player has enough mana outside the mana pool
         if (arMana [(int)type] < nAmount) {
-			Debug.Log ("Not enough mana");
+			Debug.Log ("Not enough " + (MANATYPE)type + " to add to the pool");
 			return false;
 		}
 
@@ -63,6 +68,7 @@ public class Mana : Subject {
 			arMana [(int)type]--;
 			arManaPool [(int)type]++;
 			qManaPool.AddLast (type);
+			nManaPool++;
 		}
 
 		return true;
@@ -87,6 +93,7 @@ public class Mana : Subject {
 			arManaPool [(int)type]--;
 			arMana [(int)type]++;
 			qManaPool.Remove (type);
+			nManaPool--;
 		}
 
 		return true;
@@ -105,22 +112,25 @@ public class Mana : Subject {
         //          type of mana and that it is always in the last position in the array
         for (int i = 0; i < arCost.Length; i++)
         {
-            nTotalMana += arManaPool[i];
-            nTotalCost += arCost[i];
 
             //For mana type [i], checks if the player has enough to cover the cost
             //Effort mana, or mana type [5], will often fail this check, as it is always 0
             if (arManaPool[i] < arCost[i])
             {
                 //After all other costs are paid, leftover mana pool mana is used to pay for effort
-                if (i == (int)MANATYPE.EFFORT && nTotalMana >= nTotalCost)
-                {
-                    Debug.Log("Can pay effort with other types of mana");
-                    break;
-                }
+				if (i == (int)MANATYPE.EFFORT) {
 
-                Debug.Log("Can't pay this mana cost");
-                return false;
+					if (nManaPool >= arCost [i]) {
+						//Enough mana is in the pool to pay for this
+
+					} else {
+						Debug.Log ("Not enough mana in the mana pool");
+						return false;
+					}
+				} else {
+					Debug.Log ("Not enough " + (MANATYPE)i + " to pay this cost");
+					return false;
+				}
             }
         }
 
@@ -163,6 +173,7 @@ public class Mana : Subject {
 					//Uses mana in order of most recently added to mana pool
 					arManaPool [(int)(qManaPool.First.Value)]--;
 					qManaPool.RemoveFirst ();
+					nManaPool--;
                 
                 //Catches non-existant mana types
                 } else {
@@ -175,6 +186,10 @@ public class Mana : Subject {
 		return true;
 	}
 
+
+	public void SetPlayer(Player _plyr){
+		plyr = _plyr;
+	}
 
 	public Mana () {
 		arMana = new int[nManaTypes];
