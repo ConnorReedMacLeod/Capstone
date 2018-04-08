@@ -45,7 +45,6 @@ public class ViewArena : Observer {
 	//TODO:: Update this to reflect selecting specific coordinates in the grid
     //Notifies application when the Arena view is clicked on
     public void OnMouseDown(){
-		Debug.Log (GetArenaPos(Input.mousePosition));
 		Controller.Get().NotifyObs(Notification.ClickArena, this, GetArenaPos(Input.mousePosition));
 	}
 }
