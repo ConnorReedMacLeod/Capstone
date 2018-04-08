@@ -24,7 +24,7 @@ public class StateTargetSelected : StateTarget {
 		contTarg.SetState (new StateTargetIdle (contTarg));
 	}
 
-	override public void OnClickChr(Character chr, Vector3 pos){
+	override public void OnClickChr(Chr chr, Vector3 pos){
 		if (contTarg.selected == chr)
 			return; //nothing should be done here I don't think
 
@@ -39,7 +39,7 @@ public class StateTargetSelected : StateTarget {
 		// but we want to reinitiallize the action wheel
 	}
 
-	override public void OnClickAct(Character chr, int idAct){
+	override public void OnClickAct(Chr chr, int idAct){
 		//Debug.Log (chr + " is using action " + idAct);
 
 		contTarg.selected.Targetting ();

@@ -5,7 +5,7 @@ using UnityEngine;
 public class TargetArgPos : TargetArg {
 
 	public Vector3 v3Tar;
-	public delegate bool funcLegalPos (Character own, Vector3 v3Tar);
+	public delegate bool funcLegalPos (Chr own, Vector3 v3Tar);
 	funcLegalPos fLegalCheck;
 
 	//WARNING: This feels like it should be shared among TargetArgs but it isn't

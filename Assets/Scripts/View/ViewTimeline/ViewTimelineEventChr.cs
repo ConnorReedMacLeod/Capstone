@@ -2,55 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewTimelineEventChr : ViewTimelineEvent {
-
-	public string sLastName;
-
-	public TimelineEventChr mod;
+public class ViewTimelineEventChr : ViewTimelineEvent<TimelineEventChr> {
 
 	private int indexEventPortrait = 1;
-
-	public void SetModel(TimelineEventChr _mod){
-		mod = _mod;
-		mod.Subscribe (this);
-	}
 
 	public override float GetVertSpan (){
 		return 0.8f + ViewTimeline.fEventGap;
 	}
-		
-	public override int GetPlace(){
-		return mod.nPlace;
-	}
 
-	public override TimelineEvent.STATE GetState (){
-		return mod.state;
-	}
+	public override void UpdateObs(string eventType, Object target, params object[] args){
 
-	public override void UpdateObs(){
-		if (sLastName != mod.chrSubject.sName) {
-			sLastName = mod.chrSubject.sName;
-			SetPortrait (sLastName);
+		switch (eventType) {
+		case "NewChr":
+			SetPortrait (mod.chrSubject);
+			break;
+		default:
+
+			break;
 		}
 
 
-		base.UpdateObs ();
+		base.UpdateObs (eventType, target, args);
 	}
 
-	public override void Print (){
-		Debug.Log ("I am the " + mod.nPlace + "th node and I represent " + mod.chrSubject.sName);
-	}
-
-	void SetPortrait(string _sName){
-		string sMatPath = "Materials/Characters/mat" + _sName;
+	void SetPortrait(Chr chr){
+		string sMatPath = "Materials/Chrs/Mat" + chr.sName;
 		Material matChr = Resources.Load(sMatPath, typeof(Material)) as Material;
 
 		GetComponentsInChildren<Renderer> ()[indexEventPortrait].material = matChr;
 	}
 
-	public override void Start(){
-		base.Start ();
-
+	public void InitPlayer(){
 		// Subject to change
 		if (mod.chrSubject.plyrOwner.id == 0) {
 			this.SetMaterial ("MatTimelineEvent1");
@@ -60,5 +42,13 @@ public class ViewTimelineEventChr : ViewTimelineEvent {
 			this.SetMaterial ("MatTimelineEvent2");
 			transform.GetChild(indexEventPortrait).transform.localScale = new Vector3 (-0.7f, 0.7f, 1);
 		}
+	}
+
+	public override void Start(){
+		base.Start ();
+		//Should have the model set by now
+
+		InitPlayer ();
+		SetPortrait (mod.chrSubject);
 	}
 }

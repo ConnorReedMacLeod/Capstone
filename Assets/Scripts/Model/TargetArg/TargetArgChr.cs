@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class TargetArgChr : TargetArg {
 
-	public Character chrTar;
-	public delegate bool funcLegalChr (Character own, Character arg);
+	public Chr chrTar;
+	public delegate bool funcLegalChr (Chr own, Chr arg);
 	funcLegalChr fLegalCheck;
 
 	//WARNING: This feels like it should be shared among TargetArgs but it isn't
-	public bool setTar(Character _chrTar){
-		Character chrOldTar = chrTar;
+	public bool setTar(Chr _chrTar){
+		Chr chrOldTar = chrTar;
 		chrTar = _chrTar;
 		if (VerifyLegal ()) {
 			return true; //the targetting was successful
