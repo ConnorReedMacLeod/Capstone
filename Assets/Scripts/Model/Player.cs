@@ -13,6 +13,8 @@ public class Player : MonoBehaviour{
 	public Chr.CHARTYPE[] arChrTypeSelection;
 	public int nChrs;
 
+	public GameObject pfManaPanel;
+
 	public Mana mana;
 
 	public void setChrs(){
@@ -34,7 +36,15 @@ public class Player : MonoBehaviour{
 			bStarted = true;
 			arChrTypeSelection = new Chr.CHARTYPE[MAXCHRS];
 
-			mana = GetComponentInChildren<Mana> ();
+			GameObject manaPanel = Instantiate(pfManaPanel);
+			mana = manaPanel.GetComponent<Mana>();
+
+			//TODO: Change this, all this, too work with networking
+			if (id == 0) {
+				manaPanel.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
+			} else {
+				manaPanel.transform.position = new Vector3(0.0f, 10.0f, 0.0f);
+			}
 		}
 	}
 
