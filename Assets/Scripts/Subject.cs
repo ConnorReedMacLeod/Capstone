@@ -40,7 +40,9 @@ public class Subject : MonoBehaviour {
 	}
 
 	public virtual void Start (){
-		bStart = true;
-		lstObservers = new List<Observer> ();
+		if (bStart == false) {
+			bStart = true;
+			lstObservers = new List<Observer> ();
+		}
 	}
 }

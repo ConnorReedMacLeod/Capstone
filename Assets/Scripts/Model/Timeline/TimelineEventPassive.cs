@@ -13,6 +13,7 @@ public class TimelineEventPassive : TimelineEvent {
 			Debug.LogError ("ERROR! COUDLN't FIND A VIEWTIMELINEEVENTPASSIVE COMPONENT");
 		}
 		Subscribe (view);
+		view.Start ();
 	}
 
 	public override float GetVertSpan (){

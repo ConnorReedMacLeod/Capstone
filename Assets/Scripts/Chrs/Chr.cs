@@ -57,7 +57,7 @@ public class Chr : Subject {
 
 
 	public void NotifyNewRecharge(){
-		Timeline.Get ().AddEvent (this, nRecharge, Timeline.PRIORITY.NONE); 
+		Timeline.Get ().AddEventChr (this, nRecharge, Timeline.PRIORITY.NONE); 
 	}
 
   //Counts down the character's recharge with the timeline
@@ -98,6 +98,7 @@ public class Chr : Subject {
 	public void ExecuteAction(){
 		Debug.Assert (ValidAction ());
 		arActions [nUsingAction].Execute ();
+		nUsingAction = 7;//TODO:: Make thie consistent
 	}
 
     //Checks if the character's selected action is ready and able to be performed

@@ -6,11 +6,7 @@ public class TimelineEventChr : TimelineEvent {
 
 	public Chr chrSubject;
 
-	//TODO:: CHANGE THIS TO AN INIT METHOD
-	// If no priority is given, assume neutral
-	public TimelineEventChr (Chr _chrSubject, Timeline.PRIORITY _prior = Timeline.PRIORITY.NONE) : base (_prior){
-
-		chrSubject = _chrSubject;
+	public TimelineEventChr (){
 
 		fDelay = 2.0f;
 
@@ -24,6 +20,12 @@ public class TimelineEventChr : TimelineEvent {
 			Debug.LogError ("ERROR! COUDLN't FIND A VIEWTIMELINEEVENTCHR COMPONENT");
 		}
 		Subscribe (view);
+		view.Start ();
+	}
+
+	public void SetChr(Chr _chrSubject){
+		chrSubject = _chrSubject;
+		NotifyObs ("NewChr", null);
 	}
 
 	public override float GetVertSpan (){

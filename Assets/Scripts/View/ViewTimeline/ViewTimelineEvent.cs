@@ -43,6 +43,7 @@ public abstract class ViewTimelineEvent<EventType> : Observer/*, ViewEventInterf
 
 	public virtual Vector3 GetPosAfter(){
 		//Ask the specific type of event what its height + gap are
+
 		return new Vector3(v3Pos.x, v3Pos.y - GetVertSpan(), v3Pos.z);
 	}
 

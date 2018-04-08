@@ -13,6 +13,7 @@ public class TimelineEventStatus : TimelineEvent {
 			Debug.LogError ("ERROR! COUDLN't FIND A VIEWTIMELINEEVENTSTATUS COMPONENT");
 		}
 		Subscribe (view);
+		view.Start ();
 	}
 
 	public override float GetVertSpan (){

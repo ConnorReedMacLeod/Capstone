@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class ViewTimelineEventChr : ViewTimelineEvent<TimelineEventChr> {
 
-	public string sLastName;
-
 	private int indexEventPortrait = 1;
 
 	public override float GetVertSpan (){
@@ -13,25 +11,28 @@ public class ViewTimelineEventChr : ViewTimelineEvent<TimelineEventChr> {
 	}
 
 	public override void UpdateObs(string eventType, Object target, params object[] args){
-		if (sLastName != mod.chrSubject.sName) {
-			sLastName = mod.chrSubject.sName;
-			SetPortrait (sLastName);
+
+		switch (eventType) {
+		case "NewChr":
+			SetPortrait (mod.chrSubject);
+			break;
+		default:
+
+			break;
 		}
 
 
 		base.UpdateObs (eventType, target, args);
 	}
 
-	void SetPortrait(string _sName){
-		string sMatPath = "Materials/Characters/mat" + _sName;
+	void SetPortrait(Chr chr){
+		string sMatPath = "Materials/Chrs/Mat" + chr.sName;
 		Material matChr = Resources.Load(sMatPath, typeof(Material)) as Material;
 
 		GetComponentsInChildren<Renderer> ()[indexEventPortrait].material = matChr;
 	}
 
-	public override void Start(){
-		base.Start ();
-
+	public void InitPlayer(){
 		// Subject to change
 		if (mod.chrSubject.plyrOwner.id == 0) {
 			this.SetMaterial ("MatTimelineEvent1");
@@ -41,5 +42,13 @@ public class ViewTimelineEventChr : ViewTimelineEvent<TimelineEventChr> {
 			this.SetMaterial ("MatTimelineEvent2");
 			transform.GetChild(indexEventPortrait).transform.localScale = new Vector3 (-0.7f, 0.7f, 1);
 		}
+	}
+
+	public override void Start(){
+		base.Start ();
+		//Should have the model set by now
+
+		InitPlayer ();
+		SetPortrait (mod.chrSubject);
 	}
 }

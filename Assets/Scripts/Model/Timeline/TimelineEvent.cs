@@ -52,9 +52,13 @@ public abstract class TimelineEvent : Subject {
 		NotifyObs ();
 	}
 
-	public TimelineEvent (Timeline.PRIORITY _prior = Timeline.PRIORITY.NONE){
-		
+	public void SetPriority(Timeline.PRIORITY _prior = Timeline.PRIORITY.NONE){
 		prior = _prior;
+	}
+
+	public TimelineEvent (){
+		
+		prior = Timeline.PRIORITY.NONE;
 		fDelay = 4.0f;
 		state = STATE.UNREADY;
 
@@ -63,7 +67,7 @@ public abstract class TimelineEvent : Subject {
 	public virtual void Evaluate(){
 
 		// Set up the next event to go off later
-		Invoke ("NextTimelineEvent", fDelay);
+		//Invoke ("NextTimelineEvent", fDelay);
 	}
 
 }

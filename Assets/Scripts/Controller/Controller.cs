@@ -16,6 +16,7 @@ public class Controller : Subject{
 
 
 	ContTarget contTarget;
+	ContTimeline contTimeline;
 
 	public static Controller Get (){
 		GameObject go = GameObject.FindGameObjectWithTag ("Controller");
@@ -35,6 +36,9 @@ public class Controller : Subject{
 		// Find all necessary controllers and register them as our observers
 		contTarget = GetComponent<ContTarget> ();
 		Subscribe (contTarget);
+
+		contTimeline = GetComponent<ContTimeline> ();
+		Subscribe (contTimeline);
 	}
 
 }
