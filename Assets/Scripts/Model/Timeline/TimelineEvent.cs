@@ -30,7 +30,7 @@ public abstract class TimelineEvent : Subject {
 	public abstract float GetVertSpan ();
 	public abstract Vector3 GetPosAfter ();
 
-	public void Start(){
+	public virtual void Start(){
 		if (bStarted == false) {
 			bStarted = true;
 
@@ -48,8 +48,7 @@ public abstract class TimelineEvent : Subject {
 
 	public void SetState(STATE _state){
 		state = _state;
-
-		NotifyObs ();
+		NotifyObs ("ChangedState", null);
 	}
 
 	public void SetPriority(Timeline.PRIORITY _prior = Timeline.PRIORITY.NONE){

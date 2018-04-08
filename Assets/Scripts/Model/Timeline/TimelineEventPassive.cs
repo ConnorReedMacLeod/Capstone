@@ -12,7 +12,7 @@ public class TimelineEventPassive : TimelineEvent {
 		if (view == null){
 			Debug.LogError ("ERROR! COUDLN't FIND A VIEWTIMELINEEVENTPASSIVE COMPONENT");
 		}
-		Subscribe (view);
+			
 		view.Start ();
 	}
 
