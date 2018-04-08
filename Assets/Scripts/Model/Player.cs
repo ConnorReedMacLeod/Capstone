@@ -25,7 +25,7 @@ public class Player : MonoBehaviour{
 		nChrs = 3;
 	}
 
-	public void RegisterID(int _id){
+	public void SetID(int _id){
 		id = _id;
 	}
 
@@ -36,14 +36,16 @@ public class Player : MonoBehaviour{
 			bStarted = true;
 			arChrTypeSelection = new Chr.CHARTYPE[MAXCHRS];
 
-			GameObject manaPanel = Instantiate(pfManaPanel);
+			GameObject manaPanel = Instantiate(pfManaPanel, Match.Get().transform);
 			mana = manaPanel.GetComponent<Mana>();
+
+			mana.SetPlayer (this);
 
 			//TODO: Change this, all this, too work with networking
 			if (id == 0) {
-				manaPanel.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
+				manaPanel.transform.position = new Vector3(-13.0f, -3.0f, 0.0f);
 			} else {
-				manaPanel.transform.position = new Vector3(0.0f, 10.0f, 0.0f);
+				manaPanel.transform.position = new Vector3(-13.0f, 3.0f, 0.0f);
 			}
 		}
 	}

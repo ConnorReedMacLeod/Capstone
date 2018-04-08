@@ -47,8 +47,8 @@ public class Match : MonoBehaviour {
 				Debug.LogError ("ERROR! NO PLAYER COMPONENT ON PLAYER PREFAB!");
 			}
 
+			newPlayer.SetID (i);
 			newPlayer.Start ();
-			newPlayer.RegisterID (i);
 			newPlayer.setChrs (); /// TODO:: replace with actual character selection
 			arPlayers [i] = newPlayer;
 		}
