@@ -44,6 +44,7 @@ public class Mana : Subject {
 	public void AddMana(MANATYPE type, int nAmount){
 		arMana [(int)type] += nAmount;
 		NotifyObs("ManaChange", null, type);
+		Debug.Log ("Added " + type + " mana");
 	}
 
 	//For adding any number of mana of any number of types to player's total mana, using an array of MANATYPEs
@@ -208,7 +209,6 @@ public class Mana : Subject {
 			// Call our base Subject's start method
 
 			view = GetComponent<ViewMana>();
-			Debug.Log(view);
 			view.Start();
 
 			arMana = new int[nManaTypes];
