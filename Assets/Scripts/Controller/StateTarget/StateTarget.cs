@@ -21,11 +21,11 @@ public class StateTarget {
 
 	}
 
-	public virtual void OnClickAct(Character chr, int idAct){
+	public virtual void OnClickAct(Chr chr, int idAct){
 
 	}
 
-	public virtual void OnClickChr(Character chr, Vector3 pos){
+	public virtual void OnClickChr(Chr chr, Vector3 pos){
 		//requires the selected character and it's position in the arena
 
 	}

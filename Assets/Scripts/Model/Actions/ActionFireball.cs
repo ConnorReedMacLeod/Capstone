@@ -6,7 +6,7 @@ public class ActionFireball : Action {
 
 
 
-	public ActionFireball(Character _chrOwner): base(1, _chrOwner){//number of target arguments
+	public ActionFireball(Chr _chrOwner): base(1, _chrOwner){//number of target arguments
 
 		//Since the base constructor initializes this array, we can start filling it
 		arArgs [0] = new TargetArgChr ((own, tar) => own.plyrOwner != tar.plyrOwner);
@@ -22,7 +22,7 @@ public class ActionFireball : Action {
 	override public void Execute(){
 		//It's a bit awkward that you have to do this typecasting, 
 		// but at least it's eliminated from the targetting lambda
-		Character tar = ((TargetArgChr)arArgs [0]).chrTar;
+		Chr tar = ((TargetArgChr)arArgs [0]).chrTar;
 
 		Debug.Log (tar + " has been targetted");
 

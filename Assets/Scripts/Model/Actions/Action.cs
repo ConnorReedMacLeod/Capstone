@@ -11,11 +11,11 @@ public class Action { //This should probably be made abstract
 	public int nCd;
 	public int nCurCD;
 	public int nRecharge;
-	public Character chrOwner;
+	public Chr chrOwner;
 
 	public int[] arCost;
 
-	public Action(int _nArgs, Character _chrOwner){
+	public Action(int _nArgs, Chr _chrOwner){
 		nArgs = _nArgs;
 		chrOwner = _chrOwner;
 
@@ -45,7 +45,7 @@ public class Action { //This should probably be made abstract
 		}
 	}
 
-	public void TimeTick(){
+	public void Recharge(){
 		ChangeCD (-1);
 	}
 
