@@ -43,9 +43,10 @@ public class Player : MonoBehaviour{
 
 			//TODO: Change this, all this, too work with networking
 			if (id == 0) {
-				manaPanel.transform.position = new Vector3(-13.0f, -3.0f, 0.0f);
+				manaPanel.transform.position = new Vector3(-20.0f, 3.0f, 0.0f);
 			} else {
-				manaPanel.transform.position = new Vector3(-13.0f, 3.0f, 0.0f);
+				//move it offscreen for now
+				manaPanel.transform.position = new Vector3(-13.0f, -3.0f, 0.0f);
 			}
 		}
 	}
