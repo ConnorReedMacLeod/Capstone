@@ -51,7 +51,6 @@ public class TimelineEventTurn : TimelineEvent {
 
 		//Give the mana to each player
 		for (int i = 0; i < Timeline.Get().match.nPlayers; i++) {
-			Debug.Log ("Giving mana to player " + i);
 			Timeline.Get().match.arPlayers [i].mana.AddMana (manaGen);
 		}
 

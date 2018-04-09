@@ -120,7 +120,7 @@ public class ViewMana : Observer {
 
 			case "ManaPoolChange":
 
-				DisplayMana(txtManaEffort, mod.arMana[(int)Mana.MANATYPE.EFFORT]);
+			DisplayMana(txtManaEffort, mod.nManaPool);
 
 				switch ((Mana.MANATYPE)args[0]) {
 					case Mana.MANATYPE.PHYSICAL:

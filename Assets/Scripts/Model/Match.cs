@@ -34,6 +34,9 @@ public class Match : MonoBehaviour {
 		return instance;
 	}
 
+	public Player GetLocalPlayer(){
+		return arPlayers [0];
+	}
 
 	void InitPlayers (int _nPlayers){
 		nPlayers = _nPlayers;//in case this needs to be changed based on the match

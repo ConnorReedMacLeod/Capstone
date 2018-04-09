@@ -12,11 +12,14 @@ using UnityEngine;
 // among the contained controllers
 
 [RequireComponent (typeof(ContTarget))]
+[RequireComponent (typeof(ContTimeline))]
+[RequireComponent (typeof(ContMana))]
 public class Controller : Subject{
 
 
 	ContTarget contTarget;
 	ContTimeline contTimeline;
+	ContMana contMana;
 
 	public static Controller Get (){
 		GameObject go = GameObject.FindGameObjectWithTag ("Controller");
@@ -39,6 +42,9 @@ public class Controller : Subject{
 
 		contTimeline = GetComponent<ContTimeline> ();
 		Subscribe (contTimeline);
+
+		contMana = GetComponent<ContMana> ();
+		Subscribe (contMana);
 	}
 
 }
