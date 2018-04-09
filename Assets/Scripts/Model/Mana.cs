@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(ViewMana))]
 public class Mana : Subject {
 
 	public enum MANATYPE {
@@ -19,11 +20,20 @@ public class Mana : Subject {
 
 	public static int nManaTypes = 5; //Number of mana types (PHYSICAL, MENTAL, ENERGY, BLOOD, EFFORT)
 
-	public int[] arMana;        //Player's mana, total
-	public int[] arManaPool;    //Player's mana in mana pool
+	public int[] arMana;        //Player's mana totals for each type
+	public int[] arManaPool;    //Player's mana of each type in the pool
+	public int nManaPool; 		//Total amount of mana in mana pool
+
+	public Player plyr;         //Reference to the Player who owns this
+
+	bool bStarted = false;
+
+	public ViewMana view;
 
 	//Tracks the order in which mana was added to the mana pool
 	public LinkedList<MANATYPE> qManaPool;
+
+
 
 	//For adding one mana of one type to player's total mana
 	public void AddMana(MANATYPE type){
@@ -33,6 +43,7 @@ public class Mana : Subject {
 	//For adding any number of mana of one type to player's total mana
 	public void AddMana(MANATYPE type, int nAmount){
 		arMana [(int)type] += nAmount;
+		NotifyObs("ManaChange", null, type);
 	}
 
 	//For adding any number of mana of any number of types to player's total mana, using an array of MANATYPEs
@@ -41,6 +52,7 @@ public class Mana : Subject {
 
 		for (int i = 0; i < _arMana.Length; i++) {
 			arMana [i] += _arMana [i];
+			NotifyObs("ManaChange", null, (MANATYPE)i);
 		}
 	}
 
@@ -54,7 +66,7 @@ public class Mana : Subject {
 
         //Checks if the player has enough mana outside the mana pool
         if (arMana [(int)type] < nAmount) {
-			Debug.Log ("Not enough mana");
+			Debug.Log ("Not enough " + (MANATYPE)type + " to add to the pool");
 			return false;
 		}
 
@@ -63,7 +75,10 @@ public class Mana : Subject {
 			arMana [(int)type]--;
 			arManaPool [(int)type]++;
 			qManaPool.AddLast (type);
+			nManaPool++;
 		}
+		NotifyObs("ManaChange", null, type);
+		NotifyObs("ManaPoolChange", null, type);
 
 		return true;
 	}
@@ -87,7 +102,11 @@ public class Mana : Subject {
 			arManaPool [(int)type]--;
 			arMana [(int)type]++;
 			qManaPool.Remove (type);
+			nManaPool--;
 		}
+
+		NotifyObs("ManaChange", null, type);
+		NotifyObs("ManaPoolChange", null, type);
 
 		return true;
 	}
@@ -98,29 +117,29 @@ public class Mana : Subject {
         //Checks that the given cost contains only up to 5 mana types
         Debug.Assert(arCost.Length == nManaTypes || arCost.Length == nManaTypes - 1);
 
-        int nTotalMana = 0;
-        int nTotalCost = 0;
-
         //WARNING:: This assumes that effort can be paid with any
         //          type of mana and that it is always in the last position in the array
         for (int i = 0; i < arCost.Length; i++)
         {
-            nTotalMana += arManaPool[i];
-            nTotalCost += arCost[i];
 
             //For mana type [i], checks if the player has enough to cover the cost
             //Effort mana, or mana type [5], will often fail this check, as it is always 0
-            if (arManaPool[i] < arCost[i])
+            if (arMana[i] < arCost[i])
             {
                 //After all other costs are paid, leftover mana pool mana is used to pay for effort
-                if (i == (int)MANATYPE.EFFORT && nTotalMana >= nTotalCost)
-                {
-                    Debug.Log("Can pay effort with other types of mana");
-                    break;
-                }
+				if (i == (int)MANATYPE.EFFORT) {
 
-                Debug.Log("Can't pay this mana cost");
-                return false;
+					if (nManaPool >= arCost [i]) {
+						//Enough mana is in the pool to pay for this
+
+					} else {
+						Debug.Log ("Not enough mana in the mana pool");
+						return false;
+					}
+				} else {
+					Debug.Log ("Not enough " + (MANATYPE)i + " to pay this cost");
+					return false;
+				}
             }
         }
 
@@ -153,19 +172,21 @@ public class Mana : Subject {
 			for (int j = 0; j < arCost [i]; j++) {
                 
                 //Pays for coloured mana
-                if (arManaPool [i] > 0) {
-					arManaPool [i]--;
-					qManaPool.Remove ((MANATYPE)i);
+                if (arMana [i] > 0) {
+					arMana [i]--;
+					NotifyObs("ManaChange", null, (MANATYPE)i);
 
                 //Pays for effort mana
 				} else if (i == (int)MANATYPE.EFFORT) {
 
 					//Uses mana in order of most recently added to mana pool
 					arManaPool [(int)(qManaPool.First.Value)]--;
-					qManaPool.RemoveFirst ();
-                
-                //Catches non-existant mana types
-                } else {
+					nManaPool--;
+					NotifyObs("ManaPoolChange", null, qManaPool.First.Value);
+					qManaPool.RemoveFirst();
+
+					//Catches non-existant mana types
+				} else {
 					Debug.LogError ("RAN OUT OF MANA TO SPEND!");
 					return false;
 				}
@@ -176,10 +197,23 @@ public class Mana : Subject {
 	}
 
 
-	public Mana () {
-		arMana = new int[nManaTypes];
-		arManaPool = new int[nManaTypes];
-		qManaPool = new LinkedList<MANATYPE> ();
+	public void SetPlayer(Player _plyr){
+		plyr = _plyr;
 	}
 
+	public override void Start () {
+		if (bStarted == false) {
+			bStarted = true;
+
+			base.Start();
+			// Call our base Subject's start method
+
+			view = GetComponent<ViewMana>();
+			view.Start();
+
+			arMana = new int[nManaTypes];
+			arManaPool = new int[nManaTypes];
+			qManaPool = new LinkedList<MANATYPE>();
+		}
+	}
 }

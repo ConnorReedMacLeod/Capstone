@@ -3,8 +3,12 @@ guid: d099fd945f005924fa06387d92f338bb
 timeCreated: 1517368279
 licenseType: Free
 MonoImporter:
+  externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - pfManaPanel: {fileID: 1078399501351770, guid: 825babeed0e724344b03b01ac5dc93d9,
+      type: 2}
+  - mana: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
