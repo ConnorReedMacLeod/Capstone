@@ -34,6 +34,9 @@ public class Match : MonoBehaviour {
 		return instance;
 	}
 
+	public Player GetLocalPlayer(){
+		return arPlayers [0];
+	}
 
 	void InitPlayers (int _nPlayers){
 		nPlayers = _nPlayers;//in case this needs to be changed based on the match
@@ -47,8 +50,8 @@ public class Match : MonoBehaviour {
 				Debug.LogError ("ERROR! NO PLAYER COMPONENT ON PLAYER PREFAB!");
 			}
 
+			newPlayer.SetID (i);
 			newPlayer.Start ();
-			newPlayer.RegisterID (i);
 			newPlayer.setChrs (); /// TODO:: replace with actual character selection
 			arPlayers [i] = newPlayer;
 		}
