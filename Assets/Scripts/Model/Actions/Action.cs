@@ -13,7 +13,10 @@ public class Action { //This should probably be made abstract
 	public int nRecharge;
 	public Chr chrOwner;
 
+	public string sDescription;
+
 	public int[] arCost;
+	public string sCost;
 
 	public Action(int _nArgs, Chr _chrOwner){
 		nArgs = _nArgs;
