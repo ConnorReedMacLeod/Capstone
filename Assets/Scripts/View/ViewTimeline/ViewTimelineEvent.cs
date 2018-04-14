@@ -68,7 +68,7 @@ public abstract class ViewTimelineEvent<EventType> : Observer/*, ViewEventInterf
 		//Will generally just use the specific type's UpdateObs()
 
 		switch (eventType) {
-		case "MovedEvent":
+		case Notification.EventMoved:
 			//Place this event based on the position of the previous node
 			if (mod.nodeEvent.Previous == null) {
 				//Then we're the first thing in the list
@@ -79,7 +79,7 @@ public abstract class ViewTimelineEvent<EventType> : Observer/*, ViewEventInterf
 			}
 			break;
 
-		case "ChangedState":
+		case Notification.EventChangedState:
 			
 			Renderer render = GetComponentsInChildren<Renderer>()[0];
 			render.material.EnableKeyword ("_EMISSION");
@@ -99,7 +99,6 @@ public abstract class ViewTimelineEvent<EventType> : Observer/*, ViewEventInterf
 
 				break;
 			default:
-				Debug.LogError ("UNRECOGNIZED TIMELINE EVENT STATE IN VIEW");
 				break;
 			}
 			break;

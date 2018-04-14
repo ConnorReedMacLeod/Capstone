@@ -42,27 +42,10 @@ public class ViewTimeline : Observer {
 
 		//Depending on what was last added
 		switch (eventType) {
-		case "FinishedEvent":
+		case Notification.EventFinish:
 			ScrollEventHolder (((TimelineEvent)target).GetVertSpan ());
 			break;
-		/*case Timeline.UPDATETYPE.NEWEVENT:
-			switch (mod.eventLastAdded.prior) {
-			case Timeline.PRIORITY.TURN:
-				NewEvent ((TimelineEventTurn)mod.eventLastAdded);
-				break;
-			case Timeline.PRIORITY.HIGH:
-			case Timeline.PRIORITY.NONE:
-			case Timeline.PRIORITY.LOW:
-				NewEvent ((TimelineEventChr)mod.eventLastAdded);
-				break;
-			case Timeline.PRIORITY.EOT:
-			case Timeline.PRIORITY.BOT:
-				//TODO:: ADD IN STATUS AND PASSIVE STUFF
-				break;
-			}
-			break*/;
 		default:
-			Debug.LogError ("UNRECOGNIZED TIMELINE UPDATE");
 			break;
 		}
 		//Print ();

@@ -22,13 +22,6 @@ public class ViewAction : Observer {
 		mod.Subscribe (this);
 	}
 
-    /*//Sets the ActionWheel segment's view
-    public ViewAction(ViewActionWheel _viewActionWheel, int _id)
-    {
-        viewActionWheel = _viewActionWheel;
-        id = _id;
-    }*/
-
     //Notifies application when the action's ActionWheel segment is clicked
     public void OnMouseDown(){
 		Controller.Get().NotifyObs(Notification.ClickAct, this, id);

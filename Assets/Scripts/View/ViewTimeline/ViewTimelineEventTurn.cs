@@ -12,7 +12,7 @@ public class ViewTimelineEventTurn : ViewTimelineEvent<TimelineEventTurn> {
 		
 	public override void UpdateObs(string eventType, Object target, params object[] args){
 		switch (eventType) {
-		case "ManaTypeSet":
+		case Notification.EventSetMana:
 
 			SetPortrait (Mana.arsManaTypes [(int)(mod.manaGen)]);
 			break;

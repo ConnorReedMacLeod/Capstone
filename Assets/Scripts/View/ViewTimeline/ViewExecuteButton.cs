@@ -6,7 +6,7 @@ public class ViewExecuteButton : MonoBehaviour {
 
 
 	public void OnMouseDown(){
-		Controller.Get().NotifyObs(Notification.ClickExecute, null);
+		Controller.Get().NotifyObs(Notification.ExecuteEvent, null);
 	}
 
 }
