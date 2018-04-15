@@ -15,6 +15,10 @@ public class Notification {
 	public const string ActStopHover = "act.stophover";
 	public const string ClickArena = "click.arena";
 
+	//Targetting Events
+	public const string TargetFinish = "target.finish";
+	public const string TargetStart = "target.start";
+
 	//Mana Events
 	public const string ManaAddPhysical = "mana.addphys";
 	public const string ManaAddAllPhysical = "mana.addallphys";
