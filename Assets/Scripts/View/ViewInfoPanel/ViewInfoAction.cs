@@ -26,9 +26,10 @@ public class ViewInfoAction : Observer {
 		if (bStarted == false) {
 			bStarted = true;
 			Init();
+			Unscale ();
 
-			Action test = new ActionFireball (null);
-			SetModel (test);
+			//Reposition to be at the origin
+			transform.localPosition = Vector3.zero;
 		}
 	}
 
@@ -184,6 +185,14 @@ public class ViewInfoAction : Observer {
 		}
 
 		UpdateObs (Notification.InfoActionUpdate, null);
+	}
+
+	//Undoes the image and border scaling set by the parent
+	public void Unscale(){
+		transform.localScale = new Vector3
+			(transform.localScale.x / transform.parent.localScale.x,
+				transform.localScale.y / transform.parent.localScale.y,
+				transform.localScale.z / transform.parent.localScale.z);
 	}
 
 	public void SetModel(Action _mod) {
