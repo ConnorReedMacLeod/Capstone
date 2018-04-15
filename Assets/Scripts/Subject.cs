@@ -23,11 +23,11 @@ public class Subject : MonoBehaviour {
 	}
 
 	// Used for standard updates for views
-	public void NotifyObs(){
-		NotifyObs ("Default", null);
+	public virtual void NotifyObs(){
+		NotifyObs (Notification.Default, null);
 	}
 
-	public void NotifyObs (string eventType, Object target, params object[] args){
+	public virtual void NotifyObs (string eventType, Object target, params object[] args){
 		if (bStart == false) {
 			Start ();
 		}

@@ -12,7 +12,7 @@ public class TimelineEventTurn : TimelineEvent {
 	public void InitMana(){
 		//TODO::Make this only semi-random
 		manaGen = (Mana.MANATYPE)Random.Range (0, Mana.nManaTypes - 1);
-		NotifyObs ("ManaTypeSet", null);
+		NotifyObs (Notification.EventSetMana, null);
 	}
 
 	public override void InitView(){

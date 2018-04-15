@@ -66,6 +66,10 @@ public class ContTarget : Observer {
 			selected.Deselect ();
 
 			SetState (new StateTargetIdle (this));
+
+			//Let everything know that targetting has ended
+			Controller.Get().NotifyObs(Notification.TargetFinish, null);
+
 		} else if (nTarCount == selected.arActions [selected.nUsingAction].nArgs) {
 			//Then we've filled of the targetting arguments
 
@@ -74,7 +78,15 @@ public class ContTarget : Observer {
 
 			// Can now go back idle and wait for the next targetting
 			SetState (new StateTargetIdle (this));
+
+			//Let everything know that targetting has ended
+			Controller.Get().NotifyObs(Notification.TargetFinish, null);
 		} else {
+
+			if (nTarCount == 0) {
+				//Then we should let things know that a new targetting has begun
+				Controller.Get().NotifyObs(Notification.TargetStart, selected, selected.nUsingAction);
+			}
 
 			// Get the type of the target arg that we need to handle
 			string sArgType = selected.arActions[selected.nUsingAction].arArgs[nTarCount].GetType().ToString();

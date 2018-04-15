@@ -98,7 +98,7 @@ public class ViewMana : Observer {
 	override public void UpdateObs(string eventType, Object target, params object[] args) {
 
 		switch (eventType) {
-			case "ManaChange":
+		case Notification.ManaChange:
 				switch ((Mana.MANATYPE)args[0]) {
 					case Mana.MANATYPE.PHYSICAL:
 						DisplayMana(txtManaPhysical, mod.arMana[(int)Mana.MANATYPE.PHYSICAL]);
@@ -118,7 +118,7 @@ public class ViewMana : Observer {
 				}
 				break;
 
-			case "ManaPoolChange":
+		case Notification.ManaPoolChange:
 
 			DisplayMana(txtManaEffort, mod.nManaPool);
 
