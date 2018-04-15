@@ -11,10 +11,15 @@ public class ActionMove : Action {
 		//Since the base constructor initializes this array, we can start filling it
 		arArgs [0] = new TargetArgPos ((own, pos) => true);// TODO:: Make a standard "can't move inside other people or outside of map" function
 
+		sName = "Move";
+		type = ActionType.ACTIVE;
+
 		arCost = new int[]{ 0, 0, 0, 0, 0 };
 
 		nCd = 3;
 		nRecharge = 3;
+
+		sDescription = "Move to a target location";
 
 		SetArgOwners ();
 	}

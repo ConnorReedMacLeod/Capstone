@@ -11,6 +11,8 @@ public class Notification {
 	//Character/Action Events
 	public const string ClickChr = "click.chr";
 	public const string ClickAct = "click.act";
+	public const string ActStartHover = "act.starthover";
+	public const string ActStopHover = "act.stophover";
 	public const string ClickArena = "click.arena";
 
 	//Mana Events

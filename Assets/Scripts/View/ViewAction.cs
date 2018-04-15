@@ -26,4 +26,12 @@ public class ViewAction : Observer {
     public void OnMouseDown(){
 		Controller.Get().NotifyObs(Notification.ClickAct, this, id);
 	}	
+
+	public void OnMouseEnter(){
+		Controller.Get ().NotifyObs (Notification.ActStartHover, this, id);
+	}
+
+	public void OnMouseExit(){
+		Controller.Get ().NotifyObs (Notification.ActStopHover, this, id);
+	}
 }
