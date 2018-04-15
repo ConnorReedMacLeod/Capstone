@@ -40,7 +40,7 @@ public class Notification {
 	public const string ManaChange = "mana.change";
 	public const string ManaPoolChange = "mana.poolchange";
 
-	//TimelineEvents
+	//Timeline Events
 	public const string EventFinish = "event.finish";
 	public const string EventMoved = "event.moved";
 	public const string EventChangedState = "event.changedstate";
@@ -48,5 +48,8 @@ public class Notification {
 	public const string EventSetMana = "event.setmana";
 
 	public const string ExecuteEvent = "event.execute";
+
+	//Info Panel Events
+	public const string InfoActionUpdate = "info.actionupdate";
 
 }
