@@ -43,7 +43,7 @@ public class Mana : Subject {
 	//For adding any number of mana of one type to player's total mana
 	public void AddMana(MANATYPE type, int nAmount){
 		arMana [(int)type] += nAmount;
-		NotifyObs("ManaChange", null, type);
+		NotifyObs(Notification.ManaChange, null, type);
 	}
 
 	//For adding any number of mana of any number of types to player's total mana, using an array of MANATYPEs
@@ -52,7 +52,7 @@ public class Mana : Subject {
 
 		for (int i = 0; i < _arMana.Length; i++) {
 			arMana [i] += _arMana [i];
-			NotifyObs("ManaChange", null, (MANATYPE)i);
+			NotifyObs(Notification.ManaChange, null, (MANATYPE)i);
 		}
 	}
 
@@ -77,8 +77,8 @@ public class Mana : Subject {
 			qManaPool.AddLast (type);
 			nManaPool++;
 		}
-		NotifyObs("ManaChange", null, type);
-		NotifyObs("ManaPoolChange", null, type);
+		NotifyObs(Notification.ManaChange, null, type);
+		NotifyObs(Notification.ManaPoolChange, null, type);
 
 		return true;
 	}
@@ -105,8 +105,8 @@ public class Mana : Subject {
 			nManaPool--;
 		}
 
-		NotifyObs("ManaChange", null, type);
-		NotifyObs("ManaPoolChange", null, type);
+		NotifyObs(Notification.ManaChange, null, type);
+		NotifyObs(Notification.ManaPoolChange, null, type);
 
 		return true;
 	}
@@ -174,7 +174,7 @@ public class Mana : Subject {
                 //Pays for coloured mana
                 if (arMana [i] > 0) {
 					arMana [i]--;
-					NotifyObs("ManaChange", null, (MANATYPE)i);
+					NotifyObs(Notification.ManaChange, null, (MANATYPE)i);
 
                 //Pays for effort mana
 				} else if (i == (int)MANATYPE.EFFORT) {
@@ -182,7 +182,7 @@ public class Mana : Subject {
 					//Uses mana in order of most recently added to mana pool
 					arManaPool [(int)(qManaPool.First.Value)]--;
 					nManaPool--;
-					NotifyObs("ManaPoolChange", null, qManaPool.First.Value);
+					NotifyObs(Notification.ManaPoolChange, null, qManaPool.First.Value);
 					qManaPool.RemoveFirst();
 
 					//Catches non-existant mana types

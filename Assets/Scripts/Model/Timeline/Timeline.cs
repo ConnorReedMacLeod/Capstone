@@ -107,7 +107,7 @@ public class Timeline : Subject {
 
 				//Let it know its position in the list
 				newEvent.nodeEvent = newPos.Next;
-				newEvent.NotifyObs ("MovedEvent", null);
+				newEvent.NotifyObs (Notification.EventMoved, null);
 
 				UpdateEventPositions (newPos.Next);
 
@@ -140,7 +140,7 @@ public class Timeline : Subject {
 	public void UpdateEventPositions(LinkedListNode<TimelineEvent> curNode){
 
 		while (curNode != null) {
-			curNode.Value.NotifyObs ("MovedEvent", null);
+			curNode.Value.NotifyObs (Notification.EventMoved, null);
 			curNode = curNode.Next;
 		}
 	}
@@ -171,7 +171,7 @@ public class Timeline : Subject {
 		curEvent.Value.SetState(TimelineEvent.STATE.FINISHED);
 
 		//Let the timeline know to shift upward
-		NotifyObs ("FinishedEvent", curEvent.Value);
+		NotifyObs (Notification.EventFinish, curEvent.Value);
 
 		curEvent = curEvent.Next;
 		curEvent.Value.SetState(TimelineEvent.STATE.CURRENT);

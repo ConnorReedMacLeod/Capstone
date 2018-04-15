@@ -43,12 +43,12 @@ public abstract class TimelineEvent : Subject {
 	public virtual void Init(LinkedListNode<TimelineEvent> _nodeEvent){
 		nodeEvent = _nodeEvent;
 
-		NotifyObs ("MovedEvent", null);
+		NotifyObs (Notification.EventMoved, null);
 	}
 
 	public void SetState(STATE _state){
 		state = _state;
-		NotifyObs ("ChangedState", null);
+		NotifyObs (Notification.EventChangedState, null);
 	}
 
 	public void SetPriority(Timeline.PRIORITY _prior = Timeline.PRIORITY.NONE){

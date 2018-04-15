@@ -14,12 +14,14 @@ using UnityEngine;
 [RequireComponent (typeof(ContTarget))]
 [RequireComponent (typeof(ContTimeline))]
 [RequireComponent (typeof(ContMana))]
+[RequireComponent (typeof(ContInfo))]
 public class Controller : Subject{
 
 
 	ContTarget contTarget;
 	ContTimeline contTimeline;
 	ContMana contMana;
+	ContInfo contInfo;
 
 	public static Controller Get (){
 		GameObject go = GameObject.FindGameObjectWithTag ("Controller");
@@ -45,6 +47,9 @@ public class Controller : Subject{
 
 		contMana = GetComponent<ContMana> ();
 		Subscribe (contMana);
+
+		contInfo = GetComponent<ContInfo> ();
+		Subscribe (contInfo);
 	}
 
 }

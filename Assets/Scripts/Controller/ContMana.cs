@@ -2,58 +2,104 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContMana : Observer {
-
-	public delegate void fnManaAction();
-
-	public Dictionary<fnManaAction, KeyBind> dictFnToBind;
-	public Dictionary<KeyBind, fnManaAction> dictBindToFn;
-
-	public struct KeyBind{
-		public KeyCode keyPress;
-		public KeyCode keyModifier;
-
-		public KeyBind(KeyCode _keyPress, KeyCode _keyModifier){
-			keyPress = _keyPress;
-			keyModifier = _keyModifier;
-		}
+public class ContMana : Observer{
+	public void Start () {
+		InitBindings ();
 	}
 
-	public bool BindingUsed(KeyBind bind){
-		if (bind.keyModifier != KeyCode.None && !Input.GetKey (bind.keyModifier)) {
-			//If there is a key that needs to be held down, then
-			//if it's not held down the binding isn't satisfied
-			return false;
+	public override void UpdateObs(string eventType, Object target, params object[] args){
+
+		switch(eventType){
+		case Notification.ManaAddPhysical: 
+			AddPhysical();
+			break;
+		case Notification.ManaAddAllPhysical: 
+			AddAllPhysical();
+			break;
+		case Notification.ManaRemovePhysical: 
+			RemovePhysical();
+			break;
+		case Notification.ManaRemoveAllPhysical: 
+			RemoveAllPhysical();
+			break;
+
+		case Notification.ManaAddMental: 
+			AddMental();
+			break;
+		case Notification.ManaAddAllMental: 
+			AddAllMental();
+			break;
+		case Notification.ManaRemoveMental: 
+			RemoveMental();
+			break;
+		case Notification.ManaRemoveAllMental: 
+			RemoveAllMental();
+			break;
+
+		case Notification.ManaAddEnergy: 
+			AddEnergy();
+			break;
+		case Notification.ManaAddAllEnergy: 
+			AddAllEnergy();
+			break;
+		case Notification.ManaRemoveEnergy: 
+			RemoveEnergy();
+			break;
+		case Notification.ManaRemoveAllEnergy: 
+			RemoveAllEnergy();
+			break;
+
+		case Notification.ManaAddBlood: 
+			AddBlood();
+			break;
+		case Notification.ManaAddAllBlood: 
+			AddAllBlood();
+			break;
+		case Notification.ManaRemoveBlood: 
+			RemoveBlood();
+			break;
+		case Notification.ManaRemoveAllBlood: 
+			RemoveAllBlood();
+			break;
+
+		case Notification.ManaAddAll:
+			AddAll();
+			break;
+		case Notification.ManaRemoveAll:
+			RemoveAll();
+			break;
+
+		default:
+			break;
 		}
-		return (Input.GetKeyDown(bind.keyPress));
 	}
 
 	public void InitBindings(){
-		SetBinding (AddPhysical, KeyCode.Q);
-		SetBinding (AddAllPhysical, KeyCode.Q, KeyCode.LeftShift);
-		SetBinding (RemovePhysical, KeyCode.A);
-		SetBinding (RemoveAllPhysical, KeyCode.A, KeyCode.LeftShift);
+		KeyBindings.SetBinding (Notification.ManaAddPhysical, KeyCode.Q);
+		KeyBindings.SetBinding (Notification.ManaAddAllPhysical, KeyCode.Q, KeyCode.LeftShift);
+		KeyBindings.SetBinding (Notification.ManaRemovePhysical, KeyCode.A);
+		KeyBindings.SetBinding (Notification.ManaRemoveAllPhysical, KeyCode.A, KeyCode.LeftShift);
 
-		SetBinding (AddMental, KeyCode.W);
-		SetBinding (AddAllMental, KeyCode.W, KeyCode.LeftShift);
-		SetBinding (RemoveMental, KeyCode.S);
-		SetBinding (RemoveAllMental, KeyCode.S, KeyCode.LeftShift);
+		KeyBindings.SetBinding (Notification.ManaAddMental, KeyCode.W);
+		KeyBindings.SetBinding (Notification.ManaAddAllMental, KeyCode.W, KeyCode.LeftShift);
+		KeyBindings.SetBinding (Notification.ManaRemoveMental, KeyCode.S);
+		KeyBindings.SetBinding (Notification.ManaRemoveAllMental, KeyCode.S, KeyCode.LeftShift);
 
-		SetBinding (AddEnergy, KeyCode.E);
-		SetBinding (AddAllEnergy, KeyCode.E, KeyCode.LeftShift);
-		SetBinding (RemoveEnergy, KeyCode.D);
-		SetBinding (RemoveAllEnergy, KeyCode.D, KeyCode.LeftShift);
+		KeyBindings.SetBinding (Notification.ManaAddEnergy, KeyCode.E);
+		KeyBindings.SetBinding (Notification.ManaAddAllEnergy, KeyCode.E, KeyCode.LeftShift);
+		KeyBindings.SetBinding (Notification.ManaRemoveEnergy, KeyCode.D);
+		KeyBindings.SetBinding (Notification.ManaRemoveAllEnergy, KeyCode.D, KeyCode.LeftShift);
 
-		SetBinding (AddBlood, KeyCode.R);
-		SetBinding (AddAllBlood, KeyCode.R, KeyCode.LeftShift);
-		SetBinding (RemoveBlood, KeyCode.F);
-		SetBinding (RemoveAllBlood, KeyCode.F, KeyCode.LeftShift);
+		KeyBindings.SetBinding (Notification.ManaAddBlood, KeyCode.R);
+		KeyBindings.SetBinding (Notification.ManaAddAllBlood, KeyCode.R, KeyCode.LeftShift);
+		KeyBindings.SetBinding (Notification.ManaRemoveBlood, KeyCode.F);
+		KeyBindings.SetBinding (Notification.ManaRemoveAllBlood, KeyCode.F, KeyCode.LeftShift);
 
-		SetBinding (AddAll, KeyCode.T);
-		SetBinding (RemoveAll, KeyCode.G);
+		KeyBindings.SetBinding (Notification.ManaAddAll, KeyCode.T);
+		KeyBindings.SetBinding (Notification.ManaRemoveAll, KeyCode.G);
 	}
 
-	//TODO:: Maybe abstract these to be created by a factory
+	//CONSIDER:: Maybe abstract these to be created by a factory
 	public void AddPhysical(){
 		Match.Get ().GetLocalPlayer ().mana.AddToPool (Mana.MANATYPE.PHYSICAL);
 	}
@@ -131,45 +177,5 @@ public class ContMana : Observer {
 		RemoveAllMental ();
 		RemoveAllEnergy ();
 		RemoveAllBlood ();
-	}
-
-	public void Start () {
-		dictFnToBind = new Dictionary<fnManaAction, KeyBind> ();
-		dictBindToFn = new Dictionary<KeyBind, fnManaAction> ();
-
-		InitBindings ();
-	}
-
-
-	void Update () {
-
-		foreach (KeyValuePair<KeyBind, fnManaAction> bind in dictBindToFn) {
-			if (BindingUsed (bind.Key)) {
-				//If a binding is satisfied, then activate it's function
-
-				bind.Value ();
-			}
-		}
-	}
-		
-	public void SetBinding(fnManaAction fnAction, KeyCode _key, KeyCode _keyModifier = KeyCode.None){
-
-		if (dictFnToBind.ContainsKey(fnAction)) {
-			KeyBind curBind = dictFnToBind [fnAction];
-
-			//Unbind the currently used key
-			dictBindToFn.Remove (curBind);
-		}
-		KeyBind newBind = new KeyBind (_key, _keyModifier);
-
-		if (dictBindToFn.ContainsKey (newBind)) {
-			// If the new binding is used for something else, then
-			// unbind the other thing
-			fnManaAction curAction = dictBindToFn[newBind];
-			dictFnToBind.Remove (curAction);
-		}
-
-		dictFnToBind [fnAction] = newBind;
-		dictBindToFn [newBind] = fnAction;
 	}
 }
