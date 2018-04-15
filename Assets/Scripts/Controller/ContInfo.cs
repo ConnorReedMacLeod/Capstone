@@ -10,11 +10,20 @@ public class ContInfo : Observer {
 	public bool bLocked; //TODO:: Flush out a target locking system more
 
 	public ViewInfoPanel viewInfoPanel;
+	public Action actFocus;
 
 	public override void UpdateObs(string eventType, Object target, params object[] args){
 		switch(stateInfo){
 		case StateInfo.Action:
 			switch (eventType) {
+			case Notification.TargetStart:
+				SetActionFocus(((Chr)target).arActions[(int)args[0]]);
+				break;
+
+			case Notification.TargetFinish:
+				ClearActionFocus ();
+				break;
+
 			case Notification.ActStartHover:
 				if (bLocked == false) {
 					viewInfoPanel.ShowInfoAction (((ViewAction)target).mod.arActions [(int)args [0]]);
@@ -41,6 +50,17 @@ public class ContInfo : Observer {
 
 			break;
 		}
+	}
+
+	public void SetActionFocus(Action _actFocus){
+		viewInfoPanel.ClearPanel ();
+		actFocus = _actFocus;
+		viewInfoPanel.ShowInfoAction (actFocus);
+	}
+
+	public void ClearActionFocus(){
+		actFocus = null;
+		viewInfoPanel.ClearPanel ();//TODO:: This feels like it could maybe bug
 	}
 
 	public void Start(){
