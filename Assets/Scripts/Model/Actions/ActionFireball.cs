@@ -11,10 +11,15 @@ public class ActionFireball : Action {
 		//Since the base constructor initializes this array, we can start filling it
 		arArgs [0] = new TargetArgChr ((own, tar) => own.plyrOwner != tar.plyrOwner);
 
-		arCost = new int[]{0,0,1,0,0};
+		sName = "Fireball";
+		type = ActionType.ACTIVE;
+
+		arCost = new int[]{2,1,1,4,3};
 
 		nCd = 6;
 		nRecharge = 4;
+
+		sDescription = "Throw a fireball at a target";
 
 		SetArgOwners ();
 	}

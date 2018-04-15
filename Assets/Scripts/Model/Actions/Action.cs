@@ -4,19 +4,28 @@ using UnityEngine;
 
 public class Action { //This should probably be made abstract
 
+	public enum ActionType {ACTIVE, PASSIVE, CHANNEL};
+
 	public int id;
 
 	public int nArgs;
 	public TargetArg [] arArgs;
+	public string sName;
+	public ActionType type; 
 	public int nCd;
 	public int nCurCD;
 	public int nRecharge;
+
 	public Chr chrOwner;
 
+	public bool bCharges;
+	public int nCharges;
+	public int nCurCharges;
+
 	public string sDescription;
+	public string sExtraDescription;
 
 	public int[] arCost;
-	public string sCost;
 
 	public Action(int _nArgs, Chr _chrOwner){
 		nArgs = _nArgs;

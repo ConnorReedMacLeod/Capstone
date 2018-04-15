@@ -10,7 +10,18 @@ public static class LibText {
 		{"P", (char)176},
 		{"M", (char)177},
 		{"E", (char)178},
-		{"B", (char)179}};
+		{"B", (char)179},
+		{"O", (char)180}};
+
+	//Convert a single Symbol to it's ascii char representation
+	public static char PrepSymbol(string sSym){
+		if (dictTextConversions.ContainsKey (sSym)) {
+			return dictTextConversions [sSym];
+		} else {
+			Debug.LogError ("ERROR!  " + sSym + " cannot be converted to a ascii character");
+			return (char)0;
+		}
+	}
 
 	//Convert any escaped words (using |xxx|) with their assigned ascii value
 	public static string PrepText(string sText){
