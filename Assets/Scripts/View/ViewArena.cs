@@ -39,12 +39,12 @@ public class ViewArena : Observer {
 		
     //Gets the mouse position within the Arena
 	//WARNING:: This requires the arena to be centered at 0,0 in worldspace
-	public Vector3 GetArenaPos(Vector3 pos){
+	public static Vector3 GetArenaPos(Vector3 pos){
 
 		Vector3 worldPos = Camera.main.ScreenToWorldPoint(pos);
 		//return new Vector3 (worldPos.x / fWidth, worldPos.y / fHeight, worldPos.z);//TODO:: figure out a proper z coord
 
-		Debug.Log("Click at " + new Vector3 (worldPos.x, worldPos.y, 0));
+		//Debug.Log("Click at " + new Vector3 (worldPos.x, worldPos.y, 0));
 		return new Vector3 (worldPos.x, worldPos.y, worldPos.z);
 	}
 
