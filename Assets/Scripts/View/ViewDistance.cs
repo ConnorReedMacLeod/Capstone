@@ -56,11 +56,24 @@ public class ViewDistance : MonoBehaviour {
 		return Mathf.Sqrt (Mathf.Pow (fDeltaX, 2) + Mathf.Pow (fDeltaY, 2));
 	}
 
-	public void RenderDistance(){
-		Debug.Log (Dist (v3Start, v3End) + " is dist");
-		tfDist.localScale = new Vector3 (Dist (v3Start, v3End), 0.15f, 1.0f);
+	public static float Angle(Vector3 v1, Vector3 v2){
+		float fDeltaX = v2.x - v1.x;
+		float fDeltaY = v2.y - v1.y;
 
-		this.transform.localPosition = new Vector3 ((v3End.x - v3Start.x) / 2, (v3End.y - v3Start.y), 0);
+		return Mathf.Rad2Deg * (Mathf.Atan2 (fDeltaY, fDeltaX));
+	}
+
+	public void RenderDistance(){
+		//Debug.Log (this.transform.localScale + " " + tfLine.localScale);
+		tfLine.localScale = new Vector3 (Dist (v3Start, v3End), 0.15f, 1.0f);
+
+		//this.transform.position = Vector3.zero;
+		tfLine.localPosition = new Vector3 ((v3End.x + v3Start.x) / 2, (v3End.y + v3Start.y)/2, -0.1f);
+
+		tfLine.localRotation = Quaternion.Euler (0, 0, Angle (v3Start, v3End));
+
+		txtDist.text = Dist (v3Start, v3End).ToString("F1");
+		tfDist.localPosition = new Vector3 (v3End.x, v3End.y, -0.1f);
 	}
 
 	public void SetStart(Vector3 _v3Start){
@@ -79,12 +92,23 @@ public class ViewDistance : MonoBehaviour {
 		}
 	}
 
+
+	//Undoes the image and border scaling set by the parent
+	public void Unscale(){
+		transform.localScale = new Vector3
+			(transform.localScale.x / transform.parent.localScale.x,
+				transform.localScale.y / transform.parent.localScale.y,
+				transform.localScale.z / transform.parent.localScale.z);
+	}
+		
 	// Use this for initialization
 	public void Start () {
 		if (bStarted == false) {
 			bStarted = true;
 
 			Init ();
+			Unscale ();
+			transform.localPosition = Vector3.zero;
 			fMinDist = 1.0f;
 		}
 	}
