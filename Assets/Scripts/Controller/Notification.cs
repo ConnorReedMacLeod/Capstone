@@ -15,6 +15,9 @@ public class Notification {
 	public const string ActStopHover = "act.stophover";
 	public const string ClickArena = "click.arena";
 
+	//Global Mouse Events
+	public const string MouseHeldStop = "mouse.heldstop";
+
 	//Targetting Events
 	public const string TargetFinish = "target.finish";
 	public const string TargetStart = "target.start";
