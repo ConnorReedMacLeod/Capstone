@@ -26,13 +26,10 @@ public static class LibText {
 	//Convert any escaped words (using |xxx|) with their assigned ascii value
 	public static string PrepText(string sText){
 
-		StringBuilder test = new StringBuilder (sText);
-
 		string[] arsComponents = sText.Split ('|');
 
 		//Skip over the first section of text which isn't escaped
 		int i = 1;
-		Debug.Log ("Length of first is " + arsComponents [0].Length);
 
 
 		while (i < arsComponents.Length) {

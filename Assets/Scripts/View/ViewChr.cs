@@ -42,13 +42,13 @@ public class ViewChr : Observer {
 		}
 	}
 
-    //Undoes the image and border scaling set by the parent
+    /*//Undoes the image and border scaling set by the parent
     public void Unscale(){
 		transform.localScale = new Vector3
 			(transform.localScale.x / transform.parent.localScale.x,
 				transform.localScale.y / transform.parent.localScale.y,
 				transform.localScale.z / transform.parent.localScale.z);
-	}
+	}*/
 
     //Sets the material used for the character's portrait
 	void setPortrait(string _sName){
@@ -76,12 +76,7 @@ public class ViewChr : Observer {
 
     //Updates the character's position to match the model's position
 	void UpdatePos(){
-        //Checks if character position has changed
-		if (v3LastPos != mod.v3Pos) {
-			v3LastPos = mod.v3Pos;
-			//TODO:: Will probably update this to be some animation
-			transform.localPosition = v3LastPos;
-		}
+		transform.position = mod.v3Pos;
 	}
 
     //Spawns the ActionWheel

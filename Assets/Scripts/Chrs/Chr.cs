@@ -15,7 +15,14 @@ public class Chr : Subject {
 		SELECTED,                   //Initial selection of the character
 		TARGGETING,                 //Targetting of character actions
 		UNSELECTED                  //Default character state
-	}
+	};
+
+	public enum SIZE{
+		SMALL,
+		MEDIUM,
+		LARGE,
+		GIANT
+	};
 
 	Arena arena;                    //The field of play
 
@@ -40,6 +47,9 @@ public class Chr : Subject {
 	public int nUsingAction;        //The currently selected action for the character, either targetting or having been queued
 	public bool bSetAction;         //Whether or not the character has an action queued
 
+	public static float[] arfSize = { 0.5f, 0.75f, 1.25f, 2.0f };
+	public SIZE size;
+	public float fRad;
 
 	public ViewChr view;
 
@@ -67,6 +77,7 @@ public class Chr : Subject {
 
     //Sets the character's position
     public void SetPosition(Vector3 _v3Pos){
+		Start ();
         v3Pos = _v3Pos;
         NotifyObs();
     }
@@ -107,6 +118,11 @@ public class Chr : Subject {
 		return (bSetAction && arActions [nUsingAction].VerifyLegal ());
 	}
 
+	public void SetSize(SIZE _size){
+		size = _size;
+		fRad = arfSize [(int)size];
+	}
+
     //Sets character's selected action to Rest
 	public void SetRestAction(){
 		Debug.Log ("Had to reset to a rest action");
@@ -130,10 +146,11 @@ public class Chr : Subject {
 
 	// Used to initiallize information fields of the Chr
 	// Call this after creating to set information
-	public void InitChr(Player _plyrOwner, int _id, string _sName){
+	public void InitChr(Player _plyrOwner, int _id, string _sName, SIZE _size = SIZE.MEDIUM){
 		plyrOwner = _plyrOwner;
 		id = _id;
 		sName = _sName;
+		SetSize (_size);
 
 		SetActions ();//TODO:: move this somewhere else at some point
 

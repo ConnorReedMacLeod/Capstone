@@ -87,8 +87,9 @@ public class Match : MonoBehaviour {
 		}
 		arChrs [player.id] [id] = newChr;
 
-		//Initially set a random position for the new character *** CHANGE THIS AT SOME POINT ***
-		newChr.SetPosition(Random.Range(-10.0f, 10.0f), Random.Range(-5.0f, 5.0f));
+	 
+		//newChr.SetPosition(Random.Range(-10.0f, 10.0f), arena.arfStartingPosY[id]);
+		arena.InitPlaceUnit(newChr);
 
 	}
 
@@ -123,6 +124,8 @@ public class Match : MonoBehaviour {
 		arena = GetComponentInChildren<Arena> ();
 		timeline = GetComponentInChildren<Timeline> ();
 		controller = GetComponentInChildren<Controller> ();
+
+		arena.Start ();
 
 		timeline.Start ();
 
