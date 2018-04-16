@@ -9,6 +9,7 @@ public class ContArena : Observer {
 	public Vector3 v3HeldPos;
 	public bool bHeldArena;
 	public float fHeldDelay; //Time until it counts as holding
+	public float fDistDelay; //Minimum distance before Distance is immediately displayed
 
 	public GameObject pfDistance;
 	public bool bDistanceShown;
@@ -18,7 +19,8 @@ public class ContArena : Observer {
 
 	// Use this for initialization
 	void Start () {
-		fHeldDelay = 0.5f;
+		fHeldDelay = 0.2f;
+		fDistDelay = 1.0f;
 	}
 
 	public override void UpdateObs(string eventType, Object target, params object[] args){
@@ -56,6 +58,7 @@ public class ContArena : Observer {
 
 		viewDistance.Start ();
 		viewDistance.SetStart (v3Start);
+		viewDistance.SetEnd (ViewArena.GetArenaPos(Input.mousePosition));
 
 	}
 
@@ -64,9 +67,9 @@ public class ContArena : Observer {
 			return;
 		Debug.Log ("DespawnDistance");
 
-		//Destroy (goDistance);
-		//viewDistance = null;
-		//goDistance = null;
+		Destroy (goDistance);
+		viewDistance = null;
+		goDistance = null;
 
 		bDistanceShown = false;
 
@@ -75,7 +78,10 @@ public class ContArena : Observer {
 	void Update () {
 		if (bHeldArena) {
 			fTimeMouseHeld += Time.deltaTime;
-			if (bDistanceShown == false && fTimeMouseHeld >= fHeldDelay) {
+			if (bDistanceShown == false && 
+				((fTimeMouseHeld >= fHeldDelay) || 
+					(ViewDistance.Dist(v3HeldPos, ViewArena.GetArenaPos(Input.mousePosition)) >= fDistDelay))) {
+				//Check if either we've been holding the mouse long enough, or we've moved the mouse far enough
 				SpawnDistance (v3HeldPos);
 			}
 		}
