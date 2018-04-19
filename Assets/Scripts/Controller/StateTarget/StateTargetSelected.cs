@@ -39,11 +39,10 @@ public class StateTargetSelected : StateTarget {
 		// but we want to reinitiallize the action wheel
 	}
 
-	override public void OnClickAct(Chr chr, int idAct){
-		//Debug.Log (chr + " is using action " + idAct);
+	override public void OnClickAct(Action act){
 
 		contTarg.selected.Targetting ();
-		contTarg.selected.nUsingAction = idAct;
+		contTarg.selected.nUsingAction = act.id;
 
 		contTarg.ResetTar ();
 		contTarg.SetTargetArgState ();

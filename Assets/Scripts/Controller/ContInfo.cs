@@ -25,15 +25,16 @@ public class ContInfo : Observer {
 				break;
 
 			case Notification.ActStartHover:
+				
 				if (bLocked == false) {
-					viewInfoPanel.ShowInfoAction (((ViewAction)target).mod.arActions [(int)args [0]]);
+					viewInfoPanel.ShowInfoAction (((ViewAction)target).mod);
 				}
 
 				break;
 
 			case Notification.ActStopHover:
 				if (bLocked == false &&
-				    ((ViewAction)target).mod.arActions [(int)args [0]] == viewInfoPanel.viewInfoAction.mod) {
+				    ((ViewAction)target).mod == viewInfoPanel.viewInfoAction.mod) {
 					//When we stop hovering over the thing we're displaying, stop displaying it
 					viewInfoPanel.ClearPanel ();
 				}

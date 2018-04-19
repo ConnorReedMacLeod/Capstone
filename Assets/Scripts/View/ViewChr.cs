@@ -51,8 +51,23 @@ public class ViewChr : Observer {
 
 		mousehandler.SetNtfStartHold (Notification.ClickChr);
 		mousehandler.SetNtfStartDrag (Notification.ClickChr);
+
+		mousehandler.SetReleaseOtherCallback (ReleaseOverOther);
 	}
 
+	public void ReleaseOverOther(GameObject other){
+
+		// Check if the other object has a ViewAction component
+		ViewAction viewAction = other.GetComponent<ViewAction>();
+		if (viewAction != null) {
+			// Then use the action
+			// TODO:: Use the action
+			return;
+		}
+
+		// If the object has none of the desired components
+		// TODO:: Need to make us unselect the current character I guess
+	}
 
     /*//Undoes the image and border scaling set by the parent
     public void Unscale(){
