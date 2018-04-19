@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Chr))]
+[RequireComponent (typeof(MouseHandler))]
 public class ViewChr : Observer {
 
 	bool bStarted;                          //Confirms the Start() method has executed
 
 	public Chr mod;                   //Character model
+	public MouseHandler mousehandler;
 
 	Chr.STATESELECT lastStateSelect;  //Tracks previous character state (SELECTED, TARGETTING, UNSELECTED)
 	Vector3 v3LastPos;                      //Tracks previous character position against the model position
@@ -31,6 +33,7 @@ public class ViewChr : Observer {
 			InitModel ();
 			//Unscale ();
 			lastStateSelect = Chr.STATESELECT.UNSELECTED;
+			InitMouseHandler ();
 		}
     }
 
@@ -41,6 +44,15 @@ public class ViewChr : Observer {
 			GetComponentsInChildren<Transform>()[indexTransformPortrait].localScale = new Vector3 (-1, 1, 1);
 		}
 	}
+
+	public void InitMouseHandler(){
+		mousehandler = GetComponent<MouseHandler> ();
+		mousehandler.SetOwner (this);
+
+		mousehandler.SetNtfStartHold (Notification.ClickChr);
+		mousehandler.SetNtfStartDrag (Notification.ClickChr);
+	}
+
 
     /*//Undoes the image and border scaling set by the parent
     public void Unscale(){
@@ -107,7 +119,7 @@ public class ViewChr : Observer {
 		if (lastStateSelect != mod.stateSelect) {
 			switch (mod.stateSelect) {
             
-            //On switch to selecteds, spawns the ActionWheel and highlights character border
+            //On switch to selected, spawns the ActionWheel and highlights character border
 			case Chr.STATESELECT.SELECTED:
 				SetBorder ("ChrBorderSelected");
 				AddActionWheel ();
@@ -145,10 +157,5 @@ public class ViewChr : Observer {
 		UpdatePos();
 		UpdateStatus();
 	}
-
-    //Notifies application when the character view is clicked on
-	public void OnMouseDown(){
-		//TODO:: Change to actually produce the coordinates of the click
-		Controller.Get().NotifyObs(Notification.ClickChr, this, Vector3.zero);
-	}
+		
 }

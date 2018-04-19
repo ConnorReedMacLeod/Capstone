@@ -120,7 +120,7 @@ public class ViewDistance : MonoBehaviour {
 			//For now, always just follow the mouse
 			//TODO:: Latch on to Chrs
 			//TODO:: Don't go off the edge (Can have a last valid point vector3)
-			SetEnd(ViewArena.GetArenaPos(Input.mousePosition));
+			SetEnd(LibView.GetMouseLocation());
 		}
 	}
 }
