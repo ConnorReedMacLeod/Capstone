@@ -4,19 +4,19 @@ using UnityEngine;
 
 //Provides standard types of events to be sent from
 //View objects to controller
+//TODO:: Standardize some of these string values
 public class Notification {
 
 	public const string Default = "default";
 
 	//Character/Action Events
-	public const string ClickChr = "click.chr";
-	public const string ClickAct = "click.act";
+	public const string ClickChr = "chr.click";
+	public const string ClickAct = "act.click";
 	public const string ActStartHover = "act.starthover";
 	public const string ActStopHover = "act.stophover";
-	public const string ClickArena = "click.arena";
-
-	//Global Mouse Events
-	public const string MouseHeldStop = "mouse.heldstop";
+	public const string ClickArena = "arena.click";
+	public const string ArenaStartDrag = "arena.startdrag";
+	public const string ArenaStopDrag = "arena.stopdrag";
 
 	//Targetting Events
 	public const string TargetFinish = "target.finish";
