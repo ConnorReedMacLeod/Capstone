@@ -21,7 +21,7 @@ public class StateTarget {
 
 	}
 
-	public virtual void OnClickAct(Chr chr, int idAct){
+	public virtual void OnClickAct(Action act){
 
 	}
 

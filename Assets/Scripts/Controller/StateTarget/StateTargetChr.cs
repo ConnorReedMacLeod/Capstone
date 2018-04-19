@@ -47,9 +47,9 @@ public class StateTargetChr : StateTarget {
 
 	}
 
-	override public void OnClickAct(Chr chr, int idAct){
+	override public void OnClickAct(Action act){
 		// shouldn't be possible since no actions should be out
-		Debug.LogError("SOMEHOW CLICKED AN ACTION WHILE TRYING TO TARGET A CHR");
+		Debug.LogError("SOMEHOW CLICKED AN ACTION WHILE TRYING TO TARGET A POS");
 	}
 		
 	public StateTargetChr(ContTarget _contTarg): base(_contTarg){

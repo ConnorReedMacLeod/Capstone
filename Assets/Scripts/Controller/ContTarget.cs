@@ -22,7 +22,7 @@ public class ContTarget : Observer {
 
 		switch (eventType) {
 		case Notification.ClickAct:
-			curState.OnClickAct(((ViewAction)target).mod, (int)args[0]);
+			curState.OnClickAct(((ViewAction)target).mod);
 			break;
 		case Notification.ClickArena:
 			Vector3 clickPos = (Vector3)args [0];
@@ -115,6 +115,7 @@ public class ContTarget : Observer {
 	}
 
 	public void SetState (StateTarget newState){
+		Debug.Log ("Now in state: " + newState);
 		if (curState != null) {
 			curState.OnLeave ();
 		}

@@ -11,7 +11,10 @@ public class MouseHandler : MonoBehaviour {
 	public STATELEFT stateLeft;
 
 	public MonoBehaviour owner; //TODO:: Consider if this is even needed
+	public System.Type typeOwner;
+
 	public delegate void fnCallback(); // allow owner to set a function to let it know when an event has happend
+	public delegate void fnCallbackGo(GameObject go); // callback for passing a single Gameobject
 
 	public bool bDown; // If the mouse is currently down
 	public bool bHeld; // If the mouse has been held down for a while
@@ -41,6 +44,9 @@ public class MouseHandler : MonoBehaviour {
 	public fnCallback fnMouseStartHover;
 	public string ntfMouseStopHover;
 	public fnCallback fnMouseStopHover;
+
+	//public string ntfMouseRleaseOther;  //TODO:: Consider if a notification for this is even needed
+	public fnCallbackGo fnMouseReleaseOther;
 
 	// Use this for initialization
 	void Start () {
@@ -98,6 +104,23 @@ public class MouseHandler : MonoBehaviour {
 			}
 
 			break;
+		}
+
+		// Check if we've dragged off of our object then released on another object
+		if (Input.GetMouseButtonUp (0)) {
+
+			bDown = false;
+			bHeld = false;
+			v3Down = Vector3.zero;
+			fTimeUp = 0.0f;
+
+			GameObject goReleasedOver = LibView.GetObjectUnderMouse ();
+			if (this.gameObject != goReleasedOver) {
+				// Then we've released the mouse over a new object after dragging
+				if (fnMouseReleaseOther != null) {
+					fnMouseReleaseOther (goReleasedOver);
+				}
+			}
 		}
 	}
 
@@ -182,6 +205,7 @@ public class MouseHandler : MonoBehaviour {
 		if (fnMouseStartHover != null) {
 			fnMouseStartHover ();
 		}
+
 		SendNotification (ntfMouseStartHover);
 	}
 
@@ -201,6 +225,7 @@ public class MouseHandler : MonoBehaviour {
 
 	public void SetOwner(MonoBehaviour _owner){
 		owner = _owner;
+		typeOwner = owner.GetType ();
 	}
 		
 	// Owner scripts should set notifications for the events they want to support
@@ -235,5 +260,9 @@ public class MouseHandler : MonoBehaviour {
 	public void SetNtfStopHover(string _ntfMouseStopHover, fnCallback _fnMouseStopHover = null){
 		ntfMouseStopHover = _ntfMouseStopHover;
 		fnMouseStopHold = _fnMouseStopHover;
+	}
+
+	public void SetReleaseOtherCallback(fnCallback _fnMouseReleaseOther){
+		fnMouseReleaseOther = _fnMouseReleaseOther;
 	}
 }
