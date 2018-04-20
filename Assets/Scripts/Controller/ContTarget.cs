@@ -10,9 +10,7 @@ public class ContTarget : Observer {
 
 	public int nTarCount;
 
-	//TODO:: Set up helper methods to make retrieving the current action and current target arg easy
-	//       Need to consider what happens if they don't exist though
-
+	//TODO RIGHT NOW:: Change this so that it only passes along an updateObs call to the state it holds
 	override public void UpdateObs(string eventType, Object target, params object[] args){
 
 		if (curState == null) {
@@ -21,7 +19,7 @@ public class ContTarget : Observer {
 		}
 
 		switch (eventType) {
-		case Notification.ClickAct:
+		case Notification.ReleaseChrOverAct:
 			curState.OnClickAct(((ViewAction)target).mod);
 			break;
 		case Notification.ClickArena:

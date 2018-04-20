@@ -49,8 +49,9 @@ public class ViewChr : Observer {
 		mousehandler = GetComponent<MouseHandler> ();
 		mousehandler.SetOwner (this);
 
-		mousehandler.SetNtfStartHold (Notification.ClickChr);
-		mousehandler.SetNtfStartDrag (Notification.ClickChr);
+		mousehandler.SetNtfStartHold (Notification.ChrStartHold);
+
+		mousehandler.SetNtfStopHold (Notification.ChrStopHold);
 
 		mousehandler.SetReleaseOtherCallback (ReleaseOverOther);
 	}
@@ -61,12 +62,12 @@ public class ViewChr : Observer {
 		ViewAction viewAction = other.GetComponent<ViewAction>();
 		if (viewAction != null) {
 			// Then use the action
-			// TODO:: Use the action
+			Controller.Get().NotifyObs(Notification.ReleaseChrOverAct, this, viewAction);
 			return;
 		}
 
 		// If the object has none of the desired components
-		// TODO:: Need to make us unselect the current character I guess
+		Controller.Get().NotifyObs(Notification.ReleaseChrOverNone, this, null);
 	}
 
     /*//Undoes the image and border scaling set by the parent
@@ -133,10 +134,16 @@ public class ViewChr : Observer {
 		//Checks if character status has changed
 		if (lastStateSelect != mod.stateSelect) {
 			switch (mod.stateSelect) {
-            
-            //On switch to selected, spawns the ActionWheel and highlights character border
+
+			//On switch to selection, highlight the border
 			case Chr.STATESELECT.SELECTED:
 				SetBorder ("ChrBorderSelected");
+
+				break;
+            
+            //On switch to choosing action, spawns the ActionWheel
+			case Chr.STATESELECT.CHOOSINGACT:
+				
 				AddActionWheel ();
 				break;
 
@@ -146,13 +153,16 @@ public class ViewChr : Observer {
 				break;
 
             //On switch to unselected, make changes depending on previous state
-			case Chr.STATESELECT.UNSELECTED:
-                //If previously SELECTED, unhighlights character border and despawns ActionWheel
-				if (lastStateSelect == Chr.STATESELECT.SELECTED) {
-					SetBorder ("ChrBorder");
+			case Chr.STATESELECT.IDLE:
+                //If previously choosing an action, despawn the ActionWheel
+				if (lastStateSelect == Chr.STATESELECT.CHOOSINGACT) {
 					RemoveActionWheel ();
-                //If previously TARGETTING, unhilights character border
+
 				} else if (lastStateSelect == Chr.STATESELECT.TARGGETING) {
+					//Nothing needs to be done (currently, this may change)
+
+				} else if (lastStateSelect == Chr.STATESELECT.SELECTED) {
+					//Then unhighlight the border
 					SetBorder ("ChrBorder");
 				}
 				break;
