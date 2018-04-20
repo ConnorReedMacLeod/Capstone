@@ -7,6 +7,27 @@ public class StateTargetPos : StateTarget {
 
 	TargetArgPos tarArg;
 
+	public void UpdateObs(string eventType, Object target, params object[] args){
+
+		switch (eventType) {
+		case Notification.ClickChr: // If you click on a character, then you still want the location under them
+		case Notification.ClickArena:
+			// Try targetting under the mouse
+			if (tarArg.setTar (LibView.GetMouseLocation ())) {
+				// If the target location is acceptable
+
+				//move to next target
+				contTarg.IncTar ();
+
+				contTarg.SetTargetArgState ();
+			} else {
+				// The location is not valid
+				Debug.Log("You can't target that position");
+			}
+			break;
+		}
+	}
+
 	override public void OnEnter(){
 
 		Debug.Assert(contTarg.selected != null);
@@ -19,39 +40,6 @@ public class StateTargetPos : StateTarget {
 	}
 
 	//TODO:: set up some general 'back' method for targetting
-
-	override public void OnClickArena(Vector3 pos){
-
-		if (tarArg.setTar (pos)) {
-
-			//move to next target
-			contTarg.IncTar ();
-
-			contTarg.SetTargetArgState ();
-		} else {
-			
-		}
-	}
-
-	override public void OnClickChr(Chr chr, Vector3 pos){
-		//TODO:: this was just copied from above - prolly don't do that...
-		if (tarArg.setTar (pos)) {
-
-			//move to next target
-			contTarg.IncTar ();
-
-			contTarg.SetTargetArgState ();
-		} else {
-			
-		}
-
-
-	}
-
-	override public void OnClickAct(Action act){
-		// shouldn't be possible since no actions should be out
-		Debug.LogError("SOMEHOW CLICKED AN ACTION WHILE TRYING TO TARGET A POS");
-	}
 
 	public StateTargetPos(ContTarget _contTarg): base(_contTarg){
 

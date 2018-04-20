@@ -13,8 +13,12 @@ public static class LibView {
 		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 		RaycastHit hit;
 
-		if (Physics.Raycast (ray, hit)) {
+		if (Physics.Raycast (ray, out hit)) {
+			// If there's a gameobject under the mouse, return it
 			return hit.collider.gameObject;
 		}
+
+		// Otherwise, return false
+		return null;
 	}
 }

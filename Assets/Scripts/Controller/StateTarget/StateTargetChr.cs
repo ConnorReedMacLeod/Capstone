@@ -18,8 +18,7 @@ public class StateTargetChr : StateTarget {
 
 	}
 
-	override public void OnClickArena(Vector3 pos){
-
+	public void StopTargetting(){
 		//clear any targetting 
 		//TODO:: maybe only reset the targets to whatever was selected before?
 		contTarg.selected.arActions [contTarg.selected.nUsingAction].Reset ();
@@ -29,6 +28,18 @@ public class StateTargetChr : StateTarget {
 		contTarg.selected = null;
 
 		contTarg.SetState (new StateTargetIdle (contTarg));
+	}
+
+	override public void OnReleaseChrOverNone(){
+
+		StopTargetting ();
+
+	}
+
+	override public void OnClickArena(Vector3 pos){
+	
+		StopTargetting ();
+	
 	}
 
 	override public void OnClickChr(Chr chr, Vector3 pos){
@@ -45,11 +56,6 @@ public class StateTargetChr : StateTarget {
 		}
 
 
-	}
-
-	override public void OnClickAct(Action act){
-		// shouldn't be possible since no actions should be out
-		Debug.LogError("SOMEHOW CLICKED AN ACTION WHILE TRYING TO TARGET A POS");
 	}
 		
 	public StateTargetChr(ContTarget _contTarg): base(_contTarg){

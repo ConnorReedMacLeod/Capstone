@@ -31,7 +31,6 @@ public class ViewAction : MonoBehaviour {
 		mousehandler = GetComponent<MouseHandler> ();
 		mousehandler.SetOwner (this);
 
-		mousehandler.SetNtfClick (Notification.ClickAct);//TODO:: Remove this
 		mousehandler.SetNtfStartHover (Notification.ActStartHover);
 		mousehandler.SetNtfStopHover (Notification.ActStopHover);
 	}

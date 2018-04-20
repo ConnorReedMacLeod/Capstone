@@ -12,9 +12,10 @@ public class Chr : Subject {
 	};
 
 	public enum STATESELECT{
-		SELECTED,                   //Initial selection of the character
+		SELECTED,                   //Selected a character (to see status effects, measure distances, etc.)
+		CHOOSINGACT,				//Choosing an action to perform
 		TARGGETING,                 //Targetting of character actions
-		UNSELECTED                  //Default character state
+		IDLE                 		//Default character state
 	};
 
 	public enum SIZE{
@@ -93,6 +94,11 @@ public class Chr : Subject {
 		NotifyObs ();
 	}
 
+	public void ChoosingAction(){
+		stateSelect = STATESELECT.CHOOSINGACT;
+		NotifyObs ();
+	}
+
     //Sets character state to targetting
 	public void Targetting(){
 		stateSelect = STATESELECT.TARGGETING;
@@ -100,8 +106,8 @@ public class Chr : Subject {
 	}
 
     //Set character state to unselected
-	public void Deselect (){
-		stateSelect = STATESELECT.UNSELECTED;
+	public void Idle (){
+		stateSelect = STATESELECT.IDLE;
 		NotifyObs ();
 	}
 

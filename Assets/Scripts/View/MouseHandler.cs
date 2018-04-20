@@ -100,6 +100,9 @@ public class MouseHandler : MonoBehaviour {
 				if (fnMouseStartDrag != null) {
 					fnMouseStartDrag ();
 				}
+				if (stateLeft != STATELEFT.HELD) {
+					SendNotification (ntfMouseStartHold);
+				}
 				SendNotification (ntfMouseStartDrag);
 			}
 
@@ -121,6 +124,7 @@ public class MouseHandler : MonoBehaviour {
 					fnMouseReleaseOther (goReleasedOver);
 				}
 			}
+			//Otherwise we've released the mouse over ourselves, so we'll catch this with StopDrag
 		}
 	}
 
@@ -262,7 +266,7 @@ public class MouseHandler : MonoBehaviour {
 		fnMouseStopHold = _fnMouseStopHover;
 	}
 
-	public void SetReleaseOtherCallback(fnCallback _fnMouseReleaseOther){
+	public void SetReleaseOtherCallback(fnCallbackGo _fnMouseReleaseOther){
 		fnMouseReleaseOther = _fnMouseReleaseOther;
 	}
 }
