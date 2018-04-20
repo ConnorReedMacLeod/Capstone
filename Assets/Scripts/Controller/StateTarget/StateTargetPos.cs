@@ -7,7 +7,7 @@ public class StateTargetPos : StateTarget {
 
 	TargetArgPos tarArg;
 
-	public void UpdateObs(string eventType, Object target, params object[] args){
+	public override void UpdateObs(string eventType, Object target, params object[] args){
 
 		switch (eventType) {
 		case Notification.ClickChr: // If you click on a character, then you still want the location under them

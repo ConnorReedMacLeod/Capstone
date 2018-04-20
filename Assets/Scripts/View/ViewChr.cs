@@ -32,7 +32,7 @@ public class ViewChr : Observer {
 			// Find our model
 			InitModel ();
 			//Unscale ();
-			lastStateSelect = Chr.STATESELECT.UNSELECTED;
+			lastStateSelect = Chr.STATESELECT.IDLE;
 			InitMouseHandler ();
 		}
     }

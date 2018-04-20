@@ -9,7 +9,7 @@ using UnityEngine;
 public class StateTargetIdle : StateTarget {
 
 
-	public void UpdateObs(string eventType, Object target, params object[] args){
+	public override void UpdateObs(string eventType, Object target, params object[] args){
 
 		switch (eventType) {
 		case Notification.ClickChr:

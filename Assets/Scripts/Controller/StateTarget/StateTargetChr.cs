@@ -7,6 +7,32 @@ public class StateTargetChr : StateTarget {
 
 	TargetArgChr tarArg;
 
+
+	public override void UpdateObs(string eventType, Object target, params object[] args){
+
+		switch (eventType) {
+		case Notification.ClickArena:
+			StopTargetting ();
+
+			break;
+
+		case Notification.ChrStopHold:
+		case Notification.ClickChr:
+			if (tarArg.setTar (((ViewChr)target).mod)) {
+				Debug.Log ("Target successfully set to " + ((ViewChr)target).mod);
+
+				//move to next target
+				contTarg.IncTar ();
+
+				contTarg.SetTargetArgState ();
+			} else {
+				Debug.Log (((ViewChr)target).mod + " is not a valid target");
+			}
+			break;
+		}
+
+	}
+
 	override public void OnEnter(){
 
 		Debug.Assert(contTarg.selected != null);
@@ -23,40 +49,9 @@ public class StateTargetChr : StateTarget {
 		//TODO:: maybe only reset the targets to whatever was selected before?
 		contTarg.selected.arActions [contTarg.selected.nUsingAction].Reset ();
 
-		contTarg.selected.Deselect();
-
-		contTarg.selected = null;
-
 		contTarg.SetState (new StateTargetIdle (contTarg));
 	}
 
-	override public void OnReleaseChrOverNone(){
-
-		StopTargetting ();
-
-	}
-
-	override public void OnClickArena(Vector3 pos){
-	
-		StopTargetting ();
-	
-	}
-
-	override public void OnClickChr(Chr chr, Vector3 pos){
-
-		if (tarArg.setTar (chr)) {
-			Debug.Log ("Target successfully set to " + chr);
-
-			//move to next target
-			contTarg.IncTar ();
-
-			contTarg.SetTargetArgState ();
-		} else {
-			Debug.Log (chr + " is not a valid target");
-		}
-
-
-	}
 		
 	public StateTargetChr(ContTarget _contTarg): base(_contTarg){
 

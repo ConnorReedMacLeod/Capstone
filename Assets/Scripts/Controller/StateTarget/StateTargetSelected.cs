@@ -5,7 +5,7 @@ using UnityEngine;
 public class StateTargetSelected : StateTarget {
 
 
-	public void UpdateObs(string eventType, Object target, params object[] args){
+	public override void UpdateObs(string eventType, Object target, params object[] args){
 
 		switch (eventType) {
 		case Notification.ArenaStartDrag:
@@ -21,7 +21,9 @@ public class StateTargetSelected : StateTarget {
 			contTarg.selected.Idle (); // Need to deselect our current character first
 			contTarg.selected = ((ViewChr)target).mod;
 
-			contTarg.SetState(new StateTargetSelected(contTarg);
+			contTarg.SetState (new StateTargetSelected (contTarg));
+
+			break;
 		}
 	}
 
