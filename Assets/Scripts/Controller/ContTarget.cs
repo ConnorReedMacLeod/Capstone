@@ -10,31 +10,10 @@ public class ContTarget : Observer {
 
 	public int nTarCount;
 
-	//TODO RIGHT NOW:: Change this so that it only passes along an updateObs call to the state it holds
+
 	override public void UpdateObs(string eventType, Object target, params object[] args){
-
-		if (curState == null) {
-			Debug.LogError ("CONTTARGET HAS NO STATE");
-			Debug.Assert (false);
-		}
-
-		switch (eventType) {
-		case Notification.ReleaseChrOverAct:
-			curState.OnClickAct(((ViewAction)target).mod);
-			break;
-		case Notification.ClickArena:
-			Vector3 clickPos = (Vector3)args [0];
-			curState.OnClickArena (clickPos);
-			break;
-
-		case Notification.ClickChr:
-			curState.OnClickChr (((ViewChr)target).mod, (Vector3)args[0]);
-			break;
-
-		default:
-			//Assume this notification isn't relevent for this controller
-			break;
-		}
+		// Just pass along the update information to our current state - it'll decide what to do
+		curState.UpdateObs (eventType, target, args);
 
 	}
 
@@ -61,7 +40,7 @@ public class ContTarget : Observer {
 			//Then we've cancelled the targetting action so go back to... idle?
 			selected.bSetAction = false;
 			selected.nUsingAction = -1;
-			selected.Deselect ();
+			selected.Idle ();
 
 			SetState (new StateTargetIdle (this));
 
@@ -72,7 +51,7 @@ public class ContTarget : Observer {
 			//Then we've filled of the targetting arguments
 
 			selected.bSetAction = true;
-			selected.Deselect ();
+			selected.Idle ();
 
 			// Can now go back idle and wait for the next targetting
 			SetState (new StateTargetIdle (this));
@@ -101,7 +80,7 @@ public class ContTarget : Observer {
 				break;
 
 			default:
-				newState = new StateTarget(this);
+
 				Debug.LogError(sArgType + " is not a recognized ArgType!");
 				return;
 			}

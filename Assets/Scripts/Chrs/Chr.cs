@@ -179,7 +179,7 @@ public class Chr : Subject {
 			arActions = new Action[nActions];
 			nUsingAction = -1;
 
-			stateSelect = STATESELECT.UNSELECTED;
+			stateSelect = STATESELECT.IDLE;
 		}
 
 	}
