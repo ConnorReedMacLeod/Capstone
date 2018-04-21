@@ -36,6 +36,7 @@ public class KeyBindings : MonoBehaviour{
 			if (instance == null){
 				Debug.LogError("ERROR!  CONTROLLER HAS NO KEYBINDINGS COMPONENT!");
 			}
+			instance.Start ();
 		}
 		return instance;
 	}

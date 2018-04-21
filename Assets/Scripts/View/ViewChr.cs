@@ -49,6 +49,9 @@ public class ViewChr : Observer {
 		mousehandler = GetComponent<MouseHandler> ();
 		mousehandler.SetOwner (this);
 
+		mousehandler.SetNtfClick (Notification.ClickChr);
+		mousehandler.SetNtfDoubleClick (Notification.ClickChr);
+
 		mousehandler.SetNtfStartHold (Notification.ChrStartHold);
 
 		mousehandler.SetNtfStopHold (Notification.ChrStopHold);
@@ -62,6 +65,7 @@ public class ViewChr : Observer {
 		ViewAction viewAction = other.GetComponent<ViewAction>();
 		if (viewAction != null) {
 			// Then use the action
+			Debug.Log("Sending ViewChr event from " + this.mod.sName);
 			Controller.Get().NotifyObs(Notification.ReleaseChrOverAct, this, viewAction);
 			return;
 		}
@@ -126,6 +130,7 @@ public class ViewChr : Observer {
 		viewActionWheel = null;
 	}
 
+	//TODO:: Make this a state machine
     //Updates the character's state (SELECTED, TARGETTING, UNSELECTED)
 	void UpdateStatus(){
 		//Refuses to accept udpates until after initialized
@@ -137,13 +142,16 @@ public class ViewChr : Observer {
 
 			//On switch to selection, highlight the border
 			case Chr.STATESELECT.SELECTED:
+				if (lastStateSelect == Chr.STATESELECT.CHOOSINGACT) {
+					RemoveActionWheel ();
+				}
 				SetBorder ("ChrBorderSelected");
 
 				break;
             
             //On switch to choosing action, spawns the ActionWheel
 			case Chr.STATESELECT.CHOOSINGACT:
-				
+				SetBorder ("ChrBorder");
 				AddActionWheel ();
 				break;
 

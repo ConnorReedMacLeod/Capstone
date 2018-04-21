@@ -11,6 +11,7 @@ public class StateTargetChooseAction : StateTarget {
 		switch (eventType) {
 		case Notification.ReleaseChrOverAct:
 			// Then we've dragged from a Chr to an Action - start targetting with that action
+
 			Debug.Assert (((ViewChr)target).mod == contTarg.selected);
 			contTarg.selected.Targetting ();
 			contTarg.selected.nUsingAction = ((ViewAction)args[0]).id;
