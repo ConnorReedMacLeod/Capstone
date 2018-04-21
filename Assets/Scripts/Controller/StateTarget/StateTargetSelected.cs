@@ -24,6 +24,14 @@ public class StateTargetSelected : StateTarget {
 			contTarg.SetState (new StateTargetSelected (contTarg));
 
 			break;
+
+		case Notification.ChrStartHold:
+			// Then we've started to hold/drag this character in preparation for choosing an action
+			contTarg.selected.Idle();
+			contTarg.selected = ((ViewChr)target).mod;
+
+			contTarg.SetState (new StateTargetChooseAction (contTarg));
+			break;
 		}
 	}
 
