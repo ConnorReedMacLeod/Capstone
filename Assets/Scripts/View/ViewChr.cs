@@ -80,7 +80,6 @@ public class ViewChr : Observer {
 		ViewAction viewAction = other.GetComponent<ViewAction>();
 		if (viewAction != null) {
 			// Then use the action
-			Debug.Log("Sending ViewChr event from " + this.mod.sName);
 			Controller.Get().NotifyObs(Notification.ReleaseChrOverAct, this, viewAction);
 			return;
 		}

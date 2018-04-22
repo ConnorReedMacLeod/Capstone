@@ -113,7 +113,6 @@ public class MouseHandler : MonoBehaviour {
 
 			// Check if we've dragged off of our object then released on another object
 			if (Input.GetMouseButtonUp (0)) {
-				Debug.Log ("Released mouse somewhere while dragging");
 
 				GameObject goReleasedOver = LibView.GetObjectUnderMouse ();
 				if (this.gameObject != goReleasedOver) {
