@@ -92,7 +92,7 @@ public class ContTarget : Observer {
 	}
 
 	public void SetState (StateTarget newState){
-		Debug.Log ("Now in state: " + newState);
+		
 		if (curState != null) {
 			curState.OnLeave ();
 		}

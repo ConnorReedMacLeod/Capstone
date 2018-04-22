@@ -10,10 +10,8 @@ public class ViewDistance : MonoBehaviour {
 	public Transform tfDist;
 	public TextMesh txtDist;
 
-	public Vector3 v3Start;
-	public Vector3 v3End;
-
-	public float fMinDist;
+	public DistanceEndpoint endpointStart;
+	public DistanceEndpoint endpointEnd;
 
 	public void Init(){
 
@@ -50,46 +48,52 @@ public class ViewDistance : MonoBehaviour {
 
 	}
 
-	public static float Dist(Vector3 v1, Vector3 v2){
-		float fDeltaX = v1.x - v2.x;
-		float fDeltaY = v1.y - v2.y;
-		return Mathf.Sqrt (Mathf.Pow (fDeltaX, 2) + Mathf.Pow (fDeltaY, 2));
-	}
-
-	public static float Angle(Vector3 v1, Vector3 v2){
-		float fDeltaX = v2.x - v1.x;
-		float fDeltaY = v2.y - v1.y;
-
-		return Mathf.Rad2Deg * (Mathf.Atan2 (fDeltaY, fDeltaX));
-	}
 
 	public void RenderDistance(){
-		//Debug.Log (this.transform.localScale + " " + tfLine.localScale);
-		tfLine.localScale = new Vector3 (Dist (v3Start, v3End), 0.15f, 1.0f);
+		if (endpointStart == null || endpointEnd == null)
+			return;
+
+		tfLine.localScale = new Vector3 (DistanceEndpoint.Dist (endpointStart, endpointEnd), 0.15f, 1.0f);
+
+		float angle = LibView.GetAngle (endpointStart.GetCenter (), endpointEnd.GetCenter ());
 
 		//this.transform.position = Vector3.zero;
-		tfLine.localPosition = new Vector3 ((v3End.x + v3Start.x) / 2, (v3End.y + v3Start.y)/2, -0.1f);
+		tfLine.localPosition = new Vector3 
+			((endpointStart.GetCenter().x + endpointEnd.GetCenter().x 
+				- (Mathf.Cos(Mathf.Deg2Rad * angle)) * (endpointStart.GetRadius() + endpointEnd.GetRadius())
+			) / 2, 
+			(endpointStart.GetCenter().y + endpointEnd.GetCenter().y
+					- (Mathf.Sin(Mathf.Deg2Rad * angle)) * (endpointStart.GetRadius() + endpointEnd.GetRadius())
+				) / 2, -0.1f);
 
-		tfLine.localRotation = Quaternion.Euler (0, 0, Angle (v3Start, v3End));
+		tfLine.localRotation = Quaternion.Euler (0, 0, angle);
 
-		txtDist.text = Dist (v3Start, v3End).ToString("F1");
-		tfDist.localPosition = new Vector3 (v3End.x, v3End.y, -0.1f);
+		txtDist.text = DistanceEndpoint.Dist (endpointStart, endpointEnd).ToString("F1");
+		tfDist.localPosition = new Vector3 (endpointEnd.GetCenter().x, endpointEnd.GetCenter().y, -0.1f);
 	}
 
-	public void SetStart(Vector3 _v3Start){
-		v3Start = _v3Start;
+	public void SetStart(Chr chr){
+		endpointStart = new DistanceEndpointChr (chr);
 
-		if (v3End != null) {
-			RenderDistance ();
-		}
+		RenderDistance ();
 	}
 
-	public void SetEnd(Vector3 _v3End){
-		v3End = _v3End;
+	public void SetStart(Vector3 v3){
+		endpointStart = new DistanceEndpointPos (v3);
 
-		if (v3Start != null) {
-			RenderDistance ();
-		}
+		RenderDistance ();
+	}
+
+	public void SetEnd(Chr chr){
+		endpointEnd = new DistanceEndpointChr (chr);
+
+		RenderDistance ();
+	}
+
+	public void SetEnd(Vector3 v3){
+		endpointEnd = new DistanceEndpointPos (v3);
+
+		RenderDistance ();
 	}
 
 
@@ -109,7 +113,7 @@ public class ViewDistance : MonoBehaviour {
 			Init ();
 			Unscale ();
 			transform.localPosition = Vector3.zero;
-			fMinDist = 1.0f;
+
 		}
 	}
 	
@@ -118,9 +122,15 @@ public class ViewDistance : MonoBehaviour {
 
 		if (Input.GetMouseButton (0)) {
 			//For now, always just follow the mouse
-			//TODO:: Latch on to Chrs
 			//TODO:: Don't go off the edge (Can have a last valid point vector3)
-			SetEnd(LibView.GetMouseLocation());
+
+			ViewChr viewchr = (ViewChr)LibView.IsUnderMouse (typeof(ViewChr));
+			if (viewchr != null) {
+				SetEnd (viewchr.mod);
+			} else {
+				SetEnd (LibView.GetMouseLocation ());
+			}
+
 		}
 	}
 }

@@ -21,15 +21,19 @@ public class Match : MonoBehaviour {
 	public GameObject pfPlayer;
 	public GameObject pfChr;
 
+	public static Match instance;
+
 
 	public static Match Get (){
-		GameObject go = GameObject.FindGameObjectWithTag ("Match");
-		if (go == null) {
-			Debug.LogError ("ERROR! NO OBJECT HAS A MATCH TAG!");
-		}
-		Match instance = go.GetComponent<Match> ();
 		if (instance == null) {
-			Debug.LogError ("ERROR! MATCH TAGGED OBJECT DOES NOT HAVE A MATCH COMPONENT!");
+			GameObject go = GameObject.FindGameObjectWithTag ("Match");
+			if (go == null) {
+				Debug.LogError ("ERROR! NO OBJECT HAS A MATCH TAG!");
+			}
+			instance = go.GetComponent<Match> ();
+			if (instance == null) {
+				Debug.LogError ("ERROR! MATCH TAGGED OBJECT DOES NOT HAVE A MATCH COMPONENT!");
+			}
 		}
 		return instance;
 	}

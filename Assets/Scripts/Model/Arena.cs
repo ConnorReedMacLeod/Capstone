@@ -21,6 +21,24 @@ public class Arena : Subject{
 	public float fStartPosX;
 	public float[] arfStartingPosY;
 
+	public ViewArena view;
+
+	public static Arena instance;
+
+	public static Arena Get (){
+		if (instance == null) {
+			GameObject go = GameObject.FindGameObjectWithTag ("Arena");
+			if (go == null) {
+				Debug.LogError ("ERROR! NO OBJECT HAS A ARENA TAG!");
+			}
+			instance = go.GetComponent<Arena> ();
+			if (instance == null) {
+				Debug.LogError ("ERROR! ARENA TAGGED OBJECT DOES NOT HAVE A ARENA COMPONENT!");
+			}
+		}
+		return instance;
+	}
+
 	public void PlaceUnit(Chr chr, float x, float y){
 
 		if (x - chr.fRad < -(nWidth / 2)) {
@@ -78,6 +96,7 @@ public class Arena : Subject{
 
 			InitArenaSize ();
 
+			view = GetComponent<ViewArena> ();
 		}
 	}
 

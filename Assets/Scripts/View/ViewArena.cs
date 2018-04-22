@@ -55,9 +55,8 @@ public class ViewArena : Observer {
 		mousehandler.SetNtfStopDrag (Notification.ArenaStopDrag, DespawnDistance);
 	}
 
-	public void SpawnDistance (){
-
-		Debug.Log("SpawnDistance");
+	//TODO:: Consider if there's a better way to do this rather than just copying code
+	public void SpawnDistance (Chr chrStart){
 
 		goDistance = Instantiate (pfDistance, Match.Get ().arena.transform);
 		viewDistance = goDistance.GetComponent<ViewDistance> ();
@@ -66,14 +65,31 @@ public class ViewArena : Observer {
 		}
 
 		viewDistance.Start ();
-		viewDistance.SetStart (mousehandler.v3Down);
+		viewDistance.SetStart (chrStart);
+		viewDistance.SetEnd (LibView.GetMouseLocation());
+
+	}
+
+	// If no argument is provided, assume that we want to spawn it under the original mouse click
+	public void SpawnDistance (){
+		SpawnDistance (mousehandler.v3Down);
+	}
+
+	public void SpawnDistance (Vector3 v3Start){
+
+		goDistance = Instantiate (pfDistance, Match.Get ().arena.transform);
+		viewDistance = goDistance.GetComponent<ViewDistance> ();
+		if (viewDistance == null) {
+			Debug.LogError ("ERROR! NO VIEWDISTANCE COMPONENT ON GAMEOBJECT");
+		}
+
+		viewDistance.Start ();
+		viewDistance.SetStart (v3Start);
 		viewDistance.SetEnd (LibView.GetMouseLocation());
 
 	}
 
 	public void DespawnDistance (){
-		
-		Debug.Log ("DespawnDistance");
 
 		Destroy (goDistance);
 		viewDistance = null;
