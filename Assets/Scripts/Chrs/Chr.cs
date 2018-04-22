@@ -115,7 +115,7 @@ public class Chr : Subject {
 	public void ExecuteAction(){
 		Debug.Assert (ValidAction ());
 		arActions [nUsingAction].Execute ();
-		nUsingAction = 7;//TODO:: Make thie consistent
+		nUsingAction = 7;//TODO:: Make this consistent
 	}
 
     //Checks if the character's selected action is ready and able to be performed
@@ -127,6 +127,7 @@ public class Chr : Subject {
 	public void SetSize(SIZE _size){
 		size = _size;
 		fRad = arfSize [(int)size];
+		NotifyObs ();
 	}
 
     //Sets character's selected action to Rest

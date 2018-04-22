@@ -18,6 +18,12 @@ public class ViewChr : Observer {
 	public GameObject objActionWheel;       //ActionWheel object
 	public ViewActionWheel viewActionWheel; //ActionWheel view
 
+	public float fOrigRadius;
+	public float fOrigWidth;
+	public float fOrigHeight;
+	public float fOrigScaleX;
+	public float fOrigScaleY;
+
 	const int indexTransformParent = 0;			//The parent object's transform index
 	const int indexRendererBorder = 0;         	//The border surrounding the character's portrait
 	const int indexTransformBorder = 1;
@@ -34,6 +40,13 @@ public class ViewChr : Observer {
 			//Unscale ();
 			lastStateSelect = Chr.STATESELECT.IDLE;
 			InitMouseHandler ();
+
+			//Get the base size of the character prefab so we can scale it later
+			fOrigWidth = GetComponent<Collider>().bounds.size.x;
+			fOrigHeight = GetComponent<Collider>().bounds.size.y;
+			fOrigRadius = GetComponent<CapsuleCollider> ().radius;
+			fOrigScaleX = transform.localScale.x;
+			fOrigScaleY = transform.localScale.y;
 		}
     }
 
@@ -42,6 +55,8 @@ public class ViewChr : Observer {
 		if (mod.plyrOwner.id == 0) {
 			//Find the portrait and flip it for one of the players
 			GetComponentsInChildren<Transform>()[indexTransformPortrait].localScale = new Vector3 (-1, 1, 1);
+
+
 		}
 	}
 
@@ -130,12 +145,26 @@ public class ViewChr : Observer {
 		viewActionWheel = null;
 	}
 
+	public void UpdateSize(){
+		// Check the model's desired radius, so we can match that
+
+		float fRelativeScale = fOrigRadius / mod.fRad;
+
+		transform.localScale = new Vector3 (fOrigScaleX / fRelativeScale, fOrigScaleY / fRelativeScale, 1.0f);
+		GetComponent<CapsuleCollider> ().radius = mod.fRad;
+		//ERROR:: The collider doesn't rescale properly if the size increases past the original... idk why
+
+	}
+
 	//TODO:: Make this a state machine
     //Updates the character's state (SELECTED, TARGETTING, UNSELECTED)
 	void UpdateStatus(){
 		//Refuses to accept udpates until after initialized
 		if (!bStarted)
 			return;
+
+		UpdateSize ();
+
 		//Checks if character status has changed
 		if (lastStateSelect != mod.stateSelect) {
 			switch (mod.stateSelect) {
