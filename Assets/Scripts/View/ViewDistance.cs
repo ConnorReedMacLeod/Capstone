@@ -13,6 +13,8 @@ public class ViewDistance : MonoBehaviour {
 	public DistanceEndpoint endpointStart;
 	public DistanceEndpoint endpointEnd;
 
+	public float fHideDist;
+
 	public void Init(){
 
 		txtDist = GetComponentInChildren<TextMesh> ();
@@ -53,17 +55,25 @@ public class ViewDistance : MonoBehaviour {
 		if (endpointStart == null || endpointEnd == null)
 			return;
 
+		if (Mathf.Abs(Vector3.Distance(endpointStart.GetCenter(), endpointEnd.GetCenter())) <= fHideDist) {
+			//Then we are effectively measuring no distance at all - hide the measurement
+			tfLine.localScale = Vector3.zero;
+			txtDist.text = "";
+			return;
+
+		}
 		tfLine.localScale = new Vector3 (DistanceEndpoint.Dist (endpointStart, endpointEnd), 0.15f, 1.0f);
 
 		float angle = LibView.GetAngle (endpointStart.GetCenter (), endpointEnd.GetCenter ());
 
-		//this.transform.position = Vector3.zero;
 		tfLine.localPosition = new Vector3 
 			((endpointStart.GetCenter().x + endpointEnd.GetCenter().x 
-				- (Mathf.Cos(Mathf.Deg2Rad * angle)) * (endpointStart.GetRadius() + endpointEnd.GetRadius())
+				+ (Mathf.Cos(Mathf.Deg2Rad * angle)) * endpointStart.GetRadius()
+				- (Mathf.Cos(Mathf.Deg2Rad * angle)) * endpointEnd.GetRadius()
 			) / 2, 
 			(endpointStart.GetCenter().y + endpointEnd.GetCenter().y
-					- (Mathf.Sin(Mathf.Deg2Rad * angle)) * (endpointStart.GetRadius() + endpointEnd.GetRadius())
+					+ (Mathf.Sin(Mathf.Deg2Rad * angle)) * endpointStart.GetRadius()
+					- (Mathf.Sin(Mathf.Deg2Rad * angle)) * endpointEnd.GetRadius()
 				) / 2, -0.1f);
 
 		tfLine.localRotation = Quaternion.Euler (0, 0, angle);
@@ -114,13 +124,15 @@ public class ViewDistance : MonoBehaviour {
 			Unscale ();
 			transform.localPosition = Vector3.zero;
 
+			fHideDist = 0.3f;
+
 		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-		if (Input.GetMouseButton (0)) {
+		//if (Input.GetMouseButton (0)) {
 			//For now, always just follow the mouse
 			//TODO:: Don't go off the edge (Can have a last valid point vector3)
 
@@ -131,6 +143,6 @@ public class ViewDistance : MonoBehaviour {
 				SetEnd (LibView.GetMouseLocation ());
 			}
 
-		}
+		//}
 	}
 }
