@@ -13,6 +13,8 @@ public class KeyBindings : MonoBehaviour{
 	public Dictionary<string, KeyBind> dictEventToBind;
 	public Dictionary<KeyBind, string> dictBindToEvent;
 
+	public bool bStarted;
+
 	public struct KeyBind{
 		public KeyCode keyPress;
 		public KeyCode keyModifier;
@@ -34,6 +36,7 @@ public class KeyBindings : MonoBehaviour{
 			if (instance == null){
 				Debug.LogError("ERROR!  CONTROLLER HAS NO KEYBINDINGS COMPONENT!");
 			}
+			instance.Start ();
 		}
 		return instance;
 	}
@@ -64,14 +67,19 @@ public class KeyBindings : MonoBehaviour{
 	}
 
 	public void Start () {
-		dictEventToBind = new Dictionary<string, KeyBind> ();
-		dictBindToEvent = new Dictionary<KeyBind, string> ();
+		if(bStarted == false){
+			bStarted = true;
 
-		Get();//To initialize the static instance
+			dictEventToBind = new Dictionary<string, KeyBind> ();
+			dictBindToEvent = new Dictionary<KeyBind, string> ();
+
+			Get();//To initialize the static instance
+		}
 	}
 
 
 	void Update () {
+		Start ();
 
 		foreach (KeyValuePair<KeyBind, string> bind in dictBindToEvent) {
 			if (BindingUsed (bind.Key)) {

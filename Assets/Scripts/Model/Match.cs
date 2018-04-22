@@ -21,15 +21,19 @@ public class Match : MonoBehaviour {
 	public GameObject pfPlayer;
 	public GameObject pfChr;
 
+	public static Match instance;
+
 
 	public static Match Get (){
-		GameObject go = GameObject.FindGameObjectWithTag ("Match");
-		if (go == null) {
-			Debug.LogError ("ERROR! NO OBJECT HAS A MATCH TAG!");
-		}
-		Match instance = go.GetComponent<Match> ();
 		if (instance == null) {
-			Debug.LogError ("ERROR! MATCH TAGGED OBJECT DOES NOT HAVE A MATCH COMPONENT!");
+			GameObject go = GameObject.FindGameObjectWithTag ("Match");
+			if (go == null) {
+				Debug.LogError ("ERROR! NO OBJECT HAS A MATCH TAG!");
+			}
+			instance = go.GetComponent<Match> ();
+			if (instance == null) {
+				Debug.LogError ("ERROR! MATCH TAGGED OBJECT DOES NOT HAVE A MATCH COMPONENT!");
+			}
 		}
 		return instance;
 	}
@@ -87,8 +91,9 @@ public class Match : MonoBehaviour {
 		}
 		arChrs [player.id] [id] = newChr;
 
-		//Initially set a random position for the new character *** CHANGE THIS AT SOME POINT ***
-		newChr.SetPosition(Random.Range(-10.0f, 10.0f), Random.Range(-5.0f, 5.0f));
+	 
+		//newChr.SetPosition(Random.Range(-10.0f, 10.0f), arena.arfStartingPosY[id]);
+		arena.InitPlaceUnit(newChr);
 
 	}
 
@@ -123,6 +128,8 @@ public class Match : MonoBehaviour {
 		arena = GetComponentInChildren<Arena> ();
 		timeline = GetComponentInChildren<Timeline> ();
 		controller = GetComponentInChildren<Controller> ();
+
+		arena.Start ();
 
 		timeline.Start ();
 

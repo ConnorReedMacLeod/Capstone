@@ -4,31 +4,17 @@ using UnityEngine;
 
 //Will need states for each of the possible types that are targettable:
 // Can target Chars, Locations, Mana Type, Nothing(?), Abilities
-public class StateTarget {
+abstract public class StateTarget {
 
 	public ContTarget contTarg;
 
-	public virtual void OnEnter(){
-		//what happens when you enter this state
-	}
+	// Note that this isn't actually the normal Observer method, but will be called in the same way
+	public abstract void UpdateObs (string eventType, Object target, params object[] args);
 
-	public virtual void OnLeave(){
-		//what happens when you leave this state
-	}
 
-	public virtual void OnClickArena(Vector3 pos){
-		//requires the position that was clicked
+	public virtual void OnEnter (){}
+	public virtual void OnLeave (){}
 
-	}
-
-	public virtual void OnClickAct(Chr chr, int idAct){
-
-	}
-
-	public virtual void OnClickChr(Chr chr, Vector3 pos){
-		//requires the selected character and it's position in the arena
-
-	}
 
 	public StateTarget(ContTarget _contTarg){
 		contTarg = _contTarg;

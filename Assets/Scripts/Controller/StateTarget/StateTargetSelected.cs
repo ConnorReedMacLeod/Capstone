@@ -4,51 +4,52 @@ using UnityEngine;
 
 public class StateTargetSelected : StateTarget {
 
+
+	public override void UpdateObs(string eventType, Object target, params object[] args){
+
+		switch (eventType) {
+		case Notification.ArenaStartDrag:
+		case Notification.ClickArena:
+			// If we're clicking at all with the arena, then we can deselect our character
+
+			contTarg.SetState (new StateTargetIdle (contTarg));
+
+			break;
+
+		case Notification.ClickChr:
+			// If we now click on a different character, then we'll select them instead
+			contTarg.selected.Idle (); // Need to deselect our current character first
+			contTarg.selected = ((ViewChr)target).mod;
+
+			contTarg.SetState (new StateTargetSelected (contTarg));
+
+			break;
+
+		case Notification.ChrStartHold:
+			// Then we've started to hold/drag this character in preparation for choosing an action
+			contTarg.selected.Idle();
+			contTarg.selected = ((ViewChr)target).mod;
+
+			contTarg.SetState (new StateTargetChooseAction (contTarg));
+			break;
+		}
+	}
+
+
 	override public void OnEnter(){
 		
 		Debug.Assert(contTarg.selected != null);
 		contTarg.selected.Select ();
 
+		Arena.Get().view.SpawnDistance (contTarg.selected);
+
 	}
 
 	override public void OnLeave(){
+		Arena.Get ().view.DespawnDistance ();
 
 	}
 
-	override public void OnClickArena(Vector3 pos){
-		//requires the position that was clicked
-		contTarg.selected.Deselect();
-
-		contTarg.selected = null;
-
-		contTarg.SetState (new StateTargetIdle (contTarg));
-	}
-
-	override public void OnClickChr(Chr chr, Vector3 pos){
-		if (contTarg.selected == chr)
-			return; //nothing should be done here I don't think
-
-		//change the selected character
-		contTarg.selected.Deselect();
-
-		contTarg.selected = chr;
-		chr.Select();
-
-		contTarg.SetState (new StateTargetSelected (contTarg));
-		//perhaps a bit silly since we're already in this state,
-		// but we want to reinitiallize the action wheel
-	}
-
-	override public void OnClickAct(Chr chr, int idAct){
-		//Debug.Log (chr + " is using action " + idAct);
-
-		contTarg.selected.Targetting ();
-		contTarg.selected.nUsingAction = idAct;
-
-		contTarg.ResetTar ();
-		contTarg.SetTargetArgState ();
-
-	}
 
 	public StateTargetSelected(ContTarget _contTarg): base(_contTarg){
 

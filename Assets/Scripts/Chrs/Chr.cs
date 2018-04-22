@@ -12,10 +12,18 @@ public class Chr : Subject {
 	};
 
 	public enum STATESELECT{
-		SELECTED,                   //Initial selection of the character
+		SELECTED,                   //Selected a character (to see status effects, measure distances, etc.)
+		CHOOSINGACT,				//Choosing an action to perform
 		TARGGETING,                 //Targetting of character actions
-		UNSELECTED                  //Default character state
-	}
+		IDLE                 		//Default character state
+	};
+
+	public enum SIZE{
+		SMALL,
+		MEDIUM,
+		LARGE,
+		GIANT
+	};
 
 	Arena arena;                    //The field of play
 
@@ -40,6 +48,9 @@ public class Chr : Subject {
 	public int nUsingAction;        //The currently selected action for the character, either targetting or having been queued
 	public bool bSetAction;         //Whether or not the character has an action queued
 
+	public static float[] arfSize = { 0.5f, 0.75f, 1.25f, 2.0f };
+	public SIZE size;
+	public float fRad;
 
 	public ViewChr view;
 
@@ -67,6 +78,7 @@ public class Chr : Subject {
 
     //Sets the character's position
     public void SetPosition(Vector3 _v3Pos){
+		Start ();
         v3Pos = _v3Pos;
         NotifyObs();
     }
@@ -82,6 +94,11 @@ public class Chr : Subject {
 		NotifyObs ();
 	}
 
+	public void ChoosingAction(){
+		stateSelect = STATESELECT.CHOOSINGACT;
+		NotifyObs ();
+	}
+
     //Sets character state to targetting
 	public void Targetting(){
 		stateSelect = STATESELECT.TARGGETING;
@@ -89,8 +106,8 @@ public class Chr : Subject {
 	}
 
     //Set character state to unselected
-	public void Deselect (){
-		stateSelect = STATESELECT.UNSELECTED;
+	public void Idle (){
+		stateSelect = STATESELECT.IDLE;
 		NotifyObs ();
 	}
 
@@ -98,13 +115,19 @@ public class Chr : Subject {
 	public void ExecuteAction(){
 		Debug.Assert (ValidAction ());
 		arActions [nUsingAction].Execute ();
-		nUsingAction = 7;//TODO:: Make thie consistent
+		nUsingAction = 7;//TODO:: Make this consistent
 	}
 
     //Checks if the character's selected action is ready and able to be performed
 	public bool ValidAction(){
 		//Debug.Log (bSetAction + " is the setaction");
 		return (bSetAction && arActions [nUsingAction].VerifyLegal ());
+	}
+
+	public void SetSize(SIZE _size){
+		size = _size;
+		fRad = arfSize [(int)size];
+		NotifyObs ();
 	}
 
     //Sets character's selected action to Rest
@@ -130,10 +153,11 @@ public class Chr : Subject {
 
 	// Used to initiallize information fields of the Chr
 	// Call this after creating to set information
-	public void InitChr(Player _plyrOwner, int _id, string _sName){
+	public void InitChr(Player _plyrOwner, int _id, string _sName, SIZE _size = SIZE.MEDIUM){
 		plyrOwner = _plyrOwner;
 		id = _id;
 		sName = _sName;
+		SetSize (_size);
 
 		SetActions ();//TODO:: move this somewhere else at some point
 
@@ -156,7 +180,7 @@ public class Chr : Subject {
 			arActions = new Action[nActions];
 			nUsingAction = -1;
 
-			stateSelect = STATESELECT.UNSELECTED;
+			stateSelect = STATESELECT.IDLE;
 		}
 
 	}
