@@ -19,15 +19,20 @@ public class StateTargetChr : StateTarget {
 		case Notification.ChrStopHold:
 		case Notification.ClickChr:
 			if (tarArg.setTar (((ViewChr)target).mod)) {
-				Debug.Log ("Target successfully set to " + ((ViewChr)target).mod);
+				Debug.Log ("Target successfully set to " + ((ViewChr)target).mod.sName);
 
 				//move to next target
 				contTarg.IncTar ();
 
 				contTarg.SetTargetArgState ();
 			} else {
-				Debug.Log (((ViewChr)target).mod + " is not a valid target");
+				//BUG:: When releasing intially to select a characters ability, it tries to target the abililty immediately
+				// Cause: when you release over an action it passes a actionrelease and characterrelease notification
+				Debug.Log (((ViewChr)target).mod + " is not a valid character target");
 			}
+			break;
+		case Notification.GlobalRightUp:
+			contTarg.CancelTar ();
 			break;
 		}
 
@@ -41,7 +46,6 @@ public class StateTargetChr : StateTarget {
 	}
 
 	override public void OnLeave(){
-
 	}
 
 	public void StopTargetting(){

@@ -32,20 +32,28 @@ public class ContTarget : Observer {
 		nTarCount = 0;
 	}
 
+	// Ends targetting
+	public void CancelTar(){
+		//TODO:: Consider if resetting like this needs to back through the previously selected
+		//       targets and clean them out for the future.
+		ResetTar();
+		selected.bSetAction = false;
+		selected.nUsingAction = -1;
+		selected.Idle ();
+
+		SetState (new StateTargetIdle (this));
+
+		//Let everything know that targetting has ended
+		Controller.Get().NotifyObs(Notification.TargetFinish, null);
+	}
+
 	// Create the necessary state for selecting the needed type
 	public void SetTargetArgState(){
 		//Before this is called, assume that IncTar/DecTar/ResetTar has been appropriately called
 
 		if (nTarCount < 0) {
 			//Then we've cancelled the targetting action so go back to... idle?
-			selected.bSetAction = false;
-			selected.nUsingAction = -1;
-			selected.Idle ();
-
-			SetState (new StateTargetIdle (this));
-
-			//Let everything know that targetting has ended
-			Controller.Get().NotifyObs(Notification.TargetFinish, null);
+			CancelTar();
 
 		} else if (nTarCount == selected.arActions [selected.nUsingAction].nArgs) {
 			//Then we've filled of the targetting arguments
@@ -55,6 +63,7 @@ public class ContTarget : Observer {
 
 			// Can now go back idle and wait for the next targetting
 			SetState (new StateTargetIdle (this));
+			Debug.Log ("Targetting finished");
 
 			//Let everything know that targetting has ended
 			Controller.Get().NotifyObs(Notification.TargetFinish, null);
