@@ -24,6 +24,7 @@ public class Controller : Subject{
 	ContMana contMana;
 	ContInfo contInfo;
 	ContArena contArena;
+	ContGlobalInput contGlobalInput;
 
 	public static Controller Get (){
 		GameObject go = GameObject.FindGameObjectWithTag ("Controller");
@@ -55,6 +56,9 @@ public class Controller : Subject{
 
 		contArena = GetComponent<ContArena> ();
 		Subscribe (contArena);
+
+		contGlobalInput = GetComponent<ContGlobalInput> ();
+		Subscribe (contGlobalInput);
 	}
 
 }

@@ -45,6 +45,9 @@ public class MouseHandler : MonoBehaviour {
 	public string ntfMouseStopHover;
 	public fnCallback fnMouseStopHover;
 
+	public string ntfMouseRightClick;
+	public fnCallback fnMouseRightClick;
+
 	//public string ntfMouseRleaseOther;  //TODO:: Consider if a notification for this is even needed
 	public fnCallbackGo fnMouseReleaseOther;
 

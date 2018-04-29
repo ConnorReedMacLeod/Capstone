@@ -9,6 +9,8 @@ public class Notification {
 
 	public const string Default = "default";
 
+	public const string GlobalRightUp = "global.right.up";
+
 	//Character/Action Events
 	public const string ClickChr = "chr.click";
 	public const string ChrStopHold = "chr.stophold";

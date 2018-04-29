@@ -25,6 +25,9 @@ public class StateTargetPos : StateTarget {
 				Debug.Log("You can't target that position");
 			}
 			break;
+		case Notification.GlobalRightUp:
+			contTarg.CancelTar ();
+			break;
 		}
 	}
 

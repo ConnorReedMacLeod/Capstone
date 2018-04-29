@@ -15,7 +15,6 @@ public class StateTargetIdle : StateTarget {
 		case Notification.ClickChr:
 			// TODO:: Select the character so that you can see debuffs and stuff, measure distances
 			contTarg.selected = ((ViewChr)target).mod;
-			Debug.Log ("selected");
 
 			contTarg.SetState (new StateTargetSelected (contTarg));
 			break;

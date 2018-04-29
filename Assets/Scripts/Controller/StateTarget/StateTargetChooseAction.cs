@@ -20,7 +20,6 @@ public class StateTargetChooseAction : StateTarget {
 			// revert to those targets if you've failed targetting
 			contTarg.ResetTar ();
 			contTarg.SetTargetArgState (); // Let the parent figure out what exact state we go to
-
 			break;
 		
 		case Notification.ReleaseChrOverNone:

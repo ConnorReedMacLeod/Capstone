@@ -13,7 +13,7 @@ public class ViewActionWheel : Observer {
 	public ViewActionWheel(){
 		arViewAction = new ViewAction[MAXACTIONS];
 	}
-
+		
 	public void setModel(Chr _mod){
 		mod = _mod;
 		mod.Subscribe (this);
@@ -32,4 +32,5 @@ public class ViewActionWheel : Observer {
 	public void Start(){
         
 	}
+		
 }
