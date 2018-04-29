@@ -101,6 +101,12 @@ public class ViewDistance : MonoBehaviour {
 	}
 
 	public void SetEnd(Vector3 v3){
+		ViewArena viewArena = (ViewArena)LibView.IsUnderMouse (typeof(ViewArena));
+		if (viewArena == null) {
+			//Then we're not hovering over the arena any more
+			//TODO:: Maybe draw the line to the edge of arena (as much as possible)
+			return;
+		}
 		endpointEnd = new DistanceEndpointPos (v3);
 
 		RenderDistance ();
