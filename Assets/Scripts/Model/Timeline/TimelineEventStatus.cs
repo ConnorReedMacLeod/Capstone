@@ -22,4 +22,11 @@ public class TimelineEventStatus : TimelineEvent {
 		return view.GetPosAfter ();
 	}
 
+	public override void Evaluate(){
+
+		//Actually do this
+
+		Timeline.Get ().EventFinished ();
+	}
+
 }

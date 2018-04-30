@@ -23,4 +23,11 @@ public class TimelineEventPassive : TimelineEvent {
 		return view.GetPosAfter ();
 	}
 
+	public override void Evaluate(){
+
+		//Actually do this
+
+		Timeline.Get ().EventFinished ();
+	}
+
 }

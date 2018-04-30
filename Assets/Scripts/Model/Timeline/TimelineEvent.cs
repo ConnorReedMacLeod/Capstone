@@ -63,10 +63,6 @@ public abstract class TimelineEvent : Subject {
 
 	}
 
-	public virtual void Evaluate(){
-
-		// Set up the next event to go off later
-		//Invoke ("NextTimelineEvent", fDelay);
-	}
+	public abstract void Evaluate ();
 
 }

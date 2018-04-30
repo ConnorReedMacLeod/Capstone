@@ -47,7 +47,6 @@ public class TimelineEventChr : TimelineEvent {
 
 		chrSubject.ExecuteAction ();
 
-		base.Evaluate ();
 	}
 
 

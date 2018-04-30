@@ -12,6 +12,8 @@ public class Timeline : Subject {
 
 	public static int MAXTURNS = 15;
 
+	public float fEventDelay;
+
 	bool bStarted;
 
 	public enum PRIORITY {
@@ -55,6 +57,7 @@ public class Timeline : Subject {
 			this.Start ();
 
 			match = Match.Get ();
+			fEventDelay = 4.0f;
 
 			listEvents = new LinkedList<TimelineEvent> ();
 
@@ -162,9 +165,15 @@ public class Timeline : Subject {
 		InitChars ();
 
 	}
+
+	public void EventFinished(){
+		//Wait for a few seconds, then start the next event
+
+		Invoke("EvaluateEvent", fEventDelay);
+	}
 		
 	public void EvaluateEvent(){
-		//Print ();
+		Debug.Log ("Evaluating Event");
 
 		curEvent.Value.Evaluate ();
 

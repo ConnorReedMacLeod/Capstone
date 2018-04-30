@@ -59,6 +59,6 @@ public class TimelineEventTurn : TimelineEvent {
 		//Let players know to update their cds/recharges
 		Timeline.Get().NewTurn();
 
-		base.Evaluate ();
+		Timeline.Get ().EventFinished ();
 	}
 }
