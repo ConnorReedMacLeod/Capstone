@@ -9,10 +9,6 @@ public class ViewInfoPanel : Observer {
 
 	public GameObject goCurInfoContent;
 
-	//TODO:: While currently targetting, set the default info description to be
-	// the currently selected ability.  When the ability is finished targetting,
-	// then we can clear the panel.
-
 	public void ShowInfoAction(Action _mod){
 
 		if (viewInfoAction != null && viewInfoAction.mod == _mod) {

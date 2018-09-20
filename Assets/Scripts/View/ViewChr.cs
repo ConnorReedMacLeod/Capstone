@@ -113,7 +113,7 @@ public class ViewChr : Observer {
 		GetComponentsInChildren<Renderer> ()[indexRendererBorder].material = matBorder;
 	}
 
-    //Find the model, and do any setup for reflect it
+    //Find the model, and do any setup to reflect it
 	public void InitModel(){
 		mod = GetComponent<Chr>();
 		mod.Subscribe (this);
