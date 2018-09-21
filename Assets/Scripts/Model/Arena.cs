@@ -18,10 +18,25 @@ public class Arena : Subject{
 	public int nHeight;
 	public float fUnit;
 
-	public float fStartPosX;
-	public float[] arfStartingPosY;
+    public Vector2[,] arCharacterPositions =
+        new Vector2[2, 7] {
+             {  new Vector2(0.0f, 0.0f),
+                new Vector2(0.0f, 0.0f),
+                new Vector2(0.0f, 0.0f),
+                new Vector2(0.0f, 0.0f),
+                new Vector2(0.0f, 0.0f),
+                new Vector2(0.0f, 0.0f),
+                new Vector2(0.0f, 0.0f) },
+             {  new Vector2(0.0f, 0.0f),
+                new Vector2(0.0f, 0.0f),
+                new Vector2(0.0f, 0.0f),
+                new Vector2(0.0f, 0.0f),
+                new Vector2(0.0f, 0.0f),
+                new Vector2(0.0f, 0.0f),
+                new Vector2(0.0f, 0.0f) } };
 
-	public ViewArena view;
+
+    public ViewArena view;
 
 	public static Arena instance;
 
