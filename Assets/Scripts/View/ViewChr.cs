@@ -120,11 +120,6 @@ public class ViewChr : Observer {
 
 	}
 
-    //Updates the character's position to match the model's position
-	void UpdatePos(){
-		transform.position = mod.v3Pos;
-	}
-
     //Spawns the ActionWheel
 	void AddActionWheel(){
 		Debug.Assert (objActionWheel == null);
@@ -215,7 +210,6 @@ public class ViewChr : Observer {
     //Updates character view, detecting if changes are needed to the character position or state
 	override public void UpdateObs(string eventType, Object target, params object[] args){
 		//TODO:: Make this update more intelligent so that it updates based on the passed eventType
-		UpdatePos();
 		UpdateStatus();
 	}
 		

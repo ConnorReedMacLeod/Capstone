@@ -41,12 +41,9 @@ public class StateTargetSelected : StateTarget {
 		Debug.Assert(contTarg.selected != null);
 		contTarg.selected.Select ();
 
-		Arena.Get().view.SpawnDistance (contTarg.selected);
-
 	}
 
 	override public void OnLeave(){
-		Arena.Get ().view.DespawnDistance ();
 
 	}
 
