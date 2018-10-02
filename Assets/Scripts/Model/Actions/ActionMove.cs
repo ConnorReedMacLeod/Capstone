@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ActionMove : Action {
 
-
+    //NOTE:: THIS IS A DEPRECATED ABILITY AS MOVEMENT ISN'T SUPPORTED - LEFT FOR EXAMPLES OF HOW TO MAKE ABILITIES
 
 	public ActionMove(Chr _chrOwner): base(1, _chrOwner){//number of target arguments
 
@@ -29,7 +29,7 @@ public class ActionMove : Action {
 		// but at least it's eliminated from the targetting lambda
 		Vector3 tar = ((TargetArgPos)arArgs [0]).v3Tar;
 
-		chrOwner.SetPosition (new Vector3(tar.x, tar.y, chrOwner.v3Pos.z));
+		//chrOwner.SetPosition (new Vector3(tar.x, tar.y, chrOwner.v3Pos.z));
 
 		//NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
 
