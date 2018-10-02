@@ -18,22 +18,7 @@ public class Arena : Subject{
 	public int nHeight;
 	public float fUnit;
 
-    public Vector2[,] arCharacterPositions =
-        new Vector2[2, 7] {
-             {  new Vector2(0.0f, 0.0f),
-                new Vector2(0.0f, 0.0f),
-                new Vector2(0.0f, 0.0f),
-                new Vector2(0.0f, 0.0f),
-                new Vector2(0.0f, 0.0f),
-                new Vector2(0.0f, 0.0f),
-                new Vector2(0.0f, 0.0f) },
-             {  new Vector2(0.0f, 0.0f),
-                new Vector2(0.0f, 0.0f),
-                new Vector2(0.0f, 0.0f),
-                new Vector2(0.0f, 0.0f),
-                new Vector2(0.0f, 0.0f),
-                new Vector2(0.0f, 0.0f),
-                new Vector2(0.0f, 0.0f) } };
+    public ViewChrSlot[,] arChrPositions = new ViewChrSlot[2, 7];
 
 
     public ViewArena view;
@@ -54,54 +39,19 @@ public class Arena : Subject{
 		return instance;
 	}
 
-	public void PlaceUnit(Chr chr, float x, float y){
-
-		if (x - chr.fRad < -(nWidth / 2)) {
-			Debug.LogError ("ERROR!  Trying to place this Chr too far left!");
-		}
-		if (x + chr.fRad > (nWidth / 2)) {
-			Debug.LogError ("ERROR!  Trying to place this Chr too far right!");
-		}
-		if (y - chr.fRad < -(nHeight / 2)) {
-			Debug.LogError ("ERROR!  Trying to place this Chr too far up!");
-		}
-		if (y + chr.fRad > (nHeight / 2)) {
-			Debug.LogError ("ERROR!  Trying to place this Chr too far down!");
-		}
-
-		chr.SetPosition (x, y);
-	}
-
 	public void InitPlaceUnit(Chr chr){
-		if (chr.plyrOwner.id == 0) {
-			PlaceUnit (chr, -fStartPosX * fArenaWidth, arfStartingPosY [chr.id] * fArenaHeight);
-		} else {
-			PlaceUnit (chr, fStartPosX * fArenaWidth, arfStartingPosY [chr.id] * fArenaHeight);
-		}
+        chr.transform.position = arChrPositions[chr.plyrOwner.id, chr.id].getPos();
 	}
 
-	public void InitArenaSize(){
+    // Find and store each starting location stored in the prefab
+	public void InitChrSlots(){
 
-		//Set the starting positions (as a percentage of the total arena size);
-		fStartPosX = 0.3f;
-		arfStartingPosY = new float[]{-0.25f, 0.0f, 0.25f};
+        foreach (ViewChrSlot slot in GetComponentsInChildren<ViewChrSlot>()){
+    
+            arChrPositions[slot.nTeam, slot.nSlot] = slot;
 
-		fArenaWidth = transform.localScale.x;
-		fArenaHeight = transform.localScale.y;
+        }
 
-		fUnit = Chr.arfSize [(int)Chr.SIZE.MEDIUM];
-
-		float fRem = (fArenaWidth / fUnit) % 1.0f;
-		if (Mathf.Abs (fRem * (1.0f - fRem)) > 0.1f) {
-			Debug.LogError ("ALERT! Arena's width is not a multiple of the unit size!");
-		}
-		nWidth = (int)(fArenaWidth / fUnit);
-
-		fRem = (fArenaHeight / fUnit) % 1.0f;
-		if (Mathf.Abs (fRem * (1.0f - fRem)) > 0.1f) {
-			Debug.LogError ("ALERT! Arena's height is not a multiple of the unit size!");
-		}
-		nHeight = (int)(fArenaHeight / fUnit);
 	}
 
 	public void Start(){
@@ -109,7 +59,7 @@ public class Arena : Subject{
 		if (bStarted == false) {
 			bStarted = true;
 
-			InitArenaSize ();
+            InitChrSlots();
 
 			view = GetComponent<ViewArena> ();
 		}
