@@ -28,7 +28,7 @@ public class StateTargetChr : StateTarget {
 			} else {
 				//BUG:: When releasing intially to select a characters ability, it tries to target the abililty immediately
 				// Cause: when you release over an action it passes a actionrelease and characterrelease notification
-				Debug.Log (((ViewChr)target).mod + " is not a valid character target");
+				Debug.Log (((ViewChr)target).mod.sName + ", on team " + ((ViewChr)target).mod.plyrOwner.id + " is not a valid character target");
 			}
 			break;
 		case Notification.GlobalRightUp:

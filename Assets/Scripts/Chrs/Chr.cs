@@ -29,7 +29,6 @@ public class Chr : Subject {
 
 	public string sName;			//The name of the character
 	public Player plyrOwner;        //The player who controls the character
-	public Vector3 v3Pos;           //The character's position
 
     // TODO:: Reconsider making this pos range from -0.5 to 0.5
     //        it's nice for avoiding some standard units of measurement,
@@ -74,18 +73,6 @@ public class Chr : Subject {
   //Counts down the character's recharge with the timeline
 	public void TimeTick(){
 		ChangeRecharge (-1);
-	}
-
-    //Sets the character's position
-    public void SetPosition(Vector3 _v3Pos){
-		Start ();
-        v3Pos = _v3Pos;
-        NotifyObs();
-    }
-
-    //Sets the character's position without need for depth (z)
-    public void SetPosition(float _fX, float _fY){
-		SetPosition (new Vector3 (_fX, _fY, 0));
 	}
 
     //Sets character state to selected
