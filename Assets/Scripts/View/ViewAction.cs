@@ -9,7 +9,6 @@ public class ViewAction : MonoBehaviour {
 	public int id;                              //The action's unique identifier
 	public Action mod;                      		//The action's model
 	public MouseHandler mousehandler;
-	public ViewActionWheel viewActionWheel;     //The action's ActionWheel segment's view
 
     //Sets the ActionWheel segment's material
 	public void SetActionMaterial (string _sName){
@@ -35,16 +34,16 @@ public class ViewAction : MonoBehaviour {
 		mousehandler.SetNtfStopHover (Notification.ActStopHover);
 	}
 
-    //Notifies application when the action's ActionWheel segment is clicked
+    //Notifies application when the Action is clicked
     public void OnMouseDown(){
-		//Controller.Get().NotifyObs(Notification.ClickAct, this, id);
+		Controller.Get().NotifyObs(Notification.ClickAct, this, id);
 	}	
 
 	public void OnMouseEnter(){
-		//Controller.Get ().NotifyObs (Notification.ActStartHover, this, id);
+		Controller.Get ().NotifyObs (Notification.ActStartHover, this, id);
 	}
 
 	public void OnMouseExit(){
-		//Controller.Get ().NotifyObs (Notification.ActStopHover, this, id);
+		Controller.Get ().NotifyObs (Notification.ActStopHover, this, id);
 	}
 }
