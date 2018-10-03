@@ -11,17 +11,14 @@ public class Notification {
 
 	public const string GlobalRightUp = "global.right.up";
 
-	//Character/Action Events
-	public const string ClickChr = "chr.click";
-	public const string ChrStopHold = "chr.stophold";
-	public const string ChrStartHold = "chr.starthold";
-	public const string ReleaseChrOverAct = "release.chr.act";
-	public const string ReleaseChrOverNone = "release.chr.none";
-	public const string ActStartHover = "act.starthover";
-	public const string ActStopHover = "act.stophover";
-	public const string ClickArena = "arena.click";
-	public const string ArenaStartDrag = "arena.startdrag";
-	public const string ArenaStopDrag = "arena.stopdrag";
+    //Character/Action Events
+    public const string ClickChr = "chr.click";
+    public const string ClickAct = "act.click";
+    public const string ActStartHover = "act.starthover";
+    public const string ActStopHover = "act.stophover";
+    public const string ClickArena = "arena.click";
+
+
 
 	//Targetting Events
 	public const string TargetFinish = "target.finish";
@@ -66,4 +63,16 @@ public class Notification {
 	//Info Panel Events
 	public const string InfoActionUpdate = "info.actionupdate";
 
+
+
+    //CURRENTLY UNUSED
+    public const string ChrStopHold = "chr.stophold";
+    public const string ChrStartHold = "chr.starthold";
+    public const string ReleaseChrOverAct = "release.chr.act";
+    public const string ReleaseChrOverNone = "release.chr.none";
+    public const string ArenaStartDrag = "arena.startdrag";
+    public const string ArenaStopDrag = "arena.stopdrag";
+
 }
+
+

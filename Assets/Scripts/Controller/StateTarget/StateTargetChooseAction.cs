@@ -9,10 +9,9 @@ public class StateTargetChooseAction : StateTarget {
 	public override void UpdateObs(string eventType, Object target, params object[] args){
 
 		switch (eventType) {
-		case Notification.ReleaseChrOverAct:
-			// Then we've dragged from a Chr to an Action - start targetting with that action
-
-			Debug.Assert (((ViewChr)target).mod == contTarg.selected);
+		case Notification.ClickAct:
+			// When we've clicked an action, use that action
+            
 			contTarg.selected.Targetting ();
 			contTarg.selected.nUsingAction = ((ViewAction)args[0]).id;
 
@@ -22,16 +21,15 @@ public class StateTargetChooseAction : StateTarget {
 			contTarg.SetTargetArgState (); // Let the parent figure out what exact state we go to
 			break;
 		
-		case Notification.ReleaseChrOverNone:
-			// Then we've dragging from a Chr and ended on something that wasn't ourselves, or an action
-			Debug.Assert (((ViewChr)target).mod == contTarg.selected);
+		case Notification.ClickArena:
+			// Then we've just clicked somewhere in the arena, so we can deselect the current Char
 
 			contTarg.SetState (new StateTargetIdle (contTarg));
 
 			break;
 
 		case Notification.ChrStopHold:
-			// Then we've just dragged, but released over the original character - select them
+			// Then we've clicked on a different character, so select them
 
 			contTarg.selected = ((ViewChr)target).mod;
 
