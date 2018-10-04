@@ -40,6 +40,7 @@ public class StateTargetSelected : StateTarget {
 		
 		Debug.Assert(contTarg.selected != null);
 		contTarg.selected.Select ();
+        
 
 	}
 
