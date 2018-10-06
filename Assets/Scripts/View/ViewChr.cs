@@ -147,7 +147,7 @@ public class ViewChr : Observer {
 			//On switch to selection, highlight the border
 			case Chr.STATESELECT.SELECTED:
 				if (lastStateSelect == Chr.STATESELECT.CHOOSINGACT) {
-					RemoveActionWheel ();
+					//RemoveActionWheel ();
 				}
 				SetBorder ("ChrBorderSelected");
 
@@ -156,19 +156,19 @@ public class ViewChr : Observer {
             //On switch to choosing action, spawns the ActionWheel
 			case Chr.STATESELECT.CHOOSINGACT:
 				SetBorder ("ChrBorder");
-				AddActionWheel ();
+				//AddActionWheel ();
 				break;
 
             //On switch to targetting, despawns the ActionWheel
 			case Chr.STATESELECT.TARGGETING:
-				RemoveActionWheel ();
+				//RemoveActionWheel ();
 				break;
 
             //On switch to unselected, make changes depending on previous state
 			case Chr.STATESELECT.IDLE:
                 //If previously choosing an action, despawn the ActionWheel
 				if (lastStateSelect == Chr.STATESELECT.CHOOSINGACT) {
-					RemoveActionWheel ();
+					//RemoveActionWheel ();
 
 				} else if (lastStateSelect == Chr.STATESELECT.TARGGETING) {
 					//Nothing needs to be done (currently, this may change)

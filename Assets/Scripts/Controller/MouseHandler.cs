@@ -224,7 +224,7 @@ public class MouseHandler : MonoBehaviour {
 
 	public void SendNotification(string ntf){
 		if (ntf != "") {
-			//If this notification has been enabled, then send it
+            //If this notification has been enabled, then send it
 			Controller.Get ().NotifyObs (ntf, owner, LibView.GetMouseLocation());
 		}
 	}

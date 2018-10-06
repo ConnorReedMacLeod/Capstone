@@ -33,8 +33,9 @@ public class ContInfo : Observer {
 				break;
 
 			case Notification.ActStopHover:
-				if (bLocked == false &&
-				    ((ViewAction)target).mod == viewInfoPanel.viewInfoAction.mod) {
+
+                if (bLocked == false) { 
+                   //  && ((ViewAction)target).mod == viewInfoPanel.viewInfoAction.mod) {
 					//When we stop hovering over the thing we're displaying, stop displaying it
 					viewInfoPanel.ClearPanel ();
 				}
