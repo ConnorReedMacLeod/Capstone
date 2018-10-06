@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class StateTargetChooseAction : StateTarget {
 
-	// Note: The only way to be in this state is if the mouse is currently held down
-	//       So we only need to handle ways in which the mouse can be released
 	public override void UpdateObs(string eventType, Object target, params object[] args){
 
 		switch (eventType) {
@@ -28,7 +26,7 @@ public class StateTargetChooseAction : StateTarget {
 
 			break;
 
-		case Notification.ChrStopHold:
+		case Notification.ClickChr:
 			// Then we've clicked on a different character, so select them
 
 			contTarg.selected = ((ViewChr)target).mod;
