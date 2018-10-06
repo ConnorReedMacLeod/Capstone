@@ -23,6 +23,8 @@ public class Notification {
 	//Targetting Events
 	public const string TargetFinish = "target.finish";
 	public const string TargetStart = "target.start";
+    public const string ChrSelected = "chr.selected";
+    public const string ChrUnselected = "chr.unselected";
 
 	//Mana Events
 	public const string ManaAddPhysical = "mana.addphys";
@@ -60,8 +62,10 @@ public class Notification {
 
 	public const string ExecuteEvent = "event.execute";
 
+
 	//Info Panel Events
 	public const string InfoActionUpdate = "info.actionupdate";
+    public const string ActionUpdate = "act.update";
 
 
 

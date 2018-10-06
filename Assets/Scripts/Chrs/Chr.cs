@@ -78,7 +78,7 @@ public class Chr : Subject {
     //Sets character state to selected
 	public void Select(){
 		stateSelect = STATESELECT.SELECTED;
-		NotifyObs ();
+        NotifyObs (Notification.ChrSelected, this);
 	}
 
 	public void ChoosingAction(){

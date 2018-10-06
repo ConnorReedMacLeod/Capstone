@@ -6,8 +6,10 @@ using UnityEngine;
 // responsible for creating and managing the game
 
 public class Match : MonoBehaviour {
-	
-	public Arena arena;
+
+    bool bStarted;                          //Confirms the Start() method has executed
+
+    public Arena arena;
 
 	public int nPlayers = 2;
 	public Player [] arPlayers;
@@ -123,7 +125,12 @@ public class Match : MonoBehaviour {
 
 
 	public void Start(){
-		gameObject.tag = "Match"; // So that anything can find this very quickly
+        if (bStarted) {
+            return;
+        }
+        bStarted = true;
+
+        gameObject.tag = "Match"; // So that anything can find this very quickly
 
 		arena = GetComponentInChildren<Arena> ();
 		timeline = GetComponentInChildren<Timeline> ();
