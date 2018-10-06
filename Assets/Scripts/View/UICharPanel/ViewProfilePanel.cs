@@ -56,7 +56,6 @@ public class ViewProfilePanel : Observer {
 
             //TODO:: Figure out when to update this - for like power/def changes
             case Notification.ChrSelected:
-                Debug.Log("Received selection signal");
                 SetFocus((Chr)target);
                 break;
 

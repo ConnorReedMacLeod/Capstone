@@ -78,8 +78,6 @@ public class Chr : Subject {
     //Sets character state to selected
 	public void Select(){
 		stateSelect = STATESELECT.SELECTED;
-        Debug.Log("sending selected notification");
-        Debug.Log(this.lstObservers.Count);
         NotifyObs (Notification.ChrSelected, this);
 	}
 
