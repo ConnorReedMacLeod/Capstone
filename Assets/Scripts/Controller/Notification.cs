@@ -24,6 +24,7 @@ public class Notification {
 	public const string TargetFinish = "target.finish";
 	public const string TargetStart = "target.start";
     public const string ChrSelected = "chr.selected";
+    public const string ChrUnselected = "chr.unselected";
 
 	//Mana Events
 	public const string ManaAddPhysical = "mana.addphys";

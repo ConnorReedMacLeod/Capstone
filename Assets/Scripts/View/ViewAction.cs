@@ -39,10 +39,12 @@ public class ViewAction : Observer {
 		mousehandler = GetComponent<MouseHandler> ();
 		mousehandler.SetOwner (this);
 
+        mousehandler.SetNtfClick(Notification.ClickAct);
 		mousehandler.SetNtfStartHover (Notification.ActStartHover);
 		mousehandler.SetNtfStopHover (Notification.ActStopHover);
 	}
 
+    /* TODO:: REMOVE THESE, SINCE MOUSEHANDLER SHOULD TAKE CARE OF THIS
     //Notifies application when the Action is clicked
     public void OnMouseDown(){
 		Controller.Get().NotifyObs(Notification.ClickAct, this, id);
@@ -55,6 +57,7 @@ public class ViewAction : Observer {
 	public void OnMouseExit(){
 		Controller.Get ().NotifyObs (Notification.ActStopHover, this, id);
 	}
+    */
 
 
     override public void UpdateObs(string eventType, Object target, params object[] args)
@@ -64,6 +67,7 @@ public class ViewAction : Observer {
         {
             //TODO:: Consider adding in field-specific update types if only one field needs updating
 
+            case Notification.ChrSelected:
             case Notification.ActionUpdate:
                 DisplayAll();
                 break;
@@ -164,7 +168,7 @@ public class ViewAction : Observer {
             }
         }
 
-        UpdateObs(Notification.InfoActionUpdate, null);
+        UpdateObs(Notification.ActionUpdate, null);
     }
 
 }
