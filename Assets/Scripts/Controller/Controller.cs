@@ -54,7 +54,7 @@ public class Controller : Subject{
 		contInfo = GetComponent<ContInfo> ();
 		Subscribe (contInfo);
 
-		contArena = GetComponent<ContArena> ();
+        contArena = GetComponent<ContArena> ();
 		Subscribe (contArena);
 
 		contGlobalInput = GetComponent<ContGlobalInput> ();

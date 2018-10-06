@@ -23,7 +23,6 @@ public class ViewActionWheel : Observer {
 		// I'm not sure how I feel about the sturdiness of that...
 
 		for (int i = 0; i < MAXACTIONS; i++) {
-			arViewAction [i].SetActionMaterial ("Default");
 			arViewAction [i].SetModel (mod.arActions[i]);
 			//arViewAction [i].SetActionMaterial (mod.arActions[i].sName); //TODO: replace when ready
 		}

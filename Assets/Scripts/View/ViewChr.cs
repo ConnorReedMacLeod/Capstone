@@ -120,25 +120,6 @@ public class ViewChr : Observer {
 
 	}
 
-    //Spawns the ActionWheel
-	void AddActionWheel(){
-		Debug.Assert (objActionWheel == null);
-		Debug.Assert (viewActionWheel == null);
-		objActionWheel = Instantiate (pfActionWheel, transform);
-		///viewActionWheel = objActionWheel.AddComponent<ViewActionWheel> ();
-		viewActionWheel = objActionWheel.GetComponent<ViewActionWheel>();
-		viewActionWheel.setModel (mod);
-	}
-
-    //Despawns the ActionWheel
-	void RemoveActionWheel(){
-		Debug.Assert (objActionWheel != null);
-		Debug.Assert (viewActionWheel != null);
-		Destroy (objActionWheel);
-		objActionWheel = null;
-		viewActionWheel = null;
-	}
-
 	public void UpdateSize(){
 		// Check the model's desired radius, so we can match that
 
@@ -212,5 +193,28 @@ public class ViewChr : Observer {
 		//TODO:: Make this update more intelligent so that it updates based on the passed eventType
 		UpdateStatus();
 	}
-		
+
+
+
+    //UNUSED
+
+    //Spawns the ActionWheel
+    void AddActionWheel() {
+        Debug.Assert(objActionWheel == null);
+        Debug.Assert(viewActionWheel == null);
+        objActionWheel = Instantiate(pfActionWheel, transform);
+        ///viewActionWheel = objActionWheel.AddComponent<ViewActionWheel> ();
+        viewActionWheel = objActionWheel.GetComponent<ViewActionWheel>();
+        viewActionWheel.setModel(mod);
+    }
+
+    //Despawns the ActionWheel
+    void RemoveActionWheel() {
+        Debug.Assert(objActionWheel != null);
+        Debug.Assert(viewActionWheel != null);
+        Destroy(objActionWheel);
+        objActionWheel = null;
+        viewActionWheel = null;
+    }
+
 }
