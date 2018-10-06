@@ -79,8 +79,8 @@ public class Chr : Subject {
 	public void Select(){
 		stateSelect = STATESELECT.SELECTED;
         Debug.Log("sending selected notification");
-		NotifyObs (Notification.ChrSelected, this);
-        Controller.Get().NotifyObs(Notification.ChrSelected, this);
+        Debug.Log(this.lstObservers.Count);
+        NotifyObs (Notification.ChrSelected, this);
 	}
 
 	public void ChoosingAction(){
