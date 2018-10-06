@@ -46,6 +46,14 @@ public class ViewActionPanel : Observer {
         if (bStarted == false) {
             bStarted = true;
             setModel(null);
+
+            Match.Get().Start();
+            //Start listening to each of the characters
+            for (int i = 0; i < Match.Get().nPlayers; i++) {
+                for (int j = 0; j < Match.Get().arChrs[1].Length; j++) {
+                    Match.Get().arChrs[i][j].Subscribe(this);
+                }
+            }
         }
 
     }

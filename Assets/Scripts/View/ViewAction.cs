@@ -32,6 +32,13 @@ public class ViewAction : Observer {
             bStarted = true;
             Init();
             InitMouseHandler();
+
+            Match.Get().Start();
+            for (int i = 0; i < Match.Get().nPlayers; i++) {
+                for (int j = 0; j < Match.Get().arChrs[1].Length; j++) {
+                    Match.Get().arChrs[i][j].Subscribe(this);
+                }
+            }
         }
 	}
 
@@ -62,14 +69,12 @@ public class ViewAction : Observer {
 
     override public void UpdateObs(string eventType, Object target, params object[] args)
     {
-
-        switch (eventType)
-        {
+        switch (eventType) {
             //TODO:: Consider adding in field-specific update types if only one field needs updating
 
             case Notification.ChrSelected:
-            case Notification.ActionUpdate:
-                DisplayAll();
+            //case Notification.ActionUpdate:
+                SetModel(((Chr)target).arActions[id]);
                 break;
 
             default:
