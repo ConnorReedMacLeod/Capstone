@@ -51,6 +51,7 @@ public class ViewAction : Observer {
 		mousehandler.SetNtfStopHover (Notification.ActStopHover);
 	}
 
+    /*
     //TODO:: REMOVE THESE, SINCE MOUSEHANDLER SHOULD TAKE CARE OF THIS
     //Notifies application when the Action is clicked
     public void OnMouseDown(){
@@ -64,7 +65,7 @@ public class ViewAction : Observer {
 	public void OnMouseExit(){
 		Controller.Get ().NotifyObs (Notification.ActStopHover, this, id);
 	}
-    /**/
+    */
 
 
     override public void UpdateObs(string eventType, Object target, params object[] args)
