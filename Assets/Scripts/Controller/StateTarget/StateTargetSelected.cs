@@ -11,14 +11,12 @@ public class StateTargetSelected : StateTarget {
 		case Notification.ArenaStartDrag:
 		case Notification.ClickArena:
             // If we're clicking at all with the arena, then we can deselect our character
-            Debug.Log("Clicked Arena, so stopping selection");
 
              contTarg.SetState (new StateTargetIdle (contTarg));
 
 			break;
 
 		case Notification.ClickChr:
-             Debug.Log("Switching to select a new character instead");
 
             // If we now click on a different character, then we'll select them instead
             contTarg.selected.Idle (); // Need to deselect our current character first
