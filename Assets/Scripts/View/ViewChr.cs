@@ -146,17 +146,8 @@ public class ViewChr : Observer {
 
 			//On switch to selection, highlight the border
 			case Chr.STATESELECT.SELECTED:
-				if (lastStateSelect == Chr.STATESELECT.CHOOSINGACT) {
-					//RemoveActionWheel ();
-				}
 				SetBorder ("ChrBorderSelected");
 
-				break;
-            
-            //On switch to choosing action, spawns the ActionWheel
-			case Chr.STATESELECT.CHOOSINGACT:
-				SetBorder ("ChrBorder");
-				//AddActionWheel ();
 				break;
 
             //On switch to targetting, despawns the ActionWheel
@@ -166,18 +157,16 @@ public class ViewChr : Observer {
 
             //On switch to unselected, make changes depending on previous state
 			case Chr.STATESELECT.IDLE:
-                //If previously choosing an action, despawn the ActionWheel
-				if (lastStateSelect == Chr.STATESELECT.CHOOSINGACT) {
-					//RemoveActionWheel ();
 
-				} else if (lastStateSelect == Chr.STATESELECT.TARGGETING) {
+				if (lastStateSelect == Chr.STATESELECT.TARGGETING) {
 					//Nothing needs to be done (currently, this may change)
 
 				} else if (lastStateSelect == Chr.STATESELECT.SELECTED) {
-					//Then unhighlight the border
-					SetBorder ("ChrBorder");
-				}
-				break;
+                        //Nothing needs to be done (currently, this may change)
+                }
+                 //Then unhighlight the border
+                SetBorder("ChrBorder");
+                 break;
             
             //Catches unrecognized character states
 			default: 
