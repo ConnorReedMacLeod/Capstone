@@ -52,20 +52,21 @@ public class ViewAction : Observer {
 	}
 
     /*
-    //TODO:: REMOVE THESE, SINCE MOUSEHANDLER SHOULD TAKE CARE OF THIS
-    //Notifies application when the Action is clicked
-    public void OnMouseDown(){
-		Controller.Get().NotifyObs(Notification.ClickAct, this, id);
-	}	
+   //TODO:: REMOVE THESE, SINCE MOUSEHANDLER SHOULD TAKE CARE OF THIS
+   //Notifies application when the Action is clicked
+   public void OnMouseDown(){
+       Debug.Log("Built in Click");
+       Controller.Get().NotifyObs(Notification.ClickAct, this, id);
+   }
 
-	public void OnMouseEnter(){
-		Controller.Get ().NotifyObs (Notification.ActStartHover, this, id);
-	}
+   public void OnMouseEnter(){
+       Controller.Get ().NotifyObs (Notification.ActStartHover, this, id);
+   }
 
-	public void OnMouseExit(){
-		Controller.Get ().NotifyObs (Notification.ActStopHover, this, id);
-	}
-    */
+   public void OnMouseExit(){
+       Controller.Get ().NotifyObs (Notification.ActStopHover, this, id);
+   }
+   */
 
 
     override public void UpdateObs(string eventType, Object target, params object[] args)

@@ -111,6 +111,7 @@ public class ContTarget : Observer {
 		if (curState != null) {
 			curState.OnEnter ();
 		}
+        Debug.Log("new state is " + newState);
 	}
 
 	public ContTarget(){
