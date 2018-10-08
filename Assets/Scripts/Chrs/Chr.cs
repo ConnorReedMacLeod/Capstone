@@ -12,8 +12,7 @@ public class Chr : Subject {
 	};
 
 	public enum STATESELECT{
-		SELECTED,                   //Selected a character (to see status effects, measure distances, etc.)
-		CHOOSINGACT,				//Choosing an action to perform
+		SELECTED,                   //Selected a character (to see status effects, actions)
 		TARGGETING,                 //Targetting of character actions
 		IDLE                 		//Default character state
 	};
@@ -79,11 +78,6 @@ public class Chr : Subject {
 	public void Select(){
 		stateSelect = STATESELECT.SELECTED;
         NotifyObs (Notification.ChrSelected, this);
-	}
-
-	public void ChoosingAction(){
-		stateSelect = STATESELECT.CHOOSINGACT;
-		NotifyObs ();
 	}
 
     //Sets character state to targetting

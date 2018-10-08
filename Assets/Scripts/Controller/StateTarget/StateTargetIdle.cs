@@ -12,18 +12,11 @@ public class StateTargetIdle : StateTarget {
 	public override void UpdateObs(string eventType, Object target, params object[] args){
 
 		switch (eventType) {
-		case Notification.ClickChr:
-			// TODO:: Select the character so that you can see debuffs and stuff, measure distances
+            case Notification.ChrStartHold:
+            case Notification.ClickChr:
 			contTarg.selected = ((ViewChr)target).mod;
 
 			contTarg.SetState (new StateTargetSelected (contTarg));
-			break;
-
-		case Notification.ChrStartHold:
-			// Then we've started to hold/drag this character in preparation for choosing an action
-			contTarg.selected = ((ViewChr)target).mod;
-
-			contTarg.SetState (new StateTargetChooseAction (contTarg));
 			break;
 		}
 	}

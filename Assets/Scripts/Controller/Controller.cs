@@ -19,7 +19,7 @@ using UnityEngine;
 public class Controller : Subject{
 
 
-	ContTarget contTarget;
+    ContTarget contTarget;
 	ContTimeline contTimeline;
 	ContMana contMana;
 	ContInfo contInfo;
@@ -38,7 +38,8 @@ public class Controller : Subject{
 		return instance;
 	}
 
-	public void Start () {
+	public override void Start () {
+        base.Start();
 		gameObject.tag = "Controller";
 
 		// Find all necessary controllers and register them as our observers

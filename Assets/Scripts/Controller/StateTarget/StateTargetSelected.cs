@@ -10,29 +10,36 @@ public class StateTargetSelected : StateTarget {
 		switch (eventType) {
 		case Notification.ArenaStartDrag:
 		case Notification.ClickArena:
-			// If we're clicking at all with the arena, then we can deselect our character
+            // If we're clicking at all with the arena, then we can deselect our character
+            Debug.Log("Clicked Arena, so stopping selection");
 
-			contTarg.SetState (new StateTargetIdle (contTarg));
+             contTarg.SetState (new StateTargetIdle (contTarg));
 
 			break;
 
 		case Notification.ClickChr:
-			// If we now click on a different character, then we'll select them instead
-			contTarg.selected.Idle (); // Need to deselect our current character first
+             Debug.Log("Switching to select a new character instead");
+
+            // If we now click on a different character, then we'll select them instead
+            contTarg.selected.Idle (); // Need to deselect our current character first
 			contTarg.selected = ((ViewChr)target).mod;
 
 			contTarg.SetState (new StateTargetSelected (contTarg));
 
 			break;
 
-		case Notification.ChrStartHold:
-			// Then we've started to hold/drag this character in preparation for choosing an action
-			contTarg.selected.Idle();
-			contTarg.selected = ((ViewChr)target).mod;
+		case Notification.ClickAct:
+            // When we've clicked an action, use that action
 
-			contTarg.SetState (new StateTargetChooseAction (contTarg));
-			break;
-		}
+            contTarg.selected.Targetting();
+            contTarg.selected.nUsingAction = ((ViewAction)target).id;
+
+            // TODO:: Save the current targets if there are any, so that you can 
+            // revert to those targets if you've failed targetting
+            contTarg.ResetTar();
+            contTarg.SetTargetArgState(); // Let the parent figure out what exact state we go to
+            break;
+        }
 	}
 
 
