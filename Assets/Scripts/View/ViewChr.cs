@@ -17,14 +17,6 @@ public class ViewChr : Observer {
 	public GameObject goBorder;        //Border reference
 	public GameObject goPortrait;       //Portrait Reference
 
-    /*
-	public float fOrigRadius;
-	public float fOrigWidth;
-	public float fOrigHeight;
-	public float fOrigScaleX;
-	public float fOrigScaleY;
-    */		
-
     public void Start()
     {
 		if (bStarted == false) {
@@ -36,14 +28,6 @@ public class ViewChr : Observer {
 			lastStateSelect = Chr.STATESELECT.IDLE;
 			InitMouseHandler ();
 
-            /*
-			//Get the base size of the character prefab so we can scale it later
-			fOrigWidth = GetComponent<Collider>().bounds.size.x;
-			fOrigHeight = GetComponent<Collider>().bounds.size.y;
-			fOrigRadius = GetComponent<CapsuleCollider> ().radius;
-			fOrigScaleX = transform.localScale.x;
-			fOrigScaleY = transform.localScale.y;
-            */
 		}
     }
 
@@ -68,8 +52,6 @@ public class ViewChr : Observer {
 		mousehandler.SetNtfStartHold (Notification.ChrStartHold);
 
 		mousehandler.SetNtfStopHold (Notification.ChrStopHold);
-
-		//mousehandler.SetReleaseOtherCallback (ReleaseOverOther);
 	}
 
     
