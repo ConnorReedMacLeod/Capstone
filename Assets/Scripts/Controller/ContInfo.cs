@@ -18,10 +18,12 @@ public class ContInfo : Observer {
 			switch (eventType) {
 			case Notification.TargetStart:
 				SetActionFocus(((Chr)target).arActions[(int)args[0]]);
+                bLocked = true;
 				break;
 
 			case Notification.TargetFinish:
 				ClearActionFocus ();
+                bLocked = false;
 				break;
 
 			case Notification.ActStartHover:
@@ -34,8 +36,8 @@ public class ContInfo : Observer {
 
 			case Notification.ActStopHover:
 
-                if (bLocked == false) { 
-                   //  && ((ViewAction)target).mod == viewInfoPanel.viewInfoAction.mod) {
+                if (bLocked == false && ((ViewAction)target).mod == viewInfoPanel.viewInfoAction.mod) {
+                    // First ensure that what we're leaving is the current displayed ability
 					//When we stop hovering over the thing we're displaying, stop displaying it
 					viewInfoPanel.ClearPanel ();
 				}
