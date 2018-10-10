@@ -57,6 +57,7 @@ public class MouseHandler : MonoBehaviour {
 		fTimeDownDelay = 0.2f;
 		fTimeDoubleDelay = 0.3f;
 		fMinDistDrag = 1.0f;
+        Physics.queriesHitTriggers = true;
 	}
 
 
@@ -131,6 +132,7 @@ public class MouseHandler : MonoBehaviour {
 	}
 
 	public void OnLeftDown(){
+        Debug.Log(owner);
 
 		bDown = true;
 		fTimeDown = 0.0f;
