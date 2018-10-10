@@ -89,7 +89,7 @@ public class Chr : Subject {
     //Set character state to unselected
 	public void Idle (){
 		stateSelect = STATESELECT.IDLE;
-		NotifyObs ();
+		NotifyObs (Notification.ChrUnselected, this);
 	}
 
     //Performs the character's queued action

@@ -132,7 +132,6 @@ public class MouseHandler : MonoBehaviour {
 	}
 
 	public void OnLeftDown(){
-        Debug.Log(owner);
 
 		bDown = true;
 		fTimeDown = 0.0f;

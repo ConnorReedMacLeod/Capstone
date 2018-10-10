@@ -75,8 +75,11 @@ public class ViewAction : Observer {
             //TODO:: Consider adding in field-specific update types if only one field needs updating
 
             case Notification.ChrSelected:
-            //case Notification.ActionUpdate:
                 SetModel(((Chr)target).arActions[id]);
+                break;
+
+            case Notification.ChrUnselected:
+                SetModel(null);
                 break;
 
             default:
