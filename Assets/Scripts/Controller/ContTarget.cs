@@ -59,7 +59,6 @@ public class ContTarget : Observer {
 			//Then we've filled of the targetting arguments
 
 			selected.bSetAction = true;
-			selected.Idle ();
 
 			// Can now go back idle and wait for the next targetting
 			SetState (new StateTargetIdle (this));

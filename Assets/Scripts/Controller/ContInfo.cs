@@ -21,6 +21,7 @@ public class ContInfo : Observer {
                 bLocked = true;
 				break;
 
+                        //TODO:: Need a TargetCancelled notification
 			case Notification.TargetFinish:
 				ClearActionFocus ();
                 bLocked = false;
