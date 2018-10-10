@@ -14,21 +14,16 @@ public class ViewChr : Observer {
 	Chr.STATESELECT lastStateSelect;  //Tracks previous character state (SELECTED, TARGETTING, UNSELECTED)
 	Vector3 v3LastPos;                      //Tracks previous character position against the model position
 
-	public GameObject pfActionWheel;        //ActionWheel prefab
-	public GameObject objActionWheel;       //ActionWheel object
-	public ViewActionWheel viewActionWheel; //ActionWheel view
+	public GameObject goBorder;        //Border reference
+	public GameObject goPortrait;       //Portrait Reference
 
+    /*
 	public float fOrigRadius;
 	public float fOrigWidth;
 	public float fOrigHeight;
 	public float fOrigScaleX;
 	public float fOrigScaleY;
-
-	const int indexTransformParent = 0;			//The parent object's transform index
-	const int indexRendererBorder = 0;         	//The border surrounding the character's portrait
-	const int indexTransformBorder = 1;
-	const int indexRendererPortrait = 1;		//The character's portait
-	const int indexTransformPortrait = 2;        		
+    */		
 
     public void Start()
     {
@@ -41,23 +36,26 @@ public class ViewChr : Observer {
 			lastStateSelect = Chr.STATESELECT.IDLE;
 			InitMouseHandler ();
 
+            /*
 			//Get the base size of the character prefab so we can scale it later
 			fOrigWidth = GetComponent<Collider>().bounds.size.x;
 			fOrigHeight = GetComponent<Collider>().bounds.size.y;
 			fOrigRadius = GetComponent<CapsuleCollider> ().radius;
 			fOrigScaleX = transform.localScale.x;
 			fOrigScaleY = transform.localScale.y;
+            */
 		}
     }
 
 	public void Init(){
 		setPortrait (mod.sName);
-		if (mod.plyrOwner.id == 0) {
+		if (mod.plyrOwner.id == 1) {
 			//Find the portrait and flip it for one of the players
-			GetComponentsInChildren<Transform>()[indexTransformPortrait].localScale = new Vector3 (-1, 1, 1);
+			goPortrait.transform.localScale = new Vector3 (-1.33f, 1.33f, 1.33f);
 
-
-		}
+            //Find the border and flip it for one of the players
+            goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.33f);
+        }
 	}
 
 	public void InitMouseHandler(){
@@ -71,46 +69,26 @@ public class ViewChr : Observer {
 
 		mousehandler.SetNtfStopHold (Notification.ChrStopHold);
 
-		mousehandler.SetReleaseOtherCallback (ReleaseOverOther);
+		//mousehandler.SetReleaseOtherCallback (ReleaseOverOther);
 	}
 
-	public void ReleaseOverOther(GameObject other){
+    
 
-		// Check if the other object has a ViewAction component
-		ViewAction viewAction = other.GetComponent<ViewAction>();
-		if (viewAction != null) {
-			// Then use the action
-			Controller.Get().NotifyObs(Notification.ReleaseChrOverAct, this, viewAction);
-			return;
-		}
-
-		// If the object has none of the desired components
-		Controller.Get().NotifyObs(Notification.ReleaseChrOverNone, this, null);
-	}
-
-    /*//Undoes the image and border scaling set by the parent
-    public void Unscale(){
-		transform.localScale = new Vector3
-			(transform.localScale.x / transform.parent.localScale.x,
-				transform.localScale.y / transform.parent.localScale.y,
-				transform.localScale.z / transform.parent.localScale.z);
-	}*/
-
-    //Sets the material used for the character's portrait
+    //Sets the sprite used for the character's portrait
 	void setPortrait(string _sName){
-		string sMatPath = "Materials/Chrs/mat" + _sName;
-		Material matChr = Resources.Load(sMatPath, typeof(Material)) as Material;
+		string sSprPath = "Images/Chrs/img" + _sName;
+		Sprite sprChr = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
 
-		GetComponentsInChildren<Renderer> ()[indexRendererPortrait].material = matChr;
+        goPortrait.GetComponent<SpriteRenderer>().sprite = sprChr;
 
 	}
-
-    //Sets the material used for the character's border
+    
+    //Sets the sprite used for the character's border
 	void SetBorder(string _sName){
-		string sMatPath = "Materials/mat" + _sName;
-		Material matBorder = Resources.Load(sMatPath, typeof(Material)) as Material;
+		string sSprPath = "Images/Chrs/img" + _sName;
+		Sprite sprBorder = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
 
-		GetComponentsInChildren<Renderer> ()[indexRendererBorder].material = matBorder;
+        goBorder.GetComponent<SpriteRenderer>().sprite = sprBorder;
 	}
 
     //Find the model, and do any setup to reflect it
@@ -120,16 +98,6 @@ public class ViewChr : Observer {
 
 	}
 
-	public void UpdateSize(){
-		// Check the model's desired radius, so we can match that
-
-		float fRelativeScale = fOrigRadius / mod.fRad;
-
-		transform.localScale = new Vector3 (fOrigScaleX / fRelativeScale, fOrigScaleY / fRelativeScale, 1.0f);
-		GetComponent<CapsuleCollider> ().radius = mod.fRad;
-		//ERROR:: The collider doesn't rescale properly if the size increases past the original... idk why
-
-	}
 
 	//TODO:: Make this a state machine
     //Updates the character's state (SELECTED, TARGETTING, UNSELECTED)
@@ -138,7 +106,7 @@ public class ViewChr : Observer {
 		if (!bStarted)
 			return;
 
-		UpdateSize ();
+		//UpdateSize ();
 
 		//Checks if character status has changed
 		if (lastStateSelect != mod.stateSelect) {
@@ -186,7 +154,7 @@ public class ViewChr : Observer {
 
 
     //UNUSED
-
+    /*
     //Spawns the ActionWheel
     void AddActionWheel() {
         Debug.Assert(objActionWheel == null);
@@ -205,5 +173,40 @@ public class ViewChr : Observer {
         objActionWheel = null;
         viewActionWheel = null;
     }
+    */
+    /*
+	public void UpdateSize(){
+		// Check the model's desired radius, so we can match that
 
+		float fRelativeScale = fOrigRadius / mod.fRad;
+
+		transform.localScale = new Vector3 (fOrigScaleX / fRelativeScale, fOrigScaleY / fRelativeScale, 1.0f);
+		GetComponent<CapsuleCollider> ().radius = mod.fRad;
+		//ERROR:: The collider doesn't rescale properly if the size increases past the original... idk why
+
+	}
+    */
+    /* UNNEEDED WITH JUST ABILITY BUTTONS
+	public void ReleaseOverOther(GameObject other){
+
+		// Check if the other object has a ViewAction component
+		ViewAction viewAction = other.GetComponent<ViewAction>();
+		if (viewAction != null) {
+			// Then use the action
+			Controller.Get().NotifyObs(Notification.ReleaseChrOverAct, this, viewAction);
+			return;
+		}
+
+		// If the object has none of the desired components
+		Controller.Get().NotifyObs(Notification.ReleaseChrOverNone, this, null);
+	}
+    */
+
+    /*//Undoes the image and border scaling set by the parent
+    public void Unscale(){
+		transform.localScale = new Vector3
+			(transform.localScale.x / transform.parent.localScale.x,
+				transform.localScale.y / transform.parent.localScale.y,
+				transform.localScale.z / transform.parent.localScale.z);
+	}*/
 }
