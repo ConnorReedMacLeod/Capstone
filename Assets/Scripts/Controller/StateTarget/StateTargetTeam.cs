@@ -35,6 +35,21 @@ public class StateTargetTeam : StateTarget {
                 contTarg.CancelTar();
 
                 break;
+
+            case Notification.ClickAct:
+                // Then we've clicked a new ability, so switch targetting to that
+
+                // Reset any targetting we've done
+                ResetTargets();
+
+                contTarg.selected.nUsingAction = ((ViewAction)target).id;
+
+                // TODO:: Save the current targets if there are any, so that you can 
+                // revert to those targets if you've failed targetting
+                contTarg.ResetTar();
+                contTarg.SetTargetArgState(); // Let the parent figure out what exact state we go to
+
+                break;
         }
 
     }
