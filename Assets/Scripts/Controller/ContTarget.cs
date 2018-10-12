@@ -39,6 +39,7 @@ public class ContTarget : Observer {
 		ResetTar();
 		selected.bSetAction = false;
 		selected.nUsingAction = -1;
+        
 		//selected.Idle ();
 
 		SetState (new StateTargetIdle (this));
@@ -93,7 +94,7 @@ public class ContTarget : Observer {
                 break;
 
             case "TargetAlly":
-                newState = new StateTargetAlly(this);
+                newState = new StateTargetChr(this);
                 break;
 
 			default:
