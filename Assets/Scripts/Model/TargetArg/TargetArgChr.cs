@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TargetArgChr : TargetArg {
 
+  
 	public Chr chrTar;
 	public delegate bool funcLegalChr (Chr own, Chr arg);
 	public funcLegalChr fLegalCheck;
