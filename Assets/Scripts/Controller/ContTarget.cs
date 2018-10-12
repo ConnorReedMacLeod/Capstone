@@ -39,7 +39,7 @@ public class ContTarget : Observer {
 		ResetTar();
 		selected.bSetAction = false;
 		selected.nUsingAction = -1;
-		selected.Idle ();
+		//selected.Idle ();
 
 		SetState (new StateTargetIdle (this));
 
@@ -59,6 +59,7 @@ public class ContTarget : Observer {
 			//Then we've filled of the targetting arguments
 
 			selected.bSetAction = true;
+			//selected.Idle ();
 
 			// Can now go back idle and wait for the next targetting
 			SetState (new StateTargetIdle (this));
@@ -83,9 +84,17 @@ public class ContTarget : Observer {
 				newState = new StateTargetChr (this);
 				break;
 
-			case "TargetArgPos":
+			case "TargetArgPos": //TODO:: REMOVE THIS
 				newState = new StateTargetPos (this);
 				break;
+
+            case "TargetTeam":
+                newState = new StateTargetTeam(this);
+                break;
+
+            case "TargetAlly":
+                newState = new StateTargetAlly(this);
+                break;
 
 			default:
 
