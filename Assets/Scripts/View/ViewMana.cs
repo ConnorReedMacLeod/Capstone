@@ -20,8 +20,6 @@ public class ViewMana : Observer {
 	public Text txtManaEffortEnergy;
 	public Text txtManaEffortBlood;
 
-	public GameObject[] arManaText;
-
 	public Mana mod;                   //Character model
 
 	// Use this for initialization
@@ -35,7 +33,7 @@ public class ViewMana : Observer {
 
 	//Variable initialization
 	public void Init() {
-		arManaText = GameObject.FindGameObjectsWithTag("Mana");
+        /*GameObject[] arManaText = GetComponentsInChildren<Text>();
 
 		for (int i = 0; i < arManaText.Length; i++) {
 			Text txtIndex = arManaText[i].GetComponent<Text>();
@@ -81,7 +79,7 @@ public class ViewMana : Observer {
 				}
 
 			}
-		}
+		}*/
 	}
 
 	public void InitModel() {
@@ -89,9 +87,13 @@ public class ViewMana : Observer {
 		mod.Subscribe(this);
 	}
 
-	public void DisplayMana(Text _txtMana, int _nMana) {
-		_txtMana.text = _nMana.ToString();
-	}
+    public void DisplayMana(Text _txtMana, int _nMana) {
+        if (_nMana == 0) {
+            _txtMana.text = "";
+        } else { 
+            _txtMana.text = _nMana.ToString();
+        }
+    }
 
 
 	//Updates mana view, detecting if changes are needed to the values
