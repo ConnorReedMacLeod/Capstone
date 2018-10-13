@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ViewTimelineEventTurn : ViewTimelineEvent<TimelineEventTurn> {
 
-	private int indexEventPortrait = 1;
+    public SpriteRenderer rendMana;
+    public Text txtTurnNumber;
 
 	public override float GetVertSpan (){
 		return 0.4f + ViewTimeline.fEventGap;
@@ -14,7 +16,7 @@ public class ViewTimelineEventTurn : ViewTimelineEvent<TimelineEventTurn> {
 		switch (eventType) {
 		case Notification.EventSetMana:
 
-			SetPortrait (Mana.arsManaTypes [(int)(mod.manaGen)]);
+            SetImgMana(Mana.arsManaTypes [(int)(mod.manaGen)]);
 			break;
 		default:
 			break;
@@ -24,18 +26,22 @@ public class ViewTimelineEventTurn : ViewTimelineEvent<TimelineEventTurn> {
 
 	}
 
-	void SetPortrait(string _sType){
-		string sMatPath = "Materials/Mana/Mat" + _sType;
+    public void SetTurnNumber(int _nTurnNumber) {
+        txtTurnNumber.text = _nTurnNumber.ToString();
+    }
 
-		Material matChr = Resources.Load(sMatPath, typeof(Material)) as Material;
+	public void SetImgMana(string _sType){
+		string sImgPath = "Images/Mana/ImgMana" + _sType + "Tiny";
 
-		GetComponentsInChildren<Renderer> ()[indexEventPortrait].material = matChr;
+		Sprite sprMana = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
+
+        rendMana.sprite = sprMana;
 	}
 
 	public override void Start(){
 		base.Start ();
 
-		SetMaterial ("MatTimelineEventTurn");
+		//SetMaterial ("MatTimelineEventTurn");
 	}
 
 }
