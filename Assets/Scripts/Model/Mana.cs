@@ -214,6 +214,8 @@ public class Mana : Subject {
 			arMana = new int[nManaTypes];
 			arManaPool = new int[nManaTypes];
 			qManaPool = new LinkedList<MANATYPE>();
+
+            this.AddMana(new int[] { 3, 4, 2, 5, 0 });
 		}
 	}
 }
