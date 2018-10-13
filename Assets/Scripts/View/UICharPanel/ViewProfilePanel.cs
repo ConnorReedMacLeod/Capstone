@@ -50,7 +50,7 @@ public class ViewProfilePanel : Observer {
     }
 
     override public void UpdateObs(string eventType, Object target, params object[] args) {
-        Debug.Log(eventType);
+        //Debug.Log(eventType);
         switch (eventType) {
             
 
