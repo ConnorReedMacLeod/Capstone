@@ -10,7 +10,7 @@ public class Timeline : Subject {
 
 	public static Timeline instance;
 
-	public static int MAXTURNS = 15;
+	public static int MAXTURNS = 50;
 
 	bool bStarted;
 
