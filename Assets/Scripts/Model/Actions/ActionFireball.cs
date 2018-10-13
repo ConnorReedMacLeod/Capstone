@@ -14,12 +14,13 @@ public class ActionFireball : Action {
 		sName = "Fireball";
 		type = ActionType.ACTIVE;
 
-		arCost = new int[]{2,1,1,4,3};
+        //Physical, Mental, Energy, Blood, Effort
+		arCost = new int[]{0,0,1,0,1};
 
 		nCd = 6;
 		nRecharge = 4;
 
-		sDescription = "Throw a fireball at a target";
+		sDescription = "Deal 5 damage to target character";
 
 		SetArgOwners ();
 	}
@@ -29,7 +30,7 @@ public class ActionFireball : Action {
 		// but at least it's eliminated from the targetting lambda
 		Chr tar = ((TargetArgChr)arArgs [0]).chrTar;
 
-		Debug.Log (tar + " has been targetted");
+		Debug.Log ("Character " + tar + " has been fireballed");
 
 		//NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
 

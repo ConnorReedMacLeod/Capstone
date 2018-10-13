@@ -2,15 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//TODO:: replace individual derived character classes
-// with methods from a static class that initialize
-// a generic character with the unique characteristics of each char
-// e.i. - paint something to be a character rather than sculpting one
+public class ChrLancer : BaseChr {
 
-public class ChrLancer : Chr {
-	/*
-	public ChrLancer(Player _playOwner, int _id): base(_playOwner, _id){
-		sName = "Lancer";
-	}
-	*/
+    public ChrLancer(Chr _chrOwner) : base(_chrOwner) {
+
+    }
+
+    public override void SetName() {
+        chrOwner.sName = "Lancer";
+    }
+
+    //Defines all of a character's unique actions
+    public override void SetActions() {
+
+        chrOwner.arActions[0] = new ActionFireball(chrOwner);
+        chrOwner.arActions[1] = new ActionHeal(chrOwner);
+        chrOwner.arActions[2] = new ActionExplosion(chrOwner);
+        chrOwner.arActions[3] = new ActionFireball(chrOwner);
+
+        chrOwner.arActions[7] = new ActionRest(chrOwner);
+    }
+
 }

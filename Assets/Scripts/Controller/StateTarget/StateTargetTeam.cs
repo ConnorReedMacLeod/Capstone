@@ -20,7 +20,7 @@ public class StateTargetTeam : StateTarget {
             case Notification.ChrStopHold:
             case Notification.ClickChr:
                 if (tarArg.setTar(((ViewChr)target).mod.plyrOwner)) {
-                    Debug.Log("Target successfully set to " + ((ViewChr)target).mod.plyrOwner.name);
+                    Debug.Log("Target successfully set to Player " + ((ViewChr)target).mod.plyrOwner.id);
 
                     //move to next target
                     contTarg.IncTar();

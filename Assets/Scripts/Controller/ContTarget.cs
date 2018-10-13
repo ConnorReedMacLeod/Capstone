@@ -89,11 +89,11 @@ public class ContTarget : Observer {
 				newState = new StateTargetPos (this);
 				break;
 
-            case "TargetTeam":
+            case "TargetArgTeam":
                 newState = new StateTargetTeam(this);
                 break;
 
-            case "TargetAlly":
+            case "TargetArgAlly":
                 newState = new StateTargetChr(this);
                 break;
 
