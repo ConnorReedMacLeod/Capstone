@@ -20,6 +20,9 @@ public class ViewAction : Observer {
     public Text txtCooldown;
     public Text txtRemaining;
 
+	//Base position
+	Vector3 v3Position;
+
     //Let the Action button know which character and id it's representing
 	public void SetModel (Action _mod){
 		mod = _mod;
@@ -177,6 +180,8 @@ public class ViewAction : Observer {
                     break;
             }
         }
+
+		v3Position = transform.position;
 
         UpdateObs(Notification.ActionUpdate, null);
     }
