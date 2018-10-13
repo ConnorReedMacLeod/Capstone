@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Action { //This should probably be made abstract
 
-	public enum ActionType {ACTIVE, PASSIVE, CHANNEL};
+	public enum ActionType {ACTIVE, PASSIVE, CHANNEL, CANTRIP};
 
 	public int id;
 
