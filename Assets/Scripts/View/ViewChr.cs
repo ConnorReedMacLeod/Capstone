@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Chr))]
 [RequireComponent (typeof(MouseHandler))]
@@ -16,6 +17,7 @@ public class ViewChr : Observer {
 
 	public GameObject goBorder;        //Border reference
 	public GameObject goPortrait;       //Portrait Reference
+    public Text txtHealth;              //Textfield Reference
 
     public void Start()
     {
@@ -39,6 +41,11 @@ public class ViewChr : Observer {
 
             //Find the border and flip it for one of the players
             goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.33f);
+
+            txtHealth.transform.localPosition  = 
+                new Vector3(txtHealth.transform.localPosition.x, 
+                            -txtHealth.transform.localPosition.y,
+                            txtHealth.transform.localPosition.z);
         }
 	}
 
@@ -79,6 +86,10 @@ public class ViewChr : Observer {
 		mod.Subscribe (this);
 
 	}
+
+    public void UpdateTxtHealth() {
+        txtHealth.text = mod.nCurHealth + "/" + mod.nMaxHealth;
+    }
 
 
 	//TODO:: Make this a state machine
@@ -129,8 +140,11 @@ public class ViewChr : Observer {
 
     //Updates character view, detecting if changes are needed to the character position or state
 	override public void UpdateObs(string eventType, Object target, params object[] args){
-		//TODO:: Make this update more intelligent so that it updates based on the passed eventType
-		UpdateStatus();
+        //TODO:: Make this update more intelligent so that it updates based on the passed eventType
+
+        UpdateTxtHealth();
+
+        UpdateStatus();
 	}
 
 
