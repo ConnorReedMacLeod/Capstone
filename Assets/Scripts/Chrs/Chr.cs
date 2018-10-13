@@ -29,11 +29,6 @@ public class Chr : Subject {
 	public string sName;			//The name of the character
 	public Player plyrOwner;        //The player who controls the character
 
-    // TODO:: Reconsider making this pos range from -0.5 to 0.5
-    //        it's nice for avoiding some standard units of measurement,
-    //        but it means there's only one map size
-
-	// TODO:: Make a grid of possible positions
 
     public int id;                  //The character's unique identifier
     public int nRecharge;           //Number of turns a character must wait before their next action
@@ -45,10 +40,6 @@ public class Chr : Subject {
     public static int nActions = 8; //Number of actions the character can perform
 	public int nUsingAction;        //The currently selected action for the character, either targetting or having been queued
 	public bool bSetAction;         //Whether or not the character has an action queued
-
-	public static float[] arfSize = { 0.5f, 0.75f, 1.25f, 2.0f };
-	public SIZE size;
-	public float fRad;
 
 	public ViewChr view;
 
@@ -89,7 +80,7 @@ public class Chr : Subject {
     //Set character state to unselected
 	public void Idle (){
 		stateSelect = STATESELECT.IDLE;
-		NotifyObs ();
+		NotifyObs (Notification.ChrUnselected, this);
 	}
 
     //Performs the character's queued action
@@ -105,12 +96,6 @@ public class Chr : Subject {
 		return (bSetAction && arActions [nUsingAction].VerifyLegal ());
 	}
 
-	public void SetSize(SIZE _size){
-		size = _size;
-		fRad = arfSize [(int)size];
-		NotifyObs ();
-	}
-
     //Sets character's selected action to Rest
 	public void SetRestAction(){
 		Debug.Log ("Had to reset to a rest action");
@@ -121,26 +106,14 @@ public class Chr : Subject {
 		nUsingAction = 7;//TODO::Make this consistent
 	}
 
-    //Defines all of a character's unique actions
-	public void SetActions(){//TODO:: probably add some parameter for this at some point like an array of ids
-
-		for (int i = 0; i < nActions; i+=2) {
-			arActions [i] = new ActionFireball (this);
-			arActions [i+1] = new ActionMove (this);
-		}
-		arActions [7] = new ActionRest (this);
-	}
-
-
 	// Used to initiallize information fields of the Chr
 	// Call this after creating to set information
-	public void InitChr(Player _plyrOwner, int _id, string _sName, SIZE _size = SIZE.MEDIUM){
+	public void InitChr(Player _plyrOwner, int _id, BaseChr baseChr){
 		plyrOwner = _plyrOwner;
 		id = _id;
-		sName = _sName;
-		SetSize (_size);
 
-		SetActions ();//TODO:: move this somewhere else at some point
+        baseChr.SetName();
+        baseChr.SetActions();
 
 		view.Init ();
 	}
@@ -165,5 +138,17 @@ public class Chr : Subject {
 		}
 
 	}
-		
+
+    /* Shouldn't need this now that character defining qualities have been pushed to the BaseChr class
+    //Defines all of a character's unique actions
+    public virtual void SetActions() {//TODO:: probably add some parameter for this at some point like an array of ids
+
+        for (int i = 0; i < nActions; i += 2) {
+            arActions[i] = new ActionFireball(this);
+            arActions[i + 1] = new ActionMove(this);
+        }
+        arActions[7] = new ActionRest(this);
+    }
+    */
+
 }

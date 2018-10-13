@@ -50,13 +50,17 @@ public class ViewProfilePanel : Observer {
     }
 
     override public void UpdateObs(string eventType, Object target, params object[] args) {
-
+        //Debug.Log(eventType);
         switch (eventType) {
             
 
             //TODO:: Figure out when to update this - for like power/def changes
             case Notification.ChrSelected:
                 SetFocus((Chr)target);
+                break;
+
+            case Notification.ChrUnselected:
+                SetFocus(null);
                 break;
 
             default:

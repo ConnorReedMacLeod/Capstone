@@ -12,9 +12,10 @@ public class StateTargetChr : StateTarget {
 
 		switch (eventType) {
 		case Notification.ClickArena:
-			StopTargetting ();
+            ResetTargets();
+            contTarg.CancelTar();
 
-			break;
+            break;
 
 		case Notification.ChrStopHold:
 		case Notification.ClickChr:
@@ -26,14 +27,29 @@ public class StateTargetChr : StateTarget {
 
 				contTarg.SetTargetArgState ();
 			} else {
-				//BUG:: When releasing intially to select a characters ability, it tries to target the abililty immediately
-				// Cause: when you release over an action it passes a actionrelease and characterrelease notification
 				Debug.Log (((ViewChr)target).mod.sName + ", on team " + ((ViewChr)target).mod.plyrOwner.id + " is not a valid character target");
 			}
 			break;
 		case Notification.GlobalRightUp:
-			contTarg.CancelTar ();
+
+            ResetTargets();
+            contTarg.CancelTar ();
 			break;
+
+         case Notification.ClickAct:
+            // Then we've clicked a new ability, so switch targetting to that
+
+            // Reset any targetting we've done
+            ResetTargets();
+
+            contTarg.selected.nUsingAction = ((ViewAction)target).id;
+
+            // TODO:: Save the current targets if there are any, so that you can 
+            // revert to those targets if you've failed targetting
+            contTarg.ResetTar();
+            contTarg.SetTargetArgState(); // Let the parent figure out what exact state we go to
+
+            break;
 		}
 
 	}
@@ -41,6 +57,7 @@ public class StateTargetChr : StateTarget {
 	override public void OnEnter(){
 
 		Debug.Assert(contTarg.selected != null);
+        //BUG :: THIS MAY CAUSE AN ERROR IF AN ALLY TARGET IS CAST TO A NORMAL CHR TARGET - MAY NOT CHECK FOR SAME TEAM
 		tarArg = (TargetArgChr)contTarg.selected.arActions [contTarg.selected.nUsingAction].arArgs[contTarg.nTarCount];
 
 	}
@@ -48,12 +65,12 @@ public class StateTargetChr : StateTarget {
 	override public void OnLeave(){
 	}
 
-	public void StopTargetting(){
+	public void ResetTargets(){
 		//clear any targetting 
 		//TODO:: maybe only reset the targets to whatever was selected before?
 		contTarg.selected.arActions [contTarg.selected.nUsingAction].Reset ();
 
-		contTarg.SetState (new StateTargetIdle (contTarg));
+		//contTarg.SetState (new StateTargetIdle (contTarg));
 	}
 
 		
