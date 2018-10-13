@@ -5,7 +5,7 @@ using UnityEngine;
 //       and see if those occurrences can be avoided with moving
 //       around existing elements
 
-//Nothing selected - ready to target a new character
+//Nothing selected - ready to select a new character
 public class StateTargetIdle : StateTarget {
 
 

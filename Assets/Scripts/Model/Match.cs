@@ -77,18 +77,18 @@ public class Match : MonoBehaviour {
 
 		switch (type) {
 		case Chr.CHARTYPE.KATARA: 
-			newChr.InitChr(player, id, "Katara");
+			newChr.InitChr(player, id, new ChrKatara(newChr));
 			break;
 		case Chr.CHARTYPE.LANCER:
-			newChr.InitChr(player, id, "Lancer");
+			newChr.InitChr(player, id, new ChrLancer(newChr));
 			break;
 		case Chr.CHARTYPE.SKELCOWBOY:
-			newChr.InitChr(player, id, "SkelCowboy");
+			newChr.InitChr(player, id, new ChrSkelCowboy(newChr));
 			break;
 		default: 
 			Debug.LogError ("INVALID CHARACTER SELECTION");
 			Application.Quit ();
-			newChr.InitChr (player, id, "ERROR"); //so the editor will let us compile
+			newChr.InitChr (player, id, new BaseChr(newChr)); //so the editor will let us compile
 			break;
 		}
 		arChrs [player.id] [id] = newChr;

@@ -19,12 +19,12 @@ using UnityEngine;
 public class Controller : Subject{
 
 
-    ContTarget contTarget;
-	ContTimeline contTimeline;
-	ContMana contMana;
-	ContInfo contInfo;
-	ContArena contArena;
-	ContGlobalInput contGlobalInput;
+    public ContTarget contTarget;
+    public ContTimeline contTimeline;
+    public ContMana contMana;
+    public ContInfo contInfo;
+    public ContArena contArena;
+    public ContGlobalInput contGlobalInput;
 
 	public static Controller Get (){
 		GameObject go = GameObject.FindGameObjectWithTag ("Controller");
