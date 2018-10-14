@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class ViewTimelineEventChr : ViewTimelineEvent<TimelineEventChr> {
 
-	private int indexEventPortrait = 1;
+    public GameObject goFrame;
+    public GameObject goPortrait;
 
 	public override float GetVertSpan (){
-		return 0.8f + ViewTimeline.fEventGap;
+		return 0.3f + ViewTimeline.fEventGap;
 	}
 
 	public override void UpdateObs(string eventType, Object target, params object[] args){
@@ -26,21 +27,22 @@ public class ViewTimelineEventChr : ViewTimelineEvent<TimelineEventChr> {
 	}
 
 	void SetPortrait(Chr chr){
-		string sMatPath = "Materials/Chrs/Mat" + chr.sName;
-		Material matChr = Resources.Load(sMatPath, typeof(Material)) as Material;
+		string sImgPath = "Images/Chrs/img" + chr.sName;
+		Sprite sprChr = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
 
-		GetComponentsInChildren<Renderer> ()[indexEventPortrait].material = matChr;
+		goPortrait.GetComponent<SpriteRenderer> ().sprite = sprChr;
 	}
 
 	public void InitPlayer(){
 		// Subject to change
 		if (mod.chrSubject.plyrOwner.id == 0) {
-			this.SetMaterial ("MatTimelineEvent1");
-			transform.GetChild(indexEventPortrait).transform.localPosition = new Vector3 (-0.75f, -0.4f, -0.1f); 
+            //this.SetMaterial ("MatTimelineEvent1");
+            goPortrait.transform.localPosition = new Vector3 (-1.0f, -0.26f, -0.1f);
+            goPortrait.transform.localScale = new Vector3(0.2f, 0.2f, 1);
 
-		} else {
-			this.SetMaterial ("MatTimelineEvent2");
-			transform.GetChild(indexEventPortrait).transform.localScale = new Vector3 (-0.7f, 0.7f, 1);
+        } else {
+            //this.SetMaterial ("MatTimelineEvent2");
+            goPortrait.transform.localScale = new Vector3 (-0.2f, 0.2f, 1);
 		}
 	}
 

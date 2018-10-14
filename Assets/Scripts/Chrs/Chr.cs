@@ -106,11 +106,21 @@ public class Chr : Subject {
 		nUsingAction = 7;//TODO::Make this consistent
 	}
 
-	// Used to initiallize information fields of the Chr
-	// Call this after creating to set information
-	public void InitChr(Player _plyrOwner, int _id, BaseChr baseChr){
+    //By default, set all character actions to resting
+    public virtual void SetDefaultActions() {//TODO:: probably add some parameter for this at some point like an array of ids
+
+        for (int i = 0; i < nActions; i++) {
+            arActions[i] = new ActionRest(this);
+        }
+    }
+
+    // Used to initiallize information fields of the Chr
+    // Call this after creating to set information
+    public void InitChr(Player _plyrOwner, int _id, BaseChr baseChr){
 		plyrOwner = _plyrOwner;
 		id = _id;
+
+        SetDefaultActions();
 
         baseChr.SetName();
         baseChr.SetActions();
@@ -138,17 +148,4 @@ public class Chr : Subject {
 		}
 
 	}
-
-    /* Shouldn't need this now that character defining qualities have been pushed to the BaseChr class
-    //Defines all of a character's unique actions
-    public virtual void SetActions() {//TODO:: probably add some parameter for this at some point like an array of ids
-
-        for (int i = 0; i < nActions; i += 2) {
-            arActions[i] = new ActionFireball(this);
-            arActions[i + 1] = new ActionMove(this);
-        }
-        arActions[7] = new ActionRest(this);
-    }
-    */
-
 }

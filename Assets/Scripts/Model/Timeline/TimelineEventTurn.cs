@@ -7,7 +7,8 @@ public class TimelineEventTurn : TimelineEvent {
 	public int nTurn;
 	public Mana.MANATYPE manaGen;
 
-	public ViewTimelineEvent<TimelineEventTurn> view;
+	//public ViewTimelineEvent<TimelineEventTurn> view;
+    public ViewTimelineEventTurn view;
 
 	public void InitMana(){
 		//TODO::Make this only semi-random
@@ -17,11 +18,12 @@ public class TimelineEventTurn : TimelineEvent {
 
 	public override void InitView(){
 		
-		view = GetComponent<ViewTimelineEvent<TimelineEventTurn>>();
+		view = GetComponent<ViewTimelineEventTurn>();
 		if (view == null){
 			Debug.LogError ("ERROR! COUDLN't FIND A VIEWTIMELINEEVENTTURN COMPONENT");
 		}
 		view.Start ();
+         //TODO:: Consider moving this elsewhere
 	}
 
 	public override float GetVertSpan (){
@@ -35,9 +37,11 @@ public class TimelineEventTurn : TimelineEvent {
 		base.Init (_eventNode);
 
 		prior = Timeline.PRIORITY.TURN;
+        
 		nTurn = _nTurn;
+        view.SetTurnNumber(nTurn);
 
-		InitMana ();
+        InitMana ();
 
 		fDelay = 4.0f;
 
