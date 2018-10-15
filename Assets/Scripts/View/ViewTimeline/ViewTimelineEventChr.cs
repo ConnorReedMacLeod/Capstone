@@ -6,6 +6,7 @@ public class ViewTimelineEventChr : ViewTimelineEvent<TimelineEventChr> {
 
     public GameObject goFrame;
     public GameObject goPortrait;
+    public GameObject goStatus;
 
 	public override float GetVertSpan (){
 		return 0.3f + ViewTimeline.fEventGap;
@@ -21,9 +22,9 @@ public class ViewTimelineEventChr : ViewTimelineEvent<TimelineEventChr> {
 
 			break;
 		}
+        
 
-
-		base.UpdateObs (eventType, target, args);
+        base.UpdateObs (eventType, target, args);
 	}
 
 	void SetPortrait(Chr chr){
@@ -32,6 +33,30 @@ public class ViewTimelineEventChr : ViewTimelineEvent<TimelineEventChr> {
 
 		goPortrait.GetComponent<SpriteRenderer> ().sprite = sprChr;
 	}
+
+    void UpdateStatus() {
+
+        string sImgPath = ""; ;
+
+        switch (mod.chrSubject.stateSelect) {
+            case Chr.STATESELECT.TARGGETING:
+                sImgPath = "Images/Timeline/imgActionPlanning";
+        
+                break;
+
+            case Chr.STATESELECT.IDLE:
+                if (mod.chrSubject.bSetAction) {
+                    sImgPath = "Images/Timeline/imgActionPlanned";
+                } else {
+                    sImgPath = "Images/Timeline/imgActionUnplanned";
+                }
+
+                break;
+        }
+        Sprite sprStatus = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
+
+        goStatus.GetComponent<SpriteRenderer>().sprite = sprStatus;
+    }
 
 	public void InitPlayer(){
 		// Subject to change
