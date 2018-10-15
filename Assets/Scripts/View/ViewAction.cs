@@ -20,8 +20,15 @@ public class ViewAction : Observer {
     public Text txtCooldown;
     public Text txtRemaining;
 
-	//Base position
-	Vector3 v3Position;
+
+
+	//Ability Panel Animation Variables
+	Vector3 v3StartPosition;    //Base position
+
+	float fSlideMaxSpeed;
+	float fSlideMinSpeed;
+	float fSlideDeceleration;
+	float fLeftShift;			//Amount the panels jump when changing characters
 
     //Let the Action button know which character and id it's representing
 	public void SetModel (Action _mod){
@@ -181,7 +188,13 @@ public class ViewAction : Observer {
             }
         }
 
-		v3Position = transform.position;
+		v3StartPosition = transform.position;
+
+		fSlideMaxSpeed = 100.0f;
+		fSlideMinSpeed = 10.0f;
+		fSlideDeceleration = 10.0f;
+
+		fLeftShift = 200.0f + (id * 25.0f);
 
         UpdateObs(Notification.ActionUpdate, null);
     }
