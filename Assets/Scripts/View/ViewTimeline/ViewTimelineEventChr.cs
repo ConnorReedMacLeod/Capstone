@@ -18,7 +18,13 @@ public class ViewTimelineEventChr : ViewTimelineEvent<TimelineEventChr> {
 		case "NewChr":
 			SetPortrait (mod.chrSubject);
 			break;
-		default:
+
+        case Notification.EventChangedState:
+                Debug.Log("state changed");
+                UpdateStatus();
+            break;
+
+        default:
 
 			break;
 		}
@@ -77,5 +83,6 @@ public class ViewTimelineEventChr : ViewTimelineEvent<TimelineEventChr> {
 
 		InitPlayer ();
 		SetPortrait (mod.chrSubject);
+
 	}
 }
