@@ -23,12 +23,15 @@ public class ViewAction : Observer {
 
 
 	//Ability Panel Animation Variables
-	Vector3 v3StartPosition;    //Base position
+	Vector3 v3StartPosition;			//Base position
+	Vector3 v3AnimPosition;				//Position on ability change
+	Vector3 v3DecelerationPosition;     //Positional threshold for deceleration
+	Vector3 v3NewPosition;
 
 	float fSlideMaxSpeed;
+	float fSlideCurrentSpeed;
 	float fSlideMinSpeed;
 	float fSlideDeceleration;
-	float fLeftShift;			//Amount the panels jump when changing characters
 
     //Let the Action button know which character and id it's representing
 	public void SetModel (Action _mod){
@@ -61,7 +64,7 @@ public class ViewAction : Observer {
 		mousehandler.SetNtfStopHover (Notification.ActStopHover);
 	}
 
-    /*
+	/*
    //TODO:: REMOVE THESE, SINCE MOUSEHANDLER SHOULD TAKE CARE OF THIS
    //Notifies application when the Action is clicked
    public void OnMouseDown(){
@@ -77,6 +80,11 @@ public class ViewAction : Observer {
        Controller.Get ().NotifyObs (Notification.ActStopHover, this, id);
    }
    */
+	public void Update() {
+		if (transform.position.x < v3StartPosition.x) {
+			AnimateActions();
+		}
+	}
 
 
     override public void UpdateObs(string eventType, Object target, params object[] args)
@@ -86,6 +94,7 @@ public class ViewAction : Observer {
 
             case Notification.ChrSelected:
                 SetModel(((Chr)target).arActions[id]);
+				RestartAnimateActions();
                 break;
 
             case Notification.ChrUnselected:
@@ -152,6 +161,32 @@ public class ViewAction : Observer {
         DisplayRemaining();
     }
 
+	public void RestartAnimateActions() {
+		transform.position = v3AnimPosition;
+		fSlideCurrentSpeed = fSlideMaxSpeed;
+	}
+
+	public void AnimateActions() {
+		v3NewPosition = transform.position;
+		v3NewPosition.x += fSlideCurrentSpeed*Time.deltaTime;
+
+		if (v3NewPosition.x >= v3DecelerationPosition.x) {
+			fSlideCurrentSpeed -= fSlideDeceleration*Time.deltaTime;
+		}
+
+		
+		if (v3NewPosition.x > v3StartPosition.x) {
+			v3NewPosition.x = v3StartPosition.x;
+		}
+
+		transform.position = v3NewPosition;
+
+		if (fSlideCurrentSpeed < fSlideMinSpeed) {
+			fSlideCurrentSpeed = fSlideMinSpeed;
+		}
+
+	}
+
     //Variable initialization
     public void Init()
     {
@@ -190,11 +225,16 @@ public class ViewAction : Observer {
 
 		v3StartPosition = transform.position;
 
-		fSlideMaxSpeed = 100.0f;
-		fSlideMinSpeed = 10.0f;
-		fSlideDeceleration = 10.0f;
+		v3AnimPosition = v3StartPosition;
+		v3AnimPosition.x = v3StartPosition.x - (7.5f);
 
-		fLeftShift = 200.0f + (id * 25.0f);
+		v3DecelerationPosition = v3StartPosition;
+		v3DecelerationPosition.x = v3StartPosition.x - 5.0f;
+
+		fSlideMaxSpeed = 40.0f;
+		fSlideCurrentSpeed = fSlideMaxSpeed;
+		fSlideMinSpeed = 5.0f;
+		fSlideDeceleration = 0.0f;
 
         UpdateObs(Notification.ActionUpdate, null);
     }
