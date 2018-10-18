@@ -10,6 +10,8 @@ public class ContTarget : Observer {
 
 	public int nTarCount;
 
+    public static Subject subAllStartTargetting;
+    public static Subject subAllFinishTargetting;
 
 	override public void UpdateObs(string eventType, Object target, params object[] args){
 		// Just pass along the update information to our current state - it'll decide what to do
@@ -45,7 +47,7 @@ public class ContTarget : Observer {
 		SetState (new StateTargetIdle (this));
 
 		//Let everything know that targetting has ended
-		Controller.Get().NotifyObs(Notification.TargetFinish, null);
+		subAllFinishTargetting.NotifyObs(this);
 	}
 
 	// Create the necessary state for selecting the needed type
@@ -66,13 +68,13 @@ public class ContTarget : Observer {
 			SetState (new StateTargetIdle (this));
 			Debug.Log ("Targetting finished");
 
-			//Let everything know that targetting has ended
-			Controller.Get().NotifyObs(Notification.TargetFinish, null);
+            //Let everything know that targetting has ended
+            subAllFinishTargetting.NotifyObs(this);
 		} else {
 
 			if (nTarCount == 0) {
-				//Then we should let things know that a new targetting has begun
-				Controller.Get().NotifyObs(Notification.TargetStart, selected, selected.nUsingAction);
+                //Then we should let things know that a new targetting has begun
+                subAllStartTargetting.NotifyObs(selected, selected.nUsingAction);
 			}
 
 			// Get the type of the target arg that we need to handle
