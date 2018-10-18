@@ -1,15 +1,11 @@
 ﻿//BEN HICKS
 
-//TODO::
-//Right now, the code only allows mana in the mana pool to be spent.
-//Instead, the mana pool shuold be changed so that it indicates what mana is available to be used for effort.
-//Coloured mana can be taken from anywhere, prioritizing mana outside the mana pool.
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(ViewMana))]
-public class Mana : Subject {
+public class Mana : MonoBehaviour{
 
 	public enum MANATYPE {
 		PHYSICAL, MENTAL, ENERGY, BLOOD, EFFORT
@@ -33,27 +29,32 @@ public class Mana : Subject {
 	//Tracks the order in which mana was added to the mana pool
 	public LinkedList<MANATYPE> qManaPool;
 
+    public Subject subManaChange;
+    public static Subject subAllManaChange;
 
+    public Subject subManaPoolChange;
+    public static Subject subAllManaPoolChange;
 
-	//For adding one mana of one type to player's total mana
-	public void AddMana(MANATYPE type){
+    //For adding one mana of one type to player's total mana
+    public void AddMana(MANATYPE type){
 		AddMana (type, 1);
-	}
+    }
 
 	//For adding any number of mana of one type to player's total mana
 	public void AddMana(MANATYPE type, int nAmount){
 		arMana [(int)type] += nAmount;
-		NotifyObs(Notification.ManaChange, null, type);
-	}
+
+        subManaChange.NotifyObs(null, type);
+        subAllManaChange.NotifyObs(null, type);
+    }
 
 	//For adding any number of mana of any number of types to player's total mana, using an array of MANATYPEs
 	public void AddMana(int [] _arMana){
 		Debug.Assert (_arMana.Length == nManaTypes || _arMana.Length == nManaTypes - 1);
 
 		for (int i = 0; i < _arMana.Length; i++) {
-			arMana [i] += _arMana [i];
-			NotifyObs(Notification.ManaChange, null, (MANATYPE)i);
-		}
+            AddMana((MANATYPE)i, _arMana[i]);
+        }
 	}
 
     //For adding one mana of one type to player's mana pool
@@ -77,10 +78,14 @@ public class Mana : Subject {
 			qManaPool.AddLast (type);
 			nManaPool++;
 		}
-		NotifyObs(Notification.ManaChange, null, type);
-		NotifyObs(Notification.ManaPoolChange, null, type);
 
-		return true;
+        subManaChange.NotifyObs(null, type);
+        subAllManaChange.NotifyObs(null, type);
+
+        subManaPoolChange.NotifyObs(null, type);
+        subAllManaPoolChange.NotifyObs(null, type);
+
+        return true;
 	}
 
     //For removing one mana of one type from the player's mana pool
@@ -105,10 +110,12 @@ public class Mana : Subject {
 			nManaPool--;
 		}
 
-		NotifyObs(Notification.ManaChange, null, type);
-		NotifyObs(Notification.ManaPoolChange, null, type);
+        subManaChange.NotifyObs(null, type);
+        subAllManaChange.NotifyObs(null, type);
+        subManaPoolChange.NotifyObs(null, type);
+        subAllManaPoolChange.NotifyObs(null, type);
 
-		return true;
+        return true;
 	}
 
     //Checks to see if the player has enough mana total and in their mana pool to pay for a given cost
@@ -174,16 +181,19 @@ public class Mana : Subject {
                 //Pays for coloured mana
                 if (arMana [i] > 0) {
 					arMana [i]--;
-					NotifyObs(Notification.ManaChange, null, (MANATYPE)i);
+                    subManaChange.NotifyObs(null, (MANATYPE)i);
+                    subAllManaChange.NotifyObs(null, (MANATYPE)i);
 
-                //Pays for effort mana
-				} else if (i == (int)MANATYPE.EFFORT) {
+                    //Pays for effort mana
+                } else if (i == (int)MANATYPE.EFFORT) {
 
 					//Uses mana in order of most recently added to mana pool
 					arManaPool [(int)(qManaPool.First.Value)]--;
 					nManaPool--;
-					NotifyObs(Notification.ManaPoolChange, null, qManaPool.First.Value);
-					qManaPool.RemoveFirst();
+                    subManaPoolChange.NotifyObs(null, qManaPool.First.Value);
+                    subAllManaPoolChange.NotifyObs(null, qManaPool.First.Value);
+
+                    qManaPool.RemoveFirst();
 
 					//Catches non-existant mana types
 				} else {
@@ -201,12 +211,9 @@ public class Mana : Subject {
 		plyr = _plyr;
 	}
 
-	public override void Start () {
+	public void Start () {
 		if (bStarted == false) {
 			bStarted = true;
-
-			base.Start();
-			// Call our base Subject's start method
 
 			view = GetComponent<ViewMana>();
 			view.Start();
