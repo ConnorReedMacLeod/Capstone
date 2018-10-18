@@ -52,6 +52,9 @@ public class Chr : MonoBehaviour {
     public Subject subStartIdle;
     public static Subject subAllStartIdle;
 
+    public Subject subHealthChange;
+    public Subject subStatusChange;
+
 
     //Changes the character's recharge by a given value
     public void ChangeRecharge(int _nChange){
