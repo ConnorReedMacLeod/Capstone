@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class ViewExecuteButton : MonoBehaviour {
 
+    public static Subject subAllExecuteEvent;
 
 	public void OnMouseDown(){
-		Controller.Get().NotifyObs(Notification.ExecuteEvent, null);
+        subAllExecuteEvent.NotifyObs(this);
 	}
 
 }
