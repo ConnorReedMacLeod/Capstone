@@ -13,12 +13,6 @@ public class ContTarget : Observer {
     public static Subject subAllStartTargetting;
     public static Subject subAllFinishTargetting;
 
-	override public void UpdateObs(string eventType, Object target, params object[] args){
-		// Just pass along the update information to our current state - it'll decide what to do
-		curState.UpdateObs (eventType, target, args);
-
-	}
-
 	// Move to selecting the next target
 	public void IncTar(){
 		nTarCount++;

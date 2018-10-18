@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//TODO:: Consider making this a base class from which all views derive
+//       can handle all of these built-in actions and only extend the ones you want
+
 // NOTE:: This works essentially like a specific subject, but it only expects one thing to 
 //        ever watch it (the owner).  Maybe consider adding static notifications as well?
 

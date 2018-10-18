@@ -15,6 +15,10 @@ public class ViewArena : Observer {
 
 	bool bStarted;
 
+    public void cbClickArena(Object target, params Object [] args) {
+
+    }
+
     //Gets the Arena view's dimensions
     public void Start()
     {
