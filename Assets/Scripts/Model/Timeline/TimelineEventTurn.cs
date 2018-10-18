@@ -10,11 +10,16 @@ public class TimelineEventTurn : TimelineEvent {
 	//public ViewTimelineEvent<TimelineEventTurn> view;
     public ViewTimelineEventTurn view;
 
+    public Subject subSetMana;
+    public static Subject subAllSetMana;
+
 	public void InitMana(){
 		//TODO::Make this only semi-random
 		manaGen = (Mana.MANATYPE)Random.Range (0, Mana.nManaTypes - 1);
-		NotifyObs (Notification.EventSetMana, null);
-	}
+
+        subSetMana.NotifyObs(this);
+        subAllSetMana.NotifyObs(this);
+    }
 
 	public override void InitView(){
 		

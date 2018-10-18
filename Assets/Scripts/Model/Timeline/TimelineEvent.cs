@@ -7,7 +7,7 @@ using UnityEngine;
 //base class for any event that's in the timeline
 // responsible for keeping track of its position relative
 // to the position before it
-public abstract class TimelineEvent : Subject {
+public abstract class TimelineEvent : MonoBehaviour {
 
 	public bool bStarted;
 
@@ -30,11 +30,14 @@ public abstract class TimelineEvent : Subject {
 	public abstract float GetVertSpan ();
 	public abstract Vector3 GetPosAfter ();
 
+    public Subject subEventMoved;
+    public static Subject subAllEventMoved;
+    public Subject subEventChangedState;
+    public static Subject subAllEventChangedState;
+
 	public virtual void Start(){
 		if (bStarted == false) {
 			bStarted = true;
-
-			base.Start ();
 
 			InitView ();
 		}
@@ -43,13 +46,16 @@ public abstract class TimelineEvent : Subject {
 	public virtual void Init(LinkedListNode<TimelineEvent> _nodeEvent){
 		nodeEvent = _nodeEvent;
 
-		NotifyObs (Notification.EventMoved, null);
-	}
+        subEventMoved.NotifyObs(this);
+        subAllEventMoved.NotifyObs(this);
+    }
 
 	public void SetState(STATE _state){
 		state = _state;
-		NotifyObs (Notification.EventChangedState, null);
-	}
+
+        subEventChangedState.NotifyObs(this);
+        subAllEventChangedState.NotifyObs(this);
+    }
 
 	public void SetPriority(Timeline.PRIORITY _prior = Timeline.PRIORITY.NONE){
 		prior = _prior;

@@ -108,7 +108,7 @@ public class Timeline : MonoBehaviour {
 
 				//Let it know its position in the list
 				newEvent.nodeEvent = newPos.Next;
-				newEvent.NotifyObs (Notification.EventMoved, null);
+				newEvent.NotifyObs (Notification.EventMoved, null); //TODO:: Just call the newEvent's callback function directly
 
 				UpdateEventPositions (newPos.Next);
 

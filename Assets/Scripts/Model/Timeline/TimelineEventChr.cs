@@ -6,6 +6,9 @@ public class TimelineEventChr : TimelineEvent {
 
 	public Chr chrSubject;
 
+    public Subject subChrChanged;
+    public static Subject subAllChrChanged;
+
 	public TimelineEventChr (){
 
 		fDelay = 2.0f;
@@ -24,8 +27,10 @@ public class TimelineEventChr : TimelineEvent {
 
 	public void SetChr(Chr _chrSubject){
 		chrSubject = _chrSubject;
-		NotifyObs ("NewChr", null);
-	}
+
+        subChrChanged.NotifyObs(this);
+        subAllChrChanged.NotifyObs(this);
+    }
 
 	public override float GetVertSpan (){
 		return view.GetVertSpan ();
