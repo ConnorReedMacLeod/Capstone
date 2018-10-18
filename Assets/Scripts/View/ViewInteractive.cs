@@ -2,22 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//TODO:: Consider making this a base class from which all views derive
-//       can handle all of these built-in actions and only extend the ones you want
-
-// NOTE:: This works essentially like a specific subject, but it only expects one thing to 
-//        ever watch it (the owner).  Maybe consider adding static notifications as well?
+// NOTE:: This is the base class for all Views that support
+//        mouse interaction - just override the methods you want
+//        to change and ensure these overrides also call the base method
 
 // TODO:: Add right mouse button support
 // TODO:: Consider if clicking should immediately send an event, or if it
 //        should wait to see if it's a double click before sending the event
-public class MouseHandler : MonoBehaviour {
+public class ViewInteractive : MonoBehaviour {
 
 	public enum STATELEFT {IDLE, PRESS, CLICK, DOUBLEPRESS, DOUBLECLICK, HELD, DRAG};
 	public STATELEFT stateLeft;
-
-	public MonoBehaviour owner; //TODO:: Consider if this is even needed
-	public System.Type typeOwner;
 
 	public bool bDown; // If the mouse is currently down
 	public bool bHeld; // If the mouse has been held down for a while
@@ -28,24 +23,58 @@ public class MouseHandler : MonoBehaviour {
 	public static float fTimeDoubleDelay; // Window to make a double click
 	public static float fMinDistDrag; // Distance you have to move the mouse before it counts as dragging
 
-	public Subject.FnCallback fnMouseClick;
-	public Subject.FnCallback fnMouseDoubleClick;
+    public Subject subMouseClick;
+    public virtual void fnMouseClick(params object[] args) {
+        subMouseClick.NotifyObs(this, args);
+    }
 
-	public Subject.FnCallback fnMouseStartHold;
-	public Subject.FnCallback fnMouseStopHold;
+    public Subject subMouseDoubleClick;
+    public virtual void fnMouseDoubleClick(params object[] args) {
+        subMouseDoubleClick.NotifyObs(this, args);
+    }
 
-	public Subject.FnCallback fnMouseStartDrag;
-	public Subject.FnCallback fnMouseStopDrag;
+    public Subject subMouseStartHold;
+    public virtual void fnMouseStartHold(params object[] args) {
+        subMouseStartHold.NotifyObs(this, args);
+    }
 
-	public Subject.FnCallback fnMouseStartHover;
-	public Subject.FnCallback fnMouseStopHover;
+    public Subject subMouseStopHold;
+    public virtual void fnMouseStopHold(params object[] args) {
+        subMouseStopHold.NotifyObs(this, args);
+    }
 
-	public Subject.FnCallback fnMouseRightClick;
+    public Subject subMouseStartDrag;
+    public virtual void fnMouseStartDrag(params object[] args) {
+        subMouseStartDrag.NotifyObs(this, args);
+    }
 
-	public Subject.FnCallback fnMouseReleaseOther;
+    public Subject subMouseStopDrag;
+    public virtual void fnMouseStopDrag(params object[] args) {
+        subMouseStopDrag.NotifyObs(this, args);
+    }
 
-	// Use this for initialization
-	void Start () {
+    public Subject subMouseStartHover;
+    public virtual void fnMouseStartHover(params object[] args) {
+        subMouseStartHover.NotifyObs(this, args);
+    }
+
+    public Subject subMouseStopHover;
+    public virtual void fnMouseStopHover(params object[] args) {
+        subMouseStopHover.NotifyObs(this, args);
+    }
+
+    public Subject subMouseRightClick;
+    public virtual void fnMouseRightClick(params object[] args) {
+        subMouseRightClick.NotifyObs(this, args);
+    }
+
+    public Subject subMouseReleaseOther;
+    public virtual void fnMouseReleaseOther(params object[] args) {
+        subMouseReleaseOther.NotifyObs(this, args);
+    }
+
+    // Use this for initialization
+    void Start () {
 		stateLeft = STATELEFT.IDLE;
 		fTimeDownDelay = 0.2f;
 		fTimeDoubleDelay = 0.3f;
@@ -70,7 +99,7 @@ public class MouseHandler : MonoBehaviour {
 				bHeld = true;
 				stateLeft = STATELEFT.HELD;
 
-				SendNotification (fnMouseStartHold);
+				fnMouseStartHold();
 			}
 
 			break;
@@ -94,9 +123,9 @@ public class MouseHandler : MonoBehaviour {
 				stateLeft = STATELEFT.DRAG;
 
 				if (stateLeft != STATELEFT.HELD) {
-					SendNotification (fnMouseStartHold);
+					fnMouseStartHold();
 				}
-				SendNotification (fnMouseStartDrag);
+				fnMouseStartDrag();
 			}
 
 			break;
@@ -110,7 +139,7 @@ public class MouseHandler : MonoBehaviour {
 				GameObject goReleasedOver = LibView.GetObjectUnderMouse ();
 				if (this.gameObject != goReleasedOver) {
 					// Then we've released the mouse over a new object after dragging
-                    SendNotification(fnMouseReleaseOther, goReleasedOver);
+                    fnMouseReleaseOther(goReleasedOver);
 
 					OnLeftUp ();
 				}
@@ -148,27 +177,27 @@ public class MouseHandler : MonoBehaviour {
 		case STATELEFT.PRESS:
 			stateLeft = STATELEFT.CLICK;
 
-			SendNotification (fnMouseClick);
+			fnMouseClick();
 			break;
 
 		case STATELEFT.DOUBLEPRESS:
 			stateLeft = STATELEFT.DOUBLECLICK;
 
-			SendNotification (fnMouseDoubleClick);
+			fnMouseDoubleClick();
 			break;
 
 		case STATELEFT.HELD:
 			stateLeft = STATELEFT.IDLE;
 
-			SendNotification (fnMouseStopHold);
+			fnMouseStopHold();
 			break;
 
 		case STATELEFT.DRAG:
 			stateLeft = STATELEFT.IDLE;
 
 			// For dragging, send a notification that dragging and holding has stopped
-			SendNotification (fnMouseStopHold);
-			SendNotification (fnMouseStopDrag);
+			fnMouseStopHold();
+			fnMouseStopDrag();
 			break;
 		}
 
@@ -185,51 +214,10 @@ public class MouseHandler : MonoBehaviour {
 	}
 
 	public void OnMouseEnter(){
-		SendNotification (fnMouseStartHover);
+		fnMouseStartHover();
 	}
 
 	public void OnMouseExit(){
-		SendNotification (fnMouseStopHover);
-	}
-
-	public void SendNotification(Subject.FnCallback fnCallback, params object[] args){
-		if (fnCallback != null) {
-            //If this notification has been enabled, then send it
-			fnCallback(owner, LibView.GetMouseLocation(), args);
-		}
-	}
-
-	public void SetOwner(MonoBehaviour _owner){
-		owner = _owner;
-		typeOwner = owner.GetType ();
-	}
-		
-	// Owner scripts should set notifications for the events they want to support
-	public void SetNtfClick(Subject.FnCallback _fnMouseClick){
-		fnMouseClick = _fnMouseClick;
-	}
-	public void SetNtfDoubleClick(Subject.FnCallback _fnMouseDoubleClick) {
-		fnMouseDoubleClick = _fnMouseDoubleClick;
-	}
-	public void SetNtfStartHold(Subject.FnCallback _fnMouseStartHold) {
-		fnMouseStartHold = _fnMouseStartHold;
-	}
-	public void SetNtfStopHold(Subject.FnCallback _fnMouseStopHold) {
-		fnMouseStopHold = _fnMouseStopHold;
-	}
-	public void SetNtfStartDrag(Subject.FnCallback _fnMouseStartDrag) {
-		fnMouseStartDrag = _fnMouseStartDrag;
-	}
-	public void SetNtfStopDrag(Subject.FnCallback _fnMouseStopDrag) {
-		fnMouseStopDrag = _fnMouseStopDrag;
-	}
-	public void SetNtfStartHover(Subject.FnCallback _fnMouseStartHover) {
-		fnMouseStartHold = _fnMouseStartHover;
-	}
-	public void SetNtfStopHover(Subject.FnCallback _fnMouseStopHover) {
-		fnMouseStopHold = _fnMouseStopHover;
-	}
-	public void SetReleaseOtherCallback(Subject.FnCallback _fnMouseReleaseOther) {
-        fnMouseReleaseOther = _fnMouseReleaseOther;
+		fnMouseStopHover();
 	}
 }
