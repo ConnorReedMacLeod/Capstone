@@ -19,6 +19,9 @@ public class ViewChr : Observer {
 	public GameObject goPortrait;       //Portrait Reference
     public Text txtHealth;              //Textfield Reference
 
+    public static Subject subAllStartHover;
+    public static Subject subAllStopHover;
+
     public void Start()
     {
 		if (bStarted == false) {
@@ -59,12 +62,25 @@ public class ViewChr : Observer {
 		mousehandler.SetNtfStartHold (Notification.ChrStartHold);
 
 		mousehandler.SetNtfStopHold (Notification.ChrStopHold);
-	}
 
-    
+        mousehandler.SetNtfStartHover(cbStartHover);
+        mousehandler.SetNtfStopHover(cbStopHover);
+    }
+
+    public void cbStartHover(Object target, params object[] args) {
+        //Currently not doing anything - just passing along the notification to a global notification
+
+        subAllStartHover.NotifyObs(target, args);
+    }
+
+    public void cbStopHover(Object target, params object[] args) {
+        //Currently not doing anything - just passing along the notification to a global notification
+
+        subAllStopHover.NotifyObs(target, args);
+    }
 
     //Sets the sprite used for the character's portrait
-	void setPortrait(string _sName){
+    void setPortrait(string _sName){
 		string sSprPath = "Images/Chrs/img" + _sName;
 		Sprite sprChr = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
 
