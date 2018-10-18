@@ -25,50 +25,19 @@ public class ContInfo : MonoBehaviour{
         bLocked = false;
     }
 
-	public override void UpdateObs(string eventType, Object target, params object[] args){
-		switch(stateInfo){
-		case StateInfo.Action:
-			switch (eventType) {
-			case Notification.TargetStart:
-				SetActionFocus(((Chr)target).arActions[(int)args[0]]);
-                bLocked = true;
-				break;
+    public void cbActStartHover(Object target, params object[] args) {
+        if (bLocked == false) {
+            viewInfoPanel.ShowInfoAction(((ViewAction)target).mod);
+        }
+    }
 
-                        //TODO:: Need a TargetCancelled notification
-			case Notification.TargetFinish:
-				ClearActionFocus ();
-                bLocked = false;
-				break;
-
-			case Notification.ActStartHover:
-				
-				if (bLocked == false) {
-					viewInfoPanel.ShowInfoAction (((ViewAction)target).mod);
-				}
-
-				break;
-
-			case Notification.ActStopHover:
-
-                if (bLocked == false && ((ViewAction)target).mod == viewInfoPanel.viewInfoAction.mod) {
-                    // First ensure that what we're leaving is the current displayed ability
-					//When we stop hovering over the thing we're displaying, stop displaying it
-					viewInfoPanel.ClearPanel ();
-				}
-
-				break;
-
-			default:
-
-				break;
-			}
-			break;
-
-		default:
-
-			break;
-		}
-	}
+    public void cbActStopHover(Object target, params object[] args) {
+        if (bLocked == false && ((ViewAction)target).mod == viewInfoPanel.viewInfoAction.mod) {
+            // First ensure that what we're leaving is the current displayed ability
+            //When we stop hovering over the thing we're displaying, stop displaying it
+            viewInfoPanel.ClearPanel();
+        }
+    }
 
 	public void SetActionFocus(Action _actFocus){
 		viewInfoPanel.ClearPanel ();
@@ -94,6 +63,9 @@ public class ContInfo : MonoBehaviour{
 
         ContTarget.subAllStartTargetting.Subscribe(cbStartTargetting);
         ContTarget.subAllFinishTargetting.Subscribe(cbFinishTargetting);
+
+        ViewChr.subAllStartHover.Subscribe(cbActStartHover);
+        ViewChr.subAllStopHover.Subscribe(cbActStopHover);
         }
 	}
 }
