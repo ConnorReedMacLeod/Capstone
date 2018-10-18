@@ -2,21 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//NOTE :: May not need this general container to handle distributing
+// updates - instead just have individual classes directly ask their 
+// class's static subject to let them know when an event happens
+// in any of those classes
+
+
 // These should control actions and logical flow of the game
 // map actions taken with the view to changes in the model
 // Can maintain information about game state
 
 // The container class for Controllers
 // Control flow:
-// Events are channeled into this container which then distributes
-// among the contained controllers
+// This will subscribe to every subject that exists
+// so that if any other observers need to know if some event
+// happend anywhere (say across all character selections), they 
+// can subscribe to this mega-subject class
 
 [RequireComponent (typeof(ContTarget))]
 [RequireComponent (typeof(ContTimeline))]
 [RequireComponent (typeof(ContMana))]
 [RequireComponent (typeof(ContInfo))]
 [RequireComponent (typeof(ContArena))]
-public class Controller : Subject{
+public class Controller : MonoBehaviour{
 
 
     public ContTarget contTarget;
@@ -38,8 +46,7 @@ public class Controller : Subject{
 		return instance;
 	}
 
-	public override void Start () {
-        base.Start();
+	public void Start () {
 		gameObject.tag = "Controller";
 
 		// Find all necessary controllers and register them as our observers
