@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//NOTE :: THIS IS NOW UNNEEDED - Should just use callbacks now rather than event types
+
+
 //Provides standard types of events to be sent from
 //View objects to controller
 //TODO:: Standardize some of these string values
