@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// NOTE:: This works essentially like a specific subject, but it only expects one thing to 
+//        ever watch it (the owner).  Maybe consider adding static notifications as well?
+
 // TODO:: Add right mouse button support
 // TODO:: Consider if clicking should immediately send an event, or if it
 //        should wait to see if it's a double click before sending the event
@@ -13,9 +16,6 @@ public class MouseHandler : MonoBehaviour {
 	public MonoBehaviour owner; //TODO:: Consider if this is even needed
 	public System.Type typeOwner;
 
-	public delegate void fnCallback(); // allow owner to set a function to let it know when an event has happend
-	public delegate void fnCallbackGo(GameObject go); // callback for passing a single Gameobject
-
 	public bool bDown; // If the mouse is currently down
 	public bool bHeld; // If the mouse has been held down for a while
 	public Vector3 v3Down; // Where the mouse was originally pressed down
@@ -25,31 +25,21 @@ public class MouseHandler : MonoBehaviour {
 	public static float fTimeDoubleDelay; // Window to make a double click
 	public static float fMinDistDrag; // Distance you have to move the mouse before it counts as dragging
 
-	public string ntfMouseClick;
-	public fnCallback fnMouseClick;
-	public string ntfMouseDoubleClick;
-	public fnCallback fnMouseDoubleClick;
+	public Subject.FnCallback fnMouseClick;
+	public Subject.FnCallback fnMouseDoubleClick;
 
-	public string ntfMouseStartHold;
-	public fnCallback fnMouseStartHold;
-	public string ntfMouseStopHold;
-	public fnCallback fnMouseStopHold;
+	public Subject.FnCallback fnMouseStartHold;
+	public Subject.FnCallback fnMouseStopHold;
 
-	public string ntfMouseStartDrag;
-	public fnCallback fnMouseStartDrag;
-	public string ntfMouseStopDrag;
-	public fnCallback fnMouseStopDrag;
+	public Subject.FnCallback fnMouseStartDrag;
+	public Subject.FnCallback fnMouseStopDrag;
 
-	public string ntfMouseStartHover;
-	public fnCallback fnMouseStartHover;
-	public string ntfMouseStopHover;
-	public fnCallback fnMouseStopHover;
+	public Subject.FnCallback fnMouseStartHover;
+	public Subject.FnCallback fnMouseStopHover;
 
-	public string ntfMouseRightClick;
-	public fnCallback fnMouseRightClick;
+	public Subject.FnCallback fnMouseRightClick;
 
-	//public string ntfMouseRleaseOther;  //TODO:: Consider if a notification for this is even needed
-	public fnCallbackGo fnMouseReleaseOther;
+	public Subject.FnCallback fnMouseReleaseOther;
 
 	// Use this for initialization
 	void Start () {
@@ -76,10 +66,8 @@ public class MouseHandler : MonoBehaviour {
 			if (fTimeDown >= fTimeDownDelay) {
 				bHeld = true;
 				stateLeft = STATELEFT.HELD;
-				if (fnMouseStartHold != null) {
-					fnMouseStartHold ();
-				}
-				SendNotification (ntfMouseStartHold);
+
+				SendNotification (fnMouseStartHold);
 			}
 
 			break;
@@ -101,13 +89,11 @@ public class MouseHandler : MonoBehaviour {
 			// Check if the mouse has moved far enough to count as dragging
 			if (Vector3.Distance (v3Down, LibView.GetMouseLocation ()) >= fMinDistDrag) {
 				stateLeft = STATELEFT.DRAG;
-				if (fnMouseStartDrag != null) {
-					fnMouseStartDrag ();
-				}
+
 				if (stateLeft != STATELEFT.HELD) {
-					SendNotification (ntfMouseStartHold);
+					SendNotification (fnMouseStartHold);
 				}
-				SendNotification (ntfMouseStartDrag);
+				SendNotification (fnMouseStartDrag);
 			}
 
 			break;
@@ -121,9 +107,8 @@ public class MouseHandler : MonoBehaviour {
 				GameObject goReleasedOver = LibView.GetObjectUnderMouse ();
 				if (this.gameObject != goReleasedOver) {
 					// Then we've released the mouse over a new object after dragging
-					if (fnMouseReleaseOther != null) {
-						fnMouseReleaseOther (goReleasedOver);
-					}
+                    SendNotification(fnMouseReleaseOther, goReleasedOver);
+
 					OnLeftUp ();
 				}
 				//Otherwise we've released the mouse over ourselves, so we'll catch this with StopDrag
@@ -159,40 +144,28 @@ public class MouseHandler : MonoBehaviour {
 		switch (stateLeft) {
 		case STATELEFT.PRESS:
 			stateLeft = STATELEFT.CLICK;
-			if (fnMouseClick != null) {
-				fnMouseClick ();
-			}
-			SendNotification (ntfMouseClick);
+
+			SendNotification (fnMouseClick);
 			break;
 
 		case STATELEFT.DOUBLEPRESS:
 			stateLeft = STATELEFT.DOUBLECLICK;
-			if (fnMouseDoubleClick != null) {
-				fnMouseDoubleClick ();
-			}
-			SendNotification (ntfMouseDoubleClick);
+
+			SendNotification (fnMouseDoubleClick);
 			break;
 
 		case STATELEFT.HELD:
 			stateLeft = STATELEFT.IDLE;
-			if (fnMouseStopHold != null) {
-				fnMouseStopHold ();
-			}
-			SendNotification (ntfMouseStopHold);
+
+			SendNotification (fnMouseStopHold);
 			break;
 
 		case STATELEFT.DRAG:
 			stateLeft = STATELEFT.IDLE;
 
 			// For dragging, send a notification that dragging and holding has stopped
-			if (fnMouseStopHold != null) {
-				fnMouseStopHold ();
-			}
-			if (fnMouseStopDrag != null) {
-				fnMouseStopDrag ();
-			}
-			SendNotification (ntfMouseStopHold);
-			SendNotification (ntfMouseStopDrag);
+			SendNotification (fnMouseStopHold);
+			SendNotification (fnMouseStopDrag);
 			break;
 		}
 
@@ -209,24 +182,17 @@ public class MouseHandler : MonoBehaviour {
 	}
 
 	public void OnMouseEnter(){
-		if (fnMouseStartHover != null) {
-			fnMouseStartHover ();
-		}
-
-		SendNotification (ntfMouseStartHover);
+		SendNotification (fnMouseStartHover);
 	}
 
 	public void OnMouseExit(){
-		if (fnMouseStopHover != null) {
-			fnMouseStopHover ();
-		}
-		SendNotification (ntfMouseStopHover);
+		SendNotification (fnMouseStopHover);
 	}
 
-	public void SendNotification(string ntf){
-		if (ntf != "") {
+	public void SendNotification(Subject.FnCallback fnCallback, params object[] args){
+		if (fnCallback != null) {
             //If this notification has been enabled, then send it
-			Controller.Get ().NotifyObs (ntf, owner, LibView.GetMouseLocation());
+			fnCallback(owner, LibView.GetMouseLocation(), args);
 		}
 	}
 
@@ -236,40 +202,31 @@ public class MouseHandler : MonoBehaviour {
 	}
 		
 	// Owner scripts should set notifications for the events they want to support
-	public void SetNtfClick(string _ntfMouseClick, fnCallback _fnMouseClick = null){
-		ntfMouseClick = _ntfMouseClick;
+	public void SetNtfClick(Subject.FnCallback _fnMouseClick){
 		fnMouseClick = _fnMouseClick;
 	}
-	public void SetNtfDoubleClick(string _ntfMouseDoubleClick, fnCallback _fnMouseDoubleClick = null){
-		ntfMouseDoubleClick = _ntfMouseDoubleClick;
+	public void SetNtfDoubleClick(Subject.FnCallback _fnMouseDoubleClick) {
 		fnMouseDoubleClick = _fnMouseDoubleClick;
 	}
-	public void SetNtfStartHold(string _ntfMouseStartHold, fnCallback _fnMouseStartHold = null){
-		ntfMouseStartHold = _ntfMouseStartHold;
+	public void SetNtfStartHold(Subject.FnCallback _fnMouseStartHold) {
 		fnMouseStartHold = _fnMouseStartHold;
 	}
-	public void SetNtfStopHold(string _ntfMouseStopHold, fnCallback _fnMouseStopHold = null){
-		ntfMouseStopHold = _ntfMouseStopHold;
+	public void SetNtfStopHold(Subject.FnCallback _fnMouseStopHold) {
 		fnMouseStopHold = _fnMouseStopHold;
 	}
-	public void SetNtfStartDrag(string _ntfMouseStartDrag, fnCallback _fnMouseStartDrag = null){
-		ntfMouseStartDrag = _ntfMouseStartDrag;
+	public void SetNtfStartDrag(Subject.FnCallback _fnMouseStartDrag) {
 		fnMouseStartDrag = _fnMouseStartDrag;
 	}
-	public void SetNtfStopDrag(string _ntfMouseStopDrag, fnCallback _fnMouseStopDrag = null){
-		ntfMouseStopDrag = _ntfMouseStopDrag;
+	public void SetNtfStopDrag(Subject.FnCallback _fnMouseStopDrag) {
 		fnMouseStopDrag = _fnMouseStopDrag;
 	}
-	public void SetNtfStartHover(string _ntfMouseStartHover, fnCallback _fnMouseStartHover = null){
-		ntfMouseStartHover = _ntfMouseStartHover;
+	public void SetNtfStartHover(Subject.FnCallback _fnMouseStartHover) {
 		fnMouseStartHold = _fnMouseStartHover;
 	}
-	public void SetNtfStopHover(string _ntfMouseStopHover, fnCallback _fnMouseStopHover = null){
-		ntfMouseStopHover = _ntfMouseStopHover;
+	public void SetNtfStopHover(Subject.FnCallback _fnMouseStopHover) {
 		fnMouseStopHold = _fnMouseStopHover;
 	}
-
-	public void SetReleaseOtherCallback(fnCallbackGo _fnMouseReleaseOther){
-		fnMouseReleaseOther = _fnMouseReleaseOther;
+	public void SetReleaseOtherCallback(Subject.FnCallback _fnMouseReleaseOther) {
+        fnMouseReleaseOther = _fnMouseReleaseOther;
 	}
 }

@@ -2,15 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContInfo : Observer {
+public class ContInfo : MonoBehaviour{
+
+    bool bStarted;
 
 	public enum StateInfo {Action};
 
-	public StateInfo stateInfo;
+	public StateInfo stateInfo; //TODO:: Alternate which subscriptions you are using depending on
+                                //       which state you're currently in
 	public bool bLocked; //TODO:: Flush out a target locking system more
 
 	public ViewInfoPanel viewInfoPanel;
 	public Action actFocus;
+
+    public void cbStartTargetting(Object target, params object[] args) {
+        SetActionFocus(((Chr)target).arActions[(int)args[0]]);
+        bLocked = true;
+    }
+
+    public void cbFinishTargetting(Object target, params object[] args) {
+        ClearActionFocus();
+        bLocked = false;
+    }
 
 	public override void UpdateObs(string eventType, Object target, params object[] args){
 		switch(stateInfo){
@@ -68,14 +81,19 @@ public class ContInfo : Observer {
 		viewInfoPanel.ClearPanel ();//TODO:: This feels like it could maybe bug
 	}
 
-	public void Start(){
-		GameObject go = GameObject.FindGameObjectWithTag ("Info");
-		if (go == null) {
-			Debug.LogError ("ERROR! NO INFO-TAGGED OBJECT!");
-		}
-		viewInfoPanel = go.GetComponent<ViewInfoPanel> ();
-		if (viewInfoPanel == null) {
-			Debug.LogError ("ERROR! NO VIEWINFOPANEL ON INFO-TAGGED OBJECT!");
-		}
+    public void Start() {
+        if (!bStarted) { }
+            GameObject go = GameObject.FindGameObjectWithTag("Info");
+            if (go == null) {
+                Debug.LogError("ERROR! NO INFO-TAGGED OBJECT!");
+            }
+            viewInfoPanel = go.GetComponent<ViewInfoPanel>();
+            if (viewInfoPanel == null) {
+                Debug.LogError("ERROR! NO VIEWINFOPANEL ON INFO-TAGGED OBJECT!");
+            }
+
+        ContTarget.subAllStartTargetting.Subscribe(cbStartTargetting);
+        ContTarget.subAllFinishTargetting.Subscribe(cbFinishTargetting);
+        }
 	}
 }
