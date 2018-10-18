@@ -6,7 +6,7 @@ using UnityEngine;
 //Reponsible for keeping track of the order of events
 
 [RequireComponent(typeof(ViewTimeline))]
-public class Timeline : Subject {
+public class Timeline : MonoBehaviour {
 
 	public static Timeline instance;
 
@@ -34,6 +34,9 @@ public class Timeline : Subject {
 
 	public ViewTimeline view;
 
+    public Subject subEventFinished;
+    public static Subject subAllEventFinished;
+
 	public static Timeline Get (){
 		if (instance == null) {
 			GameObject go = GameObject.FindGameObjectWithTag ("Timeline");
@@ -48,11 +51,9 @@ public class Timeline : Subject {
 		return instance;
 	}
 
-	public override void Start(){
+	public void Start(){
 		if (bStarted == false) {
 			bStarted = true;
-
-			this.Start ();
 
 			match = Match.Get ();
 
@@ -170,10 +171,11 @@ public class Timeline : Subject {
 
 		curEvent.Value.SetState(TimelineEvent.STATE.FINISHED);
 
-		//Let the timeline know to shift upward
-		NotifyObs (Notification.EventFinish, curEvent.Value);
+        //Let the timeline know to shift upward
+        subEventFinished.NotifyObs(curEvent.Value);
+        subAllEventFinished.NotifyObs(curEvent.Value);
 
-		curEvent = curEvent.Next;
+        curEvent = curEvent.Next;
 		curEvent.Value.SetState(TimelineEvent.STATE.CURRENT);
 
 
