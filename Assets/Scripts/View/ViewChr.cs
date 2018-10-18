@@ -22,6 +22,9 @@ public class ViewChr : Observer {
     public static Subject subAllStartHover;
     public static Subject subAllStopHover;
 
+    public Subject subClick;
+    public static Subject subAllClick;
+
     public void Start()
     {
 		if (bStarted == false) {
@@ -56,15 +59,18 @@ public class ViewChr : Observer {
 		mousehandler = GetComponent<MouseHandler> ();
 		mousehandler.SetOwner (this);
 
-		mousehandler.SetNtfClick (Notification.ClickChr);
-		mousehandler.SetNtfDoubleClick (Notification.ClickChr);
-
-		mousehandler.SetNtfStartHold (Notification.ChrStartHold);
-
-		mousehandler.SetNtfStopHold (Notification.ChrStopHold);
+		mousehandler.SetNtfClick (cbClick);
+		mousehandler.SetNtfDoubleClick (cbClick);
 
         mousehandler.SetNtfStartHover(cbStartHover);
         mousehandler.SetNtfStopHover(cbStopHover);
+    }
+
+    public void cbClick(Object target, params object[] args) {
+        //Currently not doing anything - just passing along the notification
+
+        subClick.NotifyObs(target, args);
+        subAllClick.NotifyObs(target, args);
     }
 
     public void cbStartHover(Object target, params object[] args) {
@@ -78,6 +84,7 @@ public class ViewChr : Observer {
 
         subAllStopHover.NotifyObs(target, args);
     }
+
 
     //Sets the sprite used for the character's portrait
     void setPortrait(string _sName){
@@ -99,20 +106,21 @@ public class ViewChr : Observer {
     //Find the model, and do any setup to reflect it
 	public void InitModel(){
 		mod = GetComponent<Chr>();
-		mod.Subscribe (this);
+		mod.subHealthChange.Subscribe (cbUpdateTxtHealth);
+        mod.subStatusChange.Subscribe(cbUpdateStatus);
 
 	}
 
-    public void UpdateTxtHealth() {
+    public void cbUpdateTxtHealth(Object target, params object[] args) {
         txtHealth.text = mod.nCurHealth + "/" + mod.nMaxHealth;
     }
 
 
 	//TODO:: Make this a state machine
     //Updates the character's state (SELECTED, TARGETTING, UNSELECTED)
-	void UpdateStatus(){
-		//Refuses to accept udpates until after initialized
-		if (!bStarted)
+	void cbUpdateStatus(Object target, params object[] args) {
+        //Refuses to accept updates until after initialized
+        if (!bStarted)
 			return;
 
 		//UpdateSize ();
@@ -153,16 +161,6 @@ public class ViewChr : Observer {
 			lastStateSelect = mod.stateSelect;
 		}
 	}
-
-    //Updates character view, detecting if changes are needed to the character position or state
-	override public void UpdateObs(string eventType, Object target, params object[] args){
-        //TODO:: Make this update more intelligent so that it updates based on the passed eventType
-
-        UpdateTxtHealth();
-
-        UpdateStatus();
-	}
-
 
 
     //UNUSED
