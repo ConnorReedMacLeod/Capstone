@@ -6,43 +6,38 @@ public class Subject : MonoBehaviour {
 
 	bool bStart;
 
-	public List<Observer> lstObservers;
+    public delegate void FnCallback(Object target, params object[] args);
 
-	public void Subscribe(Observer newObs){
-		if (bStart == false) {
-			Start ();
-		}
-		lstObservers.Add (newObs);
+    public List<FnCallback> lstCallbacks;
+
+	public void Subscribe(FnCallback fnCallback){
+
+        lstCallbacks.Add (fnCallback);
 	}
 
-	public void UnSubscribe(Observer newObs){
-		if (bStart == false) {
-			Start ();
-		}
-		lstObservers.Remove (newObs);
+	public void UnSubscribe(FnCallback fnCallback) {
+
+        lstCallbacks.Remove (fnCallback);
 	}
 
-	// Used for standard updates for views
+	// Used for unspecific updates for views
 	public virtual void NotifyObs(){
-		NotifyObs (Notification.Default, null);
+		NotifyObs (null);
 	}
 
-	public virtual void NotifyObs (string eventType, Object target, params object[] args){
+	public virtual void NotifyObs (Object target, params object[] args){
 		if (bStart == false) {
 			Start ();
 		}
-		List<Observer> copiedList = new List<Observer> (lstObservers);
-		foreach (Observer obs in copiedList) {
-			if (obs == null)
-				continue;//in case this object has been removed by the results of previous update iterations
-			obs.UpdateObs (eventType, target, args);
+        List<FnCallback> lstCopied = new List<FnCallback>(lstCallbacks);
+		foreach (FnCallback callback in lstCopied) {
+            //if (callback == null)
+            //	continue;//in case this object has been removed by the results of previous update iterations
+            callback(target, args);
 		}
 	}
 
 	public virtual void Start (){
-		if (bStart == false) {
-			bStart = true;
-			lstObservers = new List<Observer> ();
-		}
+
 	}
 }
