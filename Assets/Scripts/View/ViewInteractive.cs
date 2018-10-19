@@ -64,8 +64,10 @@ public class ViewInteractive : MonoBehaviour {
     }
 
     public Subject subMouseRightClick;
+    public static Subject subGlobalMouseRightClick;
     public virtual void onMouseRightClick(params object[] args) {
         subMouseRightClick.NotifyObs(this, args);
+        subGlobalMouseRightClick.NotifyObs(this, args);
     }
 
     public Subject subMouseReleaseOther;
@@ -99,7 +101,7 @@ public class ViewInteractive : MonoBehaviour {
 				bHeld = true;
 				stateLeft = STATELEFT.HELD;
 
-				fnMouseStartHold();
+				onMouseStartHold();
 			}
 
 			break;
@@ -123,9 +125,9 @@ public class ViewInteractive : MonoBehaviour {
 				stateLeft = STATELEFT.DRAG;
 
 				if (stateLeft != STATELEFT.HELD) {
-					fnMouseStartHold();
+					onMouseStartHold();
 				}
-				fnMouseStartDrag();
+				onMouseStartDrag();
 			}
 
 			break;
@@ -139,7 +141,7 @@ public class ViewInteractive : MonoBehaviour {
 				GameObject goReleasedOver = LibView.GetObjectUnderMouse ();
 				if (this.gameObject != goReleasedOver) {
 					// Then we've released the mouse over a new object after dragging
-                    fnMouseReleaseOther(goReleasedOver);
+                    onMouseReleaseOther(goReleasedOver);
 
 					OnLeftUp ();
 				}
@@ -177,27 +179,27 @@ public class ViewInteractive : MonoBehaviour {
 		case STATELEFT.PRESS:
 			stateLeft = STATELEFT.CLICK;
 
-			fnMouseClick();
+			onMouseClick();
 			break;
 
 		case STATELEFT.DOUBLEPRESS:
 			stateLeft = STATELEFT.DOUBLECLICK;
 
-			fnMouseDoubleClick();
+			onMouseDoubleClick();
 			break;
 
 		case STATELEFT.HELD:
 			stateLeft = STATELEFT.IDLE;
 
-			fnMouseStopHold();
+			onMouseStopHold();
 			break;
 
 		case STATELEFT.DRAG:
 			stateLeft = STATELEFT.IDLE;
 
 			// For dragging, send a notification that dragging and holding has stopped
-			fnMouseStopHold();
-			fnMouseStopDrag();
+			onMouseStopHold();
+			onMouseStopDrag();
 			break;
 		}
 
@@ -214,10 +216,10 @@ public class ViewInteractive : MonoBehaviour {
 	}
 
 	public void OnMouseEnter(){
-		fnMouseStartHover();
+		onMouseStartHover();
 	}
 
 	public void OnMouseExit(){
-		fnMouseStopHover();
+		onMouseStopHover();
 	}
 }
