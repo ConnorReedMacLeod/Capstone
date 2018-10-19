@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ViewProfilePanel : Observer {
+public class ViewProfilePanel : MonoBehaviour {
 
     bool bStarted;                          //Confirms the Start() method has executed
 
@@ -13,6 +13,14 @@ public class ViewProfilePanel : Observer {
     public Text txtName;
     public Text txtPower;
     public Text txtDefense;
+
+    public void cbChrSelected(Object target, params object[] args) {
+        SetFocus((Chr)target);
+    }
+
+    public void cbChrUnselected(Object target, params object[] args) {
+        SetFocus(null);
+    }
 
     public void DisplayName() {
         if (chrFocus == null) {
@@ -47,25 +55,6 @@ public class ViewProfilePanel : Observer {
     void SetFocus(Chr _chrFocus) {
         chrFocus = _chrFocus;
         DisplayAll();
-    }
-
-    override public void UpdateObs(string eventType, Object target, params object[] args) {
-        //Debug.Log(eventType);
-        switch (eventType) {
-            
-
-            //TODO:: Figure out when to update this - for like power/def changes
-            case Notification.ChrSelected:
-                SetFocus((Chr)target);
-                break;
-
-            case Notification.ChrUnselected:
-                SetFocus(null);
-                break;
-
-            default:
-                break;
-        }
     }
 
     void Init() {
@@ -104,13 +93,16 @@ public class ViewProfilePanel : Observer {
             bStarted = true;
             Init();
 
-            Match.Get().Start();
-            //Start listening to each of the characters
-            for(int i=0; i<Match.Get().nPlayers; i++) {
-                for(int j=0; j<Match.Get().arChrs[1].Length; j++) {
-                    Match.Get().arChrs[i][j].Subscribe(this);
-                }
-            }
+            /* Match.Get().Start();
+             //Start listening to each of the characters
+             for(int i=0; i<Match.Get().nPlayers; i++) {
+                 for(int j=0; j<Match.Get().arChrs[1].Length; j++) {
+                     Match.Get().arChrs[i][j].Subscribe(this);
+                 }
+             }*/
+
+            Chr.subAllStartSelect.Subscribe(cbChrSelected);
+            Chr.subAllStartIdle.Subscribe(cbChrUnselected);
         }
     }
 
