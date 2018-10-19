@@ -51,19 +51,19 @@ public class Controller : MonoBehaviour{
 
 		// Find all necessary controllers and register them as our observers
 		contTarget = GetComponent<ContTarget> ();
-		Subscribe (contTarget);
+		//Subscribe (contTarget);
 
 		contTimeline = GetComponent<ContTimeline> ();
-		Subscribe (contTimeline);
+		//Subscribe (contTimeline);
 
 		contMana = GetComponent<ContMana> ();
-		Subscribe (contMana);
+		//Subscribe (contMana);
 
 		contInfo = GetComponent<ContInfo> ();
-		Subscribe (contInfo);
+		//Subscribe (contInfo);
 
         contArena = GetComponent<ContArena> ();
-		Subscribe (contArena);
+		//Subscribe (contArena);
 	}
 
 }

@@ -11,21 +11,6 @@ public class ViewTimelineEventChr : ViewTimelineEvent<TimelineEventChr> {
 		return 0.3f + ViewTimeline.fEventGap;
 	}
 
-	public override void UpdateObs(string eventType, Object target, params object[] args){
-
-		switch (eventType) {
-		case "NewChr":
-			SetPortrait (mod.chrSubject);
-			break;
-		default:
-
-			break;
-		}
-
-
-		base.UpdateObs (eventType, target, args);
-	}
-
 	void SetPortrait(Chr chr){
 		string sImgPath = "Images/Chrs/img" + chr.sName;
 		Sprite sprChr = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;

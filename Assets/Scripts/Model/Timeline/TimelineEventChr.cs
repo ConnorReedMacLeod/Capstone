@@ -15,12 +15,13 @@ public class TimelineEventChr : TimelineEvent {
 
 	}
 
-	public ViewTimelineEvent<TimelineEventChr> view;
+	//public ViewTimelineEvent<TimelineEventChr> view;
 
 	public override void InitView(){
-		view = GetComponent<ViewTimelineEvent<TimelineEventChr>>();
+		view = GetComponent<ViewTimelineEvent<TimelineEvent>>();
+
 		if (view == null){
-			Debug.LogError ("ERROR! COUDLN't FIND A VIEWTIMELINEEVENTCHR COMPONENT");
+			Debug.LogError ("ERROR! COUDLN'T FIND A VIEWTIMELINEEVENTCHR COMPONENT");
 		}
 		view.Start ();
 	}

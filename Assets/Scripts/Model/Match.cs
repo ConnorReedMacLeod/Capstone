@@ -111,7 +111,7 @@ public class Match : MonoBehaviour {
 	}
 
 	public void NextTimelineEvent(){
-		timeline.EvaluateEvent ();
+        timeline.EvaluateEvent(null);
 	}
 
 	public Controller GetController(){

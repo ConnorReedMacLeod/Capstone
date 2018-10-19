@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO:: Make a static unscale method in some library class that can unscale anything
-//        with respect to its parent
-
 // Reponsible for keeping track of where the container for
 // events should be and scrolling to line up the current event
 
-public class ViewTimeline : Observer {
+public class ViewTimeline : MonoBehaviour {
 
 	public bool bStarted;
 
@@ -34,22 +31,13 @@ public class ViewTimeline : Observer {
 	//Find the model, and do any setup for reflect it
 	public void InitModel(){
 		mod = GetComponent<Timeline>();
-	
 
+        mod.subEventFinished.Subscribe(cbEventFinished);
 	}
 
-	public override void UpdateObs(string eventType, Object target, params object[] args){
-
-		//Depending on what was last added
-		switch (eventType) {
-		case Notification.EventFinish:
-			ScrollEventHolder (((TimelineEvent)target).GetVertSpan ());
-			break;
-		default:
-			break;
-		}
-		//Print ();
-	}
+    public void cbEventFinished(Object target, params object[] args) {
+        ScrollEventHolder(((TimelineEvent)target).GetVertSpan());
+    }
 
 	public void ScrollEventHolder(float _diff){
 		Vector3 newPos = new Vector3 (transEventContainer.position.x, 

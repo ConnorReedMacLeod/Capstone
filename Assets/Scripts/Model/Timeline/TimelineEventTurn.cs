@@ -8,10 +8,11 @@ public class TimelineEventTurn : TimelineEvent {
 	public Mana.MANATYPE manaGen;
 
 	//public ViewTimelineEvent<TimelineEventTurn> view;
-    public ViewTimelineEventTurn view;
 
     public Subject subSetMana;
     public static Subject subAllSetMana;
+
+    public Subject subSetTurn;
 
 	public void InitMana(){
 		//TODO::Make this only semi-random
@@ -23,7 +24,7 @@ public class TimelineEventTurn : TimelineEvent {
 
 	public override void InitView(){
 		
-		view = GetComponent<ViewTimelineEventTurn>();
+		view = GetComponent<ViewTimelineEvent<TimelineEvent>>();
 		if (view == null){
 			Debug.LogError ("ERROR! COUDLN't FIND A VIEWTIMELINEEVENTTURN COMPONENT");
 		}
@@ -44,7 +45,7 @@ public class TimelineEventTurn : TimelineEvent {
 		prior = Timeline.PRIORITY.TURN;
         
 		nTurn = _nTurn;
-        view.SetTurnNumber(nTurn);
+        subSetTurn.NotifyObs(this);
 
         InitMana ();
 
