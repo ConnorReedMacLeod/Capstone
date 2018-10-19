@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContTarget : Observer {
+//TODO:: Make a static instance of this
+
+public class ContTarget : MonoBehaviour {
 
 	public StateTarget curState;
 
@@ -35,8 +37,6 @@ public class ContTarget : Observer {
 		ResetTar();
 		selected.bSetAction = false;
 		selected.nUsingAction = -1;
-        
-		//selected.Idle ();
 
 		SetState (new StateTargetIdle (this));
 
@@ -56,7 +56,6 @@ public class ContTarget : Observer {
 			//Then we've filled of the targetting arguments
 
 			selected.bSetAction = true;
-			//selected.Idle ();
 
 			// Can now go back idle and wait for the next targetting
 			SetState (new StateTargetIdle (this));
@@ -79,10 +78,6 @@ public class ContTarget : Observer {
 			switch (sArgType) { //TODO:: Maybe make this not rely on a string comparison... bleh
 			case "TargetArgChr":
 				newState = new StateTargetChr (this);
-				break;
-
-			case "TargetArgPos": //TODO:: REMOVE THIS
-				newState = new StateTargetPos (this);
 				break;
 
             case "TargetArgTeam":
