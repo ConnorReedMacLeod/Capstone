@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContMana : Observer{
+public class ContMana : MonoBehaviour{
 	public void Start () {
 		InitBindings ();
 	}
