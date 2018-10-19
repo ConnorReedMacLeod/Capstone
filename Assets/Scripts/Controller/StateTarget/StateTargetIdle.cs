@@ -8,18 +8,11 @@ using UnityEngine;
 //Nothing selected - ready to select a new character
 public class StateTargetIdle : StateTarget {
 
+    public void cbClickChar(Object target, params object[] args) {
+        contTarg.selected = ((ViewChr)target).mod;
 
-	public override void UpdateObs(string eventType, Object target, params object[] args){
-
-		switch (eventType) {
-            case Notification.ChrStartHold:
-            case Notification.ClickChr:
-			contTarg.selected = ((ViewChr)target).mod;
-
-			contTarg.SetState (new StateTargetSelected (contTarg));
-			break;
-		}
-	}
+        contTarg.SetState(new StateTargetSelected(contTarg));
+    }
 
 	override public void OnEnter(){
 		if (contTarg.selected != null) {
@@ -29,7 +22,7 @@ public class StateTargetIdle : StateTarget {
 	}
 
 	public StateTargetIdle(ContTarget _contTarg): base(_contTarg){
-
+        ViewChr.subAllClick.Subscribe(cbClickChar);
 	}
 
 }
