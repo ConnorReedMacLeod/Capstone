@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
-public class ViewInfoAction : Observer {
+public class ViewInfoAction : MonoBehaviour {
 
 	bool bStarted;                          //Confirms the Start() method has executed
 
@@ -20,6 +20,8 @@ public class ViewInfoAction : Observer {
 	public Text txtExtraDescription;
 
 	public Action mod;                   //Action model
+
+    public Subject subInfoActionUpdate;
 
 	// Use this for initialization
 	public void Start() {
@@ -125,20 +127,6 @@ public class ViewInfoAction : Observer {
 		DisplayExtraDescription ();
 	}
 
-	override public void UpdateObs(string eventType, Object target, params object[] args) {
-
-		switch (eventType) {
-		//TODO:: Consider adding in field-specific update types if only one field needs updating
-
-		case Notification.InfoActionUpdate:
-			DisplayAll ();
-			break;
-
-		default:
-			break;
-		}
-	}
-
 	//Variable initialization
 	public void Init() {
 		Text[] arTextComponents = GetComponentsInChildren<Text>();
@@ -183,8 +171,6 @@ public class ViewInfoAction : Observer {
 				break;
 			}
 		}
-
-		UpdateObs (Notification.InfoActionUpdate, null);
 	}
 
 	//Undoes the image and border scaling set by the parent
@@ -198,12 +184,12 @@ public class ViewInfoAction : Observer {
 	public void SetModel(Action _mod) {
 		mod = _mod;
 
-		//TODO:: Consider if observing the owner of the action to 
-		// dynamically update the description text makes sense
-		//mod.Subscribe(this);
+        //TODO:: Consider if observing the owner of the action to 
+        // dynamically update the description text makes sense
+        //mod.Subscribe(this);
 
-		UpdateObs (Notification.InfoActionUpdate, null);
-	}
+        DisplayAll();
+    }
 
 
 }
