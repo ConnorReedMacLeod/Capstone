@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 
-public abstract class ViewTimelineEvent<EventType> : Observer/*, ViewEventInterface*/
+public abstract class ViewTimelineEvent<EventType> : MonoBehaviour/*, ViewEventInterface*/
 	where EventType : TimelineEvent {
 
 	bool bStarted;
@@ -26,7 +26,8 @@ public abstract class ViewTimelineEvent<EventType> : Observer/*, ViewEventInterf
 	//Find the model, and do any setup for reflect it
 	public void InitModel(){
 		mod = GetComponent<EventType>();
-		mod.Subscribe (this);
+
+        mod.subEventChangedState.Subscribe(cbChangedState);
 
 	}
 
@@ -60,55 +61,48 @@ public abstract class ViewTimelineEvent<EventType> : Observer/*, ViewEventInterf
 
 	public void SetPos(Vector3 _v3Pos){
 		v3Pos = _v3Pos;
-		this.transform.localPosition = v3Pos;
+		transform.localPosition = v3Pos;
 	}
 
-	public override void UpdateObs(string eventType, Object target, params object[] args){
-		//Anything that needs to be done across any type of event can be here
-		//Will generally just use the specific type's UpdateObs()
+    //This event has been moved (since something on the timeline was inserted
+    // before it), so we need to shift this down to be after it's predecessor
+    public void EventMoved() {
+        if (mod.nodeEvent.Previous == null) {
+            //Then we're the first thing in the list
+            SetPos(Vector3.zero);
+        } else {
+            //Place ourselves right after the previous node
+            SetPos(mod.nodeEvent.Previous.Value.GetPosAfter());
+        }
 
-		switch (eventType) {
-		case Notification.EventMoved:
-			//Place this event based on the position of the previous node
-			if (mod.nodeEvent.Previous == null) {
-				//Then we're the first thing in the list
-				SetPos(Vector3.zero);
-			} else {
-				//Place ourselves right after the previous node
-				SetPos (mod.nodeEvent.Previous.Value.GetPosAfter ());
-			}
-			break;
+        if(mod.nodeEvent.Next != null) {
+            //Then let the node below us know that it should shift up as well
+            mod.nodeEvent.Next.Value.view.EventMoved();
+        }
+    }
 
-		case Notification.EventChangedState:
-			
-			Renderer render = GetComponentsInChildren<Renderer>()[0];
-			render.material.EnableKeyword ("_EMISSION");
+    public void cbChangedState(Object target, params object[] args) {
+        Renderer render = GetComponentsInChildren<Renderer>()[0];
+        render.material.EnableKeyword("_EMISSION");
 
-			switch (GetState()){
-			case TimelineEvent.STATE.CURRENT:
-				//BUG:: The first event doesn't get highlighted - weird right?
-				render.material.SetColor ("_EmissionColor", Color.yellow);
-				break;
-			case TimelineEvent.STATE.FINISHED:
-				render.material.DisableKeyword ("_EMISSION");
-				break;
-			case TimelineEvent.STATE.READY:
+        switch (GetState()) {
+            case TimelineEvent.STATE.CURRENT:
+                //BUG:: The first event doesn't get highlighted - weird right?
+                render.material.SetColor("_EmissionColor", Color.yellow);
+                break;
+            case TimelineEvent.STATE.FINISHED:
+                render.material.DisableKeyword("_EMISSION");
+                break;
+            case TimelineEvent.STATE.READY:
 
-				break;
-			case TimelineEvent.STATE.UNREADY:
+                break;
+            case TimelineEvent.STATE.UNREADY:
 
-				break;
-			default:
-				break;
-			}
-			break;
-		default:
-			
-			break;
-		}
-
-	}
-
+                break;
+            default:
+                break;
+        }
+    }
 
 	//TODO:: It is a problem that view Start methods might be called
 	//       after some Notify methods are called.  A possible fix is to intentially
@@ -118,12 +112,7 @@ public abstract class ViewTimelineEvent<EventType> : Observer/*, ViewEventInterf
 		if (bStarted == false) {
 			bStarted = true;
 
-
-			/*
-			Vector3 size = GetComponentInChildren<Renderer> ().bounds.size;
-	
-			fWidth = size.x;
-			fHeight = size.y;*/
+            //TODO:: Subscribe to a statuschanged subject
 			InitModel ();
 		}
 	}

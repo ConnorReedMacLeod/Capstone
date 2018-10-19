@@ -20,6 +20,8 @@ public abstract class TimelineEvent : MonoBehaviour {
 
 	public STATE state;
 
+    public ViewTimelineEvent<TimelineEvent> view;
+
 	public Timeline.PRIORITY prior;
 	public float fDelay;
 

@@ -108,9 +108,10 @@ public class Timeline : MonoBehaviour {
 
 				//Let it know its position in the list
 				newEvent.nodeEvent = newPos.Next;
-				newEvent.NotifyObs (Notification.EventMoved, null); //TODO:: Just call the newEvent's callback function directly
 
-				UpdateEventPositions (newPos.Next);
+                newEvent.view.EventMoved();
+
+				//UpdateEventPositions (newPos.Next); Should EventMoved should pass this along
 
 				break;
 			} else {
@@ -134,16 +135,6 @@ public class Timeline : MonoBehaviour {
 		curEvent = listEvents.First;
 		curEvent.Value.SetState(TimelineEvent.STATE.CURRENT);
 
-	}
-
-
-	// Update the timeline position for curNode and for everything after it
-	public void UpdateEventPositions(LinkedListNode<TimelineEvent> curNode){
-
-		while (curNode != null) {
-			curNode.Value.NotifyObs (Notification.EventMoved, null);
-			curNode = curNode.Next;
-		}
 	}
 
 

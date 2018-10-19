@@ -11,23 +11,13 @@ public class ViewTimelineEventTurn : ViewTimelineEvent<TimelineEventTurn> {
 	public override float GetVertSpan (){
 		return 0.4f + ViewTimeline.fEventGap;
 	}
-		
-	public override void UpdateObs(string eventType, Object target, params object[] args){
-		switch (eventType) {
-		case Notification.EventSetMana:
 
-            SetImgMana(Mana.arsManaTypes [(int)(mod.manaGen)]);
-			break;
-		default:
-			break;
-		}
+    public void cbSetMana(Object target, params object[] args) {
+        SetImgMana(Mana.arsManaTypes[(int)(mod.manaGen)]);
+    }
 
-		base.UpdateObs (eventType, target, args);
-
-	}
-
-    public void SetTurnNumber(int _nTurnNumber) {
-        txtTurnNumber.text = _nTurnNumber.ToString();
+    public void cbSetTurn(Object target, params object[] args) {
+        txtTurnNumber.text = ((TimelineEventTurn)mod).nTurn.ToString();
     }
 
 	public void SetImgMana(string _sType){
@@ -41,6 +31,8 @@ public class ViewTimelineEventTurn : ViewTimelineEvent<TimelineEventTurn> {
 	public override void Start(){
 		base.Start ();
 
+        mod.subSetTurn.Subscribe(cbSetTurn);
+        mod.subSetMana.Subscribe(cbSetMana);
 		//SetMaterial ("MatTimelineEventTurn");
 	}
 
