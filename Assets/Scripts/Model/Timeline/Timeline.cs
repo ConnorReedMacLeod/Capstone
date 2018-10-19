@@ -162,9 +162,11 @@ public class Timeline : MonoBehaviour {
 
 		InitChars ();
 
+        ViewExecuteButton.subAllExecuteEvent.Subscribe(EvaluateEvent);
+
 	}
 		
-	public void EvaluateEvent(){
+	public void EvaluateEvent(Object target, params object[] args){
 		//Print ();
 
 		curEvent.Value.Evaluate ();

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//NOTE :: May not need this general container to handle distributing
-// updates - instead just have individual classes directly ask their 
-// class's static subject to let them know when an event happens
-// in any of those classes
+//TODO :: Should be able to convert generally shared controllers
+//        to static instances.  However, for something like ContMana,
+//        each player will need their own instance to ensure
+//        player input only works for their instance of mana
 
 
 // These should control actions and logical flow of the game
@@ -26,13 +26,13 @@ using UnityEngine;
 [RequireComponent (typeof(ContArena))]
 public class Controller : MonoBehaviour{
 
-
+    //TODO:: Make all of these controllers static instances, so a controller object isn't needed
+    
     public ContTarget contTarget;
     public ContTimeline contTimeline;
     public ContMana contMana;
     public ContInfo contInfo;
     public ContArena contArena;
-    public ContGlobalInput contGlobalInput;
 
 	public static Controller Get (){
 		GameObject go = GameObject.FindGameObjectWithTag ("Controller");
@@ -64,9 +64,6 @@ public class Controller : MonoBehaviour{
 
         contArena = GetComponent<ContArena> ();
 		Subscribe (contArena);
-
-		contGlobalInput = GetComponent<ContGlobalInput> ();
-		Subscribe (contGlobalInput);
 	}
 
 }

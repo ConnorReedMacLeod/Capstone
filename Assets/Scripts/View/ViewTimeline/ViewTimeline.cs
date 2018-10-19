@@ -34,7 +34,7 @@ public class ViewTimeline : Observer {
 	//Find the model, and do any setup for reflect it
 	public void InitModel(){
 		mod = GetComponent<Timeline>();
-		mod.Subscribe (this);
+	
 
 	}
 
