@@ -4,13 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Chr))]
-[RequireComponent (typeof(MouseHandler))]
-public class ViewChr : Observer {
+public class ViewChr : ViewInteractive {
 
 	bool bStarted;                          //Confirms the Start() method has executed
 
 	public Chr mod;                   //Character model
-	public MouseHandler mousehandler;
 
 	Chr.STATESELECT lastStateSelect;  //Tracks previous character state (SELECTED, TARGETTING, UNSELECTED)
 	Vector3 v3LastPos;                      //Tracks previous character position against the model position
@@ -21,8 +19,6 @@ public class ViewChr : Observer {
 
     public static Subject subAllStartHover;
     public static Subject subAllStopHover;
-
-    public Subject subClick;
     public static Subject subAllClick;
 
     public void Start()
@@ -32,9 +28,7 @@ public class ViewChr : Observer {
 
 			// Find our model
 			InitModel ();
-			//Unscale ();
 			lastStateSelect = Chr.STATESELECT.IDLE;
-			InitMouseHandler ();
 
 		}
     }
@@ -55,34 +49,36 @@ public class ViewChr : Observer {
         }
 	}
 
-	public void InitMouseHandler(){
-		mousehandler = GetComponent<MouseHandler> ();
-		mousehandler.SetOwner (this);
-
-		mousehandler.SetNtfClick (cbClick);
-		mousehandler.SetNtfDoubleClick (cbClick);
-
-        mousehandler.SetNtfStartHover(cbStartHover);
-        mousehandler.SetNtfStopHover(cbStopHover);
-    }
-
-    public void cbClick(Object target, params object[] args) {
+    public override void onMouseClick(params object[] args) {
         //Currently not doing anything - just passing along the notification
+        
+        subAllClick.NotifyObs(this, args);
 
-        subClick.NotifyObs(target, args);
-        subAllClick.NotifyObs(target, args);
+        base.onMouseClick(args);
     }
 
-    public void cbStartHover(Object target, params object[] args) {
-        //Currently not doing anything - just passing along the notification to a global notification
+    public override void onMouseDoubleClick(params object[] args) {
 
-        subAllStartHover.NotifyObs(target, args);
+        //just do the same thing as a normal click
+        onMouseClick(args);
+
+        base.onMouseDoubleClick(args);
     }
 
-    public void cbStopHover(Object target, params object[] args) {
+    public override void onMouseStartHover(params object[] args) {
         //Currently not doing anything - just passing along the notification to a global notification
 
-        subAllStopHover.NotifyObs(target, args);
+        subAllStartHover.NotifyObs(this, args);
+
+        base.onMouseStartHover(args);
+    }
+
+    public override void onMouseStopHover(params object[] args) {
+        //Currently not doing anything - just passing along the notification to a global notification
+
+        subAllStopHover.NotifyObs(this, args);
+
+        base.onMouseStopHover(args);
     }
 
 
@@ -106,7 +102,7 @@ public class ViewChr : Observer {
     //Find the model, and do any setup to reflect it
 	public void InitModel(){
 		mod = GetComponent<Chr>();
-		mod.subHealthChange.Subscribe (cbUpdateTxtHealth);
+		mod.subHealthChange.Subscribe(cbUpdateTxtHealth);
         mod.subStatusChange.Subscribe(cbUpdateStatus);
 
 	}
