@@ -15,14 +15,20 @@ public class StateTargetIdle : StateTarget {
     }
 
 	override public void OnEnter(){
+        Debug.Log("Entering Idle");
 		if (contTarg.selected != null) {
 			contTarg.selected.Idle ();
 		}		
 		contTarg.selected = null;
-	}
-
-	public StateTargetIdle(ContTarget _contTarg): base(_contTarg){
         ViewChr.subAllClick.Subscribe(cbClickChar);
+    }
+
+    public override void OnLeave() {
+        ViewChr.subAllClick.UnSubscribe(cbClickChar);
+    }
+
+    public StateTargetIdle(ContTarget _contTarg): base(_contTarg){
+
 	}
 
 }

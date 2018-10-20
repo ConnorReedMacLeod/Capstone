@@ -74,9 +74,15 @@ public class Chr : MonoBehaviour {
 		ChangeRecharge (-1);
 	}
 
+    public void ChangeState(STATESELECT _stateSelect) {
+        stateSelect = _stateSelect;
+
+        subStatusChange.NotifyObs(this);
+    }
+
     //Sets character state to selected
 	public void Select(){
-		stateSelect = STATESELECT.SELECTED;
+        ChangeState(STATESELECT.SELECTED);
 
         subStartSelect.NotifyObs(this);
         subAllStartSelect.NotifyObs(this);
@@ -84,7 +90,7 @@ public class Chr : MonoBehaviour {
 
     //Sets character state to targetting
 	public void Targetting(){
-		stateSelect = STATESELECT.TARGGETING;
+		ChangeState(STATESELECT.TARGGETING);
 
         subStartTargetting.NotifyObs(this);
         subAllStartTargetting.NotifyObs(this);
@@ -92,7 +98,7 @@ public class Chr : MonoBehaviour {
 
     //Set character state to unselected
 	public void Idle (){
-		stateSelect = STATESELECT.IDLE;
+		ChangeState(STATESELECT.IDLE);
 
         subStartIdle.NotifyObs(this);
         subAllStartIdle.NotifyObs(this);

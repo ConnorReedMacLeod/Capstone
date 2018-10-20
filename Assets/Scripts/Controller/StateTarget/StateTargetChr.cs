@@ -43,10 +43,21 @@ public class StateTargetChr : StateTarget {
         //BUG :: THIS MAY CAUSE AN ERROR IF AN ALLY TARGET IS CAST TO A NORMAL CHR TARGET - MAY NOT CHECK FOR SAME TEAM
 		tarArg = (TargetArgChr)contTarg.selected.arActions [contTarg.selected.nUsingAction].arArgs[contTarg.nTarCount];
 
-	}
+        Arena.Get().view.subMouseClick.Subscribe(cbCancelTargetting);
+        ViewInteractive.subGlobalMouseRightClick.Subscribe(cbCancelTargetting);
+
+        ViewChr.subAllClick.Subscribe(cbSetTargetChr);
+        ViewAction.subAllClick.Subscribe(cbSwitchAction);
+
+    }
 
 	override public void OnLeave(){
-	}
+        Arena.Get().view.subMouseClick.UnSubscribe(cbCancelTargetting);
+        ViewInteractive.subGlobalMouseRightClick.UnSubscribe(cbCancelTargetting);
+
+        ViewChr.subAllClick.UnSubscribe(cbSetTargetChr);
+        ViewAction.subAllClick.UnSubscribe(cbSwitchAction);
+    }
 
 	public void ResetTargets(){
 		//clear any targetting 
@@ -59,10 +70,5 @@ public class StateTargetChr : StateTarget {
 		
 	public StateTargetChr(ContTarget _contTarg): base(_contTarg){
 
-        Arena.Get().view.subMouseClick.Subscribe(cbCancelTargetting);
-        ViewInteractive.subGlobalMouseRightClick.Subscribe(cbCancelTargetting);
-
-        ViewChr.subAllClick.Subscribe(cbSetTargetChr);
-        ViewAction.subAllClick.Subscribe(cbSwitchAction);
 	}
 }

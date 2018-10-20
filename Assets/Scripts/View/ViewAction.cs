@@ -18,6 +18,8 @@ public class ViewAction : ViewInteractive {
     public Text txtRemaining;
 
     public static Subject subAllClick = new Subject();
+    public static Subject subAllStartHover = new Subject();
+    public static Subject subAllStopHover = new Subject();
 
     public override void onMouseClick(params object[] args) {
 

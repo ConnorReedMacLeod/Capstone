@@ -65,8 +65,8 @@ public class ContInfo : MonoBehaviour{
         ContTarget.subAllStartTargetting.Subscribe(cbStartTargetting);
         ContTarget.subAllFinishTargetting.Subscribe(cbFinishTargetting);
 
-        ViewChr.subAllStartHover.Subscribe(cbActStartHover);
-        ViewChr.subAllStopHover.Subscribe(cbActStopHover);
+        ViewAction.subAllStartHover.Subscribe(cbActStartHover);
+        ViewAction.subAllStopHover.Subscribe(cbActStopHover);
         }
 	}
 }
