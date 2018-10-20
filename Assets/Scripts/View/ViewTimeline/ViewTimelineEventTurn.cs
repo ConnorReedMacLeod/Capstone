@@ -3,12 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ViewTimelineEventTurn : ViewTimelineEvent<TimelineEventTurn> {
+public class ViewTimelineEventTurn : ViewTimelineEvent {
 
     public SpriteRenderer rendMana;
     public Text txtTurnNumber;
 
-	public override float GetVertSpan (){
+    public new TimelineEventTurn mod {
+        get {
+            return (TimelineEventTurn)GetMod();
+        }
+        set {
+            mod = value;
+        }
+    }
+
+    public override TimelineEvent GetMod() {
+        return GetComponent<TimelineEventTurn>();
+    }
+
+    public override float GetVertSpan (){
 		return 0.4f + ViewTimeline.fEventGap;
 	}
 

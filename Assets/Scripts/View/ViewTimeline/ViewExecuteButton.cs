@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ViewExecuteButton : MonoBehaviour {
 
-    public static Subject subAllExecuteEvent;
+    public static Subject subAllExecuteEvent = new Subject();
 
 	public void OnMouseDown(){
         subAllExecuteEvent.NotifyObs(this);

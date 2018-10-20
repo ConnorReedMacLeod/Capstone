@@ -11,7 +11,7 @@ public class ViewTimeline : MonoBehaviour {
 
 	public Timeline mod;
 
-	public LinkedList<ViewTimelineEvent<TimelineEvent>> listViewEvents;
+	public LinkedList<ViewTimelineEvent> listViewEvents;
 
 	public Transform transEventContainer;
 
@@ -71,7 +71,7 @@ public class ViewTimeline : MonoBehaviour {
 
 	public ViewTimeline(){
 
-		listViewEvents = new LinkedList<ViewTimelineEvent<TimelineEvent>> ();
+		listViewEvents = new LinkedList<ViewTimelineEvent> ();
 		fEventGap = 0.2f;
 
 	}

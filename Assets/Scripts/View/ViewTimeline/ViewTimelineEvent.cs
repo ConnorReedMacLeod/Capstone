@@ -4,8 +4,7 @@ using UnityEngine;
 
 
 
-public abstract class ViewTimelineEvent<EventType> : MonoBehaviour/*, ViewEventInterface*/
-	where EventType : TimelineEvent {
+public abstract class ViewTimelineEvent : MonoBehaviour {
 
 	bool bStarted;
 
@@ -16,29 +15,20 @@ public abstract class ViewTimelineEvent<EventType> : MonoBehaviour/*, ViewEventI
 	public float fWidth;
 	public float fHeight;
 
-	public EventType mod;
+	public TimelineEvent mod {
+        get {
+            return GetMod();
+        }
+        set {
+            mod = value;
+        }
+    }
 
-	/*public EventType GetMod(){
-		return mod;
-	}*/
-
-
-	//Find the model, and do any setup for reflect it
-	public void InitModel(){
-		mod = GetComponent<EventType>();
-
-        mod.subEventChangedState.Subscribe(cbChangedState);
-
-	}
-
-	//undoes the scaling of the parent
-	public void Unscale(){
-		transform.localScale = new Vector3
-			(transform.localScale.x / transform.parent.localScale.x,
-				transform.localScale.y / transform.parent.localScale.y,
-				transform.localScale.z / transform.parent.localScale.z);
-	}
-
+    public virtual TimelineEvent GetMod() {
+        //TODO:: Consider if there's a way to do this without
+        //       a unity library function call each time
+        return GetComponent<TimelineEvent>();
+    }
 
 	public abstract float GetVertSpan ();
 
@@ -46,13 +36,6 @@ public abstract class ViewTimelineEvent<EventType> : MonoBehaviour/*, ViewEventI
 		//Ask the specific type of event what its height + gap are
 
 		return new Vector3(v3Pos.x, v3Pos.y - GetVertSpan(), v3Pos.z);
-	}
-
-	public virtual void SetMaterial(string sMatName){
-		string sMatPath = "Materials/Timeline/" + sMatName;
-		Material matEvent = Resources.Load(sMatPath, typeof(Material)) as Material;
-
-		GetComponentInChildren<Renderer> ().material = matEvent;
 	}
 
 	public TimelineEvent.STATE GetState (){
@@ -66,7 +49,7 @@ public abstract class ViewTimelineEvent<EventType> : MonoBehaviour/*, ViewEventI
 
     //This event has been moved (since something on the timeline was inserted
     // before it), so we need to shift this down to be after it's predecessor
-    public void EventMoved() {
+    public void cbEventMoved(Object target, params object[] args) {
         if (mod.nodeEvent.Previous == null) {
             //Then we're the first thing in the list
             SetPos(Vector3.zero);
@@ -77,7 +60,7 @@ public abstract class ViewTimelineEvent<EventType> : MonoBehaviour/*, ViewEventI
 
         if(mod.nodeEvent.Next != null) {
             //Then let the node below us know that it should shift up as well
-            mod.nodeEvent.Next.Value.view.EventMoved();
+            mod.nodeEvent.Next.Value.subEventMoved.NotifyObs();
         }
     }
 
@@ -104,16 +87,14 @@ public abstract class ViewTimelineEvent<EventType> : MonoBehaviour/*, ViewEventI
         }
     }
 
-	//TODO:: It is a problem that view Start methods might be called
-	//       after some Notify methods are called.  A possible fix is to intentially
-	//       not call Notifys in Start methods - would require some reworking
 	public virtual void Start(){
 
 		if (bStarted == false) {
 			bStarted = true;
 
             //TODO:: Subscribe to a statuschanged subject
-			InitModel ();
+            mod.subEventMoved.Subscribe(cbEventMoved);
+            mod.subEventChangedState.Subscribe(cbChangedState);
 		}
 	}
 
