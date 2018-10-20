@@ -6,8 +6,8 @@ public class TimelineEventChr : TimelineEvent {
 
 	public Chr chrSubject;
 
-    public Subject subChrChanged;
-    public static Subject subAllChrChanged;
+    public Subject subChrChanged = new Subject();
+    public static Subject subAllChrChanged = new Subject();
 
 	public TimelineEventChr (){
 
@@ -15,20 +15,9 @@ public class TimelineEventChr : TimelineEvent {
 
 	}
 
-	//public ViewTimelineEvent<TimelineEventChr> view;
-
-	public override void InitView(){
-		view = GetComponent<ViewTimelineEvent<TimelineEvent>>();
-
-		if (view == null){
-			Debug.LogError ("ERROR! COUDLN'T FIND A VIEWTIMELINEEVENTCHR COMPONENT");
-		}
-		view.Start ();
-	}
-
 	public void SetChr(Chr _chrSubject){
 		chrSubject = _chrSubject;
-
+        
         subChrChanged.NotifyObs(this);
         subAllChrChanged.NotifyObs(this);
     }

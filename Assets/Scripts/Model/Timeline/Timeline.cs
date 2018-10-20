@@ -34,8 +34,8 @@ public class Timeline : MonoBehaviour {
 
 	public ViewTimeline view;
 
-    public Subject subEventFinished;
-    public static Subject subAllEventFinished;
+    public Subject subEventFinished = new Subject();
+    public static Subject subAllEventFinished = new Subject();
 
 	public static Timeline Get (){
 		if (instance == null) {
@@ -107,7 +107,7 @@ public class Timeline : MonoBehaviour {
 				//Let it know its position in the list
 				newEvent.nodeEvent = newPos.Next;
 
-                newEvent.view.EventMoved();
+                newEvent.subEventMoved.NotifyObs();
 
 				//UpdateEventPositions (newPos.Next); Should EventMoved should pass this along
 
@@ -151,6 +151,7 @@ public class Timeline : MonoBehaviour {
 
 		InitChars ();
 
+        Debug.Log(ViewExecuteButton.subAllExecuteEvent);
         ViewExecuteButton.subAllExecuteEvent.Subscribe(EvaluateEvent);
 
 	}

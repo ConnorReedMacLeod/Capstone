@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Subject{
 
-	bool bStart;
+	bool bStarted;
 
     public delegate void FnCallback(Object target, params object[] args);
 
@@ -26,9 +26,8 @@ public class Subject{
 	}
 
 	public virtual void NotifyObs (Object target, params object[] args){
-		if (bStart == false) {
-			Start ();
-		}
+        Start(); 
+
         List<FnCallback> lstCopied = new List<FnCallback>(lstCallbacks);
 		foreach (FnCallback callback in lstCopied) {
             //if (callback == null)
@@ -38,6 +37,9 @@ public class Subject{
 	}
 
 	public virtual void Start (){
+        if (!bStarted) {
+            bStarted = true;
 
+        }
 	}
 }

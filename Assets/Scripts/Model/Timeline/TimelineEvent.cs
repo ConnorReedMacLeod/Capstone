@@ -20,28 +20,27 @@ public abstract class TimelineEvent : MonoBehaviour {
 
 	public STATE state;
 
-    public ViewTimelineEvent<TimelineEvent> view;
+    public ViewTimelineEvent view;
 
 	public Timeline.PRIORITY prior;
 	public float fDelay;
 
 	public LinkedListNode <TimelineEvent> nodeEvent;
 
-	public abstract void InitView ();
 	//Query the specific view's version of these methods
 	public abstract float GetVertSpan ();
 	public abstract Vector3 GetPosAfter ();
 
-    public Subject subEventMoved;
-    public static Subject subAllEventMoved;
-    public Subject subEventChangedState;
-    public static Subject subAllEventChangedState;
+    public Subject subEventMoved = new Subject();
+    public static Subject subAllEventMoved = new Subject();
+    public Subject subEventChangedState = new Subject();
+    public static Subject subAllEventChangedState = new Subject();
 
 	public virtual void Start(){
 		if (bStarted == false) {
 			bStarted = true;
 
-			InitView ();
+			
 		}
 	}
 

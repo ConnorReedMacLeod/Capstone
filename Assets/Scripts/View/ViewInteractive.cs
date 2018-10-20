@@ -23,54 +23,54 @@ public class ViewInteractive : MonoBehaviour {
 	public static float fTimeDoubleDelay; // Window to make a double click
 	public static float fMinDistDrag; // Distance you have to move the mouse before it counts as dragging
 
-    public Subject subMouseClick;
+    public Subject subMouseClick = new Subject();
     public virtual void onMouseClick(params object[] args) {
         subMouseClick.NotifyObs(this, args);
     }
 
-    public Subject subMouseDoubleClick;
+    public Subject subMouseDoubleClick = new Subject();
     public virtual void onMouseDoubleClick(params object[] args) {
         subMouseDoubleClick.NotifyObs(this, args);
     }
 
-    public Subject subMouseStartHold;
+    public Subject subMouseStartHold = new Subject();
     public virtual void onMouseStartHold(params object[] args) {
         subMouseStartHold.NotifyObs(this, args);
     }
 
-    public Subject subMouseStopHold;
+    public Subject subMouseStopHold = new Subject();
     public virtual void onMouseStopHold(params object[] args) {
         subMouseStopHold.NotifyObs(this, args);
     }
 
-    public Subject subMouseStartDrag;
+    public Subject subMouseStartDrag = new Subject();
     public virtual void onMouseStartDrag(params object[] args) {
         subMouseStartDrag.NotifyObs(this, args);
     }
 
-    public Subject subMouseStopDrag;
+    public Subject subMouseStopDrag = new Subject();
     public virtual void onMouseStopDrag(params object[] args) {
         subMouseStopDrag.NotifyObs(this, args);
     }
 
-    public Subject subMouseStartHover;
+    public Subject subMouseStartHover = new Subject();
     public virtual void onMouseStartHover(params object[] args) {
         subMouseStartHover.NotifyObs(this, args);
     }
 
-    public Subject subMouseStopHover;
+    public Subject subMouseStopHover = new Subject();
     public virtual void onMouseStopHover(params object[] args) {
         subMouseStopHover.NotifyObs(this, args);
     }
 
-    public Subject subMouseRightClick;
-    public static Subject subGlobalMouseRightClick;
+    public Subject subMouseRightClick = new Subject();
+    public static Subject subGlobalMouseRightClick = new Subject();
     public virtual void onMouseRightClick(params object[] args) {
         subMouseRightClick.NotifyObs(this, args);
         subGlobalMouseRightClick.NotifyObs(this, args);
     }
 
-    public Subject subMouseReleaseOther;
+    public Subject subMouseReleaseOther = new Subject();
     public virtual void onMouseReleaseOther(params object[] args) {
         subMouseReleaseOther.NotifyObs(this, args);
     }

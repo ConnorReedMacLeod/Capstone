@@ -9,10 +9,10 @@ public class TimelineEventTurn : TimelineEvent {
 
 	//public ViewTimelineEvent<TimelineEventTurn> view;
 
-    public Subject subSetMana;
-    public static Subject subAllSetMana;
+    public Subject subSetMana = new Subject();
+    public static Subject subAllSetMana = new Subject();
 
-    public Subject subSetTurn;
+    public Subject subSetTurn = new Subject();
 
 	public void InitMana(){
 		//TODO::Make this only semi-random
@@ -21,18 +21,6 @@ public class TimelineEventTurn : TimelineEvent {
         subSetMana.NotifyObs(this);
         subAllSetMana.NotifyObs(this);
     }
-
-	public override void InitView(){
-		
-		view = GetComponent<ViewTimelineEvent<TimelineEvent>>();
-        Debug.Log("view is " + view);
-        Debug.Log("searching for timelineeventTurn is " + GetComponent<ViewTimelineEvent<TimelineEventTurn>>());
-		if (view == null){
-			Debug.LogError ("ERROR! COUDLN't FIND A VIEWTIMELINEEVENTTURN COMPONENT");
-		}
-		view.Start ();
-         //TODO:: Consider moving this elsewhere
-	}
 
 	public override float GetVertSpan (){
 		return view.GetVertSpan ();

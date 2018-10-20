@@ -45,11 +45,11 @@ public class Chr : MonoBehaviour {
 
 	public STATESELECT stateSelect; //The character's state
 
-    public Subject subStartSelect;
+    public Subject subStartSelect = new Subject();
     public static Subject subAllStartSelect = new Subject();
-    public Subject subStartTargetting;
+    public Subject subStartTargetting = new Subject();
     public static Subject subAllStartTargetting = new Subject();
-    public Subject subStartIdle;
+    public Subject subStartIdle = new Subject();
     public static Subject subAllStartIdle = new Subject();
 
     public Subject subHealthChange = new Subject();

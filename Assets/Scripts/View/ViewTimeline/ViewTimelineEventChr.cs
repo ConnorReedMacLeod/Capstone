@@ -2,12 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewTimelineEventChr : ViewTimelineEvent<TimelineEventChr> {
+public class ViewTimelineEventChr : ViewTimelineEvent {
 
     public GameObject goFrame;
     public GameObject goPortrait;
 
-	public override float GetVertSpan (){
+    public new TimelineEventChr mod {
+        get {
+            return (TimelineEventChr)GetMod();
+        }
+        set {
+            mod = value;
+        }
+    }
+
+    public override TimelineEvent GetMod() {
+        return GetComponent<TimelineEventChr>();
+    }
+
+    public override float GetVertSpan (){
 		return 0.3f + ViewTimeline.fEventGap;
 	}
 

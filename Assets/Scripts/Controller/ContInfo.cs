@@ -51,7 +51,8 @@ public class ContInfo : MonoBehaviour{
 	}
 
     public void Start() {
-        if (!bStarted) { 
+        if (!bStarted) {
+            bStarted = true;
             GameObject go = GameObject.FindGameObjectWithTag("Info");
             if (go == null) {
                 Debug.LogError("ERROR! NO INFO-TAGGED OBJECT!");

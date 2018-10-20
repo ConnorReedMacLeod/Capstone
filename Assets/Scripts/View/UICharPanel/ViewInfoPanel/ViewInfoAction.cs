@@ -21,7 +21,7 @@ public class ViewInfoAction : MonoBehaviour {
 
 	public Action mod;                   //Action model
 
-    public Subject subInfoActionUpdate;
+    public Subject subInfoActionUpdate = new Subject();
 
 	// Use this for initialization
 	public void Start() {
