@@ -116,9 +116,10 @@ public class ViewChr : ViewInteractive {
     //Updates the character's state (SELECTED, TARGETTING, UNSELECTED)
 	void cbUpdateStatus(Object target, params object[] args) {
         //Refuses to accept updates until after initialized
-        if (!bStarted)
-			return;
+        //if (!bStarted)
+        //	return;
 
+        Debug.Log("Updating State of Chr " + mod.sName);
 		//UpdateSize ();
 
 		//Checks if character status has changed

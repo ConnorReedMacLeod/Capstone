@@ -105,7 +105,7 @@ public class ContTarget : MonoBehaviour {
 		if (curState != null) {
 			curState.OnLeave ();
 		}
-
+        
 		curState = newState;
 
 		if (curState != null) {

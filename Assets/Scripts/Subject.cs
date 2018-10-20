@@ -26,7 +26,7 @@ public class Subject{
 	}
 
 	public virtual void NotifyObs (Object target, params object[] args){
-        Start(); 
+        Start();
 
         List<FnCallback> lstCopied = new List<FnCallback>(lstCallbacks);
 		foreach (FnCallback callback in lstCopied) {

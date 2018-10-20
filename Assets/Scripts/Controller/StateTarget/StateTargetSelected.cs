@@ -29,20 +29,25 @@ public class StateTargetSelected : StateTarget {
     }
 
 	override public void OnEnter(){
-		
+        Debug.Log("Entering Selected");
 		Debug.Assert(contTarg.selected != null);
-		contTarg.selected.Select (); 
+
+        Arena.Get().view.subMouseClick.Subscribe(cbDeselect);
+        ViewChr.subAllClick.Subscribe(cbReselectChar);
+        ViewAction.subAllClick.Subscribe(cbChooseAction);
+
+        contTarg.selected.Select (); 
 
 	}
 
 	override public void OnLeave(){
-
-	}
+        Arena.Get().view.subMouseClick.UnSubscribe(cbDeselect);
+        ViewChr.subAllClick.UnSubscribe(cbReselectChar);
+        ViewAction.subAllClick.UnSubscribe(cbChooseAction);
+    }
 
 
 	public StateTargetSelected(ContTarget _contTarg): base(_contTarg){
-        Arena.Get().view.subMouseClick.Subscribe(cbDeselect);
-        ViewChr.subAllClick.Subscribe(cbReselectChar);
-        ViewAction.subAllClick.Subscribe(cbChooseAction);
+        
     }
 }

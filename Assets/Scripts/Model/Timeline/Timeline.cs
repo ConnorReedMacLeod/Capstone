@@ -150,8 +150,7 @@ public class Timeline : MonoBehaviour {
 		InitTurns ();
 
 		InitChars ();
-
-        Debug.Log(ViewExecuteButton.subAllExecuteEvent);
+        
         ViewExecuteButton.subAllExecuteEvent.Subscribe(EvaluateEvent);
 
 	}
