@@ -46,15 +46,14 @@ public class Chr : MonoBehaviour {
 	public STATESELECT stateSelect; //The character's state
 
     public Subject subStartSelect;
-    public static Subject subAllStartSelect;
+    public static Subject subAllStartSelect = new Subject();
     public Subject subStartTargetting;
-    public static Subject subAllStartTargetting;
+    public static Subject subAllStartTargetting = new Subject();
     public Subject subStartIdle;
-    public static Subject subAllStartIdle;
+    public static Subject subAllStartIdle = new Subject();
 
-    public Subject subHealthChange;
-    public Subject subStatusChange;
-
+    public Subject subHealthChange = new Subject();
+    public Subject subStatusChange = new Subject();
 
     //Changes the character's recharge by a given value
     public void ChangeRecharge(int _nChange){

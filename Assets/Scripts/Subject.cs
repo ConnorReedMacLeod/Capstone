@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Subject : MonoBehaviour {
+public class Subject{
 
 	bool bStart;
 
     public delegate void FnCallback(Object target, params object[] args);
 
-    public List<FnCallback> lstCallbacks;
+    public List<FnCallback> lstCallbacks = new List<FnCallback>();
 
 	public void Subscribe(FnCallback fnCallback){
 

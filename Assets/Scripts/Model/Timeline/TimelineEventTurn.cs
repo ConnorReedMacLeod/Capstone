@@ -25,6 +25,8 @@ public class TimelineEventTurn : TimelineEvent {
 	public override void InitView(){
 		
 		view = GetComponent<ViewTimelineEvent<TimelineEvent>>();
+        Debug.Log("view is " + view);
+        Debug.Log("searching for timelineeventTurn is " + GetComponent<ViewTimelineEvent<TimelineEventTurn>>());
 		if (view == null){
 			Debug.LogError ("ERROR! COUDLN't FIND A VIEWTIMELINEEVENTTURN COMPONENT");
 		}

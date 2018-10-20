@@ -17,9 +17,9 @@ public class ViewChr : ViewInteractive {
 	public GameObject goPortrait;       //Portrait Reference
     public Text txtHealth;              //Textfield Reference
 
-    public static Subject subAllStartHover;
-    public static Subject subAllStopHover;
-    public static Subject subAllClick;
+    public static Subject subAllStartHover = new Subject();
+    public static Subject subAllStopHover = new Subject();
+    public static Subject subAllClick = new Subject();
 
     public void Start()
     {
