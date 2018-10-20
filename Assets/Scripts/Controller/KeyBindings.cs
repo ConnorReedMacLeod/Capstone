@@ -12,8 +12,8 @@ public class KeyBindings : MonoBehaviour{
 
 	public static KeyBindings instance;
 
-	public Dictionary<Subject.FnCallback, KeyBind> dictEventToBind;
-	public Dictionary<KeyBind, Subject.FnCallback> dictBindToEvent;
+	public Dictionary<Subject.FnCallback, KeyBind> dictEventToBind = new Dictionary<Subject.FnCallback, KeyBind>();
+	public Dictionary<KeyBind, Subject.FnCallback> dictBindToEvent = new Dictionary<KeyBind, Subject.FnCallback>();
 
 	public bool bStarted;
 
@@ -73,7 +73,8 @@ public class KeyBindings : MonoBehaviour{
 			bStarted = true;
 
 			Get();//To initialize the static instance
-		}
+
+        }
 	}
 
 

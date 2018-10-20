@@ -17,7 +17,7 @@ public class ViewAction : ViewInteractive {
     public Text txtCooldown;
     public Text txtRemaining;
 
-    public static Subject subAllClick;
+    public static Subject subAllClick = new Subject();
 
     public override void onMouseClick(params object[] args) {
 

@@ -29,11 +29,11 @@ public class Mana : MonoBehaviour{
 	//Tracks the order in which mana was added to the mana pool
 	public LinkedList<MANATYPE> qManaPool;
 
-    public Subject subManaChange;
-    public static Subject subAllManaChange;
+    public Subject subManaChange = new Subject();
+    public static Subject subAllManaChange = new Subject();
 
-    public Subject subManaPoolChange;
-    public static Subject subAllManaPoolChange;
+    public Subject subManaPoolChange = new Subject();
+    public static Subject subAllManaPoolChange = new Subject();
 
     //For adding one mana of one type to player's total mana
     public void AddMana(MANATYPE type){

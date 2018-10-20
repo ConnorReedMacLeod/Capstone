@@ -25,9 +25,9 @@ public class Timeline : MonoBehaviour {
 
 	public Match match;
 
-	public LinkedList <TimelineEvent> listEvents;
+	public LinkedList <TimelineEvent> listEvents = new LinkedList<TimelineEvent>();
 
-	public LinkedListNode <TimelineEvent> curEvent;
+    public LinkedListNode<TimelineEvent> curEvent;
 
 	public GameObject pfTimelineEventChr;
 	public GameObject pfTimelineEventTurn;
@@ -56,8 +56,6 @@ public class Timeline : MonoBehaviour {
 			bStarted = true;
 
 			match = Match.Get ();
-
-			listEvents = new LinkedList<TimelineEvent> ();
 
 			view = GetComponent<ViewTimeline> ();
 			view.Start ();

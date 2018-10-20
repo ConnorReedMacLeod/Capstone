@@ -12,8 +12,8 @@ public class ContTarget : MonoBehaviour {
 
 	public int nTarCount;
 
-    public static Subject subAllStartTargetting;
-    public static Subject subAllFinishTargetting;
+    public static Subject subAllStartTargetting = new Subject();
+    public static Subject subAllFinishTargetting = new Subject();
 
 	// Move to selecting the next target
 	public void IncTar(){
@@ -113,8 +113,12 @@ public class ContTarget : MonoBehaviour {
 		}
 	}
 
-	public ContTarget(){
-		SetState( new StateTargetIdle (this));
+    public void Start() {
+        SetState(new StateTargetIdle(this));
+    }
+
+    public ContTarget(){
+		
 		nTarCount = 0;
 	}
 }
