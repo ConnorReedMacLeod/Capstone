@@ -25,8 +25,10 @@ public class ViewTimelineEventChr : ViewTimelineEvent {
 	}
 
 	void SetHeadshot(Chr chr){
-		string sImgPath = "Images/Chrs/" + chr.sName + "/img" + chr.sName + "Headshot";
-		Sprite sprChr = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
+
+        string sImgPath = "Images/Chrs/" + chr.sName + "/img" + chr.sName + "Headshot";
+
+        Sprite sprChr = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
 
 		goHeadshot.GetComponent<SpriteRenderer> ().sprite = sprChr;
 	}

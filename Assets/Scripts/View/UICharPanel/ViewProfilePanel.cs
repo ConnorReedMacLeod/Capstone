@@ -14,6 +14,8 @@ public class ViewProfilePanel : MonoBehaviour {
     public Text txtPower;
     public Text txtDefense;
 
+    public GameObject goHeadshot;
+
     public void cbChrSelected(Object target, params object[] args) {
         SetFocus((Chr)target);
     }
@@ -46,10 +48,24 @@ public class ViewProfilePanel : MonoBehaviour {
         }
     }
 
+    void SetHeadshot(Chr chr) {
+        //Load the blank image if no character is selected
+        string sImgPath = "Images/UICharPanel/imgBlankHeadshot";
+
+        if (chr != null) {
+            //If a character is selected, then grab their headshot
+            sImgPath = "Images/Chrs/" + chr.sName + "/img" + chr.sName + "Headshot";
+        }
+        Sprite sprChr = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
+
+        goHeadshot.GetComponent<SpriteRenderer>().sprite = sprChr;
+    }
+
     public void DisplayAll() {
         DisplayName();
         DisplayPower();
         DisplayDefense();
+        SetHeadshot(chrFocus);
     }
 
     void SetFocus(Chr _chrFocus) {
@@ -57,49 +73,12 @@ public class ViewProfilePanel : MonoBehaviour {
         DisplayAll();
     }
 
-    void Init() {
-
-        Text[] arTextComponents = GetComponentsInChildren<Text>();
-
-        for (int i = 0; i < arTextComponents.Length; i++) {
-
-            switch (arTextComponents[i].name) {
-                case "txtName":
-                    txtName = arTextComponents[i];
-                    break;
-
-                case "txtPower":
-                    txtPower = arTextComponents[i];
-                    break;
-
-                case "txtDefense":
-                    txtDefense = arTextComponents[i];
-                    break;
-
-                default:
-                    Debug.LogError("ERROR! Unrecognized Text component in ViewProfilePanel");
-                    break;
-
-            }
-        }
-
-        SetFocus(null);
-    }
-      
-
     // Use this for initialization
     void Start () {
         if (bStarted == false) {
             bStarted = true;
-            Init();
 
-            /* Match.Get().Start();
-             //Start listening to each of the characters
-             for(int i=0; i<Match.Get().nPlayers; i++) {
-                 for(int j=0; j<Match.Get().arChrs[1].Length; j++) {
-                     Match.Get().arChrs[i][j].Subscribe(this);
-                 }
-             }*/
+            SetFocus(null);
 
             Chr.subAllStartSelect.Subscribe(cbChrSelected);
             Chr.subAllStartIdle.Subscribe(cbChrUnselected);
