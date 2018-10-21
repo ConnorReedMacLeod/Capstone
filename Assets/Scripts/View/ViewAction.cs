@@ -39,7 +39,7 @@ public class ViewAction : ViewInteractive {
         if (bStarted == false)
         {
             bStarted = true;
-            Init();
+            //Init();
 
             /* Match.Get().Start();
              for (int i = 0; i < Match.Get().nPlayers; i++) {

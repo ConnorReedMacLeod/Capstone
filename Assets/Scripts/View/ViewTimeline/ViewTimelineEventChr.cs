@@ -34,6 +34,12 @@ public class ViewTimelineEventChr : ViewTimelineEvent {
 		goHeadshot.GetComponent<SpriteRenderer> ().sprite = sprChr;
 	}
 
+    public void cbFinishedExecuting(Object target, params object[] args) {
+        cbSetStatus(target, args);
+
+        mod.subEventChangedState.UnSubscribe(cbSetStatus);
+    }
+
     public void cbSetStatus(Object target, params object[] args) {
         string sImgPath = ""; ;
 
@@ -79,5 +85,6 @@ public class ViewTimelineEventChr : ViewTimelineEvent {
 		SetHeadshot (mod.chrSubject);
         cbSetStatus(mod.chrSubject);
         mod.chrSubject.subStatusChange.Subscribe(cbSetStatus);
+        mod.subFinishedExecuting.Subscribe(cbFinishedExecuting);
 	}
 }
