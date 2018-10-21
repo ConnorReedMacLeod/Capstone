@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent (typeof(ViewChr))]
-public class Chr : Subject {
+public class Chr : MonoBehaviour {
 
 	bool bStarted;
 
@@ -45,9 +45,18 @@ public class Chr : Subject {
 
 	public STATESELECT stateSelect; //The character's state
 
-    
+    public Subject subStartSelect = new Subject();
+    public static Subject subAllStartSelect = new Subject();
+    public Subject subStartTargetting = new Subject();
+    public static Subject subAllStartTargetting = new Subject();
+    public Subject subStartIdle = new Subject();
+    public static Subject subAllStartIdle = new Subject();
+
+    public Subject subHealthChange = new Subject();
+    public Subject subStatusChange = new Subject();
+
     //Changes the character's recharge by a given value
-	public void ChangeRecharge(int _nChange){
+    public void ChangeRecharge(int _nChange){
 		if (_nChange + nRecharge < 0) {
 			nRecharge = 0;
 		} else {
@@ -65,23 +74,35 @@ public class Chr : Subject {
 		ChangeRecharge (-1);
 	}
 
+    public void ChangeState(STATESELECT _stateSelect) {
+        stateSelect = _stateSelect;
+
+        subStatusChange.NotifyObs(this);
+    }
+
     //Sets character state to selected
 	public void Select(){
-		stateSelect = STATESELECT.SELECTED;
-        NotifyObs (Notification.ChrSelected, this);
-	}
+        ChangeState(STATESELECT.SELECTED);
+
+        subStartSelect.NotifyObs(this);
+        subAllStartSelect.NotifyObs(this);
+    }
 
     //Sets character state to targetting
 	public void Targetting(){
-		stateSelect = STATESELECT.TARGGETING;
-		NotifyObs ();
-	}
+		ChangeState(STATESELECT.TARGGETING);
+
+        subStartTargetting.NotifyObs(this);
+        subAllStartTargetting.NotifyObs(this);
+    }
 
     //Set character state to unselected
 	public void Idle (){
-		stateSelect = STATESELECT.IDLE;
-		NotifyObs (Notification.ChrUnselected, this);
-	}
+		ChangeState(STATESELECT.IDLE);
+
+        subStartIdle.NotifyObs(this);
+        subAllStartIdle.NotifyObs(this);
+    }
 
     //Performs the character's queued action
 	public void ExecuteAction(){
@@ -129,12 +150,9 @@ public class Chr : Subject {
 	}
 
     // Sets up fundamental class connections for the Chr
-	public override void Start(){
+	public void Start(){
 		if (bStarted == false) {
 			bStarted = true;
-
-			base.Start ();
-			// Call our base Subject's start method
 
 			view = GetComponent<ViewChr> ();
 			view.Start (); 

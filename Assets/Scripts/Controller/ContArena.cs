@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContArena : Observer {
+//TODO:: Currently not doing anything with this - maybe delete?
+
+public class ContArena : MonoBehaviour {
 
 
 

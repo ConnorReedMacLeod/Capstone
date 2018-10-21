@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContTarget : Observer {
+//TODO:: Make a static instance of this
+
+public class ContTarget : MonoBehaviour {
 
 	public StateTarget curState;
 
@@ -10,12 +12,8 @@ public class ContTarget : Observer {
 
 	public int nTarCount;
 
-
-	override public void UpdateObs(string eventType, Object target, params object[] args){
-		// Just pass along the update information to our current state - it'll decide what to do
-		curState.UpdateObs (eventType, target, args);
-
-	}
+    public static Subject subAllStartTargetting = new Subject();
+    public static Subject subAllFinishTargetting = new Subject();
 
 	// Move to selecting the next target
 	public void IncTar(){
@@ -39,13 +37,11 @@ public class ContTarget : Observer {
 		ResetTar();
 		selected.bSetAction = false;
 		selected.nUsingAction = -1;
-        
-		//selected.Idle ();
 
 		SetState (new StateTargetIdle (this));
 
 		//Let everything know that targetting has ended
-		Controller.Get().NotifyObs(Notification.TargetFinish, null);
+		subAllFinishTargetting.NotifyObs(this);
 	}
 
 	// Create the necessary state for selecting the needed type
@@ -60,19 +56,18 @@ public class ContTarget : Observer {
 			//Then we've filled of the targetting arguments
 
 			selected.bSetAction = true;
-			//selected.Idle ();
 
 			// Can now go back idle and wait for the next targetting
 			SetState (new StateTargetIdle (this));
 			Debug.Log ("Targetting finished");
 
-			//Let everything know that targetting has ended
-			Controller.Get().NotifyObs(Notification.TargetFinish, null);
+            //Let everything know that targetting has ended
+            subAllFinishTargetting.NotifyObs(this);
 		} else {
 
 			if (nTarCount == 0) {
-				//Then we should let things know that a new targetting has begun
-				Controller.Get().NotifyObs(Notification.TargetStart, selected, selected.nUsingAction);
+                //Then we should let things know that a new targetting has begun
+                subAllStartTargetting.NotifyObs(selected, selected.nUsingAction);
 			}
 
 			// Get the type of the target arg that we need to handle
@@ -83,10 +78,6 @@ public class ContTarget : Observer {
 			switch (sArgType) { //TODO:: Maybe make this not rely on a string comparison... bleh
 			case "TargetArgChr":
 				newState = new StateTargetChr (this);
-				break;
-
-			case "TargetArgPos": //TODO:: REMOVE THIS
-				newState = new StateTargetPos (this);
 				break;
 
             case "TargetArgTeam":
@@ -114,7 +105,7 @@ public class ContTarget : Observer {
 		if (curState != null) {
 			curState.OnLeave ();
 		}
-
+        
 		curState = newState;
 
 		if (curState != null) {
@@ -122,8 +113,12 @@ public class ContTarget : Observer {
 		}
 	}
 
-	public ContTarget(){
-		SetState( new StateTargetIdle (this));
+    public void Start() {
+        SetState(new StateTargetIdle(this));
+    }
+
+    public ContTarget(){
+		
 		nTarCount = 0;
 	}
 }

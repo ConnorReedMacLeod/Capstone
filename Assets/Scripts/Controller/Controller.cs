@@ -2,29 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//TODO :: Should be able to convert generally shared controllers
+//        to static instances.  However, for something like ContMana,
+//        each player will need their own instance to ensure
+//        player input only works for their instance of mana
+
+
 // These should control actions and logical flow of the game
 // map actions taken with the view to changes in the model
 // Can maintain information about game state
 
 // The container class for Controllers
 // Control flow:
-// Events are channeled into this container which then distributes
-// among the contained controllers
+// This will subscribe to every subject that exists
+// so that if any other observers need to know if some event
+// happend anywhere (say across all character selections), they 
+// can subscribe to this mega-subject class
 
 [RequireComponent (typeof(ContTarget))]
 [RequireComponent (typeof(ContTimeline))]
 [RequireComponent (typeof(ContMana))]
 [RequireComponent (typeof(ContInfo))]
 [RequireComponent (typeof(ContArena))]
-public class Controller : Subject{
+public class Controller : MonoBehaviour{
 
-
+    //TODO:: Make all of these controllers static instances, so a controller object isn't needed
+    
     public ContTarget contTarget;
     public ContTimeline contTimeline;
     public ContMana contMana;
     public ContInfo contInfo;
     public ContArena contArena;
-    public ContGlobalInput contGlobalInput;
 
 	public static Controller Get (){
 		GameObject go = GameObject.FindGameObjectWithTag ("Controller");
@@ -38,28 +46,24 @@ public class Controller : Subject{
 		return instance;
 	}
 
-	public override void Start () {
-        base.Start();
+	public void Start () {
 		gameObject.tag = "Controller";
 
 		// Find all necessary controllers and register them as our observers
 		contTarget = GetComponent<ContTarget> ();
-		Subscribe (contTarget);
+		//Subscribe (contTarget);
 
 		contTimeline = GetComponent<ContTimeline> ();
-		Subscribe (contTimeline);
+		//Subscribe (contTimeline);
 
 		contMana = GetComponent<ContMana> ();
-		Subscribe (contMana);
+		//Subscribe (contMana);
 
 		contInfo = GetComponent<ContInfo> ();
-		Subscribe (contInfo);
+		//Subscribe (contInfo);
 
         contArena = GetComponent<ContArena> ();
-		Subscribe (contArena);
-
-		contGlobalInput = GetComponent<ContGlobalInput> ();
-		Subscribe (contGlobalInput);
+		//Subscribe (contArena);
 	}
 
 }

@@ -2,20 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContTimeline : Observer {
-
-	override public void UpdateObs(string eventType, Object target, params object[] args){
-
-		switch (eventType) {
-		case Notification.ExecuteEvent:
-			Timeline.Get ().EvaluateEvent ();
-
-			break;
-		default:
-
-			break;
-		}
-	}
+//TODO:: Consider if this class is even needed
+public class ContTimeline : MonoBehaviour {
 
 	public void Start(){
 

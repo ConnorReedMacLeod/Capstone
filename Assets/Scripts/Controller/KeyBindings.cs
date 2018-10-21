@@ -5,13 +5,15 @@ using UnityEngine;
 //TODO:: Figure out if there's a way to use namespaces so that you don't always have to do 
 //       KeyBindings.AddBinding every time
 
+//NOTE:: This currently assumes that a keybind can only be bound to one action
+//       Consider if this is a valid assumption to make
 
 public class KeyBindings : MonoBehaviour{
 
 	public static KeyBindings instance;
 
-	public Dictionary<string, KeyBind> dictEventToBind;
-	public Dictionary<KeyBind, string> dictBindToEvent;
+	public Dictionary<Subject.FnCallback, KeyBind> dictEventToBind = new Dictionary<Subject.FnCallback, KeyBind>();
+	public Dictionary<KeyBind, Subject.FnCallback> dictBindToEvent = new Dictionary<KeyBind, Subject.FnCallback>();
 
 	public bool bStarted;
 
@@ -51,7 +53,7 @@ public class KeyBindings : MonoBehaviour{
 			//If there's no modifier to this binding, check if there's a 
 			//binding for this key with a modifier that is satisfied
 
-			foreach (KeyValuePair<KeyBind, string> otherBind in Get().dictBindToEvent){
+			foreach (KeyValuePair<KeyBind, Subject.FnCallback> otherBind in Get().dictBindToEvent){
 				if(otherBind.Key.keyPress == bind.keyPress &&
 					otherBind.Key.keyModifier != KeyCode.None &&
 					Input.GetKey(otherBind.Key.keyModifier)){
@@ -70,45 +72,50 @@ public class KeyBindings : MonoBehaviour{
 		if(bStarted == false){
 			bStarted = true;
 
-			dictEventToBind = new Dictionary<string, KeyBind> ();
-			dictBindToEvent = new Dictionary<KeyBind, string> ();
-
 			Get();//To initialize the static instance
-		}
+
+        }
 	}
 
 
 	void Update () {
 		Start ();
 
-		foreach (KeyValuePair<KeyBind, string> bind in dictBindToEvent) {
+		foreach (KeyValuePair<KeyBind, Subject.FnCallback> bind in dictBindToEvent) {
 			if (BindingUsed (bind.Key)) {
-				//If a binding is satisfied, then activate it's function
+                //If a binding is satisfied, then activate it's function
 
-				Controller.Get().NotifyObs(bind.Value, null);
+                bind.Value(null);//Then call the callback function assigned to this binding
 				break; //Only execute one action
 			}
 		}
 	}
 
-	public static void SetBinding(string sEvent, KeyCode _key, KeyCode _keyModifier = KeyCode.None){
+	public static void SetBinding(Subject.FnCallback fnCallback, KeyCode _key, KeyCode _keyModifier = KeyCode.None){
 
-		if (Get().dictEventToBind.ContainsKey(sEvent)) {
-			KeyBind curBind = Get().dictEventToBind [sEvent];
+        //If this event is already registered to some key binding
+		if (Get().dictEventToBind.ContainsKey(fnCallback)) {
+            //Then Find that binding
+			KeyBind curBind = Get().dictEventToBind [fnCallback];
 
-			//Unbind the currently used key
+			//And unregister the event currently linked to that binding
+            //(The one we just consumed)
 			Get().dictBindToEvent.Remove (curBind);
 		}
+
+        //Create the new desired binding
 		KeyBind newBind = new KeyBind (_key, _keyModifier);
 
 		if (Get().dictBindToEvent.ContainsKey (newBind)) {
-			// If the new binding is used for something else, then
-			// unbind the other thing
-			string curEvent = Get().dictBindToEvent[newBind];
-			Get().dictEventToBind.Remove (curEvent);
+			//If this binding is already linked to an event
+
+            //Fetch the event currently linked to that binding
+			Subject.FnCallback curCallback = Get().dictBindToEvent[newBind];
+            //And unbind it
+			Get().dictEventToBind.Remove (curCallback);
 		}
 
-		Get().dictEventToBind [sEvent] = newBind;
-		Get().dictBindToEvent [newBind] = sEvent;
+		Get().dictEventToBind [fnCallback] = newBind;
+		Get().dictBindToEvent [newBind] = fnCallback;
 	}
 }

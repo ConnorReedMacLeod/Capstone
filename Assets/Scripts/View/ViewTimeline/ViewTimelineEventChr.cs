@@ -1,36 +1,27 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewTimelineEventChr : ViewTimelineEvent<TimelineEventChr> {
+public class ViewTimelineEventChr : ViewTimelineEvent {
 
     public GameObject goFrame;
     public GameObject goPortrait;
-    public GameObject goStatus;
 
-	public override float GetVertSpan (){
+    public new TimelineEventChr mod {
+        get {
+            return (TimelineEventChr)GetMod();
+        }
+        set {
+            mod = value;
+        }
+    }
+
+    public override TimelineEvent GetMod() {
+        return GetComponent<TimelineEventChr>();
+    }
+
+    public override float GetVertSpan (){
 		return 0.3f + ViewTimeline.fEventGap;
-	}
-
-	public override void UpdateObs(string eventType, Object target, params object[] args){
-
-		switch (eventType) {
-		case "NewChr":
-			SetPortrait (mod.chrSubject);
-			break;
-
-        case Notification.EventChangedState:
-                Debug.Log("state changed");
-                UpdateStatus();
-            break;
-
-        default:
-
-			break;
-		}
-        
-
-        base.UpdateObs (eventType, target, args);
 	}
 
 	void SetPortrait(Chr chr){
@@ -39,30 +30,6 @@ public class ViewTimelineEventChr : ViewTimelineEvent<TimelineEventChr> {
 
 		goPortrait.GetComponent<SpriteRenderer> ().sprite = sprChr;
 	}
-
-    void UpdateStatus() {
-
-        string sImgPath = ""; ;
-
-        switch (mod.chrSubject.stateSelect) {
-            case Chr.STATESELECT.TARGGETING:
-                sImgPath = "Images/Timeline/imgActionPlanning";
-        
-                break;
-
-            case Chr.STATESELECT.IDLE:
-                if (mod.chrSubject.bSetAction) {
-                    sImgPath = "Images/Timeline/imgActionPlanned";
-                } else {
-                    sImgPath = "Images/Timeline/imgActionUnplanned";
-                }
-
-                break;
-        }
-        Sprite sprStatus = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
-
-        goStatus.GetComponent<SpriteRenderer>().sprite = sprStatus;
-    }
 
 	public void InitPlayer(){
 		// Subject to change
@@ -83,6 +50,5 @@ public class ViewTimelineEventChr : ViewTimelineEvent<TimelineEventChr> {
 
 		InitPlayer ();
 		SetPortrait (mod.chrSubject);
-
 	}
 }

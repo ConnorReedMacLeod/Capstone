@@ -4,13 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Chr))]
-[RequireComponent (typeof(MouseHandler))]
-public class ViewChr : Observer {
+public class ViewChr : ViewInteractive {
 
 	bool bStarted;                          //Confirms the Start() method has executed
 
 	public Chr mod;                   //Character model
-	public MouseHandler mousehandler;
 
 	Chr.STATESELECT lastStateSelect;  //Tracks previous character state (SELECTED, TARGETTING, UNSELECTED)
 	Vector3 v3LastPos;                      //Tracks previous character position against the model position
@@ -19,6 +17,10 @@ public class ViewChr : Observer {
 	public GameObject goPortrait;       //Portrait Reference
     public Text txtHealth;              //Textfield Reference
 
+    public static Subject subAllStartHover = new Subject();
+    public static Subject subAllStopHover = new Subject();
+    public static Subject subAllClick = new Subject();
+
     public void Start()
     {
 		if (bStarted == false) {
@@ -26,9 +28,7 @@ public class ViewChr : Observer {
 
 			// Find our model
 			InitModel ();
-			//Unscale ();
 			lastStateSelect = Chr.STATESELECT.IDLE;
-			InitMouseHandler ();
 
 		}
     }
@@ -49,22 +49,41 @@ public class ViewChr : Observer {
         }
 	}
 
-	public void InitMouseHandler(){
-		mousehandler = GetComponent<MouseHandler> ();
-		mousehandler.SetOwner (this);
+    public override void onMouseClick(params object[] args) {
+        //Currently not doing anything - just passing along the notification
+        
+        subAllClick.NotifyObs(this, args);
 
-		mousehandler.SetNtfClick (Notification.ClickChr);
-		mousehandler.SetNtfDoubleClick (Notification.ClickChr);
+        base.onMouseClick(args);
+    }
 
-		mousehandler.SetNtfStartHold (Notification.ChrStartHold);
+    public override void onMouseDoubleClick(params object[] args) {
 
-		mousehandler.SetNtfStopHold (Notification.ChrStopHold);
-	}
+        //just do the same thing as a normal click
+        onMouseClick(args);
 
-    
+        base.onMouseDoubleClick(args);
+    }
+
+    public override void onMouseStartHover(params object[] args) {
+        //Currently not doing anything - just passing along the notification to a global notification
+
+        subAllStartHover.NotifyObs(this, args);
+
+        base.onMouseStartHover(args);
+    }
+
+    public override void onMouseStopHover(params object[] args) {
+        //Currently not doing anything - just passing along the notification to a global notification
+
+        subAllStopHover.NotifyObs(this, args);
+
+        base.onMouseStopHover(args);
+    }
+
 
     //Sets the sprite used for the character's portrait
-	void setPortrait(string _sName){
+    void setPortrait(string _sName){
 		string sSprPath = "Images/Chrs/img" + _sName;
 		Sprite sprChr = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
 
@@ -83,22 +102,23 @@ public class ViewChr : Observer {
     //Find the model, and do any setup to reflect it
 	public void InitModel(){
 		mod = GetComponent<Chr>();
-		mod.Subscribe (this);
+		mod.subHealthChange.Subscribe(cbUpdateTxtHealth);
+        mod.subStatusChange.Subscribe(cbUpdateStatus);
 
 	}
 
-    public void UpdateTxtHealth() {
+    public void cbUpdateTxtHealth(Object target, params object[] args) {
         txtHealth.text = mod.nCurHealth + "/" + mod.nMaxHealth;
     }
 
 
 	//TODO:: Make this a state machine
     //Updates the character's state (SELECTED, TARGETTING, UNSELECTED)
-	void UpdateStatus(){
-		//Refuses to accept udpates until after initialized
-		if (!bStarted)
-			return;
-
+	void cbUpdateStatus(Object target, params object[] args) {
+        //Refuses to accept updates until after initialized
+        //if (!bStarted)
+        //	return;
+        
 		//UpdateSize ();
 
 		//Checks if character status has changed
@@ -137,16 +157,6 @@ public class ViewChr : Observer {
 			lastStateSelect = mod.stateSelect;
 		}
 	}
-
-    //Updates character view, detecting if changes are needed to the character position or state
-	override public void UpdateObs(string eventType, Object target, params object[] args){
-        //TODO:: Make this update more intelligent so that it updates based on the passed eventType
-
-        UpdateTxtHealth();
-
-        UpdateStatus();
-	}
-
 
 
     //UNUSED
