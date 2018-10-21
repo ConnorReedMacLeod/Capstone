@@ -29,7 +29,6 @@ public class StateTargetSelected : StateTarget {
     }
 
 	override public void OnEnter(){
-        Debug.Log("Entering Selected");
 		Debug.Assert(contTarg.selected != null);
 
         Arena.Get().view.subMouseClick.Subscribe(cbDeselect);

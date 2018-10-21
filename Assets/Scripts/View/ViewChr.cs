@@ -118,8 +118,7 @@ public class ViewChr : ViewInteractive {
         //Refuses to accept updates until after initialized
         //if (!bStarted)
         //	return;
-
-        Debug.Log("Updating State of Chr " + mod.sName);
+        
 		//UpdateSize ();
 
 		//Checks if character status has changed

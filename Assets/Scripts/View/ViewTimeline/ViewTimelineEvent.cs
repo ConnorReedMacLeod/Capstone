@@ -50,12 +50,13 @@ public abstract class ViewTimelineEvent : MonoBehaviour {
     //This event has been moved (since something on the timeline was inserted
     // before it), so we need to shift this down to be after it's predecessor
     public void cbEventMoved(Object target, params object[] args) {
+
         if (mod.nodeEvent.Previous == null) {
             //Then we're the first thing in the list
             SetPos(Vector3.zero);
         } else {
             //Place ourselves right after the previous node
-            SetPos(mod.nodeEvent.Previous.Value.GetPosAfter());
+            SetPos(mod.nodeEvent.Previous.Value.GetView().GetPosAfter());
         }
 
         if(mod.nodeEvent.Next != null) {
@@ -92,7 +93,10 @@ public abstract class ViewTimelineEvent : MonoBehaviour {
 		if (bStarted == false) {
 			bStarted = true;
 
-            //TODO:: Subscribe to a statuschanged subject
+            //Call these events manually just in case the iinitial notificiation is sent out
+            //before we've gotten a change to subscribe
+            cbEventMoved(null);
+            cbChangedState(null);
             mod.subEventMoved.Subscribe(cbEventMoved);
             mod.subEventChangedState.Subscribe(cbChangedState);
 		}

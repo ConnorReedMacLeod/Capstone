@@ -36,11 +36,13 @@ public class ViewTimeline : MonoBehaviour {
 	}
 
     public void cbEventFinished(Object target, params object[] args) {
-        ScrollEventHolder(((TimelineEvent)target).GetVertSpan());
+       
+        ScrollEventHolder(((TimelineEvent)target).GetView().GetVertSpan());
     }
 
 	public void ScrollEventHolder(float _diff){
-		Vector3 newPos = new Vector3 (transEventContainer.position.x, 
+
+        Vector3 newPos = new Vector3 (transEventContainer.position.x, 
 			transEventContainer.position.y + _diff, transEventContainer.position.z);
 		SetEventHolderPos (newPos);
 	}
@@ -58,6 +60,7 @@ public class ViewTimeline : MonoBehaviour {
 	}
 		
 	public void Start(){
+        Debug.Log("Starting and bStarted is " + bStarted);
 		if (bStarted == false) {
 			bStarted = true;
 
@@ -73,6 +76,7 @@ public class ViewTimeline : MonoBehaviour {
 
 		listViewEvents = new LinkedList<ViewTimelineEvent> ();
 		fEventGap = 0.2f;
+        bStarted = false;
 
 	}
 }

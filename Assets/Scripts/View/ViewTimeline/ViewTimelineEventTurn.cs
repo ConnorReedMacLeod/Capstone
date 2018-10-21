@@ -44,9 +44,12 @@ public class ViewTimelineEventTurn : ViewTimelineEvent {
 	public override void Start(){
 		base.Start ();
 
+        //Call the methods just in case we haven't subscribed before the
+        //first notification was sent out
+        cbSetTurn(null);
+        cbSetMana(null);
         mod.subSetTurn.Subscribe(cbSetTurn);
         mod.subSetMana.Subscribe(cbSetMana);
-		//SetMaterial ("MatTimelineEventTurn");
 	}
 
 }

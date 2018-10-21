@@ -58,7 +58,6 @@ public class Timeline : MonoBehaviour {
 			match = Match.Get ();
 
 			view = GetComponent<ViewTimeline> ();
-			view.Start ();
 
 
 		}
@@ -126,7 +125,7 @@ public class Timeline : MonoBehaviour {
 			listEvents.AddLast (newEvent);
 			newEvent.Start ();
 
-			// Give a reference to the linked list node, and to the turn #
+            // Give a reference to the linked list node, and to the turn #
 			newEvent.Init (listEvents.Last, i);
 		}
 
@@ -161,6 +160,8 @@ public class Timeline : MonoBehaviour {
 		curEvent.Value.Evaluate ();
 
 		curEvent.Value.SetState(TimelineEvent.STATE.FINISHED);
+
+        Debug.Log("event has finished executing");
 
         //Let the timeline know to shift upward
         subEventFinished.NotifyObs(curEvent.Value);
