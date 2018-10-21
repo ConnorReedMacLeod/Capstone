@@ -16,6 +16,7 @@ public class ViewChr : ViewInteractive {
 	public GameObject goBorder;        //Border reference
 	public GameObject goPortrait;       //Portrait Reference
     public Text txtHealth;              //Textfield Reference
+    public SpriteMask maskPortrait;     //SpriteMask Reference
 
     public static Subject subAllStartHover = new Subject();
     public static Subject subAllStopHover = new Subject();
@@ -37,10 +38,16 @@ public class ViewChr : ViewInteractive {
 		SetPortrait (mod.sName);
 		if (mod.plyrOwner.id == 1) {
 			//Find the portrait and flip it for one of the players
-			goPortrait.transform.localScale = new Vector3 (-1.33f, 1.33f, 1.33f);
+			goPortrait.transform.localScale = new Vector3 (-1.0f, 1.0f, 1.0f);
 
             //Find the border and flip it for one of the players
-            goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.33f);
+            goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
+
+            maskPortrait.transform.localScale = new Vector3(1.0f, -1.0f, 1.0f);
+            maskPortrait.transform.localPosition = 
+                new Vector3(maskPortrait.transform.localPosition.x, 
+                            - maskPortrait.transform.localPosition.y,
+                            maskPortrait.transform.localPosition.z);
 
             txtHealth.transform.localPosition  = 
                 new Vector3(txtHealth.transform.localPosition.x, 
