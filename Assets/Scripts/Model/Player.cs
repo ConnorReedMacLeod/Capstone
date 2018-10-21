@@ -21,7 +21,7 @@ public class Player : MonoBehaviour{
 		//placeholder until character selection is available
 		arChrTypeSelection[0] = Chr.CHARTYPE.KATARA;
 		arChrTypeSelection[1] = Chr.CHARTYPE.LANCER;
-		arChrTypeSelection[2] = Chr.CHARTYPE.SKELCOWBOY;
+		arChrTypeSelection[2] = Chr.CHARTYPE.SNEKGIRL;
 		nChrs = 3;
 	}
 
