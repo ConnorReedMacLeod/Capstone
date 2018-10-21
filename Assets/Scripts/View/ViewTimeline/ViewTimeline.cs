@@ -60,7 +60,6 @@ public class ViewTimeline : MonoBehaviour {
 	}
 		
 	public void Start(){
-        Debug.Log("Starting and bStarted is " + bStarted);
 		if (bStarted == false) {
 			bStarted = true;
 

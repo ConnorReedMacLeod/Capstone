@@ -34,7 +34,7 @@ public class ViewChr : ViewInteractive {
     }
 
 	public void Init(){
-		setPortrait (mod.sName);
+		SetPortrait (mod.sName);
 		if (mod.plyrOwner.id == 1) {
 			//Find the portrait and flip it for one of the players
 			goPortrait.transform.localScale = new Vector3 (-1.33f, 1.33f, 1.33f);
@@ -82,9 +82,9 @@ public class ViewChr : ViewInteractive {
     }
 
 
-    //Sets the sprite used for the character's portrait
-    void setPortrait(string _sName){
-		string sSprPath = "Images/Chrs/img" + _sName;
+    //Sets the sprite used for the character's full picture portrait
+    void SetPortrait(string _sName){
+		string sSprPath = "Images/Chrs/" + _sName + "/img" + _sName + "Portrait";
 		Sprite sprChr = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
 
         goPortrait.GetComponent<SpriteRenderer>().sprite = sprChr;
