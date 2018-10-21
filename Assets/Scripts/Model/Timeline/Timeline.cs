@@ -14,6 +14,8 @@ public class Timeline : MonoBehaviour {
 
 	bool bStarted;
 
+    public bool bAutoTurns = false;
+
 	public enum PRIORITY {
 		BOT, //beginning of turn
 		HIGH, //before normal actions
@@ -149,10 +151,23 @@ public class Timeline : MonoBehaviour {
 		InitTurns ();
 
 		InitChars ();
-        
-        ViewExecuteButton.subAllExecuteEvent.Subscribe(EvaluateEvent);
+
+        ViewAutoTurnsButton.subAllAutoExecuteEvent.Subscribe(cbAutoExecuteEvent);
+        ViewManualTurnsButton.subAllManualExecuteEvent.Subscribe(cbManualExecuteEvent);
 
 	}
+
+    public void cbAutoExecuteEvent(Object target, params object[] args) {
+        bAutoTurns = true;
+
+        //TODO:: FILL THIS IN
+    }
+
+    public void cbManualExecuteEvent(Object target, params object[] args) {
+        bAutoTurns = false;
+
+        EvaluateEvent(target, args);
+    }
 		
 	public void EvaluateEvent(Object target, params object[] args){
 		//Print ();
