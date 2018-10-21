@@ -15,7 +15,6 @@ public class StateTargetIdle : StateTarget {
     }
 
 	override public void OnEnter(){
-        Debug.Log("Entering Idle");
 		if (contTarg.selected != null) {
 			contTarg.selected.Idle ();
 		}		

@@ -20,23 +20,32 @@ public abstract class TimelineEvent : MonoBehaviour {
 
 	public STATE state;
 
-    public ViewTimelineEvent view;
-
 	public Timeline.PRIORITY prior;
 	public float fDelay;
 
-	public LinkedListNode <TimelineEvent> nodeEvent;
+    public ViewTimelineEvent view {
+        get {
+            return GetView();
+        }
+        set {
+            view = value;
+        }
+    }
 
-	//Query the specific view's version of these methods
-	public abstract float GetVertSpan ();
-	public abstract Vector3 GetPosAfter ();
+    public LinkedListNode <TimelineEvent> nodeEvent;
 
     public Subject subEventMoved = new Subject();
     public static Subject subAllEventMoved = new Subject();
     public Subject subEventChangedState = new Subject();
     public static Subject subAllEventChangedState = new Subject();
 
-	public virtual void Start(){
+    public virtual ViewTimelineEvent GetView() {
+        //TODO:: Consider if there's a way to do this without
+        //       a unity library function call each time
+        return GetComponent<ViewTimelineEvent>();
+    }
+
+    public virtual void Start(){
 		if (bStarted == false) {
 			bStarted = true;
 
@@ -46,7 +55,7 @@ public abstract class TimelineEvent : MonoBehaviour {
 
 	public virtual void Init(LinkedListNode<TimelineEvent> _nodeEvent){
 		nodeEvent = _nodeEvent;
-
+        
         subEventMoved.NotifyObs(this);
         subAllEventMoved.NotifyObs(this);
     }
