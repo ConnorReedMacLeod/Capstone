@@ -38,11 +38,11 @@ public class ViewTimelineEventChr : ViewTimelineEvent {
 		if (mod.chrSubject.plyrOwner.id == 0) {
             //this.SetMaterial ("MatTimelineEvent1");
             goHeadshot.transform.localPosition = new Vector3 (-1.0f, -0.26f, -0.1f);
-            goHeadshot.transform.localScale = new Vector3(0.2f, 0.2f, 1);
+            goHeadshot.transform.localScale = new Vector3(0.4f, 0.4f, 1);
 
         } else {
             //this.SetMaterial ("MatTimelineEvent2");
-            goHeadshot.transform.localScale = new Vector3 (-0.2f, 0.2f, 1);
+            goHeadshot.transform.localScale = new Vector3 (-0.4f, 0.4f, 1);
 		}
 	}
 

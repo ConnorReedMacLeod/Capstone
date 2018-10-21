@@ -86,7 +86,10 @@ public class Match : MonoBehaviour {
 		case Chr.CHARTYPE.SKELCOWBOY:
 			newChr.InitChr(player, id, new ChrSkelCowboy(newChr));
 			break;
-		default: 
+        case Chr.CHARTYPE.SNEKGIRL:
+            newChr.InitChr(player, id, new ChrSnekGirl(newChr));
+            break;
+        default: 
 			Debug.LogError ("INVALID CHARACTER SELECTION");
 			Application.Quit ();
 			newChr.InitChr (player, id, new BaseChr(newChr)); //so the editor will let us compile
