@@ -6,6 +6,7 @@ public class ViewTimelineEventChr : ViewTimelineEvent {
 
     public GameObject goFrame;
     public GameObject goHeadshot;
+    public GameObject goStatus;
 
     public new TimelineEventChr mod {
         get {
@@ -33,7 +34,31 @@ public class ViewTimelineEventChr : ViewTimelineEvent {
 		goHeadshot.GetComponent<SpriteRenderer> ().sprite = sprChr;
 	}
 
-	public void InitPlayer(){
+    public void cbSetStatus(Object target, params object[] args) {
+        string sImgPath = ""; ;
+
+        switch (mod.chrSubject.stateSelect) {
+            case Chr.STATESELECT.SELECTED:
+                return;
+
+            case Chr.STATESELECT.TARGGETING:
+                sImgPath = "Images/Timeline/imgActionPlanning";
+
+                break;
+            case Chr.STATESELECT.IDLE:
+                if (mod.chrSubject.bSetAction) {
+                    sImgPath = "Images/Timeline/imgActionPlanned";
+                } else {
+                    sImgPath = "Images/Timeline/imgActionUnplanned";
+                }
+                break;
+        }
+
+        Sprite sprStatus = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
+        goStatus.GetComponent<SpriteRenderer>().sprite = sprStatus;
+    }
+
+    public void InitPlayer(){
 		// Subject to change
 		if (mod.chrSubject.plyrOwner.id == 0) {
             //this.SetMaterial ("MatTimelineEvent1");
@@ -52,5 +77,7 @@ public class ViewTimelineEventChr : ViewTimelineEvent {
 
 		InitPlayer ();
 		SetHeadshot (mod.chrSubject);
+        cbSetStatus(mod.chrSubject);
+        mod.chrSubject.subStatusChange.Subscribe(cbSetStatus);
 	}
 }
