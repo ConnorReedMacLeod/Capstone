@@ -7,31 +7,33 @@ public class TimelineEventTurn : TimelineEvent {
 	public int nTurn;
 	public Mana.MANATYPE manaGen;
 
-	//public ViewTimelineEvent<TimelineEventTurn> view;
-    public ViewTimelineEventTurn view;
+    public new ViewTimelineEventTurn view {
+        get {
+            return (ViewTimelineEventTurn)GetView();
+        }
+        set {
+            view = value;
+        }
+    }
 
-	public void InitMana(){
+    public Subject subSetMana = new Subject();
+    public static Subject subAllSetMana = new Subject();
+
+    public Subject subSetTurn = new Subject();
+
+    public override ViewTimelineEvent GetView() {
+        //TODO:: Consider if there's a way to do this without
+        //       a unity library function call each time
+        return GetComponent<ViewTimelineEventTurn>();
+    }
+
+    public void InitMana(){
 		//TODO::Make this only semi-random
 		manaGen = (Mana.MANATYPE)Random.Range (0, Mana.nManaTypes - 1);
-		NotifyObs (Notification.EventSetMana, null);
-	}
 
-	public override void InitView(){
-		
-		view = GetComponent<ViewTimelineEventTurn>();
-		if (view == null){
-			Debug.LogError ("ERROR! COUDLN't FIND A VIEWTIMELINEEVENTTURN COMPONENT");
-		}
-		view.Start ();
-         //TODO:: Consider moving this elsewhere
-	}
-
-	public override float GetVertSpan (){
-		return view.GetVertSpan ();
-	}
-	public override Vector3 GetPosAfter (){
-		return view.GetPosAfter ();
-	}
+        subSetMana.NotifyObs(this);
+        subAllSetMana.NotifyObs(this);
+    }
 
 	public void Init(LinkedListNode<TimelineEvent> _eventNode, int _nTurn){
 		base.Init (_eventNode);
@@ -39,7 +41,7 @@ public class TimelineEventTurn : TimelineEvent {
 		prior = Timeline.PRIORITY.TURN;
         
 		nTurn = _nTurn;
-        view.SetTurnNumber(nTurn);
+        subSetTurn.NotifyObs(this);
 
         InitMana ();
 

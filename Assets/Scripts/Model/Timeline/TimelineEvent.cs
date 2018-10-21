@@ -7,7 +7,7 @@ using UnityEngine;
 //base class for any event that's in the timeline
 // responsible for keeping track of its position relative
 // to the position before it
-public abstract class TimelineEvent : Subject {
+public abstract class TimelineEvent : MonoBehaviour {
 
 	public bool bStarted;
 
@@ -23,33 +23,49 @@ public abstract class TimelineEvent : Subject {
 	public Timeline.PRIORITY prior;
 	public float fDelay;
 
-	public LinkedListNode <TimelineEvent> nodeEvent;
+    public ViewTimelineEvent view {
+        get {
+            return GetView();
+        }
+        set {
+            view = value;
+        }
+    }
 
-	public abstract void InitView ();
-	//Query the specific view's version of these methods
-	public abstract float GetVertSpan ();
-	public abstract Vector3 GetPosAfter ();
+    public LinkedListNode <TimelineEvent> nodeEvent;
 
-	public virtual void Start(){
+    public Subject subEventMoved = new Subject();
+    public static Subject subAllEventMoved = new Subject();
+    public Subject subEventChangedState = new Subject();
+    public static Subject subAllEventChangedState = new Subject();
+
+    public virtual ViewTimelineEvent GetView() {
+        //TODO:: Consider if there's a way to do this without
+        //       a unity library function call each time
+        return GetComponent<ViewTimelineEvent>();
+    }
+
+    public virtual void Start(){
 		if (bStarted == false) {
 			bStarted = true;
 
-			base.Start ();
-
-			InitView ();
+			
 		}
 	}
 
 	public virtual void Init(LinkedListNode<TimelineEvent> _nodeEvent){
 		nodeEvent = _nodeEvent;
-
-		NotifyObs (Notification.EventMoved, null);
-	}
+        
+        subEventMoved.NotifyObs(this);
+        subAllEventMoved.NotifyObs(this);
+    }
 
 	public void SetState(STATE _state){
 		state = _state;
-		NotifyObs (Notification.EventChangedState, null);
-	}
+
+        subEventChangedState.NotifyObs(this);
+        subAllEventChangedState.NotifyObs(this);
+    }
 
 	public void SetPriority(Timeline.PRIORITY _prior = Timeline.PRIORITY.NONE){
 		prior = _prior;

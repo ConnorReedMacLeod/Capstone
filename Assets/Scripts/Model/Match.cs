@@ -36,6 +36,7 @@ public class Match : MonoBehaviour {
 			if (instance == null) {
 				Debug.LogError ("ERROR! MATCH TAGGED OBJECT DOES NOT HAVE A MATCH COMPONENT!");
 			}
+            instance.Start();
 		}
 		return instance;
 	}
@@ -110,7 +111,7 @@ public class Match : MonoBehaviour {
 	}
 
 	public void NextTimelineEvent(){
-		timeline.EvaluateEvent ();
+        timeline.EvaluateEvent(null);
 	}
 
 	public Controller GetController(){

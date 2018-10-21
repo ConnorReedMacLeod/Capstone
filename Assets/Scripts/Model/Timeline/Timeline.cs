@@ -6,7 +6,7 @@ using UnityEngine;
 //Reponsible for keeping track of the order of events
 
 [RequireComponent(typeof(ViewTimeline))]
-public class Timeline : Subject {
+public class Timeline : MonoBehaviour {
 
 	public static Timeline instance;
 
@@ -25,14 +25,17 @@ public class Timeline : Subject {
 
 	public Match match;
 
-	public LinkedList <TimelineEvent> listEvents;
+	public LinkedList <TimelineEvent> listEvents = new LinkedList<TimelineEvent>();
 
-	public LinkedListNode <TimelineEvent> curEvent;
+    public LinkedListNode<TimelineEvent> curEvent;
 
 	public GameObject pfTimelineEventChr;
 	public GameObject pfTimelineEventTurn;
 
 	public ViewTimeline view;
+
+    public Subject subEventFinished = new Subject();
+    public static Subject subAllEventFinished = new Subject();
 
 	public static Timeline Get (){
 		if (instance == null) {
@@ -48,18 +51,13 @@ public class Timeline : Subject {
 		return instance;
 	}
 
-	public override void Start(){
+	public void Start(){
 		if (bStarted == false) {
 			bStarted = true;
 
-			this.Start ();
-
 			match = Match.Get ();
 
-			listEvents = new LinkedList<TimelineEvent> ();
-
 			view = GetComponent<ViewTimeline> ();
-			view.Start ();
 
 
 		}
@@ -107,9 +105,10 @@ public class Timeline : Subject {
 
 				//Let it know its position in the list
 				newEvent.nodeEvent = newPos.Next;
-				newEvent.NotifyObs (Notification.EventMoved, null);
 
-				UpdateEventPositions (newPos.Next);
+                newEvent.subEventMoved.NotifyObs();
+
+				//UpdateEventPositions (newPos.Next); Should EventMoved should pass this along
 
 				break;
 			} else {
@@ -126,23 +125,13 @@ public class Timeline : Subject {
 			listEvents.AddLast (newEvent);
 			newEvent.Start ();
 
-			// Give a reference to the linked list node, and to the turn #
+            // Give a reference to the linked list node, and to the turn #
 			newEvent.Init (listEvents.Last, i);
 		}
 
 		curEvent = listEvents.First;
 		curEvent.Value.SetState(TimelineEvent.STATE.CURRENT);
 
-	}
-
-
-	// Update the timeline position for curNode and for everything after it
-	public void UpdateEventPositions(LinkedListNode<TimelineEvent> curNode){
-
-		while (curNode != null) {
-			curNode.Value.NotifyObs (Notification.EventMoved, null);
-			curNode = curNode.Next;
-		}
 	}
 
 
@@ -160,20 +149,25 @@ public class Timeline : Subject {
 		InitTurns ();
 
 		InitChars ();
+        
+        ViewExecuteButton.subAllExecuteEvent.Subscribe(EvaluateEvent);
 
 	}
 		
-	public void EvaluateEvent(){
+	public void EvaluateEvent(Object target, params object[] args){
 		//Print ();
 
 		curEvent.Value.Evaluate ();
 
 		curEvent.Value.SetState(TimelineEvent.STATE.FINISHED);
 
-		//Let the timeline know to shift upward
-		NotifyObs (Notification.EventFinish, curEvent.Value);
+        Debug.Log("event has finished executing");
 
-		curEvent = curEvent.Next;
+        //Let the timeline know to shift upward
+        subEventFinished.NotifyObs(curEvent.Value);
+        subAllEventFinished.NotifyObs(curEvent.Value);
+
+        curEvent = curEvent.Next;
 		curEvent.Value.SetState(TimelineEvent.STATE.CURRENT);
 
 

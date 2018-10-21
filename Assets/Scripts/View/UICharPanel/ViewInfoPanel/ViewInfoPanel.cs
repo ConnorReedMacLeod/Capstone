@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewInfoPanel : Observer {
+public class ViewInfoPanel : MonoBehaviour {
 
 	public GameObject pfInfoAction;
 	public ViewInfoAction viewInfoAction;

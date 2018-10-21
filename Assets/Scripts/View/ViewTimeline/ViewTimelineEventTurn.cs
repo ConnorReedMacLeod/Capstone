@@ -3,31 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ViewTimelineEventTurn : ViewTimelineEvent<TimelineEventTurn> {
+public class ViewTimelineEventTurn : ViewTimelineEvent {
 
     public SpriteRenderer rendMana;
     public Text txtTurnNumber;
 
-	public override float GetVertSpan (){
+    public new TimelineEventTurn mod {
+        get {
+            return (TimelineEventTurn)GetMod();
+        }
+        set {
+            mod = value;
+        }
+    }
+
+    public override TimelineEvent GetMod() {
+        return GetComponent<TimelineEventTurn>();
+    }
+
+    public override float GetVertSpan (){
 		return 0.4f + ViewTimeline.fEventGap;
 	}
-		
-	public override void UpdateObs(string eventType, Object target, params object[] args){
-		switch (eventType) {
-		case Notification.EventSetMana:
 
-            SetImgMana(Mana.arsManaTypes [(int)(mod.manaGen)]);
-			break;
-		default:
-			break;
-		}
+    public void cbSetMana(Object target, params object[] args) {
+        SetImgMana(Mana.arsManaTypes[(int)(mod.manaGen)]);
+    }
 
-		base.UpdateObs (eventType, target, args);
-
-	}
-
-    public void SetTurnNumber(int _nTurnNumber) {
-        txtTurnNumber.text = _nTurnNumber.ToString();
+    public void cbSetTurn(Object target, params object[] args) {
+        txtTurnNumber.text = ((TimelineEventTurn)mod).nTurn.ToString();
     }
 
 	public void SetImgMana(string _sType){
@@ -41,7 +44,12 @@ public class ViewTimelineEventTurn : ViewTimelineEvent<TimelineEventTurn> {
 	public override void Start(){
 		base.Start ();
 
-		//SetMaterial ("MatTimelineEventTurn");
+        //Call the methods just in case we haven't subscribed before the
+        //first notification was sent out
+        cbSetTurn(null);
+        cbSetMana(null);
+        mod.subSetTurn.Subscribe(cbSetTurn);
+        mod.subSetMana.Subscribe(cbSetMana);
 	}
 
 }

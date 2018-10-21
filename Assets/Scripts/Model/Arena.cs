@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Can hold information about arena conditions like terrain or effects
+/// Used for placing characters in the proper slots
 /// </summary>
 
 [RequireComponent (typeof(ViewArena))]
-public class Arena : Subject{
+public class Arena : MonoBehaviour{
 
 	bool bStarted;
 

@@ -6,34 +6,36 @@ public class TimelineEventChr : TimelineEvent {
 
 	public Chr chrSubject;
 
-	public TimelineEventChr (){
+    public new ViewTimelineEventChr view {
+        get {
+            return (ViewTimelineEventChr)GetView();
+        }
+        set {
+            view = value;
+        }
+    }
+
+    public Subject subChrChanged = new Subject();
+    public static Subject subAllChrChanged = new Subject();
+
+    public override ViewTimelineEvent GetView() {
+        //TODO:: Consider if there's a way to do this without
+        //       a unity library function call each time
+        return GetComponent<ViewTimelineEventChr>();
+    }
+
+    public TimelineEventChr (){
 
 		fDelay = 2.0f;
 
 	}
 
-	public ViewTimelineEvent<TimelineEventChr> view;
-
-	public override void InitView(){
-		view = GetComponent<ViewTimelineEvent<TimelineEventChr>>();
-		if (view == null){
-			Debug.LogError ("ERROR! COUDLN't FIND A VIEWTIMELINEEVENTCHR COMPONENT");
-		}
-		view.Start ();
-	}
-
 	public void SetChr(Chr _chrSubject){
 		chrSubject = _chrSubject;
-		NotifyObs ("NewChr", null);
-	}
-
-	public override float GetVertSpan (){
-		return view.GetVertSpan ();
-	}
-	public override Vector3 GetPosAfter (){
-		return view.GetPosAfter ();
-	}
-
+        
+        subChrChanged.NotifyObs(this);
+        subAllChrChanged.NotifyObs(this);
+    }
 
 	//TODO:: Lock out targetting for this ability while it's being executed
 	public override void Evaluate(){
