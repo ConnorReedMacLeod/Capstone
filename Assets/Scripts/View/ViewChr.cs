@@ -122,11 +122,6 @@ public class ViewChr : ViewInteractive {
 	//TODO:: Make this a state machine
     //Updates the character's state (SELECTED, TARGETTING, UNSELECTED)
 	void cbUpdateStatus(Object target, params object[] args) {
-        //Refuses to accept updates until after initialized
-        //if (!bStarted)
-        //	return;
-        
-		//UpdateSize ();
 
 		//Checks if character status has changed
 		if (lastStateSelect != mod.stateSelect) {
@@ -164,62 +159,4 @@ public class ViewChr : ViewInteractive {
 			lastStateSelect = mod.stateSelect;
 		}
 	}
-
-
-    //UNUSED
-    /*
-    //Spawns the ActionWheel
-    void AddActionWheel() {
-        Debug.Assert(objActionWheel == null);
-        Debug.Assert(viewActionWheel == null);
-        objActionWheel = Instantiate(pfActionWheel, transform);
-        ///viewActionWheel = objActionWheel.AddComponent<ViewActionWheel> ();
-        viewActionWheel = objActionWheel.GetComponent<ViewActionWheel>();
-        viewActionWheel.setModel(mod);
-    }
-
-    //Despawns the ActionWheel
-    void RemoveActionWheel() {
-        Debug.Assert(objActionWheel != null);
-        Debug.Assert(viewActionWheel != null);
-        Destroy(objActionWheel);
-        objActionWheel = null;
-        viewActionWheel = null;
-    }
-    */
-    /*
-	public void UpdateSize(){
-		// Check the model's desired radius, so we can match that
-
-		float fRelativeScale = fOrigRadius / mod.fRad;
-
-		transform.localScale = new Vector3 (fOrigScaleX / fRelativeScale, fOrigScaleY / fRelativeScale, 1.0f);
-		GetComponent<CapsuleCollider> ().radius = mod.fRad;
-		//ERROR:: The collider doesn't rescale properly if the size increases past the original... idk why
-
-	}
-    */
-    /* UNNEEDED WITH JUST ABILITY BUTTONS
-	public void ReleaseOverOther(GameObject other){
-
-		// Check if the other object has a ViewAction component
-		ViewAction viewAction = other.GetComponent<ViewAction>();
-		if (viewAction != null) {
-			// Then use the action
-			Controller.Get().NotifyObs(Notification.ReleaseChrOverAct, this, viewAction);
-			return;
-		}
-
-		// If the object has none of the desired components
-		Controller.Get().NotifyObs(Notification.ReleaseChrOverNone, this, null);
-	}
-    */
-
-    /*//Undoes the image and border scaling set by the parent
-    public void Unscale(){
-		transform.localScale = new Vector3
-			(transform.localScale.x / transform.parent.localScale.x,
-				transform.localScale.y / transform.parent.localScale.y,
-				transform.localScale.z / transform.parent.localScale.z);
-	}*/
 }
