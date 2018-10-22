@@ -27,8 +27,8 @@ public class ViewInfoAction : MonoBehaviour {
 	public void Start() {
 		if (bStarted == false) {
 			bStarted = true;
-			Init();
-			Unscale ();
+			//Init();
+			//Unscale ();
 
 			//Reposition to be at the origin
 			transform.localPosition = Vector3.zero;
