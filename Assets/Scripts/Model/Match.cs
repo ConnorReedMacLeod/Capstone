@@ -96,6 +96,7 @@ public class Match : MonoBehaviour {
 			break;
 		}
 		arChrs [player.id] [id] = newChr;
+        player.arChr[id] = newChr;
 
 	 
 		//newChr.SetPosition(Random.Range(-10.0f, 10.0f), arena.arfStartingPosY[id]);

@@ -32,6 +32,8 @@ public class ActionFireball : Action {
 
 		Debug.Log ("Character " + tar + " has been fireballed");
 
+        tar.ChangeHealth(-5);
+
 		//NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
 
 

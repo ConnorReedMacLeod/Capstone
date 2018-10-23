@@ -33,6 +33,8 @@ public class ActionHeal : Action {
 
         Debug.Log("Character " + tar + " has been healed");
 
+        tar.ChangeHealth(5);
+
         //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
 
 
