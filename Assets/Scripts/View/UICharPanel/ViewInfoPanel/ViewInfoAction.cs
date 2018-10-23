@@ -59,12 +59,18 @@ public class ViewInfoAction : MonoBehaviour {
 	}
 
 	public void DisplayCost() {
-		if (mod == null) {
-			txtCost.text = "";
-		} else {
-			txtCost.text = CostToString (mod.arCost);
-		}
-	}
+        if (mod == null) {
+            txtType.text = "";
+        } else {
+            string sPhys = new string('1', mod.arCost[(int)Mana.MANATYPE.PHYSICAL]);
+            string sMent = new string('2', mod.arCost[(int)Mana.MANATYPE.MENTAL]);
+            string sEnrg = new string('3', mod.arCost[(int)Mana.MANATYPE.ENERGY]);
+            string sBld = new string('4', mod.arCost[(int)Mana.MANATYPE.BLOOD]);
+            string sEfrt = new string('5', mod.arCost[(int)Mana.MANATYPE.EFFORT]);
+
+            txtCost.text = sPhys + sMent + sEnrg + sBld + sEfrt;
+        }
+    }
 
 	public void DisplayType() {
 		if (mod == null) {
