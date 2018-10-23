@@ -160,17 +160,30 @@ public class Timeline : MonoBehaviour {
     public void cbAutoExecuteEvent(Object target, params object[] args) {
         bAutoTurns = true;
 
-        //TODO:: FILL THIS IN
+        if (bAutoTurns) {
+            Debug.Log("Going to next event in " + curEvent.Value.fDelay);
+
+            Invoke("AutoExecuteEvent", curEvent.Value.fDelay);
+        }
+    }
+    public void AutoExecuteEvent() {
+
+        if (!bAutoTurns) {
+            //Then we must have switched to manual turns while waiting for this event,
+            //so don't actually execute anything automatically
+            return;
+        }
+
+        EvaluateEvent();
     }
 
     public void cbManualExecuteEvent(Object target, params object[] args) {
         bAutoTurns = false;
 
-        EvaluateEvent(target, args);
+        EvaluateEvent();
     }
 		
-	public void EvaluateEvent(Object target, params object[] args){
-		//Print ();
+	public void EvaluateEvent(){
 
 		curEvent.Value.Evaluate ();
 
@@ -185,7 +198,11 @@ public class Timeline : MonoBehaviour {
         curEvent = curEvent.Next;
 		curEvent.Value.SetState(TimelineEvent.STATE.CURRENT);
 
+        if (bAutoTurns) {
+            Debug.Log("Going to next event in " + curEvent.Value.fDelay);
 
+            Invoke("AutoExecuteEvent", curEvent.Value.fDelay);
+        }
 
 	}
 		
