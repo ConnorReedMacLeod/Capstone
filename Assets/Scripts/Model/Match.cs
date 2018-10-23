@@ -113,10 +113,6 @@ public class Match : MonoBehaviour {
 		}
 	}
 
-	public void NextTimelineEvent(){
-        timeline.EvaluateEvent(null);
-	}
-
 	public Controller GetController(){
 		if (controller == null) {
 			controller = GetComponentInChildren<Controller> ();
@@ -150,9 +146,7 @@ public class Match : MonoBehaviour {
 
 		timeline.InitTimeline ();
 	
-		/*FOR TESTING -> REMOVE THIS AT SOME POINT*/
-		//Invoke("NextTimelineEvent", 5);
-		/**/
+		//TODO:: By default, automatically start evaluating turns
 
 	}
 }

@@ -108,6 +108,7 @@ public class Chr : MonoBehaviour {
 	public void ExecuteAction(){
 		Debug.Assert (ValidAction ());
 		arActions [nUsingAction].Execute ();
+        bSetAction = false;
 		nUsingAction = 7;//TODO:: Make this consistent
 	}
 
