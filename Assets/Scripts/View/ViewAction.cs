@@ -28,6 +28,20 @@ public class ViewAction : ViewInteractive {
         base.onMouseClick(args);
     }
 
+    public override void onMouseStartHover(params object[] args) {
+
+        subAllStartHover.NotifyObs(this, args);
+
+        base.onMouseStartHover(args);
+    }
+
+    public override void onMouseStopHover(params object[] args) {
+
+        subAllStopHover.NotifyObs(this, args);
+
+        base.onMouseStopHover(args);
+    }
+
 
     //Let the Action button know which character and id it's representing
     public void SetModel (Action _mod){
@@ -39,14 +53,7 @@ public class ViewAction : ViewInteractive {
         if (bStarted == false)
         {
             bStarted = true;
-            Init();
 
-            /* Match.Get().Start();
-             for (int i = 0; i < Match.Get().nPlayers; i++) {
-                 for (int j = 0; j < Match.Get().arChrs[1].Length; j++) {
-                     Match.Get().arChrs[i][j].Subscribe(this);
-                 }
-             }*/
             Chr.subAllStartSelect.Subscribe(cbChrSelected);
             Chr.subAllStartIdle.Subscribe(cbChrUnselected);
         }
@@ -113,44 +120,4 @@ public class ViewAction : ViewInteractive {
         DisplayCooldown();
         DisplayRemaining();
     }
-
-    //TODO:: Just link this in the prefab
-    //Variable initialization
-    public void Init()
-    {
-        Text[] arTextComponents = GetComponentsInChildren<Text>();
-
-        for (int i = 0; i < arTextComponents.Length; i++)
-        {
-
-            switch (arTextComponents[i].name)
-            {
-                case "txtName":
-                    txtName = arTextComponents[i];
-                    break;
-
-                case "txtType":
-                    txtType = arTextComponents[i];
-                    break;
-
-                case "txtRecharge":
-                    txtRecharge = arTextComponents[i];
-                    break;
-
-                case "txtCooldown":
-                    txtCooldown = arTextComponents[i];
-                    break;
-
-                case "txtRemaining":
-                    txtRemaining = arTextComponents[i];
-                    break;
-
-                default:
-                    Debug.LogError("ERROR! Unrecognized Text component in ViewAction");
-                    break;
-            }
-        }
-        
-    }
-
 }

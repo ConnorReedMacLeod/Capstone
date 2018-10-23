@@ -27,7 +27,6 @@ public class TimelineEventChr : TimelineEvent {
     public TimelineEventChr (){
 
 		fDelay = 2.0f;
-
 	}
 
 	public void SetChr(Chr _chrSubject){

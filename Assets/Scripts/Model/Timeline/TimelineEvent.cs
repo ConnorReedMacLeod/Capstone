@@ -39,6 +39,9 @@ public abstract class TimelineEvent : MonoBehaviour {
     public Subject subEventChangedState = new Subject();
     public static Subject subAllEventChangedState = new Subject();
 
+    public Subject subFinishedExecuting = new Subject();
+    public static Subject subAllFinishedExecuting = new Subject();
+
     public virtual ViewTimelineEvent GetView() {
         //TODO:: Consider if there's a way to do this without
         //       a unity library function call each time
@@ -81,8 +84,12 @@ public abstract class TimelineEvent : MonoBehaviour {
 
 	public virtual void Evaluate(){
 
-		// Set up the next event to go off later
-		//Invoke ("NextTimelineEvent", fDelay);
-	}
+        // Set up the next event to go off later
+        //Invoke ("NextTimelineEvent", fDelay);
+
+        subFinishedExecuting.NotifyObs(this);
+        subAllFinishedExecuting.NotifyObs(this);
+
+    }
 
 }
