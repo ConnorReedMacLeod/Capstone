@@ -222,7 +222,7 @@ public class Mana : MonoBehaviour{
 			arManaPool = new int[nManaTypes];
 			qManaPool = new LinkedList<MANATYPE>();
 
-            AddMana(new int[] { 3, 4, 2, 5, 0 });
+            AddMana(new int[] { 3, 4, 10, 5, 0 });
 		}
 	}
 }

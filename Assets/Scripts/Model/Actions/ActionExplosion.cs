@@ -32,6 +32,10 @@ public class ActionExplosion : Action {
 
         Debug.Log("Player " + tar.id + " has been exploded");
 
+        for(int i=0; i<tar.nChrs; i++) {
+            tar.arChr[i].ChangeHealth(-5);
+        }
+
         //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
 
 

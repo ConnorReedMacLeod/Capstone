@@ -34,6 +34,8 @@ public class Player : MonoBehaviour{
 
 		if (bStarted == false) {
 			bStarted = true;
+
+            arChr = new Chr[MAXCHRS];
 			arChrTypeSelection = new Chr.CHARTYPE[MAXCHRS];
 
 			GameObject manaPanel = Instantiate(pfManaPanel, Match.Get().transform);

@@ -64,6 +64,12 @@ public class Chr : MonoBehaviour {
 		}
 	}
 
+    public void ChangeHealth(int nChange) {
+        nCurHealth += nChange;
+
+        subHealthChange.NotifyObs();
+    }
+
 
 	public void NotifyNewRecharge(){
 		Timeline.Get ().AddEventChr (this, nRecharge, Timeline.PRIORITY.NONE); 
