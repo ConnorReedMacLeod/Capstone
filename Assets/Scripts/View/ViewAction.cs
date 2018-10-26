@@ -78,7 +78,7 @@ public class ViewAction : ViewInteractive {
 
     public void DisplayCost() {
         if (mod == null) {
-            txtType.text = "";
+            txtCost.text = "";
         } else {
             string sPhys = new string('1', mod.arCost[(int)Mana.MANATYPE.PHYSICAL]);
             string sMent = new string('2', mod.arCost[(int)Mana.MANATYPE.MENTAL]);
