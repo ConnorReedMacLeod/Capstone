@@ -1,42 +1,65 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class Player : MonoBehaviour{
+public class Player : NetworkBehaviour {
 
-	bool bStarted;
+    bool bStarted;
 
-	public int id;
-	public static int MAXCHRS = 3;
-	public static int MAXPLAYERS = 2;
-	public Chr[] arChr;
-	public Chr.CHARTYPE[] arChrTypeSelection;
-	public int nChrs;
+    [SyncVar (hook = "OnSetID")]
+    public int id;
 
-	public GameObject pfManaPanel;
+    public static int idLocal;
 
-	public Mana mana;
+    public static int MAXCHRS = 3;
+    public static int MAXPLAYERS = 2;
+    public Chr[] arChr;
+    public int nChrs = 3;
 
-	public void setChrs(){
-		//placeholder until character selection is available
-		arChrTypeSelection[0] = Chr.CHARTYPE.KATARA;
-		arChrTypeSelection[1] = Chr.CHARTYPE.LANCER;
-		arChrTypeSelection[2] = Chr.CHARTYPE.SNEKGIRL;
-		nChrs = 3;
-	}
+    public GameObject pfManaPanel;
 
-	public void SetID(int _id){
-		id = _id;
-	}
+    public Mana mana;
 
-	// Use this for initialization
-	public void Start () {
+    public void OnSetID(Player plyr) {
+        //Make sure the match knows that we're the player with this id
+        Debug.Log("OnSetID called");
+        Match.Get().arPlayers[id] = plyr;
+    }
+
+    public void SetID(int _id) {
+        Debug.Log("In SetID and are we the server? " + isServer);
+        id = _id;
+        Match.Get().arPlayers[id] = this;
+        Debug.Log("And our id is now " + id);
+    }
+
+    [Command]
+    public void CmdInitId() {
+        //This will be called by the local player, then executed on the server
+        if (!isServer) {
+            Debug.Log("CmdInitId was somehow called on a client");
+            return;
+        }
+
+        Match.Get().RequestPlayerID(this);
+    }
+
+
+    public override void OnStartLocalPlayer() {
+        Debug.Log("Going to call CmdInitId since we're the local player");
+        CmdInitId();
+        idLocal = id;
+        Debug.Log("Finished calling CmdInitId");
+    }
+
+    // Use this for initialization
+    public void Start () {
 
 		if (bStarted == false) {
 			bStarted = true;
 
             arChr = new Chr[MAXCHRS];
-			arChrTypeSelection = new Chr.CHARTYPE[MAXCHRS];
 
 			GameObject manaPanel = Instantiate(pfManaPanel, Match.Get().transform);
 			mana = manaPanel.GetComponent<Mana>();

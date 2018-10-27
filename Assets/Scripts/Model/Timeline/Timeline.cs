@@ -141,7 +141,7 @@ public class Timeline : MonoBehaviour {
 	public void InitChars(){
 		for (int i = 0; i < match.nPlayers; i++) {
 			for (int j = 0; j < match.arPlayers [i].nChrs; j++) {
-				AddEventChr (match.arChrs [i] [j], 2 * j + i + 1);
+				AddEventChr (match.arChrs [i,j], 2 * j + i + 1);
 			}
 		}
 	}
@@ -210,14 +210,14 @@ public class Timeline : MonoBehaviour {
 
 		for (int i = 0; i < match.nPlayers; i++) {
 			for (int j = 0; j < Player.MAXCHRS; j++) {
-				if (match.arChrs [i] [j] == null) {
+				if (match.arChrs [i,j] == null) {
 					continue; // A character isn't actually here (extra space for characters)
 				}
 
 				//Reduce the character's recharge
-				match.arChrs [i] [j].TimeTick ();
+				match.arChrs [i,j].TimeTick ();
 				//Reduce the cd of that character's actions
-				RechargeActions (match.arChrs [i] [j]);
+				RechargeActions (match.arChrs [i,j]);
 
 			}
 		}

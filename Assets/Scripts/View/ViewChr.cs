@@ -34,25 +34,52 @@ public class ViewChr : ViewInteractive {
 		}
     }
 
+    public void InitOpponentCharacter() {
+        //Let the Arena position ourselves as an enemy
+        Arena.Get().InitPlaceUnit(false, this);
+
+        //Find the portrait and flip it
+        goPortrait.transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
+
+        //Find the border and flip it
+        goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
+
+        //Flip and position the mask
+        maskPortrait.transform.localScale = new Vector3(1.0f, -1.0f, 1.0f);
+        maskPortrait.transform.localPosition =
+            new Vector3(maskPortrait.transform.localPosition.x,
+                        -maskPortrait.transform.localPosition.y,
+                        maskPortrait.transform.localPosition.z);
+
+        txtHealth.transform.localPosition =
+            new Vector3(txtHealth.transform.localPosition.x,
+                        -txtHealth.transform.localPosition.y,
+                        txtHealth.transform.localPosition.z);
+
+    }
+
+    public void InitLocalCharacter() {
+        //Let the Arena position ourselves as a locally owned player
+        Arena.Get().InitPlaceUnit(true, this);
+
+
+    }
+
 	public void Init(){
+
 		SetPortrait (mod.sName);
-		if (mod.plyrOwner.id == 1) {
-			//Find the portrait and flip it for one of the players
-			goPortrait.transform.localScale = new Vector3 (-1.0f, 1.0f, 1.0f);
 
-            //Find the border and flip it for one of the players
-            goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
-
-            maskPortrait.transform.localScale = new Vector3(1.0f, -1.0f, 1.0f);
-            maskPortrait.transform.localPosition = 
-                new Vector3(maskPortrait.transform.localPosition.x, 
-                            - maskPortrait.transform.localPosition.y,
-                            maskPortrait.transform.localPosition.z);
-
-            txtHealth.transform.localPosition  = 
-                new Vector3(txtHealth.transform.localPosition.x, 
-                            -txtHealth.transform.localPosition.y,
-                            txtHealth.transform.localPosition.z);
+        //Check if we're owned by the local player
+        Debug.Log("mod is " + mod);
+        Debug.Log("mod.plyrOwner is " + mod.plyrOwner);
+        Debug.Log("local id is " + Player.idLocal); // <<<<--- BUG CAUSING
+        if(mod.plyrOwner != null && mod.plyrOwner.id == Player.idLocal) {
+            //If the owner of this player is already registered, and it's our local player
+            InitLocalCharacter();
+        } else {
+            //Then either the player registered is the opponent, or no one has registered
+            //this character (which could only happen for an opponent)
+            InitOpponentCharacter();
         }
 	}
 

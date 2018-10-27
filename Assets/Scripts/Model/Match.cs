@@ -1,20 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 // Will generally contain everything in a match
 // responsible for creating and managing the game
 
-public class Match : MonoBehaviour {
+public class Match : NetworkBehaviour {
 
     bool bStarted;                          //Confirms the Start() method has executed
 
     public Arena arena;
 
+    [SyncVar]
+    public int nRegisteredPlayers = 0;
+
 	public int nPlayers = 2;
+
 	public Player [] arPlayers;
 
-	public Chr [][] arChrs;
+	public Chr [,] arChrs;
+    public Chr.CHARTYPE[,] arChrSelection;
 
 	public Timeline timeline;
 
@@ -45,24 +51,16 @@ public class Match : MonoBehaviour {
 		return arPlayers [0];
 	}
 
-	void InitPlayers (int _nPlayers){
-		nPlayers = _nPlayers;//in case this needs to be changed based on the match
-		arPlayers = new Player[nPlayers];
-		arChrs = new Chr[nPlayers][];
+    public void RequestPlayerID(Player plyr) {
+        if (!isServer) {
+            Debug.Log("We somehow called RequestPlayerId on a client");
+            return;
+        }
+        arPlayers[nRegisteredPlayers] = plyr;
+        plyr.SetID(nRegisteredPlayers);
+        nRegisteredPlayers++;
 
-		for (int i = 0; i < _nPlayers; i++) {
-			GameObject goPlayer = Instantiate (pfPlayer, this.transform);
-			Player newPlayer = goPlayer.GetComponent<Player> ();// TODO:: Replace this with Network spawning somehow
-			if (newPlayer == null) {
-				Debug.LogError ("ERROR! NO PLAYER COMPONENT ON PLAYER PREFAB!");
-			}
-
-			newPlayer.SetID (i);
-			newPlayer.Start ();
-			newPlayer.setChrs (); /// TODO:: replace with actual character selection
-			arPlayers [i] = newPlayer;
-		}
-	}
+    }
 
 	// Will eventually need a clean solution to adding/removing characters
 	// while managing ids - some sort of Buffer of unused views will probably help
@@ -95,21 +93,16 @@ public class Match : MonoBehaviour {
 			newChr.InitChr (player, id, new BaseChr(newChr)); //so the editor will let us compile
 			break;
 		}
-		arChrs [player.id] [id] = newChr;
+		arChrs [player.id, id] = newChr;
         player.arChr[id] = newChr;
-
-	 
-		//newChr.SetPosition(Random.Range(-10.0f, 10.0f), arena.arfStartingPosY[id]);
-		arena.InitPlaceUnit(newChr);
-
+        newChr.plyrOwner = player;
+        Debug.Log("Player owner is set");
 	}
 
 	void InitAllChrs(){
 		for (int i = 0; i < nPlayers; i++) {
-			arChrs [i] = new Chr[Player.MAXCHRS];
-
-			for (int j = 0; j < arPlayers [i].nChrs; j++) {
-				InitChr (arPlayers [i].arChrTypeSelection [j], arPlayers[i], j);
+			for (int j = 0; j < Player.MAXCHRS; j++) {
+				InitChr (arChrSelection [i,j], arPlayers[i], j);
 			}
 		}
 	}
@@ -124,6 +117,17 @@ public class Match : MonoBehaviour {
 		return controller;
 	}
 
+    public void InitChrSelection() {
+        arChrSelection = new Chr.CHARTYPE[2,3];
+
+        arChrSelection[0,0] = Chr.CHARTYPE.KATARA;
+        arChrSelection[0,1] = Chr.CHARTYPE.LANCER;
+        arChrSelection[0,2] = Chr.CHARTYPE.SNEKGIRL;
+
+        arChrSelection[1, 0] = Chr.CHARTYPE.SNEKGIRL;
+        arChrSelection[1, 1] = Chr.CHARTYPE.SNEKGIRL;
+        arChrSelection[1, 2] = Chr.CHARTYPE.SNEKGIRL;
+    }
 
 	public void Start(){
         if (bStarted) {
@@ -133,19 +137,25 @@ public class Match : MonoBehaviour {
 
         gameObject.tag = "Match"; // So that anything can find this very quickly
 
+        //TODO Do this connection in the editor
 		arena = GetComponentInChildren<Arena> ();
 		timeline = GetComponentInChildren<Timeline> ();
 		controller = GetComponentInChildren<Controller> ();
 
-		arena.Start ();
+        arPlayers = new Player[nPlayers];
+        arChrs = new Chr[2, 3];
+
+        arena.Start ();
 
 		timeline.Start ();
 
-		InitPlayers (nPlayers);
+        InitChrSelection();
+
+		//InitPlayers (nPlayers);
 
 		InitAllChrs ();
 
-		timeline.InitTimeline ();
+		//timeline.InitTimeline ();
 	
 		//TODO:: By default, automatically start evaluating turns
 

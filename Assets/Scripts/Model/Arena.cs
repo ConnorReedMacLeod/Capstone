@@ -39,8 +39,18 @@ public class Arena : MonoBehaviour{
 		return instance;
 	}
 
-	public void InitPlaceUnit(Chr chr){
-        chr.transform.position = arChrPositions[chr.plyrOwner.id, chr.id].getPos();
+	public void InitPlaceUnit(bool bLocal, ViewChr chr){
+        Vector3 v3DesiredPos;
+
+        if(bLocal) {
+            //Then this is a character owned by the local player, so position him on the bottom
+            v3DesiredPos = arChrPositions[0, chr.mod.id].getPos();
+        } else {
+            //Then this is an opponent's character, so put them on the top
+            v3DesiredPos = arChrPositions[1, chr.mod.id].getPos();
+        }
+
+        chr.transform.position = v3DesiredPos;
 	}
 
     // Find and store each starting location stored in the prefab
