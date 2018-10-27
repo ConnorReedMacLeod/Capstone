@@ -9,7 +9,7 @@ public class TargetArgAlly : TargetArgChr {
     }
 
     public override bool VerifyLegal() {
-        if(chrOwner.plyrOwner != chrTar.plyrOwner) {
+        if(chrOwner.ownerID != chrTar.ownerID) {
             Debug.Log("Bad Target - You need to target an allied character");
             return false;
         }else if(!fLegalCheck(chrOwner, chrTar)) {

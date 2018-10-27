@@ -21,10 +21,15 @@ public class Player : NetworkBehaviour {
 
     public Mana mana;
 
-    public void OnSetID(Player plyr) {
+    public void OnSetID(int id) {
         //Make sure the match knows that we're the player with this id
         Debug.Log("OnSetID called");
-        Match.Get().arPlayers[id] = plyr;
+        Match.Get().arPlayers[id] = this;
+
+        //Once we've gotten our id, we can claim our characters and position them
+        for (int i = 0; i < MAXCHRS; i++) {
+            Match.Get().arChrs[id, i].SetOwner(this);
+        }
     }
 
     public void SetID(int _id) {
@@ -32,6 +37,12 @@ public class Player : NetworkBehaviour {
         id = _id;
         Match.Get().arPlayers[id] = this;
         Debug.Log("And our id is now " + id);
+
+        //Once we've gotten our id, we can claim our characters and position them
+        for (int i = 0; i < MAXCHRS; i++) {
+            Match.Get().arChrs[id, i].SetOwner(this);
+        }
+
     }
 
     [Command]
@@ -51,6 +62,9 @@ public class Player : NetworkBehaviour {
         CmdInitId();
         idLocal = id;
         Debug.Log("Finished calling CmdInitId");
+
+        
+
     }
 
     // Use this for initialization

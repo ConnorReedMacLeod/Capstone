@@ -65,8 +65,8 @@ public class ViewTimelineEventChr : ViewTimelineEvent {
     }
 
     public void InitPlayer(){
-		// Subject to change
-		if (mod.chrSubject.plyrOwner.id == 0) {
+		//Subject to change
+		if (mod.chrSubject.plyrOwner.id == Player.idLocal) {
             //this.SetMaterial ("MatTimelineEvent1");
             goHeadshot.transform.localPosition = new Vector3 (-1.0f, -0.26f, -0.1f);
             goHeadshot.transform.localScale = new Vector3(0.4f, 0.4f, 1);

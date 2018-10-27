@@ -27,6 +27,7 @@ public class Chr : MonoBehaviour {
 	Arena arena;                    //The field of play
 
 	public string sName;			//The name of the character
+    public int ownerID;             //The id of the player who controls this character
 	public Player plyrOwner;        //The player who controls the character
 
 
@@ -142,10 +143,19 @@ public class Chr : MonoBehaviour {
         }
     }
 
+    public void SetOwner(Player plyr) {
+        if(plyr.id != ownerID) {
+            Debug.LogError("Tried to claim a character you don't own");
+        }
+
+        plyrOwner = plyr;
+        view.PositionChar();
+    }
+
     // Used to initiallize information fields of the Chr
     // Call this after creating to set information
-    public void InitChr(Player _plyrOwner, int _id, BaseChr baseChr){
-		plyrOwner = _plyrOwner;
+    public void InitChr(int _ownerID, int _id, BaseChr baseChr){
+		ownerID = _ownerID;
 		id = _id;
 
         SetDefaultActions();

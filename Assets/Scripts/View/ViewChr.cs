@@ -6,15 +6,15 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Chr))]
 public class ViewChr : ViewInteractive {
 
-	bool bStarted;                          //Confirms the Start() method has executed
+    bool bStarted;                          //Confirms the Start() method has executed
 
-	public Chr mod;                   //Character model
+    public Chr mod;                   //Character model
 
-	Chr.STATESELECT lastStateSelect;  //Tracks previous character state (SELECTED, TARGETTING, UNSELECTED)
-	Vector3 v3LastPos;                      //Tracks previous character position against the model position
+    Chr.STATESELECT lastStateSelect;  //Tracks previous character state (SELECTED, TARGETTING, UNSELECTED)
+    Vector3 v3LastPos;                      //Tracks previous character position against the model position
 
-	public GameObject goBorder;        //Border reference
-	public GameObject goPortrait;       //Portrait Reference
+    public GameObject goBorder;        //Border reference
+    public GameObject goPortrait;       //Portrait Reference
     public Text txtHealth;              //Textfield Reference
     public SpriteMask maskPortrait;     //SpriteMask Reference
 
@@ -22,16 +22,15 @@ public class ViewChr : ViewInteractive {
     public static Subject subAllStopHover = new Subject();
     public static Subject subAllClick = new Subject();
 
-    public void Start()
-    {
-		if (bStarted == false) {
-			bStarted = true;
+    public void Start() {
+        if (bStarted == false) {
+            bStarted = true;
 
-			// Find our model
-			InitModel ();
-			lastStateSelect = Chr.STATESELECT.IDLE;
+            // Find our model
+            InitModel();
+            lastStateSelect = Chr.STATESELECT.IDLE;
 
-		}
+        }
     }
 
     public void InitOpponentCharacter() {
@@ -65,15 +64,9 @@ public class ViewChr : ViewInteractive {
 
     }
 
-	public void Init(){
-
-		SetPortrait (mod.sName);
-
-        //Check if we're owned by the local player
-        Debug.Log("mod is " + mod);
-        Debug.Log("mod.plyrOwner is " + mod.plyrOwner);
-        Debug.Log("local id is " + Player.idLocal); // <<<<--- BUG CAUSING
-        if(mod.plyrOwner != null && mod.plyrOwner.id == Player.idLocal) {
+    //Put this character in the correct position based on who owns them
+    public void PositionChar() {
+        if (mod.ownerID == Player.idLocal) {
             //If the owner of this player is already registered, and it's our local player
             InitLocalCharacter();
         } else {
@@ -81,6 +74,13 @@ public class ViewChr : ViewInteractive {
             //this character (which could only happen for an opponent)
             InitOpponentCharacter();
         }
+    }
+
+	public void Init(){
+
+		SetPortrait (mod.sName);
+
+        PositionChar();
 	}
 
     public override void onMouseClick(params object[] args) {

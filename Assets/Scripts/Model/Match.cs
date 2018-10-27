@@ -47,9 +47,9 @@ public class Match : NetworkBehaviour {
 		return instance;
 	}
 
-	public Player GetLocalPlayer(){
-		return arPlayers [0];
-	}
+    public Player GetLocalPlayer() {
+        return arPlayers[Player.idLocal];
+    }
 
     public void RequestPlayerID(Player plyr) {
         if (!isServer) {
@@ -64,7 +64,7 @@ public class Match : NetworkBehaviour {
 
 	// Will eventually need a clean solution to adding/removing characters
 	// while managing ids - some sort of Buffer of unused views will probably help
-	void InitChr (Chr.CHARTYPE type, Player player, int id){
+	void InitChr (Chr.CHARTYPE type, int ownerID, int id){
 
 		GameObject goChr = Instantiate (pfChr, this.transform);
 		Chr newChr = goChr.GetComponent<Chr>();
@@ -76,33 +76,33 @@ public class Match : NetworkBehaviour {
 
 		switch (type) {
 		case Chr.CHARTYPE.KATARA: 
-			newChr.InitChr(player, id, new ChrKatara(newChr));
+			newChr.InitChr(ownerID, id, new ChrKatara(newChr));
 			break;
 		case Chr.CHARTYPE.LANCER:
-			newChr.InitChr(player, id, new ChrLancer(newChr));
+			newChr.InitChr(ownerID, id, new ChrLancer(newChr));
 			break;
 		case Chr.CHARTYPE.SKELCOWBOY:
-			newChr.InitChr(player, id, new ChrSkelCowboy(newChr));
+			newChr.InitChr(ownerID, id, new ChrSkelCowboy(newChr));
 			break;
         case Chr.CHARTYPE.SNEKGIRL:
-            newChr.InitChr(player, id, new ChrSnekGirl(newChr));
+            newChr.InitChr(ownerID, id, new ChrSnekGirl(newChr));
             break;
         default: 
 			Debug.LogError ("INVALID CHARACTER SELECTION");
 			Application.Quit ();
-			newChr.InitChr (player, id, new BaseChr(newChr)); //so the editor will let us compile
+			newChr.InitChr (ownerID, id, new BaseChr(newChr)); //so the editor will let us compile
 			break;
 		}
-		arChrs [player.id, id] = newChr;
-        player.arChr[id] = newChr;
-        newChr.plyrOwner = player;
+		arChrs [ownerID, id] = newChr;
+        //TODO:: Remember to let the player save the character in his arChr
+        newChr.ownerID = ownerID;
         Debug.Log("Player owner is set");
 	}
 
 	void InitAllChrs(){
 		for (int i = 0; i < nPlayers; i++) {
 			for (int j = 0; j < Player.MAXCHRS; j++) {
-				InitChr (arChrSelection [i,j], arPlayers[i], j);
+				InitChr (arChrSelection [i,j], i, j);
 			}
 		}
 	}

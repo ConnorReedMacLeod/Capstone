@@ -15,14 +15,14 @@ public class StateTargetTeam : StateTarget {
 
     public void cbClickChr(Object target, params object[] args) {
         if (tarArg.setTar(((ViewChr)target).mod.plyrOwner)) {
-            Debug.Log("Target successfully set to Player " + ((ViewChr)target).mod.plyrOwner.id);
+            Debug.Log("Target successfully set to Player " + ((ViewChr)target).mod.ownerID);
 
             //move to next target
             contTarg.IncTar();
 
             contTarg.SetTargetArgState();
         } else {
-            Debug.Log("Player " + ((ViewChr)target).mod.plyrOwner.id + " is not a valid player target");
+            Debug.Log("Player " + ((ViewChr)target).mod.ownerID + " is not a valid player target");
         }
     }
 

@@ -21,7 +21,7 @@ public class StateTargetChr : StateTarget {
 
             contTarg.SetTargetArgState();
         } else {
-            Debug.Log(((ViewChr)target).mod.sName + ", on team " + ((ViewChr)target).mod.plyrOwner.id + " is not a valid character target");
+            Debug.Log(((ViewChr)target).mod.sName + ", on team " + ((ViewChr)target).mod.ownerID + " is not a valid character target");
         }
     }
 
