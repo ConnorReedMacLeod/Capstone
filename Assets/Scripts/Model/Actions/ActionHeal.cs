@@ -18,7 +18,7 @@ public class ActionHeal : Action {
         arCost = new int[] { 0, 0, 1, 0, 1 };
 
         nCd = 3;
-        nRecharge = 3;
+        nFatigue = 3;
 
         sDescription = "Restore 5 health to target ally";
 

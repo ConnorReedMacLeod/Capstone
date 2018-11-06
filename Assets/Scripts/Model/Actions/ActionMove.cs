@@ -17,7 +17,7 @@ public class ActionMove : Action {
 		arCost = new int[]{ 0, 0, 0, 0, 0 };
 
 		nCd = 3;
-		nRecharge = 3;
+        nFatigue = 3;
 
 		sDescription = "Move to a target location";
 

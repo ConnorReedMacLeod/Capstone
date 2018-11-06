@@ -12,7 +12,7 @@ public class ViewInfoAction : MonoBehaviour {
 	public Text txtCost;
 
 	public Text txtType;
-	public Text txtRecharge;
+	public Text txtFatigue;
 	public Text txtCooldown;
 	public Text txtCharges;
 
@@ -80,11 +80,11 @@ public class ViewInfoAction : MonoBehaviour {
 		}
 	}
 
-	public void DisplayRecharge() {
+	public void DisplayFatigue() {
 		if (mod == null) {
-			txtRecharge.text = "";
+			txtFatigue.text = "";
 		} else {
-			txtRecharge.text = "RC: " + mod.nRecharge.ToString();
+			txtFatigue.text = "FTG: " + mod.nFatigue.ToString();
 		}
 	}
 
@@ -126,57 +126,11 @@ public class ViewInfoAction : MonoBehaviour {
 		DisplayName ();
 		DisplayCost ();
 		DisplayType ();
-		DisplayRecharge ();
+		DisplayFatigue ();
 		DisplayCooldown ();
 		DisplayCharges ();
 		DisplayDescription ();
 		DisplayExtraDescription ();
-	}
-
-	//Variable initialization
-	public void Init() {
-		Text[] arTextComponents = GetComponentsInChildren<Text>();
-
-		for (int i = 0; i < arTextComponents.Length; i++) {
-
-			switch (arTextComponents[i].name) {
-			case "txtName":
-				txtName = arTextComponents[i];
-				break;
-
-			case "txtCost":
-				txtCost = arTextComponents[i];
-				break;
-
-			case "txtType":
-				txtType = arTextComponents[i];
-				break;
-
-			case "txtRecharge":
-				txtRecharge = arTextComponents[i];
-				break;
-
-			case "txtCooldown":
-				txtCooldown = arTextComponents[i];
-				break;
-
-			case "txtCharges":
-				txtCharges = arTextComponents [i];
-				break;
-
-			case "txtDescription":
-				txtDescription = arTextComponents[i];
-				break;
-
-			case "txtExtraDescription":
-				txtExtraDescription = arTextComponents[i];
-				break;
-
-			default:
-				Debug.LogError ("ERROR! Unrecognized Text component in ViewInfoAction");
-				break;
-			}
-		}
 	}
 
 	//Undoes the image and border scaling set by the parent

@@ -14,7 +14,7 @@ public class ViewAction : ViewInteractive {
     public Text txtCost;
     public Text txtName;
     public Text txtType;
-    public Text txtRecharge;
+    public Text txtFatigue;
     public Text txtCooldown;
     public Text txtRemaining;
 
@@ -98,11 +98,11 @@ public class ViewAction : ViewInteractive {
         }
     }
 
-    public void DisplayRecharge() {
+    public void DisplayFatigue() {
         if (mod == null) {
-            txtRecharge.text = "";
+            txtFatigue.text = "";
         } else {
-            txtRecharge.text = mod.nRecharge.ToString();
+            txtFatigue.text = mod.nFatigue.ToString();
         }
     }
 
@@ -127,7 +127,7 @@ public class ViewAction : ViewInteractive {
         DisplayName();
         DisplayCost();
         DisplayType();
-        DisplayRecharge();
+        DisplayFatigue();
         DisplayCooldown();
         DisplayRemaining();
     }

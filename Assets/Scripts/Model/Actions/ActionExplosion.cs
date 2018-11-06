@@ -18,7 +18,7 @@ public class ActionExplosion : Action {
         arCost = new int[] { 0, 0, 2, 0, 1 };
 
         nCd = 10;
-        nRecharge = 6;
+        nFatigue = 6;
 
         sDescription = "Deal 5 damage to all characters on target team";
 

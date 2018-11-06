@@ -18,7 +18,7 @@ public class ActionFireball : Action {
 		arCost = new int[]{0,0,1,0,1};
 
 		nCd = 6;
-		nRecharge = 4;
+        nFatigue = 4;
 
 		sDescription = "Deal 5 damage to target character";
 
