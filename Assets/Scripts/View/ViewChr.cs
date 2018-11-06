@@ -16,6 +16,7 @@ public class ViewChr : ViewInteractive {
 	public GameObject goBorder;        //Border reference
 	public GameObject goPortrait;       //Portrait Reference
     public Text txtHealth;              //Textfield Reference
+    public Text txtFatigue;             //Fatigue Overlay Reference
     public SpriteMask maskPortrait;     //SpriteMask Reference
 
     public static Subject subAllStartHover = new Subject();
@@ -109,6 +110,7 @@ public class ViewChr : ViewInteractive {
     //Find the model, and do any setup to reflect it
 	public void InitModel(){
 		mod = GetComponent<Chr>();
+        mod.subFatigueChange.Subscribe(cbUpdateFatigue);
 		mod.subHealthChange.Subscribe(cbUpdateTxtHealth);
         mod.subStatusChange.Subscribe(cbUpdateStatus);
 
@@ -116,6 +118,14 @@ public class ViewChr : ViewInteractive {
 
     public void cbUpdateTxtHealth(Object target, params object[] args) {
         txtHealth.text = mod.nCurHealth + "/" + mod.nMaxHealth;
+    }
+
+    public void cbUpdateFatigue(Object target, params object[] args) {
+        if (mod.nFatigue > 0) {
+            txtFatigue.text = mod.nFatigue.ToString();
+        } else {
+            txtFatigue.text = "";
+        }
     }
 
 

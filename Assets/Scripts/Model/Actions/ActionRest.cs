@@ -14,7 +14,7 @@ public class ActionRest : Action {
 		arCost = new int[]{0,0,0,0,0};
 
 		nCd = 0;
-		nRecharge = 2;
+        nFatigue = 2;
 
 		sDescription = "Just wait around for a little";
 
