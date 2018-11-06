@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ContTurns : MonoBehaviour {
 
+    public bool bStarted = false;
+
     public static ContTurns instance;
 
     public Chr []arChrPriority = new Chr[6];
@@ -14,7 +16,9 @@ public class ContTurns : MonoBehaviour {
 
     public static Subject subAllTurnStart = new Subject();
     public static Subject subAllTurnEnd = new Subject();
-
+    
+    //TODO CHANGE ALL .Get() calls in other classes to use properties
+    //     so the syntax isn't as gross
 
     public static ContTurns Get() {
         if (instance == null) {
@@ -38,6 +42,8 @@ public class ContTurns : MonoBehaviour {
             i++;
         }
 
+        Debug.Log("I am " + chr.sName + " and I'm in position " + i + " with fatigue " + chr.nFatigue);
+
         //First try to move ahead the character
         //If there is some character ahead and we go on a earlier turn
         while (i > 0 && arChrPriority[i - 1].nFatigue > chr.nFatigue) {
@@ -48,15 +54,25 @@ public class ContTurns : MonoBehaviour {
             i--;
         }
 
+        if(i!=0)
+        Debug.Log("I stopped moving left since the previous character is " + arChrPriority[i - 1].sName + " at position " + (i - 1) + " with fatigue " +
+            arChrPriority[i - 1].nFatigue);
+
         //Next try to move the character back in the list
         //If there is a character after us, and we go on the same turn or later
-        while (i < (6 - 1) && chr.nFatigue <= arChrPriority[i + 1].nFatigue) {
+        while (i < (6 - 1) && chr.nFatigue >= arChrPriority[i + 1].nFatigue) {
             //Swap these character
             arChrPriority[i] = arChrPriority[i + 1];
             arChrPriority[i + 1] = chr;
             //And move to the next possible slot
             i++;
         }
+
+        if (i == 5) Debug.Log("I stopped moving right since I have the highest fatigue");
+
+        if (i != 5) 
+        Debug.Log("I stopped moving right since the next character is " + arChrPriority[i + 1].sName + " at position " + (i + 1) + " with fatigue " +
+            arChrPriority[i + 1].nFatigue);
 
         subAllPriorityChange.NotifyObs(this);
     }
@@ -129,9 +145,36 @@ public class ContTurns : MonoBehaviour {
 
     }
 
+    //Copy the array of characters so we have references we can sort by priority
+    public void InitChrPriority() {
+        for (int i = 0; i < Match.Get().nPlayers; i++) {
+            for (int j = 0; j < Match.Get().arPlayers[i].nChrs; j++) {
+
+                arChrPriority[i + 2*j] = Match.Get().arChrs[i][j];
+            }
+        }
+    }
+
+    //Initially assign Fatigue values to each character
+    public void InitChrTurns() {
+
+        for (int i = 0; i < Match.Get().nPlayers; i++) {
+            for (int j = 0; j < Match.Get().arPlayers[i].nChrs; j++) {
+                Debug.Log("Changing fatigue of " + Match.Get().arChrs[i][j] + " to " + (2 * j + i + 1));
+                Match.Get().arChrs[i][j].ChangeFatigue(2 * j + i + 1);
+            }
+        }
+
+    }
+
     // Use this for initialization
     void Start () {
-		
+        if (bStarted) return;
+
+        bStarted = true;
+        InitChrPriority();
+        InitChrTurns();
+
 	}
 	
 	// Update is called once per frame
