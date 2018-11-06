@@ -59,7 +59,7 @@ public class Chr : MonoBehaviour {
     public Subject subStatusChange = new Subject();
 
     //Changes the character's recharge by a given value
-    public void ChangeFatigue(int _nChange){
+    public void ChangeFatigue(int _nChange, bool bBeginningTurn = false){
 		if (_nChange + nFatigue < 0) {
 			nFatigue = 0;
 		} else {
@@ -68,6 +68,20 @@ public class Chr : MonoBehaviour {
 
         subFatigueChange.NotifyObs(this);
         subAllFatigueChange.NotifyObs(this);
+
+        if (!bBeginningTurn) {
+            //Then this is a stun or an actions used
+            ContTurns.Get().FixSortedPriority(this);
+            //So make sure we're in the right place in the priority list
+        }
+    }
+
+
+    public void RechargeActions() {
+
+        for (int i = 0; i < Chr.nActions; i++) {
+            arActions[i].Recharge();
+        }
     }
 
     public void ChangeHealth(int nChange) {
@@ -78,7 +92,7 @@ public class Chr : MonoBehaviour {
 
   //Counts down the character's recharge with the timeline
 	public void TimeTick(){
-		ChangeFatigue (-1);
+		ChangeFatigue (-1, true);
 	}
 
     public void ChangeState(STATESELECT _stateSelect) {
