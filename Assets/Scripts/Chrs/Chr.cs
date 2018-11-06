@@ -127,7 +127,10 @@ public class Chr : MonoBehaviour {
 
     //Performs the character's queued action
 	public void ExecuteAction(){
-		Debug.Assert (ValidAction ());
+        if (!ValidAction()) {
+            SetRestAction();
+        }
+
 		arActions [nUsingAction].Execute ();
         bSetAction = false;
 		nUsingAction = 7;//TODO:: Make this consistent
