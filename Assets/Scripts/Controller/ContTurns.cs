@@ -6,6 +6,17 @@ public class ContTurns : MonoBehaviour {
 
     public bool bStarted = false;
 
+    public enum STATETURN {GIVEMANA, REDUCECOOLDOWNS, CHOOSEACTIONS, TURNSTART, EXECUTEACTIONS, TURNEND };
+    public STATETURN curStateTurn;
+
+    //Delays to wait before we enter the next phase (duration of this phase)
+    public float fDelayGiveMana = 0.5f;
+    public float fDelayReduceCooldowns = 0.5f;
+    public float fDelayChooseActions = 0.0f;
+    public float fDelayTurnStart = 0.5f;
+    public float fDelayExecuteActions = 0.5f; //Delay between each action
+    public float fDelayTurnEnd = 1.0f;
+
     public static ContTurns instance;
 
     public Chr []arChrPriority = new Chr[6];
@@ -42,7 +53,7 @@ public class ContTurns : MonoBehaviour {
             i++;
         }
 
-        Debug.Log("I am " + chr.sName + " and I'm in position " + i + " with fatigue " + chr.nFatigue);
+        //Debug.Log("I am " + chr.sName + " and I'm in position " + i + " with fatigue " + chr.nFatigue);
 
         //First try to move ahead the character
         //If there is some character ahead and we go on a earlier turn
@@ -54,9 +65,9 @@ public class ContTurns : MonoBehaviour {
             i--;
         }
 
-        if(i!=0)
-        Debug.Log("I stopped moving left since the previous character is " + arChrPriority[i - 1].sName + " at position " + (i - 1) + " with fatigue " +
-            arChrPriority[i - 1].nFatigue);
+        //if(i!=0)
+        //Debug.Log("I stopped moving left since the previous character is " + arChrPriority[i - 1].sName + " at position " + (i - 1) + " with fatigue " +
+        //    arChrPriority[i - 1].nFatigue);
 
         //Next try to move the character back in the list
         //If there is a character after us, and we go on the same turn or later
@@ -68,11 +79,11 @@ public class ContTurns : MonoBehaviour {
             i++;
         }
 
-        if (i == 5) Debug.Log("I stopped moving right since I have the highest fatigue");
+        //if (i == 5) Debug.Log("I stopped moving right since I have the highest fatigue");
 
-        if (i != 5) 
-        Debug.Log("I stopped moving right since the next character is " + arChrPriority[i + 1].sName + " at position " + (i + 1) + " with fatigue " +
-            arChrPriority[i + 1].nFatigue);
+        //if (i != 5) 
+        //Debug.Log("I stopped moving right since the next character is " + arChrPriority[i + 1].sName + " at position " + (i + 1) + " with fatigue " +
+        //    arChrPriority[i + 1].nFatigue);
 
         subAllPriorityChange.NotifyObs(this);
     }
@@ -88,6 +99,10 @@ public class ContTurns : MonoBehaviour {
             }
         }
         return nActingChrs;
+    }
+
+    public int GetNumAllActingChrs() {
+        return GetNumActingChrs(0) + GetNumActingChrs(1);
     }
 
     public float GetTimeForActing() {
@@ -136,12 +151,14 @@ public class ContTurns : MonoBehaviour {
     public void StartTurn() {
 
         subAllTurnStart.NotifyObs(this);
+        //TODO - MAKE CHARACTERS OBSERVE THIS AND LOCK THEIR ABILITY SELECTION
 
     }
 
     public void EndTurn() {
 
         subAllTurnEnd.NotifyObs(this);
+        //TODO - MAKE CHARACTERS OBSERVE THIS AND UNLOCK THEIR ABILITY SELECTION
 
     }
 
@@ -160,12 +177,64 @@ public class ContTurns : MonoBehaviour {
 
         for (int i = 0; i < Match.Get().nPlayers; i++) {
             for (int j = 0; j < Match.Get().arPlayers[i].nChrs; j++) {
-                Debug.Log("Changing fatigue of " + Match.Get().arChrs[i][j] + " to " + (2 * j + i + 1));
                 Match.Get().arChrs[i][j].ChangeFatigue(2 * j + i + 1);
             }
         }
 
     }
+
+
+    public void HandleTurnPhase() {
+
+        switch (curStateTurn) {
+            case STATETURN.GIVEMANA:
+                GiveMana();
+
+                curStateTurn = STATETURN.REDUCECOOLDOWNS;
+                Invoke("HandleTurnPhase", fDelayGiveMana);
+                break;
+            case STATETURN.REDUCECOOLDOWNS:
+                ReduceCooldowns();
+
+                curStateTurn = STATETURN.CHOOSEACTIONS;
+                Invoke("HandleTurnPhase", fDelayReduceCooldowns);
+                break;
+            case STATETURN.CHOOSEACTIONS:
+                fDelayChooseActions = GetTimeForActing();
+                Debug.Log("Giving " + fDelayChooseActions + " time for choosing actions");
+
+                curStateTurn = STATETURN.TURNSTART;
+                Invoke("HandleTurnPhase", fDelayChooseActions);
+                break;
+            case STATETURN.TURNSTART:
+                StartTurn();
+
+                curStateTurn = STATETURN.EXECUTEACTIONS;
+                Invoke("HandleTurnPhase", fDelayTurnEnd);
+                break;
+            case STATETURN.EXECUTEACTIONS:
+
+                if(GetNumAllActingChrs() == 0) {
+                    //If no more characters are set to act this turn
+                    curStateTurn = STATETURN.TURNEND;
+                } else {
+                    //Then at least one character still has to go
+
+                    arChrPriority[0].ExecuteAction();
+
+                }
+
+                Invoke("HandleTurnPhase", fDelayExecuteActions);
+                break;
+            case STATETURN.TURNEND:
+                EndTurn();
+
+                curStateTurn = STATETURN.GIVEMANA;
+                Invoke("HandleTurnPhase", fDelayTurnEnd);
+                break;
+        }
+    }
+
 
     // Use this for initialization
     void Start () {
