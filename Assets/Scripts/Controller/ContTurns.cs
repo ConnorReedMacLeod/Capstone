@@ -5,6 +5,7 @@ using UnityEngine;
 public class ContTurns : MonoBehaviour {
 
     public bool bStarted = false;
+    public bool bAutoTurns = false;
 
     public enum STATETURN {GIVEMANA, REDUCECOOLDOWNS, CHOOSEACTIONS, TURNSTART, EXECUTEACTIONS, TURNEND };
     public STATETURN curStateTurn;
@@ -22,8 +23,8 @@ public class ContTurns : MonoBehaviour {
     public Chr []arChrPriority = new Chr[6];
     public static Subject subAllPriorityChange = new Subject();
 
-    public float fDelayChrFirst = 30.0f;
-    public float fDelayChrAdditional = 15.0f;
+    public float fDelayChrFirst = 5.0f;
+    public float fDelayChrAdditional = 1.0f;
 
     public static Subject subAllTurnStart = new Subject();
     public static Subject subAllTurnEnd = new Subject();
@@ -125,8 +126,8 @@ public class ContTurns : MonoBehaviour {
         Mana.MANATYPE manaGen = (Mana.MANATYPE)Random.Range(0, Mana.nManaTypes - 1);
 
         //Give the mana to each player
-        for (int i = 0; i < Timeline.Get().match.nPlayers; i++) {
-            Timeline.Get().match.arPlayers[i].mana.AddMana(manaGen);
+        for (int i = 0; i < Match.Get().nPlayers; i++) {
+            Match.Get().arPlayers[i].mana.AddMana(manaGen);
         }
     }
 
@@ -183,34 +184,63 @@ public class ContTurns : MonoBehaviour {
 
     }
 
+    public void cbAutoExecuteEvent(Object target, params object[] args) {
+        bAutoTurns = true;
+
+        if (bAutoTurns) {
+            Debug.Log("Going to next event in " + 2.0f);
+
+            Invoke("AutoExecuteEvent", 2.0f);
+        }
+    }
+    public void AutoExecuteEvent() {
+
+        if (!bAutoTurns) {
+            //Then we must have switched to manual turns while waiting for this event,
+            //so don't actually execute anything automatically
+            return;
+        }
+
+        HandleTurnPhase();
+    }
+
+    public void cbManualExecuteEvent(Object target, params object[] args) {
+        bAutoTurns = false;
+
+        HandleTurnPhase();
+    }
+
 
     public void HandleTurnPhase() {
+
+        Debug.Log(curStateTurn);
+        float fDelay = 0.0f;
 
         switch (curStateTurn) {
             case STATETURN.GIVEMANA:
                 GiveMana();
 
                 curStateTurn = STATETURN.REDUCECOOLDOWNS;
-                Invoke("HandleTurnPhase", fDelayGiveMana);
+                fDelay = fDelayGiveMana;
                 break;
             case STATETURN.REDUCECOOLDOWNS:
                 ReduceCooldowns();
 
                 curStateTurn = STATETURN.CHOOSEACTIONS;
-                Invoke("HandleTurnPhase", fDelayReduceCooldowns);
+                fDelay = fDelayReduceCooldowns;
                 break;
             case STATETURN.CHOOSEACTIONS:
                 fDelayChooseActions = GetTimeForActing();
                 Debug.Log("Giving " + fDelayChooseActions + " time for choosing actions");
 
                 curStateTurn = STATETURN.TURNSTART;
-                Invoke("HandleTurnPhase", fDelayChooseActions);
+                fDelay = fDelayChooseActions;
                 break;
             case STATETURN.TURNSTART:
                 StartTurn();
 
                 curStateTurn = STATETURN.EXECUTEACTIONS;
-                Invoke("HandleTurnPhase", fDelayTurnEnd);
+                fDelay = fDelayTurnEnd;
                 break;
             case STATETURN.EXECUTEACTIONS:
 
@@ -224,14 +254,20 @@ public class ContTurns : MonoBehaviour {
 
                 }
 
-                Invoke("HandleTurnPhase", fDelayExecuteActions);
+                fDelay = fDelayExecuteActions;
                 break;
             case STATETURN.TURNEND:
                 EndTurn();
 
                 curStateTurn = STATETURN.GIVEMANA;
-                Invoke("HandleTurnPhase", fDelayTurnEnd);
+                fDelay = fDelayTurnEnd;
                 break;
+        }
+
+        if (bAutoTurns) {
+            Debug.Log("Going to next event in " + fDelay);
+
+            Invoke("HandleTurnPhase", fDelay);
         }
     }
 
@@ -244,7 +280,10 @@ public class ContTurns : MonoBehaviour {
         InitChrPriority();
         InitChrTurns();
 
-	}
+
+        ViewAutoTurnsButton.subAllAutoExecuteEvent.Subscribe(cbAutoExecuteEvent);
+        ViewManualTurnsButton.subAllManualExecuteEvent.Subscribe(cbManualExecuteEvent);
+    }
 	
 	// Update is called once per frame
 	void Update () {
