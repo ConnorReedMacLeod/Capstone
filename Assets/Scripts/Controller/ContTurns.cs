@@ -28,6 +28,8 @@ public class ContTurns : MonoBehaviour {
 
     public static Subject subAllTurnStart = new Subject();
     public static Subject subAllTurnEnd = new Subject();
+
+    public GameObject pfTimer;
     
     //TODO CHANGE ALL .Get() calls in other classes to use properties
     //     so the syntax isn't as gross
@@ -185,6 +187,7 @@ public class ContTurns : MonoBehaviour {
     }
 
     public void cbAutoExecuteEvent(Object target, params object[] args) {
+        if (bAutoTurns == true) return; //If the button is already pressed
         bAutoTurns = true;
 
         if (bAutoTurns) {
@@ -210,11 +213,19 @@ public class ContTurns : MonoBehaviour {
         HandleTurnPhase();
     }
 
+    public void SpawnTimer(float fDelay, string sLabel) {
+        GameObject goTimer = Instantiate(pfTimer, Match.Get().transform);
+        ViewTimer viewTimer = goTimer.GetComponent<ViewTimer>();
+        if (viewTimer == null) {
+            Debug.LogError("ERROR - pfTimer doesn't have a viewTimer component");
+        }
+        viewTimer.InitTimer(fDelay, sLabel);
+    }
 
     public void HandleTurnPhase() {
 
-        Debug.Log(curStateTurn);
         float fDelay = 0.0f;
+        string sLabel = "";
 
         switch (curStateTurn) {
             case STATETURN.GIVEMANA:
@@ -222,36 +233,46 @@ public class ContTurns : MonoBehaviour {
 
                 curStateTurn = STATETURN.REDUCECOOLDOWNS;
                 fDelay = fDelayGiveMana;
+                sLabel = "Giving Mana";
                 break;
             case STATETURN.REDUCECOOLDOWNS:
                 ReduceCooldowns();
 
                 curStateTurn = STATETURN.CHOOSEACTIONS;
                 fDelay = fDelayReduceCooldowns;
+                sLabel = "Reducing Cooldowns";
                 break;
             case STATETURN.CHOOSEACTIONS:
                 fDelayChooseActions = GetTimeForActing();
-                Debug.Log("Giving " + fDelayChooseActions + " time for choosing actions");
 
                 curStateTurn = STATETURN.TURNSTART;
                 fDelay = fDelayChooseActions;
+                sLabel = "Select Your Actions";
                 break;
             case STATETURN.TURNSTART:
                 StartTurn();
 
                 curStateTurn = STATETURN.EXECUTEACTIONS;
                 fDelay = fDelayTurnEnd;
+                sLabel = "Beginning of Turn";
                 break;
             case STATETURN.EXECUTEACTIONS:
 
                 if(GetNumAllActingChrs() == 0) {
                     //If no more characters are set to act this turn
                     curStateTurn = STATETURN.TURNEND;
+                    sLabel = "All Characters Have Finished Acting";
                 } else {
                     //Then at least one character still has to go
 
-                    arChrPriority[0].ExecuteAction();
+                    if (arChrPriority[0].nUsingAction != -1) {
+                        sLabel = arChrPriority[0].sName + " is using " + arChrPriority[0].arActions[arChrPriority[0].nUsingAction].sName;
+                    } else {
+                        sLabel = arChrPriority[0].sName + " has no valid action prepped";
+                    }
 
+                    arChrPriority[0].ExecuteAction();
+                    
                 }
 
                 fDelay = fDelayExecuteActions;
@@ -261,13 +282,23 @@ public class ContTurns : MonoBehaviour {
 
                 curStateTurn = STATETURN.GIVEMANA;
                 fDelay = fDelayTurnEnd;
+                sLabel = "End of Turn";
                 break;
         }
 
+
         if (bAutoTurns) {
-            Debug.Log("Going to next event in " + fDelay);
+
+            if(fDelay > 0) {
+                //Check if we need to spawn a timer
+
+                SpawnTimer(fDelay, sLabel);
+            }
 
             Invoke("HandleTurnPhase", fDelay);
+        } else {
+            //Then we're doing manual turns - still spawn a quick timer to show what phase of the turn we're in
+            SpawnTimer(1.0f, sLabel);
         }
     }
 
