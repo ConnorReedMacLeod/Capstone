@@ -16,8 +16,6 @@ public class Match : MonoBehaviour {
 
 	public Chr [][] arChrs;
 
-	public Timeline timeline;
-
 	public Controller controller;
 
 	public GameObject pfPlayer;
@@ -134,20 +132,12 @@ public class Match : MonoBehaviour {
         gameObject.tag = "Match"; // So that anything can find this very quickly
 
 		arena = GetComponentInChildren<Arena> ();
-		timeline = GetComponentInChildren<Timeline> ();
 		controller = GetComponentInChildren<Controller> ();
 
 		arena.Start ();
 
-		timeline.Start ();
-
 		InitPlayers (nPlayers);
 
 		InitAllChrs ();
-
-		timeline.InitTimeline ();
-	
-		//TODO:: By default, automatically start evaluating turns
-
 	}
 }
