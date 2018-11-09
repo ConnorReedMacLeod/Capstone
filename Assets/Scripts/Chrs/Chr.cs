@@ -31,7 +31,7 @@ public class Chr : MonoBehaviour {
 
 
     public int id;                  //The character's unique identifier
-    public int nRecharge;           //Number of turns a character must wait before their next action
+    public int nFatigue;           //Number of turns a character must wait before their next action
 
 	public int nCurHealth;          //The character's current health
 	public int nMaxHealth;          //The character's max health
@@ -52,17 +52,37 @@ public class Chr : MonoBehaviour {
     public Subject subStartIdle = new Subject();
     public static Subject subAllStartIdle = new Subject();
 
+    public Subject subFatigueChange = new Subject();
+    public static Subject subAllFatigueChange = new Subject();
+
     public Subject subHealthChange = new Subject();
     public Subject subStatusChange = new Subject();
 
     //Changes the character's recharge by a given value
-    public void ChangeRecharge(int _nChange){
-		if (_nChange + nRecharge < 0) {
-			nRecharge = 0;
+    public void ChangeFatigue(int _nChange, bool bBeginningTurn = false){
+		if (_nChange + nFatigue < 0) {
+			nFatigue = 0;
 		} else {
-			nRecharge += _nChange;
+			nFatigue += _nChange;
 		}
-	}
+
+        subFatigueChange.NotifyObs(this);
+        subAllFatigueChange.NotifyObs(this);
+
+        if (!bBeginningTurn) {
+            //Then this is a stun or an actions used
+            ContTurns.Get().FixSortedPriority(this);
+            //So make sure we're in the right place in the priority list
+        }
+    }
+
+
+    public void RechargeActions() {
+
+        for (int i = 0; i < Chr.nActions; i++) {
+            arActions[i].Recharge();
+        }
+    }
 
     public void ChangeHealth(int nChange) {
         nCurHealth += nChange;
@@ -70,14 +90,9 @@ public class Chr : MonoBehaviour {
         subHealthChange.NotifyObs();
     }
 
-
-	public void NotifyNewRecharge(){
-		Timeline.Get ().AddEventChr (this, nRecharge, Timeline.PRIORITY.NONE); 
-	}
-
   //Counts down the character's recharge with the timeline
 	public void TimeTick(){
-		ChangeRecharge (-1);
+		ChangeFatigue (-1, true);
 	}
 
     public void ChangeState(STATESELECT _stateSelect) {
@@ -112,7 +127,10 @@ public class Chr : MonoBehaviour {
 
     //Performs the character's queued action
 	public void ExecuteAction(){
-		Debug.Assert (ValidAction ());
+        if (!ValidAction()) {
+            SetRestAction();
+        }
+
 		arActions [nUsingAction].Execute ();
         bSetAction = false;
 		nUsingAction = 7;//TODO:: Make this consistent

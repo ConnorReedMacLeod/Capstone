@@ -14,7 +14,7 @@ public class Action { //This should probably be made abstract
 	public ActionType type; 
 	public int nCd;
 	public int nCurCD;
-	public int nRecharge;
+	public int nFatigue;
 
 	public Chr chrOwner;
 
@@ -67,10 +67,7 @@ public class Action { //This should probably be made abstract
 		Debug.Assert (VerifyLegal ());
 		
 		nCurCD = nCd;
-		chrOwner.ChangeRecharge(nRecharge);
-
-		//Let the timeline know about the new slot
-		chrOwner.NotifyNewRecharge ();
+		chrOwner.ChangeFatigue(nFatigue);
 
 		if (chrOwner.plyrOwner.mana.SpendMana (arCost)) {
 			//Then the mana was paid properly

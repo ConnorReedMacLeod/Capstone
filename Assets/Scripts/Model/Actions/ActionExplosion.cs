@@ -15,10 +15,10 @@ public class ActionExplosion : Action {
         type = ActionType.ACTIVE;
 
         //Physical, Mental, Energy, Blood, Effort
-        arCost = new int[] { 0, 0, 2, 0, 1 };
+        arCost = new int[] { 0, 0, 2, 0, 0 };
 
         nCd = 10;
-        nRecharge = 6;
+        nFatigue = 6;
 
         sDescription = "Deal 5 damage to all characters on target team";
 
