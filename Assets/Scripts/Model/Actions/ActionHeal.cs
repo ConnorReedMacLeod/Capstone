@@ -15,10 +15,10 @@ public class ActionHeal : Action {
         type = ActionType.ACTIVE;
 
         //Physical, Mental, Energy, Blood, Effort
-        arCost = new int[] { 0, 0, 1, 0, 1 };
+        arCost = new int[] { 0, 0, 0, 1, 0 };
 
         nCd = 3;
-        nRecharge = 3;
+        nFatigue = 3;
 
         sDescription = "Restore 5 health to target ally";
 

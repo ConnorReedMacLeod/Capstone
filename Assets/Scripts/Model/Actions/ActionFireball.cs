@@ -15,10 +15,10 @@ public class ActionFireball : Action {
 		type = ActionType.ACTIVE;
 
         //Physical, Mental, Energy, Blood, Effort
-		arCost = new int[]{0,0,1,0,1};
+		arCost = new int[]{0,0,1,0,0};
 
 		nCd = 6;
-		nRecharge = 4;
+        nFatigue = 4;
 
 		sDescription = "Deal 5 damage to target character";
 

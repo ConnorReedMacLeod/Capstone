@@ -14,9 +14,9 @@ public class ViewAction : ViewInteractive {
     public Text txtCost;
     public Text txtName;
     public Text txtType;
-    public Text txtRecharge;
+    public Text txtCurCooldown;
     public Text txtCooldown;
-    public Text txtRemaining;
+    public Text txtFatigue;
 
     public static Subject subAllClick = new Subject();
     public static Subject subAllStartHover = new Subject();
@@ -98,13 +98,22 @@ public class ViewAction : ViewInteractive {
         }
     }
 
-    public void DisplayRecharge() {
-        if (mod == null) {
-            txtRecharge.text = "";
+    public void DisplayCurCooldown() {
+        if (mod == null || mod.nCurCD == 0) {
+            txtCurCooldown.text = "";
         } else {
-            txtRecharge.text = mod.nRecharge.ToString();
+            txtCurCooldown.text = mod.nCurCD.ToString();
         }
     }
+
+    public void DisplayFatigue() {
+        if (mod == null) {
+            txtFatigue.text = "";
+        } else {
+            txtFatigue.text = mod.nFatigue.ToString();
+        }
+    }
+
 
     public void DisplayCooldown() {
         if (mod == null) {
@@ -114,21 +123,12 @@ public class ViewAction : ViewInteractive {
         }
     }
 
-    public void DisplayRemaining() {
-        if (mod == null) {
-            txtRemaining.text = "";
-        } else {
-            //txtRemaining.text = "CD: " + mod.nCd.ToString();
-            //TODO:  THIS PART OF THE FUNCTION
-        }
-    }
 
     public void DisplayAll() {
         DisplayName();
         DisplayCost();
         DisplayType();
-        DisplayRecharge();
+        DisplayCurCooldown();
         DisplayCooldown();
-        DisplayRemaining();
     }
 }
