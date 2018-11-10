@@ -27,6 +27,8 @@ public class Action { //This should probably be made abstract
 
 	public int[] arCost;
 
+    public Clause[] arClauses;
+
 	public Action(int _nArgs, Chr _chrOwner){
 		nArgs = _nArgs;
 		chrOwner = _chrOwner;
