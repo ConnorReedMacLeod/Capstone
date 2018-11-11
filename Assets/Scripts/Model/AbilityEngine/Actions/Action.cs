@@ -27,7 +27,7 @@ public class Action { //This should probably be made abstract
 
 	public int[] arCost;
 
-    public Clause[] arClauses;
+    public Queue<Clause> queueClauses = new Queue<Clause>();
 
 	public Action(int _nArgs, Chr _chrOwner){
 		nArgs = _nArgs;
@@ -72,8 +72,14 @@ public class Action { //This should probably be made abstract
 		chrOwner.ChangeFatigue(nFatigue);
 
 		if (chrOwner.plyrOwner.mana.SpendMana (arCost)) {
-			//Then the mana was paid properly
-		} else {
+            //Then the mana was paid properly
+
+            while (queueClauses.Count != 0) {
+                //Add each clause in this ability to the stack
+                ContAbilityEngine.Get().AddClause(queueClauses.Dequeue());
+            }
+
+        } else {
 			Debug.LogError ("YOU DIDN'T ACTUALLY HAVE ENOUGH MANA");
 		}
 
