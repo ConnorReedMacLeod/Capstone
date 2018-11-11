@@ -68,6 +68,9 @@ public class Action { //This should probably be made abstract
 
 		Debug.Assert (VerifyLegal ());
 		
+        //TODO:: Consider if cooldowns and fatigue should be set before or 
+        //       after the ability finishes resolving
+
 		nCurCD = nCd;
 		chrOwner.ChangeFatigue(nFatigue);
 
