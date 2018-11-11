@@ -30,14 +30,22 @@ public class ActionFireball : Action {
 		// but at least it's eliminated from the targetting lambda
 		Chr tar = ((TargetArgChr)arArgs [0]).chrTar;
 
-		Debug.Log ("Character " + tar + " has been fireballed");
+        queueClauses.Enqueue(new Clause() {
+            fExecute = () => {
+                Debug.Log("This Fireball Clause put an ExecDamage on the stack");
+                ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
+                    chrTarget = tar,
+                    nDamage = 5,
+                    fDelay = 1.0f,
+                    sLabel = "Fireballing"
+                });
+            }
+        });
 
-        tar.ChangeHealth(-5);
 
-		//NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
+        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
 
-
-		base.Execute ();
+        base.Execute ();
 	}
 
 }
