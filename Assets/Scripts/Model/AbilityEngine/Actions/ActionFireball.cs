@@ -34,6 +34,7 @@ public class ActionFireball : Action {
             fExecute = () => {
                 Debug.Log("This Fireball Clause put an ExecDamage on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
+                    chrOwner = this.chrOwner,
                     chrTarget = tar,
                     nDamage = 5,
                     fDelay = 1.0f,

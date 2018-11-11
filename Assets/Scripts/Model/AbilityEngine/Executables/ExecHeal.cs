@@ -4,16 +4,15 @@ using UnityEngine;
 
 //Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
 
-public class ExecDealDamage : Executable {
+public class ExecHeal : Executable {
 
     public Chr chrTarget;
-    public int nDamage;
+    public int nAmount;
 
-	public override void Execute() {
+    public override void Execute() {
         //TODO:: Take into account armour and power/defense
-        chrTarget.ChangeHealth(-nDamage);
+        chrTarget.ChangeHealth(nAmount);
 
         base.Execute();
     }
-
 }

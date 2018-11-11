@@ -4,8 +4,10 @@ using UnityEngine;
 
 public abstract class Executable {
 
+    public Chr chrOwner;
     public string sLabel;
     public float fDelay;
+
 
     public virtual void Execute() {
 
