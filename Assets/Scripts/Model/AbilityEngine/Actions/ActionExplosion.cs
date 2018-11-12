@@ -30,11 +30,20 @@ public class ActionExplosion : Action {
         // but at least it's eliminated from the targetting lambda
         Player tar = ((TargetArgTeam)arArgs[0]).plyrTar;
 
-        Debug.Log("Player " + tar.id + " has been exploded");
-
-        for(int i=0; i<tar.nChrs; i++) {
-            tar.arChr[i].ChangeHealth(-5);
-        }
+        queueClauses.Enqueue(new Clause() {
+            fExecute = () => {
+                for (int i = 0; i < tar.arChr.Length; i++) {
+                    Debug.Log("This Explosion Clause put an ExecDamage on the stack");
+                    ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
+                        chrOwner = this.chrOwner,
+                        chrTarget = tar.arChr[i],
+                        nDamage = 5,
+                        fDelay = 1.0f,
+                        sLabel = "Exploding"
+                    });
+                }
+            }
+        });
 
         //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
 

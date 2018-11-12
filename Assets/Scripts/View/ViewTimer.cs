@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class ViewTimer : MonoBehaviour {
 
+    //TODO Despawn this is you've manually spawned another Timer;
+
     public GameObject goTimerBar;
     public Text txtLabel;
     public Text txtTime;
