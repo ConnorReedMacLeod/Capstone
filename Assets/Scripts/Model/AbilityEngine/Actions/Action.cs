@@ -27,6 +27,8 @@ public class Action { //This should probably be made abstract
 
 	public int[] arCost;
 
+    public Queue<Clause> queueClauses = new Queue<Clause>();
+
 	public Action(int _nArgs, Chr _chrOwner){
 		nArgs = _nArgs;
 		chrOwner = _chrOwner;
@@ -66,12 +68,21 @@ public class Action { //This should probably be made abstract
 
 		Debug.Assert (VerifyLegal ());
 		
+        //TODO:: Consider if cooldowns and fatigue should be set before or 
+        //       after the ability finishes resolving
+
 		nCurCD = nCd;
 		chrOwner.ChangeFatigue(nFatigue);
 
 		if (chrOwner.plyrOwner.mana.SpendMana (arCost)) {
-			//Then the mana was paid properly
-		} else {
+            //Then the mana was paid properly
+
+            while (queueClauses.Count != 0) {
+                //Add each clause in this ability to the stack
+                ContAbilityEngine.Get().AddClause(queueClauses.Dequeue());
+            }
+
+        } else {
 			Debug.LogError ("YOU DIDN'T ACTUALLY HAVE ENOUGH MANA");
 		}
 

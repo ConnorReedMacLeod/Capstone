@@ -31,12 +31,20 @@ public class ActionHeal : Action {
         // but at least it's eliminated from the targetting lambda
         Chr tar = ((TargetArgAlly)arArgs[0]).chrTar;
 
-        Debug.Log("Character " + tar + " has been healed");
-
-        tar.ChangeHealth(5);
+        queueClauses.Enqueue(new Clause() {
+            fExecute = () => {
+                Debug.Log("This Heal Clause put an ExecHeal on the stack");
+                ContAbilityEngine.Get().AddExec(new ExecHeal() {
+                    chrOwner = this.chrOwner,
+                    chrTarget = tar,
+                    nAmount = 10,
+                    fDelay = 1.0f,
+                    sLabel = "Healing"
+                });
+            }
+        });
 
         //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-
 
         base.Execute();
     }
