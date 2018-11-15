@@ -8,6 +8,8 @@ public class ExecTurnEndTurn : Executable {
 
     public void EndTurn() {
 
+        Controller.Get().contTarget.UnlockTargetting();
+
         subAllTurnEnd.NotifyObs(null);
         //TODO - MAKE CHARACTERS OBSERVE THIS AND UNLOCK THEIR ABILITY SELECTION
 
