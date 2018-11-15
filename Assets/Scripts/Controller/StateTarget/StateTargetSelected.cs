@@ -19,6 +19,12 @@ public class StateTargetSelected : StateTarget {
     public void cbChooseAction(Object target, params object[] args) {
         // When we've clicked an action, use that action
 
+        // But first, check if targetting is locked
+        if (contTarg.bLocked) {
+            Debug.Log("We can't choose an action when locked");
+            return;
+        }
+
         contTarg.selected.Targetting();
         contTarg.selected.nUsingAction = ((ViewAction)target).id;
 
