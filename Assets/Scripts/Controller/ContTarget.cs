@@ -12,11 +12,34 @@ public class ContTarget : MonoBehaviour {
 
 	public int nTarCount;
 
+    public bool bLocked;
+
+    public static ContTarget instance;
+
     public static Subject subAllStartTargetting = new Subject();
     public static Subject subAllFinishTargetting = new Subject();
 
-	// Move to selecting the next target
-	public void IncTar(){
+    //TODO CHANGE ALL .Get() calls in other classes to use properties
+    //     so the syntax isn't as gross
+
+    public static ContTarget Get() {
+        if (instance == null) {
+            GameObject go = GameObject.FindGameObjectWithTag("ContTarget");
+            if (go == null) {
+                Debug.LogError("ERROR! NO OBJECT HAS A ContTarget TAG!");
+            }
+            instance = go.GetComponent<ContTarget>();
+            if (instance == null) {
+                Debug.LogError("ERROR! ContTurns TAGGED OBJECT DOES NOT HAVE A ContTarget COMPONENT!");
+            }
+            instance.Start();
+        }
+        return instance;
+    }
+
+
+    // Move to selecting the next target
+    public void IncTar(){
 		nTarCount++;
 	}
 
@@ -30,10 +53,31 @@ public class ContTarget : MonoBehaviour {
 		nTarCount = 0;
 	}
 
+    // Stop the player from targetting any abilities during a turn
+    public void LockTargetting() {
+
+        CancelTar();
+        bLocked = true;
+    }
+
+    // Allow the player to start targetting abilities again
+    public void UnlockTargetting() {
+
+        bLocked = false;
+
+    }
+
 	// Ends targetting
 	public void CancelTar(){
-		//TODO:: Consider if resetting like this needs to back through the previously selected
-		//       targets and clean them out for the future.
+        //TODO:: Consider if resetting like this needs to back through the previously selected
+        //       targets and clean them out for the future.
+
+        if(curState.GetType() == typeof(StateTargetIdle) || curState.GetType() == typeof(StateTargetSelected)) {
+            // If we're waiting to select a character, or aren't in the process of targetting
+            // an ability with the selected character, then no resetting is needed
+            return;
+        }
+
 		ResetTar();
 		selected.bSetAction = false;
 		selected.nUsingAction = -1;

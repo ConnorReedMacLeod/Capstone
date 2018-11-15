@@ -9,6 +9,7 @@ using UnityEngine;
 public class StateTargetIdle : StateTarget {
 
     public void cbClickChar(Object target, params object[] args) {
+
         contTarg.selected = ((ViewChr)target).mod;
 
         contTarg.SetState(new StateTargetSelected(contTarg));
