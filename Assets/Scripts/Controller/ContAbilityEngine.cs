@@ -17,13 +17,13 @@ public class ContAbilityEngine : MonoBehaviour {
 
     public static ContAbilityEngine Get() {
         if (instance == null) {
-            GameObject go = GameObject.FindGameObjectWithTag("ContAbilityEngine");
+            GameObject go = GameObject.FindGameObjectWithTag("Controller");
             if (go == null) {
-                Debug.LogError("ERROR! NO OBJECT HAS A ContAbilityEngine TAG!");
+                Debug.LogError("ERROR! NO OBJECT HAS A Controller TAG!");
             }
             instance = go.GetComponent<ContAbilityEngine>();
             if (instance == null) {
-                Debug.LogError("ERROR! ContAbilityEngine TAGGED OBJECT DOES NOT HAVE A ContAbilityEngine COMPONENT!");
+                Debug.LogError("ERROR! Controller TAGGED OBJECT DOES NOT HAVE A ContAbilityEngine COMPONENT!");
             }
             instance.Start();
         }

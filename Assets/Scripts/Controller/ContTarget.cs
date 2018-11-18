@@ -12,8 +12,6 @@ public class ContTarget : MonoBehaviour {
 
 	public int nTarCount;
 
-    public bool bLocked;
-
     public static ContTarget instance;
 
     public static Subject subAllStartTargetting = new Subject();
@@ -24,13 +22,13 @@ public class ContTarget : MonoBehaviour {
 
     public static ContTarget Get() {
         if (instance == null) {
-            GameObject go = GameObject.FindGameObjectWithTag("ContTarget");
+            GameObject go = GameObject.FindGameObjectWithTag("Controller");
             if (go == null) {
-                Debug.LogError("ERROR! NO OBJECT HAS A ContTarget TAG!");
+                Debug.LogError("ERROR! NO OBJECT HAS A Controller TAG!");
             }
             instance = go.GetComponent<ContTarget>();
             if (instance == null) {
-                Debug.LogError("ERROR! ContTurns TAGGED OBJECT DOES NOT HAVE A ContTarget COMPONENT!");
+                Debug.LogError("ERROR! Controller TAGGED OBJECT DOES NOT HAVE A ContTarget COMPONENT!");
             }
             instance.Start();
         }
@@ -52,20 +50,6 @@ public class ContTarget : MonoBehaviour {
 	public void ResetTar(){
 		nTarCount = 0;
 	}
-
-    // Stop the player from targetting any abilities during a turn
-    public void LockTargetting() {
-
-        CancelTar();
-        bLocked = true;
-    }
-
-    // Allow the player to start targetting abilities again
-    public void UnlockTargetting() {
-
-        bLocked = false;
-
-    }
 
 	// Ends targetting
 	public void CancelTar(){
