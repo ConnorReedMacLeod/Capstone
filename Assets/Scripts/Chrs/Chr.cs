@@ -36,6 +36,7 @@ public class Chr : MonoBehaviour {
 	public int nCurHealth;          //The character's current health
 	public int nMaxHealth;          //The character's max health
 
+    public bool bLockedTargetting;  //Whether or not the character can select their action
     public Action[] arActions;      //The characters actions
     public static int nActions = 8; //Number of actions the character can perform
 	public int nUsingAction;        //The currently selected action for the character, either targetting or having been queued
@@ -76,6 +77,13 @@ public class Chr : MonoBehaviour {
         }
     }
 
+    public void UnlockTargetting() {
+        bLockedTargetting = false;
+    }
+
+    public void LockTargetting() {
+        bLockedTargetting = true;
+    }
 
     public void RechargeActions() {
 
@@ -188,6 +196,8 @@ public class Chr : MonoBehaviour {
 			nUsingAction = -1;
 
 			stateSelect = STATESELECT.IDLE;
+
+            bLockedTargetting = true;
 		}
 
 	}

@@ -23,13 +23,13 @@ public class ContTurns : MonoBehaviour {
 
     public static ContTurns Get() {
         if (instance == null) {
-            GameObject go = GameObject.FindGameObjectWithTag("ContTurns");
+            GameObject go = GameObject.FindGameObjectWithTag("Controller");
             if (go == null) {
-                Debug.LogError("ERROR! NO OBJECT HAS A CONTTURNS TAG!");
+                Debug.LogError("ERROR! NO OBJECT HAS A Controller TAG!");
             }
             instance = go.GetComponent<ContTurns>();
             if (instance == null) {
-                Debug.LogError("ERROR! ContTurns TAGGED OBJECT DOES NOT HAVE A ContTurns COMPONENT!");
+                Debug.LogError("ERROR! Controller TAGGED OBJECT DOES NOT HAVE A ContTurns COMPONENT!");
             }
             instance.Start();
         }

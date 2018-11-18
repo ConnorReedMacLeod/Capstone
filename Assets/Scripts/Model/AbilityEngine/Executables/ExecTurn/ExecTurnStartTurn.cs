@@ -8,7 +8,7 @@ public class ExecTurnStartTurn : Executable {
 
     public void StartTurn() {
 
-        Controller.Get().contTarget.LockTargetting();
+        //Controller.Get().contTarget.LockTargetting();
 
         subAllTurnStart.NotifyObs(null);
         //TODO - MAKE CHARACTERS OBSERVE THIS AND LOCK THEIR ABILITY SELECTION
@@ -21,7 +21,7 @@ public class ExecTurnStartTurn : Executable {
 
         StartTurn();
 
-        ContTurns.Get().SetTurnState(ContTurns.STATETURN.EXECUTEACTIONS);
+        ContTurns.Get().SetTurnState(ContTurns.STATETURN.CHOOSEACTIONS);
 
         sLabel = "Beginning of Turn";
         fDelay = 0.5f;
