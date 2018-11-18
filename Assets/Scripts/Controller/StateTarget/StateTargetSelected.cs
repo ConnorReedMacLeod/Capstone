@@ -20,8 +20,8 @@ public class StateTargetSelected : StateTarget {
         // When we've clicked an action, use that action
 
         // But first, check if targetting is locked
-        if (contTarg.bLocked) {
-            Debug.Log("We can't choose an action when locked");
+        if (((ViewAction)target).mod.chrOwner.bLockedTargetting) {
+            Debug.Log("We can't choose an action for a locked character");
             return;
         }
 
