@@ -11,7 +11,7 @@ public class ActionHeal : Action {
         //Since the base constructor initializes this array, we can start filling it
         arArgs[0] = new TargetArgAlly((own, tar) => true);
 
-        sName = "Heal";
+        sName = "Heal (Cantrip)";
         type = ActionType.ACTIVE;
 
         //Physical, Mental, Energy, Blood, Effort
@@ -19,6 +19,7 @@ public class ActionHeal : Action {
 
         nCd = 3;
         nFatigue = 3;
+        nActionCost = 0;
 
         sDescription = "Restore 5 health to target ally";
 

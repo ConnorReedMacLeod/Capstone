@@ -11,12 +11,14 @@ public class ActionRest : Action {
 		sName = "Rest";
 		type = ActionType.ACTIVE;
 
+        chrOwner = _chrOwner;
+
 		arCost = new int[]{0,0,0,0,0};
 
 		nCd = 0;
-        nFatigue = 2;
+        nFatigue = 3;
 
-		sDescription = "Just wait around for a little";
+		sDescription = _chrOwner + " has finished selecting abilities for the turn";
 
 	}
 

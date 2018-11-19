@@ -25,6 +25,16 @@ public class StateTargetSelected : StateTarget {
             return;
         }
 
+        if(((ViewAction)target).mod.nCurCD > 0) {
+            Debug.Log("We can't use an ability that's on cooldown");
+            return;
+        }
+
+        if(((ViewAction)target).mod.chrOwner.nCurActionsLeft < ((ViewAction)target).mod.nActionCost) {
+            Debug.Log("We can't use an active when we've already used our active for the turn");
+            return;
+        }
+
         contTarg.selected.Targetting();
         contTarg.selected.nUsingAction = ((ViewAction)target).id;
 

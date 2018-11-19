@@ -19,6 +19,7 @@ public class ActionExplosion : Action {
 
         nCd = 10;
         nFatigue = 6;
+        nActionCost = 1;
 
         sDescription = "Deal 5 damage to all characters on target team";
 

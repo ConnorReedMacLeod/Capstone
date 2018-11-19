@@ -31,7 +31,11 @@ public class Chr : MonoBehaviour {
 
 
     public int id;                  //The character's unique identifier
-    public int nFatigue;           //Number of turns a character must wait before their next action
+    public int nFatigue;            //Number of turns a character must wait before their next action
+    public int nQueuedFatigue;      //The amount of fatigue that will be added to the characters fatigue when they're done acting for the turn
+
+    public int nMaxActionsLeft;     //The total maximum number of actions a character can use in a turn (usually 1, cantrips cost 0)
+    public int nCurActionsLeft;     //The number of actions left in a turn that the character can use (cantrips cost 0)
 
 	public int nCurHealth;          //The character's current health
 	public int nMaxHealth;          //The character's max health
@@ -59,7 +63,15 @@ public class Chr : MonoBehaviour {
     public Subject subHealthChange = new Subject();
     public Subject subStatusChange = new Subject();
 
-    //Changes the character's recharge by a given value
+
+    // Prepare a certain amount of fatigue to be applied to this character
+    public void QueueFatigue(int _nChange) {
+
+        nQueuedFatigue += _nChange;
+
+    }
+
+    // Apply this amount of fatigue to the character
     public void ChangeFatigue(int _nChange, bool bBeginningTurn = false){
 		if (_nChange + nFatigue < 0) {
 			nFatigue = 0;
@@ -75,6 +87,14 @@ public class Chr : MonoBehaviour {
             ContTurns.Get().FixSortedPriority(this);
             //So make sure we're in the right place in the priority list
         }
+    }
+
+    public void FinishSelectionPhase() {
+        // Note - this  queued amount will always be greater than 0, so we will never come back to the same character
+        //        twice in a row on the same turn.  
+        ChangeFatigue(nQueuedFatigue);
+        nQueuedFatigue = 0;
+        nCurActionsLeft = nMaxActionsLeft;
     }
 
     public void UnlockTargetting() {
@@ -136,6 +156,7 @@ public class Chr : MonoBehaviour {
     //Performs the character's queued action
 	public void ExecuteAction(){
         if (!ValidAction()) {
+            Debug.LogError("ERROR! This ability was targetted, but is no longer a valid action");
             SetRestAction();
         }
 
@@ -188,11 +209,14 @@ public class Chr : MonoBehaviour {
 			bStarted = true;
 
 			view = GetComponent<ViewChr> ();
-			view.Start (); 
-			// Should let the view initialize itself first
-			// so that it'll be safe for us to update in our Start method
+			view.Start ();
+            // Should let the view initialize itself first
+            // so that it'll be safe for us to update in our Start method
 
-			arActions = new Action[nActions];
+            nMaxActionsLeft = 1;
+            nCurActionsLeft = nMaxActionsLeft;
+
+            arActions = new Action[nActions];
 			nUsingAction = -1;
 
 			stateSelect = STATESELECT.IDLE;
