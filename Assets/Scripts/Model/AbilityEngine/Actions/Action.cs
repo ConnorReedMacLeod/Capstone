@@ -12,9 +12,12 @@ public class Action { //This should probably be made abstract
 	public TargetArg [] arArgs;
 	public string sName;
 	public ActionType type; 
+
 	public int nCd;
 	public int nCurCD;
 	public int nFatigue;
+
+    public int nActionCost; // How many action 'points' this ability uses - cantrips would cost 0
 
 	public Chr chrOwner;
 
@@ -72,7 +75,10 @@ public class Action { //This should probably be made abstract
         //       after the ability finishes resolving
 
 		nCurCD = nCd;
-		chrOwner.ChangeFatigue(nFatigue);
+		chrOwner.QueueFatigue(nFatigue);
+
+        Debug.Assert(chrOwner.nCurActionsLeft >= nActionCost);
+        chrOwner.nCurActionsLeft -= nActionCost;
 
 		if (chrOwner.plyrOwner.mana.SpendMana (arCost)) {
             //Then the mana was paid properly
@@ -85,6 +91,8 @@ public class Action { //This should probably be made abstract
         } else {
 			Debug.LogError ("YOU DIDN'T ACTUALLY HAVE ENOUGH MANA");
 		}
+
+
 
 		Reset ();
 	}
@@ -102,6 +110,11 @@ public class Action { //This should probably be made abstract
 			Debug.Log ("Ability on cd");
 			return false;
 		}
+
+        if (nActionCost > chrOwner.nMaxActionsLeft) {
+            Debug.Log("We have already used all non-cantrip actions for the turn");
+            return false;
+        }
 
 		for (int i = 0; i < nArgs; i++) {
 			if (!arArgs [i].VerifyLegal ()) {

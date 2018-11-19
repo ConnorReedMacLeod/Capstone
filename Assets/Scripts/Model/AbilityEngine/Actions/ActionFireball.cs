@@ -19,8 +19,9 @@ public class ActionFireball : Action {
 
 		nCd = 6;
         nFatigue = 4;
+        nActionCost = 1;
 
-		sDescription = "Deal 5 damage to target character";
+        sDescription = "Deal 5 damage to target character";
 
 		SetArgOwners ();
 	}
