@@ -18,6 +18,7 @@ public class ViewChr : ViewInteractive {
     public Text txtHealth;              //Textfield Reference
     public Text txtFatigue;             //Fatigue Overlay Reference
     public SpriteMask maskPortrait;     //SpriteMask Reference
+    public GameObject goSoulContainer;  //SoulContainer Reference
 
     public static Subject subAllStartHover = new Subject();
     public static Subject subAllStopHover = new Subject();
@@ -44,6 +45,9 @@ public class ViewChr : ViewInteractive {
             //Find the border and flip it for one of the players
             goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
 
+            //Flip the character's soul position as well
+            goSoulContainer.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
+
             maskPortrait.transform.localScale = new Vector3(1.0f, -1.0f, 1.0f);
             maskPortrait.transform.localPosition = 
                 new Vector3(maskPortrait.transform.localPosition.x, 
@@ -54,6 +58,7 @@ public class ViewChr : ViewInteractive {
                 new Vector3(txtHealth.transform.localPosition.x, 
                             -txtHealth.transform.localPosition.y,
                             txtHealth.transform.localPosition.z);
+
         }
 	}
 
