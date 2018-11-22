@@ -25,7 +25,6 @@ public class ViewSoul : MonoBehaviour {
     }
 
     public void UpdateTxtDuration() {
-        Debug.Log("Calling UpdateTxtDuration");
 
         if (mod == null || mod.bDuration == false) {
             //Then we don't have any duration to display

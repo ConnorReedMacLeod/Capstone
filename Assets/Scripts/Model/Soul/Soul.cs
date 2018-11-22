@@ -20,16 +20,38 @@ public class Soul : MonoBehaviour {
 
     public System.Action funcOnApplication;
     public System.Action funcOnRemoval;
+    public System.Action funcOnExpiration; //Specifically when the soul effect reaches the end of its duration
+    public System.Action funcOnEndTurn;
 
     public void OnApply() {
         if(bDuration == true) {
             nCurDuration = nMaxDuration;
         }
 
-        funcOnApplication();
+        if (funcOnApplication != null) {
+            funcOnApplication();
+        }
+    }
 
+    public void OnRemoval() {
+
+        if (funcOnRemoval != null) {
+            funcOnRemoval();
+        }
+
+        if(bDuration == true && funcOnExpiration != null) {
+            funcOnExpiration();
+        }
 
     }
 
-	
+    public void OnEndTurn() {
+
+        if (funcOnEndTurn != null) {
+            funcOnEndTurn();
+        }
+
+    }
+
+
 }
