@@ -48,7 +48,7 @@ public class SoulContainer : MonoBehaviour {
         //Remove each effect that was noted as having no duration left
         foreach (Soul SoulToRemove in lstExpiredSoul) {
             lstSoul.Remove(SoulToRemove);
-            SoulToRemove.funcOnRemoval();
+            SoulToRemove.OnRemoval();
         }
 
         //Let others know that the visible soul MAY have changed (not necessarily)
@@ -71,9 +71,7 @@ public class SoulContainer : MonoBehaviour {
                 lstSoul.Remove(lstVisibleSoul[0]);
 
                 //Perform any action that needs to be done when this Soul is removed;
-                if (soulRemoved.funcOnRemoval != null) {
-                    soulRemoved.funcOnRemoval();
-                }
+                soulRemoved.OnRemoval();
 
                 //TODO:: Add in a check for locked events
             }
@@ -83,9 +81,7 @@ public class SoulContainer : MonoBehaviour {
         lstSoul.Add(newSoul);
 
         //Perform any action that needs to be done on application
-        if (newSoul.funcOnApplication != null) {
-            newSoul.funcOnApplication();
-        }
+        newSoul.OnApply();
 
         //Let others know that the visible soul MAY have changed (not necessarily)
         subVisibleSoulUpdate.NotifyObs(this);

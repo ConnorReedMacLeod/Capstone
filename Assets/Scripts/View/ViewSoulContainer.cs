@@ -14,12 +14,9 @@ public class ViewSoulContainer : MonoBehaviour {
     public void cbUpdateVisibleSoul(Object target, params object[] args) {
 
         List<Soul> lstVisibleSoul = mod.GetVisibleSoul();
-
-        Debug.Log("Length of arViewSoul is " + arViewSoul.Length);
-        Debug.Log("Length of lstVisibleSoul is " + lstVisibleSoul.Count);
+       
 
         for (int i = 0; i < arViewSoul.Length; i++) {
-            Debug.Log("looking at soul item " + i);
 
             if (lstVisibleSoul.Count - 1 < i) {
                 //Then there's not actually a Soul in this slot
