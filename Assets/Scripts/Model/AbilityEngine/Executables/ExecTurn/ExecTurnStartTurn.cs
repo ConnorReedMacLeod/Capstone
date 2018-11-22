@@ -21,7 +21,14 @@ public class ExecTurnStartTurn : Executable {
 
         StartTurn();
 
-        ContTurns.Get().SetTurnState(ContTurns.STATETURN.CHOOSEACTIONS);
+        if (ContTurns.Get().GetNextActingChr() == null) {
+            //If there are no characters set to go this turn, then jump to end of turn directly
+            ContTurns.Get().SetTurnState(ContTurns.STATETURN.TURNEND);
+
+        } else {
+            //If there is a character set to act, then let the player choose their actions
+            ContTurns.Get().SetTurnState(ContTurns.STATETURN.CHOOSEACTIONS);
+        }
 
         sLabel = "Beginning of Turn";
         fDelay = 0.5f;
