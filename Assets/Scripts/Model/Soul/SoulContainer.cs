@@ -29,6 +29,12 @@ public class SoulContainer : MonoBehaviour {
 
     public void cbReduceDurations(Object target, params object[] args) {
 
+        //MAJOR TODO:: Should probably not even have this method
+        //Instead, have each soul subscribe to the ExecTurnEnd.SubAllEndTurn trigger
+        //So that each can trigger one by one
+
+        //TODO:: Fix this so that we don't potentially get errors when elements get removed mid-list-traversal
+
         List<Soul> lstExpiredSoul = new List<Soul>();
 
         //Search through the list from the back (most recently added) to the front
@@ -57,6 +63,8 @@ public class SoulContainer : MonoBehaviour {
     }
 
     public void ApplySoul(Soul newSoul) {
+
+        Debug.Log("In SoulContainer's ApplySoul method");
         
         if(newSoul.bVisible == true) {
             //Then check if we have enough slots

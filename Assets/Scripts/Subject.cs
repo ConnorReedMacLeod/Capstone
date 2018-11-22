@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//TODO:: Extend this to a Trigger class that will notify each of its observers one at a time,
+//       can maybe have a starting method that flags each observer as not being notified yet,
+//       then when we are asked to Notify the next observer, we scan through and find the first
+//       observer that hasn't been triggered yet, and Notify them.
+
 public class Subject{
 
 	bool bStarted;
