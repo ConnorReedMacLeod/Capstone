@@ -11,14 +11,13 @@ public class ViewChr : ViewInteractive {
 	public Chr mod;                   //Character model
 
 	Chr.STATESELECT lastStateSelect;  //Tracks previous character state (SELECTED, TARGETTING, UNSELECTED)
-	Vector3 v3LastPos;                      //Tracks previous character position against the model position
 
 	public GameObject goBorder;        //Border reference
 	public GameObject goPortrait;       //Portrait Reference
     public Text txtHealth;              //Textfield Reference
     public Text txtFatigue;             //Fatigue Overlay Reference
     public SpriteMask maskPortrait;     //SpriteMask Reference
-    public GameObject goSoulContainer;  //SoulContainer Reference
+    public ViewSoulContainer viewSoulContainer;  //SoulContainer Reference
 
     public static Subject subAllStartHover = new Subject();
     public static Subject subAllStopHover = new Subject();
@@ -46,7 +45,11 @@ public class ViewChr : ViewInteractive {
             goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
 
             //Flip the character's soul position as well
-            goSoulContainer.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
+            viewSoulContainer.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
+
+            foreach (ViewSoul viewsoul in viewSoulContainer.arViewSoul) {
+                viewsoul.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
+            }
 
             maskPortrait.transform.localScale = new Vector3(1.0f, -1.0f, 1.0f);
             maskPortrait.transform.localPosition = 
