@@ -6,32 +6,30 @@ public class ViewSoulContainer : MonoBehaviour {
 
     public SoulContainer mod;
     
-    public GameObject[] argoSoul;
+    public ViewSoul[] arViewSoul;
 
 
 
-    //Sets the sprite used for the ith soul entry
-    public void SetSoulSprite(int i) {
+    //Update all display information for each soul icon for visible soul
+    public void cbUpdateVisibleSoul(Object target, params object[] args) {
 
-        string sSprPath = "Images/Soul/imgSoulEmpty";
+        List<Soul> lstVisibleSoul = mod.GetVisibleSoul();
 
-        if (mod.arSoul[i] != null) {
+        Debug.Log("Length of arViewSoul is " + arViewSoul.Length);
+        Debug.Log("Length of lstVisibleSoul is " + lstVisibleSoul.Count);
 
-            sSprPath = "Images/Soul/imgSoul" + mod.arSoul[i].sName;
+        for (int i = 0; i < arViewSoul.Length; i++) {
+            Debug.Log("looking at soul item " + i);
 
-        }
-        Sprite sprSoul = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
+            if (lstVisibleSoul.Count - 1 < i) {
+                //Then there's not actually a Soul in this slot
+                arViewSoul[i].UpdateSoul(null);
 
-        argoSoul[i].GetComponent<SpriteRenderer>().sprite = sprSoul;
+            } else {
+                //Then pass along this visible soul to be displayed
+                arViewSoul[i].UpdateSoul(lstVisibleSoul[i]);
 
-    }
-
-
-    //Update all display information for each soul icon
-    public void cbUpdateSoulSprites(Object target, params object[] args) {
-
-        for (int i = 0; i < argoSoul.Length; i++) {
-            SetSoulSprite(i);
+            }
         }
 
     }
@@ -42,14 +40,15 @@ public class ViewSoulContainer : MonoBehaviour {
     }
 
 
-    void Init () {
+    void Start () {
 
-        SetNumSoulSlots(mod.arSoul.Length);
+        SetNumSoulSlots(3);
+
+        mod.subVisibleSoulUpdate.Subscribe(cbUpdateVisibleSoul);
+
+        cbUpdateVisibleSoul(null);//Initially update the soul to just be blanks
 
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
 }
