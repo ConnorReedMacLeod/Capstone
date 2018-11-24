@@ -92,6 +92,11 @@ public class ContAbilityEngine : MonoBehaviour {
 
         stackExec.Push(exec);
 
+        //After this has been pushed on the stack, cycle through any pre-triggers
+        //to see what should be put on top of this effect
+        //exec.GetPreTrigger().NotifyObs(exec);
+
+
     }
 
     public void MaintainStateBasedActions() {
