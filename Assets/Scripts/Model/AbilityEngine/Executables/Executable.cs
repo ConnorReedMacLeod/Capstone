@@ -8,6 +8,8 @@ public abstract class Executable {
     public string sLabel;
     public float fDelay;
 
+    //public abstract Subject GetPreTrigger();
+    //public abstract Subject GetPostTrigger();
 
     public virtual void Execute() {
 
