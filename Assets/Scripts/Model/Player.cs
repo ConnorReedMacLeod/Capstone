@@ -13,6 +13,8 @@ public class Player : MonoBehaviour{
 	public Chr.CHARTYPE[] arChrTypeSelection;
 	public int nChrs;
 
+    public int iBlocker; // the index of the currently selected blocker
+
 	public GameObject pfManaPanel;
 
 	public Mana mana;
@@ -37,6 +39,31 @@ public class Player : MonoBehaviour{
 		id = _id;
 	}
 
+    public void SetBlocker(int _iBlocker) {
+
+        Debug.Assert(arChr[_iBlocker] != null, "Assigned a blocker as a character that doesn't exist");
+        if(iBlocker == _iBlocker) {
+            Debug.Log("Then this character is already the blocker");
+            return;
+        }
+
+        //TODO:: Make this more sophisticated
+        Debug.Log(iBlocker);
+        if (iBlocker != -1) {
+            arChr[iBlocker].bBlocker = false;
+        }
+
+        iBlocker = _iBlocker;
+
+        arChr[iBlocker].bBlocker = true;
+   
+    }
+
+    public Chr GetBlocker() {
+        Debug.Assert(arChr[iBlocker] != null, "No blocker assigned to player " + id);
+        return arChr[iBlocker];
+    }
+
 	// Use this for initialization
 	public void Start () {
 
@@ -58,6 +85,7 @@ public class Player : MonoBehaviour{
 				//move it offscreen for now
 				manaPanel.transform.position = new Vector3(-20.0f, -3.0f, -0.4f);
 			}
+
 		}
 	}
 

@@ -121,6 +121,13 @@ public class Match : MonoBehaviour {
 		}
 	}
 
+    void InitAllBlockers() {
+        for (int i=0; i<nPlayers; i++) {
+            arPlayers[i].iBlocker = -1;//temporarily set the blocker to -1, so that we meaningfully change the blocker on the next line
+            arPlayers[i].SetBlocker(0);//Initially set the blocker as the first character to go
+        }
+    }
+
 	public Controller GetController(){
 		if (controller == null) {
 			controller = GetComponentInChildren<Controller> ();
@@ -148,5 +155,8 @@ public class Match : MonoBehaviour {
 		InitPlayers (nPlayers);
 
 		InitAllChrs ();
+
+        InitAllBlockers();
+
 	}
 }

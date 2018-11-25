@@ -15,10 +15,10 @@ public class ChrKatarina : BaseChr {
     //Defines all of a character's unique actions
     public override void SetActions() {
 
-        chrOwner.arActions[0] = new ActionFireball(chrOwner);
-        chrOwner.arActions[1] = new ActionHeal(chrOwner);
-        chrOwner.arActions[2] = new ActionExplosion(chrOwner);
-        chrOwner.arActions[3] = new ActionHeal(chrOwner);
+        chrOwner.arActions[0] = new ActionFortissimo(chrOwner);
+        chrOwner.arActions[1] = new ActionReverberate(chrOwner);
+        chrOwner.arActions[2] = new ActionSerenade(chrOwner);
+        chrOwner.arActions[3] = new ActionCacaphony(chrOwner);
 
         chrOwner.arActions[7] = new ActionRest(chrOwner);
     }
