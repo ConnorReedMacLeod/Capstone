@@ -8,7 +8,7 @@ public class Chr : MonoBehaviour {
 	bool bStarted;
 
 	public enum CHARTYPE {          //CHARTYPE's possible values include all characters in the game
-		LANCER, KATARA, SKELCOWBOY, SNEKGIRL
+		FISCHER, KATARINA, SKELCOWBOY, SOHPIDIA, PITBEAST, RAYNE, SAIKO
 	};
 
 	public enum STATESELECT{

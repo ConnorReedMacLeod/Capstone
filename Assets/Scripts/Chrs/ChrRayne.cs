@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChrLancer : BaseChr {
+public class ChrRayne : BaseChr {
 
-    public ChrLancer(Chr _chrOwner) : base(_chrOwner) {
+    public ChrRayne(Chr _chrOwner) : base(_chrOwner) {
 
     }
 
     public override void SetName() {
-        chrOwner.sName = "Lancer";
+        chrOwner.sName = "Rayne";
     }
 
     //Defines all of a character's unique actions

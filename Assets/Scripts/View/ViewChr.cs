@@ -103,6 +103,8 @@ public class ViewChr : ViewInteractive {
 		string sSprPath = "Images/Chrs/" + _sName + "/img" + _sName + "Portrait";
 		Sprite sprChr = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
 
+        Debug.Assert(sprChr != null, "Could not find specificed sprite: " + sSprPath);
+
         goPortrait.GetComponent<SpriteRenderer>().sprite = sprChr;
 
 	}
@@ -111,6 +113,8 @@ public class ViewChr : ViewInteractive {
 	void SetBorder(string _sName){
 		string sSprPath = "Images/Chrs/img" + _sName;
 		Sprite sprBorder = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
+
+        Debug.Assert(sprBorder != null, "Could not find specificed sprite: " + sSprPath);
 
         goBorder.GetComponent<SpriteRenderer>().sprite = sprBorder;
 	}

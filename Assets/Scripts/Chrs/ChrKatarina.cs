@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChrKatara : BaseChr {
+public class ChrKatarina : BaseChr {
 
-    public ChrKatara(Chr _chrOwner) : base(_chrOwner) {
+    public ChrKatarina(Chr _chrOwner) : base(_chrOwner) {
 
     }
 
     public override void SetName() {
-        chrOwner.sName = "Katara";
+        chrOwner.sName = "Katarina";
     }
 
     //Defines all of a character's unique actions

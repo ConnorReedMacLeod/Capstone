@@ -18,11 +18,19 @@ public class Player : MonoBehaviour{
 	public Mana mana;
 
 	public void setChrs(){
-		//placeholder until character selection is available
-		arChrTypeSelection[0] = Chr.CHARTYPE.KATARA;
-		arChrTypeSelection[1] = Chr.CHARTYPE.LANCER;
-		arChrTypeSelection[2] = Chr.CHARTYPE.SNEKGIRL;
-		nChrs = 3;
+        //placeholder until character selection is available
+
+        nChrs = 3;
+
+        if (id == 0) {
+            arChrTypeSelection[0] = Chr.CHARTYPE.KATARINA;
+            arChrTypeSelection[1] = Chr.CHARTYPE.FISCHER;
+            arChrTypeSelection[2] = Chr.CHARTYPE.SOHPIDIA;
+        } else {
+            arChrTypeSelection[0] = Chr.CHARTYPE.PITBEAST;
+            arChrTypeSelection[1] = Chr.CHARTYPE.RAYNE;
+            arChrTypeSelection[2] = Chr.CHARTYPE.SAIKO;
+        }
 	}
 
 	public void SetID(int _id){
