@@ -8,10 +8,13 @@ public abstract class Executable {
     public string sLabel;
     public float fDelay;
 
+    public abstract Subject GetPreTrigger();
+    public abstract Subject GetPostTrigger();
 
     public virtual void Execute() {
 
-        //Maybe send notifications that an executable has happened?
+        //Let everyone know that this type of executable has finished being processed
+        GetPostTrigger().NotifyObs(null, this);
 
         //Now that we've done our thing, let the engine know to start processing the next thing
         ContAbilityEngine.Get().InvokeProcessStack(fDelay, sLabel);

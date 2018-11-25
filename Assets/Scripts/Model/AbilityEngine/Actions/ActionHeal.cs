@@ -32,7 +32,7 @@ public class ActionHeal : Action {
         // but at least it's eliminated from the targetting lambda
         Chr tar = ((TargetArgAlly)arArgs[0]).chrTar;
 
-        queueClauses.Enqueue(new Clause() {
+        stackClauses.Push(new Clause() {
             fExecute = () => {
                 Debug.Log("This Heal Clause put an ExecHeal on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecHeal() {

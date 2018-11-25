@@ -30,7 +30,7 @@ public class Action { //This should probably be made abstract
 
 	public int[] arCost;
 
-    public Queue<Clause> queueClauses = new Queue<Clause>();
+    public Stack<Clause> stackClauses = new Stack<Clause>();
 
 	public Action(int _nArgs, Chr _chrOwner){
 		nArgs = _nArgs;
@@ -83,9 +83,9 @@ public class Action { //This should probably be made abstract
 		if (chrOwner.plyrOwner.mana.SpendMana (arCost)) {
             //Then the mana was paid properly
 
-            while (queueClauses.Count != 0) {
+            while (stackClauses.Count != 0) {
                 //Add each clause in this ability to the stack
-                ContAbilityEngine.Get().AddClause(queueClauses.Dequeue());
+                ContAbilityEngine.Get().AddClause(stackClauses.Pop());
             }
 
         } else {

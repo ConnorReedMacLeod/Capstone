@@ -2,7 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnEndTurn : Executable {
+//Can create executables like ...= new Exec(){soulContainerTarget = ..., funcApplySoul = ...};
+
+public class ExecApplySoul : Executable {
+
+    public SoulContainer soulContainerTarget;
+
+    public delegate Soul FuncCreateSoul();
+
+    public FuncCreateSoul funcCreateSoul;
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -23,10 +31,9 @@ public class ExecTurnEndTurn : Executable {
 
     public override void Execute() {
 
-        ContTurns.Get().SetTurnState(ContTurns.STATETURN.GIVEMANA);
+        Debug.Log("In ExecApplySoul's execute method");
 
-        sLabel = "End of Turn";
-        fDelay = 0.5f;
+        soulContainerTarget.ApplySoul(funcCreateSoul());
 
         base.Execute();
     }

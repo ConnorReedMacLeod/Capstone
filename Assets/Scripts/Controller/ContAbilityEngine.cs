@@ -77,11 +77,7 @@ public class ContAbilityEngine : MonoBehaviour {
 
     public void ResolveExec() {
 
-        //Tentative:
-        //Check if any replacement need to replace the top of the stack
-        //Check pre-executing events need to trigger
-
-        //Remove the Executable from the top of the stack (once any replacements have been cleared)
+        //Remove the Executable from the top of the stack (Assume no replacements need to take effect)
         stackExec.Pop().Execute();
 
     }
@@ -91,6 +87,10 @@ public class ContAbilityEngine : MonoBehaviour {
         //Check for any replacement effects
 
         stackExec.Push(exec);
+
+        //After this has been pushed on the stack, cycle through any pre-triggers
+        //to see what should be put on top of this effect
+        exec.GetPreTrigger().NotifyObs(null, exec);
 
     }
 
