@@ -31,10 +31,11 @@ public class ActionExplosion : Action {
         // but at least it's eliminated from the targetting lambda
         Player tar = ((TargetArgTeam)arArgs[0]).plyrTar;
 
-        queueClauses.Enqueue(new Clause() {
+        stackClauses.Push(new Clause() {
             fExecute = () => {
                 for (int i = 0; i < tar.arChr.Length; i++) {
                     Debug.Log("This Explosion Clause put an ExecDamage on the stack");
+                    //TODO:: Organize this in the correct order
                     ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                         chrOwner = this.chrOwner,
                         chrTarget = tar.arChr[i],

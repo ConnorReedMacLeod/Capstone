@@ -31,15 +31,64 @@ public class ActionFireball : Action {
 		// but at least it's eliminated from the targetting lambda
 		Chr tar = ((TargetArgChr)arArgs [0]).chrTar;
 
-        queueClauses.Enqueue(new Clause() {
+        stackClauses.Push(new Clause() {
             fExecute = () => {
                 Debug.Log("This Fireball Clause put an ExecDamage on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrOwner = this.chrOwner,
                     chrTarget = tar,
-                    nDamage = 5,
+                    nDamage = 10,
                     fDelay = 1.0f,
                     sLabel = "Fireballing"
+                });
+            }
+        });
+
+        stackClauses.Push(new Clause() {
+            fExecute = () => {
+                Debug.Log("Fireball's second clause put an ExecApplySoul on the stack");
+                ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
+                    chrOwner = this.chrOwner,
+                    soulContainerTarget = tar.soulContainer,
+
+                    funcCreateSoul = () => {
+                        return new Soul() {
+                            sName = "Test",
+                            bVisible = true,
+                            bDuration = true,
+
+                            nMaxDuration = 4,
+
+                            funcOnApplication = () => {
+                                Debug.Log("Fireball's OnApplication function has been called");
+                            },
+
+                            lstTriggers = new List<Soul.TriggerEffect>() {
+                                //Add an effect that will cause a burn at the end of each turn
+                                new Soul.TriggerEffect{
+                                    sub = ExecTurnEndTurn.subAllPostTrigger,
+                                    cb = (target, args) => {
+                                        Debug.Log("We have been triggered at the end of turn to add a burn damage exec");
+                                        ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
+                                            chrOwner = this.chrOwner,
+                                            chrTarget = tar,
+                                            nDamage = 5,
+                                            fDelay = 1.0f,
+                                            sLabel = tar.sName + " is Burning"
+                                        });
+
+                                    }
+                                }
+                            },
+
+                            funcOnRemoval = () => {
+                                Debug.Log("Fireball's OnRemoval function has been called");
+                            }
+                        };
+                    },
+
+                    fDelay = 1.0f,
+                    sLabel = "Applying Burn Effect"
                 });
             }
         });
