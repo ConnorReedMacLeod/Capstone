@@ -37,10 +37,12 @@ public class Soul {
             nCurDuration = nMaxDuration;
         }
 
-        //Each triggeredeffect we have should subscribe to the trigger it needs
-        foreach (TriggerEffect trig in lstTriggers) {
-            //TODO:: Consider switching this to an extended trigger class rather than just a Subject
-            trig.sub.Subscribe(trig.cb);
+        if (lstTriggers != null) { //Then we have some triggers to subscribe
+            //Each triggeredeffect we have should subscribe to the trigger it needs
+            foreach (TriggerEffect trig in lstTriggers) {
+                //TODO:: Consider switching this to an extended trigger class rather than just a Subject
+                trig.sub.Subscribe(trig.cb);
+            }
         }
 
         if (funcOnApplication != null) {
@@ -50,9 +52,11 @@ public class Soul {
 
     public void OnRemoval() {
 
-        //Each triggeredeffect should unsubscribe from each of its triggers its observing
-        foreach(TriggerEffect trig in lstTriggers) {
-            trig.sub.UnSubscribe(trig.cb);
+        if (lstTriggers != null) { //Then we have some triggers to unsubscribe
+                                   //Each triggeredeffect should unsubscribe from each of its triggers its observing
+            foreach (TriggerEffect trig in lstTriggers) {
+                trig.sub.UnSubscribe(trig.cb);
+            }
         }
 
         if (funcOnRemoval != null) {

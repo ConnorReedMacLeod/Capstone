@@ -46,6 +46,8 @@ public class Chr : MonoBehaviour {
 	public int nUsingAction;        //The currently selected action for the character, either targetting or having been queued
 	public bool bSetAction;         //Whether or not the character has an action queued
 
+    public bool bBlocker;           //Whether or not the character is the assigned blocker
+
     public SoulContainer soulContainer; //A reference to the characters list of soul effects
 
 	public ViewChr view;

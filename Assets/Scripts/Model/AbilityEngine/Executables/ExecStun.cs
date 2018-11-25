@@ -30,7 +30,7 @@ public class ExecStun : Executable {
 
 
     public override void Execute() {
-
+        Debug.Log("TODO:: Also should apply some stun status effect to cancel channels and prevent future stuns");
         chrTarget.ChangeFatigue(nAmount);
 
         base.Execute();
