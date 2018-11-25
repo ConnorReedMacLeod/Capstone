@@ -102,7 +102,7 @@ public class SoulContainer : MonoBehaviour {
 
         nMaxVisibleSoul = 3;
 
-        ExecTurnEndTurn.subAllTurnEnd.Subscribe(cbReduceDurations);
+        ExecTurnEndTurn.subAllPostTrigger.Subscribe(cbReduceDurations);
         //TODO::  At somepoint, fix the order of the notifications to be sent out to next-character-to-act first
 
 

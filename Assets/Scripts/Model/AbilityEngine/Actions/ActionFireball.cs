@@ -66,9 +66,9 @@ public class ActionFireball : Action {
                             lstTriggers = new List<Soul.TriggerEffect>() {
                                 //Add an effect that will cause a burn at the end of each turn
                                 new Soul.TriggerEffect{
-                                    sub = ExecTurnEndTurn.subAllTurnEnd,
+                                    sub = ExecTurnEndTurn.subAllPostTrigger,
                                     cb = (target, args) => {
-                                        Debug.Log("We are resolving an end-turn callback for the burn effect");
+                                        Debug.Log("We have been triggered at the end of turn to add a burn damage exec");
                                         ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                                             chrOwner = this.chrOwner,
                                             chrTarget = tar,
