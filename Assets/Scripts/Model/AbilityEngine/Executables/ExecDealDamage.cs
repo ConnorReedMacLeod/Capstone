@@ -8,7 +8,6 @@ public class ExecDealDamage : Executable {
 
     public Chr chrTarget;
     public int nDamage;
-/*
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -18,13 +17,13 @@ public class ExecDealDamage : Executable {
     public static Subject subAllPostTrigger = new Subject();
 
     public override Subject GetPreTrigger() {
-        return subAllPreTrigger; //Does this auto-resolve to the static member?
+        return subAllPreTrigger; //Note this auto-resolves to the static member
     }
     public override Subject GetPostTrigger() {
         return subAllPostTrigger;
     }
     // This is the end of the section that should be copied and pasted
-    */
+    
 
     public override void Execute() {
         //TODO:: Take into account armour and power/defense
