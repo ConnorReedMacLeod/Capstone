@@ -29,6 +29,8 @@ public class ActionCacaphony : Action {
         // but at least it's eliminated from the targetting lambda
         Chr tar = ((TargetArgChr)arArgs[0]).chrTar;
 
+        Debug.Log("Cacaphony has its Execute() called with target " + tar.sName);
+
         stackClauses.Push(new Clause() {
             fExecute = () => {
 
@@ -66,5 +68,9 @@ public class ActionCacaphony : Action {
             }
         });
 
+
+        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
+
+        base.Execute();
     }
 }
