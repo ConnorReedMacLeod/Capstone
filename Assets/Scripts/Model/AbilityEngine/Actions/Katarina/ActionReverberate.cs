@@ -34,7 +34,7 @@ public class ActionReverberate : Action {
             indexTargetPlayer = 1;
         }
 
-        Player tar = ((TargetArgTeam)arArgs[indexTargetPlayer]).plyrTar;
+        Player tar = Match.Get().arPlayers[indexTargetPlayer];
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
