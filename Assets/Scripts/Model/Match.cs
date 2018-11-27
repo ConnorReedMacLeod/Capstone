@@ -23,6 +23,9 @@ public class Match : MonoBehaviour {
 
 	public static Match instance;
 
+    
+    public delegate int del();
+    public delegate del curried(int i);
 
 	public static Match Get (){
 		if (instance == null) {
@@ -158,5 +161,29 @@ public class Match : MonoBehaviour {
 
         InitAllBlockers();
 
-	}
+
+        //BEGIN TESTING SECTION
+
+        curried curry = (int arg) => { return () => arg; };
+
+        int x = 3;
+
+        Debug.Log("x starts as " + x);
+
+        del fUncurried = () => { return x; };
+        LibFunc.Get<int> fCurried = LibFunc.ReturnSnapShot<int>(x);
+
+        Debug.Log("fUncurried: " + fUncurried());
+        Debug.Log("fCurried: " + fCurried());
+
+        x = 4;
+
+        Debug.Log("x has changed to " + x);
+
+        Debug.Log("fUncurried: " + fUncurried());
+        Debug.Log("fCurried: " + fCurried());
+
+        //END TESTING SECTION
+
+    }
 }
