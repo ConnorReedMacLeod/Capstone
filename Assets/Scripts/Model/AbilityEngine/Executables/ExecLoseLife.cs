@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Can create executables like ...= new ExecLoseHealth(){chrTarget = ..., nAmount = ...};
+//Can create executables like ...= new ExecLoseLife(){chrTarget = ..., nAmount = ...};
 
-public class ExecLoseHealth : Executable {
+public class ExecLoseLife : Executable {
 
     public Chr chrTarget;
     public int nAmount;

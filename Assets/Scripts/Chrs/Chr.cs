@@ -193,6 +193,15 @@ public class Chr : MonoBehaviour {
         }
     }
 
+    //Get a refernce to the enemy player
+    public Player GetEnemyPlayer() {
+        if (plyrOwner.id == 0) {
+            return Match.Get().arPlayers[1];
+        } else {
+            return Match.Get().arPlayers[0];
+        }
+    }
+
     // Used to initiallize information fields of the Chr
     // Call this after creating to set information
     public void InitChr(Player _plyrOwner, int _id, BaseChr baseChr){

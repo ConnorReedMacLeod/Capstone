@@ -48,7 +48,6 @@ public class Player : MonoBehaviour{
         }
 
         //TODO:: Make this more sophisticated
-        Debug.Log(iBlocker);
         if (iBlocker != -1) {
             arChr[iBlocker].bBlocker = false;
         }

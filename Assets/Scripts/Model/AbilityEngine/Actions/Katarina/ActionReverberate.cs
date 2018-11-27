@@ -25,16 +25,8 @@ public class ActionReverberate : Action {
     }
 
     override public void Execute() {
-        //It's a bit awkward that you have to do this typecasting, 
-        // but at least it's eliminated from the targetting lambda
 
-        int indexTargetPlayer = 0;
-        //Ensure we target the other player
-        if (indexTargetPlayer == chrOwner.plyrOwner.id) { 
-            indexTargetPlayer = 1;
-        }
-
-        Player tar = Match.Get().arPlayers[indexTargetPlayer];
+        Player tar = chrOwner.GetEnemyPlayer();
 
         stackClauses.Push(new Clause() {
             fExecute = () => {

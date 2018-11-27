@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 //TODO probably extend this class for visible/locked/duration interactions rather than using bool flags
-public class Soul {
+public abstract class Soul {
 
     public string sName;
 
@@ -26,9 +26,9 @@ public class Soul {
 
     public List<TriggerEffect> lstTriggers;
 
-    public System.Action funcOnApplication;
-    public System.Action funcOnRemoval;
-    public System.Action funcOnExpiration; //Specifically when the soul effect reaches the end of its duration
+    public virtual void funcOnApplication() { } //By default, don't do anything
+    public virtual void funcOnRemoval() { } //Also do nothing
+    public virtual void funcOnExpiration() { } //Specifically when the soul effect reaches the end of its duration
 
     public void OnApply() {
 
@@ -45,9 +45,8 @@ public class Soul {
             }
         }
 
-        if (funcOnApplication != null) {
-            funcOnApplication();
-        }
+        funcOnApplication();
+
     }
 
     public void OnRemoval() {
@@ -59,11 +58,10 @@ public class Soul {
             }
         }
 
-        if (funcOnRemoval != null) {
-            funcOnRemoval();
-        }
+        
+        funcOnRemoval();
 
-        if(bDuration == true && funcOnExpiration != null) {
+        if(bDuration == true && nCurDuration == 0) {
             funcOnExpiration();
         }
 
