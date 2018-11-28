@@ -15,9 +15,9 @@ public class ChrSophidia : BaseChr {
     //Defines all of a character's unique actions
     public override void SetActions() {
 
-        chrOwner.arActions[0] = new ActionFireball(chrOwner);
-        chrOwner.arActions[1] = new ActionFireball(chrOwner);
-        chrOwner.arActions[2] = new ActionFireball(chrOwner);
+        chrOwner.arActions[0] = new ActionHiss(chrOwner);
+        chrOwner.arActions[1] = new ActionVenemousBite(chrOwner);
+        chrOwner.arActions[2] = new ActionSnakeLaunch(chrOwner);
         chrOwner.arActions[3] = new ActionHeal(chrOwner);
 
         chrOwner.arActions[7] = new ActionRest(chrOwner);

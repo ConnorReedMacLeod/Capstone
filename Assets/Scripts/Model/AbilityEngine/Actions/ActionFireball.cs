@@ -35,7 +35,7 @@ public class ActionFireball : Action {
             fExecute = () => {
                 Debug.Log("This Fireball Clause put an ExecDamage on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                    chrOwner = this.chrOwner,
+                    chrSource = this.chrSource,
                     chrTarget = tar,
                     nDamage = 10,
                     fDelay = 1.0f,
@@ -48,43 +48,11 @@ public class ActionFireball : Action {
             fExecute = () => {
                 Debug.Log("Fireball's second clause put an ExecApplySoul on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-                    chrOwner = this.chrOwner,
-                    soulContainerTarget = tar.soulContainer,
+                    chrSource = this.chrSource,
+                    chrTarget = tar,
 
-                    funcCreateSoul = () => {
-                        return new Soul() {
-                            sName = "Test",
-                            bVisible = true,
-                            bDuration = true,
-
-                            nMaxDuration = 4,
-
-                            funcOnApplication = () => {
-                                Debug.Log("Fireball's OnApplication function has been called");
-                            },
-
-                            lstTriggers = new List<Soul.TriggerEffect>() {
-                                //Add an effect that will cause a burn at the end of each turn
-                                new Soul.TriggerEffect{
-                                    sub = ExecTurnEndTurn.subAllPostTrigger,
-                                    cb = (target, args) => {
-                                        Debug.Log("We have been triggered at the end of turn to add a burn damage exec");
-                                        ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                                            chrOwner = this.chrOwner,
-                                            chrTarget = tar,
-                                            nDamage = 5,
-                                            fDelay = 1.0f,
-                                            sLabel = tar.sName + " is Burning"
-                                        });
-
-                                    }
-                                }
-                            },
-
-                            funcOnRemoval = () => {
-                                Debug.Log("Fireball's OnRemoval function has been called");
-                            }
-                        };
+                    funcCreateSoul = (_chrSource, _chrTarget) => {
+                        return new SoulBurning(_chrSource, _chrTarget);
                     },
 
                     fDelay = 1.0f,

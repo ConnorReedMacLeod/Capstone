@@ -37,7 +37,7 @@ public class ActionExplosion : Action {
                     Debug.Log("This Explosion Clause put an ExecDamage on the stack");
                     //TODO:: Organize this in the correct order
                     ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                        chrOwner = this.chrOwner,
+                        chrSource = this.chrSource,
                         chrTarget = tar.arChr[i],
                         nDamage = 5,
                         fDelay = 1.0f,

@@ -4,7 +4,9 @@ using UnityEngine;
 
 public abstract class Executable {
 
-    public Chr chrOwner;
+    public Chr chrSource;
+    public Chr chrTarget;
+
     public string sLabel;
     public float fDelay;
 

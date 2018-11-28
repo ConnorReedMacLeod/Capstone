@@ -46,7 +46,7 @@ public class ActionCacaphony : Action {
                 Debug.Log("This Cacaphony Clause put an ExecStun on the stack");
 
                 ContAbilityEngine.Get().AddExec(new ExecStun() {
-                    chrOwner = this.chrOwner,
+                    chrSource = this.chrSource,
                     chrTarget = tar,
                     nAmount = nToFatigue,
                     fDelay = 1.0f,
@@ -56,7 +56,7 @@ public class ActionCacaphony : Action {
                 Debug.Log("This Cacaphony Clause put an ExecDamage on the stack");
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                    chrOwner = this.chrOwner,
+                    chrSource = this.chrSource,
                     chrTarget = tar,
                     nDamage = nToDamage,
                     fDelay = 1.0f,

@@ -6,9 +6,7 @@ using UnityEngine;
 
 public class ExecApplySoul : Executable {
 
-    public SoulContainer soulContainerTarget;
-
-    public delegate Soul FuncCreateSoul();
+    public delegate Soul FuncCreateSoul(Chr _chrSource, Chr _chrTarget);
 
     public FuncCreateSoul funcCreateSoul;
 
@@ -33,7 +31,7 @@ public class ExecApplySoul : Executable {
 
         Debug.Log("In ExecApplySoul's execute method");
 
-        soulContainerTarget.ApplySoul(funcCreateSoul());
+        chrTarget.soulContainer.ApplySoul(funcCreateSoul(chrSource, chrTarget));
 
         base.Execute();
     }
