@@ -11,7 +11,7 @@ public class ActionRest : Action {
 		sName = "Rest";
 		type = ActionType.ACTIVE;
 
-        chrOwner = _chrOwner;
+        chrSource = _chrOwner;
 
 		arCost = new int[]{0,0,0,0,0};
 

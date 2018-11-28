@@ -32,7 +32,7 @@ public class ActionSnakeLaunch : Action {
             fExecute = () => {
                 Debug.Log("This Snake Launch Clause put an ExecDamage on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                    chrOwner = this.chrOwner,
+                    chrSource = this.chrSource,
                     chrTarget = tar,
                     nDamage = 20,
                     fDelay = 1.0f,
@@ -45,7 +45,7 @@ public class ActionSnakeLaunch : Action {
             fExecute = () => {
                 Debug.Log("This Snake Launch Clause put an ExecDamage on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                    chrOwner = this.chrOwner,
+                    chrSource = this.chrSource,
                     chrTarget = tar,
                     nDamage = 20,
                     fDelay = 1.0f,
@@ -58,11 +58,11 @@ public class ActionSnakeLaunch : Action {
             fExecute = () => {
                 Debug.Log("This Snake Launch Clause put an LoseLife on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecLoseLife() {
-                    chrOwner = this.chrOwner,
-                    chrTarget = this.chrOwner,
-                    nAmount = 5,
+                    chrSource = this.chrSource,
+                    chrTarget = this.chrSource,
+                    nLifeLoss = 5,
                     fDelay = 1.0f,
-                    sLabel = this.chrOwner.sName + " has lost her Snakes"
+                    sLabel = this.chrSource.sName + " has lost her Snakes"
                 });
             }
         });
@@ -71,11 +71,11 @@ public class ActionSnakeLaunch : Action {
             fExecute = () => {
                 Debug.Log("This Snake Launch Clause put an LoseLife on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecLoseLife() {
-                    chrOwner = this.chrOwner,
-                    chrTarget = this.chrOwner,
-                    nAmount = 5,
+                    chrSource = this.chrSource,
+                    chrTarget = this.chrSource,
+                    nLifeLoss = 5,
                     fDelay = 1.0f,
-                    sLabel = this.chrOwner.sName + " has lost her Snakes"
+                    sLabel = this.chrSource.sName + " has lost her Snakes"
                 });
             }
         });

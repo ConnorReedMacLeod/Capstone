@@ -19,7 +19,7 @@ public class Action { //This should probably be made abstract
 
     public int nActionCost; // How many action 'points' this ability uses - cantrips would cost 0
 
-	public Chr chrOwner;
+	public Chr chrSource;
 
 	public bool bCharges;
 	public int nCharges;
@@ -34,7 +34,7 @@ public class Action { //This should probably be made abstract
 
 	public Action(int _nArgs, Chr _chrOwner){
 		nArgs = _nArgs;
-		chrOwner = _chrOwner;
+		chrSource = _chrOwner;
 
 
 		arArgs = new TargetArg[nArgs];
@@ -43,7 +43,7 @@ public class Action { //This should probably be made abstract
 
 	public void SetArgOwners(){
 		for (int i = 0; i < nArgs; i++) {
-			arArgs [i].setOwner(chrOwner);
+			arArgs [i].setOwner(chrSource);
 		}
 	}
 
@@ -75,12 +75,12 @@ public class Action { //This should probably be made abstract
         //       after the ability finishes resolving
 
 		nCurCD = nCd;
-		chrOwner.QueueFatigue(nFatigue);
+		chrSource.QueueFatigue(nFatigue);
 
-        Debug.Assert(chrOwner.nCurActionsLeft >= nActionCost);
-        chrOwner.nCurActionsLeft -= nActionCost;
+        Debug.Assert(chrSource.nCurActionsLeft >= nActionCost);
+        chrSource.nCurActionsLeft -= nActionCost;
 
-		if (chrOwner.plyrOwner.mana.SpendMana (arCost)) {
+		if (chrSource.plyrOwner.mana.SpendMana (arCost)) {
             //Then the mana was paid properly
 
             while (stackClauses.Count != 0) {
@@ -100,7 +100,7 @@ public class Action { //This should probably be made abstract
 	public virtual bool VerifyLegal(){// Maybe this doesn't need to be virtual
 
 		//Check if you have enough mana
-		if (!chrOwner.plyrOwner.mana.HasMana (arCost)) {
+		if (!chrSource.plyrOwner.mana.HasMana (arCost)) {
 			Debug.Log ("Not enough mana");
 			return false;
 		}
@@ -111,7 +111,7 @@ public class Action { //This should probably be made abstract
 			return false;
 		}
 
-        if (nActionCost > chrOwner.nMaxActionsLeft) {
+        if (nActionCost > chrSource.nMaxActionsLeft) {
             Debug.Log("We have already used all non-cantrip actions for the turn");
             return false;
         }

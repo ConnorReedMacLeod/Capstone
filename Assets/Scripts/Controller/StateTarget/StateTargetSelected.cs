@@ -20,7 +20,7 @@ public class StateTargetSelected : StateTarget {
         // When we've clicked an action, use that action
 
         // But first, check if targetting is locked
-        if (((ViewAction)target).mod.chrOwner.bLockedTargetting) {
+        if (((ViewAction)target).mod.chrSource.bLockedTargetting) {
             Debug.Log("We can't choose an action for a locked character");
             return;
         }
@@ -30,7 +30,7 @@ public class StateTargetSelected : StateTarget {
             return;
         }
 
-        if(((ViewAction)target).mod.chrOwner.nCurActionsLeft < ((ViewAction)target).mod.nActionCost) {
+        if(((ViewAction)target).mod.chrSource.nCurActionsLeft < ((ViewAction)target).mod.nActionCost) {
             Debug.Log("We can't use an active when we've already used our active for the turn");
             return;
         }

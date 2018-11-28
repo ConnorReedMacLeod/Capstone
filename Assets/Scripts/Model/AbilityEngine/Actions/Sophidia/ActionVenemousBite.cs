@@ -31,13 +31,13 @@ public class ActionVenemousBite : Action {
 
     override public void Execute() {
 
-        Chr tar = chrOwner.GetEnemyPlayer().GetBlocker();
+        Chr tar = chrSource.GetEnemyPlayer().GetBlocker();
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
                 Debug.Log("This VenemousBite Clause put an ExecDamage on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                    chrOwner = this.chrOwner,
+                    chrSource = this.chrSource,
                     chrTarget = tar,
                     nDamage = 5,
                     fDelay = 1.0f,
@@ -50,66 +50,13 @@ public class ActionVenemousBite : Action {
             fExecute = () => {
                 Debug.Log("Venemous Bite's second clause put an ExecApplySoul on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-                    chrOwner = this.chrOwner,
-                    soulContainerTarget = tar.soulContainer,
+                    chrSource = this.chrSource,
+                    chrTarget = tar,
 
-                    funcCreateSoul = () => {
-                        return new Soul() {
-                            sName = "Envenomed",
-                            bVisible = true,
-                            bDuration = true,
-
-                            nMaxDuration = 3,
-
-                            funcOnApplication = () => {
-                                Debug.Log("Envenomed's OnApplication function has been called");
-                                
-                            },
-
-                            lstTriggers = new List<Soul.TriggerEffect>() {
-                                //Add an effect that will cause a poison life loss at the end of each turn
-                                new Soul.TriggerEffect{
-                                    sub = ExecTurnEndTurn.subAllPostTrigger,
-                                    cb = (target, args) => {
-                                        Debug.Log("We have been triggered at the end of turn to add a poison life loss exec");
-                                        ContAbilityEngine.Get().AddExec(new ExecLoseLife() {
-                                            chrOwner = this.chrOwner,
-                                            chrTarget = tar,
-                                            nAmount = 5,
-                                            fDelay = 1.0f,
-                                            sLabel = tar.sName + " is losing life from poison"
-                                        });
-
-                                    }
-                                },
-                                new Soul.TriggerEffect{
-                                    sub = ExecDealDamage.subAllPostTrigger,
-                                    cb = (target, args) => {
-                                        Chr chrDamageTaker = ((ExecDealDamage)args[0]).chrTarget;
-
-
-                                        Debug.Log("Damage has been dealt to " + chrDamageTaker + ".  Should " + chrOwner.sName + "'s Envenomed duration increase?");
-                                        if(chrOwner == chrDamageTaker) {
-                                            Debug.Log("No, it shouldn't increase");
-                                            return;
-                                        }
-
-                                        Debug.Log("Yes, it should increase");
-                                        
-                                        
-                                    }
-                                }
-
-                            },
-
-                            funcOnRemoval = () => {
-                                Debug.Log("Envenomed's OnRemoval function has been called");
-                            }
-                        };
-                    },
-
-                    fDelay = 1.0f,
-                    sLabel = "Applying Burn Effect"
+                    funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
+                        return new SoulEnvenomed(_chrSource, _chrTarget);
+                    }
+               
                 });
             }
         });

@@ -33,25 +33,13 @@ public class ActionFortissimo : Action {
             fExecute = () => {
                 Debug.Log("Putting Fortissimo buff on self");
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-                    chrOwner = this.chrOwner,
-                    soulContainerTarget = chrOwner.soulContainer,
+                    chrSource = this.chrSource,
+                    chrTarget = this.chrSource,
 
-                    funcCreateSoul = () => {
-                        return new Soul() {
-                            sName = "Fortissimo",
-                            bVisible = true,
-                            bDuration = true,
+                    funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
 
-                            nMaxDuration = 4,
+                        return new SoulFortissimo(_chrSource, _chrTarget);
 
-                            funcOnApplication = () => {
-                                Debug.Log("TODO:: Apply a Power and Defense Buff now");
-                            },
-
-                            funcOnRemoval = () => {
-                                Debug.Log("TODO:: Remove the Power and Defense Buff now");
-                            }
-                        };
                     },
 
                     fDelay = 1.0f,

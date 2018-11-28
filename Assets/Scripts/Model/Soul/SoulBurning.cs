@@ -4,7 +4,18 @@ using UnityEngine;
 
 public class SoulBurning : Soul {
 
-    public SoulBurning() : base(){
+    public int nDamage;
+
+    public SoulBurning(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget){
+
+        sName = "Test";
+
+        nDamage = 5;
+
+        bVisible = true;
+        bDuration = true;
+        nMaxDuration = 4;
+
 
         lstTriggers = new List<TriggerEffect>() {
             new TriggerEffect() {
@@ -13,11 +24,12 @@ public class SoulBurning : Soul {
                 {
                     Debug.Log("We have been triggered at the end of turn to add a burn damage exec");
                     ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                        chrOwner = this.chrOwner,
-                        chrTarget = tar,
-                        nDamage = 5,
+                        chrSource = this.chrSource,
+                        chrTarget = this.chrTarget,
+                        nDamage = this.nDamage,
+
                         fDelay = 1.0f,
-                        sLabel = tar.sName + " is Burning"
+                        sLabel = this.chrTarget.sName + " is Burning"
                     });
 
                  }
@@ -26,14 +38,14 @@ public class SoulBurning : Soul {
     }
 
     public override void funcOnApplication() {
-        Debug.Log("Burning has been applied");
+        Debug.Log(sName + " has been applied");
     }
 
     public override void funcOnRemoval() {
-        Debug.Log("Burning has been removed");
+        Debug.Log(sName + " has been removed");
     }
 
     public override void funcOnExpiration() {
-        Debug.Log("Burning has expired");
+        Debug.Log(sName + " has expired");
     }
 }

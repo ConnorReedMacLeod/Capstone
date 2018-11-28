@@ -26,7 +26,7 @@ public class ActionReverberate : Action {
 
     override public void Execute() {
 
-        Player tar = chrOwner.GetEnemyPlayer();
+        Player tar = chrSource.GetEnemyPlayer();
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
@@ -34,7 +34,7 @@ public class ActionReverberate : Action {
                     Debug.Log("This Reverberate Clause put an ExecDamage on the stack");
                     //TODO:: Organize this in the correct order
                     ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                        chrOwner = this.chrOwner,
+                        chrSource = this.chrSource,
                         chrTarget = tar.arChr[i],
                         nDamage = 5,
                         fDelay = 1.0f,

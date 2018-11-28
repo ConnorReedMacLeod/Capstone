@@ -29,7 +29,7 @@ public class ActionHiss : Action {
 
         int indexTargetPlayer = 0;
         //Ensure we target the other player
-        if (indexTargetPlayer == chrOwner.plyrOwner.id) {
+        if (indexTargetPlayer == chrSource.plyrOwner.id) {
             indexTargetPlayer = 1;
         }
 
@@ -41,25 +41,11 @@ public class ActionHiss : Action {
                     Debug.Log("This Hiss Clause put an ApplySoul on the stack");
                     //TODO:: Organize this in the correct order
                     ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-                        chrOwner = this.chrOwner,
-                        soulContainerTarget = tar.arChr[i].soulContainer,
+                        chrSource = this.chrSource,
+                        chrTarget = tar.arChr[i],
 
-                        funcCreateSoul = () => {
-                            return new Soul() {
-                                sName = "Spooked",
-                                bVisible = true,
-                                bDuration = true,
-
-                                nMaxDuration = 3,
-
-                                funcOnApplication = () => {
-                                    Debug.Log("TODO:: Apply a Power debuff now");
-                                },
-
-                                funcOnRemoval = () => {
-                                    Debug.Log("TODO:: Remove the Power debuff now");
-                                }
-                            };
+                        funcCreateSoul = (_chrSource, _chrTarget) => {
+                            return new SoulSpooked(_chrSource, _chrTarget);
                         },
 
                         fDelay = 1.0f,

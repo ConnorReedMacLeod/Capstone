@@ -7,7 +7,7 @@ using UnityEngine;
 public class ExecLoseLife : Executable {
 
     public Chr chrTarget;
-    public int nAmount;
+    public int nLifeLoss;
 
 
 
@@ -31,7 +31,7 @@ public class ExecLoseLife : Executable {
 
     public override void Execute() {
 
-        chrTarget.ChangeHealth(-nAmount);
+        chrTarget.ChangeHealth(-nLifeLoss);
 
         base.Execute();
     }
