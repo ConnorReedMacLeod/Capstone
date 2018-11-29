@@ -16,7 +16,7 @@ public class SoulContainer : MonoBehaviour {
         List<Soul> lstVisibleSoul = new List<Soul>();
 
         //Search through the list from the back (most recently added) to the front
-        for(int i=lstSoul.Count-1; i>=0; i--) {
+        for(int i=0; i < lstSoul.Count; i++) {
             if(lstSoul[i].bVisible == true) {
                 lstVisibleSoul.Add(lstSoul[i]);
             }
@@ -72,6 +72,11 @@ public class SoulContainer : MonoBehaviour {
 
             if(lstVisibleSoul.Count == nMaxVisibleSoul) {
                 //Then were already using all of our slots
+                Debug.Log("USING ALL OF OUR SLOTS RIGHT NOW");
+
+                Debug.Log("0th is " + lstVisibleSoul[0]);
+                Debug.Log("1th is " + lstVisibleSoul[1]);
+                Debug.Log("2th is " + lstVisibleSoul[2]);
 
                 //So remove the oldest visible effect
                 Soul soulRemoved = lstVisibleSoul[0];
