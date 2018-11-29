@@ -6,6 +6,8 @@ public class SoulContainer : MonoBehaviour {
 
     public List<Soul> lstSoul = new List<Soul>();//TODO:: Lists have pretty bad runtime as we're using them  - worth changing?
 
+    public Chr chrOwner;
+
     public int nMaxVisibleSoul;
 
     public Subject subVisibleSoulUpdate = new Subject();
@@ -15,7 +17,6 @@ public class SoulContainer : MonoBehaviour {
         //TODO:: Just make this consistently maintained so we don't have to recalculate it each time
         List<Soul> lstVisibleSoul = new List<Soul>();
 
-        //Search through the list from the back (most recently added) to the front
         for(int i=0; i < lstSoul.Count; i++) {
             if(lstSoul[i].bVisible == true) {
                 lstVisibleSoul.Add(lstSoul[i]);
@@ -63,8 +64,6 @@ public class SoulContainer : MonoBehaviour {
     }
 
     public void ApplySoul(Soul newSoul) {
-
-        Debug.Log("In SoulContainer's ApplySoul method");
         
         if(newSoul.bVisible == true) {
             //Then check if we have enough slots
@@ -72,11 +71,6 @@ public class SoulContainer : MonoBehaviour {
 
             if(lstVisibleSoul.Count == nMaxVisibleSoul) {
                 //Then were already using all of our slots
-                Debug.Log("USING ALL OF OUR SLOTS RIGHT NOW");
-
-                Debug.Log("0th is " + lstVisibleSoul[0]);
-                Debug.Log("1th is " + lstVisibleSoul[1]);
-                Debug.Log("2th is " + lstVisibleSoul[2]);
 
                 //So remove the oldest visible effect
                 Soul soulRemoved = lstVisibleSoul[0];
@@ -99,7 +93,27 @@ public class SoulContainer : MonoBehaviour {
         //Let others know that the visible soul MAY have changed (not necessarily)
         subVisibleSoulUpdate.NotifyObs(this);
 
+        PrintAllSoul();
+
     }
+
+    public void PrintAllSoul() {
+        Debug.Log("********** Printing all Soul for " + chrOwner.sName + "*****************");
+        for (int i = 0; i < lstSoul.Count; i++) {
+            string sVisible = "";
+            string sDuration = "";
+            if (lstSoul[i].bVisible == true) {
+                sVisible = "(Visible)";
+            }
+            if (lstSoul[i].bDuration == true) {
+                sDuration = " with duration " + lstSoul[i].nCurDuration + "/" + lstSoul[i].nMaxDuration;
+            }
+            Debug.Log("[" + i + "] - " + lstSoul[i].sName + " " + sVisible + sDuration);
+        }
+        Debug.Log("*************************************************************************");
+    }
+
+
 
 
 	// Use this for initialization

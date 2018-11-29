@@ -32,7 +32,9 @@ public class ContInfo : MonoBehaviour{
     }
 
     public void cbActStopHover(Object target, params object[] args) {
-        if (bLocked == false && ((ViewAction)target).mod == viewInfoPanel.viewInfoAction.mod) {
+        if (bLocked == false && 
+            ((viewInfoPanel.viewInfoAction == null) || //If nothing is currently being shown
+            ((ViewAction)target).mod == viewInfoPanel.viewInfoAction.mod)) {
             // First ensure that what we're leaving is the current displayed ability
             //When we stop hovering over the thing we're displaying, stop displaying it
             viewInfoPanel.ClearPanel();

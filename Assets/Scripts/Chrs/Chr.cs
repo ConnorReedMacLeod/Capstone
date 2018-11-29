@@ -235,7 +235,8 @@ public class Chr : MonoBehaviour {
 			stateSelect = STATESELECT.IDLE;
 
             bLockedTargetting = true;
-		}
+
+        }
 
 	}
 }
