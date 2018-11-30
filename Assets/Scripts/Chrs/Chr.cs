@@ -40,6 +40,9 @@ public class Chr : MonoBehaviour {
 	public int nCurHealth;          //The character's current health
 	public int nMaxHealth;          //The character's max health
 
+    public int nPower;              //The character's current power
+    public int nDefense;            //The character's current defense
+
     public int nCurArmour;          //The character's current armour
 
     public bool bLockedTargetting;  //Whether or not the character can select their action
@@ -69,6 +72,8 @@ public class Chr : MonoBehaviour {
     public Subject subHealthChange = new Subject();
     public Subject subArmourChange = new Subject();
     public Subject subStatusChange = new Subject();
+    public Subject subPowerChange = new Subject();
+    public Subject subDefenseChange = new Subject();
 
 
     // Prepare a certain amount of fatigue to be applied to this character
@@ -129,6 +134,30 @@ public class Chr : MonoBehaviour {
 
         subArmourChange.NotifyObs();
         
+    }
+
+    public int GetPower() {
+        return nPower;
+    }
+
+    public void ChangeFlatPower(int nChange) {
+        //TODO:: Make this a decorator pattern in some way
+        // (probably using a generalized system)
+        nPower += nChange;
+
+        subPowerChange.NotifyObs();
+    }
+
+    public int GetDefense() {
+        return nDefense;
+    }
+
+    public void ChangeFlatDefense(int nChange) {
+        //TODO:: Make this a decorator pattern in some way
+        // (probably using a generalized system)
+        nDefense += nChange;
+
+        subDefenseChange.NotifyObs();
     }
 
     public void ChangeHealth(int nChange) {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Can create executables like ...= new Exec(){soulContainerTarget = ..., funcApplySoul = ...};
+//Can create executables like ...= new Exec(){chrSource = ..., chrTarget = ..., funcApplySoul = ...};
 
 public class ExecApplySoul : Executable {
 
