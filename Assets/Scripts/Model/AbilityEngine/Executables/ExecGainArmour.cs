@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Can create executables like ...= new ExecLoseLife(){chrTarget = ..., nLifeLoss = ...};
+//Can create executables like ...= new ExecGainArmour(){chrTarget = ..., nAmount = ...};
 
-public class ExecLoseLife : Executable {
+public class ExecGainArmour : Executable {
 
-    public int nLifeLoss;
+    public int nArmour;
 
 
 
@@ -30,7 +30,11 @@ public class ExecLoseLife : Executable {
 
     public override void Execute() {
 
-        chrTarget.ChangeHealth(-nLifeLoss);
+        //TODO:: Add a temporary armour system - likely a list
+        //       of buffs, sorted (by remaining duration?) that can include
+        //       potential triggers for when that section of armour
+        //       is removed?   maybe too fancy
+        chrTarget.ChangeFlatArmour(nArmour);
 
         base.Execute();
     }

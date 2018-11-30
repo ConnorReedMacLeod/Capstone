@@ -15,6 +15,7 @@ public class ViewChr : ViewInteractive {
 	public GameObject goBorder;        //Border reference
 	public GameObject goPortrait;       //Portrait Reference
     public Text txtHealth;              //Textfield Reference
+    public Text txtArmour;              //Textfield Reference
     public Text txtFatigue;             //Fatigue Overlay Reference
     public SpriteMask maskPortrait;     //SpriteMask Reference
     public ViewSoulContainer viewSoulContainer;  //SoulContainer Reference
@@ -125,6 +126,7 @@ public class ViewChr : ViewInteractive {
         mod.subFatigueChange.Subscribe(cbUpdateFatigue);
 		mod.subHealthChange.Subscribe(cbUpdateTxtHealth);
         mod.subStatusChange.Subscribe(cbUpdateStatus);
+        mod.subArmourChange.Subscribe(cbUpdateArmour);
 
 	}
 
@@ -140,10 +142,17 @@ public class ViewChr : ViewInteractive {
         }
     }
 
+    public void cbUpdateArmour(Object target, params object[] args) {
+        if (mod.nCurArmour > 0) {
+            txtArmour.text = "[" + mod.nCurArmour.ToString() + "]";
+        } else {
+            txtArmour.text = "";
+        }
+    }
 
-	//TODO:: Make this a state machine
+    //TODO:: Make this a state machine
     //Updates the character's state (SELECTED, TARGETTING, UNSELECTED)
-	void cbUpdateStatus(Object target, params object[] args) {
+    void cbUpdateStatus(Object target, params object[] args) {
 
 		//Checks if character status has changed
 		if (lastStateSelect != mod.stateSelect) {

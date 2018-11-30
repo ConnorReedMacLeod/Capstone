@@ -40,6 +40,8 @@ public class Chr : MonoBehaviour {
 	public int nCurHealth;          //The character's current health
 	public int nMaxHealth;          //The character's max health
 
+    public int nCurArmour;          //The character's current armour
+
     public bool bLockedTargetting;  //Whether or not the character can select their action
     public Action[] arActions;      //The characters actions
     public static int nActions = 8; //Number of actions the character can perform
@@ -65,6 +67,7 @@ public class Chr : MonoBehaviour {
     public static Subject subAllFatigueChange = new Subject();
 
     public Subject subHealthChange = new Subject();
+    public Subject subArmourChange = new Subject();
     public Subject subStatusChange = new Subject();
 
 
@@ -114,6 +117,18 @@ public class Chr : MonoBehaviour {
         for (int i = 0; i < Chr.nActions; i++) {
             arActions[i].Recharge();
         }
+    }
+
+    public void ChangeFlatArmour(int nChange) {
+
+        nCurArmour += nChange;
+
+        if(nCurArmour < 0) {
+            Debug.LogError("ERROR - " + sName + "'s armour is at " + nCurArmour);
+        }
+
+        subArmourChange.NotifyObs();
+        
     }
 
     public void ChangeHealth(int nChange) {

@@ -9,6 +9,8 @@ public abstract class Soul {
     public Chr chrSource;     //A reference to the character that applied this soul effect
     public Chr chrTarget;     //A reference to the character this soul effect is applied to
 
+    public SoulContainer soulContainer; //A reference to the soulcontainer containing this soul
+
     public string sName;
 
     public bool bVisible;     //Is the effect visible in the soul? (can be interacted with)
@@ -40,7 +42,10 @@ public abstract class Soul {
     public virtual void funcOnRemoval() { } //Also do nothing
     public virtual void funcOnExpiration() { } //Specifically when the soul effect reaches the end of its duration
    
-    public void OnApply() {
+    public void OnApply(SoulContainer _soulContainer) {
+
+        //Save a reference to the soulContainer we're in
+        soulContainer = _soulContainer;
 
         //If we have a duration, then set the current duration to the max
         if(bDuration == true) {
