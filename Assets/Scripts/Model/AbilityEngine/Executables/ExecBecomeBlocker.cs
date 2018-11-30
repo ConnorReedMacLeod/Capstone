@@ -2,13 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Can create executables like ...= new ExecLoseLife(){chrTarget = ..., nLifeLoss = ...};
-
-public class ExecLoseLife : Executable {
-
-    public int nLifeLoss;
-
-
+public class ExecBecomeBlocker : Executable {
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -26,12 +20,11 @@ public class ExecLoseLife : Executable {
     // This is the end of the section that should be copied and pasted
 
 
-
-
     public override void Execute() {
 
-        chrTarget.ChangeHealth(-nLifeLoss);
+        chrTarget.plyrOwner.SetBlocker(chrTarget.id);
 
         base.Execute();
     }
+
 }

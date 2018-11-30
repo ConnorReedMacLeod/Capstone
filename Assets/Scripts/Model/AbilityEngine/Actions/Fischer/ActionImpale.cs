@@ -2,28 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActionVenemousBite : Action {
+public class ActionImpale : Action {
 
-    public ActionVenemousBite(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
+    public ActionImpale(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
 
         //Since the base constructor initializes this array, we can start filling it
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); we don't have any targets
 
-        sName = "VenemousBite";
+        sName = "Impale";
         type = ActionType.ACTIVE;
 
         //Physical, Mental, Energy, Blood, Effort
-        arCost = new int[] { 0, 0, 0, 1, 1 };
+        arCost = new int[] { 1, 0, 0, 0, 0 };
 
-        nCd = 8;
-        nFatigue = 3;
+        nCd = 6;
+        nFatigue = 2;
         nActionCost = 1;
 
-        sDescription = "Deal 5 damage and apply [Envenomed](3) to the blocker.\n" +
-                       "[Envenomed]: Lose 5 Life at the end of each turn.  +1 duration each time you take damage";
+        sDescription = "Deal 20 damage to the blocker and lower their max Life by 10";
 
         SetArgOwners();
-    }        
+    }
 
     override public void Execute() {
 
@@ -31,28 +30,28 @@ public class ActionVenemousBite : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("This VenemousBite Clause put an ExecDamage on the stack");
+                Debug.Log("This Impale Clause put an ExecDamage on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
                     chrTarget = tar,
-                    nDamage = 5,
+                    nDamage = 20,
                     fDelay = 1.0f,
-                    sLabel = tar.sName + " is being bitten"
+                    sLabel = tar.sName + " is being impaled"
                 });
             }
         });
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("Venemous Bite's second clause put an ExecApplySoul on the stack");
+                Debug.Log("Impale's second clause put an ExecApplySoul on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
                     chrTarget = tar,
 
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                        return new SoulEnvenomed(_chrSource, _chrTarget);
+                        return new SoulImpaled(_chrSource, _chrTarget);
                     }
-               
+
                 });
             }
         });

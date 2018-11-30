@@ -27,7 +27,18 @@ public class ExecDealDamage : Executable {
 
     public override void Execute() {
         //TODO:: Take into account armour and power/defense
-        chrTarget.ChangeHealth(-nDamage);
+
+        int nArmouredDamage = Mathf.Min(nDamage, chrTarget.nCurArmour);
+
+        if (nArmouredDamage > 0) {
+            chrTarget.ChangeFlatArmour(-nArmouredDamage);
+        }
+
+        int nAfterArmourDamage = nDamage - nArmouredDamage;
+
+        if (nAfterArmourDamage > 0) {
+            chrTarget.ChangeHealth(-nAfterArmourDamage);
+        }
 
         base.Execute();
     }

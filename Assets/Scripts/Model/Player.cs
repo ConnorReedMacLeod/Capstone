@@ -25,8 +25,8 @@ public class Player : MonoBehaviour{
         nChrs = 3;
 
         if (id == 0) {
-            arChrTypeSelection[0] = Chr.CHARTYPE.SOHPIDIA;
-            arChrTypeSelection[1] = Chr.CHARTYPE.FISCHER;
+            arChrTypeSelection[0] = Chr.CHARTYPE.FISCHER;
+            arChrTypeSelection[1] = Chr.CHARTYPE.SOHPIDIA;
             arChrTypeSelection[2] = Chr.CHARTYPE.RAYNE;
         } else {
             arChrTypeSelection[0] = Chr.CHARTYPE.KATARINA;
