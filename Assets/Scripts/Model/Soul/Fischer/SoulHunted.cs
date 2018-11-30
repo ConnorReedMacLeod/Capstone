@@ -13,7 +13,7 @@ public class SoulHunted : Soul {
             chrTarget = this.chrTarget,
 
             funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                return new SoulClosingIn(_chrSource, _chrTarget);
+                return new SoulChangeDefense(_chrSource, _chrTarget, -5, 1);
             }
         });
         }

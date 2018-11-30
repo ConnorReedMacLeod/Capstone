@@ -16,6 +16,8 @@ public class ViewChr : ViewInteractive {
 	public GameObject goPortrait;       //Portrait Reference
     public Text txtHealth;              //Textfield Reference
     public Text txtArmour;              //Textfield Reference
+    public Text txtPower;               //Textfield Reference
+    public Text txtDefense;             //Textfield Reference
     public Text txtFatigue;             //Fatigue Overlay Reference
     public SpriteMask maskPortrait;     //SpriteMask Reference
     public ViewSoulContainer viewSoulContainer;  //SoulContainer Reference
@@ -127,6 +129,8 @@ public class ViewChr : ViewInteractive {
 		mod.subHealthChange.Subscribe(cbUpdateTxtHealth);
         mod.subStatusChange.Subscribe(cbUpdateStatus);
         mod.subArmourChange.Subscribe(cbUpdateArmour);
+        mod.subPowerChange.Subscribe(cbUpdatePower);
+        mod.subDefenseChange.Subscribe(cbUpdateDefense);
 
 	}
 
@@ -147,6 +151,26 @@ public class ViewChr : ViewInteractive {
             txtArmour.text = "[" + mod.nCurArmour.ToString() + "]";
         } else {
             txtArmour.text = "";
+        }
+    }
+
+    public void cbUpdatePower(Object target, params object[] args) {
+        if (mod.nPower > 0) {
+            txtPower.text = "+" + mod.nPower.ToString() + " [POWER]";
+        } else if (mod.nPower < 0) {
+            txtPower.text = "-" + mod.nPower.ToString() + " [POWER]";
+        } else {
+            txtPower.text = "";
+        }
+    }
+
+    public void cbUpdateDefense(Object target, params object[] args) {
+        if (mod.nPower > 0) {
+            txtDefense.text = "+" + mod.nDefense.ToString() + " [DEFENSE]";
+        } else if (mod.nPower < 0) {
+            txtDefense.text = "-" + mod.nDefense.ToString() + " [DEFENSE]";
+        } else {
+            txtDefense.text = "";
         }
     }
 
