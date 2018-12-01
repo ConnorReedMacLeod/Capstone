@@ -31,10 +31,13 @@ public class ActionImpale : Action {
         stackClauses.Push(new Clause() {
             fExecute = () => {
                 Debug.Log("This Impale Clause put an ExecDamage on the stack");
+                Damage dmgToDeal = new Damage(chrSource, tar, 20);
+
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
                     chrTarget = tar,
-                    nDamage = 20,
+                    dmg = dmgToDeal,
+
                     fDelay = 1.0f,
                     sLabel = tar.sName + " is being impaled"
                 });

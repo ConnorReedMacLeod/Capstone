@@ -31,10 +31,12 @@ public class ActionHarpoon : Action {
         stackClauses.Push(new Clause() {
             fExecute = () => {
                 Debug.Log("This Harpoon Clause put an ExecDamage on the stack");
+                Damage dmgToDeal = new Damage(chrSource, tar, 10);
+
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
                     chrTarget = tar,
-                    nDamage = 30,
+                    dmg = dmgToDeal,
                     fDelay = 1.0f,
                     sLabel = tar.sName + " is being Harpooned"
                 });

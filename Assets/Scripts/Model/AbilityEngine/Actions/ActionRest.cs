@@ -16,7 +16,7 @@ public class ActionRest : Action {
 		arCost = new int[]{0,0,0,0,0};
 
 		nCd = 0;
-        nFatigue = 3;
+        nFatigue = 0;
 
 		sDescription = _chrOwner + " has finished selecting abilities for the turn";
 

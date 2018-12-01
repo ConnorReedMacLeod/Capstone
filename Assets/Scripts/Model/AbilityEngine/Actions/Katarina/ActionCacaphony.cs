@@ -34,6 +34,10 @@ public class ActionCacaphony : Action {
         stackClauses.Push(new Clause() {
             fExecute = () => {
 
+                //TODO:: Should calculate this bonus damage/stun at execution time
+                //plan - once the decorator pattern is implemented, the GetBaseDamage() function
+                // can have a base conditional function (to check if target is currently the blocker)
+                // that can be decorated with potentially extra effects
                 int nToDamage = 20;
                 int nToFatigue = 2;
 
@@ -54,11 +58,13 @@ public class ActionCacaphony : Action {
                 });
 
                 Debug.Log("This Cacaphony Clause put an ExecDamage on the stack");
+                Damage dmgToDeal = new Damage(chrSource, tar, nToDamage);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
                     chrTarget = tar,
-                    nDamage = nToDamage,
+                    dmg = dmgToDeal,
+
                     fDelay = 1.0f,
                     sLabel = "Dealing " + nToDamage + " to " + tar.sName
                 });

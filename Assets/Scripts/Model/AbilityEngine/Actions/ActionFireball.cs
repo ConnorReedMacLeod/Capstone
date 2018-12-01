@@ -34,10 +34,12 @@ public class ActionFireball : Action {
         stackClauses.Push(new Clause() {
             fExecute = () => {
                 Debug.Log("This Fireball Clause put an ExecDamage on the stack");
+                Damage dmgToDeal = new Damage(chrSource, tar, 10);
+
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
                     chrTarget = tar,
-                    nDamage = 10,
+                    dmg = dmgToDeal,
                     fDelay = 1.0f,
                     sLabel = "Fireballing"
                 });
