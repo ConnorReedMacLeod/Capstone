@@ -24,12 +24,15 @@ public class SoulFortissimo : Soul {
 
     public override void funcOnApplication() {
         Debug.Log(sName + " has been applied");
-        Debug.Log("Should be applying a power and defense buff to " + chrTarget.sName + " right now");
+        chrTarget.ChangeFlatPower(nPowerBuff);
+        chrTarget.ChangeFlatDefense(nDefenseBuff);
+
     }
 
     public override void funcOnRemoval() {
         Debug.Log(sName + " has been removed");
-        Debug.Log("Should be removing the power and defense buff from " + chrTarget.sName + " right now");
+        chrTarget.ChangeFlatPower(-nPowerBuff);
+        chrTarget.ChangeFlatDefense(-nDefenseBuff);
     }
 
     public override void funcOnExpiration() {
