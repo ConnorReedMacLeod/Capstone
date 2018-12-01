@@ -155,7 +155,6 @@ public class ViewChr : ViewInteractive {
     }
 
     public void cbUpdateFatigue(Object target, params object[] args) {
-        Debug.Log(txtFatigue);
         if (mod.nFatigue > 0) {
             txtFatigue.text = mod.nFatigue.ToString();
         } else {

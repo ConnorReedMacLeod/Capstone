@@ -12,12 +12,19 @@ public class SoulParry : Soul {
         soulContainer.RemoveSoul(this);
 
         //Then retaliate with damage
-        ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-            chrSource = this.chrTarget,
-            chrTarget = chrDamager,
+        ContAbilityEngine.Get().AddClause(new Clause() {
+            fExecute = () => {
+                Damage dmgToDeal = new Damage(chrSource, chrDamager, 15);
 
-            nDamage = 15
+                ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
+                    chrSource = this.chrTarget,
+                    chrTarget = chrDamager,
+
+                    dmg = dmgToDeal
+                });
+            }
         });
+       
     }
 
     public SoulParry(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {

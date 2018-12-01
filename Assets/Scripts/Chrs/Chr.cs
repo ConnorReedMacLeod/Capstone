@@ -78,7 +78,7 @@ public class Chr : MonoBehaviour {
 
     // Prepare a certain amount of fatigue to be applied to this character
     public void QueueFatigue(int _nChange) {
-
+        Debug.Log("QUEUEING FATIGUE");
         nQueuedFatigue += _nChange;
 
     }
@@ -158,6 +158,37 @@ public class Chr : MonoBehaviour {
         nDefense += nChange;
 
         subDefenseChange.NotifyObs();
+    }
+
+    public void TakeDamage(Damage dmgToTake) {
+
+        //Reduce the damage to take by our defense (but ensure it doesn't go below 0)
+        int nDamageToTake = dmgToTake.GetDamage();
+
+        //If the damage isn't piercing, then reduce it by the defense amount
+        if (dmgToTake.bPiercing == false) { 
+            nDamageToTake = Mathf.Max(0, nDamageToTake - GetDefense());
+        }
+
+        int nArmouredDamage = 0;
+
+        if (dmgToTake.bPiercing == false) {
+            //Deal as much damage as we can (but not more than how much armour we have)
+            nArmouredDamage = Mathf.Min(nDamageToTake, nCurArmour);
+
+            //If there's actually damage that needs to be dealt to armour
+            if (nArmouredDamage > 0) {
+                ChangeFlatArmour(-nArmouredDamage);
+            }
+        }
+
+        //Calculate how much damage still needs to be done after armour
+        int nAfterArmourDamage = nDamageToTake - nArmouredDamage;
+
+        //If there's damage to be done, then deal it to health
+        if (nAfterArmourDamage > 0) {
+            ChangeHealth(-nAfterArmourDamage);
+        }
     }
 
     public void ChangeHealth(int nChange) {

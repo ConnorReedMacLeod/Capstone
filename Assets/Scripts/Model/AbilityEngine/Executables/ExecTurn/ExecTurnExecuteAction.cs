@@ -37,9 +37,12 @@ public class ExecTurnExecuteAction : Executable {
         } else {
             sLabel = chrNextToAct.sName + " has not set an Action";
 
-            if (chrNextToAct.nQueuedFatigue == 0) {
-                //If the character has not used any abilities that would increase their fatigue
-                //(cantrips with +0 fatigue), then we set the character to use a rest action
+            if (chrNextToAct.nQueuedFatigue == 0 && chrNextToAct.nCurActionsLeft == chrNextToAct.nMaxActionsLeft) {
+                //If the character has only used cantrip abilities that would don't increase fatigue,
+                //(so only cantrips with +0 fatigue), then we set the character to use a rest action
+
+                //We also set the QueuedFatigue so that the character doesn't go again immediately
+                chrNextToAct.nQueuedFatigue = 3;
 
                 chrNextToAct.SetRestAction();
                 chrNextToAct.ExecuteAction();

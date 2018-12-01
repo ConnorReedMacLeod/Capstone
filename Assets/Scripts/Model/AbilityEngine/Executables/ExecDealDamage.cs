@@ -6,8 +6,7 @@ using UnityEngine;
 
 public class ExecDealDamage : Executable {
 
-    public Chr chrTarget;
-    public int nDamage;
+    public Damage dmg;
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -26,19 +25,8 @@ public class ExecDealDamage : Executable {
     
 
     public override void Execute() {
-        //TODO:: Take into account armour and power/defense
 
-        int nArmouredDamage = Mathf.Min(nDamage, chrTarget.nCurArmour);
-
-        if (nArmouredDamage > 0) {
-            chrTarget.ChangeFlatArmour(-nArmouredDamage);
-        }
-
-        int nAfterArmourDamage = nDamage - nArmouredDamage;
-
-        if (nAfterArmourDamage > 0) {
-            chrTarget.ChangeHealth(-nAfterArmourDamage);
-        }
+        chrTarget.TakeDamage(dmg);
 
         base.Execute();
     }
