@@ -44,10 +44,21 @@ public class ViewAction : ViewInteractive {
     }
 
 
-    //Let the Action button know which character and id it's representing
-    public void SetModel (Action _mod){
-		mod = _mod;
+    //Let the Action button know which action it's representing
+    public void SetModel(Action _mod) {
+
+        if (mod != null) {
+            //If we we're previously showing an ability, then unsubscribe from it
+            mod.subAbilityChange.UnSubscribe(cbAbilityChanged);
+        }
+
+        mod = _mod;
         DisplayAll();
+
+        if (mod != null) {
+            //If we're now subscribed to an actual ability, then subscribe to it
+            mod.subAbilityChange.Subscribe(cbAbilityChanged);
+        }
     }
 
 	public void Start(){
@@ -66,6 +77,10 @@ public class ViewAction : ViewInteractive {
 
     public void cbChrUnselected(Object target, params object[] args) {
         SetModel(null);
+    }
+
+    public void cbAbilityChanged(Object target, params object[] args) {
+        DisplayAll();
     }
 
     public void DisplayName(){

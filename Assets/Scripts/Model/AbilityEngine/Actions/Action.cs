@@ -32,6 +32,8 @@ public class Action { //This should probably be made abstract
 
     public Stack<Clause> stackClauses = new Stack<Clause>();
 
+    public Subject subAbilityChange = new Subject();
+
 	public Action(int _nArgs, Chr _chrOwner){
 		nArgs = _nArgs;
 		chrSource = _chrOwner;
@@ -59,7 +61,9 @@ public class Action { //This should probably be made abstract
 			nCurCD = 0;
 		} else {
 			nCurCD += _nChange;
-		}
+            subAbilityChange.NotifyObs();
+
+        }
 	}
 
 	public void Recharge(){
@@ -91,11 +95,10 @@ public class Action { //This should probably be made abstract
         } else {
 			Debug.LogError ("YOU DIDN'T ACTUALLY HAVE ENOUGH MANA");
 		}
-
-
-
+        
 		Reset ();
-	}
+        subAbilityChange.NotifyObs();
+    }
 
 	public virtual bool VerifyLegal(){// Maybe this doesn't need to be virtual
 
