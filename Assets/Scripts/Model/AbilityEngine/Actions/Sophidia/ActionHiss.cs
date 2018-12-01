@@ -11,7 +11,7 @@ public class ActionHiss : Action {
         //arArgs[0] = new TargetArgTeam((own, tar) => true); // No selection necessary
 
         sName = "Hiss";
-        type = ActionType.ACTIVE;
+        type = ActionType.CANTRIP;
 
         //Physical, Mental, Energy, Blood, Effort
         arCost = new int[] { 0, 0, 0, 0, 1 };
@@ -20,7 +20,7 @@ public class ActionHiss : Action {
         nFatigue = 1;
         nActionCost = 0;
 
-        sDescription = "All enemies lose 10 [Power] for 3 turns";
+        sDescription = "[CANTRIP] All enemies lose 10 [Power] for 3 turns";
 
         SetArgOwners();
     }
