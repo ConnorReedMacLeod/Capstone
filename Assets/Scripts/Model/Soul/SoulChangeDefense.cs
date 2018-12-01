@@ -27,12 +27,12 @@ public class SoulChangeDefense : Soul {
     }
 
     public override void funcOnApplication() {
-        chrTarget.ChangeFlatPower(nDefenseChange);
+        chrTarget.ChangeFlatDefense(nDefenseChange);
         Debug.Log(sName + " has been applied");
     }
 
     public override void funcOnRemoval() {
-        chrTarget.ChangeFlatPower(-nDefenseChange);
+        chrTarget.ChangeFlatDefense(-nDefenseChange);
         Debug.Log(sName + " has been removed");
     }
 

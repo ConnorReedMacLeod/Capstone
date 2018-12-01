@@ -65,6 +65,21 @@ public class ViewChr : ViewInteractive {
                             -txtHealth.transform.localPosition.y,
                             txtHealth.transform.localPosition.z);
 
+            txtArmour.transform.localPosition =
+                new Vector3(txtArmour.transform.localPosition.x,
+                            -txtArmour.transform.localPosition.y,
+                            txtArmour.transform.localPosition.z);
+
+            txtPower.transform.localPosition =
+                new Vector3(txtPower.transform.localPosition.x,
+                            -txtPower.transform.localPosition.y,
+                            txtPower.transform.localPosition.z);
+
+            txtDefense.transform.localPosition =
+                new Vector3(txtDefense.transform.localPosition.x,
+                            -txtDefense.transform.localPosition.y,
+                            txtDefense.transform.localPosition.z);
+
         }
 	}
 
@@ -125,8 +140,9 @@ public class ViewChr : ViewInteractive {
     //Find the model, and do any setup to reflect it
 	public void InitModel(){
 		mod = GetComponent<Chr>();
+
         mod.subFatigueChange.Subscribe(cbUpdateFatigue);
-		mod.subHealthChange.Subscribe(cbUpdateTxtHealth);
+		mod.subHealthChange.Subscribe(cbUpdateHealth);
         mod.subStatusChange.Subscribe(cbUpdateStatus);
         mod.subArmourChange.Subscribe(cbUpdateArmour);
         mod.subPowerChange.Subscribe(cbUpdatePower);
@@ -134,11 +150,12 @@ public class ViewChr : ViewInteractive {
 
 	}
 
-    public void cbUpdateTxtHealth(Object target, params object[] args) {
+    public void cbUpdateHealth(Object target, params object[] args) {
         txtHealth.text = mod.nCurHealth + "/" + mod.nMaxHealth;
     }
 
     public void cbUpdateFatigue(Object target, params object[] args) {
+        Debug.Log(txtFatigue);
         if (mod.nFatigue > 0) {
             txtFatigue.text = mod.nFatigue.ToString();
         } else {
@@ -158,17 +175,17 @@ public class ViewChr : ViewInteractive {
         if (mod.nPower > 0) {
             txtPower.text = "+" + mod.nPower.ToString() + " [POWER]";
         } else if (mod.nPower < 0) {
-            txtPower.text = "-" + mod.nPower.ToString() + " [POWER]";
+            txtPower.text = mod.nPower.ToString() + " [POWER]";
         } else {
             txtPower.text = "";
         }
     }
 
     public void cbUpdateDefense(Object target, params object[] args) {
-        if (mod.nPower > 0) {
+        if (mod.nDefense > 0) {
             txtDefense.text = "+" + mod.nDefense.ToString() + " [DEFENSE]";
-        } else if (mod.nPower < 0) {
-            txtDefense.text = "-" + mod.nDefense.ToString() + " [DEFENSE]";
+        } else if (mod.nDefense < 0) {
+            txtDefense.text = mod.nDefense.ToString() + " [DEFENSE]";
         } else {
             txtDefense.text = "";
         }

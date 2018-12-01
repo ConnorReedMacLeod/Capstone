@@ -22,12 +22,12 @@ public class SoulSpooked : Soul {
 
     public override void funcOnApplication() {
         Debug.Log(sName + " has been applied");
-        Debug.Log("Should be applying a power debuff to " + chrTarget.sName + " right now");
+        chrTarget.ChangeFlatPower(-nPowerDebuff);
     }
 
     public override void funcOnRemoval() {
         Debug.Log(sName + " has been removed");
-        Debug.Log("Should be removing the power debuff from " + chrTarget.sName + " right now");
+        chrTarget.ChangeFlatPower(nPowerDebuff);
     }
 
     public override void funcOnExpiration() {
