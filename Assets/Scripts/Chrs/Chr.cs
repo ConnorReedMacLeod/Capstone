@@ -78,7 +78,7 @@ public class Chr : MonoBehaviour {
 
     // Prepare a certain amount of fatigue to be applied to this character
     public void QueueFatigue(int _nChange) {
-        Debug.Log("QUEUEING FATIGUE");
+
         nQueuedFatigue += _nChange;
 
     }
@@ -274,6 +274,21 @@ public class Chr : MonoBehaviour {
             return Match.Get().arPlayers[1];
         } else {
             return Match.Get().arPlayers[0];
+        }
+    }
+
+    public void SetAction(int i, Action actNew) {
+        //If there is an action already in this slot
+        if (arActions[i] != null) {
+            //Then call it's unequip method since it's leaving
+            arActions[i].OnUnequip();
+        }
+
+        arActions[i] = actNew;
+
+        //If we've set this to be a non-null action
+        if(arActions[i] != null) {
+            arActions[i].OnEquip();
         }
     }
 

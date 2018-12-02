@@ -15,12 +15,12 @@ public class ChrSophidia : BaseChr {
     //Defines all of a character's unique actions
     public override void SetActions() {
 
-        chrOwner.arActions[0] = new ActionHiss(chrOwner);
-        chrOwner.arActions[1] = new ActionVenemousBite(chrOwner);
-        chrOwner.arActions[2] = new ActionSnakeLaunch(chrOwner);
-        chrOwner.arActions[3] = new ActionHeal(chrOwner);
+        chrOwner.SetAction(0, new ActionHiss(chrOwner));
+        chrOwner.SetAction(1, new ActionVenemousBite(chrOwner));
+        chrOwner.SetAction(2, new ActionSnakeLaunch(chrOwner));
+        chrOwner.SetAction(3, new ActionHeal(chrOwner));
 
-        chrOwner.arActions[7] = new ActionRest(chrOwner);
+        chrOwner.SetAction(7, new ActionRest(chrOwner));
     }
 
 }

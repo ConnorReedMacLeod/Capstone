@@ -19,7 +19,7 @@ public class ActionSnakeLaunch : Action {
         nFatigue = 4;
         nActionCost = 1;
 
-        sDescription = "Deal 20 damage twice.  Lose 5 HP twice";
+        sDescription = "Deal 20 damage twice.  Lose 5 life twice";
 
         SetArgOwners();
     }

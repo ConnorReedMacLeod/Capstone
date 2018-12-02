@@ -36,6 +36,8 @@ public abstract class Soul {
         chrSource = _chrSource;
         chrTarget = _chrTarget;
 
+        nMaxStacks = 1; //by Default
+
     }
 
     public virtual void funcOnApplication() { } //By default, don't do anything

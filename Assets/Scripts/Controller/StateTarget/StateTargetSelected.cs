@@ -25,6 +25,13 @@ public class StateTargetSelected : StateTarget {
             return;
         }
 
+        //And check if it's an activatable ability (not a passive)
+        if(((ViewAction)target).mod.type == Action.ActionType.PASSIVE) {
+            Debug.Log("We can't try to activate a passive ability");
+            return;
+        }
+
+        // And check if it's on cooldown
         if(((ViewAction)target).mod.nCurCD > 0) {
             Debug.Log("We can't use an ability that's on cooldown");
             return;
