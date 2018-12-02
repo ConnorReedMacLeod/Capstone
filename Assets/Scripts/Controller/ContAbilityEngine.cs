@@ -70,7 +70,7 @@ public class ContAbilityEngine : MonoBehaviour {
 
         //Check for any replacements or triggers or something?
 
-        Debug.Log("Pushing a Clause " + clause);
+        Debug.Log("Pushing a Clause");
 
         stackClause.Push(clause);
 

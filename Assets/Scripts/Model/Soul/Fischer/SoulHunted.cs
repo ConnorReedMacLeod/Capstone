@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SoulHunted : Soul {
 
-    public int nLifeLoss;
+    public int nDefenseLoss;
 
     public void ApplyDefenseDebuff() {
 
@@ -13,7 +13,7 @@ public class SoulHunted : Soul {
             chrTarget = this.chrTarget,
 
             funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                return new SoulChangeDefense(_chrSource, _chrTarget, -5, 1);
+                return new SoulChangeDefense(_chrSource, _chrTarget, nDefenseLoss, 1);
             }
         });
         }
@@ -25,6 +25,7 @@ public class SoulHunted : Soul {
         bVisible = true;
         bDuration = false;
 
+        nDefenseLoss = -5;
 
         lstTriggers = new List<TriggerEffect>() {
 

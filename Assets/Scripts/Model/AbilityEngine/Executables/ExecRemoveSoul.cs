@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
+//Can create executables like ...= new Exec(){chrSource = ..., chrTarget = ..., soulToRemove = ...};
 
-public class ExecHeal : Executable {
+public class ExecRemoveSoul : Executable {
 
-    public int nAmount;
-
-
+    public Soul soulToRemove;
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -26,11 +24,11 @@ public class ExecHeal : Executable {
     // This is the end of the section that should be copied and pasted
 
 
-
-
     public override void Execute() {
-        //TODO:: Take into account armour and power/defense
-        chrTarget.ChangeHealth(nAmount);
+
+        Debug.Log("In ExecRemoveSoul's execute method");
+
+        chrTarget.soulContainer.RemoveSoul(soulToRemove);
 
         base.Execute();
     }
