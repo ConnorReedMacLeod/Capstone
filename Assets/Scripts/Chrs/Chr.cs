@@ -156,18 +156,18 @@ public class Chr : MonoBehaviour {
 
         //If the damage isn't piercing, then reduce it by the defense amount
         if (dmgToTake.bPiercing == false) { 
-            nDamageToTake = Mathf.Max(0, nDamageToTake - GetDefense());
+            nDamageToTake = Mathf.Max(0, nDamageToTake - pnDefense.Get());
         }
 
         int nArmouredDamage = 0;
 
         if (dmgToTake.bPiercing == false) {
             //Deal as much damage as we can (but not more than how much armour we have)
-            nArmouredDamage = Mathf.Min(nDamageToTake, nCurArmour);
+            nArmouredDamage = Mathf.Min(nDamageToTake, pnArmour.Get());
 
             //If there's actually damage that needs to be dealt to armour
             if (nArmouredDamage > 0) {
-                ChangeFlatArmour(-nArmouredDamage);
+                ChangeArmour(-nArmouredDamage);
             }
         }
 
@@ -183,7 +183,7 @@ public class Chr : MonoBehaviour {
     public void ChangeHealth(int nChange) {
         nCurHealth += nChange;
 
-        subHealthChange.NotifyObs();
+        subLifeChange.NotifyObs();
     }
 
   //Counts down the character's recharge with the timeline
@@ -301,21 +301,24 @@ public class Chr : MonoBehaviour {
 		if (bStarted == false) {
 			bStarted = true;
 
-			view = GetComponent<ViewChr> ();
-			view.Start ();
-            // Should let the view initialize itself first
-            // so that it'll be safe for us to update in our Start method
-
             nMaxActionsLeft = 1;
             nCurActionsLeft = nMaxActionsLeft;
 
             arActions = new Action[nActions];
-			nUsingAction = -1;
+            nUsingAction = -1;
 
-			stateSelect = STATESELECT.IDLE;
+            stateSelect = STATESELECT.IDLE;
 
             bLockedTargetting = true;
 
+            pnMaxHealth = new Property<int>(100);
+            pnArmour = new Property<int>(0);
+
+            pnPower = new Property<int>(0);
+            pnDefense = new Property<int>(0);
+
+            view = GetComponent<ViewChr>();
+            view.Start ();
         }
 
 	}

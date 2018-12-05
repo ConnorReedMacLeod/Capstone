@@ -6,6 +6,8 @@ public class SoulEvolved : Soul {
 
     int nPowerBuff;
 
+    public SoulChangePower soulChangePower;
+
     public SoulEvolved(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
 
         sName = "Evolved";
@@ -20,14 +22,20 @@ public class SoulEvolved : Soul {
 
 
     public override void funcOnApplication() {
+
+        //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
+        soulChangePower = new SoulChangePower(chrSource, chrTarget, nPowerBuff);
+        chrTarget.soulContainer.ApplySoul(soulChangePower);
+
         Debug.Log(sName + " has been applied");
-        chrTarget.ChangeFlatPower(nPowerBuff);
 
     }
 
     public override void funcOnRemoval() {
+
+        chrTarget.soulContainer.RemoveSoul(soulChangePower);
+
         Debug.Log(sName + " has been removed");
-        chrTarget.ChangeFlatPower(-nPowerBuff);
     }
 
     public override void funcOnExpiration() {

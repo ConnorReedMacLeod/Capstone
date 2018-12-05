@@ -26,12 +26,12 @@ public class Damage {
             //If we want to take a snapshot of the source's power as it is now
             //(so that future power changes won't change this damage)
             //then we should use LibFunc's ReturnSnapShot function
-            GetDamage = LibFunc.ReturnSnapShot<int>(nBaseDamage + chrSource.GetPower());
+            GetDamage = LibFunc.ReturnSnapShot<int>(nBaseDamage + chrSource.pnPower.Get());
 
         } else {
             //Otherwise, we want to fetch the current source's power whenever the GetDamage()
             //method is called
-            GetDamage = () => { return nBaseDamage + chrSource.GetPower(); };
+            GetDamage = () => { return nBaseDamage + chrSource.pnPower.Get(); };
         }
 
     }

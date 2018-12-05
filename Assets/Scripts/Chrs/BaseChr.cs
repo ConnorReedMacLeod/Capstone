@@ -14,8 +14,9 @@ public class BaseChr {
         chrOwner.sName = "Default";
     }
 
+    //Can Override this if you want to change base health for a particular character
     public virtual void SetMaxHealth() {
-        chrOwner.pnMaxHealth = new Property<int>(100);
+        chrOwner.pnMaxHealth.SetBase(100);
         chrOwner.nCurHealth = chrOwner.pnMaxHealth.Get();
     }
 
