@@ -38,12 +38,12 @@ public class Chr : MonoBehaviour {
     public int nCurActionsLeft;     //The number of actions left in a turn that the character can use (cantrips cost 0)
 
 	public int nCurHealth;          //The character's current health
-	public int nMaxHealth;          //The character's max health
+	public Property<int> pnMaxHealth;          //The character's max health
 
-    public int nPower;              //The character's current power
-    public int nDefense;            //The character's current defense
+    public Property<int> pnPower;              //The character's current power
+    public Property<int> pnDefense;            //The character's current defense
 
-    public int nCurArmour;          //The character's current armour
+    public Property<int> pnArmour;          //The character's current armour
 
     public bool bLockedTargetting;  //Whether or not the character can select their action
     public Action[] arActions;      //The characters actions
@@ -66,15 +66,12 @@ public class Chr : MonoBehaviour {
     public Subject subStartIdle = new Subject();
     public static Subject subAllStartIdle = new Subject();
 
+    public Subject subLifeChange = new Subject();
+    public Subject subArmourCleared = new Subject();
     public Subject subFatigueChange = new Subject();
     public static Subject subAllFatigueChange = new Subject();
 
-    public Subject subHealthChange = new Subject();
-    public Subject subArmourChange = new Subject();
     public Subject subStatusChange = new Subject();
-    public Subject subPowerChange = new Subject();
-    public Subject subDefenseChange = new Subject();
-
 
     // Prepare a certain amount of fatigue to be applied to this character
     public void QueueFatigue(int _nChange) {
@@ -124,41 +121,33 @@ public class Chr : MonoBehaviour {
         }
     }
 
-    public void ChangeFlatArmour(int nChange) {
+    //If we have lowered our armour (either by taking damage, or by
+    // having an armour buff expire), then check if we have no armour left
+    public void CheckNoArmour() {
 
-        nCurArmour += nChange;
+        if (pnArmour.Get() < 0) {
+            Debug.LogError("ERROR - " + sName + "'s armour is at " + pnArmour.Get());
+        } else if (pnArmour.Get() == 0) {
+            //Then we have used up all of our armour
 
-        if(nCurArmour < 0) {
-            Debug.LogError("ERROR - " + sName + "'s armour is at " + nCurArmour);
+            //So clear out the armour modifiers and reset armour to 0
+            pnArmour = new Property<int>(0);
+
+            //Notify all Armour buffs on this character that they should be dispelled
+            subArmourCleared.NotifyObs();
         }
 
-        subArmourChange.NotifyObs();
+    }
+
+    public void ChangeArmour(int nChange) {
+
+        pnArmour.AddModifier((nBelow) => nBelow += nChange);
+
+        CheckNoArmour();
         
     }
 
-    public int GetPower() {
-        return nPower;
-    }
 
-    public void ChangeFlatPower(int nChange) {
-        //TODO:: Make this a decorator pattern in some way
-        // (probably using a generalized system)
-        nPower += nChange;
-
-        subPowerChange.NotifyObs();
-    }
-
-    public int GetDefense() {
-        return nDefense;
-    }
-
-    public void ChangeFlatDefense(int nChange) {
-        //TODO:: Make this a decorator pattern in some way
-        // (probably using a generalized system)
-        nDefense += nChange;
-
-        subDefenseChange.NotifyObs();
-    }
 
     public void TakeDamage(Damage dmgToTake) {
 
@@ -302,6 +291,7 @@ public class Chr : MonoBehaviour {
 
         baseChr.SetName();
         baseChr.SetActions();
+        baseChr.SetMaxHealth();
 
 		view.Init ();
 	}
@@ -330,3 +320,7 @@ public class Chr : MonoBehaviour {
 
 	}
 }
+
+
+    //Add a max health initializer in each instance of a character - add an 
+    // initializer in the base chr that sets curhealth to max health

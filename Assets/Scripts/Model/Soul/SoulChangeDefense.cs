@@ -19,7 +19,7 @@ public class SoulChangeDefense : Soul {
             bDuration = false;
         } else {
             bDuration = true;
-            nMaxDuration = _nDuration;
+            pnMaxDuration = new Property<int>(_nDuration);
         }
 
 

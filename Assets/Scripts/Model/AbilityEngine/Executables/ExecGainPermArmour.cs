@@ -4,7 +4,7 @@ using UnityEngine;
 
 //Can create executables like ...= new ExecGainArmour(){chrTarget = ..., nAmount = ...};
 
-public class ExecGainArmour : Executable {
+public class ExecGainPermArmour : Executable {
 
     public int nArmour;
 
@@ -26,15 +26,10 @@ public class ExecGainArmour : Executable {
     // This is the end of the section that should be copied and pasted
 
 
-
-
     public override void Execute() {
 
-        //TODO:: Add a temporary armour system - likely a list
-        //       of buffs, sorted (by remaining duration?) that can include
-        //       potential triggers for when that section of armour
-        //       is removed?   maybe too fancy
-        chrTarget.ChangeFlatArmour(nArmour);
+        //NOTE - THIS IS FOR PERMANENT ARMOUR
+        chrTarget.ChangeArmour(nArmour);
 
         base.Execute();
     }

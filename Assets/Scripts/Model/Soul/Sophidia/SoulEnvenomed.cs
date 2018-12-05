@@ -7,7 +7,11 @@ public class SoulEnvenomed : Soul {
     public int nLifeLoss;
 
     public void IncreaseDuration() {
+
         nCurDuration++;
+
+        //Change the Max duration to be one higher
+        pnMaxDuration.SetBase(1 + pnMaxDuration.GetBase()());
 
         //Let the SoulContainer know to update the visuals (it updates everything cause it's a bit clueless)
         chrTarget.soulContainer.subVisibleSoulUpdate.NotifyObs();
@@ -21,7 +25,7 @@ public class SoulEnvenomed : Soul {
 
         bVisible = true;
         bDuration = true;
-        nMaxDuration = 3;
+        pnMaxDuration = new Property<int>(3);
 
 
         lstTriggers = new List<TriggerEffect>() {

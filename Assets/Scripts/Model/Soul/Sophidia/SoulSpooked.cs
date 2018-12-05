@@ -14,7 +14,7 @@ public class SoulSpooked : Soul {
 
         bVisible = true;
         bDuration = true;
-        nMaxDuration = 3;
+        pnMaxDuration = new Property<int>(3);
 
     }
 

@@ -14,7 +14,7 @@ public class SoulBurning : Soul {
 
         bVisible = true;
         bDuration = true;
-        nMaxDuration = 4;
+        pnMaxDuration = new Property<int>(4);
 
         //Make an initial reference for how much damage should be dealt
         Damage dmgToDeal = new Damage(chrSource, chrTarget, nBaseDamage, true);

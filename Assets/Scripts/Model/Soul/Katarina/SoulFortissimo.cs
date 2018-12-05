@@ -16,7 +16,7 @@ public class SoulFortissimo : Soul {
 
         bVisible = true;
         bDuration = true;
-        nMaxDuration = 4;
+        pnMaxDuration = new Property<int>(4);
 
     }
 

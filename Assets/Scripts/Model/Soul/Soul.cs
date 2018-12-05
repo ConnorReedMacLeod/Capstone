@@ -20,7 +20,7 @@ public abstract class Soul {
     public int nCurStacks;
 
     public bool bDuration; 
-    public int nMaxDuration;
+    public Property<int> pnMaxDuration;
     public int nCurDuration;
     
     //A structure to hold information about a single trigger needed by a Soul effect
@@ -51,7 +51,7 @@ public abstract class Soul {
 
         //If we have a duration, then set the current duration to the max
         if(bDuration == true) {
-            nCurDuration = nMaxDuration;
+            nCurDuration = pnMaxDuration.Get();
         }
 
         if (lstTriggers != null) { //Then we have some triggers to subscribe

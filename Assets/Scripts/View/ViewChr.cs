@@ -142,16 +142,17 @@ public class ViewChr : ViewInteractive {
 		mod = GetComponent<Chr>();
 
         mod.subFatigueChange.Subscribe(cbUpdateFatigue);
-		mod.subHealthChange.Subscribe(cbUpdateHealth);
+		mod.subLifeChange.Subscribe(cbUpdateLife);
+        mod.pnMaxHealth.subChanged.Subscribe(cbUpdateLife);
         mod.subStatusChange.Subscribe(cbUpdateStatus);
-        mod.subArmourChange.Subscribe(cbUpdateArmour);
-        mod.subPowerChange.Subscribe(cbUpdatePower);
-        mod.subDefenseChange.Subscribe(cbUpdateDefense);
+        mod.pnArmour.subChanged.Subscribe(cbUpdateArmour);
+        mod.pnPower.subChanged.Subscribe(cbUpdatePower);
+        mod.pnDefense.subChanged.Subscribe(cbUpdateDefense);
 
 	}
 
-    public void cbUpdateHealth(Object target, params object[] args) {
-        txtHealth.text = mod.nCurHealth + "/" + mod.nMaxHealth;
+    public void cbUpdateLife(Object target, params object[] args) {
+        txtHealth.text = mod.nCurHealth + "/" + mod.pnMaxHealth.Get();
     }
 
     public void cbUpdateFatigue(Object target, params object[] args) {

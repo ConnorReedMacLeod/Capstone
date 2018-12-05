@@ -5,6 +5,9 @@ using UnityEngine;
 public class SoulParry : Soul {
 
     public int nDamage;
+    public int nArmour;
+
+    public LinkedListNode<Property<int>.Modifier> nodeArmourModifier;
 
     public void OnDamaged(Chr chrDamager) {
 
@@ -14,7 +17,7 @@ public class SoulParry : Soul {
         //Then retaliate with damage
         ContAbilityEngine.Get().AddClause(new Clause() {
             fExecute = () => {
-                Damage dmgToDeal = new Damage(chrSource, chrDamager, 15);
+                Damage dmgToDeal = new Damage(chrSource, chrDamager, this.nDamage);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrTarget,
@@ -33,7 +36,10 @@ public class SoulParry : Soul {
 
         bVisible = true;
         bDuration = true;
-        nMaxDuration = 4;
+        pnMaxDuration = new Property<int>(4);
+
+        nDamage = 15;
+        nArmour = 15;
 
 
         lstTriggers = new List<TriggerEffect>() {
@@ -59,12 +65,30 @@ public class SoulParry : Soul {
         };
     }
 
+    //Called when the character's armour has reached 0
+    public void cbOnArmourClear(Object target, params object[] args) {
+        //Decide if we want to remove the buff or not when the armour is completely
+        // destroyed - for this particular buff, since we do more than just provide
+        // armour, then we shouldn't remove the buff.  If this only gave armour,
+        // then it would be reasonable to remove this buff when the armour is broken
+
+    }
+
     public override void funcOnApplication() {
         Debug.Log(sName + " has been applied");
+
+        //Add a modifier onto armour
+        nodeArmourModifier = chrTarget.pnArmour.AddModifier((nArmour) => nArmour + this.nArmour);
+
+        chrTarget.subArmourCleared.Subscribe(cbOnArmourClear);
     }
 
     public override void funcOnRemoval() {
         Debug.Log(sName + " has been removed");
+
+        //Remove the modifier we put onto armour
+        chrTarget.pnArmour.RemoveModifier(nodeArmourModifier);
+        chrTarget.subArmourCleared.UnSubscribe(cbOnArmourClear);
     }
 
     public override void funcOnExpiration() {
