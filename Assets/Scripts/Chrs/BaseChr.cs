@@ -14,6 +14,11 @@ public class BaseChr {
         chrOwner.sName = "Default";
     }
 
+    public virtual void SetMaxHealth() {
+        chrOwner.pnMaxHealth = new Property<int>(100);
+        chrOwner.nCurHealth = chrOwner.pnMaxHealth.Get();
+    }
+
     public virtual void SetActions() {
         chrOwner.arActions[0] = new ActionRest(chrOwner);
         chrOwner.arActions[1] = new ActionRest(chrOwner);

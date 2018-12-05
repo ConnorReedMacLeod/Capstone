@@ -119,7 +119,7 @@ public class SoulContainer : MonoBehaviour {
                 sVisible = "(Visible)";
             }
             if (lstSoul[i].bDuration == true) {
-                sDuration = " with duration " + lstSoul[i].nCurDuration + "/" + lstSoul[i].nMaxDuration;
+                sDuration = " with duration " + lstSoul[i].nCurDuration + "/" + lstSoul[i].pnMaxDuration.Get();
             }
             Debug.Log("[" + i + "] - " + lstSoul[i].sName + " " + sVisible + sDuration);
         }

@@ -12,6 +12,8 @@ public class ChrFischer : BaseChr {
         chrOwner.sName = "Fischer";
     }
 
+
+
     //Defines all of a character's unique actions
     public override void SetActions() {
         chrOwner.SetAction(0, new ActionHuntersQuarry(chrOwner));

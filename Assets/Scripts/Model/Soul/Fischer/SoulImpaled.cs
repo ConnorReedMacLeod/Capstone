@@ -5,6 +5,7 @@ using UnityEngine;
 public class SoulImpaled : Soul {
 
     public int nMaxLifeReduction;
+    public LinkedListNode<Property<int>.Modifier> modifierLifeReduction;
 
     public SoulImpaled(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
 
@@ -21,12 +22,14 @@ public class SoulImpaled : Soul {
 
     public override void funcOnApplication() {
         Debug.Log(sName + " has been applied");
-        Debug.Log("Should be applying a max health reduction static effect");
+        //Apply a modifier (and save a reference to the modifier node)) to reduce max health by 10
+        modifierLifeReduction = chrTarget.pnMaxHealth.AddModifier((int nBelow) => (nBelow - 10));
     }
 
     public override void funcOnRemoval() {
         Debug.Log(sName + " has been removed");
-        Debug.Log("Should be removing the max health reduction static effect");
+
+        chrTarget.pnMaxHealth.RemoveModifier(modifierLifeReduction);
     }
 
     public override void funcOnExpiration() {

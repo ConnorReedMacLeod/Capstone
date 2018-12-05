@@ -19,8 +19,8 @@ public class ActionBucklerParry : Action {
         nFatigue = 2;
         nActionCost = 0;
 
-        sDescription = "[CANTRIP] Gain 15 [ARMOUR] and [PARRY](4)\n" +
-                       "[PARRY]: After the next time an enemy deals damage to Fischer, he deals 15 damage to them";
+        sDescription = "[CANTRIP] Gain [PARRY](4)\n" +
+                       "[PARRY]: " + sName + " has +15[ARMOUR].  After the next time an enemy deals damage to Fischer, he deals 15 damage to them";
 
         SetArgOwners();
     }
@@ -29,20 +29,7 @@ public class ActionBucklerParry : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("This Buckler Parry Clause put an ExecGainArmour on the stack");
-                ContAbilityEngine.Get().AddExec(new ExecGainArmour() {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
-                    nArmour = 15,
-                    fDelay = 1.0f,
-                    sLabel = this.chrSource.sName + " is gaining armour"
-                });
-            }
-        });
-
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                Debug.Log("Buckler Parry's second clause put an ExecApplySoul on the stack");
+                Debug.Log("Buckler Parry's clause put an ExecApplySoul on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
                     chrTarget = this.chrSource,
