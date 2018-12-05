@@ -6,6 +6,9 @@ public class SoulChangeDefense : Soul {
 
     int nDefenseChange;
 
+    public LinkedListNode<Property<int>.Modifier> nodeDefenseModifier;
+
+
     public SoulChangeDefense(Chr _chrSource, Chr _chrTarget, int _nDefenseChange, int _nDuration = -1) : base(_chrSource, _chrTarget) {
 
         nDefenseChange = _nDefenseChange;
@@ -27,12 +30,14 @@ public class SoulChangeDefense : Soul {
     }
 
     public override void funcOnApplication() {
-        chrTarget.ChangeFlatDefense(nDefenseChange);
+
+        nodeDefenseModifier = chrTarget.pnDefense.AddModifier((nDefenseBelow) => this.nDefenseChange + nDefenseBelow);
         Debug.Log(sName + " has been applied");
     }
 
     public override void funcOnRemoval() {
-        chrTarget.ChangeFlatDefense(-nDefenseChange);
+
+        chrTarget.pnDefense.RemoveModifier(nodeDefenseModifier);
         Debug.Log(sName + " has been removed");
     }
 

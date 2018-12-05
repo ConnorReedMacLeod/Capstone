@@ -6,11 +6,13 @@ public class SoulSpooked : Soul {
 
     int nPowerDebuff;
 
+    public SoulChangePower soulChangePower;
+
     public SoulSpooked(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
 
         sName = "Spooked";
 
-        nPowerDebuff = 10;
+        nPowerDebuff = -10;
 
         bVisible = true;
         bDuration = true;
@@ -21,13 +23,20 @@ public class SoulSpooked : Soul {
 
 
     public override void funcOnApplication() {
+
+        //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
+        soulChangePower = new SoulChangePower(chrSource, chrTarget, nPowerDebuff);
+        chrTarget.soulContainer.ApplySoul(soulChangePower);
+
         Debug.Log(sName + " has been applied");
-        chrTarget.ChangeFlatPower(-nPowerDebuff);
+
     }
 
     public override void funcOnRemoval() {
+
+        chrTarget.soulContainer.RemoveSoul(soulChangePower);
+
         Debug.Log(sName + " has been removed");
-        chrTarget.ChangeFlatPower(nPowerDebuff);
     }
 
     public override void funcOnExpiration() {

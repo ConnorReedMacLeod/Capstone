@@ -139,7 +139,8 @@ public class ViewChr : ViewInteractive {
 
     //Find the model, and do any setup to reflect it
 	public void InitModel(){
-		mod = GetComponent<Chr>();
+        mod = GetComponent<Chr>();
+        mod.Start();
 
         mod.subFatigueChange.Subscribe(cbUpdateFatigue);
 		mod.subLifeChange.Subscribe(cbUpdateLife);
@@ -164,28 +165,28 @@ public class ViewChr : ViewInteractive {
     }
 
     public void cbUpdateArmour(Object target, params object[] args) {
-        if (mod.nCurArmour > 0) {
-            txtArmour.text = "[" + mod.nCurArmour.ToString() + "]";
+        if (mod.pnArmour.Get() > 0) {
+            txtArmour.text = "[" + mod.pnArmour.Get().ToString() + "]";
         } else {
             txtArmour.text = "";
         }
     }
 
     public void cbUpdatePower(Object target, params object[] args) {
-        if (mod.nPower > 0) {
-            txtPower.text = "+" + mod.nPower.ToString() + " [POWER]";
-        } else if (mod.nPower < 0) {
-            txtPower.text = mod.nPower.ToString() + " [POWER]";
+        if (mod.pnPower.Get() > 0) {
+            txtPower.text = "+" + mod.pnPower.Get().ToString() + " [POWER]";
+        } else if (mod.pnPower.Get() < 0) {
+            txtPower.text = mod.pnPower.Get().ToString() + " [POWER]";
         } else {
             txtPower.text = "";
         }
     }
 
     public void cbUpdateDefense(Object target, params object[] args) {
-        if (mod.nDefense > 0) {
-            txtDefense.text = "+" + mod.nDefense.ToString() + " [DEFENSE]";
-        } else if (mod.nDefense < 0) {
-            txtDefense.text = mod.nDefense.ToString() + " [DEFENSE]";
+        if (mod.pnDefense.Get() > 0) {
+            txtDefense.text = "+" + mod.pnDefense.Get().ToString() + " [DEFENSE]";
+        } else if (mod.pnDefense.Get() < 0) {
+            txtDefense.text = mod.pnDefense.Get().ToString() + " [DEFENSE]";
         } else {
             txtDefense.text = "";
         }

@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class SoulFortissimo : Soul {
 
-    int nPowerBuff;
-    int nDefenseBuff;
+    public int nPowerBuff;
+    public int nDefenseBuff;
+
+    public SoulChangePower soulChangePower;
+    public SoulChangeDefense soulChangeDefense;
 
     public SoulFortissimo(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
 
@@ -21,18 +24,25 @@ public class SoulFortissimo : Soul {
     }
 
 
-
     public override void funcOnApplication() {
-        Debug.Log(sName + " has been applied");
-        chrTarget.ChangeFlatPower(nPowerBuff);
-        chrTarget.ChangeFlatDefense(nDefenseBuff);
 
+        //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
+        soulChangePower = new SoulChangePower(chrSource, chrTarget, nPowerBuff);
+        chrTarget.soulContainer.ApplySoul(soulChangePower);
+
+        //Make a Permanent SoulChangeDefense, and save a reference to it, so it can be removed later
+        soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, nDefenseBuff);
+        chrTarget.soulContainer.ApplySoul(soulChangeDefense);
+
+        Debug.Log(sName + " has been applied");
     }
 
     public override void funcOnRemoval() {
+        chrTarget.soulContainer.RemoveSoul(soulChangePower);
+        chrTarget.soulContainer.RemoveSoul(soulChangeDefense);
+
         Debug.Log(sName + " has been removed");
-        chrTarget.ChangeFlatPower(-nPowerBuff);
-        chrTarget.ChangeFlatDefense(-nDefenseBuff);
+        
     }
 
     public override void funcOnExpiration() {

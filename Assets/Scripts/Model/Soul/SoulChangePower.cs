@@ -6,6 +6,8 @@ public class SoulChangePower : Soul {
 
     int nPowerChange;
 
+    public LinkedListNode<Property<int>.Modifier> nodePowerModifier;
+
     public SoulChangePower(Chr _chrSource, Chr _chrTarget, int _nPowerChange, int _nDuration = -1) : base(_chrSource, _chrTarget) {
 
         nPowerChange = _nPowerChange;
@@ -27,12 +29,14 @@ public class SoulChangePower : Soul {
     }
 
     public override void funcOnApplication() {
-        chrTarget.ChangeFlatPower(nPowerChange);
+
+        nodePowerModifier = chrTarget.pnPower.AddModifier((nPowerBelow) => this.nPowerChange + nPowerBelow);
         Debug.Log(sName + " has been applied");
     }
 
     public override void funcOnRemoval() {
-        chrTarget.ChangeFlatPower(-nPowerChange);
+
+        chrTarget.pnPower.RemoveModifier(nodePowerModifier);
         Debug.Log(sName + " has been removed");
     }
 
