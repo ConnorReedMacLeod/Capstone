@@ -66,6 +66,11 @@ public class Property<T> {
 
     //Removes a given modifier
     public void RemoveModifier(LinkedListNode<Modifier> nodeToRemove) {
+        if (lstModifiers.Contains(nodeToRemove.Value) == false) {
+            //Just return if that node isn't actually in the linked list already
+            return;
+        }
+
         lstModifiers.Remove(nodeToRemove);
 
         //Let observers know that this value has maybe changed
