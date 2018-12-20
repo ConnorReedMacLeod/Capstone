@@ -141,6 +141,11 @@ public class Chr : MonoBehaviour {
 
     public void ChangeArmour(int nChange) {
 
+        //TODO:: Just make a nAbsorbedByArmour value that keeps track of damage sustained by armour
+        //       If this ever goes negative, or reachs 0, clear the pnArmour modifiers
+        //       If a Armour Modifier ever expires, then it should also decrease the nAbsorbedByArmour
+        //       by the same amount
+
         pnArmour.AddModifier((nBelow) => nBelow += nChange);
 
         CheckNoArmour();
