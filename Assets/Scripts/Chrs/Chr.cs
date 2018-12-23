@@ -44,6 +44,7 @@ public class Chr : MonoBehaviour {
     public Property<int> pnDefense;            //The character's current defense
 
     public Property<int> pnArmour;          //The character's current armour
+    public int nAbsorbedArmour;             //The amount of damage currently taken by armour
 
     public bool bLockedTargetting;  //Whether or not the character can select their action
     public Action[] arActions;      //The characters actions
@@ -125,10 +126,13 @@ public class Chr : MonoBehaviour {
     // having an armour buff expire), then check if we have no armour left
     public void CheckNoArmour() {
 
-        if (pnArmour.Get() < 0) {
-            Debug.LogError("ERROR - " + sName + "'s armour is at " + pnArmour.Get());
+        if (pnArmour.Get() < nAbsorbedArmour) {
+            Debug.LogError("ERROR - " + sName + "'s armour is at " + pnArmour.Get() + " but we've absorbed " + nAbsorbedArmour);
         } else if (pnArmour.Get() == 0) {
             //Then we have used up all of our armour
+
+            //Reset the armour absorbed amount to 0
+            nAbsorbedArmour = 0;
 
             //So clear out the armour modifiers and reset armour to 0
             pnArmour = new Property<int>(0);
@@ -139,7 +143,7 @@ public class Chr : MonoBehaviour {
 
     }
 
-    public void ChangeArmour(int nChange) {
+    public void AddArmour(int nChange) {
 
         //TODO:: Just make a nAbsorbedByArmour value that keeps track of damage sustained by armour
         //       If this ever goes negative, or reachs 0, clear the pnArmour modifiers
@@ -147,20 +151,29 @@ public class Chr : MonoBehaviour {
         //       by the same amount
 
         pnArmour.AddModifier((nBelow) => nBelow += nChange);
-
-        CheckNoArmour();
         
+    }
+
+    public void DamageArmour(int nDamage) {
+
+        //Increase the current amount of damage absorbed by armour value
+        nAbsorbedArmour += nDamage;
+
+        //Then check if we've destroyed all of the armour currently on the character
+        CheckNoArmour();
+
     }
 
 
 
     public void TakeDamage(Damage dmgToTake) {
 
-        //Reduce the damage to take by our defense (but ensure it doesn't go below 0)
+        //Fetch the amount of damage we're going to take
         int nDamageToTake = dmgToTake.GetDamage();
 
         //If the damage isn't piercing, then reduce it by the defense amount
-        if (dmgToTake.bPiercing == false) { 
+        if (dmgToTake.bPiercing == false) {
+            //Reduce the damage to take by our defense (but ensure it doesn't go below 0)
             nDamageToTake = Mathf.Max(0, nDamageToTake - pnDefense.Get());
         }
 
@@ -172,7 +185,7 @@ public class Chr : MonoBehaviour {
 
             //If there's actually damage that needs to be dealt to armour
             if (nArmouredDamage > 0) {
-                ChangeArmour(-nArmouredDamage);
+                DamageArmour(nArmouredDamage);
             }
         }
 

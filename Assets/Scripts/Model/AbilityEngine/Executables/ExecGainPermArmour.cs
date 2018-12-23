@@ -29,7 +29,7 @@ public class ExecGainPermArmour : Executable {
     public override void Execute() {
 
         //NOTE - THIS IS FOR PERMANENT ARMOUR
-        chrTarget.ChangeArmour(nArmour);
+        chrTarget.AddArmour(nArmour);
 
         base.Execute();
     }
