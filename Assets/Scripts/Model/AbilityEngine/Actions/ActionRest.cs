@@ -13,7 +13,7 @@ public class ActionRest : Action {
 
         chrSource = _chrOwner;
 
-		arCost = new int[]{0,0,0,0,0};
+        parCost = new Property<int[]>(new int[]{0,0,0,0,0});
 
 		nCd = 0;
         nFatigue = 0;

@@ -13,7 +13,7 @@ public class ActionHarpoon : Action {
         type = ActionType.ACTIVE;
 
         //Physical, Mental, Energy, Blood, Effort
-        arCost = new int[] { 0, 0, 0, 0, 2 };
+        parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 2 });
 
         nCd = 5;
         nFatigue = 2;

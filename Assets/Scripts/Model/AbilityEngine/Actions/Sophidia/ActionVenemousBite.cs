@@ -13,7 +13,7 @@ public class ActionVenemousBite : Action {
         type = ActionType.ACTIVE;
 
         //Physical, Mental, Energy, Blood, Effort
-        arCost = new int[] { 0, 0, 0, 1, 1 };
+        parCost = new Property<int[]>(new int[] { 0, 0, 0, 1, 1 });
 
         nCd = 8;
         nFatigue = 3;

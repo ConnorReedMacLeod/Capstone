@@ -27,8 +27,8 @@ public class Action { //This should probably be made abstract
 
     public string sDescription;
     public string sExtraDescription;
-
-    public int[] arCost;
+    
+    public Property<int[]> parCost;
 
     public Stack<Clause> stackClauses = new Stack<Clause>();
 
@@ -104,7 +104,7 @@ public class Action { //This should probably be made abstract
         Debug.Assert(chrSource.nCurActionsLeft >= nActionCost);
         chrSource.nCurActionsLeft -= nActionCost;
 
-		if (chrSource.plyrOwner.mana.SpendMana (arCost)) {
+		if (chrSource.plyrOwner.mana.SpendMana (parCost.Get())) {
             //Then the mana was paid properly
 
             while (stackClauses.Count != 0) {
@@ -123,7 +123,7 @@ public class Action { //This should probably be made abstract
 	public virtual bool VerifyLegal(){// Maybe this doesn't need to be virtual
 
 		//Check if you have enough mana
-		if (!chrSource.plyrOwner.mana.HasMana (arCost)) {
+		if (!chrSource.plyrOwner.mana.HasMana (parCost.Get())) {
 			Debug.Log ("Not enough mana");
 			return false;
 		}

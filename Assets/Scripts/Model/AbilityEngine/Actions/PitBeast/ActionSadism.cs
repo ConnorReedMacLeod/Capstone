@@ -15,7 +15,7 @@ public class ActionSadism : Action {
         type = ActionType.PASSIVE;
 
         //Physical, Mental, Energy, Blood, Effort
-        arCost = new int[] { 0, 0, 0, 0, 0 };
+        parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 0 });
 
         nCd = 0;
         nFatigue = 0;

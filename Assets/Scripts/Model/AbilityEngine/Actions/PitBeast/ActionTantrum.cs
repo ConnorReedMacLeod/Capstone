@@ -13,7 +13,7 @@ public class ActionTantrum : Action {
         type = ActionType.ACTIVE;
 
         //Physical, Mental, Energy, Blood, Effort
-        arCost = new int[] { 1, 0, 0, 1, 0 };
+        parCost = new Property<int[]>(new int[] { 1, 0, 0, 1, 0 });
 
         nCd = 9;
         nFatigue = 5;
