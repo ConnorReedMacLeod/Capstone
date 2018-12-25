@@ -14,7 +14,7 @@ public class ActionHiss : Action {
         type = ActionType.CANTRIP;
 
         //Physical, Mental, Energy, Blood, Effort
-        arCost = new int[] { 0, 0, 0, 0, 1 };
+        parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 1 });
 
         nCd = 10;
         nFatigue = 1;

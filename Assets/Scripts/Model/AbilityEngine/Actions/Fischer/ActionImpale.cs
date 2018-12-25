@@ -13,7 +13,7 @@ public class ActionImpale : Action {
         type = ActionType.ACTIVE;
 
         //Physical, Mental, Energy, Blood, Effort
-        arCost = new int[] { 1, 0, 0, 0, 0 };
+        parCost = new Property<int[]>(new int[] { 1, 0, 0, 0, 0 });
 
         nCd = 6;
         nFatigue = 2;

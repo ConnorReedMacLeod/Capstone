@@ -13,7 +13,7 @@ public class ActionFortissimo : Action {
         type = ActionType.CANTRIP;
 
         //Physical, Mental, Energy, Blood, Effort
-        arCost = new int[] { 0, 0, 0, 0, 0 };
+        parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 0 });
 
         nCd = 8;
         nFatigue = 0;
