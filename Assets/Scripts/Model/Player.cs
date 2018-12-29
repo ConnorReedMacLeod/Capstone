@@ -49,12 +49,12 @@ public class Player : MonoBehaviour{
 
         //TODO:: Make this more sophisticated
         if (iBlocker != -1) {
-            arChr[iBlocker].bBlocker = false;
+            arChr[iBlocker].ChangeBlocker(false);
         }
 
         iBlocker = _iBlocker;
 
-        arChr[iBlocker].bBlocker = true;
+        arChr[iBlocker].ChangeBlocker(true);
    
     }
 

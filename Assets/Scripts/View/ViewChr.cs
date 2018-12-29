@@ -12,7 +12,10 @@ public class ViewChr : ViewInteractive {
 
 	Chr.STATESELECT lastStateSelect;  //Tracks previous character state (SELECTED, TARGETTING, UNSELECTED)
 
-	public GameObject goBorder;        //Border reference
+    public GameObject pfBlockerIndicator; //Reference to the prefab blocker indicator
+
+    public GameObject goBlockerIndicator; //Blocker reference
+	public GameObject goBorder;         //Border reference
 	public GameObject goPortrait;       //Portrait Reference
     public Text txtHealth;              //Textfield Reference
     public Text txtArmour;              //Textfield Reference
@@ -149,6 +152,7 @@ public class ViewChr : ViewInteractive {
         mod.pnArmour.subChanged.Subscribe(cbUpdateArmour);
         mod.pnPower.subChanged.Subscribe(cbUpdatePower);
         mod.pnDefense.subChanged.Subscribe(cbUpdateDefense);
+        mod.subBlockerChanged.Subscribe(cbUpdateBlocker);
 
 	}
 
@@ -189,6 +193,35 @@ public class ViewChr : ViewInteractive {
             txtDefense.text = mod.pnDefense.Get().ToString() + " [DEFENSE]";
         } else {
             txtDefense.text = "";
+        }
+    }
+
+    public void cbUpdateBlocker(Object target, params object[] args) {
+        if (mod.bBlocker == true) {
+            //If we haven't already, add the blocker indicator
+            if (goBlockerIndicator == null) {
+                goBlockerIndicator = Instantiate(pfBlockerIndicator, this.transform);
+
+                if (mod.plyrOwner.id == 1) {
+                    Debug.Log("Flipping " + mod.sName);
+                    goBlockerIndicator.transform.localScale = new Vector3(1.0f, -1.0f, 1.0f);
+                    goBlockerIndicator.transform.localPosition =
+                        new Vector3(goBlockerIndicator.transform.localPosition.x,
+                                    -goBlockerIndicator.transform.localPosition.y,
+                                    goBlockerIndicator.transform.localPosition.z);
+                }
+
+            } else {
+                Debug.Log("Don't need to add a blocker indicator for " + mod.sName + " since they already have it shown");
+            }
+        } else {
+            //If we haven't already, then remove the blocker indicator
+            if(goBlockerIndicator != null) {
+                GameObject.Destroy(goBlockerIndicator);
+                Debug.Assert(goBlockerIndicator == null);
+            } else {
+                Debug.Log("Don't need to remove a blocker indicator for " + mod.sName + " since nothing is yet shown");
+            }
         }
     }
 
