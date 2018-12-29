@@ -71,6 +71,7 @@ public class Chr : MonoBehaviour {
     public Subject subArmourCleared = new Subject();
     public Subject subFatigueChange = new Subject();
     public static Subject subAllFatigueChange = new Subject();
+    public Subject subBlockerChanged = new Subject();
 
     public Subject subStatusChange = new Subject();
 
@@ -202,6 +203,12 @@ public class Chr : MonoBehaviour {
         nCurHealth += nChange;
 
         subLifeChange.NotifyObs();
+    }
+
+    public void ChangeBlocker(bool _bBlocker) {
+        bBlocker = _bBlocker;
+
+        subBlockerChanged.NotifyObs();
     }
 
   //Counts down the character's recharge with the timeline
