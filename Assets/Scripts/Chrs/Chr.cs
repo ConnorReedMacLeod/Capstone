@@ -48,11 +48,12 @@ public class Chr : MonoBehaviour {
 
     public bool bLockedTargetting;  //Whether or not the character can select their action
     public Action[] arActions;      //The characters actions
-    public static int nActions = 8; //Number of actions the character can perform
+    public static int nActions = 9; //Number of actions the character can perform
 	public int nUsingAction;        //The currently selected action for the character, either targetting or having been queued
 	public bool bSetAction;         //Whether or not the character has an action queued
 
     public bool bBlocker;           //Whether or not the character is the assigned blocker
+    public Property<bool> pbCanBlock;          //Whether the character is capable or not of blocking
 
     public SoulContainer soulContainer; //A reference to the characters list of soul effects
 
@@ -306,6 +307,14 @@ public class Chr : MonoBehaviour {
         }
     }
 
+    public void SetBaseActions() {
+        //Sets the basic generic actions like resting and blocking
+
+        SetAction(7, new ActionRest(this));
+        SetAction(8, new ActionBlock(this));
+
+    }
+
     // Used to initiallize information fields of the Chr
     // Call this after creating to set information
     public void InitChr(Player _plyrOwner, int _id, BaseChr baseChr){
@@ -315,6 +324,7 @@ public class Chr : MonoBehaviour {
         SetDefaultActions();
 
         baseChr.SetName();
+        SetBaseActions();
         baseChr.SetActions();
         baseChr.SetMaxHealth();
 
@@ -335,6 +345,8 @@ public class Chr : MonoBehaviour {
             stateSelect = STATESELECT.IDLE;
 
             bLockedTargetting = true;
+
+            pbCanBlock = new Property<bool>(true);
 
             pnMaxHealth = new Property<int>(100);
             pnArmour = new Property<int>(0);
