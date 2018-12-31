@@ -19,8 +19,6 @@ public class ChrPitBeast : BaseChr {
         chrOwner.SetAction(1, new ActionTendrilStab(chrOwner));
         chrOwner.SetAction(2, new ActionForcedEvolution(chrOwner));
         chrOwner.SetAction(3, new ActionTantrum(chrOwner));
-
-        chrOwner.SetAction(7, new ActionRest(chrOwner));
     }
 
 }

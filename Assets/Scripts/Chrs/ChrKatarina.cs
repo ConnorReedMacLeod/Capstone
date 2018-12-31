@@ -19,8 +19,6 @@ public class ChrKatarina : BaseChr {
         chrOwner.SetAction(1, new ActionReverberate(chrOwner));
         chrOwner.SetAction(2, new ActionSerenade(chrOwner));
         chrOwner.SetAction(3, new ActionCacaphony(chrOwner));
-
-        chrOwner.SetAction(7, new ActionRest(chrOwner));
     }
 
 }

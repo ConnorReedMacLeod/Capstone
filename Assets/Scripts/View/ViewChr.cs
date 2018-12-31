@@ -203,7 +203,6 @@ public class ViewChr : ViewInteractive {
                 goBlockerIndicator = Instantiate(pfBlockerIndicator, this.transform);
 
                 if (mod.plyrOwner.id == 1) {
-                    Debug.Log("Flipping " + mod.sName);
                     goBlockerIndicator.transform.localScale = new Vector3(1.0f, -1.0f, 1.0f);
                     goBlockerIndicator.transform.localPosition =
                         new Vector3(goBlockerIndicator.transform.localPosition.x,

@@ -21,7 +21,7 @@ public class ChrFischer : BaseChr {
         chrOwner.SetAction(2, new ActionHarpoon(chrOwner));
         chrOwner.SetAction(3, new ActionBucklerParry(chrOwner));
 
-        chrOwner.SetAction(7, new ActionRest(chrOwner));
+       
     }
 
 }
