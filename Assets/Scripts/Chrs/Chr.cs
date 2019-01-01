@@ -52,6 +52,9 @@ public class Chr : MonoBehaviour {
 	public int nUsingAction;        //The currently selected action for the character, either targetting or having been queued
 	public bool bSetAction;         //Whether or not the character has an action queued
 
+    public const int idResting = 7;  //id for the resting action
+    public const int idBlocking = 8; //id for the blocking action
+
     public bool bBlocker;           //Whether or not the character is the assigned blocker
     public Property<bool> pbCanBlock;          //Whether the character is capable or not of blocking
 
@@ -75,6 +78,7 @@ public class Chr : MonoBehaviour {
     public Subject subBlockerChanged = new Subject();
 
     public Subject subStatusChange = new Subject();
+    public static Subject subAllStatusChange = new Subject();
 
     // Prepare a certain amount of fatigue to be applied to this character
     public void QueueFatigue(int _nChange) {
@@ -212,6 +216,10 @@ public class Chr : MonoBehaviour {
         subBlockerChanged.NotifyObs();
     }
 
+    public bool CanBlock() {
+        return !bBlocker && pbCanBlock.Get();
+    }
+
   //Counts down the character's recharge with the timeline
 	public void TimeTick(){
 		ChangeFatigue (-1, true);
@@ -221,6 +229,7 @@ public class Chr : MonoBehaviour {
         stateSelect = _stateSelect;
 
         subStatusChange.NotifyObs(this);
+        subAllStatusChange.NotifyObs(this);
     }
 
     //Sets character state to selected
@@ -300,6 +309,7 @@ public class Chr : MonoBehaviour {
         }
 
         arActions[i] = actNew;
+        actNew.id = i;
 
         //If we've set this to be a non-null action
         if(arActions[i] != null) {

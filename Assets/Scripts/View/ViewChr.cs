@@ -217,6 +217,7 @@ public class ViewChr : ViewInteractive {
             //If we haven't already, then remove the blocker indicator
             if(goBlockerIndicator != null) {
                 GameObject.Destroy(goBlockerIndicator);
+                goBlockerIndicator = null;
                 Debug.Assert(goBlockerIndicator == null);
             } else {
                 Debug.Log("Don't need to remove a blocker indicator for " + mod.sName + " since nothing is yet shown");

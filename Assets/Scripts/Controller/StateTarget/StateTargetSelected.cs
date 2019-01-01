@@ -21,7 +21,7 @@ public class StateTargetSelected : StateTarget {
     }
 
     public void cbClickBlockerButton(Object target, params object[] args) {
-        ChooseAction(((ViewBlockerButton)target).mod);
+        ChooseAction(ContTurns.Get().GetNextActingChr().arActions[Chr.idBlocking]);
     }
 
     //TODO NOW:: Make a helper function that just does this but just takes an action parameter
@@ -29,6 +29,7 @@ public class StateTargetSelected : StateTarget {
     // will just call this function with their actions
     public void ChooseAction(Action actChosen) {
         // When we've clicked an action, use that action
+        Debug.Log(actChosen + " is being used");
 
         // But first, check if targetting is locked
         if (actChosen.chrSource.bLockedTargetting) {
@@ -54,6 +55,7 @@ public class StateTargetSelected : StateTarget {
         }
 
         contTarg.selected.Targetting();
+        Debug.Log(actChosen.id + " is the currently selected id of the action");
         contTarg.selected.nUsingAction = actChosen.id;
 
         // TODO:: Save the current targets if there are any, so that you can 
