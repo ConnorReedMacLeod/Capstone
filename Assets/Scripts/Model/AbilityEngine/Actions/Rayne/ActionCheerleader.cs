@@ -21,7 +21,7 @@ public class ActionCheerleader : Action {
         nFatigue = 0;
         nActionCost = 0;
 
-        sDescription = "[PASSIVE] Before Pit Beast, would deal damage to an enemy with higher Life, heal 5 Life";
+        sDescription = "[PASSIVE] At the beginning of each turn that Rayne acts, all other allies get +5 [POWER]";
 
         SetArgOwners();
     }

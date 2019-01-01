@@ -128,6 +128,7 @@ public class Match : MonoBehaviour {
         for (int i=0; i<nPlayers; i++) {
             arPlayers[i].iBlocker = -1;//temporarily set the blocker to -1, so that we meaningfully change the blocker on the next line
             arPlayers[i].SetBlocker(1);//Initially set the blocker as the second character to go
+            arPlayers[i].SetBlocker(0);//Initially set the blocker as the first character to go
         }
     }
 
