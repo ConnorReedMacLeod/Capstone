@@ -2,39 +2,61 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class ViewBlockerButton : ViewInteractive {
 
     bool bStarted;                          //Confirms the Start() method has executed
 
     public const int id = 8;                              //The standard id for the block action
-    public Chr chrSelected;
-    public Action mod;                      		//The action's model
 
     public static Subject subAllClick = new Subject();
+    public static Subject subAllStartHover = new Subject();
+    public static Subject subAllStopHover = new Subject();
+
+    public bool ButtonVisible() {
+        //Needs to have a character that's acting next this turn, and is selected (and maybe should be in the ability selection phase)
+        return ContTurns.Get().GetNextActingChr() != null && ContTurns.Get().GetNextActingChr().stateSelect == Chr.STATESELECT.SELECTED;
+    }
 
     public override void onMouseClick(params object[] args) {
 
         //If we can't actually use this button, then don't react to clicks
-        if (!CanDeclareBlocker()) return;
+        //(No character selected or the selected character can't block anyway)
+        if (!ButtonVisible() || !ContTurns.Get().GetNextActingChr().CanBlock()) return;
 
         subAllClick.NotifyObs(this, args);
 
         base.onMouseClick(args);
     }
 
+    public override void onMouseStartHover(params object[] args) {
+
+        //Only do something if there's actually a character that's gonna go 
+        if (!ButtonVisible()) return;
+        subAllStartHover.NotifyObs(this, args);
+
+        base.onMouseStartHover(args);
+    }
+
+    public override void onMouseStopHover(params object[] args) {
+
+        if (!ButtonVisible()) return;
+        subAllStopHover.NotifyObs(this, args);
+
+        base.onMouseStopHover(args);
+    }
+
+
     public void Start() {
         if (bStarted == false) {
             bStarted = true;
 
-            Chr.subAllStartSelect.Subscribe(cbChrSelected);
-            Chr.subAllStartTargetting.Subscribe(cbChrUnselected);
-            Chr.subAllStartIdle.Subscribe(cbChrUnselected);
-        }
-    }
 
-    public bool CanDeclareBlocker() {
-        Debug.Log(chrSelected + " " + chrSelected.bBlocker + " " + chrSelected.pbCanBlock.Get());
-        return chrSelected != null && chrSelected.bBlocker == false && chrSelected.pbCanBlock.Get() == true;
+            Chr.subAllStatusChange.Subscribe(cbChrSelectionChange);
+            ContTurns.subAllPriorityChange.Subscribe(cbChrPriorityOrderChange);
+
+            Display();
+        }
     }
 
     public void Display() {
@@ -42,16 +64,16 @@ public class ViewBlockerButton : ViewInteractive {
         string sImgPath;
 
 
-        if (chrSelected == null || ContTurns.Get().GetNextActingChr() != chrSelected) {
+        if (!ButtonVisible()) {
             //Then hide the button entirely for now if either no character is selected
             // or if the selected character isn't the next to act
             sImgPath = "null";
 
-        } else if (CanDeclareBlocker()){
+        } else if (ContTurns.Get().GetNextActingChr().CanBlock()){
             //Then we want the button to be visible and usable
             sImgPath = "Images/MiscUI/imgBlockerToken";
 
-        } else {
+        } else {//Then we can't block
             //Then we just leave a greyed out blocker button
             sImgPath = "Images/MiscUI/imgBlockerTokenHolder";
         }
@@ -61,22 +83,15 @@ public class ViewBlockerButton : ViewInteractive {
     }
 
 
-    //Let the Action button know which action it's representing
-    public void SetModel(Action _mod) {
 
-        mod = _mod;
+    public void cbChrSelectionChange(Object target, params object[] args) {
+        //So if you select/unselect a character, then we can show/hide the button as needed
         Display();
-
     }
 
-    public void cbChrSelected(Object target, params object[] args) {
-        chrSelected = (Chr)target;
-        SetModel(chrSelected.arActions[id]);
-    }
-
-    public void cbChrUnselected(Object target, params object[] args) {
-        chrSelected = null;
-        SetModel(null);
+    public void cbChrPriorityOrderChange(Object target, params object[] args) {
+        //So that if a character becomes the currently acting character or not, we can show/hide
+        Display();
     }
 
 }
