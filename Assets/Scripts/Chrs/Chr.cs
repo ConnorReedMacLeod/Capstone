@@ -49,7 +49,8 @@ public class Chr : MonoBehaviour {
     public bool bLockedTargetting;  //Whether or not the character can select their action
     public Action[] arActions;      //The characters actions
     public static int nActions = 9; //Number of actions the character can perform
-	public int nUsingAction;        //The currently selected action for the character, either targetting or having been queued
+    public static int nCharacterActions = 8; // Number of non-standard actions
+    public int nUsingAction;        //The currently selected action for the character, either targetting or having been queued
 	public bool bSetAction;         //Whether or not the character has an action queued
 
     public const int idResting = 7;  //id for the resting action
@@ -70,6 +71,11 @@ public class Chr : MonoBehaviour {
     public static Subject subAllStartTargetting = new Subject();
     public Subject subStartIdle = new Subject();
     public static Subject subAllStartIdle = new Subject();
+
+    public Subject subPreExecuteAbility = new Subject();
+    public static Subject subAllPreExecuteAbility = new Subject();
+    public Subject subPostExecuteAbility = new Subject();
+    public static Subject subAllPostExecuteAbility = new Subject();
 
     public Subject subLifeChange = new Subject();
     public Subject subArmourCleared = new Subject();
@@ -263,9 +269,17 @@ public class Chr : MonoBehaviour {
             SetRestAction();
         }
 
-		arActions [nUsingAction].Execute ();
+        Action actToUse = arActions[nUsingAction];
+
+        subPreExecuteAbility.NotifyObs(this, actToUse);
+        subAllPreExecuteAbility.NotifyObs(this, actToUse);
+
+        arActions [nUsingAction].Execute ();
         bSetAction = false;
 		nUsingAction = 7;//TODO:: Make this consistent
+
+        subPostExecuteAbility.NotifyObs(this, actToUse);
+        subAllPostExecuteAbility.NotifyObs(this, actToUse);
 	}
 
     //Checks if the character's selected action is ready and able to be performed
@@ -281,7 +295,7 @@ public class Chr : MonoBehaviour {
 			arActions [nUsingAction].Reset ();
 		}
 		bSetAction = true;
-		nUsingAction = 7;//TODO::Make this consistent
+		nUsingAction = idResting;
 	}
 
     //By default, set all character actions to resting
