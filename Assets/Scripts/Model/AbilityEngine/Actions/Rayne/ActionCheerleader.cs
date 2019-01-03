@@ -35,10 +35,10 @@ public class ActionCheerleader : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("Sadism is putting its clause on the stack to apply its passive soul effect");
+                Debug.Log("Cheerleader is putting its clause on the stack to apply its passive soul effect");
 
                 //Save a reference to the buff we're applying
-                soulPassive = new SoulSadism(this.chrSource, this.chrSource);
+                soulPassive = new SoulCheerleader(this.chrSource, this.chrSource);
 
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
@@ -49,7 +49,7 @@ public class ActionCheerleader : Action {
                     },
 
                     fDelay = 1.0f,
-                    sLabel = chrSource.sName + " is sadistic"
+                    sLabel = chrSource.sName + " is one peppy boi"
                 });
             }
         });
@@ -61,7 +61,7 @@ public class ActionCheerleader : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("Sadism is putting its clause on the stack to remove its passive soul effect");
+                Debug.Log("Cheerleader is putting its clause on the stack to remove its passive soul effect");
 
                 ContAbilityEngine.Get().AddExec(new ExecRemoveSoul() {
                     chrSource = this.chrSource,
@@ -70,7 +70,7 @@ public class ActionCheerleader : Action {
                     soulToRemove = this.soulPassive,
 
                     fDelay = 1.0f,
-                    sLabel = chrSource.sName + " is no longer sadistic"
+                    sLabel = chrSource.sName + " is no longer peppy"
                 });
             }
         });
