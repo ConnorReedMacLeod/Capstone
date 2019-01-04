@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class ActionTantrum : Action {
 
+    public int nEnemyDamage;
+    public int nAllyDamage;
+
     public ActionTantrum(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
 
         //We don't need to target anything, since we always deal damage to everyone
@@ -21,6 +24,9 @@ public class ActionTantrum : Action {
 
         sDescription = "Deal 20 damage to all enemies and 5 damage to all other allies";
 
+        nEnemyDamage = 20;
+        nAllyDamage = 5;
+
         SetArgOwners();
     }
 
@@ -30,10 +36,10 @@ public class ActionTantrum : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                //Deal 20 damage to all enemies
+                //Deal damage to all enemies
                 for (int i = 0; i < enemy.arChr.Length; i++) {
                     Debug.Log("This Tantrum Clause put an ExecDamage on the stack");
-                    Damage dmgToDeal = new Damage(chrSource, enemy.arChr[i], 20);
+                    Damage dmgToDeal = new Damage(chrSource, enemy.arChr[i], nEnemyDamage);
 
                     //TODO:: Organize this in the correct order
                     ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
@@ -51,7 +57,7 @@ public class ActionTantrum : Action {
                     if (chrSource.plyrOwner.arChr[i] == chrSource) continue; //Don't hurt yourself
 
                     Debug.Log("This Tantrum Clause put an ExecDamage on the stack");
-                    Damage dmgToDeal = new Damage(chrSource, chrSource.plyrOwner.arChr[i], 5);
+                    Damage dmgToDeal = new Damage(chrSource, chrSource.plyrOwner.arChr[i], nAllyDamage);
 
                     //TODO:: Organize this in the correct order
                     ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
