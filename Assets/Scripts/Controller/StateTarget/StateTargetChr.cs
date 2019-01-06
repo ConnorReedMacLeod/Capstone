@@ -63,7 +63,7 @@ public class StateTargetChr : StateTarget {
 	public void ResetTargets(){
 		//clear any targetting 
 		//TODO:: maybe only reset the targets to whatever was selected before?
-		contTarg.selected.arActions [contTarg.selected.nUsingAction].Reset ();
+		contTarg.selected.arActions [contTarg.selected.nUsingAction].ResetTargettingArgs ();
 
 		//contTarg.SetState (new StateTargetIdle (contTarg));
 	}

@@ -49,7 +49,7 @@ public class Action { //This should probably be made abstract
         }
     }
 
-    public void Reset() {
+    public void ResetTargettingArgs() {
         for (int i = 0; i < nArgs; i++) {
             arArgs[i].Reset();
         }
@@ -116,7 +116,7 @@ public class Action { //This should probably be made abstract
 			Debug.LogError ("YOU DIDN'T ACTUALLY HAVE ENOUGH MANA");
 		}
         
-		Reset ();
+		ResetTargettingArgs ();
         subAbilityChange.NotifyObs();
     }
 

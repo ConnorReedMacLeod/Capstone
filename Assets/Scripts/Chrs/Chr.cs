@@ -292,7 +292,7 @@ public class Chr : MonoBehaviour {
 	public void SetRestAction(){
 		Debug.Log ("Had to reset to a rest action");
 		if (nUsingAction != -1) {
-			arActions [nUsingAction].Reset ();
+			arActions [nUsingAction].ResetTargettingArgs ();
 		}
 		bSetAction = true;
 		nUsingAction = idResting;
