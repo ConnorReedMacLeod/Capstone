@@ -12,6 +12,8 @@ public abstract class Executable {
 
     public abstract Subject GetPreTrigger();
     public abstract Subject GetPostTrigger();
+    public abstract List<Replacement> GetReplacements();
+    public abstract List<Replacement> GetFullReplacements();
 
     public virtual void Execute() {
 

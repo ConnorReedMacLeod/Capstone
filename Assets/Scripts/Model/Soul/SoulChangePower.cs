@@ -31,17 +31,13 @@ public class SoulChangePower : Soul {
     public override void funcOnApplication() {
 
         nodePowerModifier = chrTarget.pnPower.AddModifier((nPowerBelow) => this.nPowerChange + nPowerBelow);
-        Debug.Log(sName + " has been applied");
+
     }
 
     public override void funcOnRemoval() {
 
         chrTarget.pnPower.RemoveModifier(nodePowerModifier);
-        Debug.Log(sName + " has been removed");
+
     }
 
-    public override void funcOnExpiration() {
-        Debug.Log(sName + " has expired");
-        
-    }
 }

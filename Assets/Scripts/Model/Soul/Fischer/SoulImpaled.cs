@@ -21,18 +21,16 @@ public class SoulImpaled : Soul {
     }
 
     public override void funcOnApplication() {
-        Debug.Log(sName + " has been applied");
+
         //Apply a modifier (and save a reference to the modifier node)) to reduce max health by 10
         modifierLifeReduction = chrTarget.pnMaxHealth.AddModifier((int nBelow) => (nBelow - 10));
+
     }
 
     public override void funcOnRemoval() {
-        Debug.Log(sName + " has been removed");
 
         chrTarget.pnMaxHealth.RemoveModifier(modifierLifeReduction);
+
     }
 
-    public override void funcOnExpiration() {
-        Debug.Log(sName + " has expired");
-    }
 }

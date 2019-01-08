@@ -22,6 +22,8 @@ public abstract class Soul {
     public bool bDuration; 
     public Property<int> pnMaxDuration;
     public int nCurDuration;
+
+    public List<Replacement> lstReplacements = new List<Replacement>(); //A (potentially empty) list of replacement effects for this effect
     
     //A structure to hold information about a single trigger needed by a Soul effect
     public struct TriggerEffect {
@@ -40,8 +42,9 @@ public abstract class Soul {
 
     }
 
-    public virtual void funcOnApplication() { } //By default, don't do anything
-    public virtual void funcOnRemoval() { } //Also do nothing
+    //These don't do anything by default, but we don't need to override them, if we're not gonna do anything with them
+    public virtual void funcOnApplication() { }
+    public virtual void funcOnRemoval() { } 
     public virtual void funcOnExpiration() { } //Specifically when the soul effect reaches the end of its duration
    
     public void OnApply(SoulContainer _soulContainer) {
@@ -62,8 +65,13 @@ public abstract class Soul {
             }
         }
 
-        funcOnApplication();
+        foreach (Replacement rep in lstReplacements) {
+            //For each replacement effect this soul effect has, register it so it'll take effect
+            Replacement.Register(rep);
+        }
 
+        funcOnApplication();
+        Debug.Log(sName + " has been applied");
     }
 
     public void OnRemoval() {
@@ -75,11 +83,17 @@ public abstract class Soul {
             }
         }
 
-        
-        funcOnRemoval();
+        foreach (Replacement rep in lstReplacements) {
+            //For each replacement effect this soul effect has, unregister it so it'll stop taking effect
+            Replacement.Unregister(rep);
+        }
 
-        if(bDuration == true && nCurDuration == 0) {
+        funcOnRemoval();
+        Debug.Log(sName + " has been removed");
+
+        if (bDuration == true && nCurDuration == 0) {
             funcOnExpiration();
+            Debug.Log(sName + " has expired");
         }
 
     }

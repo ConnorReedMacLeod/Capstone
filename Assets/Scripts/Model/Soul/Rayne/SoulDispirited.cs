@@ -34,7 +34,6 @@ public class SoulDispirited : Soul {
     }
 
     public override void funcOnApplication() {
-        Debug.Log(sName + " has been applied");
 
         //Loop through each ability on the targetted character
         for (int i = 0; i < Chr.nCharacterActions; i++) {
@@ -55,7 +54,6 @@ public class SoulDispirited : Soul {
     }
 
     public override void funcOnRemoval() {
-        Debug.Log(sName + " has been removed");
 
         //When removed we'll clear all the cost modifiers we've applied
         for (int i = 0; i < Chr.nCharacterActions; i++) {
@@ -63,9 +61,7 @@ public class SoulDispirited : Soul {
         }
 
         chrTarget.subPostExecuteAbility.UnSubscribe(OnAbilityUsage);
+
     }
 
-    public override void funcOnExpiration() {
-        Debug.Log(sName + " has expired");
-    }
 }

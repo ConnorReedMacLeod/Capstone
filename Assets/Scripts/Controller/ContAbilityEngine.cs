@@ -84,9 +84,70 @@ public class ContAbilityEngine : MonoBehaviour {
 
     }
 
+
+    public Executable ResolveFullReplacements(Executable execToResolve) {
+
+        //Loop through each effect that could replace us
+        for(int i=0; i<execToResolve.GetFullReplacements().Count; i++) {
+
+            //If we have already applied this effect, then move on to the next replacement
+            if (execToResolve.GetFullReplacements()[i].bHasReplaced) continue;
+
+            //If the replacement effect shouldn't take effect, then also move on to the next replacement
+            if (!execToResolve.GetFullReplacements()[i].shouldReplace(execToResolve)) continue;
+
+            //If we haven't moved on by this point, then we should implement this replacement effect
+            //then recurse on this new executable to see if it needs to be replaced
+            return ResolveFullReplacements(execToResolve.GetFullReplacements()[i].ApplyReplacement(execToResolve));
+
+        }
+
+        //If we never account a relevent fullreplacement, then just return the exec we started with
+        return execToResolve;
+    }
+
+
+    public Executable ResolveReplacements(Executable execBaseExecutable) {
+
+        Executable execToResolve = execBaseExecutable;
+
+        List<Replacement> lstReplacements = execToResolve.GetReplacements(); 
+        //This should stay constant since our executable type isn't changing, so neither is the static lstReplacements
+
+        //Loop through each effect that could replace us
+        for (int i = 0; i < lstReplacements.Count; i++) {
+
+            //If we have already applied this effect, then move on to the next replacement
+            if (lstReplacements[i].bHasReplaced) continue;
+
+            //If the replacement effect shouldn't take effect, then also move on to the next replacement
+            if (!lstReplacements[i].shouldReplace(execToResolve)) continue;
+
+            //If we haven't moved on by this point, then we should implement this replacement effect
+            // unlike the full replacements, we don't need to completely recurse - just change the current executable
+            execToResolve = lstReplacements[i].ApplyReplacement(execToResolve);
+
+        }
+
+        //return whatever executable we're left with at this point
+        return execToResolve;
+    }
+
+
     public void AddExec(Executable exec) {
 
         //Check for any replacement effects
+
+        //Initially, we reset the cycle-checking flags for each registered replacement effect
+        Replacement.ResetReplacedFlags();
+
+        //Resolve any full replacement effects (so we settle on a single type of executable)
+        exec = ResolveFullReplacements(exec);
+
+        //Now we modify that executable as much as necessary
+        exec = ResolveReplacements(exec);
+
+        //TODO:: Consider if we should check for replacement effects and triggers at resolve-time or at stack-pushing-time
 
         stackExec.Push(exec);
 
@@ -98,6 +159,8 @@ public class ContAbilityEngine : MonoBehaviour {
 
     public void MaintainStateBasedActions() {
         //TODO:: This function
+
+        //TODO:: Consider if we should check for replacement effects and triggers at resolve-time or at stack-pushing-time
     }
 
     public void SpawnTimer(float fDelay, string sLabel) {

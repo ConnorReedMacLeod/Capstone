@@ -75,23 +75,20 @@ public class SoulParry : Soul {
     }
 
     public override void funcOnApplication() {
-        Debug.Log(sName + " has been applied");
 
         //Add a modifier onto armour
         nodeArmourModifier = chrTarget.pnArmour.AddModifier((nArmour) => nArmour + this.nArmour);
 
         chrTarget.subArmourCleared.Subscribe(cbOnArmourClear);
+
     }
 
     public override void funcOnRemoval() {
-        Debug.Log(sName + " has been removed");
 
         //Remove the modifier we put onto armour
         chrTarget.pnArmour.RemoveModifier(nodeArmourModifier);
         chrTarget.subArmourCleared.UnSubscribe(cbOnArmourClear);
+
     }
 
-    public override void funcOnExpiration() {
-        Debug.Log(sName + " has expired");
-    }
 }

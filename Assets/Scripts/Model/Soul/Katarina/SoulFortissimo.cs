@@ -34,18 +34,12 @@ public class SoulFortissimo : Soul {
         soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, nDefenseBuff);
         chrTarget.soulContainer.ApplySoul(soulChangeDefense);
 
-        Debug.Log(sName + " has been applied");
     }
 
     public override void funcOnRemoval() {
         chrTarget.soulContainer.RemoveSoul(soulChangePower);
         chrTarget.soulContainer.RemoveSoul(soulChangeDefense);
 
-        Debug.Log(sName + " has been removed");
-        
     }
 
-    public override void funcOnExpiration() {
-        Debug.Log(sName + " has expired");
-    }
 }
