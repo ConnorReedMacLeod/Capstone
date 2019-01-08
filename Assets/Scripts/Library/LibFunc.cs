@@ -22,6 +22,8 @@ public static class LibFunc {
             arToReturn[i] = fCombine(ar1[i], ar2[i]);
         }
 
+        Debug.Log("Added array is " + arToReturn[0] + " " + arToReturn[1] + " " + arToReturn[2] + " " + arToReturn[3] + " " + arToReturn[4] + " ");
+
         return arToReturn;
     }
 }

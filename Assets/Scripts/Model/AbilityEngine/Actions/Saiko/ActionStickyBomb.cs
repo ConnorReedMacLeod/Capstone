@@ -45,7 +45,7 @@ public class ActionStickyBomb : Action {
                     dmg = dmgToDeal,
 
                     fDelay = 1.0f,
-                    sLabel = chrTarget.sName + " is stuck with a bomb"
+                    sLabel = chrTarget.sName + " got a bomb thrown at them"
                 });
 
                 //Apply the stickybomb Soul effect to the target
@@ -56,7 +56,10 @@ public class ActionStickyBomb : Action {
 
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
                         return new SoulStickyBomb(_chrSource, _chrTarget);
-                    }
+                    },
+
+                    fDelay = 1.0f,
+                    sLabel = chrTarget.sName + " is stuck with the bomb"
 
                 });
             }

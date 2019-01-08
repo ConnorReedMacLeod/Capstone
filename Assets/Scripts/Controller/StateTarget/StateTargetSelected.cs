@@ -55,7 +55,7 @@ public class StateTargetSelected : StateTarget {
         }
 
         contTarg.selected.Targetting();
-        Debug.Log(actChosen.id + " is the currently selected id of the action");
+        
         contTarg.selected.nUsingAction = actChosen.id;
 
         // TODO:: Save the current targets if there are any, so that you can 

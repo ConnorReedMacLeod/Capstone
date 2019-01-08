@@ -53,7 +53,10 @@ public class ActionSpiritSlap : Action {
 
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
                         return new SoulDispirited(_chrSource, _chrTarget);
-                    }
+                    },
+
+                    fDelay = 1.0f,
+                    sLabel = tar.sName + "'s soul is drained"
 
                 });
             }

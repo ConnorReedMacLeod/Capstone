@@ -26,8 +26,8 @@ public class SoulSmokeCover : Soul {
             new TriggerEffect() {
                 sub = ExecBecomeBlocker.subAllPostTrigger,
                 cb = (target, args) => {
-                    //Check which character is about to be blocking
-                    Chr chrSource = ((ExecBecomeBlocker)args[0]).chrTarget;
+                    //Only move on if the buffed character is the one about to become the blocker
+                    if(((ExecBecomeBlocker)args[0]).chrTarget != this.chrTarget) return;
 
                     OnDeclareBlocker();
                 }
