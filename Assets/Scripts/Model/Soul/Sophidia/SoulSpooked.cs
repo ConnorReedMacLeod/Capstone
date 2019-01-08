@@ -28,18 +28,12 @@ public class SoulSpooked : Soul {
         soulChangePower = new SoulChangePower(chrSource, chrTarget, nPowerDebuff);
         chrTarget.soulContainer.ApplySoul(soulChangePower);
 
-        Debug.Log(sName + " has been applied");
-
     }
 
     public override void funcOnRemoval() {
 
         chrTarget.soulContainer.RemoveSoul(soulChangePower);
 
-        Debug.Log(sName + " has been removed");
     }
 
-    public override void funcOnExpiration() {
-        Debug.Log(sName + " has expired");
-    }
 }

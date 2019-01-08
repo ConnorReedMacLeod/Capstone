@@ -27,18 +27,12 @@ public class SoulEvolved : Soul {
         soulChangePower = new SoulChangePower(chrSource, chrTarget, nPowerBuff);
         chrTarget.soulContainer.ApplySoul(soulChangePower);
 
-        Debug.Log(sName + " has been applied");
-
     }
 
     public override void funcOnRemoval() {
 
         chrTarget.soulContainer.RemoveSoul(soulChangePower);
 
-        Debug.Log(sName + " has been removed");
     }
 
-    public override void funcOnExpiration() {
-        Debug.Log(sName + " has expired");
-    }
 }

@@ -32,17 +32,12 @@ public class SoulChangeDefense : Soul {
     public override void funcOnApplication() {
 
         nodeDefenseModifier = chrTarget.pnDefense.AddModifier((nDefenseBelow) => this.nDefenseChange + nDefenseBelow);
-        Debug.Log(sName + " has been applied");
+
     }
 
     public override void funcOnRemoval() {
 
         chrTarget.pnDefense.RemoveModifier(nodeDefenseModifier);
-        Debug.Log(sName + " has been removed");
-    }
-
-    public override void funcOnExpiration() {
-        Debug.Log(sName + " has expired");
 
     }
 }

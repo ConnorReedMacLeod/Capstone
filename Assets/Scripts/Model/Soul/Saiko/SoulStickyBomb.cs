@@ -31,16 +31,7 @@ public class SoulStickyBomb : Soul {
 
     }
 
-    public override void funcOnApplication() {
-        Debug.Log(sName + " has been applied");
-    }
-
-    public override void funcOnRemoval() {
-        Debug.Log(sName + " has been removed");
-    }
-
-    public override void funcOnExpiration() {
-        Debug.Log(sName + " has expired");
+    public override void funcOnExpiration() { 
 
         //Deal damage only if this soul effect expires naturally
         Detonate();
