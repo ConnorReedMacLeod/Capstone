@@ -21,7 +21,7 @@ public class SoulStickyBomb : Soul {
 
     public SoulStickyBomb(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
 
-        sName = "Stuck";
+        sName = "StickyBomb";
         
         nDetonationDamage = 30;
 

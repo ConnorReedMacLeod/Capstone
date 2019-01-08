@@ -25,13 +25,16 @@ public class Player : MonoBehaviour{
         nChrs = 3;
 
         if (id == 0) {
-            arChrTypeSelection[0] = Chr.CHARTYPE.FISCHER;
-            arChrTypeSelection[1] = Chr.CHARTYPE.SOHPIDIA;
-            arChrTypeSelection[2] = Chr.CHARTYPE.RAYNE;
+            arChrTypeSelection[0] = Chr.CHARTYPE.SAIKO;
+            arChrTypeSelection[1] = Chr.CHARTYPE.KATARINA;
+            arChrTypeSelection[2] = Chr.CHARTYPE.SOHPIDIA;
+            
         } else {
-            arChrTypeSelection[0] = Chr.CHARTYPE.KATARINA;
+            arChrTypeSelection[0] = Chr.CHARTYPE.RAYNE;
+            
             arChrTypeSelection[1] = Chr.CHARTYPE.PITBEAST;
-            arChrTypeSelection[2] = Chr.CHARTYPE.SAIKO;
+            arChrTypeSelection[2] = Chr.CHARTYPE.FISCHER;
+
         }
 	}
 
