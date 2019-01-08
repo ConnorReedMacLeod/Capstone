@@ -32,7 +32,7 @@ public class ActionSmokeCover : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("Putting Smoke Cover buff on self");
+                
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
                     chrTarget = this.chrSource,

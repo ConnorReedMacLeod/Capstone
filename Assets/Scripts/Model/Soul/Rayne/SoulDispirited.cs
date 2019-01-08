@@ -12,11 +12,16 @@ public class SoulDispirited : Soul {
 
     public void OnAbilityUsage(Object target, params object[] args) {
 
+        //Ignore if the action used wasn't used by the character who has this soul effect
+        if (((Action)args[0]).chrSource != this.chrTarget) return;
+
         //Check if the action that was just used is a character action - not a generic (block/rest)
         if (((Action)args[0]).id < Chr.nCharacterActions) {
             //Then dispell the debuff
             soulContainer.RemoveSoul(this);
+            Debug.Log("So we've dispelled the soul effect");
         }
+
 
 
     }
@@ -39,18 +44,20 @@ public class SoulDispirited : Soul {
 
         //Loop through each ability on the targetted character
         for (int i = 0; i < Chr.nCharacterActions; i++) {
-            Debug.Log(arnodeCostModifier[i]);
 
-            arnodeCostModifier[i] = chrTarget.arActions[i].parCost.AddModifier(
+            Property<int[]>.Modifier costIncrease =
                 (arCost) => {
-                    if (chrTarget.arActions[i].type == Action.ActionType.CANTRIP) { 
+                    if (chrTarget.arActions[i].type == Action.ActionType.CANTRIP) {
                         //Increase the cost if the ability is a cantrip
+                        Debug.Log("The cost should be increased");
                         return LibFunc.AddArray<int>(arCost, arnCostDebuff, (x, y) => (x + y));
                     } else {
                         //Otherwise, keep the cost the same
                         return arCost;
                     }
-                });
+                };
+
+            arnodeCostModifier[i] = chrTarget.arActions[i].ChangeCost(costIncrease);
 
         }
 
