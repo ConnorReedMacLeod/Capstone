@@ -31,12 +31,16 @@ public class SoulDispirited : Soul {
 
         //Increase the cost by one effort
         arnCostDebuff = new int[] { 0, 0, 0, 0, 1 };
+
+        arnodeCostModifier = new LinkedListNode<Property<int[]>.Modifier>[Chr.nCharacterActions];
     }
 
     public override void funcOnApplication() {
 
         //Loop through each ability on the targetted character
         for (int i = 0; i < Chr.nCharacterActions; i++) {
+            Debug.Log(arnodeCostModifier[i]);
+
             arnodeCostModifier[i] = chrTarget.arActions[i].parCost.AddModifier(
                 (arCost) => {
                     if (chrTarget.arActions[i].type == Action.ActionType.CANTRIP) { 

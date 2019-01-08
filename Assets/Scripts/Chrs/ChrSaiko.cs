@@ -16,7 +16,7 @@ public class ChrSaiko : BaseChr {
     public override void SetActions() {
 
         chrOwner.SetAction(0, new ActionFireball(chrOwner));
-        chrOwner.SetAction(1, new ActionHeal(chrOwner));
+        chrOwner.SetAction(1, new ActionSmokeCover(chrOwner));
         chrOwner.SetAction(2, new ActionTranquilize(chrOwner));
         chrOwner.SetAction(3, new ActionStickyBomb(chrOwner));
         
