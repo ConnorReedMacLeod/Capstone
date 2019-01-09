@@ -139,7 +139,7 @@ public class Chr : MonoBehaviour {
     public void CheckNoArmour() {
 
         if (pnArmour.Get() < nAbsorbedArmour) {
-            Debug.LogError("ERROR - " + sName + "'s armour is at " + pnArmour.Get() + " but we've absorbed " + nAbsorbedArmour);
+            //Debug.LogError("ERROR - " + sName + "'s armour is at " + pnArmour.Get() + " but we've absorbed " + nAbsorbedArmour);
         } else if (pnArmour.Get() == 0) {
             //Then we have used up all of our armour
 

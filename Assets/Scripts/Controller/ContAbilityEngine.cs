@@ -13,6 +13,8 @@ public class ContAbilityEngine : MonoBehaviour {
     public GameObject pfTimer;
     public ViewTimer viewTimerCur;
 
+    public const bool bDEBUGENGINE = false;
+
     public static ContAbilityEngine instance;
 
     public static ContAbilityEngine Get() {
@@ -70,7 +72,7 @@ public class ContAbilityEngine : MonoBehaviour {
 
         //Check for any replacements or triggers or something?
 
-        Debug.Log("Pushing a Clause");
+        if(bDEBUGENGINE) Debug.Log("Pushing a Clause");
 
         stackClause.Push(clause);
 
@@ -184,7 +186,7 @@ public class ContAbilityEngine : MonoBehaviour {
 
         //First, check if there's any executables to process
         if(stackExec.Count > 0) {
-            Debug.Log("Resolving an Executable");
+            if (bDEBUGENGINE) Debug.Log("Resolving an Executable");
             ResolveExec();
             return;
         }
@@ -194,7 +196,7 @@ public class ContAbilityEngine : MonoBehaviour {
 
         //Next, check if there's any clauses to process
         if(stackClause.Count > 0) {
-            Debug.Log("No Executables, so unpack a Clause");
+            if (bDEBUGENGINE) Debug.Log("No Executables, so unpack a Clause");
             ResolveClause();
 
             //Then recurse to find something new we can process
@@ -205,7 +207,7 @@ public class ContAbilityEngine : MonoBehaviour {
         //Then we have nothing left to process
         //So ask the ContTurn to add the executable for the next phase in the turn
 
-        Debug.Log("No Clauses or Executables so move to the next part of the turn");
+        if (bDEBUGENGINE) Debug.Log("No Clauses or Executables so move to the next part of the turn");
         ContTurns.Get().HandleTurnPhase();
 
         //And recurse to process the newly added Executable

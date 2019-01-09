@@ -29,7 +29,6 @@ public class ActionBucklerParry : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("Buckler Parry's clause put an ExecApplySoul on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
                     chrTarget = this.chrSource,

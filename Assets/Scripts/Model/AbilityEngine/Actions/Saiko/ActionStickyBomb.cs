@@ -36,7 +36,6 @@ public class ActionStickyBomb : Action {
             fExecute = () => {
 
                 //Deal initial damage to the target
-                Debug.Log("This StickyBomb Clause put an ExecDamage on the stack");
                 Damage dmgToDeal = new Damage(chrSource, chrTarget, nInitialDamage);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
@@ -49,7 +48,6 @@ public class ActionStickyBomb : Action {
                 });
 
                 //Apply the stickybomb Soul effect to the target
-                Debug.Log("The same Clause put an ExecApplySoul on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
                     chrTarget = chrTarget,

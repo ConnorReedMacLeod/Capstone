@@ -137,7 +137,7 @@ public class ContTurns : MonoBehaviour {
     // so we should add an ExecTurn Executable to next be processed
     public void HandleTurnPhase() {
 
-        Debug.Log("Handling the turn for phase: " + curStateTurn);
+        if (ContAbilityEngine.bDEBUGENGINE) Debug.Log("Handling the turn for phase: " + curStateTurn);
 
         switch (curStateTurn) {
             case STATETURN.GIVEMANA:

@@ -95,11 +95,12 @@ public class ViewAction : ViewInteractive {
         if (mod == null) {
             txtType.text = "";
         } else {
-            string sPhys = new string('1', mod.parCost.Get()[(int)Mana.MANATYPE.PHYSICAL]);
-            string sMent = new string('2', mod.parCost.Get()[(int)Mana.MANATYPE.MENTAL]);
-            string sEnrg = new string('3', mod.parCost.Get()[(int)Mana.MANATYPE.ENERGY]);
-            string sBld = new string('4', mod.parCost.Get()[(int)Mana.MANATYPE.BLOOD]);
-            string sEfrt = new string('5', mod.parCost.Get()[(int)Mana.MANATYPE.EFFORT]);
+            int[] arCost = mod.parCost.Get();
+            string sPhys = new string('1', arCost[(int)Mana.MANATYPE.PHYSICAL]);
+            string sMent = new string('2', arCost[(int)Mana.MANATYPE.MENTAL]);
+            string sEnrg = new string('3', arCost[(int)Mana.MANATYPE.ENERGY]);
+            string sBld = new string('4', arCost[(int)Mana.MANATYPE.BLOOD]);
+            string sEfrt = new string('5', arCost[(int)Mana.MANATYPE.EFFORT]);
 
             txtCost.text = sPhys + sMent + sEnrg + sBld + sEfrt;
         }

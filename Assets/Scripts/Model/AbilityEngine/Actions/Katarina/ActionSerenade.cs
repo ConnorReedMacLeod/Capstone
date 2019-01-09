@@ -32,7 +32,6 @@ public class ActionSerenade : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("This Heal Clause put an ExecHeal on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecHeal() {
                     chrSource = this.chrSource,
                     chrTarget = tar,

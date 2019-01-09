@@ -30,7 +30,6 @@ override public void Execute() {
 
     stackClauses.Push(new Clause() {
         fExecute = () => {
-            Debug.Log("This Tendril Stab Clause put an ExecDamage on the stack");
             Damage dmgToDeal = new Damage(chrSource, tar, 25, false, true);
 
             ContAbilityEngine.Get().AddExec(new ExecDealDamage() {

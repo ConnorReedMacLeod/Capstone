@@ -38,7 +38,6 @@ public class ActionHiss : Action {
         stackClauses.Push(new Clause() {
             fExecute = () => {
                 for (int i = 0; i < tar.arChr.Length; i++) {
-                    Debug.Log("This Hiss Clause put an ApplySoul on the stack");
                     //TODO:: Organize this in the correct order
                     ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                         chrSource = this.chrSource,

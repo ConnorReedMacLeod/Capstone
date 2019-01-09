@@ -30,7 +30,6 @@ public class ActionHarpoon : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("This Harpoon Clause put an ExecDamage on the stack");
                 Damage dmgToDeal = new Damage(chrSource, tar, 10);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
@@ -45,7 +44,6 @@ public class ActionHarpoon : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("Harpoon's second clause put an ExecBecomeBlocker on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecBecomeBlocker() {
                     chrSource = this.chrSource,
                     chrTarget = tar

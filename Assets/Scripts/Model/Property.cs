@@ -24,6 +24,7 @@ public class Property<T> {
     public Property(T tBase) {
         SetBase(() => tBase);
         lstModifiers = new LinkedList<Modifier>();
+
     }
 
     //Require that a base accessor be passed in
@@ -49,6 +50,7 @@ public class Property<T> {
 
     public T Get() {
         //Go through the entire list of modifiers to get the desired value
+
         return Get(lstModifiers.First);
     }
 
@@ -97,6 +99,7 @@ public class Property<T> {
 
     //Gets the base value
     public Default GetBase() {
+
         return baseValue;
     }
 }

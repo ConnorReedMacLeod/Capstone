@@ -30,7 +30,6 @@ public class ActionImpale : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("This Impale Clause put an ExecDamage on the stack");
                 Damage dmgToDeal = new Damage(chrSource, tar, 20);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
@@ -46,7 +45,6 @@ public class ActionImpale : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("Impale's second clause put an ExecApplySoul on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
                     chrTarget = tar,

@@ -10,6 +10,8 @@ public class SoulDispirited : Soul {
     public LinkedListNode<Property<int[]>.Modifier>[] arnodeCostModifier;
 
 
+
+    //Not currently useing this - was used for if this only makes the next ability you use cost more
     public void OnAbilityUsage(Object target, params object[] args) {
 
         //Ignore if the action used wasn't used by the character who has this soul effect
@@ -17,9 +19,9 @@ public class SoulDispirited : Soul {
 
         //Check if the action that was just used is a character action - not a generic (block/rest)
         if (((Action)args[0]).id < Chr.nCharacterActions) {
-            //Then dispell the debuff
+
+            //Otherwise dispell the debuff
             soulContainer.RemoveSoul(this);
-            Debug.Log("So we've dispelled the soul effect");
         }
 
 
@@ -45,11 +47,12 @@ public class SoulDispirited : Soul {
         //Loop through each ability on the targetted character
         for (int i = 0; i < Chr.nCharacterActions; i++) {
 
+            LibFunc.Get<Action> getAction = LibFunc.ReturnSnapShot<Action>(chrTarget.arActions[i]);
+
             Property<int[]>.Modifier costIncrease =
                 (arCost) => {
-                    if (chrTarget.arActions[i].type == Action.ActionType.CANTRIP) {
+                    if (getAction().type == Action.ActionType.CANTRIP) {
                         //Increase the cost if the ability is a cantrip
-                        Debug.Log("The cost should be increased");
                         return LibFunc.AddArray<int>(arCost, arnCostDebuff, (x, y) => (x + y));
                     } else {
                         //Otherwise, keep the cost the same
@@ -61,7 +64,7 @@ public class SoulDispirited : Soul {
 
         }
 
-        chrTarget.subPostExecuteAbility.Subscribe(OnAbilityUsage);
+        //chrTarget.subPostExecuteAbility.Subscribe(OnAbilityUsage);
     }
 
     public override void funcOnRemoval() {
@@ -71,7 +74,7 @@ public class SoulDispirited : Soul {
             chrTarget.arActions[i].parCost.RemoveModifier(arnodeCostModifier[i]);
         }
 
-        chrTarget.subPostExecuteAbility.UnSubscribe(OnAbilityUsage);
+        //chrTarget.subPostExecuteAbility.UnSubscribe(OnAbilityUsage);
 
     }
 

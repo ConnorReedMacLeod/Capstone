@@ -35,7 +35,6 @@ public class ActionCheerleader : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("Cheerleader is putting its clause on the stack to apply its passive soul effect");
 
                 //Save a reference to the buff we're applying
                 soulPassive = new SoulCheerleader(this.chrSource, this.chrSource);
@@ -61,7 +60,6 @@ public class ActionCheerleader : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("Cheerleader is putting its clause on the stack to remove its passive soul effect");
 
                 ContAbilityEngine.Get().AddExec(new ExecRemoveSoul() {
                     chrSource = this.chrSource,

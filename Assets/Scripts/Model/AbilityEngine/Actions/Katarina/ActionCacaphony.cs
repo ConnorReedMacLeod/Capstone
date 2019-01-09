@@ -29,8 +29,6 @@ public class ActionCacaphony : Action {
         // but at least it's eliminated from the targetting lambda
         Chr tar = ((TargetArgChr)arArgs[0]).chrTar;
 
-        Debug.Log("Cacaphony has its Execute() called with target " + tar.sName);
-
         stackClauses.Push(new Clause() {
             fExecute = () => {
 
@@ -42,12 +40,9 @@ public class ActionCacaphony : Action {
                 int nToFatigue = 2;
 
                 if(tar.bBlocker == true) {
-                    Debug.Log("The target is the blocker");
                     nToDamage = 30;
                     nToFatigue = 3;
                 }
-
-                Debug.Log("This Cacaphony Clause put an ExecStun on the stack");
 
                 ContAbilityEngine.Get().AddExec(new ExecStun() {
                     chrSource = this.chrSource,
@@ -56,8 +51,7 @@ public class ActionCacaphony : Action {
                     fDelay = 1.0f,
                     sLabel = "Stunning " + tar.sName + " for " + nToFatigue
                 });
-
-                Debug.Log("This Cacaphony Clause put an ExecDamage on the stack");
+                
                 Damage dmgToDeal = new Damage(chrSource, tar, nToDamage);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
