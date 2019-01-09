@@ -15,7 +15,7 @@ public class ActionExplosion : Action {
         type = ActionType.ACTIVE;
 
         //Physical, Mental, Energy, Blood, Effort
-        arCost = new int[] { 0, 0, 2, 0, 0 };
+        parCost = new Property<int[]>(new int[] { 0, 0, 2, 0, 0 });
 
         nCd = 10;
         nFatigue = 6;
@@ -35,11 +35,13 @@ public class ActionExplosion : Action {
             fExecute = () => {
                 for (int i = 0; i < tar.arChr.Length; i++) {
                     Debug.Log("This Explosion Clause put an ExecDamage on the stack");
+                    Damage dmgToDeal = new Damage(chrSource, tar.arChr[i], 5);
+
                     //TODO:: Organize this in the correct order
                     ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                        chrOwner = this.chrOwner,
+                        chrSource = this.chrSource,
                         chrTarget = tar.arChr[i],
-                        nDamage = 5,
+                        dmg = dmgToDeal,
                         fDelay = 1.0f,
                         sLabel = "Exploding"
                     });

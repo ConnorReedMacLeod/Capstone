@@ -15,12 +15,11 @@ public class ChrSkelCowboy : BaseChr {
     //Defines all of a character's unique actions
     public override void SetActions() {
 
-        chrOwner.arActions[0] = new ActionFireball(chrOwner);
-        chrOwner.arActions[1] = new ActionHeal(chrOwner);
-        chrOwner.arActions[2] = new ActionExplosion(chrOwner);
-        chrOwner.arActions[3] = new ActionExplosion(chrOwner);
-
-        chrOwner.arActions[7] = new ActionRest(chrOwner);
+        chrOwner.SetAction(0, new ActionFireball(chrOwner));
+        chrOwner.SetAction(1, new ActionHeal(chrOwner));
+        chrOwner.SetAction(2, new ActionExplosion(chrOwner));
+        chrOwner.SetAction(3, new ActionExplosion(chrOwner));
+        
     }
 
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//Note - there are some bugs when you hover over the blocker button then it disappears
+//        leaving the description panel up
 public class ViewInfoPanel : MonoBehaviour {
 
 	public GameObject pfInfoAction;

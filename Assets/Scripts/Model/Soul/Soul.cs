@@ -4,7 +4,12 @@ using UnityEngine;
 
 
 //TODO probably extend this class for visible/locked/duration interactions rather than using bool flags
-public class Soul {
+public abstract class Soul {
+
+    public Chr chrSource;     //A reference to the character that applied this soul effect
+    public Chr chrTarget;     //A reference to the character this soul effect is applied to
+
+    public SoulContainer soulContainer; //A reference to the soulcontainer containing this soul
 
     public string sName;
 
@@ -15,8 +20,10 @@ public class Soul {
     public int nCurStacks;
 
     public bool bDuration; 
-    public int nMaxDuration;
+    public Property<int> pnMaxDuration;
     public int nCurDuration;
+
+    public List<Replacement> lstReplacements = new List<Replacement>(); //A (potentially empty) list of replacement effects for this effect
     
     //A structure to hold information about a single trigger needed by a Soul effect
     public struct TriggerEffect {
@@ -26,41 +33,67 @@ public class Soul {
 
     public List<TriggerEffect> lstTriggers;
 
-    public System.Action funcOnApplication;
-    public System.Action funcOnRemoval;
-    public System.Action funcOnExpiration; //Specifically when the soul effect reaches the end of its duration
+    public Soul(Chr _chrSource, Chr _chrTarget) {
 
-    public void OnApply() {
+        chrSource = _chrSource;
+        chrTarget = _chrTarget;
+
+        nMaxStacks = 1; //by Default
+
+    }
+
+    //These don't do anything by default, but we don't need to override them, if we're not gonna do anything with them
+    public virtual void funcOnApplication() { }
+    public virtual void funcOnRemoval() { } 
+    public virtual void funcOnExpiration() { } //Specifically when the soul effect reaches the end of its duration
+   
+    public void OnApply(SoulContainer _soulContainer) {
+
+        //Save a reference to the soulContainer we're in
+        soulContainer = _soulContainer;
 
         //If we have a duration, then set the current duration to the max
         if(bDuration == true) {
-            nCurDuration = nMaxDuration;
+            nCurDuration = pnMaxDuration.Get();
         }
 
-        //Each triggeredeffect we have should subscribe to the trigger it needs
-        foreach (TriggerEffect trig in lstTriggers) {
-            //TODO:: Consider switching this to an extended trigger class rather than just a Subject
-            trig.sub.Subscribe(trig.cb);
+        if (lstTriggers != null) { //Then we have some triggers to subscribe
+            //Each triggeredeffect we have should subscribe to the trigger it needs
+            foreach (TriggerEffect trig in lstTriggers) {
+                //TODO:: Consider switching this to an extended trigger class rather than just a Subject
+                trig.sub.Subscribe(trig.cb);
+            }
         }
 
-        if (funcOnApplication != null) {
-            funcOnApplication();
+        foreach (Replacement rep in lstReplacements) {
+            //For each replacement effect this soul effect has, register it so it'll take effect
+            Replacement.Register(rep);
         }
+
+        funcOnApplication();
+        Debug.Log(sName + " has been applied");
     }
 
     public void OnRemoval() {
 
-        //Each triggeredeffect should unsubscribe from each of its triggers its observing
-        foreach(TriggerEffect trig in lstTriggers) {
-            trig.sub.UnSubscribe(trig.cb);
+        if (lstTriggers != null) { //Then we have some triggers to unsubscribe
+                                   //Each triggeredeffect should unsubscribe from each of its triggers its observing
+            foreach (TriggerEffect trig in lstTriggers) {
+                trig.sub.UnSubscribe(trig.cb);
+            }
         }
 
-        if (funcOnRemoval != null) {
-            funcOnRemoval();
+        foreach (Replacement rep in lstReplacements) {
+            //For each replacement effect this soul effect has, unregister it so it'll stop taking effect
+            Replacement.Unregister(rep);
         }
 
-        if(bDuration == true && funcOnExpiration != null) {
+        funcOnRemoval();
+        Debug.Log(sName + " has been removed");
+
+        if (bDuration == true && nCurDuration == 0) {
             funcOnExpiration();
+            Debug.Log(sName + " has expired");
         }
 
     }

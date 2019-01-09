@@ -48,7 +48,7 @@ public class StateTargetChr : StateTarget {
 
         ViewChr.subAllClick.Subscribe(cbSetTargetChr);
         ViewAction.subAllClick.Subscribe(cbSwitchAction);
-
+        ViewBlockerButton.subAllClick.Subscribe(cbSwitchAction);
     }
 
 	override public void OnLeave(){
@@ -57,12 +57,13 @@ public class StateTargetChr : StateTarget {
 
         ViewChr.subAllClick.UnSubscribe(cbSetTargetChr);
         ViewAction.subAllClick.UnSubscribe(cbSwitchAction);
+        ViewBlockerButton.subAllClick.UnSubscribe(cbSwitchAction);
     }
 
 	public void ResetTargets(){
 		//clear any targetting 
 		//TODO:: maybe only reset the targets to whatever was selected before?
-		contTarg.selected.arActions [contTarg.selected.nUsingAction].Reset ();
+		contTarg.selected.arActions [contTarg.selected.nUsingAction].ResetTargettingArgs ();
 
 		//contTarg.SetState (new StateTargetIdle (contTarg));
 	}

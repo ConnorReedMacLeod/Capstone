@@ -20,7 +20,6 @@ using UnityEngine;
 // can subscribe to this mega-subject class
 
 [RequireComponent (typeof(ContTarget))]
-[RequireComponent (typeof(ContTimeline))]
 [RequireComponent (typeof(ContMana))]
 [RequireComponent (typeof(ContInfo))]
 [RequireComponent (typeof(ContArena))]
@@ -29,7 +28,6 @@ public class Controller : MonoBehaviour{
     //TODO:: Make all of these controllers static instances, so a controller object isn't needed
     
     public ContTarget contTarget;
-    public ContTimeline contTimeline;
     public ContMana contMana;
     public ContInfo contInfo;
     public ContArena contArena;
@@ -52,9 +50,6 @@ public class Controller : MonoBehaviour{
 		// Find all necessary controllers and register them as our observers
 		contTarget = GetComponent<ContTarget> ();
 		//Subscribe (contTarget);
-
-		contTimeline = GetComponent<ContTimeline> ();
-		//Subscribe (contTimeline);
 
 		contMana = GetComponent<ContMana> ();
 		//Subscribe (contMana);

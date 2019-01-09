@@ -13,21 +13,59 @@ public class Player : MonoBehaviour{
 	public Chr.CHARTYPE[] arChrTypeSelection;
 	public int nChrs;
 
+    public int iBlocker; // the index of the currently selected blocker
+
 	public GameObject pfManaPanel;
 
 	public Mana mana;
 
 	public void setChrs(){
-		//placeholder until character selection is available
-		arChrTypeSelection[0] = Chr.CHARTYPE.KATARA;
-		arChrTypeSelection[1] = Chr.CHARTYPE.LANCER;
-		arChrTypeSelection[2] = Chr.CHARTYPE.SNEKGIRL;
-		nChrs = 3;
+        //placeholder until character selection is available
+
+        nChrs = 3;
+
+        if (id == 0) {
+            arChrTypeSelection[0] = Chr.CHARTYPE.RAYNE;
+            
+            arChrTypeSelection[1] = Chr.CHARTYPE.KATARINA;
+            arChrTypeSelection[2] = Chr.CHARTYPE.SOHPIDIA;
+            
+        } else {
+
+            arChrTypeSelection[0] = Chr.CHARTYPE.SAIKO;
+            arChrTypeSelection[1] = Chr.CHARTYPE.PITBEAST;
+            arChrTypeSelection[2] = Chr.CHARTYPE.FISCHER;
+
+        }
 	}
 
 	public void SetID(int _id){
 		id = _id;
 	}
+
+    public void SetBlocker(int _iBlocker) {
+
+        Debug.Assert(arChr[_iBlocker] != null, "Assigned a blocker as a character that doesn't exist");
+        if(iBlocker == _iBlocker) {
+            Debug.Log("Then this character is already the blocker");
+            return;
+        }
+
+        //TODO:: Make this more sophisticated
+        if (iBlocker != -1) {
+            arChr[iBlocker].ChangeBlocker(false);
+        }
+
+        iBlocker = _iBlocker;
+
+        arChr[iBlocker].ChangeBlocker(true);
+   
+    }
+
+    public Chr GetBlocker() {
+        Debug.Assert(arChr[iBlocker] != null, "No blocker assigned to player " + id);
+        return arChr[iBlocker];
+    }
 
 	// Use this for initialization
 	public void Start () {
@@ -48,8 +86,9 @@ public class Player : MonoBehaviour{
 				manaPanel.transform.position = new Vector3(12.75f, -5.3f, -0.4f);
 			} else {
 				//move it offscreen for now
-				manaPanel.transform.position = new Vector3(-20.0f, -3.0f, -0.4f);
+				manaPanel.transform.position = new Vector3(12.75f, 5.25f, -0.4f);
 			}
+
 		}
 	}
 
