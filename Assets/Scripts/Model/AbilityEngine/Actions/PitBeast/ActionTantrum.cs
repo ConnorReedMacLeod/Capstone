@@ -38,7 +38,6 @@ public class ActionTantrum : Action {
             fExecute = () => {
                 //Deal damage to all enemies
                 for (int i = 0; i < enemy.arChr.Length; i++) {
-                    Debug.Log("This Tantrum Clause put an ExecDamage on the stack");
                     Damage dmgToDeal = new Damage(chrSource, enemy.arChr[i], nEnemyDamage);
 
                     //TODO:: Organize this in the correct order
@@ -55,8 +54,7 @@ public class ActionTantrum : Action {
                 //Deal 5 damage to all other allies
                 for (int i = 0; i < chrSource.plyrOwner.arChr.Length; i++) {
                     if (chrSource.plyrOwner.arChr[i] == chrSource) continue; //Don't hurt yourself
-
-                    Debug.Log("This Tantrum Clause put an ExecDamage on the stack");
+                    
                     Damage dmgToDeal = new Damage(chrSource, chrSource.plyrOwner.arChr[i], nAllyDamage);
 
                     //TODO:: Organize this in the correct order

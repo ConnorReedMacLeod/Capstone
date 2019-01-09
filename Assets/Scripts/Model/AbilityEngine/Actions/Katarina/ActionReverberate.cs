@@ -31,7 +31,6 @@ public class ActionReverberate : Action {
         stackClauses.Push(new Clause() {
             fExecute = () => {
                 for (int i = 0; i < tar.arChr.Length; i++) {
-                    Debug.Log("This Reverberate Clause put an ExecDamage on the stack");
                     Damage dmgToDeal = new Damage(chrSource, tar.arChr[i], 5);
 
                     //TODO:: Organize this in the correct order

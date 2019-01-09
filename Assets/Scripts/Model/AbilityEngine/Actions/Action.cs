@@ -69,11 +69,7 @@ public class Action { //This should probably be made abstract
     //Changes the cost of this action, and returns the node that is modifying that cost (so you can remove it later)
     public LinkedListNode<Property<int[]>.Modifier> ChangeCost (Property<int[]>.Modifier modifier) {
 
-        Debug.Log("Before modifying cost: " + parCost.Get()[(int)Mana.MANATYPE.EFFORT]);
-
         LinkedListNode<Property<int[]>.Modifier> nodeModifier = parCost.AddModifier(modifier);
-
-        Debug.Log("After modifying cost: " + parCost.Get()[(int)Mana.MANATYPE.EFFORT]);
 
         //Let others know that the cost has changed
         subAbilityChange.NotifyObs();

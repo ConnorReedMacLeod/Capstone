@@ -72,7 +72,7 @@ public class SoulContainer : MonoBehaviour {
 
         Debug.Log("After removing " + toRemove.sName);
 
-        PrintAllSoul();
+        if (ContAbilityEngine.bDEBUGENGINE) PrintAllSoul();
 
     }
 
@@ -106,7 +106,7 @@ public class SoulContainer : MonoBehaviour {
         //Let others know that the visible soul MAY have changed (not necessarily)
         subVisibleSoulUpdate.NotifyObs(this);
 
-        PrintAllSoul();
+        if (ContAbilityEngine.bDEBUGENGINE) PrintAllSoul();
 
     }
 

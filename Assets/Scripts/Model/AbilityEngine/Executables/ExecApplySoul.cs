@@ -38,9 +38,7 @@ public class ExecApplySoul : Executable {
 
 
     public override void Execute() {
-
-        Debug.Log("In ExecApplySoul's execute method");
-
+       
         chrTarget.soulContainer.ApplySoul(funcCreateSoul(chrSource, chrTarget));
 
         base.Execute();

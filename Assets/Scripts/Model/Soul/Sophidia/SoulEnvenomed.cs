@@ -33,7 +33,6 @@ public class SoulEnvenomed : Soul {
                 sub = ExecTurnEndTurn.subAllPostTrigger,
                 cb = (target, args) =>
                 {
-                    Debug.Log("We have been triggered at the end of turn to add a venom damage exec");
                     ContAbilityEngine.Get().AddExec(new ExecLoseLife() {
                         chrSource = this.chrSource,
                         chrTarget = this.chrTarget,

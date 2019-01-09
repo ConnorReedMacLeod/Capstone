@@ -38,7 +38,6 @@ public class ActionStorm : Action {
             fExecute = () => {
                 //Deal damage to all enemies
                 for (int i = 0; i < enemy.arChr.Length; i++) {
-                    Debug.Log("This Storm Clause put an ExecDamage on the stack");
                     Damage dmgToDeal = new Damage(chrSource, enemy.arChr[i], nEnemyDamage);
 
                     //TODO:: Organize this in the correct order
@@ -54,8 +53,6 @@ public class ActionStorm : Action {
 
                 //Stun all enemies
                 for (int i = 0; i < enemy.arChr.Length; i++) {
-
-                    Debug.Log("This Storm Clause put a Stun on the stack");
 
                     //TODO:: Organize this in the correct order
                     ContAbilityEngine.Get().AddExec(new ExecStun() {

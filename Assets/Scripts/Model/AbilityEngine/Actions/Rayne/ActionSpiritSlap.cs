@@ -31,7 +31,6 @@ public class ActionSpiritSlap : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("This Spirit Slap Clause put an ExecDamage on the stack");
                 Damage dmgToDeal = new Damage(chrSource, tar, 5);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
@@ -46,7 +45,6 @@ public class ActionSpiritSlap : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("Spirit Slap's second clause put an ExecApplySoul on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
                     chrTarget = tar,

@@ -30,7 +30,6 @@ public class ActionSnakeLaunch : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("This Snake Launch Clause put an ExecDamage on the stack");
                 Damage dmgToDeal = new Damage(chrSource, tar, 20);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
@@ -46,7 +45,6 @@ public class ActionSnakeLaunch : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("This Snake Launch Clause put an ExecDamage on the stack");
                 Damage dmgToDeal = new Damage(chrSource, tar, 20);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
@@ -62,7 +60,6 @@ public class ActionSnakeLaunch : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("This Snake Launch Clause put an LoseLife on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecLoseLife() {
                     chrSource = this.chrSource,
                     chrTarget = this.chrSource,
@@ -76,7 +73,6 @@ public class ActionSnakeLaunch : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("This Snake Launch Clause put an LoseLife on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecLoseLife() {
                     chrSource = this.chrSource,
                     chrTarget = this.chrSource,

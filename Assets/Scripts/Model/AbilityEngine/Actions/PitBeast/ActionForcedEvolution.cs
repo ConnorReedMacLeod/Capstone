@@ -31,7 +31,6 @@ public class ActionForcedEvolution : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("Putting ForcedEvolution buff on self");
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
                     chrTarget = this.chrSource,
@@ -50,7 +49,6 @@ public class ActionForcedEvolution : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("This Evolution Clause put an LoseLife on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecLoseLife() {
                     chrSource = this.chrSource,
                     chrTarget = this.chrSource,

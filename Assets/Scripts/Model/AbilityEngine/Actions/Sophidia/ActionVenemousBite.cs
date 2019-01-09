@@ -31,7 +31,6 @@ public class ActionVenemousBite : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("This VenemousBite Clause put an ExecDamage on the stack");
                 Damage dmgToDeal = new Damage(chrSource, tar, 5);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
@@ -46,7 +45,6 @@ public class ActionVenemousBite : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("Venemous Bite's second clause put an ExecApplySoul on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
                     chrTarget = tar,

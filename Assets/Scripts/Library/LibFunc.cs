@@ -9,6 +9,9 @@ public static class LibFunc {
 
     //Can be used to fix the return value, so that we always return
     //the value of toReturn AS IT IS NOW, even if the source of toReturn changes later
+    //This can be very useful when creating functions that use values that may change
+    //after the function is created - e.g. you may want to snapshot the ability a character
+    // is using RIGHT NOW, rather than always grabbing whatever the currently used ability is
     public static Get<T> ReturnSnapShot<T>(T toReturn) {
         return () => { return toReturn; };
     }
@@ -21,8 +24,6 @@ public static class LibFunc {
         for(int i=0; i<ar1.Length; i++) {
             arToReturn[i] = fCombine(ar1[i], ar2[i]);
         }
-
-        Debug.Log("Added array is " + arToReturn[0] + " " + arToReturn[1] + " " + arToReturn[2] + " " + arToReturn[3] + " " + arToReturn[4] + " ");
 
         return arToReturn;
     }

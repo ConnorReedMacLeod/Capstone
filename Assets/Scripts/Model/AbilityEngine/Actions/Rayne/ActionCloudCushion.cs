@@ -36,7 +36,6 @@ public class ActionCloudCushion : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("Cloud Cushion's first clause put an ExecApplySoul on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
                     chrTarget = chrTarget,

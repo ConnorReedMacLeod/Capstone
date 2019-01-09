@@ -30,7 +30,6 @@ public class ActionHuntersQuarry : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Debug.Log("Hunter's Quarry's first clause put an ExecApplySoul on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
                     chrTarget = tar,
