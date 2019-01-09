@@ -16,27 +16,47 @@ public class StateTargetSelected : StateTarget {
         contTarg.SetState(new StateTargetSelected(contTarg));
     }
 
-    public void cbChooseAction(Object target, params object[] args) {
+    public void cbClickAction(Object target, params object[] args) {
+        ChooseAction(((ViewAction)target).mod);
+    }
+
+    public void cbClickBlockerButton(Object target, params object[] args) {
+        ChooseAction(ContTurns.Get().GetNextActingChr().arActions[Chr.idBlocking]);
+    }
+
+    //TODO NOW:: Make a helper function that just does this but just takes an action parameter
+    // Then have two functions (one for a ViewAction and one for a ViewBlockerButton) that
+    // will just call this function with their actions
+    public void ChooseAction(Action actChosen) {
         // When we've clicked an action, use that action
+        Debug.Log(actChosen + " is being used");
 
         // But first, check if targetting is locked
-        if (((ViewAction)target).mod.chrOwner.bLockedTargetting) {
+        if (actChosen.chrSource.bLockedTargetting) {
             Debug.Log("We can't choose an action for a locked character");
             return;
         }
 
-        if(((ViewAction)target).mod.nCurCD > 0) {
+        //And check if it's an activatable ability (not a passive)
+        if(actChosen.type == Action.ActionType.PASSIVE) {
+            Debug.Log("We can't try to activate a passive ability");
+            return;
+        }
+
+        // And check if it's on cooldown
+        if(actChosen.nCurCD > 0) {
             Debug.Log("We can't use an ability that's on cooldown");
             return;
         }
 
-        if(((ViewAction)target).mod.chrOwner.nCurActionsLeft < ((ViewAction)target).mod.nActionCost) {
+        if(actChosen.chrSource.nCurActionsLeft < actChosen.nActionCost) {
             Debug.Log("We can't use an active when we've already used our active for the turn");
             return;
         }
 
         contTarg.selected.Targetting();
-        contTarg.selected.nUsingAction = ((ViewAction)target).id;
+        
+        contTarg.selected.nUsingAction = actChosen.id;
 
         // TODO:: Save the current targets if there are any, so that you can 
         // revert to those targets if you've failed targetting
@@ -49,7 +69,8 @@ public class StateTargetSelected : StateTarget {
 
         Arena.Get().view.subMouseClick.Subscribe(cbDeselect);
         ViewChr.subAllClick.Subscribe(cbReselectChar);
-        ViewAction.subAllClick.Subscribe(cbChooseAction);
+        ViewAction.subAllClick.Subscribe(cbClickAction);
+        ViewBlockerButton.subAllClick.Subscribe(cbClickBlockerButton);
 
         contTarg.selected.Select (); 
 
@@ -58,7 +79,8 @@ public class StateTargetSelected : StateTarget {
 	override public void OnLeave(){
         Arena.Get().view.subMouseClick.UnSubscribe(cbDeselect);
         ViewChr.subAllClick.UnSubscribe(cbReselectChar);
-        ViewAction.subAllClick.UnSubscribe(cbChooseAction);
+        ViewAction.subAllClick.UnSubscribe(cbClickAction);
+        ViewBlockerButton.subAllClick.UnSubscribe(cbClickBlockerButton);
     }
 
 

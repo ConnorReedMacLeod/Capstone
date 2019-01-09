@@ -23,7 +23,6 @@ public class Match : MonoBehaviour {
 
 	public static Match instance;
 
-
 	public static Match Get (){
 		if (instance == null) {
 			GameObject go = GameObject.FindGameObjectWithTag ("Match");
@@ -42,6 +41,10 @@ public class Match : MonoBehaviour {
 	public Player GetLocalPlayer(){
 		return arPlayers [0];
 	}
+
+    public Player GetEnemyPlayer() {
+        return arPlayers[1];
+    }
 
 	void InitPlayers (int _nPlayers){
 		nPlayers = _nPlayers;//in case this needs to be changed based on the match
@@ -75,19 +78,28 @@ public class Match : MonoBehaviour {
 		newChr.Start ();
 
 		switch (type) {
-		case Chr.CHARTYPE.KATARA: 
-			newChr.InitChr(player, id, new ChrKatara(newChr));
+		case Chr.CHARTYPE.KATARINA: 
+			newChr.InitChr(player, id, new ChrKatarina(newChr));
 			break;
-		case Chr.CHARTYPE.LANCER:
-			newChr.InitChr(player, id, new ChrLancer(newChr));
+		case Chr.CHARTYPE.FISCHER:
+			newChr.InitChr(player, id, new ChrFischer(newChr));
 			break;
 		case Chr.CHARTYPE.SKELCOWBOY:
 			newChr.InitChr(player, id, new ChrSkelCowboy(newChr));
 			break;
-        case Chr.CHARTYPE.SNEKGIRL:
-            newChr.InitChr(player, id, new ChrSnekGirl(newChr));
+        case Chr.CHARTYPE.SOHPIDIA:
+            newChr.InitChr(player, id, new ChrSophidia(newChr));
             break;
-        default: 
+        case Chr.CHARTYPE.PITBEAST:
+            newChr.InitChr(player, id, new ChrPitBeast(newChr));
+            break;
+        case Chr.CHARTYPE.SAIKO:
+            newChr.InitChr(player, id, new ChrSaiko(newChr));
+            break;
+        case Chr.CHARTYPE.RAYNE:
+            newChr.InitChr(player, id, new ChrRayne(newChr));
+            break;
+            default: 
 			Debug.LogError ("INVALID CHARACTER SELECTION");
 			Application.Quit ();
 			newChr.InitChr (player, id, new BaseChr(newChr)); //so the editor will let us compile
@@ -111,6 +123,14 @@ public class Match : MonoBehaviour {
 			}
 		}
 	}
+
+    void InitAllBlockers() {
+        for (int i=0; i<nPlayers; i++) {
+            arPlayers[i].iBlocker = -1;//temporarily set the blocker to -1, so that we meaningfully change the blocker on the next line
+            arPlayers[i].SetBlocker(1);//Initially set the blocker as the second character to go
+            arPlayers[i].SetBlocker(0);//Initially set the blocker as the first character to go
+        }
+    }
 
 	public Controller GetController(){
 		if (controller == null) {
@@ -139,5 +159,8 @@ public class Match : MonoBehaviour {
 		InitPlayers (nPlayers);
 
 		InitAllChrs ();
-	}
+
+        InitAllBlockers();
+
+    }
 }

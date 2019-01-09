@@ -25,18 +25,36 @@ public class ContInfo : MonoBehaviour{
         bLocked = false;
     }
 
-    public void cbActStartHover(Object target, params object[] args) {
+    public void DisplayAction (Action act) {
         if (bLocked == false) {
-            viewInfoPanel.ShowInfoAction(((ViewAction)target).mod);
+            viewInfoPanel.ShowInfoAction(act);
         }
     }
 
-    public void cbActStopHover(Object target, params object[] args) {
-        if (bLocked == false && ((ViewAction)target).mod == viewInfoPanel.viewInfoAction.mod) {
+    public void cbActStartHover(Object target, params object[] args) {
+        DisplayAction(((ViewAction)target).mod);
+    }
+
+    public void cbBlockerButtonStartHover(Object target, params object[] args) {
+        DisplayAction(ContTurns.Get().GetNextActingChr().arActions[Chr.idBlocking]);
+    }
+
+    public void StopDisplayAction(Action act) {
+        if (bLocked == false && 
+            ((viewInfoPanel.viewInfoAction == null) || //If nothing is currently being shown
+            act == viewInfoPanel.viewInfoAction.mod)) {
             // First ensure that what we're leaving is the current displayed ability
             //When we stop hovering over the thing we're displaying, stop displaying it
             viewInfoPanel.ClearPanel();
         }
+    }
+
+    public void cbActStopHover(Object target, params object[] args) {
+        StopDisplayAction(((ViewAction)target).mod);
+    }
+
+    public void cbBlockerButtonStopHover(Object target, params object[] args) {
+        StopDisplayAction(ContTurns.Get().GetNextActingChr().arActions[Chr.idBlocking]);
     }
 
 	public void SetActionFocus(Action _actFocus){
@@ -62,11 +80,14 @@ public class ContInfo : MonoBehaviour{
                 Debug.LogError("ERROR! NO VIEWINFOPANEL ON INFO-TAGGED OBJECT!");
             }
 
-        ContTarget.subAllStartTargetting.Subscribe(cbStartTargetting);
-        ContTarget.subAllFinishTargetting.Subscribe(cbFinishTargetting);
+            ContTarget.subAllStartTargetting.Subscribe(cbStartTargetting);
+            ContTarget.subAllFinishTargetting.Subscribe(cbFinishTargetting);
 
-        ViewAction.subAllStartHover.Subscribe(cbActStartHover);
-        ViewAction.subAllStopHover.Subscribe(cbActStopHover);
+            ViewAction.subAllStartHover.Subscribe(cbActStartHover);
+            ViewAction.subAllStopHover.Subscribe(cbActStopHover);
+
+            ViewBlockerButton.subAllStartHover.Subscribe(cbBlockerButtonStartHover);
+            ViewBlockerButton.subAllStopHover.Subscribe(cbBlockerButtonStopHover);
         }
 	}
 }

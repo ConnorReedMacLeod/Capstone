@@ -15,7 +15,7 @@ public class ActionHeal : Action {
         type = ActionType.ACTIVE;
 
         //Physical, Mental, Energy, Blood, Effort
-        arCost = new int[] { 0, 0, 0, 1, 0 };
+        parCost = new Property<int[]>(new int[] { 0, 0, 0, 1, 0 });
 
         nCd = 3;
         nFatigue = 3;
@@ -36,7 +36,7 @@ public class ActionHeal : Action {
             fExecute = () => {
                 Debug.Log("This Heal Clause put an ExecHeal on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecHeal() {
-                    chrOwner = this.chrOwner,
+                    chrSource = this.chrSource,
                     chrTarget = tar,
                     nAmount = 10,
                     fDelay = 1.0f,

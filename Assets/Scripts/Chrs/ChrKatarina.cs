@@ -1,0 +1,24 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ChrKatarina : BaseChr {
+
+    public ChrKatarina(Chr _chrOwner) : base(_chrOwner) {
+
+    }
+
+    public override void SetName() {
+        chrOwner.sName = "Katarina";
+    }
+
+    //Defines all of a character's unique actions
+    public override void SetActions() {
+
+        chrOwner.SetAction(0, new ActionFortissimo(chrOwner));
+        chrOwner.SetAction(1, new ActionReverberate(chrOwner));
+        chrOwner.SetAction(2, new ActionSerenade(chrOwner));
+        chrOwner.SetAction(3, new ActionCacaphony(chrOwner));
+    }
+
+}

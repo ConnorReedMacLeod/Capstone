@@ -6,6 +6,8 @@ public class SoulContainer : MonoBehaviour {
 
     public List<Soul> lstSoul = new List<Soul>();//TODO:: Lists have pretty bad runtime as we're using them  - worth changing?
 
+    public Chr chrOwner;
+
     public int nMaxVisibleSoul;
 
     public Subject subVisibleSoulUpdate = new Subject();
@@ -15,8 +17,7 @@ public class SoulContainer : MonoBehaviour {
         //TODO:: Just make this consistently maintained so we don't have to recalculate it each time
         List<Soul> lstVisibleSoul = new List<Soul>();
 
-        //Search through the list from the back (most recently added) to the front
-        for(int i=lstSoul.Count-1; i>=0; i--) {
+        for(int i=0; i < lstSoul.Count; i++) {
             if(lstSoul[i].bVisible == true) {
                 lstVisibleSoul.Add(lstSoul[i]);
             }
@@ -53,8 +54,7 @@ public class SoulContainer : MonoBehaviour {
 
         //Remove each effect that was noted as having no duration left
         foreach (Soul SoulToRemove in lstExpiredSoul) {
-            lstSoul.Remove(SoulToRemove);
-            SoulToRemove.OnRemoval();
+            RemoveSoul(SoulToRemove);
         }
 
         //Let others know that the visible soul MAY have changed (not necessarily)
@@ -62,9 +62,21 @@ public class SoulContainer : MonoBehaviour {
 
     }
 
-    public void ApplySoul(Soul newSoul) {
+    public void RemoveSoul(Soul toRemove) {
 
-        Debug.Log("In SoulContainer's ApplySoul method");
+        lstSoul.Remove(toRemove);
+        toRemove.OnRemoval();
+
+        //Let others know that the visible soul MAY have changed (not necessarily)
+        subVisibleSoulUpdate.NotifyObs(this);
+
+        Debug.Log("After removing " + toRemove.sName);
+
+        if (ContAbilityEngine.bDEBUGENGINE) PrintAllSoul();
+
+    }
+
+    public void ApplySoul(Soul newSoul) {
         
         if(newSoul.bVisible == true) {
             //Then check if we have enough slots
@@ -89,12 +101,32 @@ public class SoulContainer : MonoBehaviour {
         lstSoul.Add(newSoul);
 
         //Perform any action that needs to be done on application
-        newSoul.OnApply();
+        newSoul.OnApply(this);
 
         //Let others know that the visible soul MAY have changed (not necessarily)
         subVisibleSoulUpdate.NotifyObs(this);
 
+        if (ContAbilityEngine.bDEBUGENGINE) PrintAllSoul();
+
     }
+
+    public void PrintAllSoul() {
+        Debug.Log("********** Printing all Soul for " + chrOwner.sName + "*****************");
+        for (int i = 0; i < lstSoul.Count; i++) {
+            string sVisible = "";
+            string sDuration = "";
+            if (lstSoul[i].bVisible == true) {
+                sVisible = "(Visible)";
+            }
+            if (lstSoul[i].bDuration == true) {
+                sDuration = " with duration " + lstSoul[i].nCurDuration + "/" + lstSoul[i].pnMaxDuration.Get();
+            }
+            Debug.Log("[" + i + "] - " + lstSoul[i].sName + " " + sVisible + sDuration);
+        }
+        Debug.Log("*************************************************************************");
+    }
+
+
 
 
 	// Use this for initialization

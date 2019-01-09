@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Can create executables like ...= new Exec(){soulContainerTarget = ..., funcApplySoul = ...};
+//Can create executables like ...= new Exec(){chrSource = ..., chrTarget = ..., funcApplySoul = ...};
 
 public class ExecApplySoul : Executable {
 
-    public SoulContainer soulContainerTarget;
-
-    public delegate Soul FuncCreateSoul();
+    public delegate Soul FuncCreateSoul(Chr _chrSource, Chr _chrTarget);
 
     public FuncCreateSoul funcCreateSoul;
 
@@ -20,20 +18,28 @@ public class ExecApplySoul : Executable {
     public static Subject subAllPreTrigger = new Subject();
     public static Subject subAllPostTrigger = new Subject();
 
+    //Keep a list of the replacement effects for this executable type
+    public static List<Replacement> lstAllReplacements = new List<Replacement>();
+    public static List<Replacement> lstAllFullReplacements = new List<Replacement>();
+
     public override Subject GetPreTrigger() {
         return subAllPreTrigger; //Note this auto-resolves to the static member
     }
     public override Subject GetPostTrigger() {
         return subAllPostTrigger;
     }
+    public override List<Replacement> GetReplacements() {
+        return lstAllReplacements;
+    }
+    public override List<Replacement> GetFullReplacements() {
+        return lstAllFullReplacements;
+    }
     // This is the end of the section that should be copied and pasted
 
 
     public override void Execute() {
-
-        Debug.Log("In ExecApplySoul's execute method");
-
-        soulContainerTarget.ApplySoul(funcCreateSoul());
+       
+        chrTarget.soulContainer.ApplySoul(funcCreateSoul(chrSource, chrTarget));
 
         base.Execute();
     }

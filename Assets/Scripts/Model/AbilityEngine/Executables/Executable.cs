@@ -4,12 +4,16 @@ using UnityEngine;
 
 public abstract class Executable {
 
-    public Chr chrOwner;
+    public Chr chrSource;
+    public Chr chrTarget;
+
     public string sLabel;
     public float fDelay;
 
     public abstract Subject GetPreTrigger();
     public abstract Subject GetPostTrigger();
+    public abstract List<Replacement> GetReplacements();
+    public abstract List<Replacement> GetFullReplacements();
 
     public virtual void Execute() {
 

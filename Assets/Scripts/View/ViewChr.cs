@@ -12,9 +12,15 @@ public class ViewChr : ViewInteractive {
 
 	Chr.STATESELECT lastStateSelect;  //Tracks previous character state (SELECTED, TARGETTING, UNSELECTED)
 
-	public GameObject goBorder;        //Border reference
+    public GameObject pfBlockerIndicator; //Reference to the prefab blocker indicator
+
+    public GameObject goBlockerIndicator; //Blocker reference
+	public GameObject goBorder;         //Border reference
 	public GameObject goPortrait;       //Portrait Reference
     public Text txtHealth;              //Textfield Reference
+    public Text txtArmour;              //Textfield Reference
+    public Text txtPower;               //Textfield Reference
+    public Text txtDefense;             //Textfield Reference
     public Text txtFatigue;             //Fatigue Overlay Reference
     public SpriteMask maskPortrait;     //SpriteMask Reference
     public ViewSoulContainer viewSoulContainer;  //SoulContainer Reference
@@ -62,6 +68,21 @@ public class ViewChr : ViewInteractive {
                             -txtHealth.transform.localPosition.y,
                             txtHealth.transform.localPosition.z);
 
+            txtArmour.transform.localPosition =
+                new Vector3(txtArmour.transform.localPosition.x,
+                            -txtArmour.transform.localPosition.y,
+                            txtArmour.transform.localPosition.z);
+
+            txtPower.transform.localPosition =
+                new Vector3(txtPower.transform.localPosition.x,
+                            -txtPower.transform.localPosition.y,
+                            txtPower.transform.localPosition.z);
+
+            txtDefense.transform.localPosition =
+                new Vector3(txtDefense.transform.localPosition.x,
+                            -txtDefense.transform.localPosition.y,
+                            txtDefense.transform.localPosition.z);
+
         }
 	}
 
@@ -103,6 +124,8 @@ public class ViewChr : ViewInteractive {
 		string sSprPath = "Images/Chrs/" + _sName + "/img" + _sName + "Portrait";
 		Sprite sprChr = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
 
+        Debug.Assert(sprChr != null, "Could not find specificed sprite: " + sSprPath);
+
         goPortrait.GetComponent<SpriteRenderer>().sprite = sprChr;
 
 	}
@@ -112,20 +135,29 @@ public class ViewChr : ViewInteractive {
 		string sSprPath = "Images/Chrs/img" + _sName;
 		Sprite sprBorder = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
 
+        Debug.Assert(sprBorder != null, "Could not find specificed sprite: " + sSprPath);
+
         goBorder.GetComponent<SpriteRenderer>().sprite = sprBorder;
 	}
 
     //Find the model, and do any setup to reflect it
 	public void InitModel(){
-		mod = GetComponent<Chr>();
+        mod = GetComponent<Chr>();
+        mod.Start();
+
         mod.subFatigueChange.Subscribe(cbUpdateFatigue);
-		mod.subHealthChange.Subscribe(cbUpdateTxtHealth);
+		mod.subLifeChange.Subscribe(cbUpdateLife);
+        mod.pnMaxHealth.subChanged.Subscribe(cbUpdateLife);
         mod.subStatusChange.Subscribe(cbUpdateStatus);
+        mod.pnArmour.subChanged.Subscribe(cbUpdateArmour);
+        mod.pnPower.subChanged.Subscribe(cbUpdatePower);
+        mod.pnDefense.subChanged.Subscribe(cbUpdateDefense);
+        mod.subBlockerChanged.Subscribe(cbUpdateBlocker);
 
 	}
 
-    public void cbUpdateTxtHealth(Object target, params object[] args) {
-        txtHealth.text = mod.nCurHealth + "/" + mod.nMaxHealth;
+    public void cbUpdateLife(Object target, params object[] args) {
+        txtHealth.text = mod.nCurHealth + "/" + mod.pnMaxHealth.Get();
     }
 
     public void cbUpdateFatigue(Object target, params object[] args) {
@@ -136,10 +168,66 @@ public class ViewChr : ViewInteractive {
         }
     }
 
+    public void cbUpdateArmour(Object target, params object[] args) {
+        if (mod.pnArmour.Get() > 0) {
+            txtArmour.text = "[" + mod.pnArmour.Get().ToString() + "]";
+        } else {
+            txtArmour.text = "";
+        }
+    }
 
-	//TODO:: Make this a state machine
+    public void cbUpdatePower(Object target, params object[] args) {
+        if (mod.pnPower.Get() > 0) {
+            txtPower.text = "+" + mod.pnPower.Get().ToString() + " [POWER]";
+        } else if (mod.pnPower.Get() < 0) {
+            txtPower.text = mod.pnPower.Get().ToString() + " [POWER]";
+        } else {
+            txtPower.text = "";
+        }
+    }
+
+    public void cbUpdateDefense(Object target, params object[] args) {
+        if (mod.pnDefense.Get() > 0) {
+            txtDefense.text = "+" + mod.pnDefense.Get().ToString() + " [DEFENSE]";
+        } else if (mod.pnDefense.Get() < 0) {
+            txtDefense.text = mod.pnDefense.Get().ToString() + " [DEFENSE]";
+        } else {
+            txtDefense.text = "";
+        }
+    }
+
+    public void cbUpdateBlocker(Object target, params object[] args) {
+        if (mod.bBlocker == true) {
+            //If we haven't already, add the blocker indicator
+            if (goBlockerIndicator == null) {
+                goBlockerIndicator = Instantiate(pfBlockerIndicator, this.transform);
+
+                if (mod.plyrOwner.id == 1) {
+                    goBlockerIndicator.transform.localScale = new Vector3(1.0f, -1.0f, 1.0f);
+                    goBlockerIndicator.transform.localPosition =
+                        new Vector3(goBlockerIndicator.transform.localPosition.x,
+                                    -goBlockerIndicator.transform.localPosition.y,
+                                    goBlockerIndicator.transform.localPosition.z);
+                }
+
+            } else {
+                Debug.Log("Don't need to add a blocker indicator for " + mod.sName + " since they already have it shown");
+            }
+        } else {
+            //If we haven't already, then remove the blocker indicator
+            if(goBlockerIndicator != null) {
+                GameObject.Destroy(goBlockerIndicator);
+                goBlockerIndicator = null;
+                Debug.Assert(goBlockerIndicator == null);
+            } else {
+                Debug.Log("Don't need to remove a blocker indicator for " + mod.sName + " since nothing is yet shown");
+            }
+        }
+    }
+
+    //TODO:: Make this a state machine
     //Updates the character's state (SELECTED, TARGETTING, UNSELECTED)
-	void cbUpdateStatus(Object target, params object[] args) {
+    void cbUpdateStatus(Object target, params object[] args) {
 
 		//Checks if character status has changed
 		if (lastStateSelect != mod.stateSelect) {
