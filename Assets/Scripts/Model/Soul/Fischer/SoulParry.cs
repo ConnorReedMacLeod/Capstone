@@ -63,6 +63,20 @@ public class SoulParry : Soul {
                 }
             }
         };
+
+        funcOnApplication = () => {
+            //Add a modifier onto armour
+            nodeArmourModifier = chrTarget.pnArmour.AddModifier((nArmour) => nArmour + this.nArmour);
+
+            chrTarget.subArmourCleared.Subscribe(cbOnArmourClear);
+        };
+
+        funcOnRemoval = () => {
+            //Remove the modifier we put onto armour
+            chrTarget.pnArmour.RemoveModifier(nodeArmourModifier);
+            chrTarget.subArmourCleared.UnSubscribe(cbOnArmourClear);
+        };
+
     }
 
     //Called when the character's armour has reached 0
@@ -73,22 +87,4 @@ public class SoulParry : Soul {
         // then it would be reasonable to remove this buff when the armour is broken
 
     }
-
-    public override void funcOnApplication() {
-
-        //Add a modifier onto armour
-        nodeArmourModifier = chrTarget.pnArmour.AddModifier((nArmour) => nArmour + this.nArmour);
-
-        chrTarget.subArmourCleared.Subscribe(cbOnArmourClear);
-
-    }
-
-    public override void funcOnRemoval() {
-
-        //Remove the modifier we put onto armour
-        chrTarget.pnArmour.RemoveModifier(nodeArmourModifier);
-        chrTarget.subArmourCleared.UnSubscribe(cbOnArmourClear);
-
-    }
-
 }

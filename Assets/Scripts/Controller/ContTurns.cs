@@ -126,7 +126,10 @@ public class ContTurns : MonoBehaviour {
 
         for (int i = 0; i < Match.Get().nPlayers; i++) {
             for (int j = 0; j < Match.Get().arPlayers[i].nChrs; j++) {
-                Match.Get().arChrs[i][j].ChangeFatigue(2 * j + i + 1);
+                //Initially start each character off in a fatigued state with 1/2/3 fatigue
+                StateFatigued newState = new StateFatigued(Match.Get().arChrs[i][j], 2 * j + i + 1);
+
+                Match.Get().arChrs[i][j].SetStateReadiness(newState);
             }
         }
 

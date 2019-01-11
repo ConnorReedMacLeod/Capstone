@@ -26,18 +26,13 @@ public class SoulChangePower : Soul {
 
 
         lstTriggers = new List<TriggerEffect>();
+
+        funcOnApplication = () => {
+            nodePowerModifier = chrTarget.pnPower.AddModifier((nPowerBelow) => this.nPowerChange + nPowerBelow);
+        };
+
+        funcOnRemoval = () => {
+            chrTarget.pnPower.RemoveModifier(nodePowerModifier);
+        };
     }
-
-    public override void funcOnApplication() {
-
-        nodePowerModifier = chrTarget.pnPower.AddModifier((nPowerBelow) => this.nPowerChange + nPowerBelow);
-
-    }
-
-    public override void funcOnRemoval() {
-
-        chrTarget.pnPower.RemoveModifier(nodePowerModifier);
-
-    }
-
 }

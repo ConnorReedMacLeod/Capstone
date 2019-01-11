@@ -21,25 +21,22 @@ public class SoulFortissimo : Soul {
         bDuration = true;
         pnMaxDuration = new Property<int>(4);
 
-    }
+        funcOnApplication = () => {
 
+            //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
+            soulChangePower = new SoulChangePower(chrSource, chrTarget, nPowerBuff);
+            chrTarget.soulContainer.ApplySoul(soulChangePower);
 
-    public override void funcOnApplication() {
+            //Make a Permanent SoulChangeDefense, and save a reference to it, so it can be removed later
+            soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, nDefenseBuff);
+            chrTarget.soulContainer.ApplySoul(soulChangeDefense);
+        };
 
-        //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
-        soulChangePower = new SoulChangePower(chrSource, chrTarget, nPowerBuff);
-        chrTarget.soulContainer.ApplySoul(soulChangePower);
+        funcOnRemoval = () => {
 
-        //Make a Permanent SoulChangeDefense, and save a reference to it, so it can be removed later
-        soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, nDefenseBuff);
-        chrTarget.soulContainer.ApplySoul(soulChangeDefense);
-
-    }
-
-    public override void funcOnRemoval() {
-        chrTarget.soulContainer.RemoveSoul(soulChangePower);
-        chrTarget.soulContainer.RemoveSoul(soulChangeDefense);
+            chrTarget.soulContainer.RemoveSoul(soulChangePower);
+            chrTarget.soulContainer.RemoveSoul(soulChangeDefense);
+        };
 
     }
-
 }
