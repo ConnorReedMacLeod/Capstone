@@ -17,22 +17,16 @@ public class SoulEvolved : Soul {
         bVisible = false;
         bDuration = false;
 
+        funcOnApplication = () => {
+            //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
+            soulChangePower = new SoulChangePower(chrSource, chrTarget, nPowerBuff);
+            chrTarget.soulContainer.ApplySoul(soulChangePower);
+        };
+
+        funcOnRemoval = () => {
+
+            chrTarget.soulContainer.RemoveSoul(soulChangePower);
+
+        };
     }
-
-
-
-    public override void funcOnApplication() {
-
-        //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
-        soulChangePower = new SoulChangePower(chrSource, chrTarget, nPowerBuff);
-        chrTarget.soulContainer.ApplySoul(soulChangePower);
-
-    }
-
-    public override void funcOnRemoval() {
-
-        chrTarget.soulContainer.RemoveSoul(soulChangePower);
-
-    }
-
 }

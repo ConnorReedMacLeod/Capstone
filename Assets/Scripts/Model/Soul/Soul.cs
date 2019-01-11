@@ -42,10 +42,10 @@ public abstract class Soul {
 
     }
 
-    //These don't do anything by default, but we don't need to override them, if we're not gonna do anything with them
-    public virtual void funcOnApplication() { }
-    public virtual void funcOnRemoval() { } 
-    public virtual void funcOnExpiration() { } //Specifically when the soul effect reaches the end of its duration
+    //These are functions that we can set to nonnull values if we want something to happen on these triggers
+    public System.Action funcOnApplication;
+    public System.Action funcOnRemoval;
+    public System.Action funcOnExpiration;//Specifically when the soul effect reaches the end of its duration
    
     public void OnApply(SoulContainer _soulContainer) {
 
@@ -70,7 +70,8 @@ public abstract class Soul {
             Replacement.Register(rep);
         }
 
-        funcOnApplication();
+        if(funcOnApplication != null) funcOnApplication();
+
         Debug.Log(sName + " has been applied");
     }
 
@@ -88,11 +89,11 @@ public abstract class Soul {
             Replacement.Unregister(rep);
         }
 
-        funcOnRemoval();
+        if (funcOnRemoval != null) funcOnRemoval();
         Debug.Log(sName + " has been removed");
 
         if (bDuration == true && nCurDuration == 0) {
-            funcOnExpiration();
+            if (funcOnExpiration != null) funcOnExpiration();
             Debug.Log(sName + " has expired");
         }
 

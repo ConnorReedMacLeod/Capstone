@@ -27,17 +27,13 @@ public class SoulChangeDefense : Soul {
 
 
         lstTriggers = new List<TriggerEffect>();
-    }
 
-    public override void funcOnApplication() {
+        funcOnApplication = () => {
+            nodeDefenseModifier = chrTarget.pnDefense.AddModifier((nDefenseBelow) => this.nDefenseChange + nDefenseBelow);
+        };
 
-        nodeDefenseModifier = chrTarget.pnDefense.AddModifier((nDefenseBelow) => this.nDefenseChange + nDefenseBelow);
-
-    }
-
-    public override void funcOnRemoval() {
-
-        chrTarget.pnDefense.RemoveModifier(nodeDefenseModifier);
-
+        funcOnRemoval = () => {
+            chrTarget.pnDefense.RemoveModifier(nodeDefenseModifier);
+        };
     }
 }

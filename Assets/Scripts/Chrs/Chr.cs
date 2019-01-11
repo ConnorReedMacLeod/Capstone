@@ -33,6 +33,7 @@ public class Chr : MonoBehaviour {
     public int id;                  //The character's unique identifier
     public int nFatigue;            //Number of turns a character must wait before their next action
     public int nQueuedFatigue;      //The amount of fatigue that will be added to the characters fatigue when they're done acting for the turn
+    public StateReadiness curStateReadiness; //A reference to the current state of readiness
 
     public int nMaxActionsLeft;     //The total maximum number of actions a character can use in a turn (usually 1, cantrips cost 0)
     public int nCurActionsLeft;     //The number of actions left in a turn that the character can use (cantrips cost 0)
@@ -86,6 +87,26 @@ public class Chr : MonoBehaviour {
     public Subject subStatusChange = new Subject();
     public static Subject subAllStatusChange = new Subject();
 
+    public void SetStateReadiness(StateReadiness newState) {
+
+        if (curStateReadiness != null) {
+            curStateReadiness.OnLeave();
+        }
+
+        curStateReadiness = newState;
+
+        if (curStateReadiness != null) {
+            curStateReadiness.OnEnter();
+        }
+    }
+
+    public void ChangeChanneltime(int _nChange) {
+        //Just let our readiness state deal with this
+        curStateReadiness.ChangeChanneltime(_nChange);
+
+        //TODO:: Send Notifications to those who are interested
+    }
+
     // Prepare a certain amount of fatigue to be applied to this character
     public void QueueFatigue(int _nChange) {
 
@@ -104,6 +125,7 @@ public class Chr : MonoBehaviour {
         subFatigueChange.NotifyObs(this);
         subAllFatigueChange.NotifyObs(this);
 
+        //TODO:: Probably delete this bBeginningTurn flag once I get a nice solution for priority handling
         if (!bBeginningTurn) {
             //Then this is a stun or an actions used
             ContTurns.Get().FixSortedPriority(this);

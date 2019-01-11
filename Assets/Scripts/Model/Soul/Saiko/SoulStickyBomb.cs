@@ -29,11 +29,9 @@ public class SoulStickyBomb : Soul {
         bDuration = true;
         pnMaxDuration = new Property<int>(1);
 
-    }
-
-    public override void funcOnExpiration() { 
-
-        //Deal damage only if this soul effect expires naturally
-        Detonate();
+        funcOnExpiration = () => {
+            //Deal damage only if this soul effect expires naturally
+            Detonate();
+        };
     }
 }
