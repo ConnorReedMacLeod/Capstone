@@ -35,6 +35,17 @@ public class StateChanneling : StateReadiness {
             nChannelTime += _nChange;
         }
 
+        //If, for any reason, we've now been put to 0 channeltime, then our channel completes
+        // and we transition to the fatigued state
+        if(nChannelTime == 0) {
+            ContAbilityEngine.Get().AddExec(new ExecCompleteChannel() {
+
+                chrSource = null, //This is a game action, so there's no source
+                chrTarget = chrOwner
+
+            });
+        }
+
     }
 
 

@@ -12,7 +12,7 @@ public class ActionHeal : Action {
         arArgs[0] = new TargetArgAlly((own, tar) => true);
 
         sName = "Heal (Cantrip)";
-        type = ActionType.ACTIVE;
+        type = ActionTypes.TYPE.ACTIVE;
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 1, 0 });

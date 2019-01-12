@@ -4,14 +4,12 @@ using UnityEngine;
 
 public class Action { //This should probably be made abstract
 
-    public enum ActionType { ACTIVE, PASSIVE, CHANNEL, CANTRIP };
-
     public int id;
 
     public int nArgs; // Note that this should only ever be 0 or 1
     public TargetArg[] arArgs;
     public string sName;
-    public ActionType type;
+    public ActionTypes.TYPE type;
 
     public int nCd;
     public int nCurCD;
@@ -102,34 +100,47 @@ public class Action { //This should probably be made abstract
 
     }
 
-	// Should call VerifyLegal() before calling this
-	public virtual void Execute(){
+    public void PayForAction() {
+
+        //Increase the character's fatigue
+        ContAbilityEngine.Get().AddExec(new ExecChangeFatigue {
+            chrSource = this.chrSource,
+            chrTarget = this.chrSource,
+
+            nAmount = nFatigue
+        });
+
+        //Increase this Action's cooldown
+        ContAbilityEngine.Get().AddExec(new ExecChangeCooldown() {
+            chrSource = this.chrSource,
+            chrTarget = this.chrSource,
+
+            actTarget = this,
+            nAmount = nCd
+        });
+
+        //Pay for the Action
+        ContAbilityEngine.Get().AddExec(new ExecChangeMana() {
+            chrSource = this.chrSource,
+            chrTarget = null,
+
+            plyrTarget = this.chrSource.plyrOwner,
+            arnAmount = this.parCost.Get(),
+        });
+
+    }
+
+    // Should call VerifyLegal() before calling this
+    public abstract void Execute() { }
 
 		Debug.Assert (VerifyLegal ());
-		
-        //TODO:: Consider if cooldowns and fatigue should be set before or 
-        //       after the ability finishes resolving
+	
 
-		nCurCD = nCd;
-		chrSource.QueueFatigue(nFatigue);
-
-        Debug.Assert(chrSource.nCurActionsLeft >= nActionCost);
-        chrSource.nCurActionsLeft -= nActionCost;
-
-		if (chrSource.plyrOwner.mana.SpendMana (parCost.Get())) {
-            //Then the mana was paid properly
-
-            while (stackClauses.Count != 0) {
-                //Add each clause in this ability to the stack
-                ContAbilityEngine.Get().AddClause(stackClauses.Pop());
-            }
-
-        } else {
-			Debug.LogError ("YOU DIDN'T ACTUALLY HAVE ENOUGH MANA");
-		}
         
-		ResetTargettingArgs ();
-        subAbilityChange.NotifyObs();
+
+ 
+
+        
     }
 
 	public virtual bool VerifyLegal(){// Maybe this doesn't need to be virtual

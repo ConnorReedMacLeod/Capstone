@@ -2,12 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
-
-public class ExecStun : Executable {
-
-    public int nAmount;
-
+public class ExecTurnRecharge : Executable {
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -37,19 +32,31 @@ public class ExecStun : Executable {
 
 
 
+    //Want to stack up a recharge executable (change fatigue/channeltime) for each character one by one
+    public void RechargeChars() {
+
+        for (int i = 0; i < Match.Get().nPlayers; i++) {
+            for (int j = 0; j < Player.MAXCHRS; j++) {
+                if (Match.Get().arChrs[i][j] == null) {
+                    continue; // A character isn't actually here (extra space for characters)
+                }
+
+                //Ask the character's readiness state to tick down its fatigue (or cooldowntimer as the case may be)
+                Match.Get().arChrs[i][j].curStateReadiness.Recharge();
+
+            }
+        }
+    }
 
     public override void Execute() {
 
-        //First interrupt the character if they're channeling
-        chrTarget.curStateReadiness.InterruptChannel();
+        RechargeChars();
 
-        //Create a new stun state to let our character transition to
-        StateStunned newState = new StateStunned(chrTarget, nAmount);
+        ContTurns.Get().SetTurnState(ContTurns.STATETURN.READY);
 
-        //Transition to the new state
-        chrTarget.SetStateReadiness(newState);
+        sLabel = "Reducing Cooldowns";
+        fDelay = 0.5f;
 
         base.Execute();
     }
-
 }

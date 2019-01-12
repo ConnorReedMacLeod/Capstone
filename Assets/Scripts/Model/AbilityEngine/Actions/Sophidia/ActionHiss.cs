@@ -11,7 +11,7 @@ public class ActionHiss : Action {
         //arArgs[0] = new TargetArgTeam((own, tar) => true); // No selection necessary
 
         sName = "Hiss";
-        type = ActionType.CANTRIP;
+        type = ActionTypes.TYPE.CANTRIP;
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 1 });

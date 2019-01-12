@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 //Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
 
-public class ExecStun : Executable {
+public class ExecChangeCooldown : Executable {
 
+    public Action actTarget;
     public int nAmount;
-
-
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -40,16 +40,14 @@ public class ExecStun : Executable {
 
     public override void Execute() {
 
-        //First interrupt the character if they're channeling
-        chrTarget.curStateReadiness.InterruptChannel();
+        //Double check that the action whose cooldown we're changing is owned by the right person
+        Debug.Assert(chrTarget == actTarget.chrSource);
 
-        //Create a new stun state to let our character transition to
-        StateStunned newState = new StateStunned(chrTarget, nAmount);
-
-        //Transition to the new state
-        chrTarget.SetStateReadiness(newState);
+        actTarget.ChangeCD(nAmount);
 
         base.Execute();
     }
+
+
 
 }

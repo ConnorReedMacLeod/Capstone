@@ -2,12 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
-
-public class ExecStun : Executable {
-
-    public int nAmount;
-
+public class ExecTurnReady : Executable {
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -35,21 +30,31 @@ public class ExecStun : Executable {
     }
     // This is the end of the section that should be copied and pasted
 
+    public void ReadyAll() {
+        //Loop through all characters and transition any 0 fatigue characters to be ready
 
+        for (int i = 0; i < Match.Get().nPlayers; i++) {
+            for (int j = 0; j < Player.MAXCHRS; j++) {
+                if (Match.Get().arChrs[i][j] == null) {
+                    continue; // A character isn't actually here (extra space for characters)
+                }
 
+                //Call the character's Ready action - they'll decide what to do
+                Match.Get().arChrs[i][j].curStateReadiness.Ready();
+
+            }
+        }
+    }
 
     public override void Execute() {
 
-        //First interrupt the character if they're channeling
-        chrTarget.curStateReadiness.InterruptChannel();
+        ReadyAll();
 
-        //Create a new stun state to let our character transition to
-        StateStunned newState = new StateStunned(chrTarget, nAmount);
+        ContTurns.Get().SetTurnState(ContTurns.STATETURN.REDUCECOOLDOWNS);
 
-        //Transition to the new state
-        chrTarget.SetStateReadiness(newState);
+        sLabel = "Readying Characters";
+        fDelay = 1.0f;
 
         base.Execute();
     }
-
 }
