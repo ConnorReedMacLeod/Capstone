@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 //Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
 
-public class ExecStun : Executable {
+public class ExecChangeMana : Executable {
 
-    public int nAmount;
-
-
+    public Player plyrTarget;
+    public int[] arnAmount;
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -40,16 +40,14 @@ public class ExecStun : Executable {
 
     public override void Execute() {
 
-        //First interrupt the character if they're channeling
-        chrTarget.curStateReadiness.InterruptChannel();
+        //Double check that there is no targetted player
+        Debug.Assert(chrTarget == null);
 
-        //Create a new stun state to let our character transition to
-        StateStunned newState = new StateStunned(chrTarget, nAmount);
-
-        //Transition to the new state
-        chrTarget.SetStateReadiness(newState);
+        plyrTarget.mana.AddMana(arnAmount);
 
         base.Execute();
     }
+
+
 
 }

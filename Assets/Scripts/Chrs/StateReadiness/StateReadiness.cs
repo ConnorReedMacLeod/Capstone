@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//TODO:: Consider if this system of introducing a base method that only one subclass actually
+//        implements is actually a good practice
 public class StateReadiness {
 
     public Chr chrOwner;
@@ -12,17 +14,30 @@ public class StateReadiness {
 
     }
 
-    public virtual bool CanSelectAction() {
-        //By default, you can't select an action
+    public virtual bool CanSelectAction(Action act) {
+        //By default, you can't select any action
 
         return false;
     }
 
+    //Call to transition to the ready state if we're at 0 fatigue
+    public virtual void Ready() {
+        //By default, you can't transition to the ready state unless you're fatigued
+
+    }
+
     //Called at the beginning of turn to reduce fatigue
 	public virtual void Recharge() {
-        //By default, we just reduce fatigue by 1 (with the beginning of turn flag)
 
-        chrOwner.ChangeFatigue(-1, true);
+        //By default, we just reduce fatigue by 1 (with the beginning of turn flag)
+        ContAbilityEngine.Get().AddExec(new ExecChangeFatigue() {
+            chrSource = null,
+            chrTarget = chrOwner,
+
+            nAmount = -1,
+            bBeginningTurn = true,
+
+        });
 
     }
 

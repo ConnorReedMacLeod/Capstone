@@ -13,7 +13,7 @@ public class ActionStorm : Action {
         // arArgs[0] = new TargetArgTeam((own, tar) => true); 
 
         sName = "Storm";
-        type = ActionType.ACTIVE;
+        type = ActionTypes.TYPE.ACTIVE;
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 1, 1, 0, 0 });

@@ -8,6 +8,7 @@ using UnityEngine;
 public class ExecChangeFatigue : Executable {
 
     public int nAmount;
+    public bool bBeginningTurn;
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -39,7 +40,7 @@ public class ExecChangeFatigue : Executable {
 
     public override void Execute() {
         
-        chrTarget.ChangeFatigue(nAmount);
+        chrTarget.ChangeFatigue(nAmount, bBeginningTurn);
 
         base.Execute();
     }

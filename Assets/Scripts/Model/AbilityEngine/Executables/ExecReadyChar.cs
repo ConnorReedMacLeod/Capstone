@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 //Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
 
-public class ExecStun : Executable {
-
-    public int nAmount;
-
-
+public class ExecReadyChar : Executable {
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -40,13 +37,12 @@ public class ExecStun : Executable {
 
     public override void Execute() {
 
-        //First interrupt the character if they're channeling
-        chrTarget.curStateReadiness.InterruptChannel();
+        Debug.Assert(chrTarget.nFatigue == 0);
 
-        //Create a new stun state to let our character transition to
-        StateStunned newState = new StateStunned(chrTarget, nAmount);
+        //Initially give the character Action Points equal to their maximum
+        StateReady newState = new StateReady(chrTarget, chrTarget.nMaxActionsLeft); 
 
-        //Transition to the new state
+        //Just transition to the ready state
         chrTarget.SetStateReadiness(newState);
 
         base.Execute();

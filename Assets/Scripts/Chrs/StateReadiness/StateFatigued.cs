@@ -4,23 +4,21 @@ using UnityEngine;
 
 public class StateFatigued : StateReadiness {
 
-    public int nStartingFatigue;
-
-    public StateFatigued(Chr _chrOwner, int _nStartingFatigue) : base(_chrOwner) {
-
-        nStartingFatigue = _nStartingFatigue;
+    public StateFatigued(Chr _chrOwner) : base(_chrOwner) {
         
     }
 
-    public override void OnEnter() {
+    public override void Ready() {
+        if(chrOwner.nFatigue == 0) {
+            //Then transition to the ready state
 
-        ContAbilityEngine.Get().AddExec(new ExecChangeFatigue {
-            chrSource = null, //Since no character is actually the source of this effect - it's just the game rules
-            chrTarget = chrOwner,
+            ContAbilityEngine.Get().AddExec(new ExecReadyChar {
+                chrSource = null, //Since no character is actually the source of this effect - it's just the game rules
+                chrTarget = chrOwner,
 
-            nAmount = nStartingFatigue
-        });
+            });
 
+        }
     }
 
 }

@@ -6,7 +6,7 @@ public class ContTurns : MonoBehaviour {
 
     public bool bStarted = false;
 
-    public enum STATETURN {GIVEMANA, REDUCECOOLDOWNS, CHOOSEACTIONS, TURNSTART, EXECUTEACTIONS, TURNEND };
+    public enum STATETURN {RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSEACTIONS, EXECUTEACTIONS, TURNEND };
     public STATETURN curStateTurn;
 
     public static ContTurns instance;
@@ -143,31 +143,49 @@ public class ContTurns : MonoBehaviour {
         if (ContAbilityEngine.bDEBUGENGINE) Debug.Log("Handling the turn for phase: " + curStateTurn);
 
         switch (curStateTurn) {
-            case STATETURN.GIVEMANA:
+            case STATETURN.RECHARGE:
 
-                ContAbilityEngine.Get().AddExec(new ExecTurnGiveMana());
+                ContAbilityEngine.Get().AddExec(new ExecTurnRecharge());
 
                 break;
+
+            case STATETURN.READY:
+
+                ContAbilityEngine.Get().AddExec(new ExecTurnReady());
+
+                break;
+
             case STATETURN.REDUCECOOLDOWNS:
 
                 ContAbilityEngine.Get().AddExec(new ExecTurnReduceCooldowns());
 
                 break;
-            case STATETURN.CHOOSEACTIONS:
 
-                ContAbilityEngine.Get().AddExec(new ExecTurnChooseActions());
+            case STATETURN.GIVEMANA:
+
+                ContAbilityEngine.Get().AddExec(new ExecTurnGiveMana());
 
                 break;
+            
+            
             case STATETURN.TURNSTART:
 
                 ContAbilityEngine.Get().AddExec(new ExecTurnStartTurn());
 
                 break;
+
+            case STATETURN.CHOOSEACTIONS:
+
+                ContAbilityEngine.Get().AddExec(new ExecTurnChooseActions());
+
+                break;
+
             case STATETURN.EXECUTEACTIONS:
 
                 ContAbilityEngine.Get().AddExec(new ExecTurnExecuteAction());
 
                 break;
+
             case STATETURN.TURNEND:
 
                 ContAbilityEngine.Get().AddExec(new ExecTurnEndTurn());

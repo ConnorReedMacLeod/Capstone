@@ -32,11 +32,9 @@ public class Chr : MonoBehaviour {
 
     public int id;                  //The character's unique identifier
     public int nFatigue;            //Number of turns a character must wait before their next action
-    public int nQueuedFatigue;      //The amount of fatigue that will be added to the characters fatigue when they're done acting for the turn
     public StateReadiness curStateReadiness; //A reference to the current state of readiness
 
     public int nMaxActionsLeft;     //The total maximum number of actions a character can use in a turn (usually 1, cantrips cost 0)
-    public int nCurActionsLeft;     //The number of actions left in a turn that the character can use (cantrips cost 0)
 
 	public int nCurHealth;          //The character's current health
 	public Property<int> pnMaxHealth;          //The character's max health
@@ -107,13 +105,6 @@ public class Chr : MonoBehaviour {
         //TODO:: Send Notifications to those who are interested
     }
 
-    // Prepare a certain amount of fatigue to be applied to this character
-    public void QueueFatigue(int _nChange) {
-
-        nQueuedFatigue += _nChange;
-
-    }
-
     // Apply this amount of fatigue to the character
     public void ChangeFatigue(int _nChange, bool bBeginningTurn = false){
 		if (_nChange + nFatigue < 0) {
@@ -133,13 +124,7 @@ public class Chr : MonoBehaviour {
         }
     }
 
-    public void FinishSelectionPhase() {
-        // Note - this  queued amount will always be greater than 0, so we will never come back to the same character
-        //        twice in a row on the same turn.  
-        ChangeFatigue(nQueuedFatigue);
-        nQueuedFatigue = 0;
-        nCurActionsLeft = nMaxActionsLeft;
-    }
+
 
     public void UnlockTargetting() {
         bLockedTargetting = false;
@@ -152,8 +137,15 @@ public class Chr : MonoBehaviour {
     public void RechargeActions() {
 
         for (int i = 0; i < Chr.nActions; i++) {
-            arActions[i].Recharge();
+            ContAbilityEngine.Get().AddExec(new ExecChangeCooldown() {
+                chrSource = null, //No source - just a game action
+                chrTarget = this,
+
+                nAmount = 1,
+                actTarget = arActions[i]
+            });
         }
+
     }
 
     //If we have lowered our armour (either by taking damage, or by
@@ -383,7 +375,6 @@ public class Chr : MonoBehaviour {
 			bStarted = true;
 
             nMaxActionsLeft = 1;
-            nCurActionsLeft = nMaxActionsLeft;
 
             arActions = new Action[nActions];
             nUsingAction = -1;
