@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 //TODO probably extend this class for visible/locked/duration interactions rather than using bool flags
-public abstract class Soul {
+public class Soul {
 
     public Chr chrSource;     //A reference to the character that applied this soul effect
     public Chr chrTarget;     //A reference to the character this soul effect is applied to
