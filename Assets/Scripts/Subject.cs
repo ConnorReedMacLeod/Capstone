@@ -15,6 +15,11 @@ public class Subject{
 
     public List<FnCallback> lstCallbacks = new List<FnCallback>();
 
+    public Subject(Subject subToCopy) {
+        Start();
+        lstCallbacks = new List<FnCallback>(subToCopy.lstCallbacks);
+    }
+
 	public void Subscribe(FnCallback fnCallback){
 
         lstCallbacks.Add (fnCallback);

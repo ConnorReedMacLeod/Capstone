@@ -6,7 +6,7 @@ public class StateChanneling : StateReadiness {
 
     public int nChannelTime;  
 
-    public Soul soulBehaviour; //Handles all customized behaviour of what the channel effect should do
+    public SoulChannel soulBehaviour; //Handles all customized behaviour of what the channel effect should do
 
     public StateChanneling(Chr _chrOwner, int _nChannelTime, Soul _soulBehaviour) : base(_chrOwner) {
 
