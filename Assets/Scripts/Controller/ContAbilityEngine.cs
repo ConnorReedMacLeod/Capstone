@@ -17,6 +17,9 @@ public class ContAbilityEngine : MonoBehaviour {
 
     public static ContAbilityEngine instance;
 
+    //Rather than having a static Get() method, it should be easier to just have
+    // static methods for all of the exec/clause stuff so that you can just directly call them
+    // rather than fetching the static instance first
     public static ContAbilityEngine Get() {
         if (instance == null) {
             GameObject go = GameObject.FindGameObjectWithTag("Controller");
@@ -61,16 +64,20 @@ public class ContAbilityEngine : MonoBehaviour {
 
     public void ResolveClause() {
 
-        //Maybe just check for replacement effects when things are put on the stack?   Might make things easier
-
         stackClause.Pop().Execute();
 
     }
 
+    public static void AddClauseStack( ref Stack<Clause> stackClauses) {
+
+        //Pop each clause from the given stack and push them onto the ability engine's stack
+        while (stackClauses.Count != 0) {
+            ContAbilityEngine.Get().AddClause(stackClauses.Pop());
+        }
+
+    }
 
     public void AddClause(Clause clause) {
-
-        //Check for any replacements or triggers or something?
 
         if(bDEBUGENGINE) Debug.Log("Pushing a Clause");
 
@@ -139,7 +146,6 @@ public class ContAbilityEngine : MonoBehaviour {
     public void AddExec(Executable exec) {
 
         //Check for any replacement effects
-
         //Initially, we reset the cycle-checking flags for each registered replacement effect
         Replacement.ResetReplacedFlags();
 

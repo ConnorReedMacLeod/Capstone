@@ -35,6 +35,13 @@ public class Property<T> {
 
     }
 
+    public Property(Property<T> pToCopy) {
+        baseValue = pToCopy.baseValue;
+        lstModifiers = new LinkedList<Modifier>(pToCopy.lstModifiers);
+
+        subChanged = new Subject(pToCopy.subChanged);
+    }
+
     public T Get(LinkedListNode<Modifier> nodeCur) {
         //If there's nothing in the linked list, take the base value
         if (nodeCur == null) {

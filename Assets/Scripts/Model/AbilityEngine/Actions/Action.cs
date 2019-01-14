@@ -15,7 +15,7 @@ public class Action { //This should probably be made abstract
     public int nCurCD;
     public int nFatigue;
 
-    public Soul soulChannel; // Stores behaviour for how this channel should work (if this is a channel)
+    public SoulChannel soulChannel; // Stores behaviour for how this channel should work (if this is a channel)
     public int nActionCost; // How many action 'points' this ability uses - cantrips would cost 0
 
     public Chr chrSource;

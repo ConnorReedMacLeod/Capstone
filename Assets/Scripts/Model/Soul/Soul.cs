@@ -99,5 +99,28 @@ public class Soul {
 
     }
 
+    public Soul(Soul soulToCopy) {
+        chrSource = soulToCopy.chrSource;
+        chrTarget = soulToCopy.chrTarget;
 
+        soulContainer = soulToCopy.soulContainer;
+        sName = soulToCopy.sName;
+        bVisible = soulToCopy.bVisible;
+        bLocked = soulToCopy.bLocked;
+
+        nMaxStacks = soulToCopy.nMaxStacks;
+        nCurStacks = soulToCopy.nCurStacks;
+
+        bDuration = soulToCopy.bDuration;
+        nCurDuration = soulToCopy.nCurDuration;
+        pnMaxDuration = new Property<int>(soulToCopy.pnMaxDuration);
+
+        lstReplacements = new List<Replacement>(soulToCopy.lstReplacements);
+        lstTriggers = new List<TriggerEffect>(soulToCopy.lstTriggers);
+
+        funcOnApplication = new System.Action(soulToCopy.funcOnApplication);
+        funcOnExpiration = new System.Action(soulToCopy.funcOnExpiration);
+        funcOnRemoval = new System.Action(soulToCopy.funcOnRemoval);
+
+    }
 }
