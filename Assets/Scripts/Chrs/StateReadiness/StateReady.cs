@@ -20,19 +20,19 @@ public class StateReady : StateReadiness {
     public override bool CanSelectAction(Action act) {
         //We actually can select another action if we're in the Ready state
 
-        //But only if it's not a passive
-        if (act.type == ActionTypes.TYPE.PASSIVE) return false;
+        if (!act.type.Usable()) {
+            //Then this type of action cannot be activated
 
-        //If it's a cantrip, we can always use it
-        if (act.type == ActionTypes.TYPE.CANTRIP) return true;
+            return false;
+        }
+        
+        if(act.type.GetActionPointCost() > nCurActionsLeft) {
+            //Then we don't have enough ability activations left for this character to use the action
 
-        //Otherwise, if it's a channel/active, check if we have enough actions left for this turn
-        if(act.type == ActionTypes.TYPE.ACTIVE || act.type == ActionTypes.TYPE.CHANNEL) {
-            return nCurActionsLeft >= act.nActionCost;
+            return false;
         }
 
-        Debug.LogError("We didn't recognize this type of action");
-        return false;
+        return true;
     }
 
 

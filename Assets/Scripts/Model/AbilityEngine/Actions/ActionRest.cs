@@ -9,7 +9,7 @@ public class ActionRest : Action {
 	public ActionRest(Chr _chrOwner): base(0, _chrOwner){//number of target arguments
 
 		sName = "Rest";
-		type = ActionTypes.TYPE.ACTIVE;
+		type = new TypeActive(this);
 
         chrSource = _chrOwner;
 

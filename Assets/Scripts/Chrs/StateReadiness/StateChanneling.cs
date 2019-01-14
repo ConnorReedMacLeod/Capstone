@@ -8,7 +8,7 @@ public class StateChanneling : StateReadiness {
 
     public SoulChannel soulBehaviour; //Handles all customized behaviour of what the channel effect should do
 
-    public StateChanneling(Chr _chrOwner, int _nChannelTime, Soul _soulBehaviour) : base(_chrOwner) {
+    public StateChanneling(Chr _chrOwner, int _nChannelTime, SoulChannel _soulBehaviour) : base(_chrOwner) {
 
         nChannelTime = _nChannelTime;
 
