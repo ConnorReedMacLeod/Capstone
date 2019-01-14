@@ -15,6 +15,7 @@ public class Action { //This should probably be made abstract
     public int nCurCD;
     public int nFatigue;
 
+    public Soul soulChannel; // Stores behaviour for how this channel should work (if this is a channel)
     public int nActionCost; // How many action 'points' this ability uses - cantrips would cost 0
 
     public Chr chrSource;
@@ -76,6 +77,7 @@ public class Action { //This should probably be made abstract
     }
 
 
+    //TODO:: I think you can remove this
     public void Recharge() {
         ChangeCD(-1);
     }
@@ -130,17 +132,11 @@ public class Action { //This should probably be made abstract
 
     }
 
-    // Should call VerifyLegal() before calling this
-    public abstract void Execute() { }
-
-		Debug.Assert (VerifyLegal ());
-	
-
-        
-
- 
-
-        
+    // Perform the actual effect this action should do
+    // This is the main effect of the action for actives/cantrips
+    //  and is the completion action for cantrips
+    public virtual void Execute() {
+        //By default do nothing - just override this to make the action do something
     }
 
 	public virtual bool VerifyLegal(){// Maybe this doesn't need to be virtual
@@ -157,8 +153,9 @@ public class Action { //This should probably be made abstract
 			return false;
 		}
 
-        if (nActionCost > chrSource.nMaxActionsLeft) {
-            Debug.Log("We have already used all non-cantrip actions for the turn");
+        //Check that we're in a readiness state (with enough usable actions left)
+        if (!chrSource.curStateReadiness.CanSelectAction(this)) {
+            Debug.Log("Not in a state where we can use this action");
             return false;
         }
 

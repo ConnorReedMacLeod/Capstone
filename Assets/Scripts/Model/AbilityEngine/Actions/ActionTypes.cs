@@ -13,9 +13,11 @@ public static class ActionTypes {
 
     static void UseCantrip(Action act, StateReady curState) {
 
+        //Get the action to push all of its effects onto its stack
+        act.Execute();
 
+        //Then pop them off of its stack and push them onto the ability engine's stack
         while (act.stackClauses.Count != 0) {
-            //Add each clause in this ability to the stack
             ContAbilityEngine.Get().AddClause(act.stackClauses.Pop());
         }
 
@@ -28,9 +30,11 @@ public static class ActionTypes {
 
     static void UseActive(Action act, StateReady curState) {
 
+        //Get the action to push all of its effects onto its stack
+        act.Execute();
 
+        //Then pop them off of its stack and push them onto the ability engine's stack
         while (act.stackClauses.Count != 0) {
-            //Add each clause in this ability to the stack
             ContAbilityEngine.Get().AddClause(act.stackClauses.Pop());
         }
 
@@ -44,6 +48,16 @@ public static class ActionTypes {
     static void UseChannel(Action act, StateReady curState) {
 
         //Make a soul effect from the act's Execute effect
+        if(act.soulChannel == null) {
+            //if we don't have a soul effect, then make one out of the action's
+            // execute effect
+            act.soulChannel = new Soul(act.chrSource, act.chrSource) {
+                bVisible = false,
+                bDuration = false,
+
+                //TODO - complete this
+            };
+        }
 
         Debug.Assert(curState.nCurActionsLeft >= nActionCostChannel);
         //It's a bit weird to reduce your action cost on a channel since you're
@@ -53,12 +67,16 @@ public static class ActionTypes {
         //Move to a Channel State
     }
 
-    public static void UseAction(Action act) { 
+    public static void UseAction(Action act) {
+        Debug.Assert(act.VerifyLegal());
 
-        //Ensure we're in a ready state
+        //Double check we're in a ready state
         Debug.Assert(act.chrSource.curStateReadiness.GetType() == typeof(StateReady));
 
         StateReady curState = (StateReady)(act.chrSource.curStateReadiness);
+
+        //Pay for the action
+        act.PayForAction();
 
         switch (act.type) {
             case TYPE.ACTIVE:

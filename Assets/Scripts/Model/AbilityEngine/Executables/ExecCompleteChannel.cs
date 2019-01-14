@@ -38,7 +38,7 @@ public class ExecCompleteChannel : Executable {
     public override void Execute() {
 
 
-        StateFatigued newState = new StateFatigued(chrTarget, 0); //No additional fatigue increase needed - should already be stored
+        StateFatigued newState = new StateFatigued(chrTarget); 
 
         //Just transition to the fatigued state (which will trigger the channel completion)
         chrTarget.SetStateReadiness(newState);
