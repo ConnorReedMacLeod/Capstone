@@ -12,7 +12,7 @@ public class ActionStickyBomb : Action {
         arArgs[0] = new TargetArgChr((own, tar) => true); 
 
         sName = "StickyBomb";
-        type = ActionTypes.TYPE.ACTIVE;
+        type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 1, 0, 0, 1 });

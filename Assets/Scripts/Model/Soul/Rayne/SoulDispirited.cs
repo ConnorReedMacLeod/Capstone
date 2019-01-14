@@ -50,7 +50,7 @@ public class SoulDispirited : Soul {
 
                 Property<int[]>.Modifier costIncrease =
                     (arCost) => {
-                        if (getAction().type == ActionTypes.TYPE.CANTRIP) {
+                        if (getAction().type.GetType() == typeof(TypeCantrip)) {
                         //Increase the cost if the ability is a cantrip
                         return LibFunc.AddArray<int>(arCost, arnCostDebuff, (x, y) => (x + y));
                         } else {

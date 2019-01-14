@@ -12,7 +12,7 @@ public class ActionSadism : Action {
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); 
 
         sName = "Sadism";
-        type = ActionTypes.TYPE.PASSIVE;
+        type = new TypePassive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 0 });

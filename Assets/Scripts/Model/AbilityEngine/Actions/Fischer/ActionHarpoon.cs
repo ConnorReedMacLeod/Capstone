@@ -10,7 +10,7 @@ public class ActionHarpoon : Action {
         arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); //Choose a target enemy
 
         sName = "Harpoon";
-        type = ActionTypes.TYPE.ACTIVE;
+        type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 2 });

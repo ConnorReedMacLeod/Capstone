@@ -13,7 +13,7 @@ public class ActionTantrum : Action {
         // arArgs[0] = new TargetArgTeam((own, tar) => true); 
 
         sName = "Tantrum";
-        type = ActionTypes.TYPE.ACTIVE;
+        type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 1, 0, 0, 1, 0 });

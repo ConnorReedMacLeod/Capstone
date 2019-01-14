@@ -10,7 +10,7 @@ public class ActionHuntersQuarry : Action {
         arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); //Choose an enemy character
 
         sName = "HuntersQuarry";
-        type = ActionTypes.TYPE.ACTIVE;
+        type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 0 });

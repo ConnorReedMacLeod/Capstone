@@ -9,7 +9,7 @@ public class Action { //This should probably be made abstract
     public int nArgs; // Note that this should only ever be 0 or 1
     public TargetArg[] arArgs;
     public string sName;
-    public ActionTypes.TYPE type;
+    public TypeAction type;
 
     public int nCd;
     public int nCurCD;

@@ -12,6 +12,12 @@ public abstract class TypeAction {
 
     public abstract int GetActionPointCost();
 
+    public virtual bool Usable() {
+        //By default, abilities can be used
+
+        return true;
+    }
+
     public void PayActionPoints() {
         //Ensure we're in a ready state
         Debug.Assert(act.chrSource.curStateReadiness.GetType() == typeof(StateReady));

@@ -10,7 +10,7 @@ public class ActionSerenade : Action {
         arArgs[0] = new TargetArgAlly((own, tar) => true);
 
         sName = "Serenade";
-        type = ActionTypes.TYPE.ACTIVE;
+        type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 1, 0, 0 });
