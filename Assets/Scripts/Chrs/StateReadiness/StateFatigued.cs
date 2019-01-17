@@ -8,6 +8,10 @@ public class StateFatigued : StateReadiness {
         
     }
 
+    public override TYPE Type() {
+        return TYPE.FATIGUED;
+    }
+
     public override void Ready() {
         if(chrOwner.nFatigue == 0) {
             //Then transition to the ready state
@@ -16,6 +20,8 @@ public class StateFatigued : StateReadiness {
                 chrSource = null, //Since no character is actually the source of this effect - it's just the game rules
                 chrTarget = chrOwner,
 
+                fDelay = 1.0f,
+                sLabel = chrOwner.sName + " is Readying"
             });
 
         }

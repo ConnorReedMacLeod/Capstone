@@ -13,6 +13,10 @@ public class StateStunned : StateReadiness {
 
     }
 
+    public override TYPE Type() {
+        return TYPE.STUNNED;
+    }
+
     public override void OnEnter() {
 
         //First, increase the fatigue value of the character

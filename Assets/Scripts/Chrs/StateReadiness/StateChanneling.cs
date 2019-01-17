@@ -17,6 +17,9 @@ public class StateChanneling : StateReadiness {
         soulBehaviour = _soulBehaviour;
     }
 
+    public override TYPE Type() {
+        return TYPE.CHANNELING;
+    }
 
     //To be called as part of a stun, before transitioning to the stunned state
     public override void InterruptChannel() {

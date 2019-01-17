@@ -10,6 +10,10 @@ public class TypeCantrip : TypeAction {
 
     }
 
+    public override TYPE Type() {
+        return TYPE.CANTRIP;
+    }
+
     public override int GetActionPointCost() {
         return nActionPointCost;
     }

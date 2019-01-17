@@ -8,6 +8,10 @@ public class TypePassive : TypeAction {
 
     }
 
+    public override TYPE Type() {
+        return TYPE.PASSIVE;
+    }
+
     public override bool Usable() {
         //Passive's cannot be used
 

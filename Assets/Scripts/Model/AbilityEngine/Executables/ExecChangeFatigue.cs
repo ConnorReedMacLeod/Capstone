@@ -42,6 +42,9 @@ public class ExecChangeFatigue : Executable {
         
         chrTarget.ChangeFatigue(nAmount, bBeginningTurn);
 
+        Debug.Log(chrTarget.sName + " is reducing their fatigue by " + nAmount);
+        fDelay = 0.0f;
+
         base.Execute();
     }
 

@@ -10,6 +10,9 @@ public class TypeActive : TypeAction {
 
     }
 
+    public override TYPE Type() {
+        return TYPE.ACTIVE;
+    }
     public override int GetActionPointCost() {
         return nActionPointCost;
     }

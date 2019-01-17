@@ -41,7 +41,7 @@ public class ExecTurnRecharge : Executable {
                     continue; // A character isn't actually here (extra space for characters)
                 }
 
-                //Ask the character's readiness state to tick down its fatigue (or cooldowntimer as the case may be)
+                //Ask the character's readiness state to tick down its fatigue (or channeltimer as the case may be)
                 Match.Get().arChrs[i][j].curStateReadiness.Recharge();
 
             }
@@ -54,7 +54,7 @@ public class ExecTurnRecharge : Executable {
 
         ContTurns.Get().SetTurnState(ContTurns.STATETURN.READY);
 
-        sLabel = "Reducing Cooldowns";
+        sLabel = "Reducing Fatigue/ChannelTimes";
         fDelay = 0.5f;
 
         base.Execute();
