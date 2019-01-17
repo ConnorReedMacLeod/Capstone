@@ -136,13 +136,17 @@ public class Chr : MonoBehaviour {
 
     public void RechargeActions() {
 
+        Debug.Log("Reducing cooldowns for " + sName);
+
         for (int i = 0; i < Chr.nActions; i++) {
             ContAbilityEngine.Get().AddExec(new ExecChangeCooldown() {
                 chrSource = null, //No source - just a game action
                 chrTarget = this,
 
-                nAmount = 1,
-                actTarget = arActions[i]
+                nAmount = -1,
+                actTarget = arActions[i],
+
+                fDelay = 0f
             });
         }
 
@@ -283,15 +287,25 @@ public class Chr : MonoBehaviour {
             SetRestAction();
         }
 
+        //Make a convenient reference to the action to be used
         Action actToUse = arActions[nUsingAction];
 
+        //TODO:: Probably swap the pre/post trigger timings so that you can put things on the stack
+        //       Maybe for post trigger, have a "blank" executable that's put on the stack as a kind of 
+        //       terminating signal for when a particular ability has finished all its effects
+
+        //Notify everyone that we're about to use this action
         subPreExecuteAbility.NotifyObs(this, actToUse);
         subAllPreExecuteAbility.NotifyObs(this, actToUse);
 
-        arActions [nUsingAction].Execute ();
+        //Actually use the action
+        arActions [nUsingAction].UseAction ();
+
+        //Reset your selection information
         bSetAction = false;
 		nUsingAction = 7;//TODO:: Make this consistent
-
+        
+        //Notify everyone that we've just used an ability
         subPostExecuteAbility.NotifyObs(this, actToUse);
         subAllPostExecuteAbility.NotifyObs(this, actToUse);
 	}

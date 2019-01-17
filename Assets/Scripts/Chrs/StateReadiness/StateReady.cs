@@ -7,10 +7,15 @@ public class StateReady : StateReadiness {
     public int nCurActionsLeft;     //The number of actions left in a turn that the character can use (cantrips cost 0)
     public int nQueuedFatigue;      //The amount of fatigue that will be added to the characters fatigue when they're done acting for the turn
 
+
     public StateReady(Chr _chrOwner, int _nCurActionsLeft) : base(_chrOwner) {
 
         nCurActionsLeft = _nCurActionsLeft;
         
+    }
+
+    public override TYPE Type() {
+        return TYPE.READY;
     }
 
     public override void Recharge() {

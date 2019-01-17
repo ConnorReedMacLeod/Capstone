@@ -45,6 +45,9 @@ public class ExecChangeCooldown : Executable {
 
         actTarget.ChangeCD(nAmount);
 
+        fDelay = 0.0f;
+        sLabel = "Reducing " + chrTarget.sName + "'s " + actTarget.sName + " cooldown";
+
         base.Execute();
     }
 

@@ -5,11 +5,13 @@ using UnityEngine;
 public abstract class TypeAction {
 
     public Action act;
+    public enum TYPE {ACTIVE, CANTRIP, CHANNEL, PASSIVE };
 
     public TypeAction(Action _act) {
         act = _act;
     }
 
+    public abstract TYPE Type();
     public abstract int GetActionPointCost();
 
     public virtual bool Usable() {
@@ -20,7 +22,7 @@ public abstract class TypeAction {
 
     public void PayActionPoints() {
         //Ensure we're in a ready state
-        Debug.Assert(act.chrSource.curStateReadiness.GetType() == typeof(StateReady));
+        Debug.Assert(act.chrSource.curStateReadiness.Type() == StateReadiness.TYPE.READY);
 
         StateReady stateReady = (StateReady)(act.chrSource.curStateReadiness);
 

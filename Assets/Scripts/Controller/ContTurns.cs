@@ -12,10 +12,10 @@ public class ContTurns : MonoBehaviour {
     public static ContTurns instance;
 
     public Chr []arChrPriority = new Chr[6];
+    public Chr chrNextReady; //Stores the currently acting character this turn (or null if none are acting)
     public static Subject subAllPriorityChange = new Subject();
 
-    public float fDelayChrFirst = 5.0f;
-    public float fDelayChrAdditional = 1.0f;
+    public const float fDelayChooseAction = 5.0f;
 
     
     //TODO CHANGE ALL .Get() calls in other classes to use properties
@@ -68,46 +68,35 @@ public class ContTurns : MonoBehaviour {
     
     public Chr GetNextActingChr() {
 
-        if (arChrPriority[0].nFatigue == 0) {
-            //TODO:: Consider adding another check here
-            //       for if the character started the turn at 0 fatigue
-            //       so we don't have characters reducing their fatigue to go immediately
-            return arChrPriority[0];
+        if(chrNextReady != null && chrNextReady.curStateReadiness.Type() == StateReadiness.TYPE.READY) {
+            //If we've already got a reference to the currently acting character, 
+            //  and that character is still ready, then they are the correct next acting character
+            return chrNextReady;
+        } else if (chrNextReady != null) {
+            //If we have a reference to a non-ready character, then reset that reference to null
         }
 
-        //Then no more characters are going this turn
-        return null;
-    }
+        //Now we should look for the first character in our priority queue in a ready state
+        int i = 0;
 
-
-    public int GetNumActingChrs(int nOwnerId) {
-        int nActingChrs = 0;
-        for (int i=0; i<6; i++) {
-            if(arChrPriority[i].plyrOwner.id == nOwnerId) {
-                if(arChrPriority[i].nFatigue == 0) {
-                    nActingChrs++;
-                }
+        while (i < 6) {
+            //Just skip this character if they don't have their readiness state created yet
+            if (arChrPriority[i].curStateReadiness == null) {
+                i++;
+                continue;
             }
-        }
-        return nActingChrs;
-    }
 
-    public int GetNumAllActingChrs() {
-        return GetNumActingChrs(0) + GetNumActingChrs(1);
-    }
-
-    public float GetTimeForActing() {
-        int nMaxChrsActing = Mathf.Max(GetNumActingChrs(0), GetNumActingChrs(1));
-
-        float fDelay = 0.0f;
-        if(nMaxChrsActing >= 1) {
-            fDelay += fDelayChrFirst;
-            if(nMaxChrsActing > 1) {
-                fDelay += fDelayChrAdditional * (nMaxChrsActing - 1);
+            if (arChrPriority[i].curStateReadiness.Type() == StateReadiness.TYPE.READY) {
+                //If we find a character in the ready state, then they will become our new chrNextReady
+                chrNextReady = arChrPriority[i];
+                break;
             }
-        }
 
-        return fDelay;
+            i++;
+        }
+        //Whether we've found a ready character or not, just return whatever's stored in chrNextReady
+        return chrNextReady;
+
     }
 
 

@@ -16,6 +16,9 @@ public class TypeChannel : TypeAction {
 
     }
 
+    public override TYPE Type() {
+        return TYPE.CHANNEL;
+    }
     public override int GetActionPointCost() {
         return nActionPointCost;
     }

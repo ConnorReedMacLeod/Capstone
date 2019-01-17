@@ -122,14 +122,17 @@ public class Action { //This should probably be made abstract
         });
 
         //Pay for the Action
-        ContAbilityEngine.Get().AddExec(new ExecChangeMana() {
+        ContAbilityEngine.Get().AddExec(new ExecChangeMana(chrSource.plyrOwner, parCost.Get()) {
             chrSource = this.chrSource,
             chrTarget = null,
-
-            plyrTarget = this.chrSource.plyrOwner,
-            arnAmount = this.parCost.Get(),
         });
 
+    }
+
+    public void UseAction() {
+
+        //Let the type of this action dictate the behaviour
+        type.UseAction();
     }
 
     // Perform the actual effect this action should do

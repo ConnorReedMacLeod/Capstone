@@ -235,7 +235,20 @@ public class ContAbilityEngine : MonoBehaviour {
         } else {
             Debug.Log("Manually executing " + sLabel);
             //Then we're doing manual execution - still spawn a quick timer to show what we're processing right now
-            SpawnTimer(1.0f, sLabel);
+
+            if(fDelay == 0.0f) {
+                //If there wouldn't be any delay on evaluating anyway, then just immediately 
+                //Process the next event immediately without spawning a timer
+                Debug.Log("Moving on to evaluate the next event too");
+
+                ProcessStacks();
+            } else {
+                //If there is a delay, then just spawn the timer and wait for the user to click to move
+                // on to evaluating the next event later
+
+                SpawnTimer(1.0f, sLabel);
+            }
+            
             
         }
         

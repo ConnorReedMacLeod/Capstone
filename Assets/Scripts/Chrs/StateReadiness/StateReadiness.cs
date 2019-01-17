@@ -4,7 +4,9 @@ using UnityEngine;
 
 //TODO:: Consider if this system of introducing a base method that only one subclass actually
 //        implements is actually a good practice
-public class StateReadiness {
+public abstract class StateReadiness {
+
+    public enum TYPE { READY, FATIGUED, STUNNED, CHANNELING};
 
     public Chr chrOwner;
 
@@ -13,6 +15,8 @@ public class StateReadiness {
         chrOwner = _chrOwner;
 
     }
+
+    public abstract TYPE Type();
 
     public virtual bool CanSelectAction(Action act) {
         //By default, you can't select any action

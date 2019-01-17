@@ -8,7 +8,12 @@ using UnityEngine;
 public class ExecChangeMana : Executable {
 
     public Player plyrTarget;
+
+    //One of the following can be set - whichever is nicer for the situation
     public int[] arnAmount;
+
+    public Mana.MANATYPE manaType;
+    public int nAmount;
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -35,15 +40,34 @@ public class ExecChangeMana : Executable {
     }
     // This is the end of the section that should be copied and pasted
 
+    public ExecChangeMana(Player _plyrTarget, int[] _arnAmount) {
+        plyrTarget = _plyrTarget;
+        arnAmount = _arnAmount;
+    }
 
+    public ExecChangeMana(Player _plyrTarget, Mana.MANATYPE _manaType, int _nAmount = 1) {
+        plyrTarget = _plyrTarget;
+        manaType = _manaType;
 
+        nAmount = _nAmount;
+    }
 
     public override void Execute() {
 
-        //Double check that there is no targetted player
+        //Double check that there is no targetted character
         Debug.Assert(chrTarget == null);
 
-        plyrTarget.mana.AddMana(arnAmount);
+        if (arnAmount == null) {
+            //If no array of mana was added, then add the single amount of mana passed
+            plyrTarget.mana.AddMana(manaType, nAmount);
+        } else {
+            //But if an array of mana was specified, then use that to add mana
+            plyrTarget.mana.AddMana(arnAmount);
+        }
+
+        //TODO:: Maybe add a flag for if there should be a timer shown or not
+        fDelay = 0.0f;
+        sLabel = "Giving mana to player " + plyrTarget.id;
 
         base.Execute();
     }
