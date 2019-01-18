@@ -10,7 +10,7 @@ public class ActionBlock : Action {
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); //Choose a target enemy
 
         sName = "Declare Blocker";
-        type = new TypeActive(this);
+        type = new TypeCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 0 });

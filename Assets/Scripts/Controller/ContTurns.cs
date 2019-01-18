@@ -74,6 +74,10 @@ public class ContTurns : MonoBehaviour {
             return chrNextReady;
         } else if (chrNextReady != null) {
             //If we have a reference to a non-ready character, then reset that reference to null
+            Debug.Log("Resetting chrNextReady since " + chrNextReady.sName + " is in " + chrNextReady.curStateReadiness);
+
+            chrNextReady = null;
+            
         }
 
         //Now we should look for the first character in our priority queue in a ready state
