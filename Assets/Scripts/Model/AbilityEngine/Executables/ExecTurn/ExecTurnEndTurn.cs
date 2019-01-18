@@ -33,7 +33,7 @@ public class ExecTurnEndTurn : Executable {
 
     public override void Execute() {
 
-        ContTurns.Get().SetTurnState(ContTurns.STATETURN.GIVEMANA);
+        ContTurns.Get().SetTurnState(ContTurns.STATETURN.RECHARGE);
 
         sLabel = "End of Turn";
         fDelay = 0.5f;

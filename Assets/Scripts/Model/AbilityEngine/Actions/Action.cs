@@ -104,32 +104,44 @@ public class Action { //This should probably be made abstract
 
     public void PayForAction() {
 
-        //Increase the character's fatigue
-        ContAbilityEngine.Get().AddExec(new ExecChangeFatigue {
-            chrSource = this.chrSource,
-            chrTarget = this.chrSource,
+        ContAbilityEngine.Get().AddClause(new Clause() { 
 
-            nAmount = nFatigue
-        });
+            fExecute = () => {
+                //Increase the character's fatigue
+                ContAbilityEngine.Get().AddExec(new ExecChangeFatigue {
+                    chrSource = this.chrSource,
+                    chrTarget = this.chrSource,
 
-        //Increase this Action's cooldown
-        ContAbilityEngine.Get().AddExec(new ExecChangeCooldown() {
-            chrSource = this.chrSource,
-            chrTarget = this.chrSource,
+                    nAmount = nFatigue
+                });
 
-            actTarget = this,
-            nAmount = nCd
-        });
+                //Increase this Action's cooldown
+                ContAbilityEngine.Get().AddExec(new ExecChangeCooldown() {
+                    chrSource = this.chrSource,
+                    chrTarget = this.chrSource,
 
-        //Pay for the Action
-        ContAbilityEngine.Get().AddExec(new ExecChangeMana(chrSource.plyrOwner, parCost.Get()) {
-            chrSource = this.chrSource,
-            chrTarget = null,
+                    actTarget = this,
+                    nAmount = nCd
+                });
+
+                //Pay for the Action
+                ContAbilityEngine.Get().AddExec(new ExecChangeMana(chrSource.plyrOwner, parCost.Get()) {
+                    chrSource = this.chrSource,
+                    chrTarget = null,
+                });
+            }
         });
 
     }
 
     public void UseAction() {
+
+        if (!chrSource.ValidAction()) {
+            Debug.LogError("You can no longer pay for the ability - should decided what to do at this point");
+        }
+
+        //First pay for the action
+        PayForAction();
 
         //Let the type of this action dictate the behaviour
         type.UseAction();

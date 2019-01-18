@@ -33,7 +33,6 @@ public class ExecTurnExecuteAction : Executable {
 
 
     public override void Execute() {
-        //TODONOW
 
         //We assume that we have just come from choosing an action, so get that character
         Chr chrNextToAct = ContTurns.Get().GetNextActingChr();
@@ -58,6 +57,9 @@ public class ExecTurnExecuteAction : Executable {
                 chrNextToAct.SetRestAction();
                 chrNextToAct.ExecuteAction();
             }
+
+            //Then move this character to a fatigued state
+            chrNextToAct.SetStateReadiness(new StateFatigued(chrNextToAct));
         }
 
         fDelay = 2.0f;

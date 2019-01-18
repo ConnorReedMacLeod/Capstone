@@ -239,7 +239,6 @@ public class ContAbilityEngine : MonoBehaviour {
             if(fDelay == 0.0f) {
                 //If there wouldn't be any delay on evaluating anyway, then just immediately 
                 //Process the next event immediately without spawning a timer
-                Debug.Log("Moving on to evaluate the next event too");
 
                 ProcessStacks();
             } else {
