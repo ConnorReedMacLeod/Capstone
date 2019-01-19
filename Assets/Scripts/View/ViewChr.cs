@@ -22,6 +22,7 @@ public class ViewChr : ViewInteractive {
     public Text txtPower;               //Textfield Reference
     public Text txtDefense;             //Textfield Reference
     public Text txtFatigue;             //Fatigue Overlay Reference
+    public Text txtChannelTime;         //ChannelTime Overlay Reference
     public SpriteMask maskPortrait;     //SpriteMask Reference
     public ViewSoulContainer viewSoulContainer;  //SoulContainer Reference
 
@@ -153,18 +154,45 @@ public class ViewChr : ViewInteractive {
         mod.pnPower.subChanged.Subscribe(cbUpdatePower);
         mod.pnDefense.subChanged.Subscribe(cbUpdateDefense);
         mod.subBlockerChanged.Subscribe(cbUpdateBlocker);
+        mod.subChannelTimeChange.Subscribe(cbUpdateChannelTime);
 
-	}
+
+    }
 
     public void cbUpdateLife(Object target, params object[] args) {
         txtHealth.text = mod.nCurHealth + "/" + mod.pnMaxHealth.Get();
     }
 
     public void cbUpdateFatigue(Object target, params object[] args) {
+        //If we're channeling, then we won't display fatigue
+        if (mod.curStateReadiness.Type() == StateReadiness.TYPE.CHANNELING) {
+            Debug.Log("We shouldn't show fatigue when channeling");
+            txtFatigue.text = "";
+            return;
+        }
+
+        //Otherwise, then show a non-zero fatigue value
         if (mod.nFatigue > 0) {
             txtFatigue.text = mod.nFatigue.ToString();
         } else {
             txtFatigue.text = "";
+        }
+    }
+
+    public void cbUpdateChannelTime(Object target, params object[] args) {
+        //If we're not channeling, then we won't display anything
+        if (mod.curStateReadiness.Type() != StateReadiness.TYPE.CHANNELING) {
+            Debug.Log("Were notified of UpdateChannelTime, but we're not in a channeling state");
+            txtChannelTime.text = "";
+            return;
+
+        }
+
+        //Otherwise, then the channeltime value
+        if (((StateChanneling)mod.curStateReadiness).nChannelTime > 0) {
+            txtChannelTime.text = ((StateChanneling)mod.curStateReadiness).nChannelTime.ToString();
+        } else {
+            txtChannelTime.text = "";
         }
     }
 

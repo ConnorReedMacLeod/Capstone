@@ -15,18 +15,26 @@ public class StateChanneling : StateReadiness {
         //Double check that the soul isn't visible - should just be a hidden implementation
         Debug.Assert(_soulBehaviour.bVisible == false);
         soulBehaviour = _soulBehaviour;
+
+        Debug.Log("soulBehaviour's action is initially " + soulBehaviour.act);
     }
 
     public override TYPE Type() {
         return TYPE.CHANNELING;
     }
 
+
+    public override int GetPriority() {
+        //The priority of a channeling character should also include the channel time remaining
+        return nChannelTime + base.GetPriority();
+    }
     //To be called as part of a stun, before transitioning to the stunned state
     public override void InterruptChannel() {
 
-        //In preperation for cancelling the channel, nullify the action the channel would take when
-        //it would be removed naturally (via completion)
-        soulBehaviour.funcOnRemoval = null;
+        Debug.Log("Interuptting an ability with " + soulBehaviour.act);
+
+        //Change the function's onRemoval effect to its interrupted function
+        soulBehaviour.funcOnRemoval = soulBehaviour.OnInterruptedCompletion;
     }
 
     public override void ChangeChanneltime(int _nChange) {
@@ -66,6 +74,9 @@ public class StateChanneling : StateReadiness {
     public override void OnEnter() {
 
         chrOwner.soulContainer.ApplySoul(soulBehaviour);
+
+        //Once we're in this state, let people know that the channel time has taken effect
+        chrOwner.subChannelTimeChange.NotifyObs();
 
     }
 

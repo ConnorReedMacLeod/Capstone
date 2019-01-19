@@ -12,8 +12,14 @@ public class TypeChannel : TypeAction {
     public TypeChannel(Action act, int _nStartChannelTime, SoulChannel _soulBehaviour) : base(act) {
 
         nStartChannelTime = _nStartChannelTime;
-        soulBehaviour = _soulBehaviour;
 
+        //If we've been given special soul effect, then use it
+        if (_soulBehaviour != null) {
+            soulBehaviour = _soulBehaviour;
+        } else {
+            //Otherwise just make a blank one
+            soulBehaviour = new SoulChannel(act);
+        }
     }
 
     public override TYPE Type() {
@@ -30,6 +36,9 @@ public class TypeChannel : TypeAction {
         PayActionPoints();
 
         //Move to a Channel State
-        act.chrSource.SetStateReadiness(new StateChanneling(act.chrSource, nStartChannelTime, new SoulChannel(soulBehaviour)));
+        act.chrSource.SetStateReadiness(new StateChanneling(act.chrSource, nStartChannelTime, new SoulChannel(soulBehaviour, act)));
+
+        //Pay the fatigue cost for the action
+        act.PayFatigue();
     }
 }

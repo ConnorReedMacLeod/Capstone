@@ -80,6 +80,7 @@ public class Chr : MonoBehaviour {
     public Subject subArmourCleared = new Subject();
     public Subject subFatigueChange = new Subject();
     public static Subject subAllFatigueChange = new Subject();
+    public Subject subChannelTimeChange = new Subject();
     public Subject subBlockerChanged = new Subject();
 
     public Subject subStatusChange = new Subject();
@@ -102,7 +103,7 @@ public class Chr : MonoBehaviour {
         //Just let our readiness state deal with this
         curStateReadiness.ChangeChanneltime(_nChange);
 
-        //TODO:: Send Notifications to those who are interested
+        subChannelTimeChange.NotifyObs();
     }
 
     // Apply this amount of fatigue to the character
@@ -124,7 +125,10 @@ public class Chr : MonoBehaviour {
         }
     }
 
-
+    public int GetPriority() {
+        //Just ask our readiness state what our priority is
+        return curStateReadiness.GetPriority();
+    }
 
     public void UnlockTargetting() {
         bLockedTargetting = false;
@@ -233,7 +237,14 @@ public class Chr : MonoBehaviour {
     }
 
     public void ChangeHealth(int nChange) {
-        nCurHealth += nChange;
+        if (nCurHealth + nChange > pnMaxHealth.Get()) {
+            nCurHealth = pnMaxHealth.Get();
+        } else if (nCurHealth + nChange < 0) {
+            nCurHealth = 0;
+            //TODO:: DEATH TRIGGER
+        } else {
+            nCurHealth += nChange;
+        }
 
         subLifeChange.NotifyObs();
     }
@@ -408,6 +419,8 @@ public class Chr : MonoBehaviour {
 
             pnPower = new Property<int>(0);
             pnDefense = new Property<int>(0);
+
+            SetStateReadiness(new StateFatigued(this));
 
             view = GetComponent<ViewChr>();
             view.Start ();

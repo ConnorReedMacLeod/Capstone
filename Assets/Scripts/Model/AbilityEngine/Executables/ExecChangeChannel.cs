@@ -38,7 +38,6 @@ public class ExecChangeChannel : Executable {
 
 
     public override void Execute() {
-
         chrTarget.ChangeChanneltime(nAmount);
 
         fDelay = 0.0f;
