@@ -4,19 +4,18 @@ using UnityEngine;
 
 public class Action { //This should probably be made abstract
 
-    public enum ActionType { ACTIVE, PASSIVE, CHANNEL, CANTRIP };
-
     public int id;
 
     public int nArgs; // Note that this should only ever be 0 or 1
     public TargetArg[] arArgs;
     public string sName;
-    public ActionType type;
+    public TypeAction type;
 
     public int nCd;
     public int nCurCD;
     public int nFatigue;
 
+    public SoulChannel soulChannel; // Stores behaviour for how this channel should work (if this is a channel)
     public int nActionCost; // How many action 'points' this ability uses - cantrips would cost 0
 
     public Chr chrSource;
@@ -78,6 +77,7 @@ public class Action { //This should probably be made abstract
     }
 
 
+    //TODO:: I think you can remove this
     public void Recharge() {
         ChangeCD(-1);
     }
@@ -102,34 +102,70 @@ public class Action { //This should probably be made abstract
 
     }
 
-	// Should call VerifyLegal() before calling this
-	public virtual void Execute(){
+    public void PayManaCost() {
+        ContAbilityEngine.Get().AddClause(new Clause() {
 
-		Debug.Assert (VerifyLegal ());
-		
-        //TODO:: Consider if cooldowns and fatigue should be set before or 
-        //       after the ability finishes resolving
-
-		nCurCD = nCd;
-		chrSource.QueueFatigue(nFatigue);
-
-        Debug.Assert(chrSource.nCurActionsLeft >= nActionCost);
-        chrSource.nCurActionsLeft -= nActionCost;
-
-		if (chrSource.plyrOwner.mana.SpendMana (parCost.Get())) {
-            //Then the mana was paid properly
-
-            while (stackClauses.Count != 0) {
-                //Add each clause in this ability to the stack
-                ContAbilityEngine.Get().AddClause(stackClauses.Pop());
+            fExecute = () => {
+                //Pay for the Action
+                ContAbilityEngine.Get().AddExec(new ExecChangeMana(chrSource.plyrOwner, parCost.Get()) {
+                    chrSource = this.chrSource,
+                    chrTarget = null,
+                });
             }
+        });
+    }
 
-        } else {
-			Debug.LogError ("YOU DIDN'T ACTUALLY HAVE ENOUGH MANA");
-		}
-        
-		ResetTargettingArgs ();
-        subAbilityChange.NotifyObs();
+    public void PayCooldown() {
+        ContAbilityEngine.Get().AddClause(new Clause() {
+
+            fExecute = () => {
+                //Increase this Action's cooldown
+                ContAbilityEngine.Get().AddExec(new ExecChangeCooldown() {
+                    chrSource = this.chrSource,
+                    chrTarget = this.chrSource,
+
+                    actTarget = this,
+                    nAmount = nCd
+                });
+            }
+        });
+    }
+
+    public void PayFatigue() {
+
+        ContAbilityEngine.Get().AddClause(new Clause() { 
+
+            fExecute = () => {
+                //Increase the character's fatigue
+                ContAbilityEngine.Get().AddExec(new ExecChangeFatigue {
+                    chrSource = this.chrSource,
+                    chrTarget = this.chrSource,
+
+                    nAmount = nFatigue
+                });
+            }
+        });
+
+    }
+
+    public void UseAction() {
+
+        if (!chrSource.ValidAction()) {
+            Debug.LogError("You can no longer pay for the ability - should decided what to do at this point");
+        }
+
+        //First pay the mana cost for the action
+        PayManaCost();
+
+        //Let the type of this action dictate the behaviour
+        type.UseAction();
+    }
+
+    // Perform the actual effect this action should do
+    // This is the main effect of the action for actives/cantrips
+    //  and is the completion action for cantrips
+    public virtual void Execute() {
+        //By default do nothing - just override this to make the action do something
     }
 
 	public virtual bool VerifyLegal(){// Maybe this doesn't need to be virtual
@@ -146,8 +182,9 @@ public class Action { //This should probably be made abstract
 			return false;
 		}
 
-        if (nActionCost > chrSource.nMaxActionsLeft) {
-            Debug.Log("We have already used all non-cantrip actions for the turn");
+        //Check that we're in a readiness state (with enough usable actions left)
+        if (!chrSource.curStateReadiness.CanSelectAction(this)) {
+            Debug.Log("Not in a state where we can use this action");
             return false;
         }
 

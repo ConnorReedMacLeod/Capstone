@@ -24,9 +24,6 @@ public class StateTargetSelected : StateTarget {
         ChooseAction(ContTurns.Get().GetNextActingChr().arActions[Chr.idBlocking]);
     }
 
-    //TODO NOW:: Make a helper function that just does this but just takes an action parameter
-    // Then have two functions (one for a ViewAction and one for a ViewBlockerButton) that
-    // will just call this function with their actions
     public void ChooseAction(Action actChosen) {
         // When we've clicked an action, use that action
         Debug.Log(actChosen + " is being used");
@@ -37,20 +34,14 @@ public class StateTargetSelected : StateTarget {
             return;
         }
 
-        //And check if it's an activatable ability (not a passive)
-        if(actChosen.type == Action.ActionType.PASSIVE) {
-            Debug.Log("We can't try to activate a passive ability");
-            return;
-        }
-
         // And check if it's on cooldown
         if(actChosen.nCurCD > 0) {
             Debug.Log("We can't use an ability that's on cooldown");
             return;
         }
 
-        if(actChosen.chrSource.nCurActionsLeft < actChosen.nActionCost) {
-            Debug.Log("We can't use an active when we've already used our active for the turn");
+        if(!actChosen.chrSource.curStateReadiness.CanSelectAction(actChosen)) {
+            Debug.Log("We can't use an action right now cause our state doesn't allow it");
             return;
         }
 

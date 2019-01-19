@@ -9,11 +9,18 @@ using UnityEngine;
 
 public class Subject{
 
-	bool bStarted;
-
     public delegate void FnCallback(Object target, params object[] args);
 
     public List<FnCallback> lstCallbacks = new List<FnCallback>();
+
+    public Subject() {
+        lstCallbacks = new List<FnCallback>();
+    }
+
+    public Subject(Subject subToCopy) {
+
+        lstCallbacks = new List<FnCallback>(subToCopy.lstCallbacks);
+    }
 
 	public void Subscribe(FnCallback fnCallback){
 
@@ -31,7 +38,6 @@ public class Subject{
 	}
 
 	public virtual void NotifyObs (Object target, params object[] args){
-        Start();
 
         List<FnCallback> lstCopied = new List<FnCallback>(lstCallbacks);
 		foreach (FnCallback callback in lstCopied) {
@@ -39,12 +45,5 @@ public class Subject{
             //	continue;//in case this object has been removed by the results of previous update iterations
             callback(target, args);
 		}
-	}
-
-	public virtual void Start (){
-        if (!bStarted) {
-            bStarted = true;
-
-        }
 	}
 }

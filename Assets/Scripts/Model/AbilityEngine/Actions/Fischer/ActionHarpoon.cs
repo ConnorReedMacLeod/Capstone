@@ -10,7 +10,7 @@ public class ActionHarpoon : Action {
         arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); //Choose a target enemy
 
         sName = "Harpoon";
-        type = ActionType.ACTIVE;
+        type = new TypeChannel(this, 2, null);
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 2 });
@@ -19,7 +19,7 @@ public class ActionHarpoon : Action {
         nFatigue = 2;
         nActionCost = 1;
 
-        sDescription = "NOT COMPLETED YET - HAVEN'T IMPLEMENTED CHANNELS";
+        sDescription = "After channeling, deal 30 damage to the chosen enemy.  That enemy becomes the blocker";
 
         SetArgOwners();
     }
@@ -46,8 +46,10 @@ public class ActionHarpoon : Action {
             fExecute = () => {
                 ContAbilityEngine.Get().AddExec(new ExecBecomeBlocker() {
                     chrSource = this.chrSource,
-                    chrTarget = tar
+                    chrTarget = tar,
 
+                    fDelay = 1.0f,
+                    sLabel = tar.sName + " has become the blocker"
                 });
             }
         });

@@ -12,7 +12,7 @@ public class ActionExplosion : Action {
         arArgs[0] = new TargetArgTeam((own, tar) => true); // any team selection is fine
 
         sName = "Explosion";
-        type = ActionType.ACTIVE;
+        type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 2, 0, 0 });

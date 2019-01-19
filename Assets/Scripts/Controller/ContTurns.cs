@@ -6,16 +6,16 @@ public class ContTurns : MonoBehaviour {
 
     public bool bStarted = false;
 
-    public enum STATETURN {GIVEMANA, REDUCECOOLDOWNS, CHOOSEACTIONS, TURNSTART, EXECUTEACTIONS, TURNEND };
+    public enum STATETURN {RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSEACTIONS, EXECUTEACTIONS, TURNEND };
     public STATETURN curStateTurn;
 
     public static ContTurns instance;
 
     public Chr []arChrPriority = new Chr[6];
+    public Chr chrNextReady; //Stores the currently acting character this turn (or null if none are acting)
     public static Subject subAllPriorityChange = new Subject();
 
-    public float fDelayChrFirst = 5.0f;
-    public float fDelayChrAdditional = 1.0f;
+    public const float fDelayChooseAction = 5.0f;
 
     
     //TODO CHANGE ALL .Get() calls in other classes to use properties
@@ -45,7 +45,7 @@ public class ContTurns : MonoBehaviour {
 
         //First try to move ahead the character
         //If there is some character ahead and we go on a earlier turn
-        while (i > 0 && arChrPriority[i - 1].nFatigue > chr.nFatigue) {
+        while (i > 0 && arChrPriority[i - 1].GetPriority() > chr.GetPriority()) {
             //Swap these characters
             arChrPriority[i] = arChrPriority[i - 1];
             arChrPriority[i - 1] = chr;
@@ -55,7 +55,7 @@ public class ContTurns : MonoBehaviour {
 
         //Next try to move the character back in the list
         //If there is a character after us, and we go on the same turn or later
-        while (i < (6 - 1) && chr.nFatigue >= arChrPriority[i + 1].nFatigue) {
+        while (i < (6 - 1) && chr.GetPriority() >= arChrPriority[i + 1].GetPriority()) {
             //Swap these character
             arChrPriority[i] = arChrPriority[i + 1];
             arChrPriority[i + 1] = chr;
@@ -68,46 +68,39 @@ public class ContTurns : MonoBehaviour {
     
     public Chr GetNextActingChr() {
 
-        if (arChrPriority[0].nFatigue == 0) {
-            //TODO:: Consider adding another check here
-            //       for if the character started the turn at 0 fatigue
-            //       so we don't have characters reducing their fatigue to go immediately
-            return arChrPriority[0];
+        if(chrNextReady != null && chrNextReady.curStateReadiness.Type() == StateReadiness.TYPE.READY) {
+            //If we've already got a reference to the currently acting character, 
+            //  and that character is still ready, then they are the correct next acting character
+            return chrNextReady;
+        } else if (chrNextReady != null) {
+            //If we have a reference to a non-ready character, then reset that reference to null
+            //Debug.Log("Resetting chrNextReady since " + chrNextReady.sName + " is in " + chrNextReady.curStateReadiness);
+
+            chrNextReady = null;
+            
         }
 
-        //Then no more characters are going this turn
-        return null;
-    }
+        //Now we should look for the first character in our priority queue in a ready state
+        int i = 0;
 
-
-    public int GetNumActingChrs(int nOwnerId) {
-        int nActingChrs = 0;
-        for (int i=0; i<6; i++) {
-            if(arChrPriority[i].plyrOwner.id == nOwnerId) {
-                if(arChrPriority[i].nFatigue == 0) {
-                    nActingChrs++;
-                }
+        while (i < 6) {
+            //Just skip this character if they don't have their readiness state created yet
+            if (arChrPriority[i].curStateReadiness == null) {
+                i++;
+                continue;
             }
-        }
-        return nActingChrs;
-    }
 
-    public int GetNumAllActingChrs() {
-        return GetNumActingChrs(0) + GetNumActingChrs(1);
-    }
-
-    public float GetTimeForActing() {
-        int nMaxChrsActing = Mathf.Max(GetNumActingChrs(0), GetNumActingChrs(1));
-
-        float fDelay = 0.0f;
-        if(nMaxChrsActing >= 1) {
-            fDelay += fDelayChrFirst;
-            if(nMaxChrsActing > 1) {
-                fDelay += fDelayChrAdditional * (nMaxChrsActing - 1);
+            if (arChrPriority[i].curStateReadiness.Type() == StateReadiness.TYPE.READY) {
+                //If we find a character in the ready state, then they will become our new chrNextReady
+                chrNextReady = arChrPriority[i];
+                break;
             }
-        }
 
-        return fDelay;
+            i++;
+        }
+        //Whether we've found a ready character or not, just return whatever's stored in chrNextReady
+        return chrNextReady;
+
     }
 
 
@@ -126,7 +119,10 @@ public class ContTurns : MonoBehaviour {
 
         for (int i = 0; i < Match.Get().nPlayers; i++) {
             for (int j = 0; j < Match.Get().arPlayers[i].nChrs; j++) {
+                //TODO:: Consider putting this on the stack
+                //Initially start each character off in a fatigued state with 1/2/3/4/5/6 fatigue
                 Match.Get().arChrs[i][j].ChangeFatigue(2 * j + i + 1);
+
             }
         }
 
@@ -140,31 +136,49 @@ public class ContTurns : MonoBehaviour {
         if (ContAbilityEngine.bDEBUGENGINE) Debug.Log("Handling the turn for phase: " + curStateTurn);
 
         switch (curStateTurn) {
-            case STATETURN.GIVEMANA:
+            case STATETURN.RECHARGE:
 
-                ContAbilityEngine.Get().AddExec(new ExecTurnGiveMana());
+                ContAbilityEngine.Get().AddExec(new ExecTurnRecharge());
 
                 break;
+
+            case STATETURN.READY:
+
+                ContAbilityEngine.Get().AddExec(new ExecTurnReady());
+
+                break;
+
             case STATETURN.REDUCECOOLDOWNS:
 
                 ContAbilityEngine.Get().AddExec(new ExecTurnReduceCooldowns());
 
                 break;
-            case STATETURN.CHOOSEACTIONS:
 
-                ContAbilityEngine.Get().AddExec(new ExecTurnChooseActions());
+            case STATETURN.GIVEMANA:
+
+                ContAbilityEngine.Get().AddExec(new ExecTurnGiveMana());
 
                 break;
+            
+            
             case STATETURN.TURNSTART:
 
                 ContAbilityEngine.Get().AddExec(new ExecTurnStartTurn());
 
                 break;
+
+            case STATETURN.CHOOSEACTIONS:
+
+                ContAbilityEngine.Get().AddExec(new ExecTurnChooseActions());
+
+                break;
+
             case STATETURN.EXECUTEACTIONS:
 
                 ContAbilityEngine.Get().AddExec(new ExecTurnExecuteAction());
 
                 break;
+
             case STATETURN.TURNEND:
 
                 ContAbilityEngine.Get().AddExec(new ExecTurnEndTurn());

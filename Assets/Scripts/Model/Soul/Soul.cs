@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 //TODO probably extend this class for visible/locked/duration interactions rather than using bool flags
-public abstract class Soul {
+public class Soul {
 
     public Chr chrSource;     //A reference to the character that applied this soul effect
     public Chr chrTarget;     //A reference to the character this soul effect is applied to
@@ -42,10 +42,10 @@ public abstract class Soul {
 
     }
 
-    //These don't do anything by default, but we don't need to override them, if we're not gonna do anything with them
-    public virtual void funcOnApplication() { }
-    public virtual void funcOnRemoval() { } 
-    public virtual void funcOnExpiration() { } //Specifically when the soul effect reaches the end of its duration
+    //These are functions that we can set to nonnull values if we want something to happen on these triggers
+    public System.Action funcOnApplication;
+    public System.Action funcOnRemoval;
+    public System.Action funcOnExpiration;//Specifically when the soul effect reaches the end of its duration
    
     public void OnApply(SoulContainer _soulContainer) {
 
@@ -61,6 +61,7 @@ public abstract class Soul {
             //Each triggeredeffect we have should subscribe to the trigger it needs
             foreach (TriggerEffect trig in lstTriggers) {
                 //TODO:: Consider switching this to an extended trigger class rather than just a Subject
+                Debug.Log("*** ADDING TRIGGER SUBSCRIPTION ***");
                 trig.sub.Subscribe(trig.cb);
             }
         }
@@ -70,7 +71,8 @@ public abstract class Soul {
             Replacement.Register(rep);
         }
 
-        funcOnApplication();
+        if(funcOnApplication != null) funcOnApplication();
+
         Debug.Log(sName + " has been applied");
     }
 
@@ -88,15 +90,47 @@ public abstract class Soul {
             Replacement.Unregister(rep);
         }
 
-        funcOnRemoval();
+        if (funcOnRemoval != null) funcOnRemoval();
         Debug.Log(sName + " has been removed");
 
         if (bDuration == true && nCurDuration == 0) {
-            funcOnExpiration();
+            if (funcOnExpiration != null) funcOnExpiration();
             Debug.Log(sName + " has expired");
         }
 
     }
 
+    public Soul(Soul soulToCopy) {
+        chrSource = soulToCopy.chrSource;
+        chrTarget = soulToCopy.chrTarget;
 
+        soulContainer = soulToCopy.soulContainer;
+        sName = soulToCopy.sName;
+        bVisible = soulToCopy.bVisible;
+        bLocked = soulToCopy.bLocked;
+
+        nMaxStacks = soulToCopy.nMaxStacks;
+        nCurStacks = soulToCopy.nCurStacks;
+
+        bDuration = soulToCopy.bDuration;
+        nCurDuration = soulToCopy.nCurDuration;
+
+        if (soulToCopy.pnMaxDuration != null) {
+            pnMaxDuration = new Property<int>(soulToCopy.pnMaxDuration);
+        }
+
+        if (soulToCopy.lstReplacements != null) {
+            lstReplacements = new List<Replacement>(soulToCopy.lstReplacements);
+        }
+        if (soulToCopy.lstTriggers != null) {
+            lstTriggers = new List<TriggerEffect>(soulToCopy.lstTriggers);
+        }
+
+        //These might cause errors if the soul's function's change later, and we don't want our previously
+        // started channel to change and reflect them
+        funcOnApplication = soulToCopy.funcOnApplication;
+        funcOnExpiration = soulToCopy.funcOnExpiration;
+        funcOnRemoval = soulToCopy.funcOnRemoval;
+
+    }
 }

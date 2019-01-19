@@ -18,7 +18,7 @@ public class ChrSophidia : BaseChr {
         chrOwner.SetAction(0, new ActionHiss(chrOwner));
         chrOwner.SetAction(1, new ActionVenemousBite(chrOwner));
         chrOwner.SetAction(2, new ActionSnakeLaunch(chrOwner));
-        chrOwner.SetAction(3, new ActionHeal(chrOwner));
+        chrOwner.SetAction(3, new ActionRegenerate(chrOwner));
         
     }
 

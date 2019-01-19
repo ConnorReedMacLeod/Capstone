@@ -15,7 +15,7 @@ public class ChrSaiko : BaseChr {
     //Defines all of a character's unique actions
     public override void SetActions() {
 
-        chrOwner.SetAction(0, new ActionFireball(chrOwner));
+        chrOwner.SetAction(0, new ActionAmbush(chrOwner));
         chrOwner.SetAction(1, new ActionSmokeCover(chrOwner));
         chrOwner.SetAction(2, new ActionTranquilize(chrOwner));
         chrOwner.SetAction(3, new ActionStickyBomb(chrOwner));

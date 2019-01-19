@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class ActionRest : Action {
 
-
+    public int nRestFatigue;
 
 	public ActionRest(Chr _chrOwner): base(0, _chrOwner){//number of target arguments
 
 		sName = "Rest";
-		type = ActionType.ACTIVE;
+		type = new TypeActive(this);
 
         chrSource = _chrOwner;
 
@@ -18,13 +18,24 @@ public class ActionRest : Action {
 		nCd = 0;
         nFatigue = 0;
 
+        nRestFatigue = 3;
+
 		sDescription = _chrOwner + " has finished selecting abilities for the turn";
 
 	}
 
 	override public void Execute(){
 
-		Debug.Log ("Just resting lol");
+		Debug.Log (chrSource.sName + " is resting");
+        ContAbilityEngine.Get().AddExec(new ExecChangeFatigue() {
+            chrSource = this.chrSource,
+            chrTarget = this.chrSource,
+
+            nAmount = this.nRestFatigue,
+            
+            fDelay = 1.0f,
+            sLabel = this.chrSource.sName + " is resting"
+        });
 
 		base.Execute ();
 	}

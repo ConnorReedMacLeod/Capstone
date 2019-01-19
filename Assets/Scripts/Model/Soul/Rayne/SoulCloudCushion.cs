@@ -18,21 +18,14 @@ public class SoulCloudCushion : Soul {
         bDuration = true;
         pnMaxDuration = new Property<int>(4);
 
+        funcOnApplication = () => {
+            //Make a Permanent SoulChangeDefense, and save a reference to it, so it can be removed later
+            soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, nDefenseBuff);
+            chrTarget.soulContainer.ApplySoul(soulChangeDefense);
+        };
+
+        funcOnRemoval = () => {
+            chrTarget.soulContainer.RemoveSoul(soulChangeDefense);
+        };
     }
-
-
-    public override void funcOnApplication() {
-
-        //Make a Permanent SoulChangeDefense, and save a reference to it, so it can be removed later
-        soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, nDefenseBuff);
-        chrTarget.soulContainer.ApplySoul(soulChangeDefense);
-
-    }
-
-    public override void funcOnRemoval() {
-
-        chrTarget.soulContainer.RemoveSoul(soulChangeDefense);
-
-    }
-
 }
