@@ -102,7 +102,36 @@ public class Action { //This should probably be made abstract
 
     }
 
-    public void PayForAction() {
+    public void PayManaCost() {
+        ContAbilityEngine.Get().AddClause(new Clause() {
+
+            fExecute = () => {
+                //Pay for the Action
+                ContAbilityEngine.Get().AddExec(new ExecChangeMana(chrSource.plyrOwner, parCost.Get()) {
+                    chrSource = this.chrSource,
+                    chrTarget = null,
+                });
+            }
+        });
+    }
+
+    public void PayCooldown() {
+        ContAbilityEngine.Get().AddClause(new Clause() {
+
+            fExecute = () => {
+                //Increase this Action's cooldown
+                ContAbilityEngine.Get().AddExec(new ExecChangeCooldown() {
+                    chrSource = this.chrSource,
+                    chrTarget = this.chrSource,
+
+                    actTarget = this,
+                    nAmount = nCd
+                });
+            }
+        });
+    }
+
+    public void PayFatigue() {
 
         ContAbilityEngine.Get().AddClause(new Clause() { 
 
@@ -113,21 +142,6 @@ public class Action { //This should probably be made abstract
                     chrTarget = this.chrSource,
 
                     nAmount = nFatigue
-                });
-
-                //Increase this Action's cooldown
-                ContAbilityEngine.Get().AddExec(new ExecChangeCooldown() {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
-
-                    actTarget = this,
-                    nAmount = nCd
-                });
-
-                //Pay for the Action
-                ContAbilityEngine.Get().AddExec(new ExecChangeMana(chrSource.plyrOwner, parCost.Get()) {
-                    chrSource = this.chrSource,
-                    chrTarget = null,
                 });
             }
         });
@@ -140,8 +154,8 @@ public class Action { //This should probably be made abstract
             Debug.LogError("You can no longer pay for the ability - should decided what to do at this point");
         }
 
-        //First pay for the action
-        PayForAction();
+        //First pay the mana cost for the action
+        PayManaCost();
 
         //Let the type of this action dictate the behaviour
         type.UseAction();

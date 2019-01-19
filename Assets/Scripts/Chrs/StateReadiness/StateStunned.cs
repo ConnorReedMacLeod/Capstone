@@ -58,7 +58,7 @@ public class StateStunned : StateReadiness {
                 Debug.Assert(typeof(ExecStun) == exec.GetType());
 
                 //replace only if the stunned character will be the character this effect is on
-                return ((ExecDealDamage)exec).chrTarget == this.chrOwner;
+                return ((ExecStun)exec).chrTarget == this.chrOwner;
             },
 
             //Just replace the executable with a completely new null executable
@@ -69,7 +69,12 @@ public class StateStunned : StateReadiness {
         //Register this replacement effect so that it will take effect
         Replacement.Register(repStun);
 
+        //Let observers know to start paying attention to the fatigue value now
+        // and to clear out any channeling time (if applicable)
+        chrOwner.subFatigueChange.NotifyObs();
+        chrOwner.subChannelTimeChange.NotifyObs();
     }
+
 
     public override void OnLeave() {
 

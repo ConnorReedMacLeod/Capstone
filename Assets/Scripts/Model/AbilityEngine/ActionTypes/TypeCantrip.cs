@@ -27,6 +27,9 @@ public class TypeCantrip : TypeAction {
 
         PayActionPoints();
 
+        act.PayCooldown();
+        act.PayFatigue();
+
         //Stay in a Ready state for now
     }
 }

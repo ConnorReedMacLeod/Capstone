@@ -45,7 +45,7 @@ public class ContTurns : MonoBehaviour {
 
         //First try to move ahead the character
         //If there is some character ahead and we go on a earlier turn
-        while (i > 0 && arChrPriority[i - 1].nFatigue > chr.nFatigue) {
+        while (i > 0 && arChrPriority[i - 1].GetPriority() > chr.GetPriority()) {
             //Swap these characters
             arChrPriority[i] = arChrPriority[i - 1];
             arChrPriority[i - 1] = chr;
@@ -55,7 +55,7 @@ public class ContTurns : MonoBehaviour {
 
         //Next try to move the character back in the list
         //If there is a character after us, and we go on the same turn or later
-        while (i < (6 - 1) && chr.nFatigue >= arChrPriority[i + 1].nFatigue) {
+        while (i < (6 - 1) && chr.GetPriority() >= arChrPriority[i + 1].GetPriority()) {
             //Swap these character
             arChrPriority[i] = arChrPriority[i + 1];
             arChrPriority[i + 1] = chr;
@@ -74,7 +74,7 @@ public class ContTurns : MonoBehaviour {
             return chrNextReady;
         } else if (chrNextReady != null) {
             //If we have a reference to a non-ready character, then reset that reference to null
-            Debug.Log("Resetting chrNextReady since " + chrNextReady.sName + " is in " + chrNextReady.curStateReadiness);
+            //Debug.Log("Resetting chrNextReady since " + chrNextReady.sName + " is in " + chrNextReady.curStateReadiness);
 
             chrNextReady = null;
             
@@ -123,9 +123,6 @@ public class ContTurns : MonoBehaviour {
                 //Initially start each character off in a fatigued state with 1/2/3/4/5/6 fatigue
                 Match.Get().arChrs[i][j].ChangeFatigue(2 * j + i + 1);
 
-                StateFatigued newState = new StateFatigued(Match.Get().arChrs[i][j]);
-
-                Match.Get().arChrs[i][j].SetStateReadiness(newState);
             }
         }
 

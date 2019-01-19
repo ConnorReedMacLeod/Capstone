@@ -18,6 +18,11 @@ public abstract class StateReadiness {
 
     public abstract TYPE Type();
 
+    public virtual int GetPriority() {
+        //By default, just return the fatigue value
+        return chrOwner.nFatigue;
+    }
+
     public virtual bool CanSelectAction(Action act) {
         //By default, you can't select any action
 

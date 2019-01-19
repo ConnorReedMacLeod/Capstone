@@ -38,13 +38,13 @@ public class ExecCompleteChannel : Executable {
     public override void Execute() {
 
 
-        StateFatigued newState = new StateFatigued(chrTarget); 
+        StateFatigued newState = new StateFatigued(chrTarget);
 
         //Just transition to the fatigued state (which will trigger the channel completion)
         chrTarget.SetStateReadiness(newState);
 
         fDelay = 1.0f;
-        sLabel = chrSource.sName + " has completed their channel";
+        sLabel = chrTarget.sName + " has completed their channel";
 
         base.Execute();
     }

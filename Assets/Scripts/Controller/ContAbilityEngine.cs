@@ -13,7 +13,7 @@ public class ContAbilityEngine : MonoBehaviour {
     public GameObject pfTimer;
     public ViewTimer viewTimerCur;
 
-    public const bool bDEBUGENGINE = false;
+    public const bool bDEBUGENGINE = true;
 
     public static ContAbilityEngine instance;
 

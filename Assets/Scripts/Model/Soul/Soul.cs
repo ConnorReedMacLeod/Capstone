@@ -61,6 +61,7 @@ public class Soul {
             //Each triggeredeffect we have should subscribe to the trigger it needs
             foreach (TriggerEffect trig in lstTriggers) {
                 //TODO:: Consider switching this to an extended trigger class rather than just a Subject
+                Debug.Log("*** ADDING TRIGGER SUBSCRIPTION ***");
                 trig.sub.Subscribe(trig.cb);
             }
         }
@@ -113,14 +114,23 @@ public class Soul {
 
         bDuration = soulToCopy.bDuration;
         nCurDuration = soulToCopy.nCurDuration;
-        pnMaxDuration = new Property<int>(soulToCopy.pnMaxDuration);
 
-        lstReplacements = new List<Replacement>(soulToCopy.lstReplacements);
-        lstTriggers = new List<TriggerEffect>(soulToCopy.lstTriggers);
+        if (soulToCopy.pnMaxDuration != null) {
+            pnMaxDuration = new Property<int>(soulToCopy.pnMaxDuration);
+        }
 
-        funcOnApplication = new System.Action(soulToCopy.funcOnApplication);
-        funcOnExpiration = new System.Action(soulToCopy.funcOnExpiration);
-        funcOnRemoval = new System.Action(soulToCopy.funcOnRemoval);
+        if (soulToCopy.lstReplacements != null) {
+            lstReplacements = new List<Replacement>(soulToCopy.lstReplacements);
+        }
+        if (soulToCopy.lstTriggers != null) {
+            lstTriggers = new List<TriggerEffect>(soulToCopy.lstTriggers);
+        }
+
+        //These might cause errors if the soul's function's change later, and we don't want our previously
+        // started channel to change and reflect them
+        funcOnApplication = soulToCopy.funcOnApplication;
+        funcOnExpiration = soulToCopy.funcOnExpiration;
+        funcOnRemoval = soulToCopy.funcOnRemoval;
 
     }
 }
