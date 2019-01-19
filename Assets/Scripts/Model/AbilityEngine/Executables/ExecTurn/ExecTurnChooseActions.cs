@@ -36,13 +36,25 @@ public class ExecTurnChooseActions : Executable {
 
     public override void Execute() {
 
-        //Ensure only the currently acting character can select actions
-        ContTurns.Get().GetNextActingChr().UnlockTargetting();
+        //First, test if we actually have any character who is ready to act right now
+        if(ContTurns.Get().GetNextActingChr() == null) {
 
-        ContTurns.Get().SetTurnState(ContTurns.STATETURN.EXECUTEACTIONS);
+            //If no character is in the ready state, then we'll move to the end of turn
+            ContTurns.Get().SetTurnState(ContTurns.STATETURN.TURNEND);
 
-        sLabel = "Select Your Action for " + ContTurns.Get().GetNextActingChr().sName;
-        fDelay = ContTurns.Get().GetTimeForActing();
+        } else {
+
+            //If we do have a character who can act, then set them up to be able to act
+
+            //Ensure only the currently acting character can select actions
+            ContTurns.Get().GetNextActingChr().UnlockTargetting();
+
+            //Prepare to execute the action that they willl have selected
+            ContTurns.Get().SetTurnState(ContTurns.STATETURN.EXECUTEACTIONS);
+
+            sLabel = "Select Your Action for " + ContTurns.Get().GetNextActingChr().sName;
+            fDelay = ContTurns.fDelayChooseAction;
+        }
 
         base.Execute();
     }

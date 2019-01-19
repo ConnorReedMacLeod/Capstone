@@ -34,6 +34,9 @@ public class ExecBecomeBlocker : Executable {
 
         chrTarget.plyrOwner.SetBlocker(chrTarget.id);
 
+        fDelay = 1.0f;
+        sLabel = chrTarget.sName + " has become the blocker";
+
         base.Execute();
     }
 

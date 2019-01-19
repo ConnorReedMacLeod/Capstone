@@ -32,10 +32,9 @@ public class Chr : MonoBehaviour {
 
     public int id;                  //The character's unique identifier
     public int nFatigue;            //Number of turns a character must wait before their next action
-    public int nQueuedFatigue;      //The amount of fatigue that will be added to the characters fatigue when they're done acting for the turn
+    public StateReadiness curStateReadiness; //A reference to the current state of readiness
 
     public int nMaxActionsLeft;     //The total maximum number of actions a character can use in a turn (usually 1, cantrips cost 0)
-    public int nCurActionsLeft;     //The number of actions left in a turn that the character can use (cantrips cost 0)
 
 	public int nCurHealth;          //The character's current health
 	public Property<int> pnMaxHealth;          //The character's max health
@@ -81,16 +80,30 @@ public class Chr : MonoBehaviour {
     public Subject subArmourCleared = new Subject();
     public Subject subFatigueChange = new Subject();
     public static Subject subAllFatigueChange = new Subject();
+    public Subject subChannelTimeChange = new Subject();
     public Subject subBlockerChanged = new Subject();
 
     public Subject subStatusChange = new Subject();
     public static Subject subAllStatusChange = new Subject();
 
-    // Prepare a certain amount of fatigue to be applied to this character
-    public void QueueFatigue(int _nChange) {
+    public void SetStateReadiness(StateReadiness newState) {
 
-        nQueuedFatigue += _nChange;
+        if (curStateReadiness != null) {
+            curStateReadiness.OnLeave();
+        }
 
+        curStateReadiness = newState;
+
+        if (curStateReadiness != null) {
+            curStateReadiness.OnEnter();
+        }
+    }
+
+    public void ChangeChanneltime(int _nChange) {
+        //Just let our readiness state deal with this
+        curStateReadiness.ChangeChanneltime(_nChange);
+
+        subChannelTimeChange.NotifyObs();
     }
 
     // Apply this amount of fatigue to the character
@@ -104,6 +117,7 @@ public class Chr : MonoBehaviour {
         subFatigueChange.NotifyObs(this);
         subAllFatigueChange.NotifyObs(this);
 
+        //TODO:: Probably delete this bBeginningTurn flag once I get a nice solution for priority handling
         if (!bBeginningTurn) {
             //Then this is a stun or an actions used
             ContTurns.Get().FixSortedPriority(this);
@@ -111,12 +125,9 @@ public class Chr : MonoBehaviour {
         }
     }
 
-    public void FinishSelectionPhase() {
-        // Note - this  queued amount will always be greater than 0, so we will never come back to the same character
-        //        twice in a row on the same turn.  
-        ChangeFatigue(nQueuedFatigue);
-        nQueuedFatigue = 0;
-        nCurActionsLeft = nMaxActionsLeft;
+    public int GetPriority() {
+        //Just ask our readiness state what our priority is
+        return curStateReadiness.GetPriority();
     }
 
     public void UnlockTargetting() {
@@ -129,9 +140,24 @@ public class Chr : MonoBehaviour {
 
     public void RechargeActions() {
 
+        Debug.Log("Reducing cooldowns for " + sName);
+
         for (int i = 0; i < Chr.nActions; i++) {
-            arActions[i].Recharge();
+
+            //Only reduce the cooldown if it is not currently off cooldown
+            if (arActions[i].nCurCD > 0) { 
+                ContAbilityEngine.Get().AddExec(new ExecChangeCooldown() {
+                    chrSource = null, //No source - just a game action
+                    chrTarget = this,
+
+                    nAmount = -1,
+                    actTarget = arActions[i],
+
+                    fDelay = 0f
+                });
+            }
         }
+
     }
 
     //If we have lowered our armour (either by taking damage, or by
@@ -211,7 +237,14 @@ public class Chr : MonoBehaviour {
     }
 
     public void ChangeHealth(int nChange) {
-        nCurHealth += nChange;
+        if (nCurHealth + nChange > pnMaxHealth.Get()) {
+            nCurHealth = pnMaxHealth.Get();
+        } else if (nCurHealth + nChange < 0) {
+            nCurHealth = 0;
+            //TODO:: DEATH TRIGGER
+        } else {
+            nCurHealth += nChange;
+        }
 
         subLifeChange.NotifyObs();
     }
@@ -269,15 +302,25 @@ public class Chr : MonoBehaviour {
             SetRestAction();
         }
 
+        //Make a convenient reference to the action to be used
         Action actToUse = arActions[nUsingAction];
 
+        //TODO:: Probably swap the pre/post trigger timings so that you can put things on the stack
+        //       Maybe for post trigger, have a "blank" executable that's put on the stack as a kind of 
+        //       terminating signal for when a particular ability has finished all its effects
+
+        //Notify everyone that we're about to use this action
         subPreExecuteAbility.NotifyObs(this, actToUse);
         subAllPreExecuteAbility.NotifyObs(this, actToUse);
 
-        arActions [nUsingAction].Execute ();
+        //Actually use the action
+        arActions [nUsingAction].UseAction ();
+
+        //Reset your selection information
         bSetAction = false;
 		nUsingAction = 7;//TODO:: Make this consistent
-
+        
+        //Notify everyone that we've just used an ability
         subPostExecuteAbility.NotifyObs(this, actToUse);
         subAllPostExecuteAbility.NotifyObs(this, actToUse);
 	}
@@ -361,7 +404,6 @@ public class Chr : MonoBehaviour {
 			bStarted = true;
 
             nMaxActionsLeft = 1;
-            nCurActionsLeft = nMaxActionsLeft;
 
             arActions = new Action[nActions];
             nUsingAction = -1;
@@ -377,6 +419,8 @@ public class Chr : MonoBehaviour {
 
             pnPower = new Property<int>(0);
             pnDefense = new Property<int>(0);
+
+            SetStateReadiness(new StateFatigued(this));
 
             view = GetComponent<ViewChr>();
             view.Start ();

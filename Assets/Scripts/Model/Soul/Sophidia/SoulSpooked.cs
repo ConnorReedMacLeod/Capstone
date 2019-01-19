@@ -18,22 +18,14 @@ public class SoulSpooked : Soul {
         bDuration = true;
         pnMaxDuration = new Property<int>(3);
 
+        funcOnApplication = () => {
+            //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
+            soulChangePower = new SoulChangePower(chrSource, chrTarget, nPowerDebuff);
+            chrTarget.soulContainer.ApplySoul(soulChangePower);
+        };
+
+        funcOnRemoval = () => {
+            chrTarget.soulContainer.RemoveSoul(soulChangePower);
+        };
     }
-
-
-
-    public override void funcOnApplication() {
-
-        //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
-        soulChangePower = new SoulChangePower(chrSource, chrTarget, nPowerDebuff);
-        chrTarget.soulContainer.ApplySoul(soulChangePower);
-
-    }
-
-    public override void funcOnRemoval() {
-
-        chrTarget.soulContainer.RemoveSoul(soulChangePower);
-
-    }
-
 }

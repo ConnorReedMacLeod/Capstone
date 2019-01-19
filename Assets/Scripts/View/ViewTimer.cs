@@ -23,6 +23,7 @@ public class ViewTimer : MonoBehaviour {
 
     public void InitTimer(float _fMaxTime, string _sLabel) {
         sLabel = _sLabel;
+
         fMaxTime = _fMaxTime;
         fCurTime = fMaxTime;
 

@@ -10,7 +10,7 @@ public class ActionBucklerParry : Action {
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); //no targets needed
 
         sName = "BucklerParry";
-        type = ActionType.ACTIVE;
+        type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 1, 0, 0, 0, 0 });

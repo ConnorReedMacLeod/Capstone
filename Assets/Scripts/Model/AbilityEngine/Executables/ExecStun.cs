@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class ExecStun : Executable {
 
-    public Chr chrTarget;
     public int nAmount;
 
 
@@ -40,8 +39,15 @@ public class ExecStun : Executable {
 
 
     public override void Execute() {
-        Debug.Log("TODO:: Also should apply some stun status effect to cancel channels and prevent future stuns");
-        chrTarget.ChangeFatigue(nAmount);
+
+        //First interrupt the character if they're channeling
+        chrTarget.curStateReadiness.InterruptChannel();
+
+        //Create a new stun state to let our character transition to
+        StateStunned newState = new StateStunned(chrTarget, nAmount);
+
+        //Transition to the new state
+        chrTarget.SetStateReadiness(newState);
 
         base.Execute();
     }

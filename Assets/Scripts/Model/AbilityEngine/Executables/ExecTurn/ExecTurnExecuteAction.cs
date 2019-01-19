@@ -41,37 +41,31 @@ public class ExecTurnExecuteAction : Executable {
         chrNextToAct.LockTargetting(); // Lock that character so they can't change ability selection
 
         if (chrNextToAct.bSetAction == true) {
+            //If the character has prepped an action, then we should use it
             sLabel = chrNextToAct.sName + " is using " + chrNextToAct.arActions[chrNextToAct.nUsingAction].sName;
             chrNextToAct.ExecuteAction();
 
         } else {
             sLabel = chrNextToAct.sName + " has not set an Action";
 
-            if (chrNextToAct.nQueuedFatigue == 0 && chrNextToAct.nCurActionsLeft == chrNextToAct.nMaxActionsLeft) {
-                //If the character has only used cantrip abilities that would don't increase fatigue,
-                //(so only cantrips with +0 fatigue), then we set the character to use a rest action
+            if (chrNextToAct.nFatigue == 0 && 
+                ((StateReady)(chrNextToAct.curStateReadiness)).nCurActionsLeft == chrNextToAct.nMaxActionsLeft) {
+                //If the character has 0 fatigue after not using any actives/channels
+                // then we set the character to use a rest action
 
-                //We also set the QueuedFatigue so that the character doesn't go again immediately
-                chrNextToAct.nQueuedFatigue = 3;
-
+                //We set up a rest action (that will give 3 fatigue) so that we don't have the same character going next turn
                 chrNextToAct.SetRestAction();
                 chrNextToAct.ExecuteAction();
             }
 
-            // Finished any cleanup we need to do for a character ending their ability selection
-            chrNextToAct.FinishSelectionPhase();
-
+            //Then move this character to a fatigued state
+            chrNextToAct.SetStateReadiness(new StateFatigued(chrNextToAct));
         }
 
         fDelay = 2.0f;
 
-        if(ContTurns.Get().GetNextActingChr() == null) {
-            // Then there are no more characters that need to go after us this turn
-            ContTurns.Get().SetTurnState(ContTurns.STATETURN.TURNEND);
-        } else {
-            // Otherwise, we have a character we need to select actions for
-            ContTurns.Get().SetTurnState(ContTurns.STATETURN.CHOOSEACTIONS);
-        }
+        //Move back to choosing actions (in case there's more actions to be chosen)
+        ContTurns.Get().SetTurnState(ContTurns.STATETURN.CHOOSEACTIONS);
 
         base.Execute();
     }
