@@ -64,29 +64,31 @@ public class Chr : MonoBehaviour {
 
 	public STATESELECT stateSelect; //The character's state
 
-    public Subject subStartSelect = new Subject();
-    public static Subject subAllStartSelect = new Subject();
-    public Subject subStartTargetting = new Subject();
-    public static Subject subAllStartTargetting = new Subject();
-    public Subject subStartIdle = new Subject();
-    public static Subject subAllStartIdle = new Subject();
+	//Character Subjects//
+    public Subject subStartSelect = new Subject();						//When you select 'this' character//
+    public static Subject subAllStartSelect = new Subject();			//When you select any character//
+    public Subject subStartTargetting = new Subject();					//When you start choosing the target of an ability for 'this' character//
+    public static Subject subAllStartTargetting = new Subject();		//When you start choosing the target of an ability for any character//
+    public Subject subStartIdle = new Subject();						//When 'this' character is unselected//
+    public static Subject subAllStartIdle = new Subject();              //When any character is unselected//
 
-    public Subject subPreExecuteAbility = new Subject();
-    public static Subject subAllPreExecuteAbility = new Subject();
-    public Subject subPostExecuteAbility = new Subject();
-    public static Subject subAllPostExecuteAbility = new Subject();
+	public Subject subStatusChange = new Subject();                     //When 'this' character's status (selected, unselected, targeted, etc) changes//
+	public static Subject subAllStatusChange = new Subject();           //When any character's status (selected, unselected, targeted, etc) changes//
 
-    public Subject subLifeChange = new Subject();
-    public Subject subArmourCleared = new Subject();
-    public Subject subFatigueChange = new Subject();
-    public static Subject subAllFatigueChange = new Subject();
-    public Subject subChannelTimeChange = new Subject();
-    public Subject subBlockerChanged = new Subject();
+	public Subject subPreExecuteAbility = new Subject();				//When 'this' character is about to use an ability//
+    public static Subject subAllPreExecuteAbility = new Subject();		//When any character is about to use an ability//
+    public Subject subPostExecuteAbility = new Subject();				//When 'this' character's ability has been used//
+    public static Subject subAllPostExecuteAbility = new Subject();     //When any character's ability has been used//
 
-    public Subject subStatusChange = new Subject();
-    public static Subject subAllStatusChange = new Subject();
+	public Subject subLifeChange = new Subject();						//When 'this' character's current life changes//
+	public static Subject subAllLifeChange = new Subject();				//When any character's current life changes//
+    public Subject subArmourCleared = new Subject();					//When 'this' character goes from >0 Armour to 0 Armour//
+    public Subject subFatigueChange = new Subject();					//When 'this' character's fatigue changes//
+    public static Subject subAllFatigueChange = new Subject();			//When any character's fatigue changes//
+    public Subject subChannelTimeChange = new Subject();				//When 'this' character's channel changes//
+    public Subject subBlockerChanged = new Subject();					//When 'this' character becomes the blocker or stops being the blocker//
 
-    public void SetStateReadiness(StateReadiness newState) {
+	public void SetStateReadiness(StateReadiness newState) {
 
         if (curStateReadiness != null) {
             curStateReadiness.OnLeave();
@@ -247,6 +249,7 @@ public class Chr : MonoBehaviour {
         }
 
         subLifeChange.NotifyObs();
+		subAllLifeChange.NotifyObs();
     }
 
     public void ChangeBlocker(bool _bBlocker) {

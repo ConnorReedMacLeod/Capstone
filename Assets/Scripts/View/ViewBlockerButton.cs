@@ -9,9 +9,9 @@ public class ViewBlockerButton : ViewInteractive {
 
     public const int id = 8;                              //The standard id for the block action
 
-    public static Subject subAllClick = new Subject();
-    public static Subject subAllStartHover = new Subject();
-    public static Subject subAllStopHover = new Subject();
+    public static Subject subAllClick = new Subject();			//When any blocker button is clicked//
+    public static Subject subAllStartHover = new Subject();		//When any blocker button has the mouse moved onto it//
+    public static Subject subAllStopHover = new Subject();		//When any blocker button has the mouse moved off of it//
 
     public bool ButtonVisible() {
         //Needs to have a character that's acting next this turn, and is selected (and maybe should be in the ability selection phase)
