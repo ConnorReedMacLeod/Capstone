@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class ActionStorm : Action {
 
-    public int nEnemyDamage;
+    public int nBaseDamage;
     public int nStunDuration;
+    public Damage dmg;
 
     public ActionStorm(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
 
@@ -24,8 +25,10 @@ public class ActionStorm : Action {
 
         sDescription = "Deal 15 damage and 2 fatigue to all enemies.";
 
-        nEnemyDamage = 15;
         nStunDuration = 2;
+        nBaseDamage = 15;
+        //Create a base Damage object that this action will apply
+        dmg = new Damage(this.chrSource, null, nBaseDamage);
 
         SetArgOwners();
     }
@@ -38,13 +41,17 @@ public class ActionStorm : Action {
             fExecute = () => {
                 //Deal damage to all enemies
                 for (int i = 0; i < enemy.arChr.Length; i++) {
-                    Damage dmgToDeal = new Damage(chrSource, enemy.arChr[i], nEnemyDamage);
+
+                    //Make a copy of the damage object to give to the executable
+                    Damage dmgToApply = new Damage(dmg);
+                    //Give the damage object its target
+                    dmgToApply.SetChrTarget(enemy.arChr[i]);
 
                     //TODO:: Organize this in the correct order
                     ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                         chrSource = this.chrSource,
                         chrTarget = enemy.arChr[i],
-                        dmg = dmgToDeal,
+                        dmg = dmgToApply,
 
                         fDelay = 1.0f,
                         sLabel = enemy.arChr[i].sName + " is caught in the storm"
@@ -58,7 +65,8 @@ public class ActionStorm : Action {
                     ContAbilityEngine.Get().AddExec(new ExecStun() {
                         chrSource = this.chrSource,
                         chrTarget = enemy.arChr[i],
-                        nAmount = nStunDuration,
+
+                        GetDuration = () => nStunDuration,
 
                         fDelay = 1.0f,
                         sLabel = chrSource.plyrOwner.arChr[i].sName + " is being stunned"

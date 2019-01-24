@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class ActionReverberate : Action {
 
+    public Damage dmg;
+    public int nBaseDamage;
+
     public ActionReverberate(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
 
         //We don't need to target anything, since we always deal damage to the enemy team
@@ -19,6 +22,10 @@ public class ActionReverberate : Action {
         nFatigue = 4;
         nActionCost = 1;
 
+        nBaseDamage = 5;
+        //Create a base Damage object that this action will apply
+        dmg = new Damage(this.chrSource, null, nBaseDamage);
+
         sDescription = "Deal 5 damage to all enemies";
 
         SetArgOwners();
@@ -31,13 +38,17 @@ public class ActionReverberate : Action {
         stackClauses.Push(new Clause() {
             fExecute = () => {
                 for (int i = 0; i < tar.arChr.Length; i++) {
-                    Damage dmgToDeal = new Damage(chrSource, tar.arChr[i], 5);
+                    //Make a copy of the damage object to give to the executable
+                    Damage dmgToApply = new Damage(dmg);
+                    //Give the damage object its target
+                    dmgToApply.SetChrTarget(tar.arChr[i]);
 
                     //TODO:: Organize this in the correct order
                     ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                         chrSource = this.chrSource,
                         chrTarget = tar.arChr[i],
-                        dmg = dmgToDeal,
+
+                        dmg = dmgToApply,
 
                         fDelay = 1.0f,
                         sLabel = "Reverberating " + tar.arChr[i].sName

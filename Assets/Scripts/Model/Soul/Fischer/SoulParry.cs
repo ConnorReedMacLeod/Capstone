@@ -6,6 +6,7 @@ public class SoulParry : Soul {
 
     public int nDamage;
     public int nArmour;
+    public Damage dmg;
 
     public LinkedListNode<Property<int>.Modifier> nodeArmourModifier;
 
@@ -17,13 +18,17 @@ public class SoulParry : Soul {
         //Then retaliate with damage
         ContAbilityEngine.Get().AddClause(new Clause() {
             fExecute = () => {
-                Damage dmgToDeal = new Damage(chrSource, chrDamager, this.nDamage);
+
+                //Make a copy of the damage object to give to the executable
+                Damage dmgToApply = new Damage(dmg);
+                //Give the damage object its target
+                dmgToApply.SetChrTarget(chrDamager);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrTarget,
                     chrTarget = chrDamager,
 
-                    dmg = dmgToDeal
+                    dmg = dmgToApply
                 });
             }
         });
@@ -40,6 +45,8 @@ public class SoulParry : Soul {
 
         nDamage = 15;
         nArmour = 15;
+        //Create a base Damage object that this action will apply
+        dmg = new Damage(this.chrSource, null, nDamage);
 
 
         lstTriggers = new List<TriggerEffect>() {

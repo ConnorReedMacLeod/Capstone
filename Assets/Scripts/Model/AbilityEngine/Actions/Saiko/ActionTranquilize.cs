@@ -38,7 +38,8 @@ public class ActionTranquilize : Action {
                 ContAbilityEngine.Get().AddExec(new ExecStun() {
                     chrSource = this.chrSource,
                     chrTarget = chrEnemyBlocker,
-                    nAmount = nStunDuration,
+
+                    GetDuration = () => nStunDuration,
 
                     fDelay = 1.0f,
                     sLabel = chrEnemyBlocker.sName + " is being stunned"

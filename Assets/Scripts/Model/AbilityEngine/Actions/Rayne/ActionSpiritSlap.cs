@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class ActionSpiritSlap : Action {
 
+    public Damage dmg;
+    public int nBaseDamage;
+
     public ActionSpiritSlap(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
 
         //Since the base constructor initializes this array, we can start filling it
@@ -19,6 +22,10 @@ public class ActionSpiritSlap : Action {
         nFatigue = 2;
         nActionCost = 1;
 
+        nBaseDamage = 5;
+        //Create a base Damage object that this action will apply
+        dmg = new Damage(this.chrSource, null, nBaseDamage);
+
         sDescription = "Deal 5 damage to the enemy blocker and apply [Dispirited](4).\n" +
                        "[Dispirited]: This character's cantrips cost [O] more.";
 
@@ -31,12 +38,15 @@ public class ActionSpiritSlap : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Damage dmgToDeal = new Damage(chrSource, tar, 5);
+                //Make a copy of the damage object to give to the executable
+                Damage dmgToApply = new Damage(dmg);
+                //Give the damage object its target
+                dmgToApply.SetChrTarget(tar);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
                     chrTarget = tar,
-                    dmg = dmgToDeal,
+                    dmg = dmgToApply,
                     fDelay = 1.0f,
                     sLabel = tar.sName + " is being slapped"
                 });

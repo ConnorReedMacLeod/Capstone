@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class ActionExplosion : Action {
 
-
+    public Damage dmg;
+    public int nBaseDamage;
 
     public ActionExplosion(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
@@ -21,6 +22,10 @@ public class ActionExplosion : Action {
         nFatigue = 6;
         nActionCost = 1;
 
+        nBaseDamage = 5;
+        //Create a base Damage object that this action will apply
+        dmg = new Damage(this.chrSource, null, nBaseDamage);
+
         sDescription = "Deal 5 damage to all characters on target team";
 
         SetArgOwners();
@@ -35,13 +40,17 @@ public class ActionExplosion : Action {
             fExecute = () => {
                 for (int i = 0; i < tar.arChr.Length; i++) {
                     Debug.Log("This Explosion Clause put an ExecDamage on the stack");
-                    Damage dmgToDeal = new Damage(chrSource, tar.arChr[i], 5);
+
+                    //Make a copy of the damage object to give to the executable
+                    Damage dmgToApply = new Damage(dmg);
+                    //Give the damage object its target
+                    dmgToApply.SetChrTarget(tar.arChr[i]);
 
                     //TODO:: Organize this in the correct order
                     ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                         chrSource = this.chrSource,
                         chrTarget = tar.arChr[i],
-                        dmg = dmgToDeal,
+                        dmg = dmgToApply,
                         fDelay = 1.0f,
                         sLabel = "Exploding"
                     });
