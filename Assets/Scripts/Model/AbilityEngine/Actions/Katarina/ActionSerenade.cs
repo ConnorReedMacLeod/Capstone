@@ -37,13 +37,14 @@ public class ActionSerenade : Action {
         // but at least it's eliminated from the targetting lambda
         Chr tar = ((TargetArgAlly)arArgs[0]).chrTar;
 
-        //Make a copy of the heal object to give to the executable
-        Healing healToApply = new Healing(heal);
-        //Give the healing object its target
-        healToApply.SetChrTarget(tar);
-
         stackClauses.Push(new Clause() {
             fExecute = () => {
+
+                //Make a copy of the heal object to give to the executable
+                Healing healToApply = new Healing(heal);
+                //Give the healing object its target
+                healToApply.SetChrTarget(tar);
+
                 ContAbilityEngine.Get().AddExec(new ExecHeal() {
                     chrSource = this.chrSource,
                     chrTarget = tar,

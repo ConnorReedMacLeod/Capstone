@@ -67,7 +67,7 @@ public class ExecChangeMana : Executable {
 
         //TODO:: Maybe add a flag for if there should be a timer shown or not
         fDelay = 0.0f;
-        sLabel = "Giving mana to player " + plyrTarget.id;
+        sLabel = "Changing mana for player " + plyrTarget.id;
 
         base.Execute();
     }

@@ -207,7 +207,7 @@ public class Chr : MonoBehaviour {
     public void TakeDamage(Damage dmgToTake) {
 
         //Fetch the amount of damage we're going to take
-        int nDamageToTake = dmgToTake.GetDamage();
+        int nDamageToTake = dmgToTake.Get();
 
         //If the damage isn't piercing, then reduce it by the defense amount
         if (dmgToTake.bPiercing == false) {

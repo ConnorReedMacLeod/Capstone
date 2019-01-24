@@ -56,11 +56,6 @@ public class SoulSadism : Soul {
                 }
             }
         };
-
-        funcOnApplication = () => {
-            //When we apply this soul effect, lock the current power in
-            heal.SnapShotPower();
-        };
     }
 
 }

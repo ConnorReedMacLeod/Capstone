@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class ActionTendrilStab : Action {
 
-   //TODO:: Give all damaging actions an instance of damage to store and fill in with a target
-   //         when the damage is actually being applied - can easilly Get() the damage value accurately
-   //         when needed, even before dealing damage
-    public int nBaseDmg;
+    public Damage dmg;
+    public int nBaseDamage;
 
     public ActionTendrilStab(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
 
@@ -23,7 +21,10 @@ public class ActionTendrilStab : Action {
         nCd = 6;
         nFatigue = 3;
         nActionCost = 1;
-        nBaseDmg = 25;
+
+        nBaseDamage = 25;
+        //Create a base Damage object that this action will apply
+        dmg = new Damage(this.chrSource, null, nBaseDamage, true);
 
         sDescription = "Deal 25 [PIERCING] damage to the enemy blocker";
 
@@ -36,12 +37,16 @@ public class ActionTendrilStab : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Damage dmgToDeal = new Damage(chrSource, tar, nBaseDmg, false, true);
+
+                //Make a copy of the damage object to give to the executable
+                Damage dmgToApply = new Damage(dmg);
+                //Give the damage object its target
+                dmgToApply.SetChrTarget(tar);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
                     chrTarget = tar,
-                    dmg = dmgToDeal,
+                    dmg = dmgToApply,
 
                     fDelay = 1.0f,
                     sLabel = tar.sName + " is being stabbed"

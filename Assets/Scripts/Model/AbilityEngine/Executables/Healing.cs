@@ -7,29 +7,39 @@ public class Healing {
     public Chr chrSource;
     public Chr chrTarget;
 
-    public int nBaseHealing;
+    public LibFunc.Get<int> GetBase;
     public LibFunc.Get<int> GetPower;
 
-    public Healing(Chr _chrSource, Chr _chrTarget, int _nBaseHealing) {
+    //For convenience, allow a constructor that just accepts a number, rather than a function
+    public Healing(Chr _chrSource, Chr _chrTarget, int _nBase) {
 
         //Copy the fields as they've been passed in
-        nBaseHealing = _nBaseHealing;
+        GetBase = () => _nBase;
 
         //Store the chrSource and apply its power buff
         SetChrSource(_chrSource);
         SetChrTarget(_chrTarget);
+    }
 
+    public Healing(Chr _chrSource, Chr _chrTarget, LibFunc.Get<int> _GetBase) {
+
+        //Copy the fields as they've been passed in
+        GetBase = _GetBase;
+
+        //Store the chrSource and apply its power buff
+        SetChrSource(_chrSource);
+        SetChrTarget(_chrTarget);
     }
 
     public int Get() {
-        return nBaseHealing + GetPower();
+        return GetBase() + GetPower();
     }
 
     public void SnapShotPower() {
 
         //If we need to snapshot, then fetch and fix the power in the GetPower function
         int nSnapshotPower = chrSource.pnPower.Get();
-        GetPower = () => nBaseHealing + nSnapshotPower;
+        GetPower = () => nSnapshotPower;
 
     }
 
@@ -52,7 +62,7 @@ public class Healing {
         chrSource = dmgToCopy.chrSource;
         chrTarget = dmgToCopy.chrTarget;
 
-        nBaseHealing = dmgToCopy.nBaseHealing;
+        GetBase = dmgToCopy.GetBase;
 
         //Copy the Power fetch method too
         GetPower = dmgToCopy.GetPower;

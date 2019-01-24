@@ -51,11 +51,14 @@ public class ActionRegenerate : Action {
         ContAbilityEngine.Get().AddClause(new Clause() {
             fExecute = () => {
 
+                //Make a copy of the heal object to give to the executable
+                Healing healToApply = new Healing(heal);
+
                 ContAbilityEngine.Get().AddExec(new ExecHeal() {
                     chrSource = this.chrSource,
                     chrTarget = this.chrSource,
                     
-                    heal = this.heal, //I don't think we need to make a separate copy
+                    heal = healToApply, 
                     fDelay = 1.0f,
                     sLabel = chrSource.sName + " is regenerating"
                 });

@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class ActionHarpoon : Action {
 
+    public Damage dmg;
+    public int nBaseDamage;
+
     public ActionHarpoon(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
         //Since the base constructor initializes this array, we can start filling it
@@ -19,6 +22,10 @@ public class ActionHarpoon : Action {
         nFatigue = 2;
         nActionCost = 1;
 
+        nBaseDamage = 30;
+        //Create a base Damage object that this action will apply
+        dmg = new Damage(this.chrSource, null, nBaseDamage);
+
         sDescription = "After channeling, deal 30 damage to the chosen enemy.  That enemy becomes the blocker";
 
         SetArgOwners();
@@ -30,12 +37,16 @@ public class ActionHarpoon : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Damage dmgToDeal = new Damage(chrSource, tar, 10);
+
+                //Make a copy of the damage object to give to the executable
+                Damage dmgToApply = new Damage(dmg);
+                //Give the damage object its target
+                dmgToApply.SetChrTarget(tar);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
                     chrTarget = tar,
-                    dmg = dmgToDeal,
+                    dmg = dmgToApply,
                     fDelay = 1.0f,
                     sLabel = tar.sName + " is being Harpooned"
                 });
