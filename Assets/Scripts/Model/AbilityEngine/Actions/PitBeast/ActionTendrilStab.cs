@@ -4,49 +4,60 @@ using UnityEngine;
 
 public class ActionTendrilStab : Action {
 
+    public Damage dmg;
+    public int nBaseDamage;
+
     public ActionTendrilStab(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
 
-    //Since the base constructor initializes this array, we can start filling it
-    //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); we don't have any targets
+        //Since the base constructor initializes this array, we can start filling it
+        //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); we don't have any targets
 
-    sName = "TendrilStab";
-    type = new TypeActive(this);
+        sName = "TendrilStab";
+        type = new TypeActive(this);
 
-    //Physical, Mental, Energy, Blood, Effort
-    parCost = new Property<int[]>(new int[] { 1, 0, 0, 0, 0 });
+        //Physical, Mental, Energy, Blood, Effort
+        parCost = new Property<int[]>(new int[] { 1, 0, 0, 0, 0 });
 
-    nCd = 6;
-    nFatigue = 3;
-    nActionCost = 1;
+        nCd = 6;
+        nFatigue = 3;
+        nActionCost = 1;
 
-    sDescription = "Deal 25 [PIERCING] damage to the enemy blocker";
+        nBaseDamage = 25;
+        //Create a base Damage object that this action will apply
+        dmg = new Damage(this.chrSource, null, nBaseDamage, true);
 
-    SetArgOwners();
-}
+        sDescription = "Deal 25 [PIERCING] damage to the enemy blocker";
 
-override public void Execute() {
+        SetArgOwners();
+    }
 
-    Chr tar = chrSource.GetEnemyPlayer().GetBlocker();
+    override public void Execute() {
 
-    stackClauses.Push(new Clause() {
-        fExecute = () => {
-            Damage dmgToDeal = new Damage(chrSource, tar, 25, false, true);
+        Chr tar = chrSource.GetEnemyPlayer().GetBlocker();
 
-            ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                chrSource = this.chrSource,
-                chrTarget = tar,
-                dmg = dmgToDeal,
+        stackClauses.Push(new Clause() {
+            fExecute = () => {
 
-                fDelay = 1.0f,
-                sLabel = tar.sName + " is being stabbed"
-            });
-        }
-    });
+                //Make a copy of the damage object to give to the executable
+                Damage dmgToApply = new Damage(dmg);
+                //Give the damage object its target
+                dmgToApply.SetChrTarget(tar);
+
+                ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
+                    chrSource = this.chrSource,
+                    chrTarget = tar,
+                    dmg = dmgToApply,
+
+                    fDelay = 1.0f,
+                    sLabel = tar.sName + " is being stabbed"
+                });
+            }
+        });
 
 
-    //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
+        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
 
-    base.Execute();
-}
+        base.Execute();
+    }
 
 }

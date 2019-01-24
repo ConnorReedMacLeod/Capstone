@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class ActionAmbush : Action {
 
-    public int nDamage;
+    public Damage dmg;
+    public int nBaseDamage;
 
     public ActionAmbush(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
@@ -40,7 +41,9 @@ public class ActionAmbush : Action {
         nFatigue = 1;
         nActionCost = 1;
 
-        nDamage = 20;
+        nBaseDamage = 20;
+        //Create a base Damage object that this action will apply
+        dmg = new Damage(this.chrSource, null, nBaseDamage);
 
         sDescription = "Channel 4: While channeling, after the chosen character uses an ability\n" +
                        "or blocks, deal 20 damage to them";
@@ -55,11 +58,16 @@ public class ActionAmbush : Action {
         ContAbilityEngine.Get().AddClause(new Clause() {
             fExecute = () => {
 
+                //Make a copy of the damage object to give to the executable
+                Damage dmgToApply = new Damage(dmg);
+                //Give the damage object its target
+                dmgToApply.SetChrTarget(tar);
+
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
                     chrTarget = tar,
 
-                    dmg = new Damage(chrSource, tar, nDamage),
+                    dmg = dmgToApply,
                     fDelay = 1.0f,
                     sLabel = chrSource.sName + " ambushed " + tar.sName + "!"
                 });

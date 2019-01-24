@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class ActionCacaphony : Action {
 
+    public Damage dmg;
+
+    public int nBaseDamage;
+    public int nCriticalBaseDamage;
+
+    public int nBaseStun;
+    public int nCriticalStun;
+
     public ActionCacaphony(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
         //Since the base constructor initializes this array, we can start filling it
@@ -19,9 +27,23 @@ public class ActionCacaphony : Action {
         nFatigue = 4;
         nActionCost = 1;
 
+        nBaseDamage = 20;
+        nCriticalBaseDamage = 30;
+        //Create a base Damage object that this action will apply
+        dmg = new Damage(this.chrSource, null, 
+            () =>  IsCritical()? nCriticalBaseDamage : nBaseDamage);
+
+        nBaseStun = 2;
+        nCriticalStun = 3;
+
         sDescription = "Deal 20 damage and 2 fatigue to the chosen character.  If the chosen character is blocking, deal 30 damage and 3 fatigue instead";
 
         SetArgOwners();
+    }
+
+    //Deal critical damage and stun if the targetted character is a blocker
+    public bool IsCritical() {
+        return ((TargetArgChr)arArgs[0]).chrTar != null && ((TargetArgChr)arArgs[0]).chrTar.bBlocker;
     }
 
     override public void Execute() {
@@ -29,38 +51,35 @@ public class ActionCacaphony : Action {
         // but at least it's eliminated from the targetting lambda
         Chr tar = ((TargetArgChr)arArgs[0]).chrTar;
 
+        
+
         stackClauses.Push(new Clause() {
             fExecute = () => {
 
-                //TODO:: Should calculate this bonus damage/stun at execution time
-                //plan - once the decorator pattern is implemented, the GetBaseDamage() function
-                // can have a base conditional function (to check if target is currently the blocker)
-                // that can be decorated with potentially extra effects
-                int nToDamage = 20;
-                int nToFatigue = 2;
-
-                if(tar.bBlocker == true) {
-                    nToDamage = 30;
-                    nToFatigue = 3;
-                }
+                //Make a copy of the damage object to give to the executable
+                Damage dmgToApply = new Damage(dmg);
+                //Give the damage object its target
+                dmgToApply.SetChrTarget(tar);
 
                 ContAbilityEngine.Get().AddExec(new ExecStun() {
                     chrSource = this.chrSource,
                     chrTarget = tar,
-                    nAmount = nToFatigue,
+
+                    GetDuration = () => IsCritical() ? nCriticalStun : nBaseStun,
+
                     fDelay = 1.0f,
-                    sLabel = "Stunning " + tar.sName + " for " + nToFatigue
+                    sLabel = "Stunning " + tar.sName
                 });
                 
-                Damage dmgToDeal = new Damage(chrSource, tar, nToDamage);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
                     chrTarget = tar,
-                    dmg = dmgToDeal,
+
+                    dmg = dmgToApply,
 
                     fDelay = 1.0f,
-                    sLabel = "Dealing " + nToDamage + " to " + tar.sName
+                    sLabel = "Screeching at " + tar.sName
                 });
 
 

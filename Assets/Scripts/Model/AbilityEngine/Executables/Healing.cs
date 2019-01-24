@@ -2,46 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Damage {
+public class Healing {
 
     public Chr chrSource;
     public Chr chrTarget;
 
-    public int nBase;
-    public bool bPiercing;
-
     public LibFunc.Get<int> GetBase;
     public LibFunc.Get<int> GetPower;
 
-
     //For convenience, allow a constructor that just accepts a number, rather than a function
-    public Damage(Chr _chrSource, Chr _chrTarget, int _nBaseDamage, bool _bPiercing = false) {
+    public Healing(Chr _chrSource, Chr _chrTarget, int _nBase) {
 
         //Copy the fields as they've been passed in
-        GetBase = () => _nBaseDamage;
-
-        bPiercing = _bPiercing;
+        GetBase = () => _nBase;
 
         //Store the chrSource and apply its power buff
         SetChrSource(_chrSource);
         SetChrTarget(_chrTarget);
     }
 
-
-    public Damage(Chr _chrSource, Chr _chrTarget, LibFunc.Get<int> _GetBase, bool _bPiercing = false) {
+    public Healing(Chr _chrSource, Chr _chrTarget, LibFunc.Get<int> _GetBase) {
 
         //Copy the fields as they've been passed in
         GetBase = _GetBase;
 
-        bPiercing = _bPiercing;
-
-
         //Store the chrSource and apply its power buff
         SetChrSource(_chrSource);
         SetChrTarget(_chrTarget);
-
     }
-
 
     public int Get() {
         return GetBase() + GetPower();
@@ -69,14 +57,12 @@ public class Damage {
 
     }
 
-    public Damage(Damage dmgToCopy) {
+    public Healing(Healing dmgToCopy) {
         //Copy over all the attributes of the original Damage instance
         chrSource = dmgToCopy.chrSource;
         chrTarget = dmgToCopy.chrTarget;
 
         GetBase = dmgToCopy.GetBase;
-
-        bPiercing = dmgToCopy.bPiercing;
 
         //Copy the Power fetch method too
         GetPower = dmgToCopy.GetPower;

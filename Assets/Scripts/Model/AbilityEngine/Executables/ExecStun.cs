@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class ExecStun : Executable {
 
-    public int nAmount;
+    public LibFunc.Get<int> GetDuration;
 
 
 
@@ -44,7 +44,7 @@ public class ExecStun : Executable {
         chrTarget.curStateReadiness.InterruptChannel();
 
         //Create a new stun state to let our character transition to
-        StateStunned newState = new StateStunned(chrTarget, nAmount);
+        StateStunned newState = new StateStunned(chrTarget, GetDuration());
 
         //Transition to the new state
         chrTarget.SetStateReadiness(newState);
