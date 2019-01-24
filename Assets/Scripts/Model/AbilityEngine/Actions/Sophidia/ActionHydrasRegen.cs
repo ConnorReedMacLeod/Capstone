@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class ActionRegenerate : Action {
 
-    public int nHealAmount;
+    public Healing heal;
+    public int nBaseHealing;
 
     public ActionRegenerate(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
 
@@ -36,7 +37,9 @@ public class ActionRegenerate : Action {
         nFatigue = 1;
         nActionCost = 1;
 
-        nHealAmount = 10;
+        nBaseHealing = 10;
+        //Create a base Healing object that this action will apply
+        heal = new Healing(this.chrSource, this.chrSource, nBaseHealing);
 
         sDescription = "For 4 turns, while channeling heal 10 at the end of turn";
 
@@ -52,7 +55,7 @@ public class ActionRegenerate : Action {
                     chrSource = this.chrSource,
                     chrTarget = this.chrSource,
                     
-                    nAmount = nHealAmount,
+                    heal = this.heal, //I don't think we need to make a separate copy
                     fDelay = 1.0f,
                     sLabel = chrSource.sName + " is regenerating"
                 });

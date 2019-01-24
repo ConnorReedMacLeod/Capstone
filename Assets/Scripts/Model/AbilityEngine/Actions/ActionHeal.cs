@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class ActionHeal : Action {
 
-
+    public Healing heal;
+    public int nBaseHealing;
 
     public ActionHeal(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
@@ -21,6 +22,11 @@ public class ActionHeal : Action {
         nFatigue = 3;
         nActionCost = 0;
 
+        nBaseHealing = 5;
+
+        //Create a base Healing object that this action will apply
+        heal = new Healing(this.chrSource, null, nBaseHealing);
+
         sDescription = "Restore 5 health to target ally";
 
 
@@ -32,13 +38,20 @@ public class ActionHeal : Action {
         // but at least it's eliminated from the targetting lambda
         Chr tar = ((TargetArgAlly)arArgs[0]).chrTar;
 
+        //Make a copy of the heal object to give to the executable
+        Healing healToApply = new Healing(heal);
+        //Give the healing object its target
+        healToApply.SetChrTarget(tar);
+
         stackClauses.Push(new Clause() {
             fExecute = () => {
                 Debug.Log("This Heal Clause put an ExecHeal on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecHeal() {
                     chrSource = this.chrSource,
                     chrTarget = tar,
-                    nAmount = 10,
+
+                    heal = healToApply,
+
                     fDelay = 1.0f,
                     sLabel = "Healing"
                 });

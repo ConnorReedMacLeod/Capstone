@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class ActionSerenade : Action {
 
+    public Healing heal;
+    public int nBaseHealing;
+
     public ActionSerenade(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
         //Since the base constructor initializes this array, we can start filling it
@@ -19,6 +22,10 @@ public class ActionSerenade : Action {
         nFatigue = 4;
         nActionCost = 1;
 
+        nBaseHealing = 25;
+        //Create a base Healing object that this action will apply
+        heal = new Healing(this.chrSource, null, nBaseHealing);
+
         sDescription = "Heal 25 health to the chosen ally";
 
 
@@ -30,12 +37,19 @@ public class ActionSerenade : Action {
         // but at least it's eliminated from the targetting lambda
         Chr tar = ((TargetArgAlly)arArgs[0]).chrTar;
 
+        //Make a copy of the heal object to give to the executable
+        Healing healToApply = new Healing(heal);
+        //Give the healing object its target
+        healToApply.SetChrTarget(tar);
+
         stackClauses.Push(new Clause() {
             fExecute = () => {
                 ContAbilityEngine.Get().AddExec(new ExecHeal() {
                     chrSource = this.chrSource,
                     chrTarget = tar,
-                    nAmount = 25,
+
+                    heal = healToApply,
+
                     fDelay = 1.0f,
                     sLabel = "Healing " + tar.sName
                 });
