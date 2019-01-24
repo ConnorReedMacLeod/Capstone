@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class ActionSnakeLaunch : Action {
 
+    public Damage dmg;
+    public int nBaseDamage;
+
+    public int nLifeLoss;
+
     public ActionSnakeLaunch(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
         //Since the base constructor initializes this array, we can start filling it
@@ -19,6 +24,12 @@ public class ActionSnakeLaunch : Action {
         nFatigue = 4;
         nActionCost = 1;
 
+        nBaseDamage = 20;
+        //Create a base Damage object that this action will apply
+        dmg = new Damage(this.chrSource, null, nBaseDamage);
+
+        nLifeLoss = 5;
+
         sDescription = "Deal 20 damage twice.  Lose 5 life twice";
 
         SetArgOwners();
@@ -30,12 +41,16 @@ public class ActionSnakeLaunch : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Damage dmgToDeal = new Damage(chrSource, tar, 20);
+
+                //Make a copy of the damage object to give to the executable
+                Damage dmgToApply = new Damage(dmg);
+                //Give the damage object its target
+                dmgToApply.SetChrTarget(tar);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
                     chrTarget = tar,
-                    dmg  = dmgToDeal,
+                    dmg  = dmgToApply,
 
                     fDelay = 1.0f,
                     sLabel = "Snake Biting " + tar.sName
@@ -45,12 +60,16 @@ public class ActionSnakeLaunch : Action {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                Damage dmgToDeal = new Damage(chrSource, tar, 20);
+
+                //Make a copy of the damage object to give to the executable
+                Damage dmgToApply = new Damage(dmg);
+                //Give the damage object its target
+                dmgToApply.SetChrTarget(tar);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
                     chrTarget = tar,
-                    dmg = dmgToDeal,
+                    dmg = dmgToApply,
 
                     fDelay = 1.0f,
                     sLabel = "Snake Biting " + tar.sName
@@ -63,7 +82,7 @@ public class ActionSnakeLaunch : Action {
                 ContAbilityEngine.Get().AddExec(new ExecLoseLife() {
                     chrSource = this.chrSource,
                     chrTarget = this.chrSource,
-                    nLifeLoss = 5,
+                    nLifeLoss = nLifeLoss,
 
                     fDelay = 1.0f,
                     sLabel = this.chrSource.sName + " has lost her Snakes"
@@ -76,7 +95,7 @@ public class ActionSnakeLaunch : Action {
                 ContAbilityEngine.Get().AddExec(new ExecLoseLife() {
                     chrSource = this.chrSource,
                     chrTarget = this.chrSource,
-                    nLifeLoss = 5,
+                    nLifeLoss = nLifeLoss,
 
                     fDelay = 1.0f,
                     sLabel = this.chrSource.sName + " has lost her Snakes"

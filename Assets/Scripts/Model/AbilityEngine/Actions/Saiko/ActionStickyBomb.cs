@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class ActionStickyBomb : Action {
 
-    public int nInitialDamage;
+    public Damage dmg;
+    public int nBaseDamage;
 
     public ActionStickyBomb(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
@@ -21,43 +22,49 @@ public class ActionStickyBomb : Action {
         nFatigue = 3;
         nActionCost = 1;
 
+        nBaseDamage = 5;
+        //Create a base Damage object that this action will apply
+        dmg = new Damage(this.chrSource, null, nBaseDamage);
+
         sDescription = "Deal 5 damage to target character, then deal 30 damage to that character at the end of turn";
 
-        nInitialDamage = 5;
+        
 
         SetArgOwners();
     }
 
     override public void Execute() {
         //Cast the first target to be a character
-        Chr chrTarget = ((TargetArgChr)arArgs[0]).chrTar;
+        Chr tar = ((TargetArgChr)arArgs[0]).chrTar;
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
 
-                //Deal initial damage to the target
-                Damage dmgToDeal = new Damage(chrSource, chrTarget, nInitialDamage);
+                //Make a copy of the damage object to give to the executable
+                Damage dmgToApply = new Damage(dmg);
+                //Give the damage object its target
+                dmgToApply.SetChrTarget(tar);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
-                    chrTarget = chrTarget,
-                    dmg = dmgToDeal,
+                    chrTarget = tar,
+                    dmg = dmgToApply,
 
                     fDelay = 1.0f,
-                    sLabel = chrTarget.sName + " got a bomb thrown at them"
+                    sLabel = tar.sName + " got a bomb thrown at them"
                 });
 
                 //Apply the stickybomb Soul effect to the target
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
-                    chrTarget = chrTarget,
+                    chrTarget = tar,
 
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
                         return new SoulStickyBomb(_chrSource, _chrTarget);
                     },
 
                     fDelay = 1.0f,
-                    sLabel = chrTarget.sName + " is stuck with the bomb"
+                    sLabel = tar.sName + " is stuck with the bomb"
 
                 });
             }

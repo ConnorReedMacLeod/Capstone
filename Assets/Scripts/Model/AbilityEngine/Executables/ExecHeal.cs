@@ -6,8 +6,7 @@ using UnityEngine;
 
 public class ExecHeal : Executable {
 
-    public int nAmount;
-
+    public Healing heal;
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -37,10 +36,9 @@ public class ExecHeal : Executable {
 
 
 
-
     public override void Execute() {
-        //TODO:: Take into account armour and power/defense
-        chrTarget.ChangeHealth(nAmount);
+
+        chrTarget.TakeHealing(heal);
 
         base.Execute();
     }

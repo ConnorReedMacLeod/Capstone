@@ -6,6 +6,8 @@ public class ActionTantrum : Action {
 
     public int nEnemyDamage;
     public int nAllyDamage;
+    public Damage dmgEnemy;
+    public Damage dmgAlly;
 
     public ActionTantrum(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
 
@@ -27,6 +29,12 @@ public class ActionTantrum : Action {
         nEnemyDamage = 20;
         nAllyDamage = 5;
 
+        //Create a base Damage object that this action will apply
+        dmgEnemy = new Damage(this.chrSource, null, nEnemyDamage);
+
+        //Create a base Damage object that this action will apply
+        dmgAlly = new Damage(this.chrSource, null, nAllyDamage);
+
         SetArgOwners();
     }
 
@@ -38,30 +46,37 @@ public class ActionTantrum : Action {
             fExecute = () => {
                 //Deal damage to all enemies
                 for (int i = 0; i < enemy.arChr.Length; i++) {
-                    Damage dmgToDeal = new Damage(chrSource, enemy.arChr[i], nEnemyDamage);
+
+                    //Make a copy of the damage object to give to the executable
+                    Damage dmgToApply = new Damage(dmgEnemy);
+                    //Give the damage object its target
+                    dmgToApply.SetChrTarget(enemy.arChr[i]);
 
                     //TODO:: Organize this in the correct order
                     ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                         chrSource = this.chrSource,
                         chrTarget = enemy.arChr[i],
-                        dmg = dmgToDeal,
+                        dmg = dmgToApply,
 
                         fDelay = 1.0f,
                         sLabel = enemy.arChr[i].sName + " is caught in the tantrum"
                     });
                 }
 
-                //Deal 5 damage to all other allies
+                //Deal damage to all other allies
                 for (int i = 0; i < chrSource.plyrOwner.arChr.Length; i++) {
                     if (chrSource.plyrOwner.arChr[i] == chrSource) continue; //Don't hurt yourself
-                    
-                    Damage dmgToDeal = new Damage(chrSource, chrSource.plyrOwner.arChr[i], nAllyDamage);
+
+                    //Make a copy of the damage object to give to the executable
+                    Damage dmgToApply = new Damage(dmgAlly);
+                    //Give the damage object its target
+                    dmgToApply.SetChrTarget(chrSource.plyrOwner.arChr[i]);
 
                     //TODO:: Organize this in the correct order
                     ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                         chrSource = this.chrSource,
                         chrTarget = chrSource.plyrOwner.arChr[i],
-                        dmg = dmgToDeal,
+                        dmg = dmgToApply,
 
                         fDelay = 1.0f,
                         sLabel = chrSource.plyrOwner.arChr[i].sName + " is caught in the tantrum"

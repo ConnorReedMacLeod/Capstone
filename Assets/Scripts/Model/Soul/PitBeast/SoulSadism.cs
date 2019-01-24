@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class SoulSadism : Soul {
 
-    public int nLifeGain;
+    public Healing heal;
+    public int nBaseHealing;
 
     public void GainLife() {
 
@@ -12,7 +13,7 @@ public class SoulSadism : Soul {
             chrSource = this.chrSource,
             chrTarget = this.chrSource,
 
-            nAmount = this.nLifeGain,
+            heal = this.heal, //TODO:: Consider if this should be a copy
 
             fDelay = 1.0f,
             sLabel = this.chrSource.sName + " is revelling in the pain"
@@ -26,7 +27,9 @@ public class SoulSadism : Soul {
         bVisible = false;
         bDuration = false;
 
-        nLifeGain = 5;
+        nBaseHealing = 5;
+        //Create a base Healing object that this action will apply 
+        heal = new Healing(this.chrSource, this.chrSource, nBaseHealing);
 
         lstTriggers = new List<TriggerEffect>() {
 
