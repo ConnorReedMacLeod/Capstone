@@ -234,6 +234,21 @@ public class Chr : MonoBehaviour {
         if (nAfterArmourDamage > 0) {
             ChangeHealth(-nAfterArmourDamage);
         }
+
+        //Maybe notify that we're taking damage
+    }
+
+    public void TakeHealing(Healing healToTake) {
+
+        //Fetch the amount of healing we're going to take
+        int nHealingToTake = healToTake.Get();
+
+        //If there's healing to be done, then apply it to our health
+        if (nHealingToTake > 0) {
+            ChangeHealth(nHealingToTake);
+        }
+
+        //maybe notify people that we've been healed
     }
 
     public void ChangeHealth(int nChange) {
