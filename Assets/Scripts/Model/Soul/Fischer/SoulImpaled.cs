@@ -23,6 +23,12 @@ public class SoulImpaled : Soul {
 
             //Apply a modifier (and save a reference to the modifier node)) to reduce max health by 10
             modifierLifeReduction = chrTarget.pnMaxHealth.AddModifier((int nBelow) => (nBelow - 10));
+            
+            //Then do a check to make sure cur health isn't above max health
+            if(chrTarget.nCurHealth > chrTarget.pnMaxHealth.Get()) {
+                //If it is, then change the curhealth by 0 (which should catch oversetting curhealth)
+                chrTarget.ChangeHealth(0);
+            }
 
         };
 

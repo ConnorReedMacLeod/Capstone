@@ -10,6 +10,8 @@ public abstract class Executable {
     public string sLabel;
     public float fDelay;
 
+    public bool bPreTriggered;
+
     public abstract Subject GetPreTrigger();
     public abstract Subject GetPostTrigger();
     public abstract List<Replacement> GetReplacements();
