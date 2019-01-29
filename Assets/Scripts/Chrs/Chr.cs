@@ -39,6 +39,8 @@ public class Chr : MonoBehaviour {
 	public int nCurHealth;          //The character's current health
 	public Property<int> pnMaxHealth;          //The character's max health
 
+    public bool bDead;                         //If the character is dead or not
+
     public Property<int> pnPower;              //The character's current power
     public Property<int> pnDefense;            //The character's current defense
 
@@ -86,6 +88,9 @@ public class Chr : MonoBehaviour {
     public Subject subStatusChange = new Subject();
     public static Subject subAllStatusChange = new Subject();
 
+    public Subject subDeath = new Subject();
+    public static Subject subAllDeath = new Subject();
+
     public void SetStateReadiness(StateReadiness newState) {
 
         if (curStateReadiness != null) {
@@ -105,6 +110,16 @@ public class Chr : MonoBehaviour {
 
         subChannelTimeChange.NotifyObs();
     }
+
+
+    public void KillCharacter() {
+
+        bDead = true;
+
+        subDeath.NotifyObs(this);
+        subAllDeath.NotifyObs(this);
+    }
+
 
     // Apply this amount of fatigue to the character
     public void ChangeFatigue(int _nChange, bool bBeginningTurn = false){
@@ -256,7 +271,8 @@ public class Chr : MonoBehaviour {
             nCurHealth = pnMaxHealth.Get();
         } else if (nCurHealth + nChange < 0) {
             nCurHealth = 0;
-            //TODO:: DEATH TRIGGER
+
+            KillCharacter();
         } else {
             nCurHealth += nChange;
         }
