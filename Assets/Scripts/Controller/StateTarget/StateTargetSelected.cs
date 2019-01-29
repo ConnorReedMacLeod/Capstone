@@ -21,7 +21,7 @@ public class StateTargetSelected : StateTarget {
     }
 
     public void cbClickBlockerButton(Object target, params object[] args) {
-        ChooseAction(ContTurns.Get().GetNextActingChr().arActions[Chr.idBlocking]);
+        ChooseAction(contTarg.selected.arActions[Chr.idBlocking]);
     }
 
     public void ChooseAction(Action actChosen) {
