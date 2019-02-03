@@ -13,7 +13,12 @@ public class StateFatigued : StateReadiness {
     }
 
     public override void Ready() {
-        if(chrOwner.nFatigue == 0) {
+        if (chrOwner.bDead) {
+            Debug.Log("Tried to Ready, but " + chrOwner.sName + " is dead");
+            return;
+        }
+
+        if (chrOwner.nFatigue == 0) {
             //Then transition to the ready state
 
             ContAbilityEngine.Get().AddExec(new ExecReadyChar {
