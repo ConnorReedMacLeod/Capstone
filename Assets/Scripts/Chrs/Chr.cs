@@ -116,6 +116,9 @@ public class Chr : MonoBehaviour {
 
         bDead = true;
 
+        //Fix our position in the priority queue
+        ContTurns.Get().FixDeadCharacterPriority(this);
+
         subDeath.NotifyObs(this);
         subAllDeath.NotifyObs(this);
     }
@@ -141,6 +144,7 @@ public class Chr : MonoBehaviour {
     }
 
     public int GetPriority() {
+
         //Just ask our readiness state what our priority is
         return curStateReadiness.GetPriority();
     }
