@@ -43,7 +43,18 @@ public class Player : MonoBehaviour{
 		id = _id;
 	}
 
-    public void SetBlocker(int _iBlocker) {
+    public void SetDefaultBlocker() {
+
+        SetBlocker(ContTurns.Get().GetNextToActOwnedBy(this));
+
+    }
+
+    //Add an alternate signature for the function
+    public void SetBlocker(Chr _chrBlocker) {
+        SetBlocker(_chrBlocker.id);
+    }
+
+   public void SetBlocker(int _iBlocker) {
 
         Debug.Assert(arChr[_iBlocker] != null, "Assigned a blocker as a character that doesn't exist");
         if(iBlocker == _iBlocker) {

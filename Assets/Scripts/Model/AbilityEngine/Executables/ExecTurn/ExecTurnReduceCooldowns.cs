@@ -42,6 +42,10 @@ public class ExecTurnReduceCooldowns : Executable {
                     continue; // A character isn't actually here (extra space for characters)
                 }
 
+                if (Match.Get().arChrs[i][j].bDead) {
+                    continue; //The character's already dead
+                }
+
                 //Reduce the cd of that character's actions
                 Match.Get().arChrs[i][j].RechargeActions();
 

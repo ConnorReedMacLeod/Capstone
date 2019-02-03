@@ -38,6 +38,11 @@ public class StateChanneling : StateReadiness {
     }
 
     public override void ChangeChanneltime(int _nChange) {
+        if (chrOwner.bDead) {
+            Debug.Log("Tried to change channeltime, but " + chrOwner.sName + " is dead");
+            return;
+        }
+
         //We can actually reduce the channel time if we're in this state
 
         if (_nChange + nChannelTime < 0) {
@@ -61,6 +66,11 @@ public class StateChanneling : StateReadiness {
 
 
     public override void Recharge() {
+        if (chrOwner.bDead) {
+            Debug.Log("Tried to recharge, but " + chrOwner.sName + " is dead");
+            return;
+        }
+
         //If we're channeling, instead of reducing fatigue, we only reduce the channel time
         ContAbilityEngine.Get().AddExec(new ExecChangeChannel() {
             chrSource = null, //This is a game action, so there's no source

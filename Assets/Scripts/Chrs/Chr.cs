@@ -116,8 +116,15 @@ public class Chr : MonoBehaviour {
 
         bDead = true;
 
+        //interrupt any channel that  we may be using 
+        curStateReadiness.InterruptChannel();        
+
         //Fix our position in the priority queue
         ContTurns.Get().FixDeadCharacterPriority(this);
+
+        //After fixing priority ordering (pushing this character to the back)
+        //If the character is the blocker, then change the blocker to the next character to act
+        plyrOwner.SetDefaultBlocker();
 
         subDeath.NotifyObs(this);
         subAllDeath.NotifyObs(this);

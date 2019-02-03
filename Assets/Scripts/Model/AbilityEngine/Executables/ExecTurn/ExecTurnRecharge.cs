@@ -41,6 +41,10 @@ public class ExecTurnRecharge : Executable {
                     continue; // A character isn't actually here (extra space for characters)
                 }
 
+                if (Match.Get().arChrs[i][j].bDead) {
+                    continue; //The character's already dead
+                }
+
                 //Ask the character's readiness state to tick down its fatigue (or channeltimer as the case may be)
                 Match.Get().arChrs[i][j].curStateReadiness.Recharge();
 

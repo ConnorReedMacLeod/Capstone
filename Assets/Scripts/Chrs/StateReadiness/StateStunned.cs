@@ -20,6 +20,11 @@ public class StateStunned : StateReadiness {
 
     //Same implementation as Fatigued
     public override void Ready() {
+        if (chrOwner.bDead) {
+            Debug.Log("Tried to ready, but " + chrOwner.sName + " is dead");
+            return;
+        }
+
         if (chrOwner.nFatigue == 0) {
             //Then transition to the ready state
 
