@@ -11,8 +11,11 @@ public class ContTurns : MonoBehaviour {
 
     public static ContTurns instance;
 
-    public Chr []arChrPriority = new Chr[6];
+    public Chr []arChrPriority = new Chr[Player.MAXCHRS];
     public Chr chrNextReady; //Stores the currently acting character this turn (or null if none are acting)
+
+    public int liveCharacters = Player.MAXCHRS;
+
     public static Subject subAllPriorityChange = new Subject();
 
     public const float fDelayChooseAction = 5.0f;
@@ -36,6 +39,33 @@ public class ContTurns : MonoBehaviour {
         return instance;
     }
 
+
+    public void FixDeadCharacterPriority(Chr chr) {
+        Debug.Assert(chr.bDead);
+
+        int i = 0;
+        //Scan through til we find the character
+        while (arChrPriority[i] != chr) {
+            i++;
+        }
+
+        //Then move to the end of the living list, swapping as we go
+        while (i < (liveCharacters - 1)) { 
+
+            //Swap these character
+            arChrPriority[i] = arChrPriority[i + 1];
+            arChrPriority[i + 1] = chr;
+            //And move to the next possible slot
+            i++;
+        }
+
+        //Once we're done swapping, this dead character should be at the end of the living section of the list
+        //so reduce the size of the living section of the list by one so they're no longer included
+        liveCharacters--;
+
+        subAllPriorityChange.NotifyObs(this);
+    }
+
     public void FixSortedPriority(Chr chr) {
         //Find the referenced character
         int i = 0;
@@ -43,6 +73,7 @@ public class ContTurns : MonoBehaviour {
             i++;
         }
 
+ 
         //First try to move ahead the character
         //If there is some character ahead and we go on a earlier turn
         while (i > 0 && arChrPriority[i - 1].GetPriority() > chr.GetPriority()) {
@@ -55,7 +86,8 @@ public class ContTurns : MonoBehaviour {
 
         //Next try to move the character back in the list
         //If there is a character after us, and we go on the same turn or later
-        while (i < (6 - 1) && chr.GetPriority() >= arChrPriority[i + 1].GetPriority()) {
+        while (i < (liveCharacters - 1) &&
+            chr.GetPriority() >= arChrPriority[i + 1].GetPriority()) {
             //Swap these character
             arChrPriority[i] = arChrPriority[i + 1];
             arChrPriority[i + 1] = chr;
@@ -83,7 +115,7 @@ public class ContTurns : MonoBehaviour {
         //Now we should look for the first character in our priority queue in a ready state
         int i = 0;
 
-        while (i < 6) {
+        while (i < liveCharacters) {
             //Just skip this character if they don't have their readiness state created yet
             if (arChrPriority[i].curStateReadiness == null) {
                 i++;
@@ -93,6 +125,8 @@ public class ContTurns : MonoBehaviour {
             if (arChrPriority[i].curStateReadiness.Type() == StateReadiness.TYPE.READY) {
                 //If we find a character in the ready state, then they will become our new chrNextReady
                 chrNextReady = arChrPriority[i];
+
+                Debug.Assert(chrNextReady.bDead == false);
                 break;
             }
 
