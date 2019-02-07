@@ -280,7 +280,7 @@ public class Chr : MonoBehaviour {
     public void ChangeHealth(int nChange) {
         if (nCurHealth + nChange > pnMaxHealth.Get()) {
             nCurHealth = pnMaxHealth.Get();
-        } else if (nCurHealth + nChange < 0) {
+        } else if (nCurHealth + nChange <= 0) {
             nCurHealth = 0;
 
             KillCharacter();

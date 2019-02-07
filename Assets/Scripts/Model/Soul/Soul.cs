@@ -19,6 +19,9 @@ public class Soul {
     public int nMaxStacks;
     public int nCurStacks;
 
+    public bool bRemoveOnChrDeath; //Should the ability be removed when the character its on dies?
+    public bool bRemoveOnChrSourceDeath; //Should the ability be removed when the character who applied it dies?
+
     public bool bDuration; 
     public Property<int> pnMaxDuration;
     public int nCurDuration;
@@ -37,6 +40,9 @@ public class Soul {
 
         chrSource = _chrSource;
         chrTarget = _chrTarget;
+
+        bRemoveOnChrSourceDeath = false;
+        bRemoveOnChrDeath = true;
 
         nMaxStacks = 1; //by Default
 
@@ -71,12 +77,18 @@ public class Soul {
             Replacement.Register(rep);
         }
 
+        chrTarget.subDeath.Subscribe(cbOnChrTargetDeath);
+        chrSource.subDeath.Subscribe(cbOnChrSourceDeath);
+        
         if(funcOnApplication != null) funcOnApplication();
 
         Debug.Log(sName + " has been applied");
     }
 
     public void OnRemoval() {
+
+        chrTarget.subDeath.UnSubscribe(cbOnChrTargetDeath);
+        chrSource.subDeath.UnSubscribe(cbOnChrSourceDeath);
 
         if (lstTriggers != null) { //Then we have some triggers to unsubscribe
                                    //Each triggeredeffect should unsubscribe from each of its triggers its observing
@@ -100,6 +112,22 @@ public class Soul {
 
     }
 
+    public void cbOnChrTargetDeath(Object target, params object[] args) {
+        if (bRemoveOnChrDeath) {
+            //When the character this is on dies, then we can dispel this soul effect
+            soulContainer.RemoveSoul(this);
+        }
+    }
+
+    public void cbOnChrSourceDeath(Object target, params object[] args) {
+        Debug.Log("Called cbOnChrSourceDeath");
+
+        if (bRemoveOnChrSourceDeath) {
+            //When the character who applied this dies, then we can dispel this soul effect
+            soulContainer.RemoveSoul(this);
+        }
+    }
+
     public Soul(Soul soulToCopy) {
         chrSource = soulToCopy.chrSource;
         chrTarget = soulToCopy.chrTarget;
@@ -108,6 +136,8 @@ public class Soul {
         sName = soulToCopy.sName;
         bVisible = soulToCopy.bVisible;
         bLocked = soulToCopy.bLocked;
+        bRemoveOnChrDeath = soulToCopy.bRemoveOnChrDeath;
+        bRemoveOnChrSourceDeath = soulToCopy.bRemoveOnChrSourceDeath;
 
         nMaxStacks = soulToCopy.nMaxStacks;
         nCurStacks = soulToCopy.nCurStacks;
