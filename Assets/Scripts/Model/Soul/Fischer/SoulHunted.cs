@@ -25,6 +25,8 @@ public class SoulHunted : Soul {
         bVisible = true;
         bDuration = false;
 
+        bRemoveOnChrSourceDeath = true;
+
         nDefenseLoss = -5;
 
         lstTriggers = new List<TriggerEffect>() {

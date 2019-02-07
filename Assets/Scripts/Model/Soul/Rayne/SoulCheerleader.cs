@@ -32,7 +32,11 @@ public class SoulCheerleader : Soul {
         bVisible = false;
         bDuration = false;
 
+        bRemoveOnChrSourceDeath = true;
+
+
         nPowerGain = 5;
+
 
         lstTriggers = new List<TriggerEffect>() {
 
