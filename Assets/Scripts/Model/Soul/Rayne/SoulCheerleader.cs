@@ -11,6 +11,9 @@ public class SoulCheerleader : Soul {
         //Make sure we are buffing an ally and not ourselves
         if (chrAlly == this.chrTarget) return;
 
+        //Don't target dead characters
+        if (chrAlly.bDead) return;
+
         //So we're sure we're buffing a valid character at this point
 
         ContAbilityEngine.Get().AddExec(new ExecApplySoul() {

@@ -28,7 +28,7 @@ public class TargetArgChr : TargetArg {
 	}
 
 	public override bool VerifyLegal(){
-		return fLegalCheck (chrOwner, chrTar);
+		return chrTar.bDead == false && fLegalCheck (chrOwner, chrTar);
 	}
 
 	public override void Reset(){

@@ -28,6 +28,19 @@ public class StateChanneling : StateReadiness {
         //The priority of a channeling character should also include the channel time remaining
         return nChannelTime + base.GetPriority();
     }
+
+    //Whenever a potentially invalidating event happens, interrupt this channel if it
+    // actually makes the channel targetting invalid
+    // this should be subcribed to each potentially invalidating subject
+    public void cbInterruptifInvalid(Object target, params object[] args) {
+
+        if (!soulBehaviour.act.LegalTargets()) {
+            //If targetting has become invalid (maybe because someone has died)
+            InterruptChannel();
+        }
+
+    }
+
     //To be called as part of a stun, before transitioning to the stunned state
     public override void InterruptChannel() {
 
@@ -85,12 +98,19 @@ public class StateChanneling : StateReadiness {
 
         chrOwner.soulContainer.ApplySoul(soulBehaviour);
 
+        //TODO:: Add a subscription list of potentially cancelling triggers to listen for a channel
+        // which we can then subcribe cbInterrupifInvalid to
+        Chr.subAllDeath.Subscribe(cbInterruptifInvalid);
+
         //Once we're in this state, let people know that the channel time has taken effect
         chrOwner.subChannelTimeChange.NotifyObs();
 
     }
 
     public override void OnLeave() {
+
+        //TODO:: unsubscribe from all of these cancelling triggers
+        Chr.subAllDeath.UnSubscribe(cbInterruptifInvalid);
 
         chrOwner.soulContainer.RemoveSoul(soulBehaviour);
 

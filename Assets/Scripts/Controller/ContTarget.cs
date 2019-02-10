@@ -49,7 +49,10 @@ public class ContTarget : MonoBehaviour {
 	// Start a new round of targetting
 	public void ResetTar(){
 		nTarCount = 0;
-	}
+        //CLear any previous targetting information we had
+        selected.arActions[selected.nUsingAction].ResetTargettingArgs();
+
+    }
 
 	// Ends targetting
 	public void CancelTar(){
