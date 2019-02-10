@@ -15,6 +15,8 @@ public class SoulChangePower : Soul {
         sName = "Power: " + nPowerChange.ToString();
 
         bVisible = false;
+        bRemoveOnChrDeath = true;
+
 
         //Check if a duration was specified
         if (_nDuration == -1) {

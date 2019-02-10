@@ -113,21 +113,19 @@ public class Chr : MonoBehaviour {
 
 
     public void KillCharacter() {
-
-        bDead = true;
+        if (bDead) {
+            Debug.Log("Trying to kill a character thast's already dead");
+            return;
+        }
 
         //interrupt any channel that  we may be using 
-        curStateReadiness.InterruptChannel();        
+        curStateReadiness.InterruptChannel();
 
-        //Fix our position in the priority queue
-        ContTurns.Get().FixDeadCharacterPriority(this);
+        //Create a new death state to let our character transition to
+        StateDead newState = new StateDead(this);
 
-        //After fixing priority ordering (pushing this character to the back)
-        //If the character is the blocker, then change the blocker to the next character to act
-        plyrOwner.SetDefaultBlocker();
-
-        subDeath.NotifyObs(this);
-        subAllDeath.NotifyObs(this);
+        //Transition to the new state
+        SetStateReadiness(newState);
     }
 
 

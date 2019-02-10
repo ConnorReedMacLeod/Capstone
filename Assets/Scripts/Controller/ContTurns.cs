@@ -39,39 +39,6 @@ public class ContTurns : MonoBehaviour {
         return instance;
     }
 
-
-    public void FixDeadCharacterPriority(Chr chr) {
-        Debug.Assert(chr.bDead);
-
-        Debug.Log("Character just died: " + chr.sName);
-
-        int i = 0;
-        //Scan through til we find the character
-        while (arChrPriority[i] != chr) {
-            i++;
-        }
-
-        Debug.Log("Found character at " + i);
-
-        //Then move to the end of the living list, swapping as we go
-        while (i < (nLiveCharacters - 1)) { 
-
-            //Swap these character
-            arChrPriority[i] = arChrPriority[i + 1];
-            arChrPriority[i + 1] = chr;
-            Debug.Log("Swapping back " + i);
-
-            //And move to the next possible slot
-            i++;
-        }
-
-        //Once we're done swapping, this dead character should be at the end of the living section of the list
-        //so reduce the size of the living section of the list by one so they're no longer included
-        nLiveCharacters--;
-
-        subAllPriorityChange.NotifyObs(this);
-    }
-
     public void FixSortedPriority(Chr chr) {
         //Find the referenced character
         int i = 0;
@@ -108,7 +75,7 @@ public class ContTurns : MonoBehaviour {
 
         if(chrNextReady != null && chrNextReady.curStateReadiness.Type() == StateReadiness.TYPE.READY) {
             //If we've already got a reference to the currently acting character, 
-            //  and that character is still ready, then they are the correct next acting character
+            //  and that character is still ready and not dead, then they are the correct next acting character
             return chrNextReady;
         } else if (chrNextReady != null) {
             //If we have a reference to a non-ready character, then reset that reference to null
