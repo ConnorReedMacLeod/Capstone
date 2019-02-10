@@ -63,8 +63,6 @@ public class ContTurns : MonoBehaviour {
 
             //And move to the next possible slot
             i++;
-
-            Debug.Log("i increased to: " + i + " and liveCharacters -1 is: " + (nLiveCharacters - 1));
         }
 
         //Once we're done swapping, this dead character should be at the end of the living section of the list

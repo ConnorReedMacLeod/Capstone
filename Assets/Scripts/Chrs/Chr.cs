@@ -370,7 +370,7 @@ public class Chr : MonoBehaviour {
     //Checks if the character's selected action is ready and able to be performed
 	public bool ValidAction(){
 		//Debug.Log (bSetAction + " is the setaction");
-		return (bSetAction && arActions [nUsingAction].VerifyLegal ());
+		return (bSetAction && arActions [nUsingAction].CanActivate ());
 	}
 
     //Sets character's selected action to Rest

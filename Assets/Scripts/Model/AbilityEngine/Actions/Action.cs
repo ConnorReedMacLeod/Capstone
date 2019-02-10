@@ -26,7 +26,7 @@ public class Action { //This should probably be made abstract
 
     public string sDescription;
     public string sExtraDescription;
-    
+
     public Property<int[]> parCost;
 
     public Stack<Clause> stackClauses = new Stack<Clause>();
@@ -66,7 +66,7 @@ public class Action { //This should probably be made abstract
     }
 
     //Changes the cost of this action, and returns the node that is modifying that cost (so you can remove it later)
-    public LinkedListNode<Property<int[]>.Modifier> ChangeCost (Property<int[]>.Modifier modifier) {
+    public LinkedListNode<Property<int[]>.Modifier> ChangeCost(Property<int[]>.Modifier modifier) {
 
         LinkedListNode<Property<int[]>.Modifier> nodeModifier = parCost.AddModifier(modifier);
 
@@ -133,7 +133,7 @@ public class Action { //This should probably be made abstract
 
     public void PayFatigue() {
 
-        ContAbilityEngine.Get().AddClause(new Clause() { 
+        ContAbilityEngine.Get().AddClause(new Clause() {
 
             fExecute = () => {
                 //Increase the character's fatigue
@@ -168,7 +168,25 @@ public class Action { //This should probably be made abstract
         //By default do nothing - just override this to make the action do something
     }
 
-	public virtual bool VerifyLegal(){// Maybe this doesn't need to be virtual
+    //Check if the owner is alive and that all targets are still valid
+    public virtual bool LegalTargets() {
+
+        if (chrSource.bDead) {
+            Debug.Log("The character source is dead");
+            return false;
+        }
+
+        for (int i = 0; i < nArgs; i++) {
+            if (!arArgs[i].VerifyLegal()) {
+                Debug.Log("Argument " + i + " was invalid");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+	public virtual bool CanActivate(){// Maybe this doesn't need to be virtual
 
 		//Check if you have enough mana
 		if (!chrSource.plyrOwner.mana.HasMana (parCost.Get())) {
@@ -188,12 +206,11 @@ public class Action { //This should probably be made abstract
             return false;
         }
 
-		for (int i = 0; i < nArgs; i++) {
-			if (!arArgs [i].VerifyLegal ()) {
-				Debug.Log ("Argument " + i + " was invalid");
-				return false;
-			}
-		}
+        if(LegalTargets() == false) {
+            return false;
+        }
+
+		
 		return true;
 	}
 		
