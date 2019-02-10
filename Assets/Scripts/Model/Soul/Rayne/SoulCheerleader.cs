@@ -21,7 +21,11 @@ public class SoulCheerleader : Soul {
             chrTarget = chrAlly,
 
             funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                return new SoulChangePower(_chrSource, _chrTarget, nPowerGain, 1);
+                SoulChangePower soulPowerBuff = new SoulChangePower(_chrSource, _chrTarget, nPowerGain, 1);
+
+                soulPowerBuff.bRemoveOnChrSourceDeath = true;
+
+                return soulPowerBuff;
             },
 
             fDelay = 1.0f,

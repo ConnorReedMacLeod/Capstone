@@ -6,7 +6,7 @@ using UnityEngine;
 //        implements is actually a good practice
 public abstract class StateReadiness {
 
-    public enum TYPE { READY, FATIGUED, STUNNED, CHANNELING};
+    public enum TYPE { READY, FATIGUED, STUNNED, CHANNELING, DEAD};
 
     public Chr chrOwner;
 
@@ -31,10 +31,6 @@ public abstract class StateReadiness {
 
     //Call to transition to the ready state if we're at 0 fatigue
     public virtual void Ready() {
-        if (chrOwner.bDead) {
-            Debug.Log("Tried to recharge, but " + chrOwner.sName + " is dead");
-            return;
-        }
 
         //By default, you can't transition to the ready state unless you're fatigued
 
@@ -42,10 +38,6 @@ public abstract class StateReadiness {
 
     //Called at the beginning of turn to reduce fatigue
 	public virtual void Recharge() {
-        if (chrOwner.bDead) {
-            Debug.Log("Tried to recharge, but " + chrOwner.sName + " is dead");
-            return;
-        }
 
         //By default, we just reduce fatigue by 1 (with the beginning of turn flag)
         ContAbilityEngine.Get().AddExec(new ExecChangeFatigue() {

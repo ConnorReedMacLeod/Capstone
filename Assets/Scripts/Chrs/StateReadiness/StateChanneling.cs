@@ -37,6 +37,7 @@ public class StateChanneling : StateReadiness {
         if (!soulBehaviour.act.LegalTargets()) {
             //If targetting has become invalid (maybe because someone has died)
             InterruptChannel();
+
         }
 
     }
