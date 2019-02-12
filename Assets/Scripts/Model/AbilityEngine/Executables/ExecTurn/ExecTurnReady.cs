@@ -46,7 +46,7 @@ public class ExecTurnReady : Executable {
         }
     }
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         ReadyAll();
 
@@ -55,6 +55,6 @@ public class ExecTurnReady : Executable {
         sLabel = "Readying Characters";
         fDelay = 1.0f;
 
-        base.Execute();
+        base.ExecuteEffect();
     }
 }

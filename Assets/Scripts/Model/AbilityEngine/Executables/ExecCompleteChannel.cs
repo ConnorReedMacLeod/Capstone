@@ -35,7 +35,7 @@ public class ExecCompleteChannel : Executable {
 
 
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
 
         StateFatigued newState = new StateFatigued(chrTarget);
@@ -46,7 +46,7 @@ public class ExecCompleteChannel : Executable {
         fDelay = 1.0f;
         sLabel = chrTarget.sName + " has completed their channel";
 
-        base.Execute();
+        base.ExecuteEffect();
     }
 
 }

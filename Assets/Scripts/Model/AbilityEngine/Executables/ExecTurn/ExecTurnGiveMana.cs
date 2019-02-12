@@ -42,7 +42,7 @@ public class ExecTurnGiveMana : Executable {
         }
     }
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         GiveMana();
 
@@ -51,6 +51,6 @@ public class ExecTurnGiveMana : Executable {
         sLabel = "Giving Mana";
         fDelay = 1.0f;
 
-        base.Execute();
+        base.ExecuteEffect();
     }
 }

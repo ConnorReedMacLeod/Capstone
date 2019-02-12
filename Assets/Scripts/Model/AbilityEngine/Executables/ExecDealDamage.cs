@@ -34,11 +34,11 @@ public class ExecDealDamage : Executable {
     // This is the end of the section that should be copied and pasted
 
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         chrTarget.TakeDamage(dmg);
 
-        base.Execute();
+        base.ExecuteEffect();
     }
 
 }
