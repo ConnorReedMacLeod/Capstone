@@ -35,11 +35,11 @@ public class ExecGainPermArmour : Executable {
     // This is the end of the section that should be copied and pasted
 
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         //NOTE - THIS IS FOR PERMANENT ARMOUR
         chrTarget.AddArmour(nArmour);
 
-        base.Execute();
+        base.ExecuteEffect();
     }
 }

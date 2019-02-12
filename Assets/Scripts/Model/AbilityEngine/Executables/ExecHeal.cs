@@ -36,10 +36,10 @@ public class ExecHeal : Executable {
 
 
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         chrTarget.TakeHealing(heal);
 
-        base.Execute();
+        base.ExecuteEffect();
     }
 }

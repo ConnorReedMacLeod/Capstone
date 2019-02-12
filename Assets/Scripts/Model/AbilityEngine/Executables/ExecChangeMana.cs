@@ -52,7 +52,7 @@ public class ExecChangeMana : Executable {
         nAmount = _nAmount;
     }
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         //Double check that there is no targetted character
         Debug.Assert(chrTarget == null);
@@ -69,7 +69,7 @@ public class ExecChangeMana : Executable {
         fDelay = 0.0f;
         sLabel = "Changing mana for player " + plyrTarget.id;
 
-        base.Execute();
+        base.ExecuteEffect();
     }
 
 

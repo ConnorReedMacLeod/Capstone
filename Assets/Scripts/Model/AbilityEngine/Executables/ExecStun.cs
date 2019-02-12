@@ -38,7 +38,7 @@ public class ExecStun : Executable {
 
 
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         //First interrupt the character if they're channeling
         chrTarget.curStateReadiness.InterruptChannel();
@@ -49,7 +49,7 @@ public class ExecStun : Executable {
         //Transition to the new state
         chrTarget.SetStateReadiness(newState);
 
-        base.Execute();
+        base.ExecuteEffect();
     }
 
 }

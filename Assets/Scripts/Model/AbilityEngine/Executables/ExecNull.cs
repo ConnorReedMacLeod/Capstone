@@ -33,11 +33,11 @@ public class ExecNull : Executable {
     // This is the end of the section that should be copied and pasted
 
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         this.sLabel = "Nothing happens";
 
-        base.Execute();
+        base.ExecuteEffect();
 
     }
 

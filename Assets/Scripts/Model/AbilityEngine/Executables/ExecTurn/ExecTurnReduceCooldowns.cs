@@ -53,7 +53,7 @@ public class ExecTurnReduceCooldowns : Executable {
         }
     }
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         ReduceCooldowns();
 
@@ -62,6 +62,6 @@ public class ExecTurnReduceCooldowns : Executable {
         sLabel = "Reducing Cooldowns";
         fDelay = 0.5f;
 
-        base.Execute();
+        base.ExecuteEffect();
     }
 }

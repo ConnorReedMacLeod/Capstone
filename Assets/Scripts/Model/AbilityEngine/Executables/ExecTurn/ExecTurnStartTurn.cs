@@ -31,13 +31,13 @@ public class ExecTurnStartTurn : Executable {
     // This is the end of the section that should be copied and pasted
 
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         ContTurns.Get().SetTurnState(ContTurns.STATETURN.CHOOSEACTIONS);
 
         sLabel = "Beginning of Turn";
         fDelay = 0.5f;
 
-        base.Execute();
+        base.ExecuteEffect();
     }
 }

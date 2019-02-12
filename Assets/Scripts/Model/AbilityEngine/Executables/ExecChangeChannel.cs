@@ -37,12 +37,12 @@ public class ExecChangeChannel : Executable {
 
 
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
         chrTarget.ChangeChanneltime(nAmount);
 
         fDelay = 0.0f;
 
-        base.Execute();
+        base.ExecuteEffect();
     }
 
 }

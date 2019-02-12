@@ -52,7 +52,7 @@ public class ExecTurnRecharge : Executable {
         }
     }
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         RechargeChars();
 
@@ -61,6 +61,6 @@ public class ExecTurnRecharge : Executable {
         sLabel = "Reducing Fatigue/ChannelTimes";
         fDelay = 0.5f;
 
-        base.Execute();
+        base.ExecuteEffect();
     }
 }

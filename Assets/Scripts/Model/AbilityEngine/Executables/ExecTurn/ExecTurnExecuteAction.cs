@@ -32,7 +32,7 @@ public class ExecTurnExecuteAction : Executable {
 
 
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         //We assume that we have just come from choosing an action, so get that character
         Chr chrNextToAct = ContTurns.Get().GetNextActingChr();
@@ -67,6 +67,6 @@ public class ExecTurnExecuteAction : Executable {
         //Move back to choosing actions (in case there's more actions to be chosen)
         ContTurns.Get().SetTurnState(ContTurns.STATETURN.CHOOSEACTIONS);
 
-        base.Execute();
+        base.ExecuteEffect();
     }
 }
