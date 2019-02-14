@@ -41,8 +41,7 @@ public class ExecChangeChannel : Executable {
         chrTarget.ChangeChanneltime(nAmount);
 
         fDelay = 0.0f;
-
-        base.ExecuteEffect();
+        
     }
 
 }

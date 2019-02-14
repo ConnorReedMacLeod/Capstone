@@ -64,12 +64,10 @@ public class ExecChangeMana : Executable {
             //But if an array of mana was specified, then use that to add mana
             plyrTarget.mana.AddMana(arnAmount);
         }
-
-        //TODO:: Maybe add a flag for if there should be a timer shown or not
+        
         fDelay = 0.0f;
         sLabel = "Changing mana for player " + plyrTarget.id;
 
-        base.ExecuteEffect();
     }
 
 

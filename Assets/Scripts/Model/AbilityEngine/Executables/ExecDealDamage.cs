@@ -38,7 +38,6 @@ public class ExecDealDamage : Executable {
 
         chrTarget.TakeDamage(dmg);
 
-        base.ExecuteEffect();
     }
 
 }

@@ -51,6 +51,5 @@ public class ExecTurnGiveMana : Executable {
         sLabel = "Giving Mana";
         fDelay = 1.0f;
 
-        base.ExecuteEffect();
     }
 }

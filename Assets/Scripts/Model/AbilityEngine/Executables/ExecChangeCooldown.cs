@@ -48,7 +48,6 @@ public class ExecChangeCooldown : Executable {
         fDelay = 0.0f;
         sLabel = "Reducing " + chrTarget.sName + "'s " + actTarget.sName + " cooldown";
 
-        base.ExecuteEffect();
     }
 
 

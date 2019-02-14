@@ -41,6 +41,5 @@ public class ExecApplySoul : Executable {
        
         chrTarget.soulContainer.ApplySoul(funcCreateSoul(chrSource, chrTarget));
 
-        base.ExecuteEffect();
     }
 }
