@@ -41,6 +41,5 @@ public class ExecLoseLife : Executable {
 
         chrTarget.ChangeHealth(-nLifeLoss);
 
-        base.ExecuteEffect();
     }
 }

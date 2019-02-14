@@ -44,8 +44,7 @@ public class ExecChangeFatigue : Executable {
 
         //Debug.Log(chrTarget.sName + " is changing their fatigue by " + nAmount);
         fDelay = 0.0f;
-
-        base.ExecuteEffect();
+        
     }
 
 }

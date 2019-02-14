@@ -61,6 +61,5 @@ public class ExecTurnRecharge : Executable {
         sLabel = "Reducing Fatigue/ChannelTimes";
         fDelay = 0.5f;
 
-        base.ExecuteEffect();
     }
 }

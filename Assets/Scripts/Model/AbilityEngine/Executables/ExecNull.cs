@@ -37,8 +37,6 @@ public class ExecNull : Executable {
 
         this.sLabel = "Nothing happens";
 
-        base.ExecuteEffect();
-
     }
 
 }

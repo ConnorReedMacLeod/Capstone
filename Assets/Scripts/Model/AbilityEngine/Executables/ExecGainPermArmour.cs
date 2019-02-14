@@ -40,6 +40,5 @@ public class ExecGainPermArmour : Executable {
         //NOTE - THIS IS FOR PERMANENT ARMOUR
         chrTarget.AddArmour(nArmour);
 
-        base.ExecuteEffect();
     }
 }

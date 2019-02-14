@@ -37,7 +37,6 @@ public class ExecBecomeBlocker : Executable {
         fDelay = 1.0f;
         sLabel = chrTarget.sName + " has become the blocker";
 
-        base.ExecuteEffect();
     }
 
 }

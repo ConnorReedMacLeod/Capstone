@@ -55,6 +55,5 @@ public class ExecTurnReady : Executable {
         sLabel = "Readying Characters";
         fDelay = 1.0f;
 
-        base.ExecuteEffect();
     }
 }

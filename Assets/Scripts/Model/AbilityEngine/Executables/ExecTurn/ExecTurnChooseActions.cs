@@ -56,6 +56,6 @@ public class ExecTurnChooseActions : Executable {
             fDelay = ContTurns.fDelayChooseAction;
         }
 
-        base.ExecuteEffect();
+
     }
 }

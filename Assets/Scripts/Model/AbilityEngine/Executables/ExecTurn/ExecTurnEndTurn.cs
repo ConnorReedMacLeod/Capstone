@@ -38,6 +38,5 @@ public class ExecTurnEndTurn : Executable {
         sLabel = "End of Turn";
         fDelay = 0.5f;
 
-        base.ExecuteEffect();
     }
 }

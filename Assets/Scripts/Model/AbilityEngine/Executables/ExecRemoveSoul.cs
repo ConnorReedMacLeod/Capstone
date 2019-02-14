@@ -40,6 +40,5 @@ public class ExecRemoveSoul : Executable {
 
         chrTarget.soulContainer.RemoveSoul(soulToRemove);
 
-        base.ExecuteEffect();
     }
 }

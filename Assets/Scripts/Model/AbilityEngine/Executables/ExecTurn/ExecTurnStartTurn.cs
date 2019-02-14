@@ -38,6 +38,5 @@ public class ExecTurnStartTurn : Executable {
         sLabel = "Beginning of Turn";
         fDelay = 0.5f;
 
-        base.ExecuteEffect();
     }
 }

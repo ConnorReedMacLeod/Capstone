@@ -48,7 +48,6 @@ public class ExecReadyChar : Executable {
         fDelay = 1.0f;
         sLabel = chrTarget.sName + " has Readied";
 
-        base.ExecuteEffect();
     }
 
 }

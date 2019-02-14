@@ -46,7 +46,6 @@ public class ExecCompleteChannel : Executable {
         fDelay = 1.0f;
         sLabel = chrTarget.sName + " has completed their channel";
 
-        base.ExecuteEffect();
     }
 
 }

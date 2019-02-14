@@ -62,6 +62,5 @@ public class ExecTurnReduceCooldowns : Executable {
         sLabel = "Reducing Cooldowns";
         fDelay = 0.5f;
 
-        base.ExecuteEffect();
     }
 }

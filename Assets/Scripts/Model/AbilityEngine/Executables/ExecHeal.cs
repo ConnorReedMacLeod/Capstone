@@ -40,6 +40,5 @@ public class ExecHeal : Executable {
 
         chrTarget.TakeHealing(heal);
 
-        base.ExecuteEffect();
     }
 }
