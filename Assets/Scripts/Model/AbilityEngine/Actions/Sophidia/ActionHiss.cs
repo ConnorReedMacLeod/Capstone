@@ -38,6 +38,10 @@ public class ActionHiss : Action {
         stackClauses.Push(new Clause() {
             fExecute = () => {
                 for (int i = 0; i < tar.arChr.Length; i++) {
+
+                    //Don't target dead characters
+                    if (tar.arChr[i].bDead) continue;
+
                     //TODO:: Organize this in the correct order
                     ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                         chrSource = this.chrSource,
@@ -47,7 +51,7 @@ public class ActionHiss : Action {
                             return new SoulSpooked(_chrSource, _chrTarget);
                         },
 
-                        fDelay = 1.0f,
+                        fDelay = ContTurns.fDelayStandard,
                         sLabel = "Applying Hiss "
                     });
                 }

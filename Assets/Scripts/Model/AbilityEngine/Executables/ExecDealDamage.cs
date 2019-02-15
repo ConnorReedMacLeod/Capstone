@@ -33,12 +33,15 @@ public class ExecDealDamage : Executable {
     }
     // This is the end of the section that should be copied and pasted
 
+    public ExecDealDamage() : base() {
+        //If the source of the damage dies, then by default, cancel the executable
+        bCancelSourceDies = true;
+    }
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         chrTarget.TakeDamage(dmg);
 
-        base.Execute();
     }
 
 }

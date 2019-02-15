@@ -29,15 +29,13 @@ public class ExecBecomeBlocker : Executable {
     }
     // This is the end of the section that should be copied and pasted
 
-
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         chrTarget.plyrOwner.SetBlocker(chrTarget.id);
 
-        fDelay = 1.0f;
+        fDelay = ContTurns.fDelayMinorAction;
         sLabel = chrTarget.sName + " has become the blocker";
 
-        base.Execute();
     }
 
 }

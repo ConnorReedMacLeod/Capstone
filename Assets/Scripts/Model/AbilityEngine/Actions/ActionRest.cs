@@ -33,7 +33,7 @@ public class ActionRest : Action {
 
             nAmount = this.nRestFatigue,
             
-            fDelay = 1.0f,
+            fDelay = ContTurns.fDelayStandard,
             sLabel = this.chrSource.sName + " is resting"
         });
 

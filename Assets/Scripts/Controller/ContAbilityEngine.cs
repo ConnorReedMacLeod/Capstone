@@ -13,7 +13,7 @@ public class ContAbilityEngine : MonoBehaviour {
     public GameObject pfTimer;
     public ViewTimer viewTimerCur;
 
-    public const bool bDEBUGENGINE = true;
+    public const bool bDEBUGENGINE = false;
 
     public static ContAbilityEngine instance;
 
@@ -88,7 +88,7 @@ public class ContAbilityEngine : MonoBehaviour {
 
     public void ResolveExec() {
 
-        //Remove the Executable from the top of the stack (Assume no replacements need to take effect)
+        //Remove the Executable from the top of the stack and execute it
         stackExec.Pop().Execute();
 
     }
@@ -145,23 +145,7 @@ public class ContAbilityEngine : MonoBehaviour {
 
     public void AddExec(Executable exec) {
 
-        //Check for any replacement effects
-        //Initially, we reset the cycle-checking flags for each registered replacement effect
-        Replacement.ResetReplacedFlags();
-
-        //Resolve any full replacement effects (so we settle on a single type of executable)
-        exec = ResolveFullReplacements(exec);
-
-        //Now we modify that executable as much as necessary
-        exec = ResolveReplacements(exec);
-
-        //TODO:: Consider if we should check for replacement effects and triggers at resolve-time or at stack-pushing-time
-
         stackExec.Push(exec);
-
-        //After this has been pushed on the stack, cycle through any pre-triggers
-        //to see what should be put on top of this effect
-        exec.GetPreTrigger().NotifyObs(null, exec);
 
     }
 
@@ -192,11 +176,49 @@ public class ContAbilityEngine : MonoBehaviour {
 
         //First, check if there's any executables to process
         if(stackExec.Count > 0) {
-            if (bDEBUGENGINE) Debug.Log("Resolving an Executable");
-            ResolveExec();
+
+            //If we're seeing this executable for the first time and have
+            //to process replacement and pre-trigger effects
+            if (!stackExec.Peek().bPreTriggered) {
+
+                //Debug.Log("Performing Replacement effects and Pre-Triggers");
+
+                //Pop off the top element
+                Executable top = stackExec.Pop();
+
+                //Check for any replacement effects
+                //Initially, we reset the cycle-checking flags for each registered replacement effect
+                Replacement.ResetReplacedFlags();
+
+                //Resolve any full replacement effects (so we settle on a single type of executable)
+                top = ResolveFullReplacements(top);
+
+                //Now we modify that executable as much as necessary
+                top = ResolveReplacements(top);
+
+                //Push the modified executable back onto the stack at the top
+                stackExec.Push(top);
+
+                //Now we can push all of the pre-triggers onto the stack
+                top.GetPreTrigger().NotifyObs(null, top);
+
+                //Set our flag so that we don't pre-trigger this effect again
+                top.bPreTriggered = true;
+
+                //Now recurse so that we can process whatever effect should come next
+                ProcessStacks();
+
+            } else {
+                //at this point, we can actually evaluate this executable
+
+                if (bDEBUGENGINE) Debug.Log("Resolving an Executable");
+                ResolveExec();
+
+            }
+
             return;
         }
-
+            
         //Check statebased actions
         MaintainStateBasedActions();
 
@@ -233,7 +255,7 @@ public class ContAbilityEngine : MonoBehaviour {
 
             Invoke("AutoProcessStacks", fDelay);
         } else {
-            Debug.Log("Manually executing " + sLabel);
+            //Debug.Log("Manually executing " + sLabel);
             //Then we're doing manual execution - still spawn a quick timer to show what we're processing right now
 
             if(fDelay == 0.0f) {

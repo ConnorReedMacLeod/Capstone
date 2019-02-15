@@ -47,7 +47,7 @@ public class ActionCheerleader : Action {
                         return soulPassive;
                     },
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = chrSource.sName + " is one peppy boi"
                 });
             }
@@ -67,7 +67,7 @@ public class ActionCheerleader : Action {
 
                     soulToRemove = this.soulPassive,
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = chrSource.sName + " is no longer peppy"
                 });
             }

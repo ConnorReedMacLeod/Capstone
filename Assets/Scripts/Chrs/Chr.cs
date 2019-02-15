@@ -39,6 +39,8 @@ public class Chr : MonoBehaviour {
 	public int nCurHealth;          //The character's current health
 	public Property<int> pnMaxHealth;          //The character's max health
 
+    public bool bDead;                         //If the character is dead or not
+
     public Property<int> pnPower;              //The character's current power
     public Property<int> pnDefense;            //The character's current defense
 
@@ -86,6 +88,9 @@ public class Chr : MonoBehaviour {
     public Subject subStatusChange = new Subject();
     public static Subject subAllStatusChange = new Subject();
 
+    public Subject subDeath = new Subject();
+    public static Subject subAllDeath = new Subject();
+
     public void SetStateReadiness(StateReadiness newState) {
 
         if (curStateReadiness != null) {
@@ -105,6 +110,24 @@ public class Chr : MonoBehaviour {
 
         subChannelTimeChange.NotifyObs();
     }
+
+
+    public void KillCharacter() {
+        if (bDead) {
+            Debug.Log("Trying to kill a character thast's already dead");
+            return;
+        }
+
+        //interrupt any channel that  we may be using 
+        curStateReadiness.InterruptChannel();
+
+        //Create a new death state to let our character transition to
+        StateDead newState = new StateDead(this);
+
+        //Transition to the new state
+        SetStateReadiness(newState);
+    }
+
 
     // Apply this amount of fatigue to the character
     public void ChangeFatigue(int _nChange, bool bBeginningTurn = false){
@@ -126,6 +149,7 @@ public class Chr : MonoBehaviour {
     }
 
     public int GetPriority() {
+
         //Just ask our readiness state what our priority is
         return curStateReadiness.GetPriority();
     }
@@ -140,8 +164,6 @@ public class Chr : MonoBehaviour {
 
     public void RechargeActions() {
 
-        Debug.Log("Reducing cooldowns for " + sName);
-
         for (int i = 0; i < Chr.nActions; i++) {
 
             //Only reduce the cooldown if it is not currently off cooldown
@@ -153,7 +175,7 @@ public class Chr : MonoBehaviour {
                     nAmount = -1,
                     actTarget = arActions[i],
 
-                    fDelay = 0f
+                    fDelay = ContTurns.fDelayMinorAction
                 });
             }
         }
@@ -254,9 +276,10 @@ public class Chr : MonoBehaviour {
     public void ChangeHealth(int nChange) {
         if (nCurHealth + nChange > pnMaxHealth.Get()) {
             nCurHealth = pnMaxHealth.Get();
-        } else if (nCurHealth + nChange < 0) {
+        } else if (nCurHealth + nChange <= 0) {
             nCurHealth = 0;
-            //TODO:: DEATH TRIGGER
+
+            KillCharacter();
         } else {
             nCurHealth += nChange;
         }
@@ -335,15 +358,12 @@ public class Chr : MonoBehaviour {
         bSetAction = false;
 		nUsingAction = 7;//TODO:: Make this consistent
         
-        //Notify everyone that we've just used an ability
-        subPostExecuteAbility.NotifyObs(this, actToUse);
-        subAllPostExecuteAbility.NotifyObs(this, actToUse);
 	}
 
     //Checks if the character's selected action is ready and able to be performed
 	public bool ValidAction(){
 		//Debug.Log (bSetAction + " is the setaction");
-		return (bSetAction && arActions [nUsingAction].VerifyLegal ());
+		return (bSetAction && arActions [nUsingAction].CanActivate ());
 	}
 
     //Sets character's selected action to Rest

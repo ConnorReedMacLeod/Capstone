@@ -17,6 +17,8 @@ public class SoulChangeDefense : Soul {
 
         bVisible = false;
 
+        bRemoveOnChrDeath = true;
+
         //Check if a duration was specified
         if (_nDuration == -1) {
             bDuration = false;

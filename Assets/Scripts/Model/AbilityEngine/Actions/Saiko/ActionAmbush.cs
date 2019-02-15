@@ -55,6 +55,7 @@ public class ActionAmbush : Action {
 
         Chr tar = ((TargetArgChr)arArgs[0]).chrTar; //Cast our first target to a ChrTarget and get that Chr
 
+
         ContAbilityEngine.Get().AddClause(new Clause() {
             fExecute = () => {
 
@@ -68,7 +69,7 @@ public class ActionAmbush : Action {
                     chrTarget = tar,
 
                     dmg = dmgToApply,
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = chrSource.sName + " ambushed " + tar.sName + "!"
                 });
             }

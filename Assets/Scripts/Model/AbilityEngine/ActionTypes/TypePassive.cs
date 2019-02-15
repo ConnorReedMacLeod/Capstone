@@ -8,6 +8,10 @@ public class TypePassive : TypeAction {
 
     }
 
+    public override string getName() {
+        return "Passive";
+    }
+
     public override TYPE Type() {
         return TYPE.PASSIVE;
     }

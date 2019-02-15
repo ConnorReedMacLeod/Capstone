@@ -59,7 +59,7 @@ public class ActionRegenerate : Action {
                     chrTarget = this.chrSource,
                     
                     heal = healToApply, 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = chrSource.sName + " is regenerating"
                 });
             }

@@ -47,7 +47,7 @@ public class ActionSpiritSlap : Action {
                     chrSource = this.chrSource,
                     chrTarget = tar,
                     dmg = dmgToApply,
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = tar.sName + " is being slapped"
                 });
             }
@@ -63,7 +63,7 @@ public class ActionSpiritSlap : Action {
                         return new SoulDispirited(_chrSource, _chrTarget);
                     },
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = tar.sName + "'s soul is drained"
 
                 });

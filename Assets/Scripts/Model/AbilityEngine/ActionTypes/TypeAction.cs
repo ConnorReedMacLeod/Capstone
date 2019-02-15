@@ -11,6 +11,7 @@ public abstract class TypeAction {
         act = _act;
     }
 
+    public abstract string getName();
     public abstract TYPE Type();
     public abstract int GetActionPointCost();
 

@@ -10,6 +10,10 @@ public class TypeActive : TypeAction {
 
     }
 
+    public override string getName() {
+        return "Active";
+    }
+
     public override TYPE Type() {
         return TYPE.ACTIVE;
     }

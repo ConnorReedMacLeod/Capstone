@@ -32,9 +32,13 @@ public class ExecTurnChooseActions : Executable {
     // This is the end of the section that should be copied and pasted
 
 
+    public override bool isLegal() {
+        //Can't invalidate a turn action
+        return true;
+    }
 
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         //First, test if we actually have any character who is ready to act right now
         if(ContTurns.Get().GetNextActingChr() == null) {
@@ -56,6 +60,6 @@ public class ExecTurnChooseActions : Executable {
             fDelay = ContTurns.fDelayChooseAction;
         }
 
-        base.Execute();
+
     }
 }

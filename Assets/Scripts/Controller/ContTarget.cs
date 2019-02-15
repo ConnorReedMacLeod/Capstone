@@ -49,7 +49,10 @@ public class ContTarget : MonoBehaviour {
 	// Start a new round of targetting
 	public void ResetTar(){
 		nTarCount = 0;
-	}
+        //CLear any previous targetting information we had
+        selected.arActions[selected.nUsingAction].ResetTargettingArgs();
+
+    }
 
 	// Ends targetting
 	public void CancelTar(){
@@ -87,7 +90,7 @@ public class ContTarget : MonoBehaviour {
 
 			// Can now go back idle and wait for the next targetting
 			SetState (new StateTargetIdle (this));
-			Debug.Log ("Targetting finished");
+			//Debug.Log ("Targetting finished");
 
             //Let everything know that targetting has ended
             subAllFinishTargetting.NotifyObs(this);

@@ -41,7 +41,7 @@ public class ActionFortissimo : Action {
 
                     },
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = "Applying Fortissimo"
                 });
             }

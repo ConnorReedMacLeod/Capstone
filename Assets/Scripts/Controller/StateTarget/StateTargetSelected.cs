@@ -21,12 +21,12 @@ public class StateTargetSelected : StateTarget {
     }
 
     public void cbClickBlockerButton(Object target, params object[] args) {
-        ChooseAction(ContTurns.Get().GetNextActingChr().arActions[Chr.idBlocking]);
+        ChooseAction(contTarg.selected.arActions[Chr.idBlocking]);
     }
 
     public void ChooseAction(Action actChosen) {
         // When we've clicked an action, use that action
-        Debug.Log(actChosen + " is being used");
+        //Debug.Log(actChosen + " is is being targetted");
 
         // But first, check if targetting is locked
         if (actChosen.chrSource.bLockedTargetting) {

@@ -38,17 +38,16 @@ public class ExecChangeCooldown : Executable {
 
 
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         //Double check that the action whose cooldown we're changing is owned by the right person
         Debug.Assert(chrTarget == actTarget.chrSource);
 
         actTarget.ChangeCD(nAmount);
 
-        fDelay = 0.0f;
+        fDelay = ContTurns.fDelayMinorAction;
         sLabel = "Reducing " + chrTarget.sName + "'s " + actTarget.sName + " cooldown";
 
-        base.Execute();
     }
 
 

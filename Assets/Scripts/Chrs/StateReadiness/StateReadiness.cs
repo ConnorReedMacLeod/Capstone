@@ -6,7 +6,7 @@ using UnityEngine;
 //        implements is actually a good practice
 public abstract class StateReadiness {
 
-    public enum TYPE { READY, FATIGUED, STUNNED, CHANNELING};
+    public enum TYPE { READY, FATIGUED, STUNNED, CHANNELING, DEAD};
 
     public Chr chrOwner;
 
@@ -31,6 +31,7 @@ public abstract class StateReadiness {
 
     //Call to transition to the ready state if we're at 0 fatigue
     public virtual void Ready() {
+
         //By default, you can't transition to the ready state unless you're fatigued
 
     }
@@ -58,6 +59,8 @@ public abstract class StateReadiness {
     }
 
     public virtual void ChangeChanneltime(int _nChange) {
+
+
         //By default, do nothing, since we're not channeling
 
         Debug.Log("Can't reduce channeltime since we're not channeling right now");

@@ -48,7 +48,7 @@ public class ActionVenemousBite : Action {
                     chrSource = this.chrSource,
                     chrTarget = tar,
                     dmg = dmgToApply,
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = tar.sName + " is being bitten"
                 });
             }

@@ -35,11 +35,14 @@ public class ExecHeal : Executable {
     // This is the end of the section that should be copied and pasted
 
 
+    public ExecHeal(): base() {
+        //By default, if the healer dies, then the target doesn't get healed
+        bCancelSourceDies = true;
+    }
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         chrTarget.TakeHealing(heal);
 
-        base.Execute();
     }
 }

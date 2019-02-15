@@ -33,6 +33,11 @@ public class ExecTurnReduceCooldowns : Executable {
     // This is the end of the section that should be copied and pasted
 
 
+    public override bool isLegal() {
+        //Can't invalidate a turn action
+        return true;
+    }
+
 
     public void ReduceCooldowns() {
 
@@ -42,6 +47,10 @@ public class ExecTurnReduceCooldowns : Executable {
                     continue; // A character isn't actually here (extra space for characters)
                 }
 
+                if (Match.Get().arChrs[i][j].bDead) {
+                    continue; //The character's already dead
+                }
+
                 //Reduce the cd of that character's actions
                 Match.Get().arChrs[i][j].RechargeActions();
 
@@ -49,15 +58,14 @@ public class ExecTurnReduceCooldowns : Executable {
         }
     }
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         ReduceCooldowns();
 
         ContTurns.Get().SetTurnState(ContTurns.STATETURN.GIVEMANA);
 
         sLabel = "Reducing Cooldowns";
-        fDelay = 0.5f;
+        fDelay = ContTurns.fDelayTurnAction;
 
-        base.Execute();
     }
 }

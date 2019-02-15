@@ -155,7 +155,18 @@ public class ViewChr : ViewInteractive {
         mod.pnDefense.subChanged.Subscribe(cbUpdateDefense);
         mod.subBlockerChanged.Subscribe(cbUpdateBlocker);
         mod.subChannelTimeChange.Subscribe(cbUpdateChannelTime);
+        mod.subDeath.Subscribe(cbUpdateDeath);
+    }
 
+    public void cbUpdateDeath(Object target, params object[] args) {
+
+        if (mod.bDead) {
+            //If the character is dead, then red-out their portrait
+            goPortrait.GetComponent<SpriteRenderer>().color = Color.red;
+        } else {
+            //If the character is still alive, then keep their portrait normal
+            goPortrait.GetComponent<SpriteRenderer>().color = Color.white;
+        }
 
     }
 
@@ -167,6 +178,12 @@ public class ViewChr : ViewInteractive {
         //If we're channeling, then we won't display fatigue
         if (mod.curStateReadiness.Type() == StateReadiness.TYPE.CHANNELING) {
             Debug.Log("We shouldn't show fatigue when channeling");
+            txtFatigue.text = "";
+            return;
+        }
+
+        if (mod.curStateReadiness.Type() == StateReadiness.TYPE.DEAD) {
+            Debug.Log("We shouldn't show fatigue when dead");
             txtFatigue.text = "";
             return;
         }

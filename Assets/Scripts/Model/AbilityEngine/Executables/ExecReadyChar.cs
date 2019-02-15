@@ -35,7 +35,7 @@ public class ExecReadyChar : Executable {
 
 
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         Debug.Assert(chrTarget.nFatigue == 0);
 
@@ -45,10 +45,9 @@ public class ExecReadyChar : Executable {
         //Just transition to the ready state
         chrTarget.SetStateReadiness(newState);
 
-        fDelay = 1.0f;
+        fDelay = ContTurns.fDelayStandard;
         sLabel = chrTarget.sName + " has Readied";
 
-        base.Execute();
     }
 
 }

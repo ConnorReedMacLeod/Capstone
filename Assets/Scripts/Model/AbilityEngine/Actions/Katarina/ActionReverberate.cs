@@ -38,6 +38,10 @@ public class ActionReverberate : Action {
         stackClauses.Push(new Clause() {
             fExecute = () => {
                 for (int i = 0; i < tar.arChr.Length; i++) {
+
+                    //Don't target dead characters
+                    if (tar.arChr[i].bDead) continue;
+
                     //Make a copy of the damage object to give to the executable
                     Damage dmgToApply = new Damage(dmg);
                     //Give the damage object its target
@@ -50,7 +54,7 @@ public class ActionReverberate : Action {
 
                         dmg = dmgToApply,
 
-                        fDelay = 1.0f,
+                        fDelay = ContTurns.fDelayStandard,
                         sLabel = "Reverberating " + tar.arChr[i].sName
                     });
                 }

@@ -67,7 +67,7 @@ public class ActionCacaphony : Action {
 
                     GetDuration = () => IsCritical() ? nCriticalStun : nBaseStun,
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = "Stunning " + tar.sName
                 });
                 
@@ -78,7 +78,7 @@ public class ActionCacaphony : Action {
 
                     dmg = dmgToApply,
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = "Screeching at " + tar.sName
                 });
 
