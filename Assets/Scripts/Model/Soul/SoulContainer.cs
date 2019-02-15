@@ -64,7 +64,13 @@ public class SoulContainer : MonoBehaviour {
 
     public void RemoveSoul(Soul toRemove) {
 
-        lstSoul.Remove(toRemove);
+        bool bRemoveSuccessfully = lstSoul.Remove(toRemove);
+
+        if(bRemoveSuccessfully == false) {
+            Debug.Log("Couldn't remove " + toRemove.sName + " since it's already removed");
+            return;
+        }
+
         toRemove.OnRemoval();
 
         //Let others know that the visible soul MAY have changed (not necessarily)

@@ -53,7 +53,7 @@ public class ActionStorm : Action {
                         chrTarget = enemy.arChr[i],
                         dmg = dmgToApply,
 
-                        fDelay = 1.0f,
+                        fDelay = ContTurns.fDelayStandard,
                         sLabel = enemy.arChr[i].sName + " is caught in the storm"
                     });
                 }
@@ -68,7 +68,7 @@ public class ActionStorm : Action {
 
                         GetDuration = () => nStunDuration,
 
-                        fDelay = 1.0f,
+                        fDelay = ContTurns.fDelayStandard,
                         sLabel = chrSource.plyrOwner.arChr[i].sName + " is being stunned"
                     });
                 }

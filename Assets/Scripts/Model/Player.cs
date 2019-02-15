@@ -25,16 +25,18 @@ public class Player : MonoBehaviour{
         nChrs = 3;
 
         if (id == 0) {
-            arChrTypeSelection[0] = Chr.CHARTYPE.PITBEAST;
+            arChrTypeSelection[0] = Chr.CHARTYPE.FISCHER;
             arChrTypeSelection[1] = Chr.CHARTYPE.RAYNE;
             arChrTypeSelection[2] = Chr.CHARTYPE.KATARINA;
             
-            
-        } else {
 
-            arChrTypeSelection[0] = Chr.CHARTYPE.SAIKO; 
-             arChrTypeSelection[1] = Chr.CHARTYPE.FISCHER;
+        } else {
+            arChrTypeSelection[0] = Chr.CHARTYPE.SAIKO;
+            arChrTypeSelection[1] = Chr.CHARTYPE.PITBEAST;
             arChrTypeSelection[2] = Chr.CHARTYPE.SOHPIDIA;
+             
+             
+            
 
         }
 	}
@@ -43,7 +45,18 @@ public class Player : MonoBehaviour{
 		id = _id;
 	}
 
-    public void SetBlocker(int _iBlocker) {
+    public void SetDefaultBlocker() {
+
+        SetBlocker(ContTurns.Get().GetNextToActOwnedBy(this));
+
+    }
+
+    //Add an alternate signature for the function
+    public void SetBlocker(Chr _chrBlocker) {
+        SetBlocker(_chrBlocker.id);
+    }
+
+   public void SetBlocker(int _iBlocker) {
 
         Debug.Assert(arChr[_iBlocker] != null, "Assigned a blocker as a character that doesn't exist");
         if(iBlocker == _iBlocker) {

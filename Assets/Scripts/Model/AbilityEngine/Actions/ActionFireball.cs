@@ -49,7 +49,7 @@ public class ActionFireball : Action {
                     chrSource = this.chrSource,
                     chrTarget = tar,
                     dmg = dmgToApply,
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = "Fireballing"
                 });
             }
@@ -66,7 +66,7 @@ public class ActionFireball : Action {
                         return new SoulBurning(_chrSource, _chrTarget);
                     },
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = "Applying Burn Effect"
                 });
             }

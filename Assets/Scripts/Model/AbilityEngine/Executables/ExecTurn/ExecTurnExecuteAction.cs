@@ -31,8 +31,12 @@ public class ExecTurnExecuteAction : Executable {
     // This is the end of the section that should be copied and pasted
 
 
+    public override bool isLegal() {
+        //Can't invalidate a turn action
+        return true;
+    }
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         //We assume that we have just come from choosing an action, so get that character
         Chr chrNextToAct = ContTurns.Get().GetNextActingChr();
@@ -62,11 +66,10 @@ public class ExecTurnExecuteAction : Executable {
             chrNextToAct.SetStateReadiness(new StateFatigued(chrNextToAct));
         }
 
-        fDelay = 2.0f;
+        fDelay = ContTurns.fDelayStandard;
 
         //Move back to choosing actions (in case there's more actions to be chosen)
         ContTurns.Get().SetTurnState(ContTurns.STATETURN.CHOOSEACTIONS);
 
-        base.Execute();
     }
 }

@@ -11,6 +11,9 @@ public class SoulCheerleader : Soul {
         //Make sure we are buffing an ally and not ourselves
         if (chrAlly == this.chrTarget) return;
 
+        //Don't target dead characters
+        if (chrAlly.bDead) return;
+
         //So we're sure we're buffing a valid character at this point
 
         ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
@@ -18,10 +21,14 @@ public class SoulCheerleader : Soul {
             chrTarget = chrAlly,
 
             funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                return new SoulChangePower(_chrSource, _chrTarget, nPowerGain, 1);
+                SoulChangePower soulPowerBuff = new SoulChangePower(_chrSource, _chrTarget, nPowerGain, 1);
+
+                soulPowerBuff.bRemoveOnChrSourceDeath = true;
+
+                return soulPowerBuff;
             },
 
-            fDelay = 1.0f,
+            fDelay = ContTurns.fDelayStandard,
             sLabel = chrAlly.sName + " is inspired by " + this.chrSource.sName
         });
     }
@@ -32,7 +39,11 @@ public class SoulCheerleader : Soul {
         bVisible = false;
         bDuration = false;
 
+        bRemoveOnChrSourceDeath = true;
+
+
         nPowerGain = 5;
+
 
         lstTriggers = new List<TriggerEffect>() {
 

@@ -46,15 +46,19 @@ public class ExecTurnReady : Executable {
         }
     }
 
-    public override void Execute() {
+    public override bool isLegal() {
+        //Can't invalidate a turn action
+        return true;
+    }
+
+    public override void ExecuteEffect() {
 
         ReadyAll();
 
         ContTurns.Get().SetTurnState(ContTurns.STATETURN.REDUCECOOLDOWNS);
 
         sLabel = "Readying Characters";
-        fDelay = 1.0f;
+        fDelay = ContTurns.fDelayTurnAction;
 
-        base.Execute();
     }
 }

@@ -31,6 +31,11 @@ public class ExecTurnRecharge : Executable {
     // This is the end of the section that should be copied and pasted
 
 
+    public override bool isLegal() {
+        //Can't invalidate a turn action
+        return true;
+    }
+
 
     //Want to stack up a recharge executable (change fatigue/channeltime) for each character one by one
     public void RechargeChars() {
@@ -41,6 +46,11 @@ public class ExecTurnRecharge : Executable {
                     continue; // A character isn't actually here (extra space for characters)
                 }
 
+                if (Match.Get().arChrs[i][j].bDead) {
+                    Debug.Log("skipping recharge since " + Match.Get().arChrs[i][j].sName + " is dead");
+                    continue; //The character's already dead
+                }
+
                 //Ask the character's readiness state to tick down its fatigue (or channeltimer as the case may be)
                 Match.Get().arChrs[i][j].curStateReadiness.Recharge();
 
@@ -48,15 +58,14 @@ public class ExecTurnRecharge : Executable {
         }
     }
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         RechargeChars();
 
         ContTurns.Get().SetTurnState(ContTurns.STATETURN.READY);
 
         sLabel = "Reducing Fatigue/ChannelTimes";
-        fDelay = 0.5f;
+        fDelay = ContTurns.fDelayTurnAction;
 
-        base.Execute();
     }
 }

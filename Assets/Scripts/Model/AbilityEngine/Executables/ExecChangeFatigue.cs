@@ -38,14 +38,13 @@ public class ExecChangeFatigue : Executable {
 
 
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
         
         chrTarget.ChangeFatigue(nAmount, bBeginningTurn);
 
         //Debug.Log(chrTarget.sName + " is changing their fatigue by " + nAmount);
-        fDelay = 0.0f;
-
-        base.Execute();
+        fDelay = ContTurns.fDelayMinorAction;
+        
     }
 
 }

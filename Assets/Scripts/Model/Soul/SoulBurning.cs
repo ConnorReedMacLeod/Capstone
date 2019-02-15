@@ -40,7 +40,7 @@ public class SoulBurning : Soul {
                         //Make a copy of the initially calculated damage when the soul was applied
                         dmg = new Damage(dmgToApply), 
 
-                        fDelay = 1.0f,
+                        fDelay = ContTurns.fDelayStandard,
                         sLabel = this.chrTarget.sName + " is Burning"
                     });
 

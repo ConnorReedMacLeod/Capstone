@@ -31,13 +31,17 @@ public class ExecTurnEndTurn : Executable {
     // This is the end of the section that should be copied and pasted
 
 
-    public override void Execute() {
+    public override bool isLegal() {
+        //Can't invalidate a turn action
+        return true;
+    }
+
+    public override void ExecuteEffect() {
 
         ContTurns.Get().SetTurnState(ContTurns.STATETURN.RECHARGE);
 
         sLabel = "End of Turn";
-        fDelay = 0.5f;
+        fDelay = ContTurns.fDelayTurnAction;
 
-        base.Execute();
     }
 }

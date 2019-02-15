@@ -11,12 +11,17 @@ public class ContTurns : MonoBehaviour {
 
     public static ContTurns instance;
 
-    public Chr []arChrPriority = new Chr[6];
+    public Chr []arChrPriority = new Chr[Player.MAXCHRS];
     public Chr chrNextReady; //Stores the currently acting character this turn (or null if none are acting)
+
+    public int nLiveCharacters;
+
     public static Subject subAllPriorityChange = new Subject();
 
-    public const float fDelayChooseAction = 5.0f;
-
+    public const float fDelayChooseAction = 10.0f;
+    public const float fDelayTurnAction = 1.0f;
+    public const float fDelayMinorAction = 0.0f;
+    public const float fDelayStandard = 2.0f;
     
     //TODO CHANGE ALL .Get() calls in other classes to use properties
     //     so the syntax isn't as gross
@@ -43,6 +48,7 @@ public class ContTurns : MonoBehaviour {
             i++;
         }
 
+ 
         //First try to move ahead the character
         //If there is some character ahead and we go on a earlier turn
         while (i > 0 && arChrPriority[i - 1].GetPriority() > chr.GetPriority()) {
@@ -55,7 +61,8 @@ public class ContTurns : MonoBehaviour {
 
         //Next try to move the character back in the list
         //If there is a character after us, and we go on the same turn or later
-        while (i < (6 - 1) && chr.GetPriority() >= arChrPriority[i + 1].GetPriority()) {
+        while (i < (nLiveCharacters - 1) &&
+            chr.GetPriority() >= arChrPriority[i + 1].GetPriority()) {
             //Swap these character
             arChrPriority[i] = arChrPriority[i + 1];
             arChrPriority[i + 1] = chr;
@@ -70,7 +77,7 @@ public class ContTurns : MonoBehaviour {
 
         if(chrNextReady != null && chrNextReady.curStateReadiness.Type() == StateReadiness.TYPE.READY) {
             //If we've already got a reference to the currently acting character, 
-            //  and that character is still ready, then they are the correct next acting character
+            //  and that character is still ready and not dead, then they are the correct next acting character
             return chrNextReady;
         } else if (chrNextReady != null) {
             //If we have a reference to a non-ready character, then reset that reference to null
@@ -83,7 +90,7 @@ public class ContTurns : MonoBehaviour {
         //Now we should look for the first character in our priority queue in a ready state
         int i = 0;
 
-        while (i < 6) {
+        while (i < nLiveCharacters) {
             //Just skip this character if they don't have their readiness state created yet
             if (arChrPriority[i].curStateReadiness == null) {
                 i++;
@@ -93,6 +100,8 @@ public class ContTurns : MonoBehaviour {
             if (arChrPriority[i].curStateReadiness.Type() == StateReadiness.TYPE.READY) {
                 //If we find a character in the ready state, then they will become our new chrNextReady
                 chrNextReady = arChrPriority[i];
+
+                Debug.Assert(chrNextReady.bDead == false);
                 break;
             }
 
@@ -101,6 +110,22 @@ public class ContTurns : MonoBehaviour {
         //Whether we've found a ready character or not, just return whatever's stored in chrNextReady
         return chrNextReady;
 
+    }
+
+    //Fetch the character owned by plyr who will act next
+    public Chr GetNextToActOwnedBy(Player plyr) {
+        int i = 0;
+
+        while (i < nLiveCharacters) {
+            if(arChrPriority[i].plyrOwner == plyr) {
+                return arChrPriority[i];
+            }
+
+            i++;
+        }
+
+        Debug.LogError("Error: Player " + plyr.id + " does not have a live character");
+        return null;
     }
 
 
@@ -199,6 +224,8 @@ public class ContTurns : MonoBehaviour {
         bStarted = true;
         InitChrPriority();
         InitChrTurns();
+
+        nLiveCharacters = Player.MAXPLAYERS * Player.MAXCHRS;
 
     }
 }

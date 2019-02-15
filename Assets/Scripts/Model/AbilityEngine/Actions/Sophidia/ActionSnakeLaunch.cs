@@ -52,7 +52,7 @@ public class ActionSnakeLaunch : Action {
                     chrTarget = tar,
                     dmg  = dmgToApply,
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = "Snake Biting " + tar.sName
                 });
             }
@@ -71,7 +71,7 @@ public class ActionSnakeLaunch : Action {
                     chrTarget = tar,
                     dmg = dmgToApply,
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = "Snake Biting " + tar.sName
                 });
             }
@@ -84,7 +84,7 @@ public class ActionSnakeLaunch : Action {
                     chrTarget = this.chrSource,
                     nLifeLoss = nLifeLoss,
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = this.chrSource.sName + " has lost her Snakes"
                 });
             }
@@ -97,7 +97,7 @@ public class ActionSnakeLaunch : Action {
                     chrTarget = this.chrSource,
                     nLifeLoss = nLifeLoss,
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = this.chrSource.sName + " has lost her Snakes"
                 });
             }

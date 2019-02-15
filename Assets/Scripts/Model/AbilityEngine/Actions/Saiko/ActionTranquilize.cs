@@ -41,7 +41,7 @@ public class ActionTranquilize : Action {
 
                     GetDuration = () => nStunDuration,
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = chrEnemyBlocker.sName + " is being stunned"
                 });
             }

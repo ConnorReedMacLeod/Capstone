@@ -37,10 +37,9 @@ public class ExecLoseLife : Executable {
 
 
 
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
         chrTarget.ChangeHealth(-nLifeLoss);
 
-        base.Execute();
     }
 }

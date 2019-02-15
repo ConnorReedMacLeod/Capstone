@@ -28,6 +28,25 @@ public class StateChanneling : StateReadiness {
         //The priority of a channeling character should also include the channel time remaining
         return nChannelTime + base.GetPriority();
     }
+
+    //Whenever a potentially invalidating event happens, interrupt this channel if it
+    // actually makes the channel targetting invalid
+    // this should be subcribed to each potentially invalidating subject
+    public void cbInterruptifInvalid(Object target, params object[] args) {
+
+        if (!soulBehaviour.act.LegalTargets()) {
+            //If targetting has become invalid (maybe because someone has died)
+            InterruptChannel();
+
+            //Create a new fatigue state to let our character transition to
+            StateFatigued newState = new StateFatigued(chrOwner);
+
+            //Transition to the new state
+            chrOwner.SetStateReadiness(newState);
+        }
+
+    }
+
     //To be called as part of a stun, before transitioning to the stunned state
     public override void InterruptChannel() {
 
@@ -38,6 +57,11 @@ public class StateChanneling : StateReadiness {
     }
 
     public override void ChangeChanneltime(int _nChange) {
+        if (chrOwner.bDead) {
+            Debug.Log("Tried to change channeltime, but " + chrOwner.sName + " is dead");
+            return;
+        }
+
         //We can actually reduce the channel time if we're in this state
 
         if (_nChange + nChannelTime < 0) {
@@ -61,6 +85,11 @@ public class StateChanneling : StateReadiness {
 
 
     public override void Recharge() {
+        if (chrOwner.bDead) {
+            Debug.Log("Tried to recharge, but " + chrOwner.sName + " is dead");
+            return;
+        }
+
         //If we're channeling, instead of reducing fatigue, we only reduce the channel time
         ContAbilityEngine.Get().AddExec(new ExecChangeChannel() {
             chrSource = null, //This is a game action, so there's no source
@@ -75,12 +104,19 @@ public class StateChanneling : StateReadiness {
 
         chrOwner.soulContainer.ApplySoul(soulBehaviour);
 
+        //TODO:: Add a subscription list of potentially cancelling triggers to listen for a channel
+        // which we can then subcribe cbInterrupifInvalid to
+        Chr.subAllDeath.Subscribe(cbInterruptifInvalid);
+
         //Once we're in this state, let people know that the channel time has taken effect
         chrOwner.subChannelTimeChange.NotifyObs();
 
     }
 
     public override void OnLeave() {
+
+        //TODO:: unsubscribe from all of these cancelling triggers
+        Chr.subAllDeath.UnSubscribe(cbInterruptifInvalid);
 
         chrOwner.soulContainer.RemoveSoul(soulBehaviour);
 

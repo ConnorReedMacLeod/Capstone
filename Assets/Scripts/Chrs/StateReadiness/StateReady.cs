@@ -19,6 +19,11 @@ public class StateReady : StateReadiness {
     }
 
     public override void Recharge() {
+        if (chrOwner.bDead) {
+            Debug.Log("Tried to recharge, but " + chrOwner.sName + " is dead");
+            return;
+        }
+
         Debug.Log("We shouldn't be able to recharge while in the ready state");
     }
 

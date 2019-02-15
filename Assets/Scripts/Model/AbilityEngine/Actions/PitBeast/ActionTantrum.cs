@@ -47,6 +47,9 @@ public class ActionTantrum : Action {
                 //Deal damage to all enemies
                 for (int i = 0; i < enemy.arChr.Length; i++) {
 
+                    //Don't target dead characters
+                    if (enemy.arChr[i].bDead) continue;
+
                     //Make a copy of the damage object to give to the executable
                     Damage dmgToApply = new Damage(dmgEnemy);
                     //Give the damage object its target
@@ -58,7 +61,7 @@ public class ActionTantrum : Action {
                         chrTarget = enemy.arChr[i],
                         dmg = dmgToApply,
 
-                        fDelay = 1.0f,
+                        fDelay = ContTurns.fDelayStandard,
                         sLabel = enemy.arChr[i].sName + " is caught in the tantrum"
                     });
                 }
@@ -78,7 +81,7 @@ public class ActionTantrum : Action {
                         chrTarget = chrSource.plyrOwner.arChr[i],
                         dmg = dmgToApply,
 
-                        fDelay = 1.0f,
+                        fDelay = ContTurns.fDelayStandard,
                         sLabel = chrSource.plyrOwner.arChr[i].sName + " is caught in the tantrum"
                     });
                 }

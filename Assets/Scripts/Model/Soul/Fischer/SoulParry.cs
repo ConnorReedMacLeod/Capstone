@@ -28,7 +28,9 @@ public class SoulParry : Soul {
                     chrSource = this.chrTarget,
                     chrTarget = chrDamager,
 
-                    dmg = dmgToApply
+                    dmg = dmgToApply,
+                    fDelay = ContTurns.fDelayStandard,
+                    sLabel = "Counterattacking"
                 });
             }
         });

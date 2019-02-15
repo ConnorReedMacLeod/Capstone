@@ -51,7 +51,7 @@ public class ActionExplosion : Action {
                         chrSource = this.chrSource,
                         chrTarget = tar.arChr[i],
                         dmg = dmgToApply,
-                        fDelay = 1.0f,
+                        fDelay = ContTurns.fDelayStandard,
                         sLabel = "Exploding"
                     });
                 }

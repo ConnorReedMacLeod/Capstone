@@ -33,9 +33,7 @@ public class ExecCompleteChannel : Executable {
     // This is the end of the section that should be copied and pasted
 
 
-
-
-    public override void Execute() {
+    public override void ExecuteEffect() {
 
 
         StateFatigued newState = new StateFatigued(chrTarget);
@@ -43,10 +41,9 @@ public class ExecCompleteChannel : Executable {
         //Just transition to the fatigued state (which will trigger the channel completion)
         chrTarget.SetStateReadiness(newState);
 
-        fDelay = 1.0f;
+        fDelay = ContTurns.fDelayTurnAction;
         sLabel = chrTarget.sName + " has completed their channel";
 
-        base.Execute();
     }
 
 }
