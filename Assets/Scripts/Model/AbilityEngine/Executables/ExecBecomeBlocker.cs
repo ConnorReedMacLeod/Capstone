@@ -29,7 +29,6 @@ public class ExecBecomeBlocker : Executable {
     }
     // This is the end of the section that should be copied and pasted
 
-
     public override void ExecuteEffect() {
 
         chrTarget.plyrOwner.SetBlocker(chrTarget.id);

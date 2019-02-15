@@ -33,6 +33,11 @@ public class ExecTurnReduceCooldowns : Executable {
     // This is the end of the section that should be copied and pasted
 
 
+    public override bool isLegal() {
+        //Can't invalidate a turn action
+        return true;
+    }
+
 
     public void ReduceCooldowns() {
 

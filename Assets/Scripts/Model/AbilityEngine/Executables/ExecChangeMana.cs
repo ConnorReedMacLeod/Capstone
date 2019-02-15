@@ -52,6 +52,11 @@ public class ExecChangeMana : Executable {
         nAmount = _nAmount;
     }
 
+    public override bool isLegal() {
+        //Currently, there is no way to invalidate giving mana
+        return true;
+    }
+
     public override void ExecuteEffect() {
 
         //Double check that there is no targetted character

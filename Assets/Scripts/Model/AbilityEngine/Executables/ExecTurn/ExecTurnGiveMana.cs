@@ -30,6 +30,10 @@ public class ExecTurnGiveMana : Executable {
     }
     // This is the end of the section that should be copied and pasted
 
+    public override bool isLegal() {
+        //Can't invalidate a turn action
+        return true;
+    }
 
     public void GiveMana() {
         //TODO::Make this only semi-random

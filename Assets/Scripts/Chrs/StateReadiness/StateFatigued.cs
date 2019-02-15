@@ -35,5 +35,6 @@ public class StateFatigued : StateReadiness {
     public override void OnEnter() {
         //Let observers know to start paying attention to the fatigue value now
         chrOwner.subFatigueChange.NotifyObs();
+        chrOwner.subChannelTimeChange.NotifyObs();
     }
 }

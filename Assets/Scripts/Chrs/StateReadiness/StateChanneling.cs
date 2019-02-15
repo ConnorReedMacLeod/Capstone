@@ -38,6 +38,11 @@ public class StateChanneling : StateReadiness {
             //If targetting has become invalid (maybe because someone has died)
             InterruptChannel();
 
+            //Create a new fatigue state to let our character transition to
+            StateFatigued newState = new StateFatigued(chrOwner);
+
+            //Transition to the new state
+            chrOwner.SetStateReadiness(newState);
         }
 
     }

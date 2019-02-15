@@ -32,6 +32,10 @@ public class ExecNull : Executable {
     }
     // This is the end of the section that should be copied and pasted
 
+    public override bool isLegal() {
+        //Can't invalidate a Null action
+        return true;
+    }
 
     public override void ExecuteEffect() {
 

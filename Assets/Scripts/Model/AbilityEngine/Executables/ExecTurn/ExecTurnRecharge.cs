@@ -31,6 +31,11 @@ public class ExecTurnRecharge : Executable {
     // This is the end of the section that should be copied and pasted
 
 
+    public override bool isLegal() {
+        //Can't invalidate a turn action
+        return true;
+    }
+
 
     //Want to stack up a recharge executable (change fatigue/channeltime) for each character one by one
     public void RechargeChars() {
@@ -42,6 +47,7 @@ public class ExecTurnRecharge : Executable {
                 }
 
                 if (Match.Get().arChrs[i][j].bDead) {
+                    Debug.Log("skipping recharge since " + Match.Get().arChrs[i][j].sName + " is dead");
                     continue; //The character's already dead
                 }
 
