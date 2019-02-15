@@ -51,7 +51,7 @@ public class ActionSerenade : Action {
 
                     heal = healToApply,
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = "Healing " + tar.sName
                 });
             }

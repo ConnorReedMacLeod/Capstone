@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnRecharge : Executable {
+public class ExecStartAbility : Executable {
 
+    public Action act; //The action that this marker represents the start of
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -30,42 +31,26 @@ public class ExecTurnRecharge : Executable {
     }
     // This is the end of the section that should be copied and pasted
 
-
     public override bool isLegal() {
-        //Can't invalidate a turn action
+        //For now, this is just a marker to know when the end of a turn is
+        //TODO:: In the future, this marker could check if the ability targetting is still legal,
+        //       and if it's not, pop off items from the top of the stack until it reaches the
+        //       end marker to cancel all effects of the ability
         return true;
+
     }
 
-
-    //Want to stack up a recharge executable (change fatigue/channeltime) for each character one by one
-    public void RechargeChars() {
-
-        for (int i = 0; i < Match.Get().nPlayers; i++) {
-            for (int j = 0; j < Player.MAXCHRS; j++) {
-                if (Match.Get().arChrs[i][j] == null) {
-                    continue; // A character isn't actually here (extra space for characters)
-                }
-
-                if (Match.Get().arChrs[i][j].bDead) {
-                    Debug.Log("skipping recharge since " + Match.Get().arChrs[i][j].sName + " is dead");
-                    continue; //The character's already dead
-                }
-
-                //Ask the character's readiness state to tick down its fatigue (or channeltimer as the case may be)
-                Match.Get().arChrs[i][j].curStateReadiness.Recharge();
-
-            }
-        }
+    public ExecStartAbility(Action _act) {
+        act = _act;
+        chrSource = act.chrSource;
     }
 
     public override void ExecuteEffect() {
+        Debug.Log("Notifying that an ability has started");
 
-        RechargeChars();
-
-        ContTurns.Get().SetTurnState(ContTurns.STATETURN.READY);
-
-        sLabel = "Reducing Fatigue/ChannelTimes";
-        fDelay = ContTurns.fDelayTurnAction;
-
+        //Notify everyone that we're just about to start the effects of an ability
+        chrSource.subPreExecuteAbility.NotifyObs(chrSource, act);
+        Chr.subAllPreExecuteAbility.NotifyObs(chrSource, act);
     }
+
 }

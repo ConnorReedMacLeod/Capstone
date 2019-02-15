@@ -69,7 +69,7 @@ public class ActionAmbush : Action {
                     chrTarget = tar,
 
                     dmg = dmgToApply,
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = chrSource.sName + " ambushed " + tar.sName + "!"
                 });
             }

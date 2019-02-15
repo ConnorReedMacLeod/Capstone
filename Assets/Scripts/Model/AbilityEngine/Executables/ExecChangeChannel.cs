@@ -40,7 +40,7 @@ public class ExecChangeChannel : Executable {
     public override void ExecuteEffect() {
         chrTarget.ChangeChanneltime(nAmount);
 
-        fDelay = 0.0f;
+        fDelay = ContTurns.fDelayMinorAction;
         
     }
 

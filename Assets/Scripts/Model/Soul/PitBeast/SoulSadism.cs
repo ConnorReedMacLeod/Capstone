@@ -15,7 +15,7 @@ public class SoulSadism : Soul {
 
             heal = this.heal, //TODO:: Consider if this should be a copy
 
-            fDelay = 1.0f,
+            fDelay = ContTurns.fDelayStandard,
             sLabel = this.chrSource.sName + " is revelling in the pain"
         });
     }

@@ -55,7 +55,7 @@ public class ActionHeal : Action {
 
                     heal = healToApply,
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = "Healing"
                 });
             }

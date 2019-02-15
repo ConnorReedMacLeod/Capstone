@@ -50,7 +50,7 @@ public class ActionStickyBomb : Action {
                     chrTarget = tar,
                     dmg = dmgToApply,
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = tar.sName + " got a bomb thrown at them"
                 });
 
@@ -63,7 +63,7 @@ public class ActionStickyBomb : Action {
                         return new SoulStickyBomb(_chrSource, _chrTarget);
                     },
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = tar.sName + " is stuck with the bomb"
 
                 });

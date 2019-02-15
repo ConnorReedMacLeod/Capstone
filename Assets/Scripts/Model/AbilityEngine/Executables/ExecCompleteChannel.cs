@@ -41,7 +41,7 @@ public class ExecCompleteChannel : Executable {
         //Just transition to the fatigued state (which will trigger the channel completion)
         chrTarget.SetStateReadiness(newState);
 
-        fDelay = 1.0f;
+        fDelay = ContTurns.fDelayTurnAction;
         sLabel = chrTarget.sName + " has completed their channel";
 
     }

@@ -42,7 +42,7 @@ public abstract class Executable {
         } else {
             //If the executable  is legal, then do its effect
 
-            //Put all of this executable's effects onto the stack
+            //Perform all of the effects of the executable
             ExecuteEffect();
 
             //Put our post-trigger effects onto the stack so they'll be executed next

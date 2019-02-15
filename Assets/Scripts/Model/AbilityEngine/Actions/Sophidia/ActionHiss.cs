@@ -51,7 +51,7 @@ public class ActionHiss : Action {
                             return new SoulSpooked(_chrSource, _chrTarget);
                         },
 
-                        fDelay = 1.0f,
+                        fDelay = ContTurns.fDelayStandard,
                         sLabel = "Applying Hiss "
                     });
                 }

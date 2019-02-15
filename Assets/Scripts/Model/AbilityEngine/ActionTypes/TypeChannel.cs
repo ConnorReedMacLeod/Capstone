@@ -22,6 +22,10 @@ public class TypeChannel : TypeAction {
         }
     }
 
+    public override string getName() {
+        return "Channel";
+    }
+
     public override TYPE Type() {
         return TYPE.CHANNEL;
     }

@@ -38,7 +38,7 @@ public class SoulEnvenomed : Soul {
                         chrTarget = this.chrTarget,
                         nLifeLoss = this.nLifeLoss,
 
-                        fDelay = 1.0f,
+                        fDelay = ContTurns.fDelayStandard,
                         sLabel = this.chrTarget.sName + " is Poisoned"
                     });
 

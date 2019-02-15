@@ -25,7 +25,7 @@ public class StateFatigued : StateReadiness {
                 chrSource = null, //Since no character is actually the source of this effect - it's just the game rules
                 chrTarget = chrOwner,
 
-                fDelay = 1.0f,
+                fDelay = ContTurns.fDelayStandard,
                 sLabel = chrOwner.sName + " is Readying"
             });
 
