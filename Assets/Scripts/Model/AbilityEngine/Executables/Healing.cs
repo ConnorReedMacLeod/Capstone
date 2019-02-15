@@ -57,15 +57,15 @@ public class Healing {
 
     }
 
-    public Healing(Healing dmgToCopy) {
+    public Healing(Healing healToCopy) {
         //Copy over all the attributes of the original Damage instance
-        chrSource = dmgToCopy.chrSource;
-        chrTarget = dmgToCopy.chrTarget;
+        chrSource = healToCopy.chrSource;
+        chrTarget = healToCopy.chrTarget;
 
-        GetBase = dmgToCopy.GetBase;
+        GetBase = healToCopy.GetBase;
 
         //Copy the Power fetch method too
-        GetPower = dmgToCopy.GetPower;
+        GetPower = healToCopy.GetPower;
     }
 
 

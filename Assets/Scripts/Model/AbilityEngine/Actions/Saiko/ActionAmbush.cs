@@ -55,6 +55,7 @@ public class ActionAmbush : Action {
 
         Chr tar = ((TargetArgChr)arArgs[0]).chrTar; //Cast our first target to a ChrTarget and get that Chr
 
+
         ContAbilityEngine.Get().AddClause(new Clause() {
             fExecute = () => {
 

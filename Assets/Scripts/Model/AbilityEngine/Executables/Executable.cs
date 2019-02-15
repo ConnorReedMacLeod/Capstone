@@ -12,6 +12,8 @@ public abstract class Executable {
 
     public bool bPreTriggered;
 
+    public bool bCancelSourceDies;
+
     
 
     public abstract Subject GetPreTrigger();
@@ -20,12 +22,12 @@ public abstract class Executable {
     public abstract List<Replacement> GetFullReplacements();
 
     public virtual bool isLegal() {
-        if (chrSource.bDead) {
+        if (bCancelSourceDies && chrSource != null && chrSource.bDead) {
             Debug.Log("Executable of type  " + this.GetType().ToString() + " not legal since " + chrSource.sName + "(source) is dead");
             return false;
         }
 
-        if (chrTarget.bDead) {
+        if (chrTarget != null && chrTarget.bDead) {
             Debug.Log("Executable of type  " + this.GetType().ToString() + " not legal since " + chrSource.sName + "(target) is dead");
             return false;
         }
@@ -37,14 +39,16 @@ public abstract class Executable {
         if (isLegal() == false) {
             Debug.Log("Executable of type  " + this.GetType().ToString() + " has been cancelled since it's no longer legal");
 
-            return;
+        } else {
+            //If the executable  is legal, then do its effect
+
+            //Put all of this executable's effects onto the stack
+            ExecuteEffect();
+
+            //Put our post-trigger effects onto the stack so they'll be executed next
+            GetPostTrigger().NotifyObs(null, this);
+
         }
-
-        //Put our post-trigger effects onto the stack so they're under the executable's effects
-        GetPostTrigger().NotifyObs(null, this);
-
-        //Put all of this executable's effects onto the stack
-        ExecuteEffect();
 
         //Now that we've done our thing, let the engine know to start processing the next thing
         ContAbilityEngine.Get().InvokeProcessStack(fDelay, sLabel);

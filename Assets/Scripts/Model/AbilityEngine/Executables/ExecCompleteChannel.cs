@@ -33,8 +33,6 @@ public class ExecCompleteChannel : Executable {
     // This is the end of the section that should be copied and pasted
 
 
-
-
     public override void ExecuteEffect() {
 
 

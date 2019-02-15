@@ -46,6 +46,11 @@ public class ExecTurnReady : Executable {
         }
     }
 
+    public override bool isLegal() {
+        //Can't invalidate a turn action
+        return true;
+    }
+
     public override void ExecuteEffect() {
 
         ReadyAll();
