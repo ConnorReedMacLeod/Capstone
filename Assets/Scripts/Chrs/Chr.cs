@@ -164,8 +164,6 @@ public class Chr : MonoBehaviour {
 
     public void RechargeActions() {
 
-        Debug.Log("Reducing cooldowns for " + sName);
-
         for (int i = 0; i < Chr.nActions; i++) {
 
             //Only reduce the cooldown if it is not currently off cooldown
@@ -177,7 +175,7 @@ public class Chr : MonoBehaviour {
                     nAmount = -1,
                     actTarget = arActions[i],
 
-                    fDelay = 0f
+                    fDelay = ContTurns.fDelayMinorAction
                 });
             }
         }
@@ -360,9 +358,6 @@ public class Chr : MonoBehaviour {
         bSetAction = false;
 		nUsingAction = 7;//TODO:: Make this consistent
         
-        //Notify everyone that we've just used an ability
-        subPostExecuteAbility.NotifyObs(this, actToUse);
-        subAllPostExecuteAbility.NotifyObs(this, actToUse);
 	}
 
     //Checks if the character's selected action is ready and able to be performed

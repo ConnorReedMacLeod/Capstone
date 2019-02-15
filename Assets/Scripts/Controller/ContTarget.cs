@@ -90,7 +90,7 @@ public class ContTarget : MonoBehaviour {
 
 			// Can now go back idle and wait for the next targetting
 			SetState (new StateTargetIdle (this));
-			Debug.Log ("Targetting finished");
+			//Debug.Log ("Targetting finished");
 
             //Let everything know that targetting has ended
             subAllFinishTargetting.NotifyObs(this);

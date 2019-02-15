@@ -70,7 +70,7 @@ public class ExecChangeMana : Executable {
             plyrTarget.mana.AddMana(arnAmount);
         }
         
-        fDelay = 0.0f;
+        fDelay = ContTurns.fDelayMinorAction;
         sLabel = "Changing mana for player " + plyrTarget.id;
 
     }

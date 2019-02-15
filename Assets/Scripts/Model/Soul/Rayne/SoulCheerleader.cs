@@ -28,7 +28,7 @@ public class SoulCheerleader : Soul {
                 return soulPowerBuff;
             },
 
-            fDelay = 1.0f,
+            fDelay = ContTurns.fDelayStandard,
             sLabel = chrAlly.sName + " is inspired by " + this.chrSource.sName
         });
     }

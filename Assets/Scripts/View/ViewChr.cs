@@ -182,6 +182,12 @@ public class ViewChr : ViewInteractive {
             return;
         }
 
+        if (mod.curStateReadiness.Type() == StateReadiness.TYPE.DEAD) {
+            Debug.Log("We shouldn't show fatigue when dead");
+            txtFatigue.text = "";
+            return;
+        }
+
         //Otherwise, then show a non-zero fatigue value
         if (mod.nFatigue > 0) {
             txtFatigue.text = mod.nFatigue.ToString();

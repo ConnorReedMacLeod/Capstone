@@ -53,7 +53,7 @@ public class ExecTurnGiveMana : Executable {
         ContTurns.Get().SetTurnState(ContTurns.STATETURN.TURNSTART);
 
         sLabel = "Giving Mana";
-        fDelay = 1.0f;
+        fDelay = ContTurns.fDelayTurnAction;
 
     }
 }

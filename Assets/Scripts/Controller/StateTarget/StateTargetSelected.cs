@@ -26,7 +26,7 @@ public class StateTargetSelected : StateTarget {
 
     public void ChooseAction(Action actChosen) {
         // When we've clicked an action, use that action
-        Debug.Log(actChosen + " is being used");
+        //Debug.Log(actChosen + " is is being targetted");
 
         // But first, check if targetting is locked
         if (actChosen.chrSource.bLockedTargetting) {

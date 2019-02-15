@@ -41,7 +41,7 @@ public class ActionForcedEvolution : Action {
 
                     },
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = sName + " is evolving"
                 });
             }
@@ -54,7 +54,7 @@ public class ActionForcedEvolution : Action {
                     chrTarget = this.chrSource,
                     nLifeLoss = 5,
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = this.chrSource.sName + " is going berserk"
                 });
             }

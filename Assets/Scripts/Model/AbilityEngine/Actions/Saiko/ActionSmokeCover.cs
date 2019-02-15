@@ -43,7 +43,7 @@ public class ActionSmokeCover : Action {
 
                     },
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = "Applying SmokeCover"
                 });
             }

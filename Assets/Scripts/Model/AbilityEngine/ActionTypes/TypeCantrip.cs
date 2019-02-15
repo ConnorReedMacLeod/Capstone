@@ -10,6 +10,10 @@ public class TypeCantrip : TypeAction {
 
     }
 
+    public override string getName() {
+        return "Cantrip";
+    }
+
     public override TYPE Type() {
         return TYPE.CANTRIP;
     }

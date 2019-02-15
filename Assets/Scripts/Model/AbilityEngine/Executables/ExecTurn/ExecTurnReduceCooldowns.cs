@@ -65,7 +65,7 @@ public class ExecTurnReduceCooldowns : Executable {
         ContTurns.Get().SetTurnState(ContTurns.STATETURN.GIVEMANA);
 
         sLabel = "Reducing Cooldowns";
-        fDelay = 0.5f;
+        fDelay = ContTurns.fDelayTurnAction;
 
     }
 }

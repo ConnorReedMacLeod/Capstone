@@ -61,7 +61,7 @@ public class ActionTantrum : Action {
                         chrTarget = enemy.arChr[i],
                         dmg = dmgToApply,
 
-                        fDelay = 1.0f,
+                        fDelay = ContTurns.fDelayStandard,
                         sLabel = enemy.arChr[i].sName + " is caught in the tantrum"
                     });
                 }
@@ -81,7 +81,7 @@ public class ActionTantrum : Action {
                         chrTarget = chrSource.plyrOwner.arChr[i],
                         dmg = dmgToApply,
 
-                        fDelay = 1.0f,
+                        fDelay = ContTurns.fDelayStandard,
                         sLabel = chrSource.plyrOwner.arChr[i].sName + " is caught in the tantrum"
                     });
                 }

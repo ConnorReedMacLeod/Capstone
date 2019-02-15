@@ -41,7 +41,7 @@ public class ExecTurnEndTurn : Executable {
         ContTurns.Get().SetTurnState(ContTurns.STATETURN.RECHARGE);
 
         sLabel = "End of Turn";
-        fDelay = 0.5f;
+        fDelay = ContTurns.fDelayTurnAction;
 
     }
 }

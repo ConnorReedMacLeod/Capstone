@@ -110,7 +110,7 @@ public class ViewAction : ViewInteractive {
         if (mod == null) {
             txtType.text = "";
         } else {
-            txtType.text = "[" + mod.type.ToString() + "]";
+            txtType.text = "[" + mod.type.getName() + "]";
         }
     }
 

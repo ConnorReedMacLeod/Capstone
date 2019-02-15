@@ -47,7 +47,7 @@ public class ActionSadism : Action {
                         return soulPassive;
                     },
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = chrSource.sName + " is sadistic"
                 });
             }
@@ -67,7 +67,7 @@ public class ActionSadism : Action {
 
                     soulToRemove = this.soulPassive,
 
-                    fDelay = 1.0f,
+                    fDelay = ContTurns.fDelayStandard,
                     sLabel = chrSource.sName + " is no longer sadistic"
                 });
             }

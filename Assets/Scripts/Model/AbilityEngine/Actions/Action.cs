@@ -157,8 +157,16 @@ public class Action { //This should probably be made abstract
         //First pay the mana cost for the action
         PayManaCost();
 
-        //Let the type of this action dictate the behaviour
+        //Add a marker for the end of the ability below all of the effects for this ability
+        ContAbilityEngine.Get().AddClause(new ClauseEndAbility(this));
+
+        //Let the type of this action dictate the behaviour and push all relevant effects onto the stack
         type.UseAction();
+
+        //Add a marker on top for where the ability starts
+        ContAbilityEngine.Get().AddClause(new ClauseStartAbility(this));
+
+
     }
 
     // Perform the actual effect this action should do

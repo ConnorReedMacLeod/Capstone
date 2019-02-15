@@ -181,7 +181,7 @@ public class ContAbilityEngine : MonoBehaviour {
             //to process replacement and pre-trigger effects
             if (!stackExec.Peek().bPreTriggered) {
 
-                Debug.Log("Performing Replacement effects and Pre-Triggers");
+                //Debug.Log("Performing Replacement effects and Pre-Triggers");
 
                 //Pop off the top element
                 Executable top = stackExec.Pop();
@@ -255,7 +255,7 @@ public class ContAbilityEngine : MonoBehaviour {
 
             Invoke("AutoProcessStacks", fDelay);
         } else {
-            Debug.Log("Manually executing " + sLabel);
+            //Debug.Log("Manually executing " + sLabel);
             //Then we're doing manual execution - still spawn a quick timer to show what we're processing right now
 
             if(fDelay == 0.0f) {

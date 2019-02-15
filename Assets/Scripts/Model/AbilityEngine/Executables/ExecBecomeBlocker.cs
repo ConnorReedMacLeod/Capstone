@@ -33,7 +33,7 @@ public class ExecBecomeBlocker : Executable {
 
         chrTarget.plyrOwner.SetBlocker(chrTarget.id);
 
-        fDelay = 1.0f;
+        fDelay = ContTurns.fDelayMinorAction;
         sLabel = chrTarget.sName + " has become the blocker";
 
     }
