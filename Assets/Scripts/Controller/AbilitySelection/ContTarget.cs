@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//TODO:: Make a static instance of this
-
 public class ContTarget : MonoBehaviour {
 
 	public StateTarget curState;
@@ -18,7 +16,7 @@ public class ContTarget : MonoBehaviour {
     public static Subject subAllFinishTargetting = new Subject();
 
     //TODO CHANGE ALL .Get() calls in other classes to use properties
-    //     so the syntax isn't as gross
+    //     so the syntax isn't as gross.  Or just directly use static methods
 
     public static ContTarget Get() {
         if (instance == null) {
