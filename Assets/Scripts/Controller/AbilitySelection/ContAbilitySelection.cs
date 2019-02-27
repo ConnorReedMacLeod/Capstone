@@ -42,6 +42,7 @@ public class ContAbilitySelection : MonoBehaviour {
         //At this point, we can start the selection process, and notify the controller
         // of the owner of the currently acting character
         bSelectingAbility = true;
+        chrCurActing.plyrOwner.inputController.StartSelection();
 
     }
 
@@ -50,14 +51,22 @@ public class ContAbilitySelection : MonoBehaviour {
         fSelectionTimer = 0.0f;
     }
 
-    public void SubmitAbility(int indexAbility, int indexTargetting) {
+    public void SubmitAbility(int indexAbility, int[] indexTargetting) {
 
         //TODONOW
-        // fill in the targetting info for the indexAbility'th ability
-        // with the indexTargetting target
-        // then confirm that the target is valid
+        ContTurns.Get().GetNextActingChr().nUsingAction = indexAbility;
 
-        // if not valid, then reset to a rest action
+        // fill in the targetting info for the indexAbility'th ability
+        // with the indexTargetting targets
+        ContTurns.Get().GetNextActingChr().arActions[indexAbility].SetTargettingArgs(indexTargetting);
+
+        // then confirm that the target is valid
+        if (ContTurns.Get().GetNextActingChr().arActions[indexAbility].LegalTargets() == false) {
+            
+            //If the targetting isn't valid
+        }
+
+
 
         //either way, call the ProcessStack function (on an empty stack)
         //which will put an execExecuteAction on the stack

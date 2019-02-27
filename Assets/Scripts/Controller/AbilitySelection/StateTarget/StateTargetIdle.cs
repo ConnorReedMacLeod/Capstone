@@ -10,16 +10,16 @@ public class StateTargetIdle : StateTarget {
 
     public void cbClickChar(Object target, params object[] args) {
 
-        contTarg.selected = ((ViewChr)target).mod;
+        inputHuman.selected = ((ViewChr)target).mod;
 
-        contTarg.SetState(new StateTargetSelected(contTarg));
+        inputHuman.SetState(new StateTargetSelected(inputHuman));
     }
 
 	override public void OnEnter(){
-		if (contTarg.selected != null) {
-			contTarg.selected.Idle ();
+		if (inputHuman.selected != null) {
+			inputHuman.selected.Idle ();
 		}		
-		contTarg.selected = null;
+		inputHuman.selected = null;
         ViewChr.subAllClick.Subscribe(cbClickChar);
     }
 
@@ -27,7 +27,7 @@ public class StateTargetIdle : StateTarget {
         ViewChr.subAllClick.UnSubscribe(cbClickChar);
     }
 
-    public StateTargetIdle(ContTarget _contTarg): base(_contTarg){
+    public StateTargetIdle(InputHuman _inputHuman) : base(_inputHuman) {
 
 	}
 

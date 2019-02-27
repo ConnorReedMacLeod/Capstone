@@ -8,25 +8,20 @@ public class TargetArgPos : TargetArg {
 	public delegate bool funcLegalPos (Chr own, Vector3 v3Tar);
 	funcLegalPos fLegalCheck;
 
-	//WARNING: This feels like it should be shared among TargetArgs but it isn't
-	public bool setTar(Vector3 _v3Tar){
-		Vector3 chrOldTar = v3Tar;
-		v3Tar = _v3Tar;
-		if (VerifyLegal ()) {
-			return true; //the targetting was successful
-		} else {
-			v3Tar = chrOldTar;
-			return false; //bad target
-		}
+    public override void SetTarget(int indexTarget) {
+        throw new System.NotImplementedException();
+    }
 
-	}
-
-	public TargetArgPos(funcLegalPos _fLegalCheck){
+    public TargetArgPos(funcLegalPos _fLegalCheck){
 		fLegalCheck = _fLegalCheck;
 
 	}
 
-	public override bool VerifyLegal(){
+    public override bool CurrentlyLegal() {
+        throw new System.NotImplementedException();
+    }
+
+    public override bool VerifyLegal(int indexTarget){
 		return fLegalCheck (chrOwner, v3Tar);
 	}
 

@@ -53,9 +53,13 @@ public class ExecTurnChooseActions : Executable {
             //Ensure only the currently acting character can select actions
             ContTurns.Get().GetNextActingChr().UnlockTargetting();
 
-            //Prepare to execute the action that they willl have selected
+            //Prepare to execute the action that they will have selected
             ContTurns.Get().SetTurnState(ContTurns.STATETURN.EXECUTEACTIONS);
 
+            //Let the controller for ability selection know that it should start selecting an ability
+            ContAbilitySelection.Get().StartSelection();
+
+            //TODO:: Ensure that there's no automatic delay when in auto-turns - eventually abolish auto-turns
             sLabel = "Select Your Action for " + ContTurns.Get().GetNextActingChr().sName;
             fDelay = ContTurns.fDelayChooseAction;
         }

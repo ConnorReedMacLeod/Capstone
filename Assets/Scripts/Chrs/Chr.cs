@@ -29,8 +29,10 @@ public class Chr : MonoBehaviour {
 	public string sName;			//The name of the character
 	public Player plyrOwner;        //The player who controls the character
 
+    public static Chr[] arAllChrs;  //A static list of all characters
 
-    public int id;                  //The character's unique identifier
+    public int globalid;            //The character's unique identifier across all characters
+    public int id;                  //The character's unique identifier for this team
     public int nFatigue;            //Number of turns a character must wait before their next action
     public StateReadiness curStateReadiness; //A reference to the current state of readiness
 
@@ -102,6 +104,14 @@ public class Chr : MonoBehaviour {
         if (curStateReadiness != null) {
             curStateReadiness.OnEnter();
         }
+    }
+
+    public static void RegisterChr(Chr chr) {
+        if(arAllChrs == null) {
+            arAllChrs = new Chr[Player.MAXCHRS * Player.MAXCHRS];
+        }
+
+        arAllChrs[chr.globalid] = chr;
     }
 
     public void ChangeChanneltime(int _nChange) {
@@ -422,6 +432,8 @@ public class Chr : MonoBehaviour {
     public void InitChr(Player _plyrOwner, int _id, BaseChr baseChr){
 		plyrOwner = _plyrOwner;
 		id = _id;
+        globalid = id + plyrOwner.id * Player.MAXCHRS;
+        RegisterChr(this);
 
         SetDefaultActions();
 
@@ -436,7 +448,7 @@ public class Chr : MonoBehaviour {
     // Sets up fundamental class connections for the Chr
 	public void Start(){
 		if (bStarted == false) {
-			bStarted = true;
+            bStarted = true;
 
             nMaxActionsLeft = 1;
 

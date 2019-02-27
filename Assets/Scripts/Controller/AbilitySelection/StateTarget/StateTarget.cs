@@ -6,13 +6,13 @@ using UnityEngine;
 // Can target Chars, (Allies/Any) or Nothing
 abstract public class StateTarget {
 
-	public ContTarget contTarg;
+	public InputHuman inputHuman;
 
 	public virtual void OnEnter (){}
 	public virtual void OnLeave (){}
 
 
-	public StateTarget(ContTarget _contTarg){
-		contTarg = _contTarg;
+	public StateTarget(InputHuman _inputHuman) {
+		inputHuman = _inputHuman;
 	}
 }
