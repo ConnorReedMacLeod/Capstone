@@ -48,6 +48,19 @@ public class Action { //This should probably be made abstract
         }
     }
 
+    public void SetTargettingArgs(int[] lstTargettingIndices) {
+
+        if (lstTargettingIndices.Length != arArgs.Length) {
+            Debug.LogError("Error - supplied list of targets isn't the correct length");
+        }
+
+        //Loop through each targetting argument and give it the assigned targetting index
+        for(int i=0; i<arArgs.Length; i++) {
+            arArgs[i].SetTarget(lstTargettingIndices[i]);
+        }
+
+    }
+
     public void ResetTargettingArgs() {
         for (int i = 0; i < nArgs; i++) {
             arArgs[i].Reset();
@@ -185,7 +198,7 @@ public class Action { //This should probably be made abstract
         }
 
         for (int i = 0; i < nArgs; i++) {
-            if (!arArgs[i].VerifyLegal()) {
+            if (!arArgs[i].CurrentlyLegal()) {
                 Debug.Log("Argument " + i + " was invalid");
                 return false;
             }

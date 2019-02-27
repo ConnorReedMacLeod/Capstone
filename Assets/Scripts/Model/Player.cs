@@ -15,11 +15,23 @@ public class Player : MonoBehaviour{
 
     public int iBlocker; // the index of the currently selected blocker
 
+    public static Player[] arAllPlayers;
 	public GameObject pfManaPanel;
+
+    public InputAbilitySelection inputController;
 
 	public Mana mana;
 
-	public void setChrs(){
+
+    public static void RegisterPlayer(Player plyr) {
+        if (arAllPlayers == null) {
+            arAllPlayers = new Player[Player.MAXCHRS];
+        }
+
+        arAllPlayers[plyr.id] = plyr;
+    }
+
+    public void setChrs(){
         //placeholder until character selection is available
 
         nChrs = 3;
@@ -44,6 +56,19 @@ public class Player : MonoBehaviour{
 	public void SetID(int _id){
 		id = _id;
 	}
+
+    public void SetInputType() {
+        if(id == 0) {
+            //Then we want the player to control this player's selection
+            //TODO NOW: FILL THIS IN WITH A HUMAN INPUT CONTROLLER
+        } else {
+            //Then we want a script to control this player's selection
+            inputController = gameObject.AddComponent<InputScripted>();
+        }
+
+        //Let the controller know which player its representing
+        inputController.SetOwner(this);
+    }
 
     public void SetDefaultBlocker() {
 

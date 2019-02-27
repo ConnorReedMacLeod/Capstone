@@ -9,26 +9,22 @@ public class TargetArgChr : TargetArg {
 	public delegate bool funcLegalChr (Chr own, Chr arg);
 	public funcLegalChr fLegalCheck;
 
-	//WARNING: This feels like it should be shared among TargetArgs but it isn't
-	public bool setTar(Chr _chrTar){
-		Chr chrOldTar = chrTar;
-		chrTar = _chrTar;
-		if (VerifyLegal ()) {
-			return true; //the targetting was successful
-		} else {
-			chrTar = chrOldTar;
-			return false; //bad target
-		}
 
-	}
+    public override void SetTarget(int indexTarget) {
+        chrTar = Chr.arAllChrs[indexTarget];
+    }
 
-	public TargetArgChr(funcLegalChr _fLegalCheck){
+    public TargetArgChr(funcLegalChr _fLegalCheck){
 		fLegalCheck = _fLegalCheck;
 
 	}
 
-	public override bool VerifyLegal(){
-		return chrTar.bDead == false && fLegalCheck (chrOwner, chrTar);
+    public override bool CurrentlyLegal() {
+        return chrTar.bDead == false && chrTar != null && fLegalCheck(chrOwner, chrTar);
+    }
+
+    public override bool VerifyLegal(int indexTarget){
+		return chrTar.bDead == false && fLegalCheck (chrOwner, Chr.arAllChrs[indexTarget]);
 	}
 
 	public override void Reset(){
