@@ -244,8 +244,8 @@ public class ContAbilityEngine : MonoBehaviour {
     }
 
     //Other classes can call this to invoke the ProcessStack method after a delay
-    public void InvokeProcessStack(float fDelay, string sLabel) {
-        if (bAutoTurns) {
+    public void InvokeProcessStack(float fDelay, string sLabel, bool bCancelInvoke) {
+        if (bAutoTurns && bCancelInvoke == false) {
 
             if (fDelay > 0) {
                 //Check if we need to spawn a timer

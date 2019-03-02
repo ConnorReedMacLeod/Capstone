@@ -39,6 +39,9 @@ public class ContAbilitySelection : MonoBehaviour {
             Debug.LogError("Error! Can't select actions if no character is set to act");
         }
 
+        //Ensure only the currently acting character can select actions
+        chrCurActing.UnlockTargetting();
+
         //At this point, we can start the selection process, and notify the controller
         // of the owner of the currently acting character
         bSelectingAbility = true;
@@ -53,7 +56,7 @@ public class ContAbilitySelection : MonoBehaviour {
 
     public void SubmitAbility(int indexAbility, int[] indexTargetting) {
 
-        //TODONOW
+        //Actually fill in the character's selected ability
         ContTurns.Get().GetNextActingChr().nUsingAction = indexAbility;
 
         // fill in the targetting info for the indexAbility'th ability
@@ -62,14 +65,20 @@ public class ContAbilitySelection : MonoBehaviour {
 
         // then confirm that the target is valid
         if (ContTurns.Get().GetNextActingChr().arActions[indexAbility].LegalTargets() == false) {
-            
-            //If the targetting isn't valid
+
+            //If the targetting isn't valid, get the input for the current character, and let them know they
+            // submitted a bad ability
+            ContTurns.Get().GetNextActingChr().plyrOwner.inputController.GaveInvalidTarget();
+
+            ContTurns.Get().GetNextActingChr().ResetSelectedAction();
+
+            //Just return and wait for a better selection
+            return;
         }
 
-
-
-        //either way, call the ProcessStack function (on an empty stack)
+        //If we've successfully selected an action, call the ProcessStack function (on an empty stack)
         //which will put an execExecuteAction on the stack
+        ContAbilityEngine.Get().ProcessStacks();
 
     }
 
@@ -80,6 +89,15 @@ public class ContAbilitySelection : MonoBehaviour {
 
             if(fSelectionTimer >= fMaxSelectionTime) {
                 //Then the time has expired 
+
+                //Consider if we need to have some cancel-targetting call here
+
+                Debug.Assert(ContTurns.Get().GetNextActingChr().bSetAction == false);
+
+                EndSelection();
+
+                ContAbilityEngine.Get().ProcessStacks();
+
             }
         }
 

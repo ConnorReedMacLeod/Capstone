@@ -23,7 +23,7 @@ public class TargetArgChr : TargetArg {
         return chrTar.bDead == false && chrTar != null && fLegalCheck(chrOwner, chrTar);
     }
 
-    public override bool VerifyLegal(int indexTarget){
+    public override bool WouldBeLegal(int indexTarget){
 		return chrTar.bDead == false && fLegalCheck (chrOwner, Chr.arAllChrs[indexTarget]);
 	}
 

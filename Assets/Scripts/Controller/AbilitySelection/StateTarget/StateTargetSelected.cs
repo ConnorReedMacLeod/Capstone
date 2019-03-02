@@ -47,7 +47,7 @@ public class StateTargetSelected : StateTarget {
 
         inputHuman.selected.Targetting();
         
-        inputHuman.selected.nUsingAction = actChosen.id;
+        inputHuman.nSelectedAbility = actChosen.id;
 
         // TODO:: Save the current targets if there are any, so that you can 
         // revert to those targets if you've failed targetting
