@@ -21,7 +21,7 @@ public class TargetArgTeam : TargetArg {
         return fLegalCheck(chrOwner, plyrTar);
     }
 
-    public override bool VerifyLegal(int indexTarget) {
+    public override bool WouldBeLegal(int indexTarget) {
         return fLegalCheck(chrOwner, Player.arAllPlayers[indexTarget]);
     }
 

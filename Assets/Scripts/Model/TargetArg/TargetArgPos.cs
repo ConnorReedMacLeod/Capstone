@@ -21,7 +21,7 @@ public class TargetArgPos : TargetArg {
         throw new System.NotImplementedException();
     }
 
-    public override bool VerifyLegal(int indexTarget){
+    public override bool WouldBeLegal(int indexTarget){
 		return fLegalCheck (chrOwner, v3Tar);
 	}
 

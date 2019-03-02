@@ -106,6 +106,14 @@ public class Chr : MonoBehaviour {
         }
     }
 
+    public int GetTargettingId() {
+        return globalid;
+    }
+
+    public static Chr GetTargetByIndex(int ind) {
+        return arAllChrs[ind];
+    }
+
     public static void RegisterChr(Chr chr) {
         if(arAllChrs == null) {
             arAllChrs = new Chr[Player.MAXCHRS * Player.MAXCHRS];
@@ -362,11 +370,11 @@ public class Chr : MonoBehaviour {
         subAllPreExecuteAbility.NotifyObs(this, actToUse);
 
         //Actually use the action
-        arActions [nUsingAction].UseAction ();
+        actToUse.UseAction ();
 
         //Reset your selection information
         bSetAction = false;
-		nUsingAction = 7;//TODO:: Make this consistent
+		nUsingAction = -1;//TODO:: Make this consistent
         
 	}
 
@@ -385,6 +393,14 @@ public class Chr : MonoBehaviour {
 		bSetAction = true;
 		nUsingAction = idResting;
 	}
+
+    public void ResetSelectedAction() {
+        if (nUsingAction != -1) {
+            arActions[nUsingAction].ResetTargettingArgs();
+        }
+        bSetAction = false;
+        nUsingAction = -1;
+    }
 
     //By default, set all character actions to resting
     public virtual void SetDefaultActions() {//TODO:: probably add some parameter for this at some point like an array of ids

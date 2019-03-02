@@ -24,7 +24,7 @@ public class TargetArgAlly : TargetArgChr {
         return base.CurrentlyLegal();
     }
 
-    public override bool VerifyLegal(int indexTarget) {
+    public override bool WouldBeLegal(int indexTarget) {
         if (chrOwner.plyrOwner != Chr.arAllChrs[indexTarget].plyrOwner) {
             Debug.Log("Bad Target - You need to target an allied character");
             return false;
@@ -34,6 +34,6 @@ public class TargetArgAlly : TargetArgChr {
         }
 
         //Try the base checks for any character targetting
-        return base.VerifyLegal(indexTarget);
+        return base.WouldBeLegal(indexTarget);
     }
 }

@@ -23,6 +23,14 @@ public class Player : MonoBehaviour{
 	public Mana mana;
 
 
+    public int GetTargettingId() {
+        return id;
+    }
+
+    public static Player GetTargetByIndex(int ind) {
+        return arAllPlayers[ind];
+    }
+
     public static void RegisterPlayer(Player plyr) {
         if (arAllPlayers == null) {
             arAllPlayers = new Player[Player.MAXCHRS];
@@ -60,7 +68,7 @@ public class Player : MonoBehaviour{
     public void SetInputType() {
         if(id == 0) {
             //Then we want the player to control this player's selection
-            //TODO NOW: FILL THIS IN WITH A HUMAN INPUT CONTROLLER
+            inputController = gameObject.AddComponent<InputHuman>();
         } else {
             //Then we want a script to control this player's selection
             inputController = gameObject.AddComponent<InputScripted>();

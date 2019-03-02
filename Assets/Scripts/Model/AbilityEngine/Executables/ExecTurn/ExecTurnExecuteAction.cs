@@ -41,7 +41,6 @@ public class ExecTurnExecuteAction : Executable {
         //We assume that we have just come from choosing an action, so get that character
         Chr chrNextToAct = ContTurns.Get().GetNextActingChr();
 
-        ContTarget.Get().CancelTar(); // If you're in the middle of targetting an ability, cancel that targetting
         chrNextToAct.LockTargetting(); // Lock that character so they can't change ability selection
 
         if (chrNextToAct.bSetAction == true) {

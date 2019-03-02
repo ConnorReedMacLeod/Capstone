@@ -16,23 +16,37 @@ public class InputHuman : InputAbilitySelection {
     public static Subject subAllStartTargetting = new Subject();
     public static Subject subAllFinishTargetting = new Subject();
 
-    // Move to selecting the next target
-    public void IncTar(){
-		indexCurTarget++;
-	}
+    public override void StartSelection() {
+        //I don't think anything special needs to be done here
 
-	// Move to selecting the previous target
-	public void DecTar(){
-		indexCurTarget--;
-	}
+    }
 
-	// Start a new round of targetting
-	public void ResetTar(){
+    public override void GaveInvalidTarget() {
+        //If we somehow gave an invalid target, make an error message, then reset our targetting
+        Debug.Log("The human-input gave an invalid target");
+        ResetTar();
+    }
+
+    // Start a new round of targetting
+    public void ResetTar(){
 		indexCurTarget = 0;
         //Clear any previous targetting information we had
         nSelectedAbility = -1;
         arTargetIndices = null;
 
+    }
+
+    public void StoreTargettingIndex(int ind) {
+        //We assume the passed in index would be a legal target
+        
+        //Save a copy of the submitted targetting index
+        arTargetIndices[indexCurTarget] = ind;
+
+        //Then advance to look for the next target
+        indexCurTarget++;
+
+        //Now figure out and move to the next state required for the next target
+        SetTargetArgState();
     }
 
 	// Ends targetting
@@ -45,8 +59,6 @@ public class InputHuman : InputAbilitySelection {
         }
 
 		ResetTar();
-		selected.bSetAction = false;
-		selected.nUsingAction = -1;
 
 		SetState (new StateTargetIdle (this));
 
