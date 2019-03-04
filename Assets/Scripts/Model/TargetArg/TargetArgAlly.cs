@@ -25,7 +25,10 @@ public class TargetArgAlly : TargetArgChr {
     }
 
     public override bool WouldBeLegal(int indexTarget) {
-        if (chrOwner.plyrOwner != Chr.arAllChrs[indexTarget].plyrOwner) {
+        if (indexTarget >= Chr.arAllChrs.Length) {
+            Debug.LogError("Trying to select a character with index " + indexTarget + " that doesn't exist");
+            return false;
+        }else if (chrOwner.plyrOwner != Chr.arAllChrs[indexTarget].plyrOwner) {
             Debug.Log("Bad Target - You need to target an allied character");
             return false;
         } else if (Chr.arAllChrs[indexTarget].bDead == true) {

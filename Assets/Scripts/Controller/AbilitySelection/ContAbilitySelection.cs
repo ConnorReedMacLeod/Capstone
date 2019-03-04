@@ -64,7 +64,8 @@ public class ContAbilitySelection : MonoBehaviour {
         ContTurns.Get().GetNextActingChr().arActions[indexAbility].SetTargettingArgs(indexTargetting);
 
         // then confirm that the target is valid
-        if (ContTurns.Get().GetNextActingChr().arActions[indexAbility].LegalTargets() == false) {
+        if (/* TODONOW:: Insert a check here to make sure the abilitypoint cost is legal (can't use multiple actives)*/
+            ContTurns.Get().GetNextActingChr().arActions[indexAbility].LegalTargets() == false) {
 
             //If the targetting isn't valid, get the input for the current character, and let them know they
             // submitted a bad ability
@@ -75,6 +76,9 @@ public class ContAbilitySelection : MonoBehaviour {
             //Just return and wait for a better selection
             return;
         }
+
+        ContTurns.Get().GetNextActingChr().bSetAction = true;
+        EndSelection();
 
         //If we've successfully selected an action, call the ProcessStack function (on an empty stack)
         //which will put an execExecuteAction on the stack

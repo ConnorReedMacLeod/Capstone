@@ -68,10 +68,13 @@ public class Player : MonoBehaviour{
     public void SetInputType() {
         if(id == 0) {
             //Then we want the player to control this player's selection
-            inputController = gameObject.AddComponent<InputHuman>();
+            //inputController = gameObject.AddComponent<InputHuman>(); IMPORTANT! UNCOMMENT THIS
+            inputController = gameObject.AddComponent<InputScripted>();
+            InputScripted.SetRandomAbilities((InputScripted)inputController);
         } else {
             //Then we want a script to control this player's selection
             inputController = gameObject.AddComponent<InputScripted>();
+            InputScripted.SetRandomAbilities((InputScripted)inputController);
         }
 
         //Let the controller know which player its representing

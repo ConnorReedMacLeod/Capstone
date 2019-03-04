@@ -62,6 +62,10 @@ public class Mana : MonoBehaviour{
 		return AddToPool (type, 1);
 	}
 
+    public bool AddToPool(int indexManaType) {
+        return AddToPool((MANATYPE)indexManaType);
+    }
+
     //For adding any number of mana of one type to player's mana pool
     public bool AddToPool(MANATYPE type, int nAmount){
 
@@ -117,6 +121,16 @@ public class Mana : MonoBehaviour{
 
         return true;
 	}
+
+    public bool HasMana(int nManaType) {
+
+        return HasMana(nManaType, 1);
+
+    }
+
+    public bool HasMana(int nManaType, int nAmount) {
+        return arMana[nManaType] >= nAmount;
+    }
 
     //Checks to see if the player has enough mana total and in their mana pool to pay for a given cost
     public bool HasMana(int[] arCost)
