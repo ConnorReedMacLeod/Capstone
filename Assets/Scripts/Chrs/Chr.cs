@@ -55,6 +55,7 @@ public class Chr : MonoBehaviour {
     public static int nCharacterActions = 8; // Number of non-standard actions
     public int nUsingAction;        //The currently selected action for the character, either targetting or having been queued
 	public bool bSetAction;         //Whether or not the character has an action queued
+    public const int NUSABLEACTIONS = 4; //The number of actions available at a time for a character to use
 
     public const int idResting = 7;  //id for the resting action
     public const int idBlocking = 8; //id for the blocking action

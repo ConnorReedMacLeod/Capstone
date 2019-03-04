@@ -51,7 +51,7 @@ public class Action { //This should probably be made abstract
     public void SetTargettingArgs(int[] lstTargettingIndices) {
 
         if (lstTargettingIndices.Length != arArgs.Length) {
-            Debug.LogError("Error - supplied list of targets isn't the correct length");
+            Debug.Log("Note - supplied list of targets isn't the correct length");
         }
 
         //Loop through each targetting argument and give it the assigned targetting index

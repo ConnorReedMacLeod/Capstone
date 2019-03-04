@@ -22,6 +22,11 @@ public class TargetArgTeam : TargetArg {
     }
 
     public override bool WouldBeLegal(int indexTarget) {
+        if (indexTarget >= Player.MAXPLAYERS) {
+            Debug.LogError("Trying to select a player with index " + indexTarget + " that doesn't exist");
+            return false;
+        }
+
         return fLegalCheck(chrOwner, Player.arAllPlayers[indexTarget]);
     }
 
