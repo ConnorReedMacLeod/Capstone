@@ -228,6 +228,7 @@ public class Action { //This should probably be made abstract
         }
 
         if(LegalTargets() == false) {
+            Debug.Log("Targets aren't legal");
             return false;
         }
 

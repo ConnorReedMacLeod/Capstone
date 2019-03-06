@@ -64,8 +64,8 @@ public class ContAbilitySelection : MonoBehaviour {
         ContTurns.Get().GetNextActingChr().arActions[indexAbility].SetTargettingArgs(indexTargetting);
 
         // then confirm that the target is valid
-        if (/* TODONOW:: Insert a check here to make sure the abilitypoint cost is legal (can't use multiple actives)*/
-            ContTurns.Get().GetNextActingChr().arActions[indexAbility].LegalTargets() == false) {
+        //(checks actionpoint usage, mana, cd, targetting)
+        if (!ContTurns.Get().GetNextActingChr().arActions[indexAbility].CanActivate()) {
 
             //If the targetting isn't valid, get the input for the current character, and let them know they
             // submitted a bad ability
@@ -93,6 +93,7 @@ public class ContAbilitySelection : MonoBehaviour {
 
             if(fSelectionTimer >= fMaxSelectionTime) {
                 //Then the time has expired 
+                Debug.Log("TIME IS UP! NO ABILITY SELECTED! MOVING ON");
 
                 //Consider if we need to have some cancel-targetting call here
 

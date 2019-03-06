@@ -33,21 +33,51 @@ public class InputScripted : InputAbilitySelection {
 
         int nActingChrid = ContTurns.Get().GetNextActingChr().id;
 
-        //Double check that the index we're on for this character is before the end of that character's script
-        if(arIndexTargetting[nActingChrid] >= arTargettingScript.GetLength(1)) {
-            Debug.LogError("ERROR - not enough targetting information stored in this script for this character");
+        Action actToUse;
+        KeyValuePair<int, int[]> nextSelection;
+
+        //Keep looking until we find a valid ability selection
+        while (true) {
+
+            //Double check that the index we're on for this character is before the end of that character's script
+            if (arIndexTargetting[nActingChrid] >= arTargettingScript.GetLength(1)) {
+                Debug.LogError("ERROR - not enough targetting information stored in this script for this character");
+            }
+
+            //Get the current targetting information, then increase the index for next time
+            nextSelection = arTargettingScript[nActingChrid, arIndexTargetting[nActingChrid]];
+            arIndexTargetting[nActingChrid]++;
+
+            actToUse = ContTurns.Get().GetNextActingChr().arActions[nextSelection.Key];
+
+            Debug.Log(ContTurns.Get().GetNextActingChr().sName + " wants chosen to use " +
+                actToUse.sName + " with target index " + nextSelection.Value[0]);
+
+            //Check that the ability isn't on cooldown
+            if (actToUse.nCurCD != 0) {
+                Debug.Log("The action we'd use is currently on CD");
+                continue;  
+            }
+
+            //Check that we're in a readiness state (with enough usable actions left)
+            if (!actToUse.chrSource.curStateReadiness.CanSelectAction(actToUse)) {
+                Debug.Log("The action would not be able to be used given the state we're currently in");
+                continue;
+            }
+
+            if (actToUse.LegalTargets() == false) {
+                Debug.Log("The targets given would not be legal");
+                continue;
+            }
+            break;
         }
 
-        //Get the current targetting information, then increase the index for next time
-        KeyValuePair<int, int[]> nextSelection = arTargettingScript[nActingChrid, arIndexTargetting[nActingChrid]];
-        arIndexTargetting[nActingChrid]++;
+            Debug.Log(ContTurns.Get().GetNextActingChr().sName + " has automatically chosen to use " +
+                actToUse.sName + " with target index " + nextSelection.Value[0]);
 
-        Debug.Log(ContTurns.Get().GetNextActingChr().sName + " has automatically chosen to use " +
-            ContTurns.Get().GetNextActingChr().arActions[nextSelection.Key].sName + " with target index " + nextSelection.Value[0]);
 
         //We now need to ready enough effort mana to pay for the ability
-        AutoPayCost(ContTurns.Get().GetNextActingChr().arActions[nextSelection.Key].parCost.Get());
-
+        actToUse.parCost.Get();
 
         ContAbilitySelection.Get().SubmitAbility(nextSelection.Key, nextSelection.Value);
 
