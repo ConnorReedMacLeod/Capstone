@@ -20,6 +20,7 @@ public class TargetArgChr : TargetArg {
 	}
 
     public override bool CurrentlyLegal() {
+
         return chrTar.bDead == false && chrTar != null && fLegalCheck(chrOwner, chrTar);
     }
 
@@ -29,7 +30,7 @@ public class TargetArgChr : TargetArg {
             return false;
         }
 
-		return chrTar.bDead == false && fLegalCheck (chrOwner, Chr.arAllChrs[indexTarget]);
+		return Chr.arAllChrs[indexTarget].bDead == false && fLegalCheck (chrOwner, Chr.arAllChrs[indexTarget]);
 	}
 
 	public override void Reset(){
