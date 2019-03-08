@@ -31,7 +31,7 @@ public class ActionCacaphony : Action {
         nCriticalBaseDamage = 30;
         //Create a base Damage object that this action will apply
         dmg = new Damage(this.chrSource, null, 
-            () =>  IsCritical()? nCriticalBaseDamage : nBaseDamage);
+            () =>  IsCritical(dmg.chrTarget)? nCriticalBaseDamage : nBaseDamage);
 
         nBaseStun = 2;
         nCriticalStun = 3;
@@ -42,14 +42,13 @@ public class ActionCacaphony : Action {
     }
 
     //Deal critical damage and stun if the targetted character is a blocker
-    public bool IsCritical() {
-        return ((TargetArgChr)arArgs[0]).chrTar != null && ((TargetArgChr)arArgs[0]).chrTar.bBlocker;
+    public bool IsCritical(Chr tarChr) {
+        return (tarChr != null && tarChr.bBlocker);
     }
 
-    override public void Execute() {
-        //It's a bit awkward that you have to do this typecasting, 
-        // but at least it's eliminated from the targetting lambda
-        Chr tar = ((TargetArgChr)arArgs[0]).chrTar;
+    override public void Execute(int[] lstTargettingIndices) {
+
+        Chr tarChr = Chr.GetTargetByIndex(lstTargettingIndices[0]);
 
         
 
@@ -59,37 +58,33 @@ public class ActionCacaphony : Action {
                 //Make a copy of the damage object to give to the executable
                 Damage dmgToApply = new Damage(dmg);
                 //Give the damage object its target
-                dmgToApply.SetChrTarget(tar);
+                dmgToApply.SetChrTarget(tarChr);
+                dmgToApply.SetBase(() => IsCritical(dmgToApply.chrTarget) ? nCriticalBaseDamage : nBaseDamage);
 
                 ContAbilityEngine.Get().AddExec(new ExecStun() {
                     chrSource = this.chrSource,
-                    chrTarget = tar,
+                    chrTarget = tarChr,
 
-                    GetDuration = () => IsCritical() ? nCriticalStun : nBaseStun,
+                    GetDuration = () => IsCritical(tarChr) ? nCriticalStun : nBaseStun,
 
                     fDelay = ContTurns.fDelayStandard,
-                    sLabel = "Stunning " + tar.sName
+                    sLabel = "Stunning " + tarChr.sName
                 });
                 
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
-                    chrTarget = tar,
+                    chrTarget = tarChr,
 
                     dmg = dmgToApply,
 
                     fDelay = ContTurns.fDelayStandard,
-                    sLabel = "Screeching at " + tar.sName
+                    sLabel = "Screeching at " + tarChr.sName
                 });
 
 
 
             }
         });
-
-
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-
-        base.Execute();
     }
 }

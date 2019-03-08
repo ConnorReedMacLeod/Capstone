@@ -33,9 +33,9 @@ public class ActionStickyBomb : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
+    override public void Execute(int[] lstTargettingIndices) {
         //Cast the first target to be a character
-        Chr tar = ((TargetArgChr)arArgs[0]).chrTar;
+        Chr tar = Chr.GetTargetByIndex(lstTargettingIndices[0]);
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
@@ -70,9 +70,6 @@ public class ActionStickyBomb : Action {
             }
         });
 
-
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-        base.Execute();
     }
 
 }

@@ -32,23 +32,23 @@ public class ActionSpiritSlap : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
+    override public void Execute(int[] lstTargettingIndices) {
 
-        Chr tar = chrSource.GetEnemyPlayer().GetBlocker();
+        Chr tarChr = chrSource.GetEnemyPlayer().GetBlocker();
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
                 //Make a copy of the damage object to give to the executable
                 Damage dmgToApply = new Damage(dmg);
                 //Give the damage object its target
-                dmgToApply.SetChrTarget(tar);
+                dmgToApply.SetChrTarget(tarChr);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
-                    chrTarget = tar,
+                    chrTarget = tarChr,
                     dmg = dmgToApply,
                     fDelay = ContTurns.fDelayStandard,
-                    sLabel = tar.sName + " is being slapped"
+                    sLabel = tarChr.sName + " is being slapped"
                 });
             }
         });
@@ -57,23 +57,19 @@ public class ActionSpiritSlap : Action {
             fExecute = () => {
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
-                    chrTarget = tar,
+                    chrTarget = tarChr,
 
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
                         return new SoulDispirited(_chrSource, _chrTarget);
                     },
 
                     fDelay = ContTurns.fDelayStandard,
-                    sLabel = tar.sName + "'s soul is drained"
+                    sLabel = tarChr.sName + "'s soul is drained"
 
                 });
             }
         });
 
-
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-
-        base.Execute();
     }
 
 }

@@ -25,27 +25,21 @@ public class ActionHiss : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
+    override public void Execute(int[] lstTargettingIndices) {
 
-        int indexTargetPlayer = 0;
-        //Ensure we target the other player
-        if (indexTargetPlayer == chrSource.plyrOwner.id) {
-            indexTargetPlayer = 1;
-        }
-
-        Player tar = Match.Get().arPlayers[indexTargetPlayer];
+        Player tarPlyr = chrSource.GetEnemyPlayer();
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                for (int i = 0; i < tar.arChr.Length; i++) {
+                for (int i = 0; i < tarPlyr.arChr.Length; i++) {
 
                     //Don't target dead characters
-                    if (tar.arChr[i].bDead) continue;
+                    if (tarPlyr.arChr[i].bDead) continue;
 
                     //TODO:: Organize this in the correct order
                     ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                         chrSource = this.chrSource,
-                        chrTarget = tar.arChr[i],
+                        chrTarget = tarPlyr.arChr[i],
 
                         funcCreateSoul = (_chrSource, _chrTarget) => {
                             return new SoulSpooked(_chrSource, _chrTarget);
@@ -58,10 +52,6 @@ public class ActionHiss : Action {
             }
         });
 
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-
-
-        base.Execute();
     }
 
 }

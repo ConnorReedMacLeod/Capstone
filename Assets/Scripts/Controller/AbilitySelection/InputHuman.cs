@@ -77,8 +77,6 @@ public class InputHuman : InputAbilitySelection {
 		} else if (indexCurTarget == selected.arActions [nSelectedAbility].nArgs) {
 			//Then we've filled of the targetting arguments
 
-			selected.bSetAction = true;
-
 			// Can now go back idle and wait for the next targetting
 			SetState (new StateTargetIdle (this));
             //Debug.Log ("Targetting finished");

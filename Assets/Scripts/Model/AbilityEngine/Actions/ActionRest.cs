@@ -24,7 +24,7 @@ public class ActionRest : Action {
 
 	}
 
-	override public void Execute(){
+	override public void Execute(int[] lstTargettingIndices) {
 
 		Debug.Log (chrSource.sName + " is resting");
         ContAbilityEngine.Get().AddExec(new ExecChangeFatigue() {
@@ -37,7 +37,6 @@ public class ActionRest : Action {
             sLabel = this.chrSource.sName + " is resting"
         });
 
-		base.Execute ();
 	}
 
 }

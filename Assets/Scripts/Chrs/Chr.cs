@@ -53,8 +53,6 @@ public class Chr : MonoBehaviour {
     public Action[] arActions;      //The characters actions
     public static int nActions = 9; //Number of actions the character can perform
     public static int nCharacterActions = 8; // Number of non-standard actions
-    public int nUsingAction;        //The currently selected action for the character, either targetting or having been queued
-	public bool bSetAction;         //Whether or not the character has an action queued
     public const int NUSABLEACTIONS = 4; //The number of actions available at a time for a character to use
 
     public const int idResting = 7;  //id for the resting action
@@ -353,55 +351,30 @@ public class Chr : MonoBehaviour {
     }
 
     //Performs the character's queued action
-	public void ExecuteAction(){
-        if (!ValidAction()) {
+	public void ExecuteAction(int nActionIndex, int[] lstTargettingIndices) {
+        if (!ValidAction(nActionIndex, lstTargettingIndices)) {
             Debug.LogError("ERROR! This ability was targetted, but is no longer a valid action");
-            SetRestAction();
+            nActionIndex = Chr.idResting; //Recover by setting the used action to a rest
         }
 
         //Make a convenient reference to the action to be used
-        Action actToUse = arActions[nUsingAction];
-
-        //TODO:: Probably swap the pre/post trigger timings so that you can put things on the stack
-        //       Maybe for post trigger, have a "blank" executable that's put on the stack as a kind of 
-        //       terminating signal for when a particular ability has finished all its effects
+        Action actToUse = arActions[nActionIndex];
 
         //Notify everyone that we're about to use this action
         subPreExecuteAbility.NotifyObs(this, actToUse);
         subAllPreExecuteAbility.NotifyObs(this, actToUse);
 
         //Actually use the action
-        actToUse.UseAction ();
-
-        //Reset your selection information
-        bSetAction = false;
-		nUsingAction = -1;//TODO:: Make this consistent
+        actToUse.UseAction (lstTargettingIndices);
         
 	}
 
-    //Checks if the character's selected action is ready and able to be performed
-	public bool ValidAction(){
+    //Checks if the proposed action and targetting list would be valid to use (doesn't check mana)
+	public bool ValidAction(int nActionIndex, int[] lstTargettingIndices) {
 		//Debug.Log (bSetAction + " is the setaction");
-		return (bSetAction && arActions [nUsingAction].CanActivate ());
+		return (arActions [nActionIndex].CanActivate (lstTargettingIndices));
 	}
 
-    //Sets character's selected action to Rest
-	public void SetRestAction(){
-		Debug.Log ("Had to reset to a rest action");
-		if (nUsingAction != -1) {
-			arActions [nUsingAction].ResetTargettingArgs ();
-		}
-		bSetAction = true;
-		nUsingAction = idResting;
-	}
-
-    public void ResetSelectedAction() {
-        if (nUsingAction != -1) {
-            arActions[nUsingAction].ResetTargettingArgs();
-        }
-        bSetAction = false;
-        nUsingAction = -1;
-    }
 
     //By default, set all character actions to resting
     public virtual void SetDefaultActions() {//TODO:: probably add some parameter for this at some point like an array of ids
@@ -470,7 +443,6 @@ public class Chr : MonoBehaviour {
             nMaxActionsLeft = 1;
 
             arActions = new Action[nActions];
-            nUsingAction = -1;
 
             stateSelect = STATESELECT.IDLE;
 

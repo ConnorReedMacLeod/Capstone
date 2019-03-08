@@ -8,6 +8,9 @@ public class ContAbilitySelection : MonoBehaviour {
     public float fMaxSelectionTime;
     public float fSelectionTimer;
 
+    public int nSelectedAbility;
+    public int[] lstSelectedTargets;
+
     public static ContAbilitySelection instance;
 
     public static ContAbilitySelection Get() {
@@ -50,34 +53,40 @@ public class ContAbilitySelection : MonoBehaviour {
     }
 
     public void EndSelection() {
+
+        Chr chrCurActing = ContTurns.Get().GetNextActingChr();
+
+        if (chrCurActing != null) {
+            chrCurActing.LockTargetting();
+        }
+
         bSelectingAbility = false;
         fSelectionTimer = 0.0f;
     }
 
     public void SubmitAbility(int indexAbility, int[] indexTargetting) {
 
-        //Actually fill in the character's selected ability
-        ContTurns.Get().GetNextActingChr().nUsingAction = indexAbility;
+        Chr chrActing = ContTurns.Get().GetNextActingChr();
 
-        // fill in the targetting info for the indexAbility'th ability
-        // with the indexTargetting targets
-        ContTurns.Get().GetNextActingChr().arActions[indexAbility].SetTargettingArgs(indexTargetting);
-
-        // then confirm that the target is valid
-        //(checks actionpoint usage, mana, cd, targetting)
-        if (!ContTurns.Get().GetNextActingChr().arActions[indexAbility].CanActivate()) {
-
+        // confirm that the target is valid
+        //(checks actionpoint usage, cd, mana, targetting)
+        if (chrActing.arActions[indexAbility].CanActivate(indexTargetting) == false ||
+            chrActing.arActions[indexAbility].CanPayMana() == false) {
+        
             //If the targetting isn't valid, get the input for the current character, and let them know they
             // submitted a bad ability
             ContTurns.Get().GetNextActingChr().plyrOwner.inputController.GaveInvalidTarget();
-
-            ContTurns.Get().GetNextActingChr().ResetSelectedAction();
 
             //Just return and wait for a better selection
             return;
         }
 
-        ContTurns.Get().GetNextActingChr().bSetAction = true;
+        //If we get this far, then the selecting is valid
+
+        //Save the validly selected abilities
+        nSelectedAbility = indexAbility;
+        lstSelectedTargets = indexTargetting;
+
         EndSelection();
 
         //If we've successfully selected an action, call the ProcessStack function (on an empty stack)
@@ -97,7 +106,8 @@ public class ContAbilitySelection : MonoBehaviour {
 
                 //Consider if we need to have some cancel-targetting call here
 
-                Debug.Assert(ContTurns.Get().GetNextActingChr().bSetAction == false);
+                //Set the used action to be a resting action
+                nSelectedAbility = Chr.idResting;
 
                 EndSelection();
 
