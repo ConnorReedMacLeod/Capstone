@@ -31,25 +31,24 @@ public class ActionExplosion : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
-        //It's a bit awkward that you have to do this typecasting, 
-        // but at least it's eliminated from the targetting lambda
-        Player tar = ((TargetArgTeam)arArgs[0]).plyrTar;
+    override public void Execute(int[] lstTargettingIndices) {
+
+        Player tarPlyr = Player.GetTargetByIndex(lstTargettingIndices[0]);
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
-                for (int i = 0; i < tar.arChr.Length; i++) {
+                for (int i = 0; i < tarPlyr.arChr.Length; i++) {
                     Debug.Log("This Explosion Clause put an ExecDamage on the stack");
 
                     //Make a copy of the damage object to give to the executable
                     Damage dmgToApply = new Damage(dmg);
                     //Give the damage object its target
-                    dmgToApply.SetChrTarget(tar.arChr[i]);
+                    dmgToApply.SetChrTarget(tarPlyr.arChr[i]);
 
                     //TODO:: Organize this in the correct order
                     ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                         chrSource = this.chrSource,
-                        chrTarget = tar.arChr[i],
+                        chrTarget = tarPlyr.arChr[i],
                         dmg = dmgToApply,
                         fDelay = ContTurns.fDelayStandard,
                         sLabel = "Exploding"
@@ -58,10 +57,6 @@ public class ActionExplosion : Action {
             }
         });
 
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-
-
-        base.Execute();
     }
 
 }

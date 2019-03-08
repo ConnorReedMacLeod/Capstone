@@ -35,9 +35,9 @@ public class ActionSnakeLaunch : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
-        //We have to typecast our targetting parameter to the type we expect
-        Chr tar = ((TargetArgChr)arArgs[0]).chrTar;
+    override public void Execute(int[] lstTargettingIndices) {
+
+        Chr tarChr = Chr.GetTargetByIndex(lstTargettingIndices[0]);
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
@@ -45,15 +45,15 @@ public class ActionSnakeLaunch : Action {
                 //Make a copy of the damage object to give to the executable
                 Damage dmgToApply = new Damage(dmg);
                 //Give the damage object its target
-                dmgToApply.SetChrTarget(tar);
+                dmgToApply.SetChrTarget(tarChr);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
-                    chrTarget = tar,
+                    chrTarget = tarChr,
                     dmg  = dmgToApply,
 
                     fDelay = ContTurns.fDelayStandard,
-                    sLabel = "Snake Biting " + tar.sName
+                    sLabel = "Snake Biting " + tarChr.sName
                 });
             }
         });
@@ -64,15 +64,15 @@ public class ActionSnakeLaunch : Action {
                 //Make a copy of the damage object to give to the executable
                 Damage dmgToApply = new Damage(dmg);
                 //Give the damage object its target
-                dmgToApply.SetChrTarget(tar);
+                dmgToApply.SetChrTarget(tarChr);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
-                    chrTarget = tar,
+                    chrTarget = tarChr,
                     dmg = dmgToApply,
 
                     fDelay = ContTurns.fDelayStandard,
-                    sLabel = "Snake Biting " + tar.sName
+                    sLabel = "Snake Biting " + tarChr.sName
                 });
             }
         });
@@ -103,11 +103,6 @@ public class ActionSnakeLaunch : Action {
             }
         });
 
-
-
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-
-        base.Execute();
     }
 
 }

@@ -31,9 +31,9 @@ public class ActionHarpoon : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
+    override public void Execute(int[] lstTargettingIndices) {
 
-        Chr tar = ((TargetArgChr)arArgs[0]).chrTar; //Cast our first target to a ChrTarget and get that Chr
+        Chr tarChr = Chr.GetTargetByIndex(lstTargettingIndices[0]);
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
@@ -41,14 +41,14 @@ public class ActionHarpoon : Action {
                 //Make a copy of the damage object to give to the executable
                 Damage dmgToApply = new Damage(dmg);
                 //Give the damage object its target
-                dmgToApply.SetChrTarget(tar);
+                dmgToApply.SetChrTarget(tarChr);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
-                    chrTarget = tar,
+                    chrTarget = tarChr,
                     dmg = dmgToApply,
                     fDelay = ContTurns.fDelayStandard,
-                    sLabel = tar.sName + " is being Harpooned"
+                    sLabel = tarChr.sName + " is being Harpooned"
                 });
             }
         });
@@ -57,18 +57,14 @@ public class ActionHarpoon : Action {
             fExecute = () => {
                 ContAbilityEngine.Get().AddExec(new ExecBecomeBlocker() {
                     chrSource = this.chrSource,
-                    chrTarget = tar,
+                    chrTarget = tarChr,
 
                     fDelay = ContTurns.fDelayStandard,
-                    sLabel = tar.sName + " has become the blocker"
+                    sLabel = tarChr.sName + " has become the blocker"
                 });
             }
         });
 
-
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-
-        base.Execute();
     }
 
 }

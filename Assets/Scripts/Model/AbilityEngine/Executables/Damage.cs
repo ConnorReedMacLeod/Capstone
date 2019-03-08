@@ -69,6 +69,10 @@ public class Damage {
 
     }
 
+    public void SetBase(LibFunc.Get<int> _GetBase) {
+        GetBase = _GetBase;
+    }
+
     public Damage(Damage dmgToCopy) {
         //Copy over all the attributes of the original Damage instance
         chrSource = dmgToCopy.chrSource;

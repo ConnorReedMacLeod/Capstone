@@ -31,7 +31,7 @@ public class ActionReverberate : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
+    override public void Execute(int[] lstTargettingIndices) {
 
         Player tar = chrSource.GetEnemyPlayer();
 
@@ -60,10 +60,6 @@ public class ActionReverberate : Action {
                 }
             }
         });
-
-
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-        base.Execute();
     }
 
 }

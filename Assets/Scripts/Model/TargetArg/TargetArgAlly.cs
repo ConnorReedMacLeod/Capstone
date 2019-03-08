@@ -8,22 +8,6 @@ public class TargetArgAlly : TargetArgChr {
 
     }
 
-    public override bool CurrentlyLegal() {
-        if(chrTar == null) {
-            Debug.Log("Bad Target - No target set");
-            return false;
-        } else if (chrOwner.plyrOwner != chrTar.plyrOwner) {
-            Debug.Log("Bad Target - You need to target an allied character");
-            return false;
-        } else if (chrTar.bDead == true) {
-            Debug.Log("Bad Target - You can't target a dead character");
-            return false;
-        }
-
-        //Try the base checks for any character targetting
-        return base.CurrentlyLegal();
-    }
-
     public override bool WouldBeLegal(int indexTarget) {
         if (indexTarget >= Chr.arAllChrs.Length) {
             Debug.LogError("Trying to select a character with index " + indexTarget + " that doesn't exist");

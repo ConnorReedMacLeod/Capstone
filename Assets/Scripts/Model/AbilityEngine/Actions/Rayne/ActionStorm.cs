@@ -33,7 +33,7 @@ public class ActionStorm : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
+    override public void Execute(int[] lstTargettingIndices) {
 
         Player enemy = chrSource.GetEnemyPlayer();
 
@@ -75,9 +75,6 @@ public class ActionStorm : Action {
             }
         });
 
-
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-        base.Execute();
     }
 
 }

@@ -53,19 +53,8 @@ public class InputScripted : InputAbilitySelection {
             Debug.Log(ContTurns.Get().GetNextActingChr().sName + " wants chosen to use " +
                 actToUse.sName + " with target index " + nextSelection.Value[0]);
 
-            //Check that the ability isn't on cooldown
-            if (actToUse.nCurCD != 0) {
-                Debug.Log("The action we'd use is currently on CD");
-                continue;  
-            }
-
-            //Check that we're in a readiness state (with enough usable actions left)
-            if (!actToUse.chrSource.curStateReadiness.CanSelectAction(actToUse)) {
-                Debug.Log("The action would not be able to be used given the state we're currently in");
-                continue;
-            }
-
-            if (actToUse.LegalTargets() == false) {
+            //Test to see if this ability would be valid
+            if (actToUse.CanActivate(nextSelection.Value) == false) {
                 Debug.Log("The targets given would not be legal");
                 continue;
             }

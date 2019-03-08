@@ -11,6 +11,7 @@ using UnityEngine;
 public class SoulChannel : Soul {
 
     public Action act; //Store a reference to the action we represent
+    
 
     /// <summary>
     /// Creates a properly configured SoulChannel based on the given Action's Execute method
@@ -31,7 +32,7 @@ public class SoulChannel : Soul {
 
     public void onSuccessfulCompletion() {
         //Use the action's execute method
-        act.Execute();
+        act.Execute(((StateChanneling)chrSource.curStateReadiness).lstStoredTargettingIndices);
 
         //Then give that action's stack of clauses to the Ability Engine to process
         ContAbilityEngine.AddClauseStack(ref act.stackClauses);
@@ -47,7 +48,7 @@ public class SoulChannel : Soul {
 
     public SoulChannel(SoulChannel soulToCopy, Action _act) : base(soulToCopy) {
 
-        //We'll need to copy this field ourselves, since the base constructor doesn't have it
+        //We'll need to copy these field ourselves, since the base constructor doesn't have it
         act = _act;
 
     }

@@ -32,9 +32,9 @@ public class ActionVenemousBite : Action {
         SetArgOwners();
     }        
 
-    override public void Execute() {
+    override public void Execute(int[] lstTargettingIndices) {
 
-        Chr tar = chrSource.GetEnemyPlayer().GetBlocker();
+        Chr tarPlyr = chrSource.GetEnemyPlayer().GetBlocker();
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
@@ -42,14 +42,14 @@ public class ActionVenemousBite : Action {
                 //Make a copy of the damage object to give to the executable
                 Damage dmgToApply = new Damage(dmg);
                 //Give the damage object its target
-                dmgToApply.SetChrTarget(tar);
+                dmgToApply.SetChrTarget(tarPlyr);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
-                    chrTarget = tar,
+                    chrTarget = tarPlyr,
                     dmg = dmgToApply,
                     fDelay = ContTurns.fDelayStandard,
-                    sLabel = tar.sName + " is being bitten"
+                    sLabel = tarPlyr.sName + " is being bitten"
                 });
             }
         });
@@ -58,7 +58,7 @@ public class ActionVenemousBite : Action {
             fExecute = () => {
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
-                    chrTarget = tar,
+                    chrTarget = tarPlyr,
 
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
                         return new SoulEnvenomed(_chrSource, _chrTarget);
@@ -68,10 +68,6 @@ public class ActionVenemousBite : Action {
             }
         });
 
-
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-
-        base.Execute();
     }
 
 }

@@ -41,28 +41,21 @@ public class ExecTurnExecuteAction : Executable {
         //We assume that we have just come from choosing an action, so get that character
         Chr chrNextToAct = ContTurns.Get().GetNextActingChr();
 
-        chrNextToAct.LockTargetting(); // Lock that character so they can't change ability selection
+        //Check if we're resting
+        if (ContAbilitySelection.Get().nSelectedAbility == Chr.idResting &&
+            chrNextToAct.nFatigue > 0) {
+            //If we have a rest action selected, but we have accrued some fatigue
 
-        if (chrNextToAct.bSetAction == true) {
-            //If the character has prepped an action, then we should use it
-            sLabel = chrNextToAct.sName + " is using " + chrNextToAct.arActions[chrNextToAct.nUsingAction].sName;
-            chrNextToAct.ExecuteAction();
-
-        } else {
-            sLabel = chrNextToAct.sName + " has not set an Action";
-
-            if (chrNextToAct.nFatigue == 0 && 
-                ((StateReady)(chrNextToAct.curStateReadiness)).nCurActionsLeft == chrNextToAct.nMaxActionsLeft) {
-                //If the character has 0 fatigue after not using any actives/channels
-                // then we set the character to use a rest action
-
-                //We set up a rest action (that will give 3 fatigue) so that we don't have the same character going next turn
-                chrNextToAct.SetRestAction();
-                chrNextToAct.ExecuteAction();
-            }
-
-            //Then move this character to a fatigued state
+            //Then no action needs to be taken, just leave the character in a fatigued state
+            sLabel = chrNextToAct.sName + " is finished selecting abilities for the turn";
             chrNextToAct.SetStateReadiness(new StateFatigued(chrNextToAct));
+        }else { 
+        
+            //If here, then we're doing a normal action (or a proper rest for 3 turns)
+
+            sLabel = chrNextToAct.sName + " is using " + chrNextToAct.arActions[ContAbilitySelection.Get().nSelectedAbility].sName;
+
+            chrNextToAct.ExecuteAction(ContAbilitySelection.Get().nSelectedAbility, ContAbilitySelection.Get().lstSelectedTargets);
         }
 
         fDelay = ContTurns.fDelayStandard;
