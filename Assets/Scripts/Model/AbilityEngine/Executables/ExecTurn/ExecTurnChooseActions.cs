@@ -39,6 +39,7 @@ public class ExecTurnChooseActions : Executable {
 
 
     public override void ExecuteEffect() {
+        
 
         //First, test if we actually have any character who is ready to act right now
         if(ContTurns.Get().GetNextActingChr() == null) {
@@ -61,8 +62,8 @@ public class ExecTurnChooseActions : Executable {
 
             sLabel = "Select Your Action for " + ContTurns.Get().GetNextActingChr().sName;
             fDelay = ContTurns.fDelayChooseAction;
-        }
 
+        }
 
     }
 }

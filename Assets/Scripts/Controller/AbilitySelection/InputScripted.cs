@@ -6,6 +6,7 @@ public class InputScripted : InputAbilitySelection {
 
     public int[] arIndexTargetting;                         //Holds the current index of the script we're using for each character's next action
     public KeyValuePair<int, int[]>[,] arTargettingScript;
+    public const int MAXTARGETATTEMPTS = 5;
 
     public override void StartSelection() {
 
@@ -35,18 +36,22 @@ public class InputScripted : InputAbilitySelection {
 
         Action actToUse;
         KeyValuePair<int, int[]> nextSelection;
+        int nTargetsTried = 0;
 
         //Keep looking until we find a valid ability selection
         while (true) {
 
             //Double check that the index we're on for this character is before the end of that character's script
             if (arIndexTargetting[nActingChrid] >= arTargettingScript.GetLength(1)) {
-                Debug.LogError("ERROR - not enough targetting information stored in this script for this character");
+                Debug.LogError("ERROR - not enough targetting information stored in this script for this character - resetting");
+                arIndexTargetting[nActingChrid] = 0;
             }
 
             //Get the current targetting information, then increase the index for next time
             nextSelection = arTargettingScript[nActingChrid, arIndexTargetting[nActingChrid]];
             arIndexTargetting[nActingChrid]++;
+            nTargetsTried++;
+            Debug.Log("nTargetsTried is now " + nTargetsTried);
 
             actToUse = ContTurns.Get().GetNextActingChr().arActions[nextSelection.Key];
 
@@ -56,7 +61,19 @@ public class InputScripted : InputAbilitySelection {
             //Test to see if this ability would be valid
             if (actToUse.CanActivate(nextSelection.Value) == false) {
                 Debug.Log("The targets given would not be legal");
-                continue;
+
+                if(nTargetsTried >= MAXTARGETATTEMPTS) {
+                    Debug.Log("nTargetsTried is greater than max attempts (" + MAXTARGETATTEMPTS + ")");
+                    //If we've tried too many abilities with no success, just end our selections
+                    // by setting our action as a rest
+                    actToUse = ContTurns.Get().GetNextActingChr().arActions[Chr.idResting];
+                    //Don't need to set the targetting indices, since they don't matter for resting
+                    break;
+                } else {
+                    Debug.Log("nTargetsTried is less than max attempts (" + MAXTARGETATTEMPTS + ")");
+                    //Otherwise, just try selecting the next ability
+                    continue;
+                }
             }
             break;
         }
@@ -82,6 +99,8 @@ public class InputScripted : InputAbilitySelection {
         //Initially, try to pay with mana that isn't in the cost we need to pay for
         while(nCurMana < (int)Mana.MANATYPE.EFFORT) {
 
+            Debug.Log("In Paying cost loop");
+
             //Check if we've allocated enough effort
             if (nEffortToPay <= 0) return;
                 
@@ -106,6 +125,7 @@ public class InputScripted : InputAbilitySelection {
 
         //If needed, we'll allocate mana types that we are paying, but that we have excess of
         while (nCurMana < (int)Mana.MANATYPE.EFFORT) {
+            Debug.Log("In second Paying cost loop");
 
             //Check if we've allocated enough effort
             if (nEffortToPay <= 0) return;
