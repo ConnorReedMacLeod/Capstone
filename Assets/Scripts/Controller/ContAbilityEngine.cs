@@ -13,7 +13,7 @@ public class ContAbilityEngine : MonoBehaviour {
     public GameObject pfTimer;
     public ViewTimer viewTimerCur;
 
-    public const bool bDEBUGENGINE = true;
+    public const bool bDEBUGENGINE = false;
 
     public static ContAbilityEngine instance;
 
@@ -178,8 +178,7 @@ public class ContAbilityEngine : MonoBehaviour {
 
         //First, check if there's any executables to process
         if(stackExec.Count > 0) {
-            Debug.Log("ProcessingStack with top element " + stackExec.Peek());
-
+            
             //If we're seeing this executable for the first time and have
             //to process replacement and pre-trigger effects
             if (!stackExec.Peek().bPreTriggered) {

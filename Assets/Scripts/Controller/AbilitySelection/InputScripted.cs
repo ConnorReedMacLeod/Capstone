@@ -51,7 +51,6 @@ public class InputScripted : InputAbilitySelection {
             nextSelection = arTargettingScript[nActingChrid, arIndexTargetting[nActingChrid]];
             arIndexTargetting[nActingChrid]++;
             nTargetsTried++;
-            Debug.Log("nTargetsTried is now " + nTargetsTried);
 
             actToUse = ContTurns.Get().GetNextActingChr().arActions[nextSelection.Key];
 
@@ -63,14 +62,19 @@ public class InputScripted : InputAbilitySelection {
                 Debug.Log("The targets given would not be legal");
 
                 if(nTargetsTried >= MAXTARGETATTEMPTS) {
-                    Debug.Log("nTargetsTried is greater than max attempts (" + MAXTARGETATTEMPTS + ")");
                     //If we've tried too many abilities with no success, just end our selections
                     // by setting our action as a rest
-                    actToUse = ContTurns.Get().GetNextActingChr().arActions[Chr.idResting];
+
+
+
+                    //We now need to ready enough effort mana to pay for the ability (even though its a rest, maybe it costs something)
+                    ContTurns.Get().GetNextActingChr().arActions[Chr.idResting].parCost.Get();
+
                     //Don't need to set the targetting indices, since they don't matter for resting
-                    break;
+                    ContAbilitySelection.Get().SubmitAbility(Chr.idResting, nextSelection.Value);
+                    return;
+
                 } else {
-                    Debug.Log("nTargetsTried is less than max attempts (" + MAXTARGETATTEMPTS + ")");
                     //Otherwise, just try selecting the next ability
                     continue;
                 }
@@ -78,12 +82,12 @@ public class InputScripted : InputAbilitySelection {
             break;
         }
 
-            Debug.Log(ContTurns.Get().GetNextActingChr().sName + " has automatically chosen to use " +
+        Debug.Log(ContTurns.Get().GetNextActingChr().sName + " has automatically chosen to use " +
                 actToUse.sName + " with target index " + nextSelection.Value[0]);
 
 
         //We now need to ready enough effort mana to pay for the ability
-        actToUse.parCost.Get();
+        AutoPayCost(actToUse.parCost.Get());
 
         ContAbilitySelection.Get().SubmitAbility(nextSelection.Key, nextSelection.Value);
 
@@ -98,8 +102,6 @@ public class InputScripted : InputAbilitySelection {
 
         //Initially, try to pay with mana that isn't in the cost we need to pay for
         while(nCurMana < (int)Mana.MANATYPE.EFFORT) {
-
-            Debug.Log("In Paying cost loop");
 
             //Check if we've allocated enough effort
             if (nEffortToPay <= 0) return;
@@ -125,7 +127,6 @@ public class InputScripted : InputAbilitySelection {
 
         //If needed, we'll allocate mana types that we are paying, but that we have excess of
         while (nCurMana < (int)Mana.MANATYPE.EFFORT) {
-            Debug.Log("In second Paying cost loop");
 
             //Check if we've allocated enough effort
             if (nEffortToPay <= 0) return;
