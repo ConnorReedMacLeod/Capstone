@@ -96,7 +96,7 @@ public class Player : MonoBehaviour{
 
 			//TODO: Change this, all this, too work with networking
 			if (id == 0) {
-				manaPanel.transform.position = new Vector3(0f, 3.8f, -0.4f);
+				manaPanel.transform.position = new Vector3(0f, 2.85f, -0.4f);
 			} else {
 				//move it offscreen for now
 				manaPanel.transform.position = new Vector3(12.75f, 5.25f, -0.4f);
