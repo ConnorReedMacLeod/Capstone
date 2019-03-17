@@ -35,6 +35,22 @@ public class Mana : MonoBehaviour{
     public Subject subManaPoolChange = new Subject();
     public static Subject subAllManaPoolChange = new Subject();
 
+
+    public static int[] ConvertToCost(int[] arCost) {
+
+        Debug.Assert(arCost.Length == nManaTypes);
+
+        for(int i=0; i<nManaTypes; i++) {
+            arCost[i] *= -1;
+            //Don't allow negative costs
+            if (arCost[i] > 0) arCost[i] = 0;
+        }
+
+        return arCost;
+
+    }
+
+
     //For adding one mana of one type to player's total mana
     public void AddMana(MANATYPE type){
 		AddMana (type, 1);

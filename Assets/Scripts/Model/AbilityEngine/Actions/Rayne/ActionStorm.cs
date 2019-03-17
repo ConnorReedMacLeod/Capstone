@@ -69,7 +69,7 @@ public class ActionStorm : Action {
                         GetDuration = () => nStunDuration,
 
                         fDelay = ContTurns.fDelayStandard,
-                        sLabel = chrSource.plyrOwner.arChr[i].sName + " is being stunned"
+                        sLabel = enemy.arChr[i].sName + " is being stunned"
                     });
                 }
             }

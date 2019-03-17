@@ -92,11 +92,12 @@ public class Action { //This should probably be made abstract
     }
 
     public void PayManaCost() {
+
         ContAbilityEngine.Get().AddClause(new Clause() {
 
             fExecute = () => {
                 //Pay for the Action
-                ContAbilityEngine.Get().AddExec(new ExecChangeMana(chrSource.plyrOwner, parCost.Get()) {
+                ContAbilityEngine.Get().AddExec(new ExecChangeMana(chrSource.plyrOwner, Mana.ConvertToCost(parCost.Get())) {
                     chrSource = this.chrSource,
                     chrTarget = null,
                 });
