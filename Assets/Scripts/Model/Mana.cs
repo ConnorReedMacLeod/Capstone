@@ -183,8 +183,11 @@ public class Mana : MonoBehaviour{
 	public bool SpendMana(int [] arManaChange){
 		Debug.Assert (arManaChange.Length == nManaTypes || arManaChange.Length == nManaTypes - 1);
 
-        //Removes mana to pay for cost
+        //Cycle through each mana type in the change
 		for (int i = 0; i < arManaChange.Length; i++) {
+
+
+
 			for (int j = 0; j < arManaChange [i]; j++) {
                 
                 //Pays for coloured mana
