@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+//TODO: Make it so that the character selection/ability hovering isn't tied purely to human input
+//      - should still work even if playing with AIs
 public class InputHuman : InputAbilitySelection {
 
 	public StateTarget curState;
@@ -74,7 +77,15 @@ public class InputHuman : InputAbilitySelection {
 			//Then we've cancelled the targetting action so go back to... idle?
 			CancelTar();
 
-		} else if (indexCurTarget == selected.arActions [nSelectedAbility].nArgs) {
+		} else if (indexCurTarget == 0) {
+            //Then create the targetting array with the correct size
+            arTargetIndices = new int[selected.arActions[nSelectedAbility].nArgs];
+
+            //Then we should let things know that a new targetting has begun
+            subAllStartTargetting.NotifyObs(selected, nSelectedAbility);
+        }
+
+        if (indexCurTarget == selected.arActions [nSelectedAbility].nArgs) {
 			//Then we've filled of the targetting arguments
 
 			// Can now go back idle and wait for the next targetting
@@ -90,13 +101,7 @@ public class InputHuman : InputAbilitySelection {
             subAllFinishTargetting.NotifyObs(this);
 		} else {
 
-			if (indexCurTarget == 0) {
-                //Then create the targetting array with the correct size
-                arTargetIndices = new int[selected.arActions[nSelectedAbility].nArgs];
-
-                //Then we should let things know that a new targetting has begun
-                subAllStartTargetting.NotifyObs(selected, nSelectedAbility);
-			}
+			
 
 			// Get the type of the target arg that we need to handle
 			string sArgType = selected.arActions[nSelectedAbility].arArgs[indexCurTarget].GetType().ToString();

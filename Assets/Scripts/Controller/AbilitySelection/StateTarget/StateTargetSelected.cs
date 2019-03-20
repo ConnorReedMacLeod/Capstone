@@ -17,6 +17,7 @@ public class StateTargetSelected : StateTarget {
     }
 
     public void cbClickAction(Object target, params object[] args) {
+        Debug.Log("Clicked on an action while in Selected State");
         ChooseAction(((ViewAction)target).mod);
     }
 
@@ -49,9 +50,6 @@ public class StateTargetSelected : StateTarget {
         
         inputHuman.nSelectedAbility = actChosen.id;
 
-        // TODO:: Save the current targets if there are any, so that you can 
-        // revert to those targets if you've failed targetting
-        inputHuman.ResetTar();
         inputHuman.SetTargetArgState(); // Let the parent figure out what exact state we go to
     }
 
