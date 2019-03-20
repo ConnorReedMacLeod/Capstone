@@ -49,40 +49,14 @@ public class ViewChr : ViewInteractive {
 			goPortrait.transform.localScale = new Vector3 (-0.2f, 0.2f, 1.0f);
 
             //Find the border and flip it for one of the players
-            goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
+            //goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
 
             //Flip the character's soul position as well
-            viewSoulContainer.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
+            //viewSoulContainer.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
 
             foreach (ViewSoul viewsoul in viewSoulContainer.arViewSoul) {
-                viewsoul.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
+                //viewsoul.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
             }
-
-            maskPortrait.transform.localScale = new Vector3(1.0f, -1.0f, 1.0f);
-            /*maskPortrait.transform.localPosition = 
-                new Vector3(maskPortrait.transform.localPosition.x, 
-                            - maskPortrait.transform.localPosition.y,
-                            maskPortrait.transform.localPosition.z);*/
-
-            txtHealth.transform.localPosition  = 
-                new Vector3(txtHealth.transform.localPosition.x, 
-                            -txtHealth.transform.localPosition.y,
-                            txtHealth.transform.localPosition.z);
-
-            txtArmour.transform.localPosition =
-                new Vector3(txtArmour.transform.localPosition.x,
-                            -txtArmour.transform.localPosition.y,
-                            txtArmour.transform.localPosition.z);
-
-            txtPower.transform.localPosition =
-                new Vector3(txtPower.transform.localPosition.x,
-                            -txtPower.transform.localPosition.y,
-                            txtPower.transform.localPosition.z);
-
-            txtDefense.transform.localPosition =
-                new Vector3(txtDefense.transform.localPosition.x,
-                            -txtDefense.transform.localPosition.y,
-                            txtDefense.transform.localPosition.z);
 
         }
 	}
