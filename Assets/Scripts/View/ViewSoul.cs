@@ -11,7 +11,7 @@ public class ViewSoul : MonoBehaviour {
 
     public void UpdateSoulSprite() {
 
-        string sSprPath = "Images/Soul/imgSoulEmpty";
+        string sSprPath = "Images/Soul/imgSoulEmpty2";
 
         if (mod != null) {
 

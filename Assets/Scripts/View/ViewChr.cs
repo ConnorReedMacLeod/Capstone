@@ -52,10 +52,10 @@ public class ViewChr : ViewInteractive {
             //goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
 
             //Flip the character's soul position as well
-            //viewSoulContainer.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
+            viewSoulContainer.transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
 
             foreach (ViewSoul viewsoul in viewSoulContainer.arViewSoul) {
-                //viewsoul.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
+                viewsoul.transform.localScale = new Vector3(-0.666f, 0.666f, 1.0f);
             }
 
         }
@@ -221,11 +221,11 @@ public class ViewChr : ViewInteractive {
             if (goBlockerIndicator == null) {
                 goBlockerIndicator = Instantiate(pfBlockerIndicator, this.transform);
 
-                if (mod.plyrOwner.id == 1) {
-                    goBlockerIndicator.transform.localScale = new Vector3(1.0f, -1.0f, 1.0f);
+                if (mod.plyrOwner.id == 1 || mod.plyrOwner.id == 0) {
+                    goBlockerIndicator.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
                     goBlockerIndicator.transform.localPosition =
                         new Vector3(goBlockerIndicator.transform.localPosition.x,
-                                    -goBlockerIndicator.transform.localPosition.y,
+                                    goBlockerIndicator.transform.localPosition.y - 3.06f,
                                     goBlockerIndicator.transform.localPosition.z);
                 }
 
