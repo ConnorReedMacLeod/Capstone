@@ -46,7 +46,7 @@ public class ExecEndAbility : Executable {
     }
 
     public override void ExecuteEffect() {
-        Debug.Log("Notifying that an ability has ended");
+        //Debug.Log("Notifying that an ability has ended");
 
         //Notify everyone that we've just completed the effects of an action
         chrSource.subPostExecuteAbility.NotifyObs(chrSource, act);
