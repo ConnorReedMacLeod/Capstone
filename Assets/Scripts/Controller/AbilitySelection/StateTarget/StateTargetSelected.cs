@@ -25,6 +25,10 @@ public class StateTargetSelected : StateTarget {
         ChooseAction(inputHuman.selected.arActions[Chr.idBlocking]);
     }
 
+    public void cbClickRestButton(Object target, params object[] args) {
+        ChooseAction(inputHuman.selected.arActions[Chr.idResting]);
+    }
+
     public void ChooseAction(Action actChosen) {
         // When we've clicked an action, use that action
         //Debug.Log(actChosen + " is is being targetted");
@@ -60,6 +64,7 @@ public class StateTargetSelected : StateTarget {
         ViewChr.subAllClick.Subscribe(cbReselectChar);
         ViewAction.subAllClick.Subscribe(cbClickAction);
         ViewBlockerButton.subAllClick.Subscribe(cbClickBlockerButton);
+        ViewRestButton.subAllClick.Subscribe(cbClickRestButton);
 
         inputHuman.selected.Select (); 
 
@@ -70,6 +75,7 @@ public class StateTargetSelected : StateTarget {
         ViewChr.subAllClick.UnSubscribe(cbReselectChar);
         ViewAction.subAllClick.UnSubscribe(cbClickAction);
         ViewBlockerButton.subAllClick.UnSubscribe(cbClickBlockerButton);
+        ViewRestButton.subAllClick.UnSubscribe(cbClickRestButton);
     }
 
 

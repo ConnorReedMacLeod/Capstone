@@ -48,6 +48,7 @@ public class StateTargetChr : StateTarget {
         ViewChr.subAllClick.Subscribe(cbSetTargetChr);
         ViewAction.subAllClick.Subscribe(cbSwitchAction);
         ViewBlockerButton.subAllClick.Subscribe(cbSwitchAction);
+        ViewRestButton.subAllClick.Subscribe(cbSwitchAction);
     }
 
 	override public void OnLeave(){
@@ -57,6 +58,7 @@ public class StateTargetChr : StateTarget {
         ViewChr.subAllClick.UnSubscribe(cbSetTargetChr);
         ViewAction.subAllClick.UnSubscribe(cbSwitchAction);
         ViewBlockerButton.subAllClick.UnSubscribe(cbSwitchAction);
+        ViewRestButton.subAllClick.UnSubscribe(cbSwitchAction);
     }
 		
 	public StateTargetChr(InputHuman _inputHuman) : base(_inputHuman) {
