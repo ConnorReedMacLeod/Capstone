@@ -54,12 +54,12 @@ public class InputScripted : InputAbilitySelection {
 
             actToUse = ContTurns.Get().GetNextActingChr().arActions[nextSelection.Key];
 
-            Debug.Log(ContTurns.Get().GetNextActingChr().sName + " wants chosen to use " +
-                actToUse.sName + " with target index " + nextSelection.Value[0]);
+           // Debug.Log(ContTurns.Get().GetNextActingChr().sName + " wants chosen to use " +
+           //     actToUse.sName + " with target index " + nextSelection.Value[0]);
 
             //Test to see if this ability would be valid
             if (actToUse.CanActivate(nextSelection.Value) == false) {
-                Debug.Log("The targets given would not be legal");
+                //Debug.Log("The targets given would not be legal");
 
                 if(nTargetsTried >= MAXTARGETATTEMPTS) {
                     //If we've tried too many abilities with no success, just end our selections
@@ -82,8 +82,8 @@ public class InputScripted : InputAbilitySelection {
             break;
         }
 
-        Debug.Log(ContTurns.Get().GetNextActingChr().sName + " has automatically chosen to use " +
-                actToUse.sName + " with target index " + nextSelection.Value[0]);
+        //Debug.Log(ContTurns.Get().GetNextActingChr().sName + " has automatically chosen to use " +
+         //       actToUse.sName + " with target index " + nextSelection.Value[0]);
 
 
         //We now need to ready enough effort mana to pay for the ability

@@ -187,13 +187,6 @@ public class Action { //This should probably be made abstract
             Debug.Log("The character source is dead");
             return false;
         }
-        Debug.Log(lstTargettingIndices.Length);
-
-        Debug.Log(arArgs.Length);
-
-        if (lstTargettingIndices.Length != 0 && lstTargettingIndices.Length != arArgs.Length) {
-            Debug.Log("Note - supplied list of targets isn't the correct length");
-        }
 
         for (int i = 0; i < arArgs.Length; i++) {
             if (arArgs[i].WouldBeLegal(lstTargettingIndices[i]) == false) {

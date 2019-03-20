@@ -352,6 +352,7 @@ public class Chr : MonoBehaviour {
 
     //Performs the character's queued action
 	public void ExecuteAction(int nActionIndex, int[] lstTargettingIndices) {
+
         if (!ValidAction(nActionIndex, lstTargettingIndices)) {
             Debug.LogError("ERROR! This ability was targetted, but is no longer a valid action");
             nActionIndex = Chr.idResting; //Recover by setting the used action to a rest
