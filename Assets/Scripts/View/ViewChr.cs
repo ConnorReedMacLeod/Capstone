@@ -46,7 +46,7 @@ public class ViewChr : ViewInteractive {
 		SetPortrait (mod.sName);
 		if (mod.plyrOwner.id == 1) {
 			//Find the portrait and flip it for one of the players
-			goPortrait.transform.localScale = new Vector3 (-1.0f, 1.0f, 1.0f);
+			goPortrait.transform.localScale = new Vector3 (-0.2f, 0.2f, 1.0f);
 
             //Find the border and flip it for one of the players
             goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
@@ -59,10 +59,10 @@ public class ViewChr : ViewInteractive {
             }
 
             maskPortrait.transform.localScale = new Vector3(1.0f, -1.0f, 1.0f);
-            maskPortrait.transform.localPosition = 
+            /*maskPortrait.transform.localPosition = 
                 new Vector3(maskPortrait.transform.localPosition.x, 
                             - maskPortrait.transform.localPosition.y,
-                            maskPortrait.transform.localPosition.z);
+                            maskPortrait.transform.localPosition.z);*/
 
             txtHealth.transform.localPosition  = 
                 new Vector3(txtHealth.transform.localPosition.x, 
