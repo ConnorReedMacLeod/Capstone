@@ -68,7 +68,7 @@ public class ActionRegenerate : Action {
     }
 
 
-    override public void Execute() {
+    override public void Execute(int[] lstTargettingIndices) {
 
        
 

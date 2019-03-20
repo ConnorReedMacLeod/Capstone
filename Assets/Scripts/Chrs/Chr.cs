@@ -29,8 +29,10 @@ public class Chr : MonoBehaviour {
 	public string sName;			//The name of the character
 	public Player plyrOwner;        //The player who controls the character
 
+    public static Chr[] arAllChrs;  //A static list of all characters
 
-    public int id;                  //The character's unique identifier
+    public int globalid;            //The character's unique identifier across all characters
+    public int id;                  //The character's unique identifier for this team
     public int nFatigue;            //Number of turns a character must wait before their next action
     public StateReadiness curStateReadiness; //A reference to the current state of readiness
 
@@ -51,8 +53,7 @@ public class Chr : MonoBehaviour {
     public Action[] arActions;      //The characters actions
     public static int nActions = 9; //Number of actions the character can perform
     public static int nCharacterActions = 8; // Number of non-standard actions
-    public int nUsingAction;        //The currently selected action for the character, either targetting or having been queued
-	public bool bSetAction;         //Whether or not the character has an action queued
+    public const int NUSABLEACTIONS = 4; //The number of actions available at a time for a character to use
 
     public const int idResting = 7;  //id for the resting action
     public const int idBlocking = 8; //id for the blocking action
@@ -102,6 +103,22 @@ public class Chr : MonoBehaviour {
         if (curStateReadiness != null) {
             curStateReadiness.OnEnter();
         }
+    }
+
+    public int GetTargettingId() {
+        return globalid;
+    }
+
+    public static Chr GetTargetByIndex(int ind) {
+        return arAllChrs[ind];
+    }
+
+    public static void RegisterChr(Chr chr) {
+        if(arAllChrs == null) {
+            arAllChrs = new Chr[Player.MAXCHRS * Player.MAXCHRS];
+        }
+
+        arAllChrs[chr.globalid] = chr;
     }
 
     public void ChangeChanneltime(int _nChange) {
@@ -334,47 +351,31 @@ public class Chr : MonoBehaviour {
     }
 
     //Performs the character's queued action
-	public void ExecuteAction(){
-        if (!ValidAction()) {
+	public void ExecuteAction(int nActionIndex, int[] lstTargettingIndices) {
+
+        if (!ValidAction(nActionIndex, lstTargettingIndices)) {
             Debug.LogError("ERROR! This ability was targetted, but is no longer a valid action");
-            SetRestAction();
+            nActionIndex = Chr.idResting; //Recover by setting the used action to a rest
         }
 
         //Make a convenient reference to the action to be used
-        Action actToUse = arActions[nUsingAction];
-
-        //TODO:: Probably swap the pre/post trigger timings so that you can put things on the stack
-        //       Maybe for post trigger, have a "blank" executable that's put on the stack as a kind of 
-        //       terminating signal for when a particular ability has finished all its effects
+        Action actToUse = arActions[nActionIndex];
 
         //Notify everyone that we're about to use this action
         subPreExecuteAbility.NotifyObs(this, actToUse);
         subAllPreExecuteAbility.NotifyObs(this, actToUse);
 
         //Actually use the action
-        arActions [nUsingAction].UseAction ();
-
-        //Reset your selection information
-        bSetAction = false;
-		nUsingAction = 7;//TODO:: Make this consistent
+        actToUse.UseAction (lstTargettingIndices);
         
 	}
 
-    //Checks if the character's selected action is ready and able to be performed
-	public bool ValidAction(){
+    //Checks if the proposed action and targetting list would be valid to use (doesn't check mana)
+	public bool ValidAction(int nActionIndex, int[] lstTargettingIndices) {
 		//Debug.Log (bSetAction + " is the setaction");
-		return (bSetAction && arActions [nUsingAction].CanActivate ());
+		return (arActions [nActionIndex].CanActivate (lstTargettingIndices));
 	}
 
-    //Sets character's selected action to Rest
-	public void SetRestAction(){
-		Debug.Log ("Had to reset to a rest action");
-		if (nUsingAction != -1) {
-			arActions [nUsingAction].ResetTargettingArgs ();
-		}
-		bSetAction = true;
-		nUsingAction = idResting;
-	}
 
     //By default, set all character actions to resting
     public virtual void SetDefaultActions() {//TODO:: probably add some parameter for this at some point like an array of ids
@@ -422,6 +423,8 @@ public class Chr : MonoBehaviour {
     public void InitChr(Player _plyrOwner, int _id, BaseChr baseChr){
 		plyrOwner = _plyrOwner;
 		id = _id;
+        globalid = id + plyrOwner.id * Player.MAXCHRS;
+        RegisterChr(this);
 
         SetDefaultActions();
 
@@ -436,12 +439,11 @@ public class Chr : MonoBehaviour {
     // Sets up fundamental class connections for the Chr
 	public void Start(){
 		if (bStarted == false) {
-			bStarted = true;
+            bStarted = true;
 
             nMaxActionsLeft = 1;
 
             arActions = new Action[nActions];
-            nUsingAction = -1;
 
             stateSelect = STATESELECT.IDLE;
 

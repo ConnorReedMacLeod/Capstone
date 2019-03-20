@@ -26,7 +26,7 @@ public class ActionBucklerParry : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
+    override public void Execute(int[] lstTargettingIndices) {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
@@ -42,10 +42,6 @@ public class ActionBucklerParry : Action {
             }
         });
 
-
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-
-        base.Execute();
     }
 
 }

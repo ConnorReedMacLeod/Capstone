@@ -33,12 +33,9 @@ public class ActionHeal : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
-        //It's a bit awkward that you have to do this typecasting, 
-        // but at least it's eliminated from the targetting lambda
-        Chr tar = ((TargetArgAlly)arArgs[0]).chrTar;
+    override public void Execute(int[] lstTargettingIndices) {
 
-        
+        Chr tarChr = Chr.GetTargetByIndex(lstTargettingIndices[0]);
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
@@ -46,12 +43,12 @@ public class ActionHeal : Action {
                 //Make a copy of the heal object to give to the executable
                 Healing healToApply = new Healing(heal);
                 //Give the healing object its target
-                healToApply.SetChrTarget(tar);
+                healToApply.SetChrTarget(tarChr);
 
                 Debug.Log("This Heal Clause put an ExecHeal on the stack");
                 ContAbilityEngine.Get().AddExec(new ExecHeal() {
                     chrSource = this.chrSource,
-                    chrTarget = tar,
+                    chrTarget = tarChr,
 
                     heal = healToApply,
 
@@ -61,9 +58,6 @@ public class ActionHeal : Action {
             }
         });
 
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-
-        base.Execute();
     }
 
 }

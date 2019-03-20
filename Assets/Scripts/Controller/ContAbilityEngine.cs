@@ -174,9 +174,11 @@ public class ContAbilityEngine : MonoBehaviour {
 
     public void ProcessStacks() {
 
+        
+
         //First, check if there's any executables to process
         if(stackExec.Count > 0) {
-
+            
             //If we're seeing this executable for the first time and have
             //to process replacement and pre-trigger effects
             if (!stackExec.Peek().bPreTriggered) {
@@ -218,6 +220,8 @@ public class ContAbilityEngine : MonoBehaviour {
 
             return;
         }
+
+        //Debug.Log("Processing stack with no executables");
             
         //Check statebased actions
         MaintainStateBasedActions();
@@ -244,8 +248,8 @@ public class ContAbilityEngine : MonoBehaviour {
     }
 
     //Other classes can call this to invoke the ProcessStack method after a delay
-    public void InvokeProcessStack(float fDelay, string sLabel) {
-        if (bAutoTurns) {
+    public void InvokeProcessStack(float fDelay, string sLabel, bool bCancelInvoke) {
+        if (bAutoTurns && bCancelInvoke == false) {
 
             if (fDelay > 0) {
                 //Check if we need to spawn a timer
