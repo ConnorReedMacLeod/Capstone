@@ -9,7 +9,7 @@ using UnityEngine;
 public class StateTargetIdle : StateTarget {
 
     public void cbClickChar(Object target, params object[] args) {
-
+        Debug.Log("Clicked on a char while in idle state");
         inputHuman.selected = ((ViewChr)target).mod;
 
         inputHuman.SetState(new StateTargetSelected(inputHuman));
