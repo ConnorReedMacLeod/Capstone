@@ -48,11 +48,6 @@ public class Action { //This should probably be made abstract
         }
     }
 
-    public void ResetTargettingArgs() {
-        for (int i = 0; i < nArgs; i++) {
-            arArgs[i].Reset();
-        }
-    }
 
     public void ChangeCD(int _nChange) {
         if (_nChange + nCurCD < 0) {
@@ -76,12 +71,6 @@ public class Action { //This should probably be made abstract
         return nodeModifier;
     }
 
-
-    //TODO:: I think you can remove this
-    public void Recharge() {
-        ChangeCD(-1);
-    }
-
     //What should happen when this action is added to the list of abilities
     public virtual void OnEquip() {
 
@@ -103,11 +92,12 @@ public class Action { //This should probably be made abstract
     }
 
     public void PayManaCost() {
+
         ContAbilityEngine.Get().AddClause(new Clause() {
 
             fExecute = () => {
                 //Pay for the Action
-                ContAbilityEngine.Get().AddExec(new ExecChangeMana(chrSource.plyrOwner, parCost.Get()) {
+                ContAbilityEngine.Get().AddExec(new ExecChangeMana(chrSource.plyrOwner, Mana.ConvertToCost(parCost.Get())) {
                     chrSource = this.chrSource,
                     chrTarget = null,
                 });
@@ -148,10 +138,24 @@ public class Action { //This should probably be made abstract
 
     }
 
-    public void UseAction() {
+    public bool CanPayMana() {
+        //Check if you have enough mana
+        if (chrSource.plyrOwner.mana.HasMana(parCost.Get()) == false) {
+            Debug.Log("Not enough mana");
+            return false;
+        }
+        return true;
+    }
 
-        if (!chrSource.ValidAction()) {
-            Debug.LogError("You can no longer pay for the ability - should decided what to do at this point");
+    //Use the selected action with the supplied targets
+    public void UseAction(int[] lstTargettingIndices) {
+
+        if(CanPayMana() == false) {
+            Debug.LogError("Tried to use action, but didn't have enough mana");
+        }
+
+        if (CanActivate(lstTargettingIndices) == false) {
+            Debug.LogError("Tried to use action, but it's not a valid selection");
         }
 
         //First pay the mana cost for the action
@@ -161,7 +165,7 @@ public class Action { //This should probably be made abstract
         ContAbilityEngine.Get().AddClause(new ClauseEndAbility(this));
 
         //Let the type of this action dictate the behaviour and push all relevant effects onto the stack
-        type.UseAction();
+        type.UseAction(lstTargettingIndices);
 
         //Add a marker on top for where the ability starts
         ContAbilityEngine.Get().AddClause(new ClauseStartAbility(this));
@@ -172,21 +176,21 @@ public class Action { //This should probably be made abstract
     // Perform the actual effect this action should do
     // This is the main effect of the action for actives/cantrips
     //  and is the completion action for cantrips
-    public virtual void Execute() {
+    public virtual void Execute(int[] lstTargettingIndices) {
         //By default do nothing - just override this to make the action do something
     }
 
-    //Check if the owner is alive and that all targets are still valid
-    public virtual bool LegalTargets() {
+    //Check if the owner is alive and that the proposed targets are legal
+    public virtual bool LegalTargets(int[] lstTargettingIndices) {
 
         if (chrSource.bDead) {
             Debug.Log("The character source is dead");
             return false;
         }
 
-        for (int i = 0; i < nArgs; i++) {
-            if (!arArgs[i].VerifyLegal()) {
-                Debug.Log("Argument " + i + " was invalid");
+        for (int i = 0; i < arArgs.Length; i++) {
+            if (arArgs[i].WouldBeLegal(lstTargettingIndices[i]) == false) {
+                Debug.Log("Argument " + i + " would be invalid");
                 return false;
             }
         }
@@ -194,13 +198,9 @@ public class Action { //This should probably be made abstract
         return true;
     }
 
-	public virtual bool CanActivate(){// Maybe this doesn't need to be virtual
 
-		//Check if you have enough mana
-		if (!chrSource.plyrOwner.mana.HasMana (parCost.Get())) {
-			Debug.Log ("Not enough mana");
-			return false;
-		}
+    //Determine if the ability could be used targetting the passed indices (Note: doesn't include mana check)
+	public virtual bool CanActivate(int[] lstTargettingIndices) {// Maybe this doesn't need to be virtual
 
 		//Check that the ability isn't on cooldown
 		if (nCurCD != 0) {
@@ -214,7 +214,8 @@ public class Action { //This should probably be made abstract
             return false;
         }
 
-        if(LegalTargets() == false) {
+        if(LegalTargets(lstTargettingIndices) == false) {
+            Debug.Log("Targets aren't legal");
             return false;
         }
 

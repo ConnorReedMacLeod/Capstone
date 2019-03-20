@@ -33,7 +33,7 @@ public class ActionStorm : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
+    override public void Execute(int[] lstTargettingIndices) {
 
         Player enemy = chrSource.GetEnemyPlayer();
 
@@ -69,15 +69,12 @@ public class ActionStorm : Action {
                         GetDuration = () => nStunDuration,
 
                         fDelay = ContTurns.fDelayStandard,
-                        sLabel = chrSource.plyrOwner.arChr[i].sName + " is being stunned"
+                        sLabel = enemy.arChr[i].sName + " is being stunned"
                     });
                 }
             }
         });
 
-
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-        base.Execute();
     }
 
 }

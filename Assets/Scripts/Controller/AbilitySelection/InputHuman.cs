@@ -2,62 +2,58 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//TODO:: Make a static instance of this
 
-public class ContTarget : MonoBehaviour {
+//TODO: Make it so that the character selection/ability hovering isn't tied purely to human input
+//      - should still work even if playing with AIs
+public class InputHuman : InputAbilitySelection {
 
 	public StateTarget curState;
 
 	public Chr selected;
 
-	public int nTarCount;
+    public int nSelectedAbility;
+    public int[] arTargetIndices;
 
-    public static ContTarget instance;
+	public int indexCurTarget;
 
     public static Subject subAllStartTargetting = new Subject();
     public static Subject subAllFinishTargetting = new Subject();
 
-    //TODO CHANGE ALL .Get() calls in other classes to use properties
-    //     so the syntax isn't as gross
+    public override void StartSelection() {
+        //I don't think anything special needs to be done here
 
-    public static ContTarget Get() {
-        if (instance == null) {
-            GameObject go = GameObject.FindGameObjectWithTag("Controller");
-            if (go == null) {
-                Debug.LogError("ERROR! NO OBJECT HAS A Controller TAG!");
-            }
-            instance = go.GetComponent<ContTarget>();
-            if (instance == null) {
-                Debug.LogError("ERROR! Controller TAGGED OBJECT DOES NOT HAVE A ContTarget COMPONENT!");
-            }
-            instance.Start();
-        }
-        return instance;
     }
 
+    public override void GaveInvalidTarget() {
+        //If we somehow gave an invalid target, make an error message, then reset our targetting
+        Debug.Log("The human-input gave an invalid target");
+        ResetTar();
+    }
 
-    // Move to selecting the next target
-    public void IncTar(){
-		nTarCount++;
-	}
+    // Start a new round of targetting
+    public void ResetTar(){
+		indexCurTarget = 0;
+        //Clear any previous targetting information we had
+        nSelectedAbility = -1;
+        arTargetIndices = null;
 
-	// Move to selecting the previous target
-	public void DecTar(){
-		nTarCount--;
-	}
+    }
 
-	// Start a new round of targetting
-	public void ResetTar(){
-		nTarCount = 0;
-        //CLear any previous targetting information we had
-        selected.arActions[selected.nUsingAction].ResetTargettingArgs();
+    public void StoreTargettingIndex(int ind) {
+        //We assume the passed in index would be a legal target
+        
+        //Save a copy of the submitted targetting index
+        arTargetIndices[indexCurTarget] = ind;
 
+        //Then advance to look for the next target
+        indexCurTarget++;
+
+        //Now figure out and move to the next state required for the next target
+        SetTargetArgState();
     }
 
 	// Ends targetting
 	public void CancelTar(){
-        //TODO:: Consider if resetting like this needs to back through the previously selected
-        //       targets and clean them out for the future.
 
         if(curState.GetType() == typeof(StateTargetIdle) || curState.GetType() == typeof(StateTargetSelected)) {
             // If we're waiting to select a character, or aren't in the process of targetting
@@ -66,8 +62,6 @@ public class ContTarget : MonoBehaviour {
         }
 
 		ResetTar();
-		selected.bSetAction = false;
-		selected.nUsingAction = -1;
 
 		SetState (new StateTargetIdle (this));
 
@@ -79,30 +73,38 @@ public class ContTarget : MonoBehaviour {
 	public void SetTargetArgState(){
 		//Before this is called, assume that IncTar/DecTar/ResetTar has been appropriately called
 
-		if (nTarCount < 0) {
+		if (indexCurTarget < 0) {
 			//Then we've cancelled the targetting action so go back to... idle?
 			CancelTar();
 
-		} else if (nTarCount == selected.arActions [selected.nUsingAction].nArgs) {
-			//Then we've filled of the targetting arguments
+		} else if (indexCurTarget == 0) {
+            //Then create the targetting array with the correct size
+            arTargetIndices = new int[selected.arActions[nSelectedAbility].nArgs];
 
-			selected.bSetAction = true;
+            //Then we should let things know that a new targetting has begun
+            subAllStartTargetting.NotifyObs(selected, nSelectedAbility);
+        }
+
+        if (indexCurTarget == selected.arActions [nSelectedAbility].nArgs) {
+			//Then we've filled of the targetting arguments
 
 			// Can now go back idle and wait for the next targetting
 			SetState (new StateTargetIdle (this));
-			//Debug.Log ("Targetting finished");
+            //Debug.Log ("Targetting finished");
+
+            //Submit our targetting selections to the InputAbilitySelection controller
+            ContAbilitySelection.Get().SubmitAbility(nSelectedAbility, arTargetIndices);
+
+            ResetTar();
 
             //Let everything know that targetting has ended
             subAllFinishTargetting.NotifyObs(this);
 		} else {
 
-			if (nTarCount == 0) {
-                //Then we should let things know that a new targetting has begun
-                subAllStartTargetting.NotifyObs(selected, selected.nUsingAction);
-			}
+			
 
 			// Get the type of the target arg that we need to handle
-			string sArgType = selected.arActions[selected.nUsingAction].arArgs[nTarCount].GetType().ToString();
+			string sArgType = selected.arActions[nSelectedAbility].arArgs[indexCurTarget].GetType().ToString();
 
 			StateTarget newState;
 
@@ -148,8 +150,8 @@ public class ContTarget : MonoBehaviour {
         SetState(new StateTargetIdle(this));
     }
 
-    public ContTarget(){
+    public InputHuman(){
 		
-		nTarCount = 0;
+		indexCurTarget = 0;
 	}
 }

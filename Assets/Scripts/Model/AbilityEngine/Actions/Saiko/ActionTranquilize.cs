@@ -27,7 +27,7 @@ public class ActionTranquilize : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
+    override public void Execute(int[] lstTargettingIndices) {
 
         Chr chrEnemyBlocker = chrSource.GetEnemyPlayer().GetBlocker();
 
@@ -47,9 +47,6 @@ public class ActionTranquilize : Action {
             }
         });
 
-
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-        base.Execute();
     }
 
 }

@@ -9,7 +9,7 @@ public class ActionRest : Action {
 	public ActionRest(Chr _chrOwner): base(0, _chrOwner){//number of target arguments
 
 		sName = "Rest";
-		type = new TypeActive(this);
+		type = new TypeCantrip(this);
 
         chrSource = _chrOwner;
 
@@ -24,7 +24,7 @@ public class ActionRest : Action {
 
 	}
 
-	override public void Execute(){
+	override public void Execute(int[] lstTargettingIndices) {
 
 		Debug.Log (chrSource.sName + " is resting");
         ContAbilityEngine.Get().AddExec(new ExecChangeFatigue() {
@@ -37,7 +37,6 @@ public class ActionRest : Action {
             sLabel = this.chrSource.sName + " is resting"
         });
 
-		base.Execute ();
 	}
 
 }

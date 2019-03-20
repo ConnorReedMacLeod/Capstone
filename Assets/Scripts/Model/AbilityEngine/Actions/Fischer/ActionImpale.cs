@@ -31,9 +31,9 @@ public class ActionImpale : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
+    override public void Execute(int[] lstTargettingIndices) {
 
-        Chr tar = chrSource.GetEnemyPlayer().GetBlocker();
+        Chr tarChr = chrSource.GetEnemyPlayer().GetBlocker();
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
@@ -41,16 +41,16 @@ public class ActionImpale : Action {
                 //Make a copy of the damage object to give to the executable
                 Damage dmgToApply = new Damage(dmg);
                 //Give the damage object its target
-                dmgToApply.SetChrTarget(tar);
+                dmgToApply.SetChrTarget(tarChr);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
-                    chrTarget = tar,
+                    chrTarget = tarChr,
 
                     dmg = dmgToApply,
 
                     fDelay = ContTurns.fDelayStandard,
-                    sLabel = tar.sName + " is being impaled"
+                    sLabel = tarChr.sName + " is being impaled"
                 });
             }
         });
@@ -59,7 +59,7 @@ public class ActionImpale : Action {
             fExecute = () => {
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
-                    chrTarget = tar,
+                    chrTarget = tarChr,
 
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
                         return new SoulImpaled(_chrSource, _chrTarget);
@@ -69,10 +69,6 @@ public class ActionImpale : Action {
             }
         });
 
-
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-
-        base.Execute();
     }
 
 }
