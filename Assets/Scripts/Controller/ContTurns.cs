@@ -18,7 +18,7 @@ public class ContTurns : MonoBehaviour {
 
     public static Subject subAllPriorityChange = new Subject();
 
-    public const float fDelayChooseAction = 10.0f;
+    public const float fDelayChooseAction = 30.0f;
     public const float fDelayTurnAction = 1.0f;
     public const float fDelayMinorAction = 0.0f;
     public const float fDelayStandard = 2.0f;
