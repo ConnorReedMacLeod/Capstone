@@ -32,10 +32,9 @@ public class ActionSerenade : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
-        //It's a bit awkward that you have to do this typecasting, 
-        // but at least it's eliminated from the targetting lambda
-        Chr tar = ((TargetArgAlly)arArgs[0]).chrTar;
+    override public void Execute(int[] lstTargettingIndices) {
+
+        Chr tarChr = Chr.GetTargetByIndex(lstTargettingIndices[0]);
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
@@ -43,22 +42,19 @@ public class ActionSerenade : Action {
                 //Make a copy of the heal object to give to the executable
                 Healing healToApply = new Healing(heal);
                 //Give the healing object its target
-                healToApply.SetChrTarget(tar);
+                healToApply.SetChrTarget(tarChr);
 
                 ContAbilityEngine.Get().AddExec(new ExecHeal() {
                     chrSource = this.chrSource,
-                    chrTarget = tar,
+                    chrTarget = tarChr,
 
                     heal = healToApply,
 
                     fDelay = ContTurns.fDelayStandard,
-                    sLabel = "Healing " + tar.sName
+                    sLabel = "Healing " + tarChr.sName
                 });
             }
         });
 
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-
-        base.Execute();
     }
 }

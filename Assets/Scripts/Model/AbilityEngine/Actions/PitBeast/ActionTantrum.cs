@@ -38,7 +38,7 @@ public class ActionTantrum : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
+    override public void Execute(int[] lstTargettingIndices) {
 
         Player enemy = chrSource.GetEnemyPlayer();
 
@@ -87,10 +87,6 @@ public class ActionTantrum : Action {
                 }
             }
         });
-
-
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-        base.Execute();
     }
 
 }

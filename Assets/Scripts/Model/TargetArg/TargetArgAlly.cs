@@ -8,18 +8,19 @@ public class TargetArgAlly : TargetArgChr {
 
     }
 
-    public override bool VerifyLegal() {
-        if (chrOwner.plyrOwner != chrTar.plyrOwner) {
+    public override bool WouldBeLegal(int indexTarget) {
+        if (indexTarget >= Chr.arAllChrs.Length) {
+            Debug.LogError("Trying to select a character with index " + indexTarget + " that doesn't exist");
+            return false;
+        }else if (chrOwner.plyrOwner != Chr.arAllChrs[indexTarget].plyrOwner) {
             Debug.Log("Bad Target - You need to target an allied character");
             return false;
-        } else if (chrTar.bDead == true) {
+        } else if (Chr.arAllChrs[indexTarget].bDead == true) {
             Debug.Log("Bad Target - You can't target a dead character");
-            return false;
-        } else if (!fLegalCheck(chrOwner, chrTar)) {
-            Debug.Log("Bad Target - " + chrTar.sName + " does not meet this ability's specifications");
             return false;
         }
 
-        return true;
+        //Try the base checks for any character targetting
+        return base.WouldBeLegal(indexTarget);
     }
 }

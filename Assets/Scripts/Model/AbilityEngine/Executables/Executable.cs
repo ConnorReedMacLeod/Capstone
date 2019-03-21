@@ -14,6 +14,8 @@ public abstract class Executable {
 
     public bool bCancelSourceDies;
 
+    public bool bStopAutoProcessing;
+
     
 
     public abstract Subject GetPreTrigger();
@@ -51,7 +53,7 @@ public abstract class Executable {
         }
 
         //Now that we've done our thing, let the engine know to start processing the next thing
-        ContAbilityEngine.Get().InvokeProcessStack(fDelay, sLabel);
+        ContAbilityEngine.Get().InvokeProcessStack(fDelay, sLabel, bStopAutoProcessing);
     }
 
     public abstract void ExecuteEffect();

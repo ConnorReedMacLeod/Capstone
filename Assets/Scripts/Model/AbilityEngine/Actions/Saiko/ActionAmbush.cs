@@ -23,7 +23,7 @@ public class ActionAmbush : Action {
 
                         //If the character who used an ability is the one we targetted,
                         // Then we can ambush them
-                        if((Chr)target == ((TargetArgChr)arArgs[0]).chrTar){
+                        if((Chr)target == Chr.GetTargetByIndex(((StateChanneling)(this.chrSource.curStateReadiness)).lstStoredTargettingIndices[0])){
                             onAbilityUse();
                         }
 
@@ -53,7 +53,7 @@ public class ActionAmbush : Action {
 
     public void onAbilityUse() {
 
-        Chr tar = ((TargetArgChr)arArgs[0]).chrTar; //Cast our first target to a ChrTarget and get that Chr
+        Chr tar = Chr.GetTargetByIndex(((StateChanneling)(this.chrSource.curStateReadiness)).lstStoredTargettingIndices[0]);
 
 
         ContAbilityEngine.Get().AddClause(new Clause() {
@@ -78,9 +78,9 @@ public class ActionAmbush : Action {
     }
 
 
-    override public void Execute() {
+    override public void Execute(int[] lstTargettingIndices) {
 
-
+        //Don't need to do anything on completion
 
     }
 

@@ -19,7 +19,7 @@ using UnityEngine;
 // happend anywhere (say across all character selections), they 
 // can subscribe to this mega-subject class
 
-[RequireComponent (typeof(ContTarget))]
+[RequireComponent (typeof(ContAbilitySelection))]
 [RequireComponent (typeof(ContMana))]
 [RequireComponent (typeof(ContInfo))]
 [RequireComponent (typeof(ContArena))]
@@ -27,7 +27,7 @@ public class Controller : MonoBehaviour{
 
     //TODO:: Make all of these controllers static instances, so a controller object isn't needed
     
-    public ContTarget contTarget;
+    public ContAbilitySelection contAbilitySelection;
     public ContMana contMana;
     public ContInfo contInfo;
     public ContArena contArena;
@@ -47,8 +47,8 @@ public class Controller : MonoBehaviour{
 	public void Start () {
 		gameObject.tag = "Controller";
 
-		// Find all necessary controllers and register them as our observers
-		contTarget = GetComponent<ContTarget> ();
+        // Find all necessary controllers and register them as our observers
+        contAbilitySelection = GetComponent<ContAbilitySelection> ();
 		//Subscribe (contTarget);
 
 		contMana = GetComponent<ContMana> ();

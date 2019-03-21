@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class ViewBlockerButton : ViewInteractive {
+public class ViewRestButton : ViewInteractive {
 
     bool bStarted;                          //Confirms the Start() method has executed
 
-    public const int id = Chr.idBlocking;                              //The standard id for the block action
+    public const int id = Chr.idResting ;                              //The standard id for the rest action
 
     public static Subject subAllClick = new Subject();
     public static Subject subAllStartHover = new Subject();
@@ -21,8 +21,7 @@ public class ViewBlockerButton : ViewInteractive {
     public override void onMouseClick(params object[] args) {
 
         //If we can't actually use this button, then don't react to clicks
-        //(No character selected or the selected character can't block anyway)
-        if (!ButtonVisible() || !ContTurns.Get().GetNextActingChr().CanBlock()) return;
+        if (!ButtonVisible()) return;
 
         subAllClick.NotifyObs(this, args);
 
@@ -69,17 +68,14 @@ public class ViewBlockerButton : ViewInteractive {
             // or if the selected character isn't the next to act
             sImgPath = "null";
 
-        } else if (ContTurns.Get().GetNextActingChr().CanBlock()){
+        } else {//TODO:: Consider if there should be some check for what character state we're in
             //Then we want the button to be visible and usable
-            sImgPath = "Images/MiscUI/imgBlockerToken";
-
-        } else {//Then we can't block
-            //Then we just leave a greyed out blocker button
-            sImgPath = "Images/MiscUI/imgBlockerTokenHolder";
+            sImgPath = "Images/MiscUI/imgSurrender";
         }
 
-        Sprite sprBlockerButton = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
-        this.GetComponent<SpriteRenderer>().sprite = sprBlockerButton;
+        Sprite sprRestButton = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
+        
+        this.GetComponent<SpriteRenderer>().sprite = sprRestButton;
     }
 
 

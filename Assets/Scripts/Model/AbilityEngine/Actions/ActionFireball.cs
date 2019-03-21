@@ -31,10 +31,9 @@ public class ActionFireball : Action {
 		SetArgOwners ();
 	}
 
-	override public void Execute(){
-		//It's a bit awkward that you have to do this typecasting, 
-		// but at least it's eliminated from the targetting lambda
-		Chr tar = ((TargetArgChr)arArgs [0]).chrTar;
+	override public void Execute(int[] lstTargettingIndices) {
+
+        Chr tar = Chr.GetTargetByIndex(lstTargettingIndices[0]);
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
@@ -72,10 +71,6 @@ public class ActionFireball : Action {
             }
         });
 
-
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-
-        base.Execute ();
 	}
 
 }
