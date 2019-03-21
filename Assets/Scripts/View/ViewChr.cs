@@ -14,9 +14,10 @@ public class ViewChr : ViewInteractive {
 
     public GameObject pfBlockerIndicator; //Reference to the prefab blocker indicator
 
-    public GameObject goBlockerIndicator; //Blocker reference
-	public GameObject goBorder;         //Border reference
+    public GameObject goBlockerIndicator; //Blocker Reference
+	public GameObject goBorder;         //Border Reference
 	public GameObject goPortrait;       //Portrait Reference
+	public GameObject goFatigueDisplay;	//Fatigue Display Reference
     public Text txtHealth;              //Textfield Reference
     public Text txtArmour;              //Textfield Reference
     public Text txtPower;               //Textfield Reference
@@ -48,11 +49,17 @@ public class ViewChr : ViewInteractive {
 			//Find the portrait and flip it for one of the players
 			goPortrait.transform.localScale = new Vector3 (-0.2f, 0.2f, 1.0f);
 
-            //Find the border and flip it for one of the players
-            //goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
+			//Find the border and flip it for one of the players
+			//goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
 
-            //Flip the character's soul position as well
-            viewSoulContainer.transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
+			//Find the fatigue display, and flip it to the other side of the portrai
+			goFatigueDisplay.transform.localPosition = new Vector3(
+				-goFatigueDisplay.transform.localPosition.x,
+				goFatigueDisplay.transform.localPosition.y,
+				goFatigueDisplay.transform.localPosition.z);
+
+			//Flip the character's soul position as well
+			viewSoulContainer.transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
 
             foreach (ViewSoul viewsoul in viewSoulContainer.arViewSoul) {
                 viewsoul.transform.localScale = new Vector3(-0.666f, 0.666f, 1.0f);
