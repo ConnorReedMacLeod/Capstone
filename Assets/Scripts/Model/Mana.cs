@@ -40,13 +40,15 @@ public class Mana : MonoBehaviour{
 
         Debug.Assert(arCost.Length == nManaTypes);
 
+        int[] arNegCost = new int[nManaTypes];
+
         for(int i=0; i<nManaTypes; i++) {
-            arCost[i] *= -1;
-            //Don't allow negative costs
-            if (arCost[i] > 0) arCost[i] = 0;
+            arNegCost[i] = -arCost[i];
+            //Don't allow negative (switched to positive) costs
+            if (arNegCost[i] > 0) arCost[i] = 0;
         }
 
-        return arCost;
+        return arNegCost;
 
     }
 

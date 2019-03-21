@@ -52,10 +52,8 @@ public abstract class Executable {
 
         }
 
-        if (bStopAutoProcessing == false) {
-            //Now that we've done our thing, let the engine know to start processing the next thing
-            ContAbilityEngine.Get().InvokeProcessStack(fDelay, sLabel, bStopAutoProcessing);
-        }
+        //Now that we've done our thing, let the engine know to start processing the next thing
+        ContAbilityEngine.Get().InvokeProcessStack(fDelay, sLabel, bStopAutoProcessing);
     }
 
     public abstract void ExecuteEffect();

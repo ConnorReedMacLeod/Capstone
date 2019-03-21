@@ -46,7 +46,7 @@ public class ExecStartAbility : Executable {
     }
 
     public override void ExecuteEffect() {
-        Debug.Log("Notifying that an ability has started");
+        //Debug.Log("Notifying that an ability has started");
 
         //Notify everyone that we're just about to start the effects of an ability
         chrSource.subPreExecuteAbility.NotifyObs(chrSource, act);

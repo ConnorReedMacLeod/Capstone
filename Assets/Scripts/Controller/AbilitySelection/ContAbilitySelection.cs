@@ -30,6 +30,9 @@ public class ContAbilitySelection : MonoBehaviour {
 
     public void Start() {
 
+        //Set our delay time to sync up with the constant
+        fMaxSelectionTime = ContTurns.fDelayChooseAction;
+
         EndSelection();
 
     }
