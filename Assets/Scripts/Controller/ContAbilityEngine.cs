@@ -163,13 +163,14 @@ public class ContAbilityEngine : MonoBehaviour {
         }
         viewTimer.InitTimer(fDelay, sLabel);
 
-        /* TODO:: Uncomment this if everything else works
+
         //Check if we should delete the previous timer
         if(viewTimerCur != null) {
+            Debug.Log("Deleting previous timer for " + viewTimerCur.sLabel);
             Destroy(viewTimerCur.gameObject);
         }
         viewTimerCur = viewTimer;
-        */
+
     }
 
     public void ProcessStacks() {
@@ -249,15 +250,16 @@ public class ContAbilityEngine : MonoBehaviour {
 
     //Other classes can call this to invoke the ProcessStack method after a delay
     public void InvokeProcessStack(float fDelay, string sLabel, bool bCancelInvoke) {
-        if (bAutoTurns && bCancelInvoke == false) {
+        if (bAutoTurns) {
 
             if (fDelay > 0) {
                 //Check if we need to spawn a timer
 
                 SpawnTimer(fDelay, sLabel);
             }
-
-            Invoke("AutoProcessStacks", fDelay);
+            if (bCancelInvoke == false) {
+                Invoke("AutoProcessStacks", fDelay);
+            }
         } else {
             //Debug.Log("Manually executing " + sLabel);
             //Then we're doing manual execution - still spawn a quick timer to show what we're processing right now

@@ -39,6 +39,10 @@ public class ContInfo : MonoBehaviour{
         DisplayAction(ContTurns.Get().GetNextActingChr().arActions[Chr.idBlocking]);
     }
 
+    public void cbRestButtonStartHover(Object target, params object[] args) {
+        DisplayAction(ContTurns.Get().GetNextActingChr().arActions[Chr.idResting]);
+    }
+
     public void StopDisplayAction(Action act) {
         if (bLocked == false && 
             ((viewInfoPanel.viewInfoAction == null) || //If nothing is currently being shown
@@ -57,7 +61,11 @@ public class ContInfo : MonoBehaviour{
         StopDisplayAction(ContTurns.Get().GetNextActingChr().arActions[Chr.idBlocking]);
     }
 
-	public void SetActionFocus(Action _actFocus){
+    public void cbRestButtonStopHover(Object target, params object[] args) {
+        StopDisplayAction(ContTurns.Get().GetNextActingChr().arActions[Chr.idResting]);
+    }
+
+    public void SetActionFocus(Action _actFocus){
 		viewInfoPanel.ClearPanel ();
 		actFocus = _actFocus;
 		viewInfoPanel.ShowInfoAction (actFocus);
@@ -88,6 +96,9 @@ public class ContInfo : MonoBehaviour{
 
             ViewBlockerButton.subAllStartHover.Subscribe(cbBlockerButtonStartHover);
             ViewBlockerButton.subAllStopHover.Subscribe(cbBlockerButtonStopHover);
+
+            ViewRestButton.subAllStartHover.Subscribe(cbRestButtonStartHover);
+            ViewRestButton.subAllStopHover.Subscribe(cbRestButtonStopHover);
         }
 	}
 }

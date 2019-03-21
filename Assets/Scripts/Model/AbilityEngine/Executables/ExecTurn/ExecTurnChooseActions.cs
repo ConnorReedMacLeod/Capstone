@@ -39,6 +39,7 @@ public class ExecTurnChooseActions : Executable {
 
 
     public override void ExecuteEffect() {
+        Debug.Log("Executing ExecTurnChooseAction");
         
 
         //First, test if we actually have any character who is ready to act right now
