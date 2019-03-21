@@ -21,9 +21,9 @@ public class TypeActive : TypeAction {
         return nActionPointCost;
     }
 
-    public override void UseAction() {
+    public override void UseAction(int[] lstTargettingIndices) {
         //Get the action to push all of its effects onto its stack
-        act.Execute();
+        act.Execute(lstTargettingIndices);
 
         //Then give that action's stack of clauses to the Ability Engine to process
         ContAbilityEngine.AddClauseStack(ref act.stackClauses);

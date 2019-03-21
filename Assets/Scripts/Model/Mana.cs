@@ -35,6 +35,24 @@ public class Mana : MonoBehaviour{
     public Subject subManaPoolChange = new Subject();
     public static Subject subAllManaPoolChange = new Subject();
 
+
+    public static int[] ConvertToCost(int[] arCost) {
+
+        Debug.Assert(arCost.Length == nManaTypes);
+
+        int[] arNegCost = new int[nManaTypes];
+
+        for(int i=0; i<nManaTypes; i++) {
+            arNegCost[i] = -arCost[i];
+            //Don't allow negative (switched to positive) costs
+            if (arNegCost[i] > 0) arCost[i] = 0;
+        }
+
+        return arNegCost;
+
+    }
+
+
     //For adding one mana of one type to player's total mana
     public void AddMana(MANATYPE type){
 		AddMana (type, 1);
@@ -61,6 +79,10 @@ public class Mana : MonoBehaviour{
 	public bool AddToPool(MANATYPE type){
 		return AddToPool (type, 1);
 	}
+
+    public bool AddToPool(int indexManaType) {
+        return AddToPool((MANATYPE)indexManaType);
+    }
 
     //For adding any number of mana of one type to player's mana pool
     public bool AddToPool(MANATYPE type, int nAmount){
@@ -118,6 +140,16 @@ public class Mana : MonoBehaviour{
         return true;
 	}
 
+    public bool HasMana(int nManaType) {
+
+        return HasMana(nManaType, 1);
+
+    }
+
+    public bool HasMana(int nManaType, int nAmount) {
+        return arMana[nManaType] >= nAmount;
+    }
+
     //Checks to see if the player has enough mana total and in their mana pool to pay for a given cost
     public bool HasMana(int[] arCost)
     {
@@ -153,30 +185,28 @@ public class Mana : MonoBehaviour{
         return true;
     }
 
-    //For spending one mana of one type
+    //For changing one mana of one type
     public bool SpendMana(MANATYPE type){
 		return SpendMana (type, 1);
 	}
 
-    //For spending any number of mana of one type
-	public bool SpendMana(MANATYPE type, int nAmount){
+    //For changing any number of mana of one type
+    public bool SpendMana(MANATYPE type, int nAmount){
 		int [] arCost = new int[nManaTypes];
 		arCost [(int)type] = nAmount;
 		return SpendMana (arCost);
 	}
 
-    //For spending any number of mana of any type
-	public bool SpendMana(int [] arCost){
-		Debug.Assert (arCost.Length == nManaTypes || arCost.Length == nManaTypes - 1);
+    //For changing any number of mana of any type
+	public bool SpendMana(int [] arManaChange){
+		Debug.Assert (arManaChange.Length == nManaTypes || arManaChange.Length == nManaTypes - 1);
 
-        //Uses HasMana function to check if player has enough mana to pay the given mana cost
-        if (!HasMana(arCost)) {
-            return false;
-        }
+        //Cycle through each mana type in the change
+		for (int i = 0; i < arManaChange.Length; i++) {
 
-        //Removes mana to pay for cost
-		for (int i = 0; i < arCost.Length; i++) {
-			for (int j = 0; j < arCost [i]; j++) {
+
+
+			for (int j = 0; j < arManaChange [i]; j++) {
                 
                 //Pays for coloured mana
                 if (arMana [i] > 0) {
@@ -201,6 +231,17 @@ public class Mana : MonoBehaviour{
 					return false;
 				}
 			}
+
+            //After changing this type of mana, ensure it didn't go negative
+            if(arMana[i] < 0) {
+                if(i == (int)MANATYPE.EFFORT) {
+                    if(nManaPool < 0) {
+                        Debug.LogError("Mana Effort is " + nManaPool);
+                    }
+                } else {
+                    Debug.LogError("Mana " + (MANATYPE)i + " is " + arMana[i]);
+                }
+            }
 		}
 
 		return true;

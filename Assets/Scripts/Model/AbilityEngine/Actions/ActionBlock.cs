@@ -24,7 +24,7 @@ public class ActionBlock : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
+    override public void Execute(int[] lstTargettingIndices) {
 
 
         stackClauses.Push(new Clause() {
@@ -38,10 +38,6 @@ public class ActionBlock : Action {
             }
         });
 
-
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-
-        base.Execute();
     }
 
 }

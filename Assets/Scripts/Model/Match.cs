@@ -66,7 +66,8 @@ public class Match : MonoBehaviour {
 			newPlayer.SetID (i);
 			newPlayer.Start ();
 			newPlayer.setChrs (); /// TODO:: replace with actual character selection
-			arPlayers [i] = newPlayer;
+            newPlayer.SetInputType();
+            arPlayers [i] = newPlayer;
 		}
 	}
 
@@ -124,7 +125,7 @@ public class Match : MonoBehaviour {
 			arChrs [i] = new Chr[Player.MAXCHRS];
 
 			for (int j = 0; j < arPlayers [i].nChrs; j++) {
-				InitChr (arPlayers [i].arChrTypeSelection [j], arPlayers[i], j);
+				InitChr(arPlayers[i].arChrTypeSelection[j], arPlayers[i], j);
 			}
 		}
 	}

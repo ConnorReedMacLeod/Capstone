@@ -163,20 +163,23 @@ public class ContAbilityEngine : MonoBehaviour {
         }
         viewTimer.InitTimer(fDelay, sLabel);
 
-        /* TODO:: Uncomment this if everything else works
+
         //Check if we should delete the previous timer
         if(viewTimerCur != null) {
+            Debug.Log("Deleting previous timer for " + viewTimerCur.sLabel);
             Destroy(viewTimerCur.gameObject);
         }
         viewTimerCur = viewTimer;
-        */
+
     }
 
     public void ProcessStacks() {
 
+        
+
         //First, check if there's any executables to process
         if(stackExec.Count > 0) {
-
+            
             //If we're seeing this executable for the first time and have
             //to process replacement and pre-trigger effects
             if (!stackExec.Peek().bPreTriggered) {
@@ -218,6 +221,8 @@ public class ContAbilityEngine : MonoBehaviour {
 
             return;
         }
+
+        //Debug.Log("Processing stack with no executables");
             
         //Check statebased actions
         MaintainStateBasedActions();
@@ -244,7 +249,7 @@ public class ContAbilityEngine : MonoBehaviour {
     }
 
     //Other classes can call this to invoke the ProcessStack method after a delay
-    public void InvokeProcessStack(float fDelay, string sLabel) {
+    public void InvokeProcessStack(float fDelay, string sLabel, bool bCancelInvoke) {
         if (bAutoTurns) {
 
             if (fDelay > 0) {
@@ -252,8 +257,9 @@ public class ContAbilityEngine : MonoBehaviour {
 
                 SpawnTimer(fDelay, sLabel);
             }
-
-            Invoke("AutoProcessStacks", fDelay);
+            if (bCancelInvoke == false) {
+                Invoke("AutoProcessStacks", fDelay);
+            }
         } else {
             //Debug.Log("Manually executing " + sLabel);
             //Then we're doing manual execution - still spawn a quick timer to show what we're processing right now

@@ -5,23 +5,28 @@ using UnityEngine;
 public class StateTargetSelected : StateTarget {
 
     public void cbDeselect(Object target, params object[] args) {
-        contTarg.SetState(new StateTargetIdle(contTarg));
+        inputHuman.SetState(new StateTargetIdle(inputHuman));
     }
 
     public void cbReselectChar(Object target, params object[] args) {
         // If we now click on a different character, then we'll select them instead
-        contTarg.selected.Idle(); // Need to deselect our current character first
-        contTarg.selected = ((ViewChr)target).mod;
+        inputHuman.selected.Idle(); // Need to deselect our current character first
+        inputHuman.selected = ((ViewChr)target).mod;
 
-        contTarg.SetState(new StateTargetSelected(contTarg));
+        inputHuman.SetState(new StateTargetSelected(inputHuman));
     }
 
     public void cbClickAction(Object target, params object[] args) {
+        Debug.Log("Clicked on an action while in Selected State");
         ChooseAction(((ViewAction)target).mod);
     }
 
     public void cbClickBlockerButton(Object target, params object[] args) {
-        ChooseAction(contTarg.selected.arActions[Chr.idBlocking]);
+        ChooseAction(inputHuman.selected.arActions[Chr.idBlocking]);
+    }
+
+    public void cbClickRestButton(Object target, params object[] args) {
+        ChooseAction(inputHuman.selected.arActions[Chr.idResting]);
     }
 
     public void ChooseAction(Action actChosen) {
@@ -45,25 +50,23 @@ public class StateTargetSelected : StateTarget {
             return;
         }
 
-        contTarg.selected.Targetting();
+        inputHuman.selected.Targetting();
         
-        contTarg.selected.nUsingAction = actChosen.id;
+        inputHuman.nSelectedAbility = actChosen.id;
 
-        // TODO:: Save the current targets if there are any, so that you can 
-        // revert to those targets if you've failed targetting
-        contTarg.ResetTar();
-        contTarg.SetTargetArgState(); // Let the parent figure out what exact state we go to
+        inputHuman.SetTargetArgState(); // Let the parent figure out what exact state we go to
     }
 
 	override public void OnEnter(){
-		Debug.Assert(contTarg.selected != null);
+		Debug.Assert(inputHuman.selected != null);
 
         Arena.Get().view.subMouseClick.Subscribe(cbDeselect);
         ViewChr.subAllClick.Subscribe(cbReselectChar);
         ViewAction.subAllClick.Subscribe(cbClickAction);
         ViewBlockerButton.subAllClick.Subscribe(cbClickBlockerButton);
+        ViewRestButton.subAllClick.Subscribe(cbClickRestButton);
 
-        contTarg.selected.Select (); 
+        inputHuman.selected.Select (); 
 
 	}
 
@@ -72,10 +75,11 @@ public class StateTargetSelected : StateTarget {
         ViewChr.subAllClick.UnSubscribe(cbReselectChar);
         ViewAction.subAllClick.UnSubscribe(cbClickAction);
         ViewBlockerButton.subAllClick.UnSubscribe(cbClickBlockerButton);
+        ViewRestButton.subAllClick.UnSubscribe(cbClickRestButton);
     }
 
 
-	public StateTargetSelected(ContTarget _contTarg): base(_contTarg){
+	public StateTargetSelected(InputHuman _inputHuman) : base(_inputHuman) {
         
     }
 }

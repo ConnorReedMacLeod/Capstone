@@ -26,7 +26,7 @@ public class ActionCheerleader : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
+    override public void Execute(int[] lstTargettingIndices) {
 
         Debug.LogError("Shouldn't be able to use " + sName + " since it's a passive ability");
     }

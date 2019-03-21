@@ -31,9 +31,9 @@ public class ActionTendrilStab : Action {
         SetArgOwners();
     }
 
-    override public void Execute() {
+    override public void Execute(int[] lstTargettingIndices) {
 
-        Chr tar = chrSource.GetEnemyPlayer().GetBlocker();
+        Chr tarChr = chrSource.GetEnemyPlayer().GetBlocker();
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
@@ -41,23 +41,19 @@ public class ActionTendrilStab : Action {
                 //Make a copy of the damage object to give to the executable
                 Damage dmgToApply = new Damage(dmg);
                 //Give the damage object its target
-                dmgToApply.SetChrTarget(tar);
+                dmgToApply.SetChrTarget(tarChr);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
-                    chrTarget = tar,
+                    chrTarget = tarChr,
                     dmg = dmgToApply,
 
                     fDelay = ContTurns.fDelayStandard,
-                    sLabel = tar.sName + " is being stabbed"
+                    sLabel = tarChr.sName + " is being stabbed"
                 });
             }
         });
 
-
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-
-        base.Execute();
     }
 
 }

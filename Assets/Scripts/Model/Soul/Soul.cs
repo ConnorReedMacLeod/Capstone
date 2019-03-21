@@ -66,7 +66,6 @@ public class Soul {
         if (lstTriggers != null) { //Then we have some triggers to subscribe
             //Each triggeredeffect we have should subscribe to the trigger it needs
             foreach (TriggerEffect trig in lstTriggers) {
-                //TODO:: Consider switching this to an extended trigger class rather than just a Subject
                 //Debug.Log("*** ADDING TRIGGER SUBSCRIPTION ***");
                 trig.sub.Subscribe(trig.cb);
             }

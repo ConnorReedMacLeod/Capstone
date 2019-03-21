@@ -25,9 +25,7 @@ public class ActionForcedEvolution : Action {
     }
 
 
-    override public void Execute() {
-        //No typecasting is needed since we have no targets
-        //Chr tar = ((TargetArgChr)arArgs[0]).chrTar;
+    override public void Execute(int[] lstTargettingIndices) {
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
@@ -59,10 +57,5 @@ public class ActionForcedEvolution : Action {
                 });
             }
         });
-
-
-        //NOTE:: Every Execute extension should begin with a typecast and end with a base.Execute call;
-
-        base.Execute();
     }
 }

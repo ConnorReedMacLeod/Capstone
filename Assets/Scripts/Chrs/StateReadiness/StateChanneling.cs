@@ -7,10 +7,12 @@ public class StateChanneling : StateReadiness {
     public int nChannelTime;  
 
     public SoulChannel soulBehaviour; //Handles all customized behaviour of what the channel effect should do
+    public int[] lstStoredTargettingIndices;
 
-    public StateChanneling(Chr _chrOwner, int _nChannelTime, SoulChannel _soulBehaviour) : base(_chrOwner) {
+    public StateChanneling(Chr _chrOwner, int _nChannelTime, SoulChannel _soulBehaviour, int[] lstTargettingIndices) : base(_chrOwner) {
 
         nChannelTime = _nChannelTime;
+        lstStoredTargettingIndices = lstTargettingIndices;
 
         //Double check that the soul isn't visible - should just be a hidden implementation
         Debug.Assert(_soulBehaviour.bVisible == false);
@@ -34,7 +36,7 @@ public class StateChanneling : StateReadiness {
     // this should be subcribed to each potentially invalidating subject
     public void cbInterruptifInvalid(Object target, params object[] args) {
 
-        if (!soulBehaviour.act.LegalTargets()) {
+        if (!soulBehaviour.act.LegalTargets(lstStoredTargettingIndices)) {
             //If targetting has become invalid (maybe because someone has died)
             InterruptChannel();
 

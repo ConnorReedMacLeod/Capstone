@@ -5,34 +5,21 @@ using UnityEngine;
 public class TargetArgChr : TargetArg {
 
   
-	public Chr chrTar;
 	public delegate bool funcLegalChr (Chr own, Chr arg);
 	public funcLegalChr fLegalCheck;
 
-	//WARNING: This feels like it should be shared among TargetArgs but it isn't
-	public bool setTar(Chr _chrTar){
-		Chr chrOldTar = chrTar;
-		chrTar = _chrTar;
-		if (VerifyLegal ()) {
-			return true; //the targetting was successful
-		} else {
-			chrTar = chrOldTar;
-			return false; //bad target
-		}
-
-	}
-
-	public TargetArgChr(funcLegalChr _fLegalCheck){
+    public TargetArgChr(funcLegalChr _fLegalCheck){
 		fLegalCheck = _fLegalCheck;
 
 	}
 
-	public override bool VerifyLegal(){
-		return chrTar.bDead == false && fLegalCheck (chrOwner, chrTar);
-	}
+    public override bool WouldBeLegal(int indexTarget){
+        if(indexTarget >= Chr.arAllChrs.Length) {
+            Debug.LogError("Trying to select a character with index " + indexTarget + " that doesn't exist");
+            return false;
+        }
 
-	public override void Reset(){
-		chrTar = null;
+		return Chr.arAllChrs[indexTarget].bDead == false && fLegalCheck (chrOwner, Chr.arAllChrs[indexTarget]);
 	}
 
 }

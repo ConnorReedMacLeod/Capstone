@@ -39,6 +39,8 @@ public class ExecTurnChooseActions : Executable {
 
 
     public override void ExecuteEffect() {
+        Debug.Log("Executing ExecTurnChooseAction");
+        
 
         //First, test if we actually have any character who is ready to act right now
         if(ContTurns.Get().GetNextActingChr() == null) {
@@ -50,16 +52,19 @@ public class ExecTurnChooseActions : Executable {
 
             //If we do have a character who can act, then set them up to be able to act
 
-            //Ensure only the currently acting character can select actions
-            ContTurns.Get().GetNextActingChr().UnlockTargetting();
-
-            //Prepare to execute the action that they willl have selected
+            //Prepare to execute the action that they will have selected
             ContTurns.Get().SetTurnState(ContTurns.STATETURN.EXECUTEACTIONS);
+
+            //Let the controller for ability selection know that it should start selecting an ability
+            ContAbilitySelection.Get().StartSelection();
+
+            //Ensure that we actually don't automatically move to process the next event
+            bStopAutoProcessing = true;
 
             sLabel = "Select Your Action for " + ContTurns.Get().GetNextActingChr().sName;
             fDelay = ContTurns.fDelayChooseAction;
-        }
 
+        }
 
     }
 }
