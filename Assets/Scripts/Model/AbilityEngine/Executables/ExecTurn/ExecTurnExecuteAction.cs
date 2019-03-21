@@ -41,21 +41,12 @@ public class ExecTurnExecuteAction : Executable {
         //We assume that we have just come from choosing an action, so get that character
         Chr chrNextToAct = ContTurns.Get().GetNextActingChr();
 
-        //Check if we're resting
-        if (ContAbilitySelection.Get().nSelectedAbility == Chr.idResting &&
-            chrNextToAct.nFatigue > 0) {
-            //If we have a rest action selected, but we have accrued some fatigue
+        sLabel = chrNextToAct.sName + " is using " + chrNextToAct.arActions[ContAbilitySelection.Get().nSelectedAbility].sName;
 
-            //Then no action needs to be taken, just leave the character in a fatigued state
-            sLabel = chrNextToAct.sName + " is finished selecting abilities for the turn";
+        chrNextToAct.ExecuteAction(ContAbilitySelection.Get().nSelectedAbility, ContAbilitySelection.Get().lstSelectedTargets);
+
+        if (ContAbilitySelection.Get().nSelectedAbility == Chr.idResting) {
             chrNextToAct.SetStateReadiness(new StateFatigued(chrNextToAct));
-        }else { 
-        
-            //If here, then we're doing a normal action (or a proper rest for 3 turns)
-
-            sLabel = chrNextToAct.sName + " is using " + chrNextToAct.arActions[ContAbilitySelection.Get().nSelectedAbility].sName;
-
-            chrNextToAct.ExecuteAction(ContAbilitySelection.Get().nSelectedAbility, ContAbilitySelection.Get().lstSelectedTargets);
         }
 
         fDelay = ContTurns.fDelayStandard;
