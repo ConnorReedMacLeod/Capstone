@@ -12,7 +12,7 @@ public class ActionVenemousBite : Action {
         //Since the base constructor initializes this array, we can start filling it
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); we don't have any targets
 
-        sName = "VenemousBite";
+        sName = "Venemous Bite";
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -26,10 +26,11 @@ public class ActionVenemousBite : Action {
         //Create a base Damage object that this action will apply
         dmg = new Damage(this.chrSource, null, nBaseDamage);
 
-        sDescription = "Deal 5 damage and apply [Envenomed](3) to the blocker.\n" +
-                       "[Envenomed]: Lose 5 Life at the end of each turn.  +1 duration each time you take damage";
+		sDescription1 = "Deal 5 damage and apply ENVENOMED (3) to the enemy Vanguard.\n";
+		sDescription2 = "[ENVENOMED]\n" + "At the end of turn, lose 5 health.  Whenever this character takes damage, +1 duration.";
 
-        SetArgOwners();
+
+		SetArgOwners();
     }        
 
     override public void Execute(int[] lstTargettingIndices) {

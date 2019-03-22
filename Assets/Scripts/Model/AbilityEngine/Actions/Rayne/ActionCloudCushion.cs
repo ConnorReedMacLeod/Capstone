@@ -12,7 +12,7 @@ public class ActionCloudCushion : Action {
         //Since the base constructor initializes this array, we can start filling it
         arArgs[0] = new TargetArgAlly((own, tar) => true); //Choose any friendly character
 
-        sName = "CloudCushion";
+        sName = "Cloud Cushion";
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -25,7 +25,7 @@ public class ActionCloudCushion : Action {
         nDefenseGain = 25;
         nDuration = 4;
 
-        sDescription = "Target ally gains 25 [DEFENSE] for 4 turns";
+        sDescription1 = "Target ally gains 25 DEFENSE for 4 turns.";
 
         SetArgOwners();
     }

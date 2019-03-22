@@ -5,7 +5,7 @@
         //Since the base constructor initializes this array, we can start filling it
         arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); //Choose an enemy character
 
-        sName = "HuntersQuarry";
+        sName = "Hunters Quarry";
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -15,7 +15,8 @@
         nFatigue = 3;
         nActionCost = 1;
 
-        sDescription = "Before " + _chrOwner.sName + " deals damage to this character, they lose 5 Defense until end of turn";
+		sDescription1 = "Apply HUNTED to the chosen character.";
+        sDescription2 = "[HUNTED]\n" + "Before " + _chrOwner.sName + " deals damage to this character, they lose 5 DEFENSE until end of turn.";
 
         SetArgOwners();
     }

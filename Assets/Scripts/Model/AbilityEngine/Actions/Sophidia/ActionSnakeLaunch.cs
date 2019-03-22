@@ -14,7 +14,7 @@ public class ActionSnakeLaunch : Action {
         //Since the base constructor initializes this array, we can start filling it
         arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner);
 
-        sName = "SnakeLaunch";
+        sName = "Snake Launch";
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -30,7 +30,7 @@ public class ActionSnakeLaunch : Action {
 
         nLifeLoss = 5;
 
-        sDescription = "Deal 20 damage twice.  Lose 5 life twice";
+        sDescription1 = "Deal 20 damage to the chosen character twice.  Lose 5 health twice";
 
         SetArgOwners();
     }

@@ -36,9 +36,11 @@ public class ActionCacaphony : Action {
         nBaseStun = 2;
         nCriticalStun = 3;
 
-        sDescription = "Deal 20 damage and 2 fatigue to the chosen character.  If the chosen character is blocking, deal 30 damage and 3 fatigue instead";
+        sDescription1 = "Deal 20 damage and 2 fatigue to the chosen character.";
+		sDescription2 = "If the chosen character is the Vanguard, deal 30 damage and 3 fatigue instead";
 
-        SetArgOwners();
+
+		SetArgOwners();
     }
 
     //Deal critical damage and stun if the targetted character is a blocker

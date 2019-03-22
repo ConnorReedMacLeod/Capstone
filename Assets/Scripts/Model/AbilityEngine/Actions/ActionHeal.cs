@@ -27,7 +27,7 @@ public class ActionHeal : Action {
         //Create a base Healing object that this action will apply
         heal = new Healing(this.chrSource, null, nBaseHealing);
 
-        sDescription = "Restore 5 health to target ally";
+        sDescription1 = "Restore 5 health to the chosen ally.";
 
 
         SetArgOwners();

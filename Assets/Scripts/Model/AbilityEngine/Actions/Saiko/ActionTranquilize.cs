@@ -20,7 +20,7 @@ public class ActionTranquilize : Action {
         nFatigue = 3;
         nActionCost = 1;
 
-        sDescription = "Deal 4 fatigue to the enemy blocker.";
+        sDescription1 = "Deal 4 fatigue to the enemy Vanguard.";
 
         nStunDuration = 4;
 

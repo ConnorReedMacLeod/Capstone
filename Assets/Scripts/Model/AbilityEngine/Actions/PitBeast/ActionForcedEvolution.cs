@@ -19,7 +19,7 @@ public class ActionForcedEvolution : Action {
         nFatigue = 1;
         nActionCost = 1;
 
-        sDescription = "Gain 5 [Power].  Lose 5 Life";
+        sDescription1 = "Lose 5 health.  Gain 5 POWER.";
 
         SetArgOwners();
     }

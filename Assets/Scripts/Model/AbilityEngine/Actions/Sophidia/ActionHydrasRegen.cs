@@ -41,7 +41,7 @@ public class ActionRegenerate : Action {
         //Create a base Healing object that this action will apply
         heal = new Healing(this.chrSource, this.chrSource, nBaseHealing);
 
-        sDescription = "For 4 turns, while channeling heal 10 at the end of turn";
+        sDescription1 = "While channeling, at the end of turn heal 10.";
 
         SetArgOwners();
     }

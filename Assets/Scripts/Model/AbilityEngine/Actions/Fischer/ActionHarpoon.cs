@@ -26,7 +26,7 @@ public class ActionHarpoon : Action {
         //Create a base Damage object that this action will apply
         dmg = new Damage(this.chrSource, null, nBaseDamage);
 
-        sDescription = "After channeling, deal 30 damage to the chosen enemy.  That enemy becomes the blocker";
+        sDescription1 = "After channeling, deal 30 damage to the chosen enemy.  That enemy becomes the blocker.";
 
         SetArgOwners();
     }

@@ -20,7 +20,7 @@ public class ActionHiss : Action {
         nFatigue = 1;
         nActionCost = 0;
 
-        sDescription = "[CANTRIP] All enemies lose 10 [Power] for 3 turns";
+        sDescription1 = "All enemies lose 10 POWER for 3 turns.";
 
         SetArgOwners();
     }

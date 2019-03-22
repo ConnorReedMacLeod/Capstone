@@ -23,7 +23,7 @@ public class ActionStorm : Action {
         nFatigue = 5;
         nActionCost = 1;
 
-        sDescription = "Deal 15 damage and 2 fatigue to all enemies.";
+        sDescription1 = "Deal 15 damage and 2 fatigue to all enemies.";
 
         nStunDuration = 2;
         nBaseDamage = 15;

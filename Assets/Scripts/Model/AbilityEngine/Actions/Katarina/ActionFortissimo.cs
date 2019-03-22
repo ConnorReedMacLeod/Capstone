@@ -19,7 +19,7 @@ public class ActionFortissimo : Action {
         nFatigue = 0;
         nActionCost = 0;//0 since this is a cantrip
 
-        sDescription = "[Cantrip]  +10 [Power] and +10 [Defense] for 4 turns";
+        sDescription1 = "Gain 10 POWER and 10 DEFENSE for 4 turns.";
 
         SetArgOwners();
     }
