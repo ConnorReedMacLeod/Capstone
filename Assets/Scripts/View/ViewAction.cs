@@ -132,7 +132,7 @@ public class ViewAction : ViewInteractive {
         }
     }
 
-    public void DisplayedIcon() {
+    public void DisplayIcon() {
         string sImgPath = "";
 
         if(mod != null) {
@@ -150,6 +150,6 @@ public class ViewAction : ViewInteractive {
         DisplayType();
         DisplayCurCooldown();
         DisplayCooldown();
-        DisplayedIcon();
+        DisplayIcon();
     }
 }
