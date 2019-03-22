@@ -18,6 +18,8 @@ public class ViewAction : ViewInteractive {
     public Text txtCooldown;
     public Text txtFatigue;
 
+    public GameObject goIcon;
+
     public static Subject subAllClick = new Subject();
     public static Subject subAllStartHover = new Subject();
     public static Subject subAllStopHover = new Subject();
@@ -43,6 +45,10 @@ public class ViewAction : ViewInteractive {
         base.onMouseStopHover(args);
     }
 
+    public void cbAbilityChanged(Object target, params object[] args) {
+        DisplayAll();
+    }
+
 
     //Let the Action button know which action it's representing
     public void SetModel(Action _mod) {
@@ -65,23 +71,10 @@ public class ViewAction : ViewInteractive {
         if (bStarted == false)
         {
             bStarted = true;
-
-            Chr.subAllStartSelect.Subscribe(cbChrSelected);
-            Chr.subAllStartIdle.Subscribe(cbChrUnselected);
         }
 	}
 
-    public void cbChrSelected(Object target, params object[] args) {
-        SetModel(((Chr)target).arActions[id]);
-    }
-
-    public void cbChrUnselected(Object target, params object[] args) {
-        SetModel(null);
-    }
-
-    public void cbAbilityChanged(Object target, params object[] args) {
-        DisplayAll();
-    }
+   
 
     public void DisplayName(){
         if (mod == null){
@@ -139,6 +132,17 @@ public class ViewAction : ViewInteractive {
         }
     }
 
+    public void DisplayedIcon() {
+        string sImgPath = "";
+
+        if(mod != null) {
+            sImgPath = "Images/Chrs/" + mod.chrSource.sName + "/img" + mod.chrSource.sName + "Headshot";
+        }
+
+        Sprite sprIcon = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
+        goIcon.GetComponent<SpriteRenderer>().sprite = sprIcon;
+    }
+
 
     public void DisplayAll() {
         DisplayName();
@@ -146,5 +150,6 @@ public class ViewAction : ViewInteractive {
         DisplayType();
         DisplayCurCooldown();
         DisplayCooldown();
+        DisplayedIcon();
     }
 }
