@@ -35,7 +35,7 @@ public class ActionVenemousBite : Action {
 
     override public void Execute(int[] lstTargettingIndices) {
 
-        Chr tarPlyr = chrSource.GetEnemyPlayer().GetBlocker();
+        Chr tarBlocker = chrSource.GetEnemyPlayer().GetBlocker();
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
@@ -43,14 +43,14 @@ public class ActionVenemousBite : Action {
                 //Make a copy of the damage object to give to the executable
                 Damage dmgToApply = new Damage(dmg);
                 //Give the damage object its target
-                dmgToApply.SetChrTarget(tarPlyr);
+                dmgToApply.SetChrTarget(tarBlocker);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
-                    chrTarget = tarPlyr,
+                    chrTarget = tarBlocker,
                     dmg = dmgToApply,
                     fDelay = ContTurns.fDelayStandard,
-                    sLabel = tarPlyr.sName + " is being bitten"
+                    sLabel = tarBlocker.sName + " is being bitten"
                 });
             }
         });
@@ -59,7 +59,7 @@ public class ActionVenemousBite : Action {
             fExecute = () => {
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
-                    chrTarget = tarPlyr,
+                    chrTarget = tarBlocker,
 
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
                         return new SoulEnvenomed(_chrSource, _chrTarget);

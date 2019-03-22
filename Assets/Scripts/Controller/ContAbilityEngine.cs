@@ -156,7 +156,7 @@ public class ContAbilityEngine : MonoBehaviour {
     }
 
     public void SpawnTimer(float fDelay, string sLabel) {
-        GameObject goTimer = Instantiate(pfTimer, Match.Get().transform);
+        GameObject goTimer = Instantiate(pfTimer, Match.Get().transform); //TIMER SPAWN POSITION
         ViewTimer viewTimer = goTimer.GetComponent<ViewTimer>();
         if (viewTimer == null) {
             Debug.LogError("ERROR - pfTimer doesn't have a viewTimer component");
