@@ -17,13 +17,22 @@ public class ViewChr : ViewInteractive {
     public GameObject goBlockerIndicator; //Blocker Reference
 	public GameObject goBorder;         //Border Reference
 	public GameObject goPortrait;       //Portrait Reference
-	public GameObject goFatigueDisplay;	//Fatigue Display Reference
+	public GameObject goFatigueDisplay; //Fatigue Display Reference
+	public GameObject goChannelDisplay; //Channel Display Reference
+	public GameObject goPowerDefense;	//Power Defense Display Reference
+	public GameObject goPowerDisplay;   //Power Display Reference
+	public GameObject goDefenseDisplay; //Defense Display Reference
+
+	private Vector3 v3PowerPosition;    //Power Display Position
+	private Vector3 v3DefensePosition;	//Defense Display Position
+
     public Text txtHealth;              //Textfield Reference
     public Text txtArmour;              //Textfield Reference
     public Text txtPower;               //Textfield Reference
     public Text txtDefense;             //Textfield Reference
     public Text txtFatigue;             //Fatigue Overlay Reference
     public Text txtChannelTime;         //ChannelTime Overlay Reference
+
     public SpriteMask maskPortrait;     //SpriteMask Reference
     public ViewSoulContainer viewSoulContainer;  //SoulContainer Reference
 
@@ -58,6 +67,26 @@ public class ViewChr : ViewInteractive {
 				goFatigueDisplay.transform.localPosition.y,
 				goFatigueDisplay.transform.localPosition.z);
 
+			goChannelDisplay.transform.localPosition = new Vector3(
+				-goChannelDisplay.transform.localPosition.x,
+				goChannelDisplay.transform.localPosition.y,
+				goChannelDisplay.transform.localPosition.z);
+
+			goPowerDefense.transform.localPosition = new Vector3(
+				-goPowerDefense.transform.localPosition.x,
+				goPowerDefense.transform.localPosition.y,
+				goPowerDefense.transform.localPosition.z);
+
+			/*goPowerDisplay.transform.localPosition = new Vector3(
+				-goPowerDisplay.transform.localPosition.x,
+				goPowerDisplay.transform.localPosition.y,
+				goPowerDisplay.transform.localPosition.z);*/
+
+			/*goDefenseDisplay.transform.localPosition = new Vector3(
+				-goDefenseDisplay.transform.localPosition.x,
+				goDefenseDisplay.transform.localPosition.y,
+				goDefenseDisplay.transform.localPosition.z);*/
+
 			//Flip the character's soul position as well
 			viewSoulContainer.transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
 
@@ -66,6 +95,13 @@ public class ViewChr : ViewInteractive {
             }
 
         }
+
+		//Power and Defense positioning
+		v3PowerPosition = goPowerDisplay.transform.localPosition;
+		v3DefensePosition = goDefenseDisplay.transform.localPosition;
+
+		goPowerDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+		goDefenseDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
 	}
 
     public override void onMouseClick(params object[] args) {
@@ -204,21 +240,27 @@ public class ViewChr : ViewInteractive {
 
     public void cbUpdatePower(Object target, params object[] args) {
         if (mod.pnPower.Get() > 0) {
-            txtPower.text = "+" + mod.pnPower.Get().ToString() + " [POWER]";
-        } else if (mod.pnPower.Get() < 0) {
-            txtPower.text = mod.pnPower.Get().ToString() + " [POWER]";
-        } else {
+            txtPower.text = "+" + mod.pnPower.Get().ToString();
+			goPowerDisplay.transform.localPosition = v3PowerPosition;
+		} else if (mod.pnPower.Get() < 0) {
+            txtPower.text = mod.pnPower.Get().ToString();
+			goPowerDisplay.transform.localPosition = v3PowerPosition;
+		} else {
             txtPower.text = "";
-        }
+			goPowerDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+		}
     }
 
     public void cbUpdateDefense(Object target, params object[] args) {
         if (mod.pnDefense.Get() > 0) {
-            txtDefense.text = "+" + mod.pnDefense.Get().ToString() + " [DEFENSE]";
-        } else if (mod.pnDefense.Get() < 0) {
-            txtDefense.text = mod.pnDefense.Get().ToString() + " [DEFENSE]";
-        } else {
+            txtDefense.text = "+" + mod.pnDefense.Get().ToString();
+			goDefenseDisplay.transform.localPosition = v3DefensePosition;
+		} else if (mod.pnDefense.Get() < 0) {
+            txtDefense.text = mod.pnDefense.Get().ToString();
+			goDefenseDisplay.transform.localPosition = v3DefensePosition;
+		} else {
             txtDefense.text = "";
+			goDefenseDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
         }
     }
 
