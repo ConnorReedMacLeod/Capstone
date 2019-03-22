@@ -24,10 +24,11 @@ public class Action { //This should probably be made abstract
     public int nCharges;
     public int nCurCharges;
 
-    public string sDescription;
-    public string sExtraDescription;
+    public string sDescription1;
+    public string sDescription2;
+	public string sDescription3;
 
-    public Property<int[]> parCost;
+	public Property<int[]> parCost;
 
     public Stack<Clause> stackClauses = new Stack<Clause>();
 

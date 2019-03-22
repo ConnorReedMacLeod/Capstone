@@ -21,7 +21,7 @@ public class ActionCheerleader : Action {
         nFatigue = 0;
         nActionCost = 0;
 
-        sDescription = "[PASSIVE] At the beginning of each turn that Rayne acts, all other allies get +5 [POWER]";
+        sDescription1 = "At the beginning of each turn that Rayne acts, all other allies gain 5 POWER until the end of turn.";
 
         SetArgOwners();
     }

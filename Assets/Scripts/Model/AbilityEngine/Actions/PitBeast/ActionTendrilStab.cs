@@ -12,7 +12,7 @@ public class ActionTendrilStab : Action {
         //Since the base constructor initializes this array, we can start filling it
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); we don't have any targets
 
-        sName = "TendrilStab";
+        sName = "Tendril Stab";
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -26,7 +26,7 @@ public class ActionTendrilStab : Action {
         //Create a base Damage object that this action will apply
         dmg = new Damage(this.chrSource, null, nBaseDamage, true);
 
-        sDescription = "Deal 25 [PIERCING] damage to the enemy blocker";
+        sDescription1 = "Deal 25 PIERCING damage to the enemy Vanguard.";
 
         SetArgOwners();
     }

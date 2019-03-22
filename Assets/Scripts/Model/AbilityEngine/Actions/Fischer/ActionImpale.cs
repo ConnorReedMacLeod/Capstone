@@ -26,7 +26,7 @@ public class ActionImpale : Action {
         //Create a base Damage object that this action will apply
         dmg = new Damage(this.chrSource, null, nBaseDamage);
 
-        sDescription = "Deal 20 damage to the blocker and lower their max Life by 10";
+        sDescription1 = "Deal 20 damage to the enemy Vanguard and reduce their max health by 10.";
 
         SetArgOwners();
     }

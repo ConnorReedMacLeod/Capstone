@@ -26,7 +26,7 @@ public class ActionFireball : Action {
         //Create a base Damage object that this action will apply
         dmg = new Damage(this.chrSource, null, nBaseDamage);
 
-        sDescription = "Deal 5 damage to target character";
+        sDescription1 = "Deal 5 damage to the chosen character.";
 
 		SetArgOwners ();
 	}

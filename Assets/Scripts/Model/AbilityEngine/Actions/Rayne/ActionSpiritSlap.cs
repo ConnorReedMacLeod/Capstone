@@ -12,7 +12,7 @@ public class ActionSpiritSlap : Action {
         //Since the base constructor initializes this array, we can start filling it
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); we don't have any targets
 
-        sName = "SpiritSlap";
+        sName = "Spirit Slap";
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -26,8 +26,8 @@ public class ActionSpiritSlap : Action {
         //Create a base Damage object that this action will apply
         dmg = new Damage(this.chrSource, null, nBaseDamage);
 
-        sDescription = "Deal 5 damage to the enemy blocker and apply [Dispirited](4).\n" +
-                       "[Dispirited]: This character's cantrips cost [O] more.";
+		sDescription1 = "Deal 5 damage to the enemy blocker and apply DISPIRITED (4).";
+		sDescription2 = "[DISPIRITED]\n" + "This character's cantrips cost [O] more.";
 
         SetArgOwners();
     }

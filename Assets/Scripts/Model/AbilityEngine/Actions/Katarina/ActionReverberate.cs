@@ -26,7 +26,7 @@ public class ActionReverberate : Action {
         //Create a base Damage object that this action will apply
         dmg = new Damage(this.chrSource, null, nBaseDamage);
 
-        sDescription = "Deal 5 damage to all enemies";
+        sDescription1 = "Deal 5 damage to all characters on the chosen team.";
 
         SetArgOwners();
     }

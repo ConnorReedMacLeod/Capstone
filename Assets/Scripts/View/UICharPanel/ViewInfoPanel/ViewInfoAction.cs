@@ -16,8 +16,9 @@ public class ViewInfoAction : MonoBehaviour {
 	public Text txtCooldown;
 	public Text txtCharges;
 
-	public Text txtDescription;
-	public Text txtExtraDescription;
+	public Text txtDescription1;
+	public Text txtDescription2;
+	public Text txtDescription3;
 
 	public Action mod;                   //Action model
 
@@ -76,7 +77,7 @@ public class ViewInfoAction : MonoBehaviour {
 		if (mod == null) {
 			txtType.text = "";
 		} else {
-			txtType.text = "[" + mod.type.ToString() + "]";
+			txtType.text = mod.type.getName();
 		}
 	}
 
@@ -106,19 +107,27 @@ public class ViewInfoAction : MonoBehaviour {
 		}
 	}
 
-	public void DisplayDescription() {
+	public void DisplayDescription1() {
 		if (mod == null) {
-			txtDescription.text = "";
+			txtDescription1.text = "";
 		} else {
-			txtDescription.text = mod.sDescription;
+			txtDescription1.text = mod.sDescription1;
 		}
 	}
 
-	public void DisplayExtraDescription() {
+	public void DisplayDescription2() {
 		if (mod == null) {
-			txtExtraDescription.text = "";
+			txtDescription2.text = "";
 		} else {
-			txtExtraDescription.text = mod.sExtraDescription;
+			txtDescription2.text = mod.sDescription2;
+		}
+	}
+
+	public void DisplayDescription3() {
+		if (mod == null) {
+			txtDescription3.text = "";
+		} else {
+			txtDescription3.text = mod.sDescription3;
 		}
 	}
 
@@ -129,8 +138,9 @@ public class ViewInfoAction : MonoBehaviour {
 		DisplayFatigue ();
 		DisplayCooldown ();
 		DisplayCharges ();
-		DisplayDescription ();
-		DisplayExtraDescription ();
+		DisplayDescription1 ();
+		DisplayDescription2 ();
+		DisplayDescription3 ();
 	}
 
 	//Undoes the image and border scaling set by the parent

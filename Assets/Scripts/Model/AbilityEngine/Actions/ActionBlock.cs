@@ -19,7 +19,7 @@ public class ActionBlock : Action {
         nFatigue = 0;
         nActionCost = 0;
 
-        sDescription = "Become the blocker";
+        sDescription1 = "Become the Vanguard.  (Melee attacks target the Vanguard)";
 
         SetArgOwners();
     }

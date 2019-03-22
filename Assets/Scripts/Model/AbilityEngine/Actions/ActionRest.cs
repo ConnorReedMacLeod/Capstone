@@ -20,7 +20,7 @@ public class ActionRest : Action {
 
         nRestFatigue = 3;
 
-		sDescription = _chrOwner + " has finished selecting abilities for the turn";
+		sDescription1 = _chrOwner + " has finished selecting abilities for the turn.";
 
 	}
 
