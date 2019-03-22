@@ -23,6 +23,8 @@ public class ViewChr : ViewInteractive {
 	public GameObject goPowerDisplay;   //Power Display Reference
 	public GameObject goDefenseDisplay; //Defense Display Reference
 
+	private Vector3 v3FatiguePosition;  //Fatigue Display Position
+	private Vector3 v3ChannelPosition;	//Channel Display Position
 	private Vector3 v3PowerPosition;    //Power Display Position
 	private Vector3 v3DefensePosition;	//Defense Display Position
 
@@ -95,6 +97,12 @@ public class ViewChr : ViewInteractive {
             }
 
         }
+		//Fatigue and Channel positioning
+		v3FatiguePosition = goFatigueDisplay.transform.localPosition;
+		v3ChannelPosition = goChannelDisplay.transform.localPosition;
+
+		goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+		goChannelDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
 
 		//Power and Defense positioning
 		v3PowerPosition = goPowerDisplay.transform.localPosition;
@@ -194,22 +202,26 @@ public class ViewChr : ViewInteractive {
     public void cbUpdateFatigue(Object target, params object[] args) {
         //If we're channeling, then we won't display fatigue
         if (mod.curStateReadiness.Type() == StateReadiness.TYPE.CHANNELING) {
-            Debug.Log("We shouldn't show fatigue when channeling");
+            /*Debug.Log("We shouldn't show fatigue when channeling");
             txtFatigue.text = "";
-            return;
+			goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+			return;*/
         }
 
         if (mod.curStateReadiness.Type() == StateReadiness.TYPE.DEAD) {
             Debug.Log("We shouldn't show fatigue when dead");
             txtFatigue.text = "";
-            return;
+			goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+			return;
         }
 
         //Otherwise, then show a non-zero fatigue value
         if (mod.nFatigue > 0) {
             txtFatigue.text = mod.nFatigue.ToString();
+			goFatigueDisplay.transform.localPosition = v3FatiguePosition;
         } else {
             txtFatigue.text = "";
+			goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
         }
     }
 
@@ -218,16 +230,19 @@ public class ViewChr : ViewInteractive {
         if (mod.curStateReadiness.Type() != StateReadiness.TYPE.CHANNELING) {
             Debug.Log("Were notified of UpdateChannelTime, but we're not in a channeling state");
             txtChannelTime.text = "";
-            return;
+			goChannelDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+			return;
 
         }
 
         //Otherwise, then the channeltime value
         if (((StateChanneling)mod.curStateReadiness).nChannelTime > 0) {
             txtChannelTime.text = ((StateChanneling)mod.curStateReadiness).nChannelTime.ToString();
-        } else {
+			goChannelDisplay.transform.localPosition = v3ChannelPosition;
+		} else {
             txtChannelTime.text = "";
-        }
+			goChannelDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+		}
     }
 
     public void cbUpdateArmour(Object target, params object[] args) {
