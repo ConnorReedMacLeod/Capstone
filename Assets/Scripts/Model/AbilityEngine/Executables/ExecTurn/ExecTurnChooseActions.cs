@@ -62,7 +62,7 @@ public class ExecTurnChooseActions : Executable {
             bStopAutoProcessing = true;
 
             sLabel = "Select Your Action for " + ContTurns.Get().GetNextActingChr().sName;
-            fDelay = ContTurns.fDelayChooseAction;
+            fDelay = ContAbilitySelection.Get().fMaxSelectionTime;
 
         }
 
