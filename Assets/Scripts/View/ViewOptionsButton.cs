@@ -7,12 +7,14 @@ public class ViewOptionsButton : ViewInteractive {
 
     bool bStarted;                          //Confirms the Start() method has executed
 
-    bool bSelected = false;
+    public bool bSelected = false;
 
     public Subject subClick = new Subject();
 
 
     public override void onMouseClick(params object[] args) {
+
+        Debug.Log("CLicked");
 
         bSelected = true;
         Display();
