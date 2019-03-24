@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ContOptionsOverlay : MonoBehaviour {
 
@@ -75,6 +76,13 @@ public class ContOptionsOverlay : MonoBehaviour {
         subTimerSelectedInGroup.NotifyObs(target);
     }
 
+    public void cbClickRestart(Object target, params object[] args) {
+        Debug.Log("Reloading");
+
+        cbOnLeave(target, args);
+
+        SceneManager.LoadScene("_SCENE");
+    }
 
     public void cbOnEnter(Object target, params object[] args) {
         Debug.Log("On Enter");
@@ -89,6 +97,7 @@ public class ContOptionsOverlay : MonoBehaviour {
         btnTimerFast.subClick.Subscribe(cbClickTimerFast);
         btnTimerMedium.subClick.Subscribe(cbClickTimerMedium);
         btnTimerInf.subClick.Subscribe(cbClickTimerInf);
+        btnRestart.subClick.Subscribe(cbClickRestart);
 
         //And listen for the open menu shortcut
         KeyBindings.SetBinding(cbOnLeave, KeyCode.Escape);
@@ -108,6 +117,7 @@ public class ContOptionsOverlay : MonoBehaviour {
         btnTimerFast.subClick.UnSubscribe(cbClickTimerFast);
         btnTimerMedium.subClick.UnSubscribe(cbClickTimerMedium);
         btnTimerInf.subClick.UnSubscribe(cbClickTimerInf);
+        btnRestart.subClick.UnSubscribe(cbClickRestart);
 
         //And listen for the open menu shortcut
         KeyBindings.SetBinding(cbOnEnter, KeyCode.Escape);
@@ -142,6 +152,8 @@ public class ContOptionsOverlay : MonoBehaviour {
     void Start () {
 	    if(bStarted == false) {
             bStarted = true;
+
+            DontDestroyOnLoad(this);
 
             InitButtonGroups();
             InitDefaultOptions();
