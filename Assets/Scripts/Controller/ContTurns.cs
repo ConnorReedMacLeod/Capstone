@@ -9,7 +9,7 @@ public class ContTurns : MonoBehaviour {
     public enum STATETURN {RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSEACTIONS, EXECUTEACTIONS, TURNEND };
     public STATETURN curStateTurn;
 
-    public static ContTurns inst;
+    public static ContTurns instance;
 
     public Chr []arChrPriority = new Chr[Player.MAXCHRS];
     public Chr chrNextReady; //Stores the currently acting character this turn (or null if none are acting)
@@ -29,16 +29,17 @@ public class ContTurns : MonoBehaviour {
     public static ContTurns Get() {
 
 
-        return inst;
+        return instance;
     }
 
     public void Awake() {
         DontDestroyOnLoad(this);
 
-        if(inst != null) {
-            Destroy(inst);
+        if(instance == null) {
+            instance = this;
+        } else {
+            Destroy(this);
         }
-        inst = this;
 
         subAllPriorityChange = new Subject();
     }

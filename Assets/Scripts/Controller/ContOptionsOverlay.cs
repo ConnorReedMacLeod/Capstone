@@ -17,26 +17,14 @@ public class ContOptionsOverlay : MonoBehaviour {
 
     public ViewOptionsButton btnRestart;
 
-    public Subject subPlayer0SelectedInGroup;
-    public Subject subPlayer1SelectedInGroup;
-    public Subject subTimerSelectedInGroup;
+    public Subject subPlayer0SelectedInGroup = new Subject();
+    public Subject subPlayer1SelectedInGroup = new Subject();
+    public Subject subTimerSelectedInGroup = new Subject();
 
     public Vector3 v3OnScreen = new Vector3(0f, 0f, -1f);
     public Vector3 v3OffScreen = new Vector3(-100f, -100f, -1f);
 
-    public static ContOptionsOverlay inst;
 
-    public void Awake() {
-        
-        if (inst != null) {
-            Debug.Log("Should destroy this inst");
-            Destroy(this.gameObject);
-            return;
-        }
-        DontDestroyOnLoad(this);
-
-        inst = this;
-    }
 
     public void cbClickPlyr0Human(Object target, params object[] args) {
 
@@ -89,6 +77,7 @@ public class ContOptionsOverlay : MonoBehaviour {
     }
 
     public void cbClickRestart(Object target, params object[] args) {
+        Debug.Log("Reloading");
 
         cbOnLeave(target, args);
 
@@ -96,6 +85,7 @@ public class ContOptionsOverlay : MonoBehaviour {
     }
 
     public void cbOnEnter(Object target, params object[] args) {
+        Debug.Log("On Enter");
         //Move the overlay onto the screen
         this.transform.position = v3OnScreen;
 
@@ -114,6 +104,7 @@ public class ContOptionsOverlay : MonoBehaviour {
     }
 
     public void cbOnLeave(Object target, params object[] args) {
+        Debug.Log("On Leave");
 
         //Move the overlay off of the screen
         this.transform.position = v3OffScreen;
@@ -162,9 +153,7 @@ public class ContOptionsOverlay : MonoBehaviour {
 	    if(bStarted == false) {
             bStarted = true;
 
-            subPlayer0SelectedInGroup = new Subject();
-            subPlayer1SelectedInGroup = new Subject();
-            subTimerSelectedInGroup = new Subject();
+            DontDestroyOnLoad(this);
 
             InitButtonGroups();
             InitDefaultOptions();

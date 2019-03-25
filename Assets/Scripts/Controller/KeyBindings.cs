@@ -10,6 +10,8 @@ using UnityEngine;
 
 public class KeyBindings : MonoBehaviour{
 
+	public static KeyBindings instance;
+
 	public Dictionary<Subject.FnCallback, KeyBind> dictEventToBind = new Dictionary<Subject.FnCallback, KeyBind>();
 	public Dictionary<KeyBind, Subject.FnCallback> dictBindToEvent = new Dictionary<KeyBind, Subject.FnCallback>();
 
@@ -26,30 +28,19 @@ public class KeyBindings : MonoBehaviour{
 		}
 	}
 
-    public static KeyBindings inst;
-
-    public void Awake() {
-
-        Debug.Log("inst is " + inst);
-
-        if (inst != null) {
-            Debug.Log("Should destroy this inst");
-            Destroy(this.gameObject);
-            return;
-        }
-
-        inst = this;
-
-        DontDestroyOnLoad(inst.gameObject);
-
-        Debug.Log("Resetting keybind lists");
-
-        dictEventToBind = new Dictionary<Subject.FnCallback, KeyBind>();
-        dictBindToEvent = new Dictionary<KeyBind, Subject.FnCallback>();
-    }
-
-    public static KeyBindings Get(){
-		return inst;
+	public static KeyBindings Get(){
+		if(instance == null){
+			GameObject go = GameObject.FindGameObjectWithTag("Controller");
+			if(go == null){
+				Debug.LogError("ERROR!  NO OBJECT WITH 'controller' TAG!");
+			}
+			instance = go.GetComponent<KeyBindings>();
+			if (instance == null){
+				Debug.LogError("ERROR!  CONTROLLER HAS NO KEYBINDINGS COMPONENT!");
+			}
+			instance.Start ();
+		}
+		return instance;
 	}
 
 	public static bool BindingUsed(KeyBind bind){
@@ -62,7 +53,7 @@ public class KeyBindings : MonoBehaviour{
 			//If there's no modifier to this binding, check if there's a 
 			//binding for this key with a modifier that is satisfied
 
-			foreach (KeyValuePair<KeyBind, Subject.FnCallback> otherBind in inst.dictBindToEvent){
+			foreach (KeyValuePair<KeyBind, Subject.FnCallback> otherBind in Get().dictBindToEvent){
 				if(otherBind.Key.keyPress == bind.keyPress &&
 					otherBind.Key.keyModifier != KeyCode.None &&
 					Input.GetKey(otherBind.Key.keyModifier)){
@@ -81,11 +72,14 @@ public class KeyBindings : MonoBehaviour{
 		if(bStarted == false){
 			bStarted = true;
 
+			Get();//To initialize the static instance
+
         }
 	}
 
 
 	void Update () {
+		Start ();
 
 		foreach (KeyValuePair<KeyBind, Subject.FnCallback> bind in dictBindToEvent) {
 			if (BindingUsed (bind.Key)) {
@@ -100,28 +94,28 @@ public class KeyBindings : MonoBehaviour{
 	public static void SetBinding(Subject.FnCallback fnCallback, KeyCode _key, KeyCode _keyModifier = KeyCode.None){
 
         //If this event is already registered to some key binding
-		if (inst.dictEventToBind.ContainsKey(fnCallback)) {
+		if (Get().dictEventToBind.ContainsKey(fnCallback)) {
             //Then Find that binding
-			KeyBind curBind = inst.dictEventToBind [fnCallback];
+			KeyBind curBind = Get().dictEventToBind [fnCallback];
 
-            //And unregister the event currently linked to that binding
+			//And unregister the event currently linked to that binding
             //(The one we just consumed)
-            inst.dictBindToEvent.Remove (curBind);
+			Get().dictBindToEvent.Remove (curBind);
 		}
 
         //Create the new desired binding
 		KeyBind newBind = new KeyBind (_key, _keyModifier);
 
-		if (inst.dictBindToEvent.ContainsKey (newBind)) {
+		if (Get().dictBindToEvent.ContainsKey (newBind)) {
 			//If this binding is already linked to an event
 
             //Fetch the event currently linked to that binding
-			Subject.FnCallback curCallback = inst.dictBindToEvent[newBind];
+			Subject.FnCallback curCallback = Get().dictBindToEvent[newBind];
             //And unbind it
-            inst.dictEventToBind.Remove (curCallback);
+			Get().dictEventToBind.Remove (curCallback);
 		}
 
-        inst.dictEventToBind [fnCallback] = newBind;
-        inst.dictBindToEvent [newBind] = fnCallback;
+		Get().dictEventToBind [fnCallback] = newBind;
+		Get().dictBindToEvent [newBind] = fnCallback;
 	}
 }
