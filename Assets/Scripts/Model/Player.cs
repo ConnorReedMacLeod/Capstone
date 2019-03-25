@@ -70,6 +70,12 @@ public class Player : MonoBehaviour{
 	}
 
     public void SetInputType(InputType inputType) {
+
+        //If we already have an input Controller, then delete it
+        if (inputController != null) {
+            Destroy(inputController);
+        }
+
         switch (inputType) {
             case InputType.AI:
                 //Then we want a script to control this player's selection
