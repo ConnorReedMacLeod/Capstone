@@ -61,7 +61,11 @@ public class Match : MonoBehaviour {
 			newPlayer.SetID (i);
 			newPlayer.Start ();
 			newPlayer.setChrs (); /// TODO:: replace with actual character selection
-            newPlayer.SetInputType(Player.InputType.AI);
+            if (i == 0) {
+                newPlayer.SetInputType(Player.InputType.HUMAN);
+            } else {
+                newPlayer.SetInputType(Player.InputType.AI);
+            }
             arPlayers [i] = newPlayer;
 		}
 	}

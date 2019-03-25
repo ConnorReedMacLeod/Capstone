@@ -8,13 +8,13 @@ public class ContOptionsOverlay : MonoBehaviour {
 
     public ViewOptionsButton btnPlyr0Human;
     public ViewOptionsButton btnPlyr0AI;
-    public ViewOptionsButton btnPlyr1Human;
-    public ViewOptionsButton btnPlyr1AI;
+    //public ViewOptionsButton btnPlyr1Human;
+    //public ViewOptionsButton btnPlyr1AI;
     public ViewOptionsButton btnTimerFast;
     public ViewOptionsButton btnTimerMedium;
     public ViewOptionsButton btnTimerInf;
 
-    public ViewOptionsButton btnRestart;
+    //public ViewOptionsButton btnRestart;
 
     public Subject subPlayer0SelectedInGroup = new Subject();
     public Subject subPlayer1SelectedInGroup = new Subject();
@@ -40,7 +40,7 @@ public class ContOptionsOverlay : MonoBehaviour {
     }
 
 
-    public void cbClickPlyr1Human(Object target, params object[] args) {
+    /*public void cbClickPlyr1Human(Object target, params object[] args) {
 
         Match.Get().arPlayers[1].SetInputType(Player.InputType.HUMAN);
 
@@ -52,7 +52,7 @@ public class ContOptionsOverlay : MonoBehaviour {
         Match.Get().arPlayers[1].SetInputType(Player.InputType.AI);
 
         subPlayer1SelectedInGroup.NotifyObs(target);
-    }
+    }*/
 
     public void cbClickTimerFast(Object target, params object[] args) {
 
@@ -77,15 +77,15 @@ public class ContOptionsOverlay : MonoBehaviour {
 
 
     public void cbOnEnter(Object target, params object[] args) {
-        Debug.Log("On Enter");
+
         //Move the overlay onto the screen
         this.transform.position = v3OnScreen;
 
         //Initialize all of the button's action subscription and action groups
         btnPlyr0Human.subClick.Subscribe(cbClickPlyr0Human);
         btnPlyr0AI.subClick.Subscribe(cbClickPlyr0AI);
-        btnPlyr1Human.subClick.Subscribe(cbClickPlyr1Human);
-        btnPlyr1AI.subClick.Subscribe(cbClickPlyr1AI);
+        //btnPlyr1Human.subClick.Subscribe(cbClickPlyr1Human);
+        //btnPlyr1AI.subClick.Subscribe(cbClickPlyr1AI);
         btnTimerFast.subClick.Subscribe(cbClickTimerFast);
         btnTimerMedium.subClick.Subscribe(cbClickTimerMedium);
         btnTimerInf.subClick.Subscribe(cbClickTimerInf);
@@ -95,7 +95,6 @@ public class ContOptionsOverlay : MonoBehaviour {
     }
 
     public void cbOnLeave(Object target, params object[] args) {
-        Debug.Log("On Leave");
 
         //Move the overlay off of the screen
         this.transform.position = v3OffScreen;
@@ -103,8 +102,8 @@ public class ContOptionsOverlay : MonoBehaviour {
         //Unsubscribe each button action
         btnPlyr0Human.subClick.UnSubscribe(cbClickPlyr0Human);
         btnPlyr0AI.subClick.UnSubscribe(cbClickPlyr0AI);
-        btnPlyr1Human.subClick.UnSubscribe(cbClickPlyr1Human);
-        btnPlyr1AI.subClick.UnSubscribe(cbClickPlyr1AI);
+        //btnPlyr1Human.subClick.UnSubscribe(cbClickPlyr1Human);
+        //btnPlyr1AI.subClick.UnSubscribe(cbClickPlyr1AI);
         btnTimerFast.subClick.UnSubscribe(cbClickTimerFast);
         btnTimerMedium.subClick.UnSubscribe(cbClickTimerMedium);
         btnTimerInf.subClick.UnSubscribe(cbClickTimerInf);
@@ -119,8 +118,8 @@ public class ContOptionsOverlay : MonoBehaviour {
         subPlayer0SelectedInGroup.Subscribe(btnPlyr0Human.cbSelectedOptionInGroup);
         subPlayer0SelectedInGroup.Subscribe(btnPlyr0AI.cbSelectedOptionInGroup);
 
-        subPlayer1SelectedInGroup.Subscribe(btnPlyr1Human.cbSelectedOptionInGroup);
-        subPlayer1SelectedInGroup.Subscribe(btnPlyr1AI.cbSelectedOptionInGroup);
+        //subPlayer1SelectedInGroup.Subscribe(btnPlyr1Human.cbSelectedOptionInGroup);
+        //subPlayer1SelectedInGroup.Subscribe(btnPlyr1AI.cbSelectedOptionInGroup);
 
         subTimerSelectedInGroup.Subscribe(btnTimerFast.cbSelectedOptionInGroup);
         subTimerSelectedInGroup.Subscribe(btnTimerMedium.cbSelectedOptionInGroup);
@@ -131,10 +130,10 @@ public class ContOptionsOverlay : MonoBehaviour {
     public void InitDefaultOptions() {
 
         //Initially Set the default options
-        btnPlyr0AI.bSelected = true;
-        subPlayer0SelectedInGroup.NotifyObs(btnPlyr0AI);
-        btnPlyr1AI.bSelected = true;
-        subPlayer1SelectedInGroup.NotifyObs(btnPlyr1AI);
+        btnPlyr0Human.bSelected = true;
+        subPlayer0SelectedInGroup.NotifyObs(btnPlyr0Human);
+        //btnPlyr1AI.bSelected = true;
+        //subPlayer1SelectedInGroup.NotifyObs(btnPlyr1AI);
         btnTimerMedium.bSelected = true;
         subTimerSelectedInGroup.NotifyObs(btnTimerMedium);
     }

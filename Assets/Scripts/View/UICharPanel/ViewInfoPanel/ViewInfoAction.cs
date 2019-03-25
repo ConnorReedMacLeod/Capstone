@@ -144,10 +144,6 @@ public class ViewInfoAction : MonoBehaviour {
 	public void SetModel(Action _mod) {
 		mod = _mod;
 
-        //TODO:: Consider if observing the owner of the action to 
-        // dynamically update the description text makes sense
-        //mod.Subscribe(this);
-
         DisplayAll();
     }
 
