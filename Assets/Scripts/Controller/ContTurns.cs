@@ -16,7 +16,7 @@ public class ContTurns : MonoBehaviour {
 
     public int nLiveCharacters;
 
-    public static Subject subAllPriorityChange;
+    public static Subject subAllPriorityChange = new Subject();
 
     public static float fDelayChooseAction = 30.0f;
     public const float fDelayTurnAction = 1.0f;
@@ -27,21 +27,18 @@ public class ContTurns : MonoBehaviour {
     //     so the syntax isn't as gross
 
     public static ContTurns Get() {
-
-
-        return instance;
-    }
-
-    public void Awake() {
-        DontDestroyOnLoad(this);
-
-        if(instance == null) {
-            instance = this;
-        } else {
-            Destroy(this);
+        if (instance == null) {
+            GameObject go = GameObject.FindGameObjectWithTag("Controller");
+            if (go == null) {
+                Debug.LogError("ERROR! NO OBJECT HAS A Controller TAG!");
+            }
+            instance = go.GetComponent<ContTurns>();
+            if (instance == null) {
+                Debug.LogError("ERROR! Controller TAGGED OBJECT DOES NOT HAVE A ContTurns COMPONENT!");
+            }
+            instance.Start();
         }
-
-        subAllPriorityChange = new Subject();
+        return instance;
     }
 
     public void FixSortedPriority(Chr chr) {

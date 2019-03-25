@@ -78,9 +78,6 @@ public class ViewBlockerButton : ViewInteractive {
             sImgPath = "Images/MiscUI/imgBlockerTokenHolder";
         }
 
-        Debug.Log("This is " + this);
-        Debug.Log("GameObject is " + this.gameObject);
-
         Sprite sprBlockerButton = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
         this.GetComponent<SpriteRenderer>().sprite = sprBlockerButton;
     }
