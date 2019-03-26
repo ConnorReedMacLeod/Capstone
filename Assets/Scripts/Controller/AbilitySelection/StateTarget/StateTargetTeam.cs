@@ -7,6 +7,8 @@ public class StateTargetTeam : StateTarget {
 
     TargetArgTeam tarArg;
 
+    public static Subject subAllStartSelection = new Subject();
+    public static Subject subAllFinishSelection = new Subject();
 
     public void cbCancelTargetting(Object target, params object[] args) {
         inputHuman.CancelTar();
@@ -51,6 +53,8 @@ public class StateTargetTeam : StateTarget {
         ViewChr.subAllClick.Subscribe(cbClickChr);
         ViewAction.subAllClick.Subscribe(cbSwitchAction);
 
+        subAllStartSelection.NotifyObs(null, tarArg);
+
     }
 
     override public void OnLeave() {
@@ -60,6 +64,9 @@ public class StateTargetTeam : StateTarget {
 
         ViewChr.subAllClick.UnSubscribe(cbClickChr);
         ViewAction.subAllClick.UnSubscribe(cbSwitchAction);
+
+        subAllFinishSelection.NotifyObs(null, tarArg);
+
     }
 
     public StateTargetTeam(InputHuman _inputHuman) : base(_inputHuman) {

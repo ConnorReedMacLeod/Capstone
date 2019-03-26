@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent (typeof(ViewChr))]
+[RequireComponent(typeof(ViewChr))]
 public class Chr : MonoBehaviour {
 
 	bool bStarted;
