@@ -7,8 +7,8 @@ using UnityEngine.UI;
 public class ViewChr : ViewInteractive {
 
 	bool bStarted;                          //Confirms the Start() method has executed
-
-    public bool bTargettable;
+    
+    public bool bSelectingTargettable;  //If we're in the middle of selecting some character and this would be valid to select
 
 	public Chr mod;                   //Character model
 
@@ -283,22 +283,33 @@ public class ViewChr : ViewInteractive {
 
 
         if (tarArg.WouldBeLegal(mod.globalid)) {
-            bTargettable = true;
-            Debug.Log("Start highlighting for " + mod.sName);
+            bSelectingTargettable = true;
         }
 
+        DecideIfHighlighted();
 
     }
 
     public void cbClearHighlightIfTargettable(Object target, params object[] args) {
 
-        if (bTargettable) {
-            Debug.Log("Stop highlighting for " + mod.sName);
-            bTargettable = false;
+        if (bSelectingTargettable) {
+            bSelectingTargettable = false; 
         }
+
+        DecideIfHighlighted();
 
     }
 
+
+    public void DecideIfHighlighted() {
+
+        if(bSelectingTargettable) {
+            Debug.Log("Should be highlighted for " + mod.sName);
+        } else {
+            Debug.Log("Should not be highlighted for " + mod.sName);
+        }
+
+    }
 
 
     //TODO:: Make this a state machine
