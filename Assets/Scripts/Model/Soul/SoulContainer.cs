@@ -76,7 +76,7 @@ public class SoulContainer : MonoBehaviour {
         //Let others know that the visible soul MAY have changed (not necessarily)
         subVisibleSoulUpdate.NotifyObs(this);
 
-        Debug.Log("After removing " + toRemove.sName);
+        //Debug.Log("After removing " + toRemove.sName);
 
         if (ContAbilityEngine.bDEBUGENGINE) PrintAllSoul();
 
