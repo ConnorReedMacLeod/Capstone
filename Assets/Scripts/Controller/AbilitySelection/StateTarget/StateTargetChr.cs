@@ -7,6 +7,10 @@ public class StateTargetChr : StateTarget {
 
 	TargetArgChr tarArg;
 
+
+    public static Subject subAllStartSelection = new Subject();
+    public static Subject subAllFinishSelection = new Subject();
+
     public void cbCancelTargetting(object target, params object [] args) {
         inputHuman.CancelTar();
     }
@@ -28,10 +32,13 @@ public class StateTargetChr : StateTarget {
     }
 
     public void cbSwitchAction(Object target, params object [] args) {
+        Debug.Log("clicking on an action while asked to target a char");
+
+        inputHuman.ResetTar();
 
         inputHuman.nSelectedAbility = ((ViewAction)target).id;
 
-        inputHuman.ResetTar();
+        Debug.Log("selected action is now " + inputHuman.nSelectedAbility);
         inputHuman.SetTargetArgState(); // Let the parent figure out what exact state we go to
 
     }
@@ -49,6 +56,8 @@ public class StateTargetChr : StateTarget {
         ViewAction.subAllClick.Subscribe(cbSwitchAction);
         ViewBlockerButton.subAllClick.Subscribe(cbSwitchAction);
         ViewRestButton.subAllClick.Subscribe(cbSwitchAction);
+
+        subAllStartSelection.NotifyObs(null, tarArg);
     }
 
 	override public void OnLeave(){
@@ -59,6 +68,8 @@ public class StateTargetChr : StateTarget {
         ViewAction.subAllClick.UnSubscribe(cbSwitchAction);
         ViewBlockerButton.subAllClick.UnSubscribe(cbSwitchAction);
         ViewRestButton.subAllClick.UnSubscribe(cbSwitchAction);
+
+        subAllFinishSelection.NotifyObs(null, tarArg);
     }
 		
 	public StateTargetChr(InputHuman _inputHuman) : base(_inputHuman) {
