@@ -222,5 +222,17 @@ public class Action { //This should probably be made abstract
 		
 		return true;
 	}
-		
+
+    public static bool IsEnemy(Chr owner, Chr tar) {
+        return owner.plyrOwner != tar.plyrOwner;
+    }
+
+    public static bool IsFriendly(Chr owner, Chr tar) {
+        return owner.plyrOwner == tar.plyrOwner;
+    }
+
+    public static bool IsAnyCharacter(Chr owner, Chr tar) {
+        return true;
+    }
+
 }
