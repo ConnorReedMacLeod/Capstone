@@ -7,8 +7,11 @@ using UnityEngine.UI;
 public class ViewChr : ViewInteractive {
 
 	bool bStarted;                          //Confirms the Start() method has executed
+    
+    public bool bSelectingChrTargettable;  //If we're in the middle of selecting some character and this would be valid to select
+    public bool bSelectingTeamTargettable;  //If we're in the middle of selecting some character and this would be valid to select
 
-	public Chr mod;                   //Character model
+    public Chr mod;                   //Character model
 
 	Chr.STATESELECT lastStateSelect;  //Tracks previous character state (SELECTED, TARGETTING, UNSELECTED)
 
@@ -39,7 +42,13 @@ public class ViewChr : ViewInteractive {
 			InitModel ();
 			lastStateSelect = Chr.STATESELECT.IDLE;
 
-		}
+            StateTargetChr.subAllStartSelection.Subscribe(cbStartTargettingChr);
+            StateTargetChr.subAllFinishSelection.Subscribe(cbStopTargettingChr);
+
+            StateTargetTeam.subAllStartSelection.Subscribe(cbStartTargettingTeam);
+            StateTargetTeam.subAllFinishSelection.Subscribe(cbStopTargettingTeam);
+
+        }
     }
 
 	public void Init(){
@@ -269,6 +278,66 @@ public class ViewChr : ViewInteractive {
             }
         }
     }
+
+
+
+    public void cbStartTargettingChr(Object target, params object[] args) {
+
+        TargetArgChr tarArg = (TargetArgChr)args[0];
+
+
+        if (tarArg.WouldBeLegal(mod.globalid)) {
+            bSelectingChrTargettable = true;
+        }
+
+        DecideIfHighlighted();
+
+    }
+
+    public void cbStopTargettingChr(Object target, params object[] args) {
+
+        if (bSelectingChrTargettable) {
+            bSelectingChrTargettable = false; 
+        }
+
+        DecideIfHighlighted();
+
+    }
+
+    public void cbStartTargettingTeam(Object target, params object[] args) {
+
+        TargetArgTeam tarArg = (TargetArgTeam)args[0];
+
+
+        if (tarArg.WouldBeLegal(mod.plyrOwner.id)) {
+            bSelectingTeamTargettable = true;
+        }
+
+        DecideIfHighlighted();
+
+    }
+
+    public void cbStopTargettingTeam(Object target, params object[] args) {
+
+        if (bSelectingTeamTargettable) {
+            bSelectingTeamTargettable = false;
+        }
+
+        DecideIfHighlighted();
+
+    }
+
+
+    public void DecideIfHighlighted() {
+
+        if(bSelectingChrTargettable || bSelectingTeamTargettable) {
+            Debug.Log("Should be highlighted for " + mod.sName);
+        } else {
+            Debug.Log("Should not be highlighted for " + mod.sName);
+        }
+
+    }
+
 
     //TODO:: Make this a state machine
     //Updates the character's state (SELECTED, TARGETTING, UNSELECTED)
