@@ -3,7 +3,7 @@
     public ActionHuntersQuarry(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
         //Since the base constructor initializes this array, we can start filling it
-        arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); //Choose an enemy character
+        arArgs[0] = new TargetArgChr(Action.IsEnemy); //Choose an enemy character
 
         sName = "HuntersQuarry";
         type = new TypeActive(this);

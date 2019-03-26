@@ -10,7 +10,7 @@ public class ActionAmbush : Action {
     public ActionAmbush(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
         //Since the base constructor initializes this array, we can start filling it
-        arArgs[0] = new TargetArgChr((own, tar) => true);
+        arArgs[0] = new TargetArgChr(Action.IsEnemy);
 
         sName = "Ambush";
 
