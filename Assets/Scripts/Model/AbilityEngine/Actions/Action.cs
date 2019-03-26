@@ -204,18 +204,18 @@ public class Action { //This should probably be made abstract
 
 		//Check that the ability isn't on cooldown
 		if (nCurCD != 0) {
-			Debug.Log ("Ability on cd");
+			//Debug.Log ("Ability on cd");
 			return false;
 		}
 
         //Check that we're in a readiness state (with enough usable actions left)
         if (!chrSource.curStateReadiness.CanSelectAction(this)) {
-            Debug.Log("Not in a state where we can use this action");
+            //Debug.Log("Not in a state where we can use this action");
             return false;
         }
 
         if(LegalTargets(lstTargettingIndices) == false) {
-            Debug.Log("Targets aren't legal");
+            //Debug.Log("Targets aren't legal");
             return false;
         }
 

@@ -55,7 +55,7 @@ public abstract class StateReadiness {
     public virtual void InterruptChannel() {
         //By default, do nothing, since we're not channeling
 
-        Debug.Log("Can't interrupt since we're not channeling right now");
+        //Debug.Log("Can't interrupt since we're not channeling right now");
     }
 
     public virtual void ChangeChanneltime(int _nChange) {
@@ -63,7 +63,7 @@ public abstract class StateReadiness {
 
         //By default, do nothing, since we're not channeling
 
-        Debug.Log("Can't reduce channeltime since we're not channeling right now");
+        //Debug.Log("Can't reduce channeltime since we're not channeling right now");
 
     }
 

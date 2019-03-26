@@ -204,7 +204,7 @@ public class ViewChr : ViewInteractive {
     public void cbUpdateChannelTime(Object target, params object[] args) {
         //If we're not channeling, then we won't display anything
         if (mod.curStateReadiness.Type() != StateReadiness.TYPE.CHANNELING) {
-            Debug.Log("Were notified of UpdateChannelTime, but we're not in a channeling state");
+            //Debug.Log("Were notified of UpdateChannelTime, but we're not in a channeling state");
             txtChannelTime.text = "";
             return;
 

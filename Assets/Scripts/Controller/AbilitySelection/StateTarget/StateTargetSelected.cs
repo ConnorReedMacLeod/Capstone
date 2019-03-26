@@ -17,7 +17,6 @@ public class StateTargetSelected : StateTarget {
     }
 
     public void cbClickAction(Object target, params object[] args) {
-        Debug.Log("Clicked on an action while in Selected State");
         ChooseAction(((ViewAction)target).mod);
     }
 
