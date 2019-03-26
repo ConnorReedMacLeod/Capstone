@@ -22,6 +22,10 @@ public class Player : MonoBehaviour{
 
 	public Mana mana;
 
+    public enum InputType {
+        HUMAN, AI
+    };
+
 
     public int GetTargettingId() {
         return id;
@@ -65,17 +69,27 @@ public class Player : MonoBehaviour{
 		id = _id;
 	}
 
-    public void SetInputType() {
-        if(id == 0) {
-            //Then we want the player to control this player's selection
-            inputController = gameObject.AddComponent<InputHuman>(); 
+    public void SetInputType(InputType inputType) {
 
-            //inputController = gameObject.AddComponent<InputScripted>();
-            //InputScripted.SetRandomAbilities((InputScripted)inputController);
-        } else {
-            //Then we want a script to control this player's selection
-            inputController = gameObject.AddComponent<InputScripted>();
-            InputScripted.SetRandomAbilities((InputScripted)inputController);
+        //If we already have an input Controller, then delete it
+        if (inputController != null) {
+            Destroy(inputController);
+        }
+
+        switch (inputType) {
+            case InputType.AI:
+                //Then we want a script to control this player's selection
+                inputController = gameObject.AddComponent<InputScripted>();
+                InputScripted.SetRandomAbilities((InputScripted)inputController);
+
+                break;
+
+            case InputType.HUMAN:
+                //Then we want the player to control this player's selection
+                inputController = gameObject.AddComponent<InputHuman>();
+
+                break;
+
         }
 
         //Let the controller know which player its representing

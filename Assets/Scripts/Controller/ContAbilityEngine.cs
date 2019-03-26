@@ -166,7 +166,7 @@ public class ContAbilityEngine : MonoBehaviour {
 
         //Check if we should delete the previous timer
         if(viewTimerCur != null) {
-            Debug.Log("Deleting previous timer for " + viewTimerCur.sLabel);
+            //Debug.Log("Deleting previous timer for " + viewTimerCur.sLabel);
             Destroy(viewTimerCur.gameObject);
         }
         viewTimerCur = viewTimer;
