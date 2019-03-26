@@ -7,6 +7,10 @@ public class StateTargetChr : StateTarget {
 
 	TargetArgChr tarArg;
 
+
+    public static Subject subAllStartSelection = new Subject();
+    public static Subject subAllFinishSelection = new Subject();
+
     public void cbCancelTargetting(object target, params object [] args) {
         inputHuman.CancelTar();
     }
@@ -49,6 +53,8 @@ public class StateTargetChr : StateTarget {
         ViewAction.subAllClick.Subscribe(cbSwitchAction);
         ViewBlockerButton.subAllClick.Subscribe(cbSwitchAction);
         ViewRestButton.subAllClick.Subscribe(cbSwitchAction);
+
+        subAllStartSelection.NotifyObs(null, tarArg);
     }
 
 	override public void OnLeave(){
@@ -59,6 +65,8 @@ public class StateTargetChr : StateTarget {
         ViewAction.subAllClick.UnSubscribe(cbSwitchAction);
         ViewBlockerButton.subAllClick.UnSubscribe(cbSwitchAction);
         ViewRestButton.subAllClick.UnSubscribe(cbSwitchAction);
+
+        subAllFinishSelection.NotifyObs(null, tarArg);
     }
 		
 	public StateTargetChr(InputHuman _inputHuman) : base(_inputHuman) {
