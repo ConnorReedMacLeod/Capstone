@@ -8,6 +8,8 @@ public class ViewChr : ViewInteractive {
 
 	bool bStarted;                          //Confirms the Start() method has executed
 
+    public bool bTargettable;
+
 	public Chr mod;                   //Character model
 
 	Chr.STATESELECT lastStateSelect;  //Tracks previous character state (SELECTED, TARGETTING, UNSELECTED)
@@ -38,6 +40,9 @@ public class ViewChr : ViewInteractive {
 			// Find our model
 			InitModel ();
 			lastStateSelect = Chr.STATESELECT.IDLE;
+
+            StateTargetChr.subAllStartSelection.Subscribe(cbStartHighlightIfTargettable);
+            StateTargetChr.subAllFinishSelection.Subscribe(cbClearHighlightIfTargettable);
 
 		}
     }
@@ -269,6 +274,32 @@ public class ViewChr : ViewInteractive {
             }
         }
     }
+
+
+
+    public void cbStartHighlightIfTargettable(Object target, params object[] args) {
+
+        TargetArgChr tarArg = (TargetArgChr)args[0];
+
+
+        if (tarArg.WouldBeLegal(mod.globalid)) {
+            bTargettable = true;
+            Debug.Log("Start highlighting for " + mod.sName);
+        }
+
+
+    }
+
+    public void cbClearHighlightIfTargettable(Object target, params object[] args) {
+
+        if (bTargettable) {
+            Debug.Log("Stop highlighting for " + mod.sName);
+            bTargettable = false;
+        }
+
+    }
+
+
 
     //TODO:: Make this a state machine
     //Updates the character's state (SELECTED, TARGETTING, UNSELECTED)
