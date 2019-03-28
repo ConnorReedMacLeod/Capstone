@@ -8,6 +8,21 @@ public class ViewChr : ViewInteractive {
 
 	bool bStarted;                          //Confirms the Start() method has executed
     
+    public enum PortraitState {
+        IDLE, ACTING, INJURED
+    };
+
+    public PortraitState statePortrait; //The portrait state the character is currently in
+
+    public bool bRecoiling;             //Targetted by an ability recently
+    public float fCurRecoilTime;
+    public const float fMaxRecoilTime = 0.4f;
+    public Vector3 v3BasePosition;
+    public const float fMaxRecoilDistance = 0.12f;
+    public Vector3 v3RecoilDirection;
+    public const int nRecoilShakes = 3;
+    public const float fRecoilSpeed = fMaxRecoilDistance / (fMaxRecoilTime / (nRecoilShakes * 4));
+
     public bool bSelectingChrTargettable;  //If we're in the middle of selecting some character and this would be valid to select
     public bool bSelectingTeamTargettable;  //If we're in the middle of selecting some character and this would be valid to select
 
@@ -42,6 +57,9 @@ public class ViewChr : ViewInteractive {
 			InitModel ();
 			lastStateSelect = Chr.STATESELECT.IDLE;
 
+            v3BasePosition = goPortrait.transform.localPosition;
+            v3RecoilDirection = Vector3.left;
+
             StateTargetChr.subAllStartSelection.Subscribe(cbStartTargettingChr);
             StateTargetChr.subAllFinishSelection.Subscribe(cbStopTargettingChr);
 
@@ -52,7 +70,7 @@ public class ViewChr : ViewInteractive {
     }
 
 	public void Init(){
-		SetPortrait (mod.sName);
+		SetPortrait ();
 		if (mod.plyrOwner.id == 1) {
 			//Find the portrait and flip it for one of the players
 			goPortrait.transform.localScale = new Vector3 (-1.0f, 1.0f, 1.0f);
@@ -130,8 +148,23 @@ public class ViewChr : ViewInteractive {
 
 
     //Sets the sprite used for the character's full picture portrait
-    void SetPortrait(string _sName){
-		string sSprPath = "Images/Chrs/" + _sName + "/img" + _sName + "Portrait";
+    void SetPortrait(){
+		string sSprPath = "Images/Chrs/" + mod.sName + "/img" + mod.sName + "Portrait";
+
+        switch (statePortrait) {
+            case PortraitState.ACTING:
+                sSprPath = "Images/Chrs/imgMonika";
+                break;
+
+            case PortraitState.INJURED:
+                sSprPath = "Images/Chrs/imgLain";
+                break;
+
+            default:
+
+                break;
+        }
+
 		Sprite sprChr = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
 
         Debug.Assert(sprChr != null, "Could not find specificed sprite: " + sSprPath);
@@ -165,6 +198,13 @@ public class ViewChr : ViewInteractive {
         mod.subBlockerChanged.Subscribe(cbUpdateBlocker);
         mod.subChannelTimeChange.Subscribe(cbUpdateChannelTime);
         mod.subDeath.Subscribe(cbUpdateDeath);
+        mod.subPreExecuteAbility.Subscribe(cbStartUsingAbility);
+        mod.subPostExecuteAbility.Subscribe(cbStopUsingAbility);
+
+        mod.subLifeChange.Subscribe(cbRecoil);
+        mod.subSoulApplied.Subscribe(cbRecoil);
+        mod.subStunApplied.Subscribe(cbRecoil);
+        mod.subLifeChange.Subscribe(cbOnInjured);
     }
 
     public void cbUpdateDeath(Object target, params object[] args) {
@@ -319,14 +359,49 @@ public class ViewChr : ViewInteractive {
 
     public void cbStopTargettingTeam(Object target, params object[] args) {
 
-        if (bSelectingTeamTargettable) {
-            bSelectingTeamTargettable = false;
-        }
+        bSelectingTeamTargettable = false;
 
         DecideIfHighlighted();
 
     }
 
+    public void cbStartUsingAbility(Object target, params object[] args) {
+
+
+        if (((Action)args[0]).bProperActive == true) {
+            statePortrait = PortraitState.ACTING;
+
+            SetPortrait();
+        }
+
+    }
+
+    public void cbStopUsingAbility(Object target, params object[] args) {
+
+        statePortrait = PortraitState.IDLE;
+
+        SetPortrait();
+
+    }
+
+    public void cbOnInjured(Object target, params object[] args) {
+        //First, double check that we're actually losing health
+        if ((int)args[0] >= 0) return;
+
+        statePortrait = PortraitState.INJURED;
+
+        SetPortrait();
+
+    }
+
+    public void cbRecoil(Object target, params object[] args) {
+
+        Debug.Log(mod.sName + " is recoiling");
+
+        bRecoiling = true;
+        fCurRecoilTime = 0f;
+
+    }
 
     public void DecideIfHighlighted() {
 
@@ -335,6 +410,40 @@ public class ViewChr : ViewInteractive {
         } else {
             Debug.Log("Should not be highlighted for " + mod.sName);
         }
+
+    }
+
+    public void UpdateRecoil() {
+        if (bRecoiling == false) return;
+
+        fCurRecoilTime += Time.deltaTime;
+        goPortrait.transform.position += fRecoilSpeed * v3RecoilDirection * Time.deltaTime;
+
+        //If we've moved too far away from the base position
+        if(Mathf.Abs(goPortrait.transform.localPosition.x - v3BasePosition.x) >= fMaxRecoilDistance) {
+            //Then reverse the direction;
+            v3RecoilDirection *= -1;
+        }
+
+
+        if(fCurRecoilTime > fMaxRecoilTime) {
+            Debug.Log(mod.sName + " is ending recoil");
+            bRecoiling = false;
+            fCurRecoilTime = 0f;
+
+            //Ensure the position is now equal to the original base position
+            goPortrait.transform.localPosition = v3BasePosition;
+
+            //And reset our sate back to idle
+            statePortrait = PortraitState.IDLE;
+            SetPortrait();
+        }
+
+    }
+
+    public void Update() {
+
+        UpdateRecoil();
 
     }
 

@@ -49,6 +49,8 @@ public class ExecStun : Executable {
         //Transition to the new state
         chrTarget.SetStateReadiness(newState);
 
+        chrTarget.subStunApplied.NotifyObs(chrTarget, GetDuration());
+
     }
 
 }
