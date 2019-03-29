@@ -20,6 +20,8 @@ public class SoulChannel : Soul {
         bVisible = false;
         bDuration = false;
 
+        bRecoilWhenApplied = false;
+
         act = _act;
 
         

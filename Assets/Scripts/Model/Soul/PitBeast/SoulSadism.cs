@@ -26,6 +26,7 @@ public class SoulSadism : Soul {
 
         bVisible = false;
         bDuration = false;
+        bRecoilWhenApplied = false;
 
         nBaseHealing = 5;
         //Create a base Healing object that this action will apply 
