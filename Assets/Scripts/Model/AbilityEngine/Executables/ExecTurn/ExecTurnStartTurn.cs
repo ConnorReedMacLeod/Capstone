@@ -41,7 +41,7 @@ public class ExecTurnStartTurn : Executable {
         ContTurns.Get().SetTurnState(ContTurns.STATETURN.CHOOSEACTIONS);
 
         sLabel = "Beginning of Turn";
-        fDelay = ContTurns.fDelayTurnAction;
+        fDelay = ContTurns.fDelayStandard;
 
     }
 }

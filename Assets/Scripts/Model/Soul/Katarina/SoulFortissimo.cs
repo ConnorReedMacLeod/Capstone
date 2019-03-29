@@ -19,6 +19,8 @@ public class SoulFortissimo : Soul {
 
         bVisible = true;
         bDuration = true;
+        bRecoilWhenApplied = false;
+
         pnMaxDuration = new Property<int>(4);
 
         funcOnApplication = () => {

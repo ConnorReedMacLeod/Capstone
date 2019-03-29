@@ -202,7 +202,7 @@ public class ViewChr : ViewInteractive {
         mod.subPostExecuteAbility.Subscribe(cbStopUsingAbility);
 
         mod.subLifeChange.Subscribe(cbRecoil);
-        mod.subSoulApplied.Subscribe(cbRecoil);
+        mod.subSoulApplied.Subscribe(cbSoulApplied);
         mod.subStunApplied.Subscribe(cbRecoil);
         mod.subLifeChange.Subscribe(cbOnInjured);
     }
@@ -395,6 +395,17 @@ public class ViewChr : ViewInteractive {
     }
 
     public void cbRecoil(Object target, params object[] args) {
+
+        Debug.Log(mod.sName + " is recoiling");
+
+        bRecoiling = true;
+        fCurRecoilTime = 0f;
+
+    }
+
+    public void cbSoulApplied(Object target, params object[] args) {
+
+        if (((Soul)args[0]).bRecoilWhenApplied == false) return;
 
         Debug.Log(mod.sName + " is recoiling");
 
