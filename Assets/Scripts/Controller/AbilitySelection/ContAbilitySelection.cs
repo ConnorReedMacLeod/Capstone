@@ -126,9 +126,9 @@ public class ContAbilitySelection : MonoBehaviour {
     public void Update() {
 
         if (bSelectingAbility) {
-            fSelectionTimer += Time.deltaTime;
+            fSelectionTimer += ContTime.Get().fDeltaTime;
 
-            if(fSelectionTimer >= fMaxSelectionTime) {
+            if (fSelectionTimer >= fMaxSelectionTime) {
                 //Then the time has expired 
                 Debug.Log("TIME IS UP! NO ABILITY SELECTED! MOVING ON");
 

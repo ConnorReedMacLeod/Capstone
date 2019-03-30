@@ -427,11 +427,11 @@ public class ViewChr : ViewInteractive {
     public void UpdateRecoil() {
         if (bRecoiling == false) return;
 
-        fCurRecoilTime += Time.deltaTime;
-        goPortrait.transform.position += fRecoilSpeed * v3RecoilDirection * Time.deltaTime;
+        fCurRecoilTime += ContTime.Get().fDeltaTime;
+        goPortrait.transform.position += fRecoilSpeed * v3RecoilDirection * ContTime.Get().fDeltaTime;
 
         //If we've moved too far away from the base position
-        if(Mathf.Abs(goPortrait.transform.localPosition.x - v3BasePosition.x) >= fMaxRecoilDistance) {
+        if (Mathf.Abs(goPortrait.transform.localPosition.x - v3BasePosition.x) >= fMaxRecoilDistance) {
             //Then reverse the direction;
             v3RecoilDirection *= -1;
         }

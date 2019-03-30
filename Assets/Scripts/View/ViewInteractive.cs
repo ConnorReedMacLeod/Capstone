@@ -87,10 +87,10 @@ public class ViewInteractive : MonoBehaviour {
 
 	void Update () {
 		if (bDown) {
-			fTimeDown += Time.deltaTime;
-		} else {
-			fTimeUp += Time.deltaTime;
-		}
+			fTimeDown += ContTime.Get().fDeltaTime;
+        } else {
+			fTimeUp += ContTime.Get().fDeltaTime;
+        }
 
 		// Handle time related checks
 		switch (stateLeft) {

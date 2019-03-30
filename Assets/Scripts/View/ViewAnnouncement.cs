@@ -25,6 +25,7 @@ public class ViewAnnouncement : MonoBehaviour {
     }
 
     private void Awake() {
+        Debug.Log("Awake");
         if(inst != null && inst != this) {
             Destroy(this.gameObject);
         } else {
@@ -49,7 +50,7 @@ public class ViewAnnouncement : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        fCurTime += Time.deltaTime;
+        fCurTime += ContTime.Get().fDeltaTime;
 
         if (fCurTime >= fMaxTime) {
             sAnnouncement = "";
