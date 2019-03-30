@@ -15,6 +15,7 @@ public class ContTurns : MonoBehaviour {
     public Chr chrNextReady; //Stores the currently acting character this turn (or null if none are acting)
 
     public int nLiveCharacters;
+    public int nTurnNumber;
 
     public static Subject subAllPriorityChange = new Subject();
 
@@ -225,6 +226,8 @@ public class ContTurns : MonoBehaviour {
         bStarted = true;
         InitChrPriority();
         InitChrTurns();
+
+        nTurnNumber = 1;
 
         nLiveCharacters = Player.MAXPLAYERS * Player.MAXCHRS;
 
