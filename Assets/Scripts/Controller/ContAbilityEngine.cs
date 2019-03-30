@@ -42,7 +42,7 @@ public class ContAbilityEngine : MonoBehaviour {
         if (bAutoTurns) {
             Debug.Log("Going to next event in " + 2.0f);
 
-            Invoke("AutoProcessStacks", 2.0f);
+            ContTime.Get().Invoke(2.0f, AutoProcessStacks);
         }
     }
     public void AutoProcessStacks() {
@@ -258,7 +258,7 @@ public class ContAbilityEngine : MonoBehaviour {
                 SpawnTimer(fDelay, sLabel);
             }
             if (bCancelInvoke == false) {
-                Invoke("AutoProcessStacks", fDelay);
+                ContTime.Get().Invoke(fDelay, AutoProcessStacks);
             }
         } else {
             //Debug.Log("Manually executing " + sLabel);

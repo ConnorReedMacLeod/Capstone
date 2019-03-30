@@ -44,9 +44,9 @@ public class ViewTimer : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        fCurTime -= Time.deltaTime;
+        fCurTime -= ContTime.Get().fDeltaTime;
 
-        if(fCurTime < 0) {
+        if (fCurTime < 0) {
             Destroy(this.gameObject);
         }
 
