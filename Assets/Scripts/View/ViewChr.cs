@@ -31,7 +31,9 @@ public class ViewChr : ViewInteractive {
 	Chr.STATESELECT lastStateSelect;  //Tracks previous character state (SELECTED, TARGETTING, UNSELECTED)
 
     public GameObject pfBlockerIndicator; //Reference to the prefab blocker indicator
+    public GameObject pfSelectionGlow; //Reference to the prefab glow for selection
 
+    public GameObject goCurSelectionGlow; //A reference to the current glow (or null if there is none)
     public GameObject goBlockerIndicator; //Blocker Reference
 	public GameObject goBorder;         //Border Reference
 	public GameObject goPortrait;       //Portrait Reference
@@ -455,9 +457,14 @@ public class ViewChr : ViewInteractive {
     public void DecideIfHighlighted() {
 
         if(bSelectingChrTargettable || bSelectingTeamTargettable) {
-            Debug.Log("Should be highlighted for " + mod.sName);
+            if(goCurSelectionGlow == null) {
+                goCurSelectionGlow = Instantiate(pfSelectionGlow, maskPortrait.transform);
+            }
         } else {
-            Debug.Log("Should not be highlighted for " + mod.sName);
+           if(goCurSelectionGlow != null) {
+                Destroy(goCurSelectionGlow);
+                goCurSelectionGlow = null;
+            }
         }
 
     }
