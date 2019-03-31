@@ -81,6 +81,8 @@ public class ContOptionsOverlay : MonoBehaviour {
         //Move the overlay onto the screen
         this.transform.position = v3OnScreen;
 
+        ContTime.Get().Pause();
+
         //Initialize all of the button's action subscription and action groups
         btnPlyr0Human.subClick.Subscribe(cbClickPlyr0Human);
         btnPlyr0AI.subClick.Subscribe(cbClickPlyr0AI);
@@ -98,6 +100,8 @@ public class ContOptionsOverlay : MonoBehaviour {
 
         //Move the overlay off of the screen
         this.transform.position = v3OffScreen;
+
+        ContTime.Get().UnPause();
 
         //Unsubscribe each button action
         btnPlyr0Human.subClick.UnSubscribe(cbClickPlyr0Human);

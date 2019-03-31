@@ -62,11 +62,9 @@ public class ContTime : MonoBehaviour {
 
 
     private void Awake() {
-        Debug.Log("waking");
         if (inst != null && inst != this) {
             Destroy(this.gameObject);
         } else {
-            Debug.Log("Setting inst");
             inst = this;
         }
     }
