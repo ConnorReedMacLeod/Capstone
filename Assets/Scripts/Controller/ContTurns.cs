@@ -15,13 +15,15 @@ public class ContTurns : MonoBehaviour {
     public Chr chrNextReady; //Stores the currently acting character this turn (or null if none are acting)
 
     public int nLiveCharacters;
+    public int nTurnNumber;
 
     public static Subject subAllPriorityChange = new Subject();
 
     public static float fDelayChooseAction = 30.0f;
-    public const float fDelayTurnAction = 1.0f;
+    public const float fDelayTurnAction = 0.0f;
     public const float fDelayMinorAction = 0.0f;
-    public const float fDelayStandard = 2.0f;
+    public const float fDelayNone = 0.0f;
+    public const float fDelayStandard = 1.25f;
     
     //TODO CHANGE ALL .Get() calls in other classes to use properties
     //     so the syntax isn't as gross
@@ -224,6 +226,8 @@ public class ContTurns : MonoBehaviour {
         bStarted = true;
         InitChrPriority();
         InitChrTurns();
+
+        nTurnNumber = 1;
 
         nLiveCharacters = Player.MAXPLAYERS * Player.MAXCHRS;
 

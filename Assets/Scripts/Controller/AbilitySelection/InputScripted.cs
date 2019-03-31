@@ -12,7 +12,7 @@ public class InputScripted : InputAbilitySelection {
 
         //Give a small delay before we return the ability selection
         // so that we can give a chance to clear the stack out
-        Invoke("SubmitNextAbility", 0.5f);
+        ContTime.Get().Invoke(Mathf.Min(ContAbilitySelection.Get().fMaxSelectionTime / 2, 1.5f), SubmitNextAbility);
 
     }
 
