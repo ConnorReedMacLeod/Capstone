@@ -38,6 +38,7 @@ public class SoulCheerleader : Soul {
 
         bVisible = false;
         bDuration = false;
+        bRecoilWhenApplied = false;
 
         bRemoveOnChrSourceDeath = true;
 

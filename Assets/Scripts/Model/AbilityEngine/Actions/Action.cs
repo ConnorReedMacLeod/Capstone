@@ -24,6 +24,9 @@ public class Action { //This should probably be made abstract
     public int nCharges;
     public int nCurCharges;
 
+    public bool bProperActive;  //Usually true - only false for non-standard actions that shouldn't 
+                                // switch the character sprite to an acting portrait (for example)
+
     public string sDescription;
     public string sExtraDescription;
 
@@ -36,6 +39,8 @@ public class Action { //This should probably be made abstract
     public Action(int _nArgs, Chr _chrOwner) {
         nArgs = _nArgs;
         chrSource = _chrOwner;
+
+        bProperActive = true;
 
 
         arArgs = new TargetArg[nArgs];

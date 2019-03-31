@@ -15,6 +15,7 @@ public class SoulChangePower : Soul {
         sName = "Power: " + nPowerChange.ToString();
 
         bVisible = false;
+        bRecoilWhenApplied = false;
         bRemoveOnChrDeath = true;
 
 
