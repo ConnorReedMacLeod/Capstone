@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class ViewTimer : MonoBehaviour {
 
-    //TODO Despawn this is you've manually spawned another Timer;
-
     public GameObject goTimerBar;
     public Text txtLabel;
     public Text txtTime;
@@ -46,9 +44,9 @@ public class ViewTimer : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        fCurTime -= Time.deltaTime;
+        fCurTime -= ContTime.Get().fDeltaTime;
 
-        if(fCurTime < 0) {
+        if (fCurTime < 0) {
             Destroy(this.gameObject);
         }
 

@@ -6,6 +6,15 @@ public class ContAbilitySelection : MonoBehaviour {
 
     public bool bSelectingAbility;
     public float fMaxSelectionTime;
+
+    public enum DELAYOPTIONS {
+        FAST, MEDIUM, INF
+    };
+
+    public const float fDelayChooseActionFast = 5.0f;
+    public const float fDelayChooseActionMedium = 30.0f;
+    public const float fDelayChooseActionInf = 9999999.0f;
+
     public float fSelectionTimer;
 
     public int nSelectedAbility;
@@ -28,10 +37,26 @@ public class ContAbilitySelection : MonoBehaviour {
         return instance;
     }
 
+    public void SetMaxSelectionTime(DELAYOPTIONS delay) {
+        switch (delay) {
+            case DELAYOPTIONS.FAST:
+                fMaxSelectionTime = fDelayChooseActionFast;
+                break;
+
+            case DELAYOPTIONS.MEDIUM:
+                fMaxSelectionTime = fDelayChooseActionMedium;
+                break;
+
+            case DELAYOPTIONS.INF:
+                fMaxSelectionTime = fDelayChooseActionInf;
+                break;
+        }
+    }
+
     public void Start() {
 
         //Set our delay time to sync up with the constant
-        fMaxSelectionTime = ContTurns.fDelayChooseAction;
+        SetMaxSelectionTime(DELAYOPTIONS.MEDIUM);
 
         EndSelection();
 
@@ -101,9 +126,9 @@ public class ContAbilitySelection : MonoBehaviour {
     public void Update() {
 
         if (bSelectingAbility) {
-            fSelectionTimer += Time.deltaTime;
+            fSelectionTimer += ContTime.Get().fDeltaTime;
 
-            if(fSelectionTimer >= fMaxSelectionTime) {
+            if (fSelectionTimer >= fMaxSelectionTime) {
                 //Then the time has expired 
                 Debug.Log("TIME IS UP! NO ABILITY SELECTED! MOVING ON");
 

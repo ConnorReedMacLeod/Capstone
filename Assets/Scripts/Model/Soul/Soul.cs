@@ -15,6 +15,7 @@ public class Soul {
 
     public bool bVisible;     //Is the effect visible in the soul? (can be interacted with)
     public bool bLocked;      //Should the effect not be able to be pushed out of the soul be new effects
+    public bool bRecoilWhenApplied;     //Should the effect recoil the target when applied
 
     public int nMaxStacks;
     public int nCurStacks;
@@ -43,6 +44,8 @@ public class Soul {
 
         bRemoveOnChrSourceDeath = false;
         bRemoveOnChrDeath = true;
+
+        bRecoilWhenApplied = true;
 
         nMaxStacks = 1; //by Default
 
