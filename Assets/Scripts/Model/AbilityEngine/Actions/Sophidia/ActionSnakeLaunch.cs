@@ -12,7 +12,7 @@ public class ActionSnakeLaunch : Action {
     public ActionSnakeLaunch(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
         //Since the base constructor initializes this array, we can start filling it
-        arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner);
+        arArgs[0] = new TargetArgChr(Action.IsEnemy);
 
         sName = "Snake Launch";
         type = new TypeActive(this);

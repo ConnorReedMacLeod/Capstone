@@ -18,6 +18,8 @@ public class ActionRest : Action {
 		nCd = 0;
         nFatigue = 0;
 
+        bProperActive = false; //This is a special action that shouldn't change our character's sprite to the active
+
         nRestFatigue = 3;
 
 		sDescription1 = _chrOwner + " has finished selecting abilities for the turn.";

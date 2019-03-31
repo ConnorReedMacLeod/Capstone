@@ -54,7 +54,7 @@ public class ActionReverberate : Action {
 
                         dmg = dmgToApply,
 
-                        fDelay = ContTurns.fDelayStandard,
+                        fDelay = ContTurns.fDelayNone,
                         sLabel = "Reverberating " + tar.arChr[i].sName
                     });
                 }

@@ -10,7 +10,7 @@ public class ActionStickyBomb : Action {
     public ActionStickyBomb(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
         //We don't need to target anything, since we always deal damage to everyone
-        arArgs[0] = new TargetArgChr((own, tar) => true); 
+        arArgs[0] = new TargetArgChr(Action.IsEnemy); 
 
         sName = "Sticky Bomb";
         type = new TypeActive(this);

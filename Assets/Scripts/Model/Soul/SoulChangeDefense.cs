@@ -16,6 +16,7 @@ public class SoulChangeDefense : Soul {
         sName = "Defense: " + nDefenseChange.ToString();
 
         bVisible = false;
+        bRecoilWhenApplied = false;
 
         bRemoveOnChrDeath = true;
 

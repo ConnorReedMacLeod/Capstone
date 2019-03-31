@@ -17,6 +17,8 @@ public class SoulEvolved : Soul {
         bVisible = false;
         bDuration = false;
 
+        bRecoilWhenApplied = false;
+
         funcOnApplication = () => {
             //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
             soulChangePower = new SoulChangePower(chrSource, chrTarget, nPowerBuff);

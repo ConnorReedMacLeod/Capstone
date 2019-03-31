@@ -61,8 +61,20 @@ public class ExecTurnChooseActions : Executable {
             //Ensure that we actually don't automatically move to process the next event
             bStopAutoProcessing = true;
 
-            sLabel = "Select Your Action for " + ContTurns.Get().GetNextActingChr().sName;
-            fDelay = ContTurns.fDelayChooseAction;
+
+            //If a human player is asked to use an ability
+            if (ContTurns.Get().GetNextActingChr().plyrOwner.inputController.GetType() == typeof(InputHuman)) {
+                //Then set up a timer countdown for them
+                sLabel = "Select Your Action for " + ContTurns.Get().GetNextActingChr().sName;
+                fDelay = ContAbilitySelection.Get().fMaxSelectionTime;
+
+            } else {
+                Debug.Log("An AI is deciding their ability");
+                sLabel = ContTurns.Get().GetNextActingChr().sName  + " is selecting their action";
+                fDelay = ContAbilitySelection.Get().fMaxSelectionTime; 
+            }
+
+            
 
         }
 

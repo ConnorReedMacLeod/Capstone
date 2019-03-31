@@ -28,6 +28,10 @@ public class Action { //This should probably be made abstract
     public string sDescription2;
 	public string sDescription3;
 
+    public bool bProperActive;  //Usually true - only false for non-standard actions that shouldn't 
+                                // switch the character sprite to an acting portrait (for example)
+
+
 	public Property<int[]> parCost;
 
     public Stack<Clause> stackClauses = new Stack<Clause>();
@@ -37,6 +41,8 @@ public class Action { //This should probably be made abstract
     public Action(int _nArgs, Chr _chrOwner) {
         nArgs = _nArgs;
         chrSource = _chrOwner;
+
+        bProperActive = true;
 
 
         arArgs = new TargetArg[nArgs];
@@ -205,23 +211,35 @@ public class Action { //This should probably be made abstract
 
 		//Check that the ability isn't on cooldown
 		if (nCurCD != 0) {
-			Debug.Log ("Ability on cd");
+			//Debug.Log ("Ability on cd");
 			return false;
 		}
 
         //Check that we're in a readiness state (with enough usable actions left)
         if (!chrSource.curStateReadiness.CanSelectAction(this)) {
-            Debug.Log("Not in a state where we can use this action");
+            //Debug.Log("Not in a state where we can use this action");
             return false;
         }
 
         if(LegalTargets(lstTargettingIndices) == false) {
-            Debug.Log("Targets aren't legal");
+            //Debug.Log("Targets aren't legal");
             return false;
         }
 
 		
 		return true;
 	}
-		
+
+    public static bool IsEnemy(Chr owner, Chr tar) {
+        return owner.plyrOwner != tar.plyrOwner;
+    }
+
+    public static bool IsFriendly(Chr owner, Chr tar) {
+        return owner.plyrOwner == tar.plyrOwner;
+    }
+
+    public static bool IsAnyCharacter(Chr owner, Chr tar) {
+        return true;
+    }
+
 }

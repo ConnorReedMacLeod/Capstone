@@ -10,7 +10,7 @@ public class ActionCloudCushion : Action {
     public ActionCloudCushion(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
         //Since the base constructor initializes this array, we can start filling it
-        arArgs[0] = new TargetArgAlly((own, tar) => true); //Choose any friendly character
+        arArgs[0] = new TargetArgChr(Action.IsFriendly); //Choose any friendly character
 
         sName = "Cloud Cushion";
         type = new TypeActive(this);

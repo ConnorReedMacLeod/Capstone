@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent (typeof(ViewChr))]
+[RequireComponent(typeof(ViewChr))]
 public class Chr : MonoBehaviour {
 
 	bool bStarted;
@@ -74,6 +74,9 @@ public class Chr : MonoBehaviour {
     public Subject subStartIdle = new Subject();
     public static Subject subAllStartIdle = new Subject();
 
+
+    public Subject subBeforeActivatingAction = new Subject();
+    public static Subject subAllBeforeActivatingAction = new Subject();
     public Subject subPreExecuteAbility = new Subject();
     public static Subject subAllPreExecuteAbility = new Subject();
     public Subject subPostExecuteAbility = new Subject();
@@ -88,6 +91,11 @@ public class Chr : MonoBehaviour {
 
     public Subject subStatusChange = new Subject();
     public static Subject subAllStatusChange = new Subject();
+
+    public Subject subSoulApplied = new Subject();
+    public Subject subSoulRemoved = new Subject();
+
+    public Subject subStunApplied = new Subject();
 
     public Subject subDeath = new Subject();
     public static Subject subAllDeath = new Subject();
@@ -301,7 +309,7 @@ public class Chr : MonoBehaviour {
             nCurHealth += nChange;
         }
 
-        subLifeChange.NotifyObs();
+        subLifeChange.NotifyObs(this, nChange);
     }
 
     public void ChangeBlocker(bool _bBlocker) {
@@ -362,8 +370,8 @@ public class Chr : MonoBehaviour {
         Action actToUse = arActions[nActionIndex];
 
         //Notify everyone that we're about to use this action
-        subPreExecuteAbility.NotifyObs(this, actToUse);
-        subAllPreExecuteAbility.NotifyObs(this, actToUse);
+        subBeforeActivatingAction.NotifyObs(this, actToUse);
+        subAllBeforeActivatingAction.NotifyObs(this, actToUse);
 
         //Actually use the action
         actToUse.UseAction (lstTargettingIndices);
