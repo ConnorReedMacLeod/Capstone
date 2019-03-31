@@ -25,7 +25,6 @@ public class ViewAnnouncement : MonoBehaviour {
     }
 
     private void Awake() {
-        Debug.Log("Awake");
         if(inst != null && inst != this) {
             Destroy(this.gameObject);
         } else {
