@@ -5,7 +5,9 @@
         //Since the base constructor initializes this array, we can start filling it
         arArgs[0] = new TargetArgChr(Action.IsEnemy); //Choose an enemy character
 
-        sName = "Hunters Quarry";
+        sName = "HuntersQuarry";
+        sDisplayName = "Hunter's Quarry";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort

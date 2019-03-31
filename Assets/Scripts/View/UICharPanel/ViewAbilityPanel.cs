@@ -8,10 +8,17 @@ public class ViewAbilityPanel : ViewInteractive {
 
     public Chr chrSelected;
 
-    public ViewAction [] arViewAction= new ViewAction[4];
+    public ViewAction [] arViewAction = new ViewAction[4];
 
     public Vector3 v3Offscreen = new Vector3(-100f, -100f, 0f);
 
+    private Vector3 [] arV3AbilityPositions = new Vector3[4];
+
+    private float fXOffsetMultiplier = 1f;
+    private float fXOffset = 2.1f;
+    private float fYOffset = 0.35f;
+
+    private int nCurrentShowingPlyrID = 0;
 
     public void cbChrSelected(Object target, params object[] args) {
         OnSelectChar((Chr)target);
@@ -22,16 +29,43 @@ public class ViewAbilityPanel : ViewInteractive {
     }
 
     
+    public void ReverseAbilityPanel() {
+        for(int i=0; i<4/2; i++) {
+            Vector3 v3Temp = arV3AbilityPositions[i];
+            arV3AbilityPositions[i] = arV3AbilityPositions[4 - i - 1];
+            arV3AbilityPositions[4 - i - 1] = v3Temp;
+        }
+    }
 
 
     public void OnSelectChar(Chr _chrSelected) {
         chrSelected = _chrSelected;
 
-        //Position the panel next to the selected character
-        this.transform.position = chrSelected.transform.position;
+        if(nCurrentShowingPlyrID != chrSelected.plyrOwner.id) {
+            nCurrentShowingPlyrID = chrSelected.plyrOwner.id;
+
+            ReverseAbilityPanel();
+
+            fXOffsetMultiplier *= -1;
+
+            for (int i = 0; i < 4; i++) {
+                arViewAction[i].transform.localScale = new Vector3(fXOffsetMultiplier, 1.0f, 1.0f);
+            }
+            this.transform.localScale = new Vector3(fXOffsetMultiplier, 1.0f, 1.0f);
+
+        }
+
+        this.transform.position = new Vector3(
+                chrSelected.transform.position.x + fXOffset * fXOffsetMultiplier,
+                chrSelected.transform.position.y + fYOffset,
+                chrSelected.transform.position.z
+                );
 
         //Notify each ability 
         for (int i = 0; i < arViewAction.Length; i++) {
+            //Move each ability to its correct (possibly flipped) location
+            arViewAction[i].transform.localPosition = arV3AbilityPositions[i];
+
             if (chrSelected != null) {
                 arViewAction[i].SetModel(chrSelected.arActions[i]);
             } else {
@@ -67,6 +101,7 @@ public class ViewAbilityPanel : ViewInteractive {
             //Start each ability as representing nothing 
             for (int i = 0; i < arViewAction.Length; i++) {
                 arViewAction[i].SetModel(null);
+                arV3AbilityPositions[i] = arViewAction[i].transform.localPosition;
             }
 
             Chr.subAllStartSelect.Subscribe(cbChrSelected);

@@ -8,6 +8,8 @@ public class ViewInfoAction : MonoBehaviour {
 
 	bool bStarted;                          //Confirms the Start() method has executed
 
+    public GameObject goIcon;
+
 	public Text txtName;
 	public Text txtCost;
 
@@ -36,11 +38,25 @@ public class ViewInfoAction : MonoBehaviour {
 		}
 	}
 
+    public void DisplayIcon() {
+        string sSprPath = "Images/Chrs/" + mod.chrSource.sName + "/img";
+
+        if (mod != null) {
+            sSprPath += mod.sName;
+        }
+
+        Sprite sprIcon = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
+
+        Debug.Assert(sprIcon != null, "Could not find specificed sprite: " + sSprPath);
+
+        goIcon.GetComponent<SpriteRenderer>().sprite = sprIcon;
+    }
+
 	public void DisplayName() {
 		if (mod == null) {
 			txtName.text = "";
 		} else {
-			txtName.text = mod.sName;
+			txtName.text = mod.sDisplayName;
 		}
 	}
 
@@ -132,7 +148,8 @@ public class ViewInfoAction : MonoBehaviour {
 	}
 
 	public void DisplayAll(){
-		DisplayName ();
+        DisplayIcon();
+        DisplayName ();
 		DisplayCost ();
 		DisplayType ();
 		DisplayFatigue ();

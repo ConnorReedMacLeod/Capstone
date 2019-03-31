@@ -13,6 +13,8 @@ public class ActionExplosion : Action {
         arArgs[0] = new TargetArgTeam((own, tar) => true); // any team selection is fine
 
         sName = "Explosion";
+        sDisplayName = "Explosion";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort

@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActionVenemousBite : Action {
+public class ActionVenomousBite : Action {
 
     public Damage dmg;
     public int nBaseDamage;
 
-    public ActionVenemousBite(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
+    public ActionVenomousBite(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
 
         //Since the base constructor initializes this array, we can start filling it
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); we don't have any targets
 
-        sName = "Venemous Bite";
+        sName = "VenomousBite";
+        sDisplayName = "Venomous Bite";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort

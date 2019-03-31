@@ -15,6 +15,8 @@ public class ActionTantrum : Action {
         // arArgs[0] = new TargetArgTeam((own, tar) => true); 
 
         sName = "Tantrum";
+        sDisplayName = "Tantrum";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort

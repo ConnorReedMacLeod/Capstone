@@ -13,6 +13,8 @@ public class ActionImpale : Action {
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); we don't have any targets
 
         sName = "Impale";
+        sDisplayName = "Impale";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort

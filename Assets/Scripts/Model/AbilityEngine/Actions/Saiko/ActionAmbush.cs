@@ -13,6 +13,7 @@ public class ActionAmbush : Action {
         arArgs[0] = new TargetArgChr(Action.IsEnemy);
 
         sName = "Ambush";
+        sDisplayName = "Ambush";
 
         SoulChannel soulChannelEffect = new SoulChannel(this) {
 

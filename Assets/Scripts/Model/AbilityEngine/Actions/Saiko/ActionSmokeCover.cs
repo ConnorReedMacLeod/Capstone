@@ -9,7 +9,9 @@ public class ActionSmokeCover : Action {
         //Note that we don't have any targets for this ability
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner);
 
-        sName = "Smoke Cover";
+        sName = "SmokeCover";
+        sDisplayName = "Smoke Cover";
+
         type = new TypeCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort

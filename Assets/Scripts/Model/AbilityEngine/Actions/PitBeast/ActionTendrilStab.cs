@@ -12,7 +12,9 @@ public class ActionTendrilStab : Action {
         //Since the base constructor initializes this array, we can start filling it
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); we don't have any targets
 
-        sName = "Tendril Stab";
+        sName = "TendrilStab";
+        sDisplayName = "Tendril Stab";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
