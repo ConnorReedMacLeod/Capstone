@@ -466,17 +466,37 @@ public class ViewChr : ViewInteractive {
         if (bRecoiling == false) return;
 
         fCurRecoilTime += ContTime.Get().fDeltaTime;
-        goPortrait.transform.position += fRecoilSpeed * v3RecoilDirection * ContTime.Get().fDeltaTime;
+        goPortrait.transform.localPosition += fRecoilSpeed * v3RecoilDirection * ContTime.Get().fDeltaTime;
 
-        //If we've moved too far away from the base position
-        if (Mathf.Abs(goPortrait.transform.localPosition.x - v3BasePosition.x) >= fMaxRecoilDistance) {
-            //Then reverse the direction;
+        //Debug.Log("x coord is " + goPortrait.transform.localPosition.x);
+
+        //If we've moved past the left boundary
+        if (v3RecoilDirection.x >= 0 && goPortrait.transform.localPosition.x >= v3BasePosition.x + fMaxRecoilDistance){
+            //Make sure we don't move too far past the edge
+            goPortrait.transform.localPosition = new Vector3
+                (v3BasePosition.x + fMaxRecoilDistance,
+                goPortrait.transform.localPosition.y,
+                goPortrait.transform.localPosition.z);
+
+            //Reverse the direction
             v3RecoilDirection *= -1;
+            //Debug.Log("reversing");
+
+        } else if(v3RecoilDirection.x < 0 && goPortrait.transform.localPosition.x <= v3BasePosition.x - fMaxRecoilDistance) {
+            //Make sure we don't move too far past the edge
+            goPortrait.transform.localPosition = new Vector3
+                (v3BasePosition.x - fMaxRecoilDistance,
+                goPortrait.transform.localPosition.y,
+                goPortrait.transform.localPosition.z);
+
+            //Reverse the direction
+            v3RecoilDirection *= -1;
+            //Debug.Log("reversing");
         }
 
 
         if(fCurRecoilTime > fMaxRecoilTime) {
-            Debug.Log(mod.sName + " is ending recoil");
+            //Debug.Log(mod.sName + " is ending recoil");
             bRecoiling = false;
             fCurRecoilTime = 0f;
 
