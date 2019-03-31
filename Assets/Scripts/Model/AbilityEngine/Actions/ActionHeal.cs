@@ -12,7 +12,9 @@ public class ActionHeal : Action {
         //Since the base constructor initializes this array, we can start filling it
         arArgs[0] = new TargetArgChr(Action.IsFriendly);
 
-        sName = "Heal (Cantrip)";
+        sName = "Heal";
+        sDisplayName = "Heal";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort

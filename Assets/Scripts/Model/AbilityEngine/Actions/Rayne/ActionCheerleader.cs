@@ -12,6 +12,8 @@ public class ActionCheerleader : Action {
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); 
 
         sName = "Cheerleader";
+        sDisplayName = "Cheerleader";
+
         type = new TypePassive(this);
 
         //Physical, Mental, Energy, Blood, Effort

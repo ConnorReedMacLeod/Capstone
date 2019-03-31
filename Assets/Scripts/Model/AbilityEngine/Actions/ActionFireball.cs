@@ -13,7 +13,9 @@ public class ActionFireball : Action {
 		arArgs [0] = new TargetArgChr ((own, tar) => own.plyrOwner != tar.plyrOwner);
 
 		sName = "Fireball";
-		type = new TypeActive(this);
+        sDisplayName = "Fireball";
+
+        type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[]{0,0,1,0,0});

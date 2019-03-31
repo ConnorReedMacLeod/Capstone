@@ -18,7 +18,7 @@ public class ChrRayne : BaseChr {
         chrOwner.SetAction(0, new ActionCheerleader(chrOwner));
         chrOwner.SetAction(1, new ActionCloudCushion(chrOwner));
         chrOwner.SetAction(2, new ActionSpiritSlap(chrOwner));
-        chrOwner.SetAction(3, new ActionStorm(chrOwner));
+        chrOwner.SetAction(3, new ActionThunderStorm(chrOwner));
         
     }
 

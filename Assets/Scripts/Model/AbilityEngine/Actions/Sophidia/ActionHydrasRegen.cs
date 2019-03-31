@@ -13,6 +13,7 @@ public class ActionRegenerate : Action {
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner);
 
         sName = "Regenerate";
+        sDisplayName = "Regenerate";
 
         SoulChannel soulChannelEffect = new SoulChannel(this) {
             

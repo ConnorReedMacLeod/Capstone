@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActionHarpoon : Action {
+public class ActionHarpoonGun : Action {
 
     public Damage dmg;
     public int nBaseDamage;
 
-    public ActionHarpoon(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
+    public ActionHarpoonGun(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
         //Since the base constructor initializes this array, we can start filling it
         arArgs[0] = new TargetArgChr(Action.IsEnemy); //Choose a target enemy
 
-        sName = "Harpoon";
+        sName = "HarpoonGun";
+        sDisplayName = "Harpoon Gun";
+
         type = new TypeChannel(this, 2, null);
 
         //Physical, Mental, Energy, Blood, Effort

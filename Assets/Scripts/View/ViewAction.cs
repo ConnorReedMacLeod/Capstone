@@ -10,6 +10,8 @@ public class ViewAction : ViewInteractive {
     public int id;                              //The action's unique identifier
 	public Action mod;                      		//The action's model
 
+    public GameObject goIcon;
+
     //Textfields to display information
     public Text txtCost;
     public Text txtName;
@@ -17,8 +19,6 @@ public class ViewAction : ViewInteractive {
     public Text txtCurCooldown;
     public Text txtCooldown;
     public Text txtFatigue;
-
-    public GameObject goIcon;
 
     public static Subject subAllClick = new Subject();
     public static Subject subAllStartHover = new Subject();
@@ -74,13 +74,24 @@ public class ViewAction : ViewInteractive {
         }
 	}
 
-   
+
+    public void DisplayIcon() {
+        if (mod == null) return;
+
+        string sSprPath = "Images/Chrs/" + mod.chrSource.sName + "/img" + mod.sName;
+
+        Sprite sprIcon = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
+
+        Debug.Assert(sprIcon != null, "Could not find specificed sprite: " + sSprPath);
+
+        goIcon.GetComponent<SpriteRenderer>().sprite = sprIcon;
+    }
 
     public void DisplayName(){
         if (mod == null){
             txtName.text = "";
         } else {
-            txtName.text = mod.sName;
+            txtName.text = mod.sDisplayName;
         }
     }
 
@@ -130,17 +141,6 @@ public class ViewAction : ViewInteractive {
         } else {
             txtCooldown.text = mod.nCd.ToString();
         }
-    }
-
-    public void DisplayIcon() {
-        string sImgPath = "";
-
-        if(mod != null) {
-            sImgPath = "Images/Chrs/" + mod.chrSource.sName + "/img" + mod.chrSource.sName + "Headshot";
-        }
-
-        Sprite sprIcon = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
-        goIcon.GetComponent<SpriteRenderer>().sprite = sprIcon;
     }
 
 

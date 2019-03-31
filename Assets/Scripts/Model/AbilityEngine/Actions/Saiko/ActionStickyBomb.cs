@@ -12,7 +12,9 @@ public class ActionStickyBomb : Action {
         //We don't need to target anything, since we always deal damage to everyone
         arArgs[0] = new TargetArgChr(Action.IsEnemy); 
 
-        sName = "Sticky Bomb";
+        sName = "StickyBomb";
+        sDisplayName = "Sticky Bomb";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort

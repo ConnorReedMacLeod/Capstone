@@ -13,6 +13,8 @@ public class ActionReverberate : Action {
         // arArgs[0] = new TargetArgTeam((own, tar) => true); 
 
         sName = "Reverberate";
+        sDisplayName = "Reverberate";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort

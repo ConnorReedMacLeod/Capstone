@@ -9,7 +9,9 @@ public class ActionBucklerParry : Action {
         //Since the base constructor initializes this array, we can start filling it
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); //no targets needed
 
-        sName = "Buckler Parry";
+        sName = "BucklerParry";
+        sDisplayName = "Buckler Parry";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -21,7 +23,7 @@ public class ActionBucklerParry : Action {
 
 
 		sDescription1 = "Gain 15 ARMOUR and PARRY (4).";
-		sDescription2 = "[PARRY]\n" + "When an enemy would deal damage to " + sName + ", deal 15 damage to them and dispel.";
+		sDescription2 = "[PARRY]\n" + "When an enemy would deal damage to " + chrSource.sName + ", deal 15 damage to them and dispel.";
 
         SetArgOwners();
     }

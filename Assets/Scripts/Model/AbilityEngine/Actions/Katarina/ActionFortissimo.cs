@@ -10,6 +10,8 @@ public class ActionFortissimo : Action {
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner);
 
         sName = "Fortissimo";
+        sDisplayName = "Fortissimo";
+
         type = new TypeCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort

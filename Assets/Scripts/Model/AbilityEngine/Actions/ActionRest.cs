@@ -9,7 +9,9 @@ public class ActionRest : Action {
 	public ActionRest(Chr _chrOwner): base(0, _chrOwner){//number of target arguments
 
 		sName = "Rest";
-		type = new TypeCantrip(this);
+        sDisplayName = "Rest";
+
+        type = new TypeCantrip(this);
 
         chrSource = _chrOwner;
 

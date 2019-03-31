@@ -13,6 +13,8 @@ public class ActionSerenade : Action {
         arArgs[0] = new TargetArgChr(Action.IsFriendly);
 
         sName = "Serenade";
+        sDisplayName = "Serenade";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
