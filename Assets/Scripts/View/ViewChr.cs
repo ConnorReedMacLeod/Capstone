@@ -370,7 +370,7 @@ public class ViewChr : ViewInteractive {
             bSelectingChrTargettable = true;
         }
 
-        DecideIfHighlighted();
+        DecideIfHighlighted(tarArg.chrOwner);
 
     }
 
@@ -380,7 +380,7 @@ public class ViewChr : ViewInteractive {
             bSelectingChrTargettable = false; 
         }
 
-        DecideIfHighlighted();
+        DecideIfHighlighted(null);
 
     }
 
@@ -393,7 +393,7 @@ public class ViewChr : ViewInteractive {
             bSelectingTeamTargettable = true;
         }
 
-        DecideIfHighlighted();
+        DecideIfHighlighted(tarArg.chrOwner);
 
     }
 
@@ -401,7 +401,7 @@ public class ViewChr : ViewInteractive {
 
         bSelectingTeamTargettable = false;
 
-        DecideIfHighlighted();
+        DecideIfHighlighted(null);
 
     }
 
@@ -454,11 +454,25 @@ public class ViewChr : ViewInteractive {
 
     }
 
-    public void DecideIfHighlighted() {
+    public void DecideIfHighlighted(Chr chrActing) {
 
         if(bSelectingChrTargettable || bSelectingTeamTargettable) {
             if(goCurSelectionGlow == null) {
                 goCurSelectionGlow = Instantiate(pfSelectionGlow, maskPortrait.transform);
+
+                //By default, assume the character is an enemy
+                string sSprPath = "Images/Chrs/imgGlow6";
+
+                //But if they're a friend, then make it a green border
+                if(chrActing.plyrOwner.id == mod.plyrOwner.id) {
+                    sSprPath = "Images/Chrs/imgGlow4";
+                }
+
+                Sprite sprGlow = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
+
+                Debug.Assert(sprGlow != null, "Could not find specificed sprite: " + sSprPath);
+
+                goCurSelectionGlow.GetComponent<SpriteRenderer>().sprite = sprGlow;
             }
         } else {
            if(goCurSelectionGlow != null) {
