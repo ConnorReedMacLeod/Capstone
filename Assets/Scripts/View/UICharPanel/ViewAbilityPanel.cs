@@ -76,7 +76,7 @@ public class ViewAbilityPanel : ViewInteractive {
     }
 
     public void Deselect(Chr chrUnselected) {
-        Debug.Log("Calling deselect for " + chrUnselected);
+        //Debug.Log("Calling deselect for " + chrUnselected);
         if (chrSelected != chrUnselected)
             //Don't do anything if we're unselecting a character that we're not currently selecting (probably some race condition
             return;

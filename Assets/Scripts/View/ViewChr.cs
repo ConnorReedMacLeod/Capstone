@@ -436,7 +436,7 @@ public class ViewChr : ViewInteractive {
 
     public void cbRecoil(Object target, params object[] args) {
 
-        Debug.Log(mod.sName + " is recoiling");
+        //Debug.Log(mod.sName + " is recoiling");
 
         bRecoiling = true;
         fCurRecoilTime = 0f;
@@ -447,7 +447,7 @@ public class ViewChr : ViewInteractive {
 
         if (((Soul)args[0]).bRecoilWhenApplied == false) return;
 
-        Debug.Log(mod.sName + " is recoiling");
+        //Debug.Log(mod.sName + " is recoiling");
 
         bRecoiling = true;
         fCurRecoilTime = 0f;
