@@ -7,7 +7,6 @@ public class ViewAction : ViewInteractive {
 
     bool bStarted;                          //Confirms the Start() method has executed
 
-    public int id;                              //The action's unique identifier
 	public Action mod;                      		//The action's model
 
     public GameObject goIcon;

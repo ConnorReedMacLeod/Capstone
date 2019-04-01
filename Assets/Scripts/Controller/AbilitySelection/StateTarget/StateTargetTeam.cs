@@ -32,7 +32,7 @@ public class StateTargetTeam : StateTarget {
 
     public void cbSwitchAction(Object target, params object[] args) {
 
-        inputHuman.nSelectedAbility = ((ViewAction)target).id;
+        inputHuman.nSelectedAbility = ((ViewAction)target).mod.id;
 
         // TODO:: Save the current targets if there are any, so that you can 
         // revert to those targets if you've failed targetting

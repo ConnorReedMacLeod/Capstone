@@ -32,13 +32,14 @@ public class StateTargetChr : StateTarget {
     }
 
     public void cbSwitchAction(Object target, params object [] args) {
+        Debug.Log("Initially, selected id is " + inputHuman.nSelectedAbility);
         Debug.Log("clicking on an action while asked to target a char");
 
         inputHuman.ResetTar();
 
-        inputHuman.nSelectedAbility = ((ViewAction)target).id;
+        inputHuman.nSelectedAbility = ((ViewAction)target).mod.id;
 
-        Debug.Log("selected action is now " + inputHuman.nSelectedAbility);
+        Debug.Log("reselected action is now " + inputHuman.nSelectedAbility);
         inputHuman.SetTargetArgState(); // Let the parent figure out what exact state we go to
 
     }
