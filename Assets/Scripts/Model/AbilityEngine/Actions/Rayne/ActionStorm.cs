@@ -13,7 +13,7 @@ public class ActionStorm : Action {
         //We don't need to target anything, since we always deal damage to everyone
         // arArgs[0] = new TargetArgTeam((own, tar) => true); 
 
-        sName = "Storm";
+        sName = "Thunder Storm";
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort

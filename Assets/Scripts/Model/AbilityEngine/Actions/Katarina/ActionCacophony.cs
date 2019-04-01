@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActionCacaphony : Action {
+public class ActionCacophony : Action {
 
     public Damage dmg;
 
@@ -12,12 +12,12 @@ public class ActionCacaphony : Action {
     public int nBaseStun;
     public int nCriticalStun;
 
-    public ActionCacaphony(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
+    public ActionCacophony(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
         //Since the base constructor initializes this array, we can start filling it
         arArgs[0] = new TargetArgChr((own, tar) => true); //Any character target is fine
 
-        sName = "Cacaphony";
+        sName = "Cacophony";
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort

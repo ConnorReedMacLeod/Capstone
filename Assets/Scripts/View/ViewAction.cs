@@ -20,7 +20,7 @@ public class ViewAction : ViewInteractive {
 
     public GameObject goIcon;
 
-    public static Subject subAllClick = new Subject();
+	public static Subject subAllClick = new Subject();
     public static Subject subAllStartHover = new Subject();
     public static Subject subAllStopHover = new Subject();
 
@@ -136,12 +136,13 @@ public class ViewAction : ViewInteractive {
         string sImgPath = "";
 
         if(mod != null) {
-            sImgPath = "Images/Chrs/" + mod.chrSource.sName + "/img" + mod.chrSource.sName + "Headshot";
+            sImgPath = "Images/Chrs/" + mod.chrSource.sName + "/img" + mod.sName;
         }
 
         Sprite sprIcon = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
         goIcon.GetComponent<SpriteRenderer>().sprite = sprIcon;
-    }
+		
+	}
 
 
     public void DisplayAll() {
