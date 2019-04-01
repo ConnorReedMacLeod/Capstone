@@ -29,7 +29,6 @@ public class ContTime : MonoBehaviour {
 
 
     public void Invoke(float _fDelay, System.Action _funcToCall) {
-        Debug.Log("adding " + _funcToCall);
         lstInvokes.Add(new InvokeFunc(_fDelay, _funcToCall));
 
     }
@@ -42,11 +41,8 @@ public class ContTime : MonoBehaviour {
             //Tick down the remaining time
             inv.fDelay -= fDeltaTime;
 
-            Debug.Log("Time is now " + inv.fDelay);
-
             //If we've ticked down the total time for the function
             if(inv.fDelay <= 0f) {
-                Debug.Log("Calling the func ");
                 //Then call the associated function
                 inv.funcToCall();
             }

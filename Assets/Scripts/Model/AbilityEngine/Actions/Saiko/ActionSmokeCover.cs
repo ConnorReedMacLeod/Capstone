@@ -10,6 +10,8 @@ public class ActionSmokeCover : Action {
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner);
 
         sName = "SmokeCover";
+        sDisplayName = "Smoke Cover";
+
         type = new TypeCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -19,8 +21,8 @@ public class ActionSmokeCover : Action {
         nFatigue = 2;
         nActionCost = 0;//0 since this is a cantrip
 
-        sDescription = "[Cantrip]  Gain \"Immune to damage to damage\" for 4 turns.\n" +
-            "If this character blocks, dispel";
+		sDescription1 = "Gain SHROUDED (4).";
+		sDescription2 = "[SHROUDED]\n" + _chrOwner.sName + " is immune to damage.  If " + _chrOwner.sName + " is the Vanguard, dispel.";
 
         SetArgOwners();
     }

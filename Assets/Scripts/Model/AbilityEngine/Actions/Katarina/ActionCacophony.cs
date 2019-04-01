@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActionCacaphony : Action {
+public class ActionCacophony : Action {
 
     public Damage dmg;
 
@@ -12,12 +12,14 @@ public class ActionCacaphony : Action {
     public int nBaseStun;
     public int nCriticalStun;
 
-    public ActionCacaphony(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
+    public ActionCacophony(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
         //Since the base constructor initializes this array, we can start filling it
         arArgs[0] = new TargetArgChr(Action.IsAnyCharacter); //Any character target is fine
 
-        sName = "Cacaphony";
+        sName = "Cacophony";
+        sDisplayName = "Cacophony";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -36,9 +38,11 @@ public class ActionCacaphony : Action {
         nBaseStun = 2;
         nCriticalStun = 3;
 
-        sDescription = "Deal 20 damage and 2 fatigue to the chosen character.  If the chosen character is blocking, deal 30 damage and 3 fatigue instead";
+        sDescription1 = "Deal 20 damage and 2 fatigue to the chosen character.";
+		sDescription2 = "If the chosen character is the Vanguard, deal 30 damage and 3 fatigue instead";
 
-        SetArgOwners();
+
+		SetArgOwners();
     }
 
     //Deal critical damage and stun if the targetted character is a blocker

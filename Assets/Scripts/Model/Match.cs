@@ -21,6 +21,11 @@ public class Match : MonoBehaviour {
 	public GameObject pfPlayer;
 	public GameObject pfChr;
 
+	//TODO: Move cursor settings into their own script
+	public Texture2D txCursor;							//Cursor Texture
+	public CursorMode cursorMode = CursorMode.Auto;     //Cursor Mode
+	public Vector2 v2HotSpot = Vector2.zero;			//Cursor Start Position
+
 	public static Match instance;
 
 	public static Match Get (){
@@ -166,6 +171,8 @@ public class Match : MonoBehaviour {
 		InitAllChrs ();
 
         InitAllBlockers();
+
+		Cursor.SetCursor(txCursor, v2HotSpot, cursorMode);
 
     }
 }

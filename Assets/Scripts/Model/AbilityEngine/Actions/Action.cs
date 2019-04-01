@@ -9,6 +9,7 @@ public class Action { //This should probably be made abstract
     public int nArgs; // Note that this should only ever be 0 or 1
     public TargetArg[] arArgs;
     public string sName;
+    public string sDisplayName;
     public TypeAction type;
 
     public int nCd;
@@ -24,13 +25,15 @@ public class Action { //This should probably be made abstract
     public int nCharges;
     public int nCurCharges;
 
+    public string sDescription1;
+    public string sDescription2;
+	public string sDescription3;
+
     public bool bProperActive;  //Usually true - only false for non-standard actions that shouldn't 
                                 // switch the character sprite to an acting portrait (for example)
 
-    public string sDescription;
-    public string sExtraDescription;
 
-    public Property<int[]> parCost;
+	public Property<int[]> parCost;
 
     public Stack<Clause> stackClauses = new Stack<Clause>();
 

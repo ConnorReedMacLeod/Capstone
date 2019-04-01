@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActionStorm : Action {
+public class ActionThunderStorm : Action {
 
     public int nBaseDamage;
     public int nStunDuration;
     public Damage dmg;
 
-    public ActionStorm(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
+    public ActionThunderStorm(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
 
         //We don't need to target anything, since we always deal damage to everyone
         // arArgs[0] = new TargetArgTeam((own, tar) => true); 
 
-        sName = "Storm";
+        sName = "ThunderStorm";
+        sDisplayName = "Thunder Storm";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -23,7 +25,7 @@ public class ActionStorm : Action {
         nFatigue = 5;
         nActionCost = 1;
 
-        sDescription = "Deal 15 damage and 2 fatigue to all enemies.";
+        sDescription1 = "Deal 15 damage and 2 fatigue to all enemies.";
 
         nStunDuration = 2;
         nBaseDamage = 15;

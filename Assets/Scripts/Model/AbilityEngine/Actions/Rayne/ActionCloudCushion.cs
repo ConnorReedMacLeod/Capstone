@@ -13,6 +13,8 @@ public class ActionCloudCushion : Action {
         arArgs[0] = new TargetArgChr(Action.IsFriendly); //Choose any friendly character
 
         sName = "CloudCushion";
+        sDisplayName = "Cloud Cushion";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -25,7 +27,7 @@ public class ActionCloudCushion : Action {
         nDefenseGain = 25;
         nDuration = 4;
 
-        sDescription = "Target ally gains 25 [DEFENSE] for 4 turns";
+        sDescription1 = "Target ally gains 25 DEFENSE for 4 turns.";
 
         SetArgOwners();
     }

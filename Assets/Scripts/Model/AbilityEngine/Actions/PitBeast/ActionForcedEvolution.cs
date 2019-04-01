@@ -10,6 +10,8 @@ public class ActionForcedEvolution : Action {
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner);
 
         sName = "ForcedEvolution";
+        sDisplayName = "Forced Evolution";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -19,7 +21,7 @@ public class ActionForcedEvolution : Action {
         nFatigue = 1;
         nActionCost = 1;
 
-        sDescription = "Gain 5 [Power].  Lose 5 Life";
+        sDescription1 = "Lose 5 health.  Gain 5 POWER.";
 
         SetArgOwners();
     }
@@ -40,7 +42,7 @@ public class ActionForcedEvolution : Action {
                     },
 
                     fDelay = ContTurns.fDelayStandard,
-                    sLabel = sName + " is evolving"
+                    sLabel = chrSource.sName + " is evolving"
                 });
             }
         });

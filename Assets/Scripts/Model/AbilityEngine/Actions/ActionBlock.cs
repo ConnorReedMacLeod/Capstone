@@ -9,7 +9,9 @@ public class ActionBlock : Action {
         //Since the base constructor initializes this array, we can start filling it
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); //Choose a target enemy
 
-        sName = "Declare Blocker";
+        sName = "DeclareBlocker";
+        sDisplayName = "Declare Blocker";
+
         type = new TypeCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -19,7 +21,7 @@ public class ActionBlock : Action {
         nFatigue = 0;
         nActionCost = 0;
 
-        sDescription = "Become the blocker";
+        sDescription1 = "Become the Vanguard.  (Melee attacks target the Vanguard)";
 
         SetArgOwners();
     }

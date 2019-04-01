@@ -18,7 +18,7 @@ public class ChrFischer : BaseChr {
     public override void SetActions() {
         chrOwner.SetAction(0, new ActionHuntersQuarry(chrOwner));
         chrOwner.SetAction(1, new ActionImpale(chrOwner));
-        chrOwner.SetAction(2, new ActionHarpoon(chrOwner));
+        chrOwner.SetAction(2, new ActionHarpoonGun(chrOwner));
         chrOwner.SetAction(3, new ActionBucklerParry(chrOwner));
 
        

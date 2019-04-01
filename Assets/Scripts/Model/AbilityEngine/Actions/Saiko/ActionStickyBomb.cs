@@ -13,6 +13,8 @@ public class ActionStickyBomb : Action {
         arArgs[0] = new TargetArgChr(Action.IsEnemy); 
 
         sName = "StickyBomb";
+        sDisplayName = "Sticky Bomb";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -26,7 +28,8 @@ public class ActionStickyBomb : Action {
         //Create a base Damage object that this action will apply
         dmg = new Damage(this.chrSource, null, nBaseDamage);
 
-        sDescription = "Deal 5 damage to target character, then deal 30 damage to that character at the end of turn";
+        sDescription1 = "Deal 5 damage to the chosen character and apply STICKIED";
+		sDescription2 = "[STICKIED]\n" + "At the end of turn, deal 30 damage to this character and dispel.";
 
         
 

@@ -7,8 +7,9 @@ public class ViewAction : ViewInteractive {
 
     bool bStarted;                          //Confirms the Start() method has executed
 
-    public int id;                              //The action's unique identifier
 	public Action mod;                      		//The action's model
+
+    public GameObject goIcon;
 
     //Textfields to display information
     public Text txtCost;
@@ -43,6 +44,10 @@ public class ViewAction : ViewInteractive {
         base.onMouseStopHover(args);
     }
 
+    public void cbAbilityChanged(Object target, params object[] args) {
+        DisplayAll();
+    }
+
 
     //Let the Action button know which action it's representing
     public void SetModel(Action _mod) {
@@ -65,29 +70,27 @@ public class ViewAction : ViewInteractive {
         if (bStarted == false)
         {
             bStarted = true;
-
-            Chr.subAllStartSelect.Subscribe(cbChrSelected);
-            Chr.subAllStartIdle.Subscribe(cbChrUnselected);
         }
 	}
 
-    public void cbChrSelected(Object target, params object[] args) {
-        SetModel(((Chr)target).arActions[id]);
-    }
 
-    public void cbChrUnselected(Object target, params object[] args) {
-        SetModel(null);
-    }
+    public void DisplayIcon() {
+        if (mod == null) return;
 
-    public void cbAbilityChanged(Object target, params object[] args) {
-        DisplayAll();
+        string sSprPath = "Images/Chrs/" + mod.chrSource.sName + "/img" + mod.sName;
+
+        Sprite sprIcon = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
+
+        Debug.Assert(sprIcon != null, "Could not find specificed sprite: " + sSprPath);
+
+        goIcon.GetComponent<SpriteRenderer>().sprite = sprIcon;
     }
 
     public void DisplayName(){
         if (mod == null){
             txtName.text = "";
         } else {
-            txtName.text = mod.sName;
+            txtName.text = mod.sDisplayName;
         }
     }
 
@@ -146,5 +149,6 @@ public class ViewAction : ViewInteractive {
         DisplayType();
         DisplayCurCooldown();
         DisplayCooldown();
+        DisplayIcon();
     }
 }

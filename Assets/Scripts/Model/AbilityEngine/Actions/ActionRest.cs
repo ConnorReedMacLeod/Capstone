@@ -9,7 +9,9 @@ public class ActionRest : Action {
 	public ActionRest(Chr _chrOwner): base(0, _chrOwner){//number of target arguments
 
 		sName = "Rest";
-		type = new TypeCantrip(this);
+        sDisplayName = "Rest";
+
+        type = new TypeCantrip(this);
 
         chrSource = _chrOwner;
 
@@ -22,7 +24,7 @@ public class ActionRest : Action {
 
         nRestFatigue = 3;
 
-		sDescription = _chrOwner + " has finished selecting abilities for the turn";
+		sDescription1 = _chrOwner + " has finished selecting abilities for the turn.";
 
 	}
 
