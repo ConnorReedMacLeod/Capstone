@@ -42,7 +42,7 @@ public class Mana : MonoBehaviour{
 
         int[] arNegCost = new int[nManaTypes];
 
-        for(int i=0; i<nManaTypes; i++) {
+        for (int i=0; i<nManaTypes; i++) {
             arNegCost[i] = -arCost[i];
             //Don't allow negative (switched to positive) costs
             if (arNegCost[i] > 0) arCost[i] = 0;
@@ -54,24 +54,31 @@ public class Mana : MonoBehaviour{
 
 
     //For adding one mana of one type to player's total mana
-    public void AddMana(MANATYPE type){
-		AddMana (type, 1);
+    public void ChangeMana(MANATYPE type){
+		ChangeMana (type, 1);
     }
 
 	//For adding any number of mana of one type to player's total mana
-	public void AddMana(MANATYPE type, int nAmount){
-		arMana [(int)type] += nAmount;
+	public void ChangeMana(MANATYPE type, int nAmount){
+        //If the change is positive, just add it directly
+        if (nAmount >= 0) {
+            arMana[(int)type] += nAmount;
+        } else {
+            //Otherwise we're spending mana
+            SpendMana(type, -nAmount);
+
+        }
 
         subManaChange.NotifyObs(null, type);
         subAllManaChange.NotifyObs(null, type);
     }
 
 	//For adding any number of mana of any number of types to player's total mana, using an array of MANATYPEs
-	public void AddMana(int [] _arMana){
+	public void ChangeMana(int [] _arMana){
 		Debug.Assert (_arMana.Length == nManaTypes || _arMana.Length == nManaTypes - 1);
 
 		for (int i = 0; i < _arMana.Length; i++) {
-            AddMana((MANATYPE)i, _arMana[i]);
+            ChangeMana((MANATYPE)i, _arMana[i]);
         }
 	}
 
@@ -162,7 +169,7 @@ public class Mana : MonoBehaviour{
         {
 
             //For mana type [i], checks if the player has enough to cover the cost
-            //Effort mana, or mana type [5], will often fail this check, as it is always 0
+            //Effort mana, or mana type [4], will often fail this check, as it is always 0
             if (arMana[i] < arCost[i])
             {
                 //After all other costs are paid, leftover mana pool mana is used to pay for effort
@@ -185,64 +192,65 @@ public class Mana : MonoBehaviour{
         return true;
     }
 
-    //For changing one mana of one type
+    //For spending one mana of one type
     public bool SpendMana(MANATYPE type){
 		return SpendMana (type, 1);
 	}
 
-    //For changing any number of mana of one type
+    //For spending any number of mana of one type
     public bool SpendMana(MANATYPE type, int nAmount){
-		int [] arCost = new int[nManaTypes];
-		arCost [(int)type] = nAmount;
-		return SpendMana (arCost);
-	}
 
-    //For changing any number of mana of any type
+        for (int j = 0; j < nAmount; j++) {
+
+            //Pays for coloured mana (which you will actually have mana for)
+            if (arMana[(int)type] > 0) {
+                arMana[(int)type]--;
+                subManaChange.NotifyObs(null, type);
+                subAllManaChange.NotifyObs(null, type);
+
+                //Pays for effort mana
+            } else if (type == MANATYPE.EFFORT && nManaPool > 0) {
+
+                //Uses mana in order of most recently added to mana pool
+                arManaPool[(int)(qManaPool.First.Value)]--;
+                nManaPool--;
+                subManaPoolChange.NotifyObs(null, qManaPool.First.Value);
+                subAllManaPoolChange.NotifyObs(null, qManaPool.First.Value);
+
+                qManaPool.RemoveFirst();
+
+                //Catches non-existant mana types
+            } else {
+                Debug.LogError("RAN OUT OF MANA TO SPEND!");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    //For spending any number of mana of any type
 	public bool SpendMana(int [] arManaChange){
 		Debug.Assert (arManaChange.Length == nManaTypes || arManaChange.Length == nManaTypes - 1);
 
         //Cycle through each mana type in the change
-		for (int i = 0; i < arManaChange.Length; i++) {
+        for (int i = 0; i < arManaChange.Length; i++) {
 
+            if (SpendMana((MANATYPE)i, arManaChange.Length) == false) {
+                return false;
+            }
 
-
-			for (int j = 0; j < arManaChange [i]; j++) {
-                
-                //Pays for coloured mana
-                if (arMana [i] > 0) {
-					arMana [i]--;
-                    subManaChange.NotifyObs(null, (MANATYPE)i);
-                    subAllManaChange.NotifyObs(null, (MANATYPE)i);
-
-                    //Pays for effort mana
-                } else if (i == (int)MANATYPE.EFFORT) {
-
-					//Uses mana in order of most recently added to mana pool
-					arManaPool [(int)(qManaPool.First.Value)]--;
-					nManaPool--;
-                    subManaPoolChange.NotifyObs(null, qManaPool.First.Value);
-                    subAllManaPoolChange.NotifyObs(null, qManaPool.First.Value);
-
-                    qManaPool.RemoveFirst();
-
-					//Catches non-existant mana types
-				} else {
-					Debug.LogError ("RAN OUT OF MANA TO SPEND!");
-					return false;
-				}
-			}
-
-            //After changing this type of mana, ensure it didn't go negative
-            if(arMana[i] < 0) {
-                if(i == (int)MANATYPE.EFFORT) {
-                    if(nManaPool < 0) {
+            //After changing this cost, ensure it didn't go negative
+            if (arMana[i] < 0) {
+                if (i == (int)MANATYPE.EFFORT) {
+                    if (nManaPool < 0) {
                         Debug.LogError("Mana Effort is " + nManaPool);
                     }
                 } else {
                     Debug.LogError("Mana " + (MANATYPE)i + " is " + arMana[i]);
                 }
             }
-		}
+        }
 
 		return true;
 	}
@@ -263,7 +271,7 @@ public class Mana : MonoBehaviour{
 			arManaPool = new int[nManaTypes];
 			qManaPool = new LinkedList<MANATYPE>();
 
-            AddMana(new int[] { 20, 20, 20, 20, 0 });
+            ChangeMana(new int[] { 20, 20, 20, 20, 0 });
 		}
 	}
 }
