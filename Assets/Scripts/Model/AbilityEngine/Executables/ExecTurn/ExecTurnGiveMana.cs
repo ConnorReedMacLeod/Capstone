@@ -42,7 +42,7 @@ public class ExecTurnGiveMana : Executable {
 
         //Give the mana to each player
         for (int i = 0; i < Match.Get().nPlayers; i++) {
-            Match.Get().arPlayers[i].mana.AddMana(manaGen);
+            Match.Get().arPlayers[i].mana.ChangeMana(manaGen);
         }
     }
 

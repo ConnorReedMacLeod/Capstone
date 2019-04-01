@@ -13,7 +13,9 @@ public class ActionFireball : Action {
 		arArgs [0] = new TargetArgChr ((own, tar) => own.plyrOwner != tar.plyrOwner);
 
 		sName = "Fireball";
-		type = new TypeActive(this);
+        sDisplayName = "Fireball";
+
+        type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[]{0,0,1,0,0});
@@ -26,7 +28,7 @@ public class ActionFireball : Action {
         //Create a base Damage object that this action will apply
         dmg = new Damage(this.chrSource, null, nBaseDamage);
 
-        sDescription = "Deal 5 damage to target character";
+        sDescription1 = "Deal 5 damage to the chosen character.";
 
 		SetArgOwners ();
 	}

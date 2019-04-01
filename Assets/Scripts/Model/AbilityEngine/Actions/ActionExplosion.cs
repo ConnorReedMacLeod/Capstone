@@ -13,6 +13,8 @@ public class ActionExplosion : Action {
         arArgs[0] = new TargetArgTeam((own, tar) => true); // any team selection is fine
 
         sName = "Explosion";
+        sDisplayName = "Explosion";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -26,7 +28,7 @@ public class ActionExplosion : Action {
         //Create a base Damage object that this action will apply
         dmg = new Damage(this.chrSource, null, nBaseDamage);
 
-        sDescription = "Deal 5 damage to all characters on target team";
+        sDescription1 = "Deal 5 damage to all characters on the chosen team.";
 
         SetArgOwners();
     }

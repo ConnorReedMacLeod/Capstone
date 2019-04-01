@@ -13,6 +13,8 @@ public class ActionSerenade : Action {
         arArgs[0] = new TargetArgChr(Action.IsFriendly);
 
         sName = "Serenade";
+        sDisplayName = "Serenade";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -26,7 +28,7 @@ public class ActionSerenade : Action {
         //Create a base Healing object that this action will apply
         heal = new Healing(this.chrSource, null, nBaseHealing);
 
-        sDescription = "Heal 25 health to the chosen ally";
+        sDescription1 = "Heal 25 to the chosen ally.";
 
 
         SetArgOwners();

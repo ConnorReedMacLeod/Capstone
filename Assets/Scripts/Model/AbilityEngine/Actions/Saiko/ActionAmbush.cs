@@ -13,6 +13,7 @@ public class ActionAmbush : Action {
         arArgs[0] = new TargetArgChr(Action.IsEnemy);
 
         sName = "Ambush";
+        sDisplayName = "Ambush";
 
         SoulChannel soulChannelEffect = new SoulChannel(this) {
 
@@ -45,8 +46,7 @@ public class ActionAmbush : Action {
         //Create a base Damage object that this action will apply
         dmg = new Damage(this.chrSource, null, nBaseDamage);
 
-        sDescription = "Channel 4: While channeling, after the chosen character uses an ability\n" +
-                       "or blocks, deal 20 damage to them";
+        sDescription1 = "While channeling, after the chosen character uses an ability or blocks, deal 20 damage to them";
 
         SetArgOwners();
     }

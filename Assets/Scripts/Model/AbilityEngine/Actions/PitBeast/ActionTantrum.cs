@@ -15,6 +15,8 @@ public class ActionTantrum : Action {
         // arArgs[0] = new TargetArgTeam((own, tar) => true); 
 
         sName = "Tantrum";
+        sDisplayName = "Tantrum";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -24,7 +26,7 @@ public class ActionTantrum : Action {
         nFatigue = 5;
         nActionCost = 1;
 
-        sDescription = "Deal 20 damage to all enemies and 5 damage to all other allies";
+        sDescription1 = "Deal 20 damage to all enemies and 5 damage to all other allies";
 
         nEnemyDamage = 20;
         nAllyDamage = 5;

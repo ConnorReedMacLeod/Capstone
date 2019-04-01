@@ -63,11 +63,11 @@ public class ExecChangeMana : Executable {
         Debug.Assert(chrTarget == null);
 
         if (arnAmount == null) {
-            //If no array of mana was added, then add the single amount of mana passed
-            plyrTarget.mana.AddMana(manaType, nAmount);
+            //If no array of mana was added, then change the single amount of mana passed
+            plyrTarget.mana.ChangeMana(manaType, nAmount);
         } else {
-            //But if an array of mana was specified, then use that to add mana
-            plyrTarget.mana.AddMana(arnAmount);
+            //But if an array of mana was specified, then use that to change mana
+            plyrTarget.mana.ChangeMana(arnAmount);
         }
         
         fDelay = ContTurns.fDelayMinorAction;

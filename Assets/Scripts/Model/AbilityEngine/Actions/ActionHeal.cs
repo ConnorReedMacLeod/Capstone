@@ -12,7 +12,9 @@ public class ActionHeal : Action {
         //Since the base constructor initializes this array, we can start filling it
         arArgs[0] = new TargetArgChr(Action.IsFriendly);
 
-        sName = "Heal (Cantrip)";
+        sName = "Heal";
+        sDisplayName = "Heal";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -27,7 +29,7 @@ public class ActionHeal : Action {
         //Create a base Healing object that this action will apply
         heal = new Healing(this.chrSource, null, nBaseHealing);
 
-        sDescription = "Restore 5 health to target ally";
+        sDescription1 = "Restore 5 health to the chosen ally.";
 
 
         SetArgOwners();

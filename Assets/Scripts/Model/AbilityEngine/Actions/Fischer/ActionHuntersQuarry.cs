@@ -6,6 +6,8 @@
         arArgs[0] = new TargetArgChr(Action.IsEnemy); //Choose an enemy character
 
         sName = "HuntersQuarry";
+        sDisplayName = "Hunter's Quarry";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -15,7 +17,8 @@
         nFatigue = 3;
         nActionCost = 1;
 
-        sDescription = "Before " + _chrOwner.sName + " deals damage to this character, they lose 5 Defense until end of turn";
+		sDescription1 = "Apply HUNTED to the chosen character.";
+        sDescription2 = "[HUNTED]\n" + "Before " + _chrOwner.sName + " deals damage to this character, they lose 5 DEFENSE until end of turn.";
 
         SetArgOwners();
     }

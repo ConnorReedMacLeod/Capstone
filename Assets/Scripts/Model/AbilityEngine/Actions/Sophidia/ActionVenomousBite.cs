@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActionVenemousBite : Action {
+public class ActionVenomousBite : Action {
 
     public Damage dmg;
     public int nBaseDamage;
 
-    public ActionVenemousBite(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
+    public ActionVenomousBite(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
 
         //Since the base constructor initializes this array, we can start filling it
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); we don't have any targets
 
-        sName = "VenemousBite";
+        sName = "VenomousBite";
+        sDisplayName = "Venomous Bite";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -26,15 +28,16 @@ public class ActionVenemousBite : Action {
         //Create a base Damage object that this action will apply
         dmg = new Damage(this.chrSource, null, nBaseDamage);
 
-        sDescription = "Deal 5 damage and apply [Envenomed](3) to the blocker.\n" +
-                       "[Envenomed]: Lose 5 Life at the end of each turn.  +1 duration each time you take damage";
+		sDescription1 = "Deal 5 damage and apply ENVENOMED (3) to the enemy Vanguard.\n";
+		sDescription2 = "[ENVENOMED]\n" + "At the end of turn, lose 5 health.  Whenever this character takes damage, +1 duration.";
 
-        SetArgOwners();
+
+		SetArgOwners();
     }        
 
     override public void Execute(int[] lstTargettingIndices) {
 
-        Chr tarPlyr = chrSource.GetEnemyPlayer().GetBlocker();
+        Chr tarBlocker = chrSource.GetEnemyPlayer().GetBlocker();
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
@@ -42,14 +45,14 @@ public class ActionVenemousBite : Action {
                 //Make a copy of the damage object to give to the executable
                 Damage dmgToApply = new Damage(dmg);
                 //Give the damage object its target
-                dmgToApply.SetChrTarget(tarPlyr);
+                dmgToApply.SetChrTarget(tarBlocker);
 
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
-                    chrTarget = tarPlyr,
+                    chrTarget = tarBlocker,
                     dmg = dmgToApply,
                     fDelay = ContTurns.fDelayStandard,
-                    sLabel = tarPlyr.sName + " is being bitten"
+                    sLabel = tarBlocker.sName + " is being bitten"
                 });
             }
         });
@@ -58,7 +61,7 @@ public class ActionVenemousBite : Action {
             fExecute = () => {
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
-                    chrTarget = tarPlyr,
+                    chrTarget = tarBlocker,
 
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
                         return new SoulEnvenomed(_chrSource, _chrTarget);

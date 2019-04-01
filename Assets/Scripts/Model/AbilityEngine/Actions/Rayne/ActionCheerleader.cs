@@ -12,6 +12,8 @@ public class ActionCheerleader : Action {
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); 
 
         sName = "Cheerleader";
+        sDisplayName = "Cheerleader";
+
         type = new TypePassive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -21,7 +23,7 @@ public class ActionCheerleader : Action {
         nFatigue = 0;
         nActionCost = 0;
 
-        sDescription = "[PASSIVE] At the beginning of each turn that Rayne acts, all other allies get +5 [POWER]";
+        sDescription1 = "At the beginning of each turn that Rayne acts, all other allies gain 5 POWER until the end of turn.";
 
         SetArgOwners();
     }

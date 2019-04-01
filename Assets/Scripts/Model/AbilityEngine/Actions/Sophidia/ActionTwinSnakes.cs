@@ -2,19 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActionSnakeLaunch : Action {
+public class ActionTwinSnakes : Action {
 
     public Damage dmg;
     public int nBaseDamage;
 
     public int nLifeLoss;
 
-    public ActionSnakeLaunch(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
+    public ActionTwinSnakes(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
         //Since the base constructor initializes this array, we can start filling it
         arArgs[0] = new TargetArgChr(Action.IsEnemy);
 
-        sName = "SnakeLaunch";
+        sName = "TwinSnakes";
+        sDisplayName = "Twin Snakes";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -30,7 +32,7 @@ public class ActionSnakeLaunch : Action {
 
         nLifeLoss = 5;
 
-        sDescription = "Deal 20 damage twice.  Lose 5 life twice";
+        sDescription1 = "Deal 20 damage to the chosen character twice.  Lose 5 health twice";
 
         SetArgOwners();
     }

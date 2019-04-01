@@ -11,6 +11,8 @@ public class ActionTranquilize : Action {
         // arArgs[0] = new TargetArgTeam((own, tar) => true); 
 
         sName = "Tranquilize";
+        sDisplayName = "Tranquilize";
+
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -20,7 +22,7 @@ public class ActionTranquilize : Action {
         nFatigue = 3;
         nActionCost = 1;
 
-        sDescription = "Deal 4 fatigue to the enemy blocker.";
+        sDescription1 = "Deal 4 fatigue to the enemy Vanguard.";
 
         nStunDuration = 4;
 

@@ -12,6 +12,8 @@ public class ActionSadism : Action {
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); 
 
         sName = "Sadism";
+        sDisplayName = "Sadism";
+
         type = new TypePassive(this);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -21,7 +23,7 @@ public class ActionSadism : Action {
         nFatigue = 0;
         nActionCost = 0;
 
-        sDescription = "[PASSIVE] Before Pit Beast, would deal damage to an enemy with higher Life, heal 5 Life";
+        sDescription1 = "When " + _chrOwner.sName + " would deal damage to a character with greater health, heal 5.";
 
         SetArgOwners();
     }

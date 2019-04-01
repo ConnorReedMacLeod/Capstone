@@ -31,16 +31,30 @@ public class ViewChr : ViewInteractive {
 	Chr.STATESELECT lastStateSelect;  //Tracks previous character state (SELECTED, TARGETTING, UNSELECTED)
 
     public GameObject pfBlockerIndicator; //Reference to the prefab blocker indicator
+    public GameObject pfSelectionGlow; //Reference to the prefab glow for selection
 
-    public GameObject goBlockerIndicator; //Blocker reference
-	public GameObject goBorder;         //Border reference
+    public GameObject goCurSelectionGlow; //A reference to the current glow (or null if there is none)
+    public GameObject goBlockerIndicator; //Blocker Reference
+	public GameObject goBorder;         //Border Reference
 	public GameObject goPortrait;       //Portrait Reference
+	public GameObject goFatigueDisplay; //Fatigue Display Reference
+	public GameObject goChannelDisplay; //Channel Display Reference
+	public GameObject goPowerDefense;	//Power Defense Display Reference
+	public GameObject goPowerDisplay;   //Power Display Reference
+	public GameObject goDefenseDisplay; //Defense Display Reference
+
+	private Vector3 v3FatiguePosition;  //Fatigue Display Position
+	private Vector3 v3ChannelPosition;	//Channel Display Position
+	private Vector3 v3PowerPosition;    //Power Display Position
+	private Vector3 v3DefensePosition;	//Defense Display Position
+
     public Text txtHealth;              //Textfield Reference
     public Text txtArmour;              //Textfield Reference
     public Text txtPower;               //Textfield Reference
     public Text txtDefense;             //Textfield Reference
     public Text txtFatigue;             //Fatigue Overlay Reference
     public Text txtChannelTime;         //ChannelTime Overlay Reference
+
     public SpriteMask maskPortrait;     //SpriteMask Reference
     public ViewSoulContainer viewSoulContainer;  //SoulContainer Reference
 
@@ -73,45 +87,58 @@ public class ViewChr : ViewInteractive {
 		SetPortrait ();
 		if (mod.plyrOwner.id == 1) {
 			//Find the portrait and flip it for one of the players
-			goPortrait.transform.localScale = new Vector3 (-1.0f, 1.0f, 1.0f);
+			goPortrait.transform.localScale = new Vector3 (-0.2f, 0.2f, 1.0f);
 
-            //Find the border and flip it for one of the players
-            goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
+			//Find the border and flip it for one of the players
+			//goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
 
-            //Flip the character's soul position as well
-            viewSoulContainer.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
+			//Find the fatigue display, and flip it to the other side of the portrai
+			goFatigueDisplay.transform.localPosition = new Vector3(
+				-goFatigueDisplay.transform.localPosition.x,
+				goFatigueDisplay.transform.localPosition.y,
+				goFatigueDisplay.transform.localPosition.z);
+
+			goChannelDisplay.transform.localPosition = new Vector3(
+				-goChannelDisplay.transform.localPosition.x,
+				goChannelDisplay.transform.localPosition.y,
+				goChannelDisplay.transform.localPosition.z);
+
+			goPowerDefense.transform.localPosition = new Vector3(
+				-goPowerDefense.transform.localPosition.x,
+				goPowerDefense.transform.localPosition.y,
+				goPowerDefense.transform.localPosition.z);
+
+			/*goPowerDisplay.transform.localPosition = new Vector3(
+				-goPowerDisplay.transform.localPosition.x,
+				goPowerDisplay.transform.localPosition.y,
+				goPowerDisplay.transform.localPosition.z);*/
+
+			/*goDefenseDisplay.transform.localPosition = new Vector3(
+				-goDefenseDisplay.transform.localPosition.x,
+				goDefenseDisplay.transform.localPosition.y,
+				goDefenseDisplay.transform.localPosition.z);*/
+
+			//Flip the character's soul position as well
+			viewSoulContainer.transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
 
             foreach (ViewSoul viewsoul in viewSoulContainer.arViewSoul) {
-                viewsoul.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
+                viewsoul.transform.localScale = new Vector3(-0.666f, 0.666f, 1.0f);
             }
 
-            maskPortrait.transform.localScale = new Vector3(1.0f, -1.0f, 1.0f);
-            maskPortrait.transform.localPosition = 
-                new Vector3(maskPortrait.transform.localPosition.x, 
-                            - maskPortrait.transform.localPosition.y,
-                            maskPortrait.transform.localPosition.z);
-
-            txtHealth.transform.localPosition  = 
-                new Vector3(txtHealth.transform.localPosition.x, 
-                            -txtHealth.transform.localPosition.y,
-                            txtHealth.transform.localPosition.z);
-
-            txtArmour.transform.localPosition =
-                new Vector3(txtArmour.transform.localPosition.x,
-                            -txtArmour.transform.localPosition.y,
-                            txtArmour.transform.localPosition.z);
-
-            txtPower.transform.localPosition =
-                new Vector3(txtPower.transform.localPosition.x,
-                            -txtPower.transform.localPosition.y,
-                            txtPower.transform.localPosition.z);
-
-            txtDefense.transform.localPosition =
-                new Vector3(txtDefense.transform.localPosition.x,
-                            -txtDefense.transform.localPosition.y,
-                            txtDefense.transform.localPosition.z);
-
         }
+		//Fatigue and Channel positioning
+		v3FatiguePosition = goFatigueDisplay.transform.localPosition;
+		v3ChannelPosition = goChannelDisplay.transform.localPosition;
+
+		goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+		goChannelDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+
+		//Power and Defense positioning
+		v3PowerPosition = goPowerDisplay.transform.localPosition;
+		v3DefensePosition = goDefenseDisplay.transform.localPosition;
+
+		goPowerDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+		goDefenseDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
 	}
 
     public override void onMouseClick(params object[] args) {
@@ -226,22 +253,26 @@ public class ViewChr : ViewInteractive {
     public void cbUpdateFatigue(Object target, params object[] args) {
         //If we're channeling, then we won't display fatigue
         if (mod.curStateReadiness.Type() == StateReadiness.TYPE.CHANNELING) {
-            Debug.Log("We shouldn't show fatigue when channeling");
+            /*Debug.Log("We shouldn't show fatigue when channeling");
             txtFatigue.text = "";
-            return;
+			goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+			return;*/
         }
 
         if (mod.curStateReadiness.Type() == StateReadiness.TYPE.DEAD) {
             Debug.Log("We shouldn't show fatigue when dead");
             txtFatigue.text = "";
-            return;
+			goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+			return;
         }
 
         //Otherwise, then show a non-zero fatigue value
         if (mod.nFatigue > 0) {
             txtFatigue.text = mod.nFatigue.ToString();
+			goFatigueDisplay.transform.localPosition = v3FatiguePosition;
         } else {
             txtFatigue.text = "";
+			goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
         }
     }
 
@@ -250,16 +281,19 @@ public class ViewChr : ViewInteractive {
         if (mod.curStateReadiness.Type() != StateReadiness.TYPE.CHANNELING) {
             //Debug.Log("Were notified of UpdateChannelTime, but we're not in a channeling state");
             txtChannelTime.text = "";
-            return;
+			goChannelDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+			return;
 
         }
 
         //Otherwise, then the channeltime value
         if (((StateChanneling)mod.curStateReadiness).nChannelTime > 0) {
             txtChannelTime.text = ((StateChanneling)mod.curStateReadiness).nChannelTime.ToString();
-        } else {
+			goChannelDisplay.transform.localPosition = v3ChannelPosition;
+		} else {
             txtChannelTime.text = "";
-        }
+			goChannelDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+		}
     }
 
     public void cbUpdateArmour(Object target, params object[] args) {
@@ -272,21 +306,27 @@ public class ViewChr : ViewInteractive {
 
     public void cbUpdatePower(Object target, params object[] args) {
         if (mod.pnPower.Get() > 0) {
-            txtPower.text = "+" + mod.pnPower.Get().ToString() + " [POWER]";
-        } else if (mod.pnPower.Get() < 0) {
-            txtPower.text = mod.pnPower.Get().ToString() + " [POWER]";
-        } else {
+            txtPower.text = "+" + mod.pnPower.Get().ToString();
+			goPowerDisplay.transform.localPosition = v3PowerPosition;
+		} else if (mod.pnPower.Get() < 0) {
+            txtPower.text = mod.pnPower.Get().ToString();
+			goPowerDisplay.transform.localPosition = v3PowerPosition;
+		} else {
             txtPower.text = "";
-        }
+			goPowerDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+		}
     }
 
     public void cbUpdateDefense(Object target, params object[] args) {
         if (mod.pnDefense.Get() > 0) {
-            txtDefense.text = "+" + mod.pnDefense.Get().ToString() + " [DEFENSE]";
-        } else if (mod.pnDefense.Get() < 0) {
-            txtDefense.text = mod.pnDefense.Get().ToString() + " [DEFENSE]";
-        } else {
+            txtDefense.text = "+" + mod.pnDefense.Get().ToString();
+			goDefenseDisplay.transform.localPosition = v3DefensePosition;
+		} else if (mod.pnDefense.Get() < 0) {
+            txtDefense.text = mod.pnDefense.Get().ToString();
+			goDefenseDisplay.transform.localPosition = v3DefensePosition;
+		} else {
             txtDefense.text = "";
+			goDefenseDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
         }
     }
 
@@ -296,11 +336,11 @@ public class ViewChr : ViewInteractive {
             if (goBlockerIndicator == null) {
                 goBlockerIndicator = Instantiate(pfBlockerIndicator, this.transform);
 
-                if (mod.plyrOwner.id == 1) {
-                    goBlockerIndicator.transform.localScale = new Vector3(1.0f, -1.0f, 1.0f);
+                if (mod.plyrOwner.id == 1 || mod.plyrOwner.id == 0) {
+                    goBlockerIndicator.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
                     goBlockerIndicator.transform.localPosition =
                         new Vector3(goBlockerIndicator.transform.localPosition.x,
-                                    -goBlockerIndicator.transform.localPosition.y,
+                                    goBlockerIndicator.transform.localPosition.y - 3.06f,
                                     goBlockerIndicator.transform.localPosition.z);
                 }
 
@@ -330,7 +370,7 @@ public class ViewChr : ViewInteractive {
             bSelectingChrTargettable = true;
         }
 
-        DecideIfHighlighted();
+        DecideIfHighlighted(tarArg.chrOwner);
 
     }
 
@@ -340,7 +380,7 @@ public class ViewChr : ViewInteractive {
             bSelectingChrTargettable = false; 
         }
 
-        DecideIfHighlighted();
+        DecideIfHighlighted(null);
 
     }
 
@@ -353,7 +393,7 @@ public class ViewChr : ViewInteractive {
             bSelectingTeamTargettable = true;
         }
 
-        DecideIfHighlighted();
+        DecideIfHighlighted(tarArg.chrOwner);
 
     }
 
@@ -361,7 +401,7 @@ public class ViewChr : ViewInteractive {
 
         bSelectingTeamTargettable = false;
 
-        DecideIfHighlighted();
+        DecideIfHighlighted(null);
 
     }
 
@@ -396,7 +436,7 @@ public class ViewChr : ViewInteractive {
 
     public void cbRecoil(Object target, params object[] args) {
 
-        Debug.Log(mod.sName + " is recoiling");
+        //Debug.Log(mod.sName + " is recoiling");
 
         bRecoiling = true;
         fCurRecoilTime = 0f;
@@ -407,19 +447,38 @@ public class ViewChr : ViewInteractive {
 
         if (((Soul)args[0]).bRecoilWhenApplied == false) return;
 
-        Debug.Log(mod.sName + " is recoiling");
+        //Debug.Log(mod.sName + " is recoiling");
 
         bRecoiling = true;
         fCurRecoilTime = 0f;
 
     }
 
-    public void DecideIfHighlighted() {
+    public void DecideIfHighlighted(Chr chrActing) {
 
         if(bSelectingChrTargettable || bSelectingTeamTargettable) {
-            Debug.Log("Should be highlighted for " + mod.sName);
+            if(goCurSelectionGlow == null) {
+                goCurSelectionGlow = Instantiate(pfSelectionGlow, maskPortrait.transform);
+
+                //By default, assume the character is an enemy
+                string sSprPath = "Images/Chrs/imgGlow6";
+
+                //But if they're a friend, then make it a green border
+                if(chrActing.plyrOwner.id == mod.plyrOwner.id) {
+                    sSprPath = "Images/Chrs/imgGlow4";
+                }
+
+                Sprite sprGlow = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
+
+                Debug.Assert(sprGlow != null, "Could not find specificed sprite: " + sSprPath);
+
+                goCurSelectionGlow.GetComponent<SpriteRenderer>().sprite = sprGlow;
+            }
         } else {
-            Debug.Log("Should not be highlighted for " + mod.sName);
+           if(goCurSelectionGlow != null) {
+                Destroy(goCurSelectionGlow);
+                goCurSelectionGlow = null;
+            }
         }
 
     }
@@ -428,17 +487,37 @@ public class ViewChr : ViewInteractive {
         if (bRecoiling == false) return;
 
         fCurRecoilTime += ContTime.Get().fDeltaTime;
-        goPortrait.transform.position += fRecoilSpeed * v3RecoilDirection * ContTime.Get().fDeltaTime;
+        goPortrait.transform.localPosition += fRecoilSpeed * v3RecoilDirection * ContTime.Get().fDeltaTime;
 
-        //If we've moved too far away from the base position
-        if (Mathf.Abs(goPortrait.transform.localPosition.x - v3BasePosition.x) >= fMaxRecoilDistance) {
-            //Then reverse the direction;
+        //Debug.Log("x coord is " + goPortrait.transform.localPosition.x);
+
+        //If we've moved past the left boundary
+        if (v3RecoilDirection.x >= 0 && goPortrait.transform.localPosition.x >= v3BasePosition.x + fMaxRecoilDistance){
+            //Make sure we don't move too far past the edge
+            goPortrait.transform.localPosition = new Vector3
+                (v3BasePosition.x + fMaxRecoilDistance,
+                goPortrait.transform.localPosition.y,
+                goPortrait.transform.localPosition.z);
+
+            //Reverse the direction
             v3RecoilDirection *= -1;
+            //Debug.Log("reversing");
+
+        } else if(v3RecoilDirection.x < 0 && goPortrait.transform.localPosition.x <= v3BasePosition.x - fMaxRecoilDistance) {
+            //Make sure we don't move too far past the edge
+            goPortrait.transform.localPosition = new Vector3
+                (v3BasePosition.x - fMaxRecoilDistance,
+                goPortrait.transform.localPosition.y,
+                goPortrait.transform.localPosition.z);
+
+            //Reverse the direction
+            v3RecoilDirection *= -1;
+            //Debug.Log("reversing");
         }
 
 
         if(fCurRecoilTime > fMaxRecoilTime) {
-            Debug.Log(mod.sName + " is ending recoil");
+            //Debug.Log(mod.sName + " is ending recoil");
             bRecoiling = false;
             fCurRecoilTime = 0f;
 

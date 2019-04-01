@@ -13,6 +13,7 @@ public class ActionRegenerate : Action {
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner);
 
         sName = "Regenerate";
+        sDisplayName = "Regenerate";
 
         SoulChannel soulChannelEffect = new SoulChannel(this) {
             
@@ -41,7 +42,7 @@ public class ActionRegenerate : Action {
         //Create a base Healing object that this action will apply
         heal = new Healing(this.chrSource, this.chrSource, nBaseHealing);
 
-        sDescription = "For 4 turns, while channeling heal 10 at the end of turn";
+        sDescription1 = "While channeling, at the end of turn heal 10.";
 
         SetArgOwners();
     }
