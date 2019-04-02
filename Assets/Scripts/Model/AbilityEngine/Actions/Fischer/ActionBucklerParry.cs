@@ -22,7 +22,7 @@ public class ActionBucklerParry : Action {
         nActionCost = 0;
 
 
-		sDescription1 = "Gain 15 ARMOUR and PARRY (4).";
+		sDescription1 = "Gain 15 DEFENSE and PARRY (4).";
 		sDescription2 = "[PARRY]\n" + "When an enemy would deal damage to " + chrSource.sName + ", deal 15 damage to them and dispel.";
 
         SetArgOwners();
@@ -37,7 +37,7 @@ public class ActionBucklerParry : Action {
                     chrTarget = this.chrSource,
 
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                        return new SoulParry(_chrSource, _chrTarget);
+                        return new SoulParry(_chrSource, _chrTarget, this);
                     }
 
                 });

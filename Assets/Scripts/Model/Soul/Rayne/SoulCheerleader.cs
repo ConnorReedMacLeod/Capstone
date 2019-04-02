@@ -21,7 +21,7 @@ public class SoulCheerleader : Soul {
             chrTarget = chrAlly,
 
             funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                SoulChangePower soulPowerBuff = new SoulChangePower(_chrSource, _chrTarget, nPowerGain, 1);
+                SoulChangePower soulPowerBuff = new SoulChangePower(_chrSource, _chrTarget, this.actSource, nPowerGain, 1);
 
                 soulPowerBuff.bRemoveOnChrSourceDeath = true;
 
@@ -32,7 +32,7 @@ public class SoulCheerleader : Soul {
             sLabel = chrAlly.sName + " is inspired by " + this.chrSource.sName
         });
     }
-    public SoulCheerleader(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
+    public SoulCheerleader(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
 
         sName = "Cheerleader";
 

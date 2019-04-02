@@ -10,7 +10,7 @@ public class ActionBlock : Action {
         //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); //Choose a target enemy
 
         sName = "DeclareBlocker";
-        sDisplayName = "Declare Blocker";
+        sDisplayName = "Declare Vanguard";
 
         type = new TypeCantrip(this);
 

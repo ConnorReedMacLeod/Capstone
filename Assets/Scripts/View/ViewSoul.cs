@@ -3,11 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ViewSoul : MonoBehaviour {
+public class ViewSoul : ViewInteractive {
 
     public Soul mod;
 
     public Text txtDuration;
+
+
+    public static Subject subAllStartHover = new Subject();
+    public static Subject subAllStopHover = new Subject();
+
+
+    public override void onMouseStartHover(params object[] args) {
+
+        subAllStartHover.NotifyObs(this, args);
+
+        base.onMouseStartHover(args);
+    }
+
+    public override void onMouseStopHover(params object[] args) {
+
+        subAllStopHover.NotifyObs(this, args);
+
+        base.onMouseStopHover(args);
+    }
+
 
     public void UpdateSoulSprite() {
 

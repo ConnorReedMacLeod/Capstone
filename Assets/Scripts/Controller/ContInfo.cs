@@ -31,6 +31,15 @@ public class ContInfo : MonoBehaviour{
         }
     }
 
+    public void cbSoulStartHover(Object target, params object[] args) {
+        if (((ViewSoul)target).mod == null || ((ViewSoul)target).mod.actSource == null) {
+            Debug.Log("No action source to display");
+        } else {
+            Debug.Log("Displaying " + ((ViewSoul)target).mod.actSource.sName);
+            DisplayAction(((ViewSoul)target).mod.actSource);
+        }
+    }
+
     public void cbActStartHover(Object target, params object[] args) {
         DisplayAction(((ViewAction)target).mod);
     }
@@ -50,6 +59,14 @@ public class ContInfo : MonoBehaviour{
             // First ensure that what we're leaving is the current displayed ability
             //When we stop hovering over the thing we're displaying, stop displaying it
             viewInfoPanel.ClearPanel();
+        }
+    }
+
+    public void cbSoulStopHover(Object target, params object[] args) {
+        if (((ViewSoul)target).mod == null) {
+            StopDisplayAction(null);
+        } else {
+            StopDisplayAction(((ViewSoul)target).mod.actSource);
         }
     }
 
@@ -93,6 +110,9 @@ public class ContInfo : MonoBehaviour{
 
             ViewAction.subAllStartHover.Subscribe(cbActStartHover);
             ViewAction.subAllStopHover.Subscribe(cbActStopHover);
+
+            ViewSoul.subAllStartHover.Subscribe(cbSoulStartHover);
+            ViewSoul.subAllStopHover.Subscribe(cbSoulStopHover);
 
             ViewBlockerButton.subAllStartHover.Subscribe(cbBlockerButtonStartHover);
             ViewBlockerButton.subAllStopHover.Subscribe(cbBlockerButtonStopHover);

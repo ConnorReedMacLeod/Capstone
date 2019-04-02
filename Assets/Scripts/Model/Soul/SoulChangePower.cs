@@ -8,7 +8,7 @@ public class SoulChangePower : Soul {
 
     public LinkedListNode<Property<int>.Modifier> nodePowerModifier;
 
-    public SoulChangePower(Chr _chrSource, Chr _chrTarget, int _nPowerChange, int _nDuration = -1) : base(_chrSource, _chrTarget) {
+    public SoulChangePower(Chr _chrSource, Chr _chrTarget, Action _actSource, int _nPowerChange, int _nDuration = -1) : base(_chrSource, _chrTarget, _actSource) {
 
         nPowerChange = _nPowerChange;
 

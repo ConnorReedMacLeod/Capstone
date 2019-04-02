@@ -8,7 +8,7 @@ public class SoulSpooked : Soul {
 
     public SoulChangePower soulChangePower;
 
-    public SoulSpooked(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
+    public SoulSpooked(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
 
         sName = "Spooked";
 
@@ -20,7 +20,7 @@ public class SoulSpooked : Soul {
 
         funcOnApplication = () => {
             //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
-            soulChangePower = new SoulChangePower(chrSource, chrTarget, nPowerDebuff);
+            soulChangePower = new SoulChangePower(chrSource, chrTarget, actSource, nPowerDebuff);
             chrTarget.soulContainer.ApplySoul(soulChangePower);
         };
 
