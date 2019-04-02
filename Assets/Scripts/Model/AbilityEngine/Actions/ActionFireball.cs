@@ -64,7 +64,7 @@ public class ActionFireball : Action {
                     chrTarget = tar,
 
                     funcCreateSoul = (_chrSource, _chrTarget) => {
-                        return new SoulBurning(_chrSource, _chrTarget);
+                        return new SoulBurning(_chrSource, _chrTarget, this);
                     },
 
                     fDelay = ContTurns.fDelayStandard,

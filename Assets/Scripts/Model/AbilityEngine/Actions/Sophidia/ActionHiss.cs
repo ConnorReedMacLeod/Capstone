@@ -44,7 +44,7 @@ public class ActionHiss : Action {
                         chrTarget = tarPlyr.arChr[i],
 
                         funcCreateSoul = (_chrSource, _chrTarget) => {
-                            return new SoulSpooked(_chrSource, _chrTarget);
+                            return new SoulSpooked(_chrSource, _chrTarget, this);
                         },
 
                         fDelay = ContTurns.fDelayNone,

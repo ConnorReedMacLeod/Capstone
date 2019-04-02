@@ -39,7 +39,7 @@ public class ActionSmokeCover : Action {
 
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
 
-                        return new SoulSmokeCover(_chrSource, _chrTarget);
+                        return new SoulSmokeCover(_chrSource, _chrTarget, this);
 
                     },
 

@@ -63,7 +63,7 @@ public class ActionStickyBomb : Action {
                     chrTarget = tar,
 
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                        return new SoulStickyBomb(_chrSource, _chrTarget);
+                        return new SoulStickyBomb(_chrSource, _chrTarget, this);
                     },
 
                     fDelay = ContTurns.fDelayStandard,
