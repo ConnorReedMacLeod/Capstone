@@ -8,7 +8,7 @@ public class SoulEvolved : Soul {
 
     public SoulChangePower soulChangePower;
 
-    public SoulEvolved(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
+    public SoulEvolved(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
 
         sName = "Evolved";
 
@@ -21,7 +21,7 @@ public class SoulEvolved : Soul {
 
         funcOnApplication = () => {
             //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
-            soulChangePower = new SoulChangePower(chrSource, chrTarget, nPowerBuff);
+            soulChangePower = new SoulChangePower(chrSource, chrTarget, actSource, nPowerBuff);
             chrTarget.soulContainer.ApplySoul(soulChangePower);
         };
 

@@ -13,12 +13,12 @@ public class SoulHunted : Soul {
             chrTarget = this.chrTarget,
 
             funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                return new SoulChangeDefense(_chrSource, _chrTarget, nDefenseLoss, 1);
+                return new SoulChangeDefense(_chrSource, _chrTarget, this.actSource, nDefenseLoss, 1);
             }
         });
         }
 
-    public SoulHunted(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
+    public SoulHunted(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
 
         sName = "Hunted";
 

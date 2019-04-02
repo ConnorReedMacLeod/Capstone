@@ -39,7 +39,7 @@ public class ActionSadism : Action {
             fExecute = () => {
 
                 //Save a reference to the buff we're applying
-                soulPassive = new SoulSadism(this.chrSource, this.chrSource);
+                soulPassive = new SoulSadism(this.chrSource, this.chrSource, this);
 
                 ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
                     chrSource = this.chrSource,
@@ -49,7 +49,7 @@ public class ActionSadism : Action {
                         return soulPassive;
                     },
 
-                    fDelay = ContTurns.fDelayStandard,
+                    fDelay = ContTurns.fDelayNone,
                     sLabel = chrSource.sName + " is sadistic"
                 });
             }

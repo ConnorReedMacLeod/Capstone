@@ -62,7 +62,7 @@ public class ActionSpiritSlap : Action {
                     chrTarget = tarChr,
 
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                        return new SoulDispirited(_chrSource, _chrTarget);
+                        return new SoulDispirited(_chrSource, _chrTarget, this);
                     },
 
                     fDelay = ContTurns.fDelayStandard,

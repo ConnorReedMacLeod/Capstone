@@ -8,7 +8,7 @@ public class SoulCloudCushion : Soul {
     
     public SoulChangeDefense soulChangeDefense;
 
-    public SoulCloudCushion(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
+    public SoulCloudCushion(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
 
         sName = "CloudCushion";
 
@@ -20,7 +20,7 @@ public class SoulCloudCushion : Soul {
 
         funcOnApplication = () => {
             //Make a Permanent SoulChangeDefense, and save a reference to it, so it can be removed later
-            soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, nDefenseBuff);
+            soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, actSource, nDefenseBuff);
             chrTarget.soulContainer.ApplySoul(soulChangeDefense);
         };
 

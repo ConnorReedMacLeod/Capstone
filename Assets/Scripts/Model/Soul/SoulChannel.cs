@@ -16,7 +16,7 @@ public class SoulChannel : Soul {
     /// <summary>
     /// Creates a properly configured SoulChannel based on the given Action's Execute method
     /// </summary>
-	public SoulChannel(Action _act):base(_act.chrSource, _act.chrSource) {
+	public SoulChannel(Action _act):base(_act.chrSource, _act.chrSource, _act) {
         bVisible = false;
         bDuration = false;
 

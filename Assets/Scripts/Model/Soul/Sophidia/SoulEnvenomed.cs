@@ -17,7 +17,7 @@ public class SoulEnvenomed : Soul {
         chrTarget.soulContainer.subVisibleSoulUpdate.NotifyObs();
     }
 
-    public SoulEnvenomed(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
+    public SoulEnvenomed(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
 
         sName = "Envenomed";
 

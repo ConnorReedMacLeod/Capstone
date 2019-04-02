@@ -37,7 +37,7 @@ public class ActionForcedEvolution : Action {
 
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
 
-                        return new SoulEvolved(_chrSource, _chrTarget);
+                        return new SoulEvolved(_chrSource, _chrTarget, this);
 
                     },
 

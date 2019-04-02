@@ -13,7 +13,7 @@ public class SoulSmokeCover : Soul {
         soulContainer.RemoveSoul(this);
     }
 
-    public SoulSmokeCover(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
+    public SoulSmokeCover(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
 
         sName = "SmokeCover";
 
