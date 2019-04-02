@@ -7,7 +7,7 @@ public class SoulBurning : Soul {
     public Damage dmg;
     public int nBaseDamage;
 
-    public SoulBurning(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget){
+    public SoulBurning(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource){
 
         sName = "Test";
 

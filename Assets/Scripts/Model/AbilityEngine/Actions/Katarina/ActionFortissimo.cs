@@ -37,7 +37,7 @@ public class ActionFortissimo : Action {
 
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
 
-                        return new SoulFortissimo(_chrSource, _chrTarget);
+                        return new SoulFortissimo(_chrSource, _chrTarget, this);
 
                     },
 

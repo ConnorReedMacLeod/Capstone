@@ -20,7 +20,7 @@ public class SoulSadism : Soul {
         });
     }
 
-    public SoulSadism(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
+    public SoulSadism(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
 
         sName = "Sadism";
 

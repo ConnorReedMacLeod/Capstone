@@ -9,7 +9,7 @@ public class SoulChangeDefense : Soul {
     public LinkedListNode<Property<int>.Modifier> nodeDefenseModifier;
 
 
-    public SoulChangeDefense(Chr _chrSource, Chr _chrTarget, int _nDefenseChange, int _nDuration = -1) : base(_chrSource, _chrTarget) {
+    public SoulChangeDefense(Chr _chrSource, Chr _chrTarget, Action _actSource, int _nDefenseChange, int _nDuration = -1) : base(_chrSource, _chrTarget, _actSource) {
 
         nDefenseChange = _nDefenseChange;
 

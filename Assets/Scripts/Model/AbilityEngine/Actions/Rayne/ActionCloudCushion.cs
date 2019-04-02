@@ -43,7 +43,7 @@ public class ActionCloudCushion : Action {
                     chrTarget = tarChr,
 
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                        return new SoulCloudCushion(_chrSource, _chrTarget);
+                        return new SoulCloudCushion(_chrSource, _chrTarget, this);
                     }
                 });
             }

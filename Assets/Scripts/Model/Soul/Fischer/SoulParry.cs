@@ -5,10 +5,13 @@ using UnityEngine;
 public class SoulParry : Soul {
 
     public int nDamage;
-    public int nArmour;
+    public int nDefense;
     public Damage dmg;
 
+    /* Removed while switching this to give defense rather than armour
     public LinkedListNode<Property<int>.Modifier> nodeArmourModifier;
+    */
+    public SoulChangeDefense soulChangeDefense;
 
     public void OnDamaged(Chr chrDamager) {
 
@@ -37,7 +40,7 @@ public class SoulParry : Soul {
        
     }
 
-    public SoulParry(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
+    public SoulParry(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
 
         sName = "Parry";
 
@@ -48,7 +51,7 @@ public class SoulParry : Soul {
         pnMaxDuration = new Property<int>(4);
 
         nDamage = 15;
-        nArmour = 15;
+        nDefense = 15;
         //Create a base Damage object that this action will apply
         dmg = new Damage(this.chrSource, null, nDamage);
 
@@ -76,16 +79,28 @@ public class SoulParry : Soul {
         };
 
         funcOnApplication = () => {
-            //Add a modifier onto armour
+
+            //Make a Permanent SoulChangeDefense, and save a reference to it, so it can be removed later
+            soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, actSource, nDefense);
+            chrTarget.soulContainer.ApplySoul(soulChangeDefense);
+
+            /*We were having this apply armour, but this has been changed to defense (temporarily?)
+             * 
+             * //Add a modifier onto armour
             nodeArmourModifier = chrTarget.pnArmour.AddModifier((nArmour) => nArmour + this.nArmour);
 
-            chrTarget.subArmourCleared.Subscribe(cbOnArmourClear);
+            chrTarget.subArmourCleared.Subscribe(cbOnArmourClear);*/
         };
 
         funcOnRemoval = () => {
+
+            chrTarget.soulContainer.RemoveSoul(soulChangeDefense);
+
+            /* removed while making this give defense rather than armour
             //Remove the modifier we put onto armour
             chrTarget.pnArmour.RemoveModifier(nodeArmourModifier);
             chrTarget.subArmourCleared.UnSubscribe(cbOnArmourClear);
+            */
         };
 
     }

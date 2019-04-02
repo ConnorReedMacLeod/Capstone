@@ -10,9 +10,11 @@ public class SoulFortissimo : Soul {
     public SoulChangePower soulChangePower;
     public SoulChangeDefense soulChangeDefense;
 
-    public SoulFortissimo(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
+    public SoulFortissimo(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
 
         sName = "Fortissimo";
+
+        actSource = _actSource;
 
         nPowerBuff = 10;
         nDefenseBuff = 10;
@@ -26,11 +28,11 @@ public class SoulFortissimo : Soul {
         funcOnApplication = () => {
 
             //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
-            soulChangePower = new SoulChangePower(chrSource, chrTarget, nPowerBuff);
+            soulChangePower = new SoulChangePower(chrSource, chrTarget, actSource, nPowerBuff);
             chrTarget.soulContainer.ApplySoul(soulChangePower);
 
             //Make a Permanent SoulChangeDefense, and save a reference to it, so it can be removed later
-            soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, nDefenseBuff);
+            soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, actSource, nDefenseBuff);
             chrTarget.soulContainer.ApplySoul(soulChangeDefense);
         };
 

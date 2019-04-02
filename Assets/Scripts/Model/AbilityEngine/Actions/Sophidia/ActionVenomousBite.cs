@@ -64,7 +64,7 @@ public class ActionVenomousBite : Action {
                     chrTarget = tarBlocker,
 
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                        return new SoulEnvenomed(_chrSource, _chrTarget);
+                        return new SoulEnvenomed(_chrSource, _chrTarget, this);
                     }
                
                 });

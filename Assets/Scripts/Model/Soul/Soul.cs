@@ -9,6 +9,8 @@ public class Soul {
     public Chr chrSource;     //A reference to the character that applied this soul effect
     public Chr chrTarget;     //A reference to the character this soul effect is applied to
 
+    public Action actSource;  //A reference to the Action that applied this source
+
     public SoulContainer soulContainer; //A reference to the soulcontainer containing this soul
 
     public string sName;
@@ -37,10 +39,11 @@ public class Soul {
 
     public List<TriggerEffect> lstTriggers;
 
-    public Soul(Chr _chrSource, Chr _chrTarget) {
+    public Soul(Chr _chrSource, Chr _chrTarget, Action _actSource) {
 
         chrSource = _chrSource;
         chrTarget = _chrTarget;
+        actSource = _actSource;
 
         bRemoveOnChrSourceDeath = false;
         bRemoveOnChrDeath = true;
