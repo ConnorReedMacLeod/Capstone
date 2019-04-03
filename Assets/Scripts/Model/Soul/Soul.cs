@@ -87,7 +87,7 @@ public class Soul {
         
         if(funcOnApplication != null) funcOnApplication();
 
-        Debug.Log(sName + " has been applied");
+        if(ContAbilityEngine.bDEBUGENGINE)Debug.Log(sName + " has been applied");
     }
 
     public void OnRemoval() {
@@ -108,11 +108,11 @@ public class Soul {
         }
 
         if (funcOnRemoval != null) funcOnRemoval();
-        Debug.Log(sName + " has been removed");
+        if (ContAbilityEngine.bDEBUGENGINE) Debug.Log(sName + " has been removed");
 
         if (bDuration == true && nCurDuration == 0) {
             if (funcOnExpiration != null) funcOnExpiration();
-            Debug.Log(sName + " has expired");
+            if (ContAbilityEngine.bDEBUGENGINE) Debug.Log(sName + " has expired");
         }
 
     }
@@ -125,7 +125,6 @@ public class Soul {
     }
 
     public void cbOnChrSourceDeath(Object target, params object[] args) {
-        Debug.Log("Called cbOnChrSourceDeath");
 
         if (bRemoveOnChrSourceDeath) {
             //When the character who applied this dies, then we can dispel this soul effect
