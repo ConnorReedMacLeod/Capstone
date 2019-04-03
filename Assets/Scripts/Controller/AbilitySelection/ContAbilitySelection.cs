@@ -20,6 +20,9 @@ public class ContAbilitySelection : MonoBehaviour {
     public int nSelectedAbility;
     public int[] lstSelectedTargets;
 
+    //As a fix for an infinite loop in the AI controller (which really should be fixed at some point), keep track of how many bad inputs we've been given
+    public int nBadSelectionsGiven;
+
     public static ContAbilitySelection instance;
 
     public static ContAbilitySelection Get() {
@@ -76,6 +79,7 @@ public class ContAbilitySelection : MonoBehaviour {
         //At this point, we can start the selection process, and notify the controller
         // of the owner of the currently acting character
         bSelectingAbility = true;
+        nBadSelectionsGiven = 0;
         chrCurActing.plyrOwner.inputController.StartSelection();
 
     }
@@ -100,7 +104,20 @@ public class ContAbilitySelection : MonoBehaviour {
         //(checks actionpoint usage, cd, mana, targetting)
         if (chrActing.arActions[indexAbility].CanActivate(indexTargetting) == false ||
             chrActing.arActions[indexAbility].CanPayMana() == false) {
-        
+
+            //This is somewhat of a bandaid to fix some infinite looping in the AI ability selection code
+            nBadSelectionsGiven++;
+            if(nBadSelectionsGiven >= 5) {
+
+                Debug.LogError("Too many bad selections given - assigning a rest action");
+                nSelectedAbility = Chr.idResting;
+                lstSelectedTargets = indexTargetting;
+
+                EndSelection();
+
+                ContAbilityEngine.Get().ProcessStacks();
+            }
+
             //If the targetting isn't valid, get the input for the current character, and let them know they
             // submitted a bad ability
             ContTurns.Get().GetNextActingChr().plyrOwner.inputController.GaveInvalidTarget();
