@@ -22,9 +22,10 @@ public class ActionAmbush : Action {
                     sub = Chr.subAllPostExecuteAbility,
                     cb = (target, args) => {
 
-                        //If the character who used an ability is the one we targetted,
+                        //If the character who used an ability is the one we targetted, they aren't using block, and they aren't using rest
                         // Then we can ambush them
-                        if((Chr)target == Chr.GetTargetByIndex(((StateChanneling)(this.chrSource.curStateReadiness)).lstStoredTargettingIndices[0])){
+                        if((Chr)target == Chr.GetTargetByIndex(((StateChanneling)(this.chrSource.curStateReadiness)).lstStoredTargettingIndices[0]) &&
+                            ((Action)args[0]).id != Chr.idBlocking && ((Action)args[0]).id != Chr.idResting){
                             onAbilityUse();
                         }
 

@@ -12,7 +12,7 @@ public class ActionBucklerParry : Action {
         sName = "BucklerParry";
         sDisplayName = "Buckler Parry";
 
-        type = new TypeActive(this);
+        type = new TypeCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 1, 0, 0, 0, 0 });

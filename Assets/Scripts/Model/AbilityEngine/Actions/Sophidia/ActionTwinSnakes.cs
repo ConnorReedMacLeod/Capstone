@@ -56,7 +56,7 @@ public class ActionTwinSnakes : Action {
 
                     arSoundEffects = new SoundEffect[] { new SoundEffect("Sophidia/sndTwinSnakes", 2f) },
 
-                    fDelay = ContTurns.fDelayStandard,
+                    fDelay = ContTurns.fDelayNone,
                     sLabel = "Snake Biting " + tarChr.sName
                 });
             }
@@ -75,7 +75,7 @@ public class ActionTwinSnakes : Action {
                     chrTarget = tarChr,
                     dmg = dmgToApply,
 
-                    fDelay = ContTurns.fDelayStandard,
+                    fDelay = ContTurns.fDelayNone,
                     sLabel = "Snake Biting " + tarChr.sName
                 });
             }
@@ -88,7 +88,7 @@ public class ActionTwinSnakes : Action {
                     chrTarget = this.chrSource,
                     nLifeLoss = nLifeLoss,
 
-                    fDelay = ContTurns.fDelayStandard,
+                    fDelay = ContTurns.fDelayNone,
                     sLabel = this.chrSource.sName + " has lost her Snakes"
                 });
             }
@@ -101,7 +101,7 @@ public class ActionTwinSnakes : Action {
                     chrTarget = this.chrSource,
                     nLifeLoss = nLifeLoss,
 
-                    fDelay = ContTurns.fDelayStandard,
+                    fDelay = ContTurns.fDelayNone,
                     sLabel = this.chrSource.sName + " has lost her Snakes"
                 });
             }
