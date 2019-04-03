@@ -22,7 +22,7 @@ public class ActionSmokeCover : Action {
         nActionCost = 0;//0 since this is a cantrip
 
 		sDescription1 = "Gain SHROUDED (4).";
-		sDescription2 = "[SHROUDED]\n" + _chrOwner.sName + " is immune to damage.  If " + _chrOwner.sName + " is the Vanguard, dispel.";
+		sDescription2 = "[SHROUDED]\n" + _chrOwner.sName + " is immune to damage.  If " + _chrOwner.sName + " becomes the Vanguard, dispel this.";
 
         SetArgOwners();
     }
