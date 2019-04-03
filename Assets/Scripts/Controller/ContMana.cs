@@ -6,10 +6,53 @@ public class ContMana : MonoBehaviour{
 
     public KeyCode keyEnemyModifier; //For testing, holding this will make you change the enemies mana pool
 
-	public void Start () {
+    public int[] arnManaReserves;
+    public const int nMaxReserves = 3;
+
+    private static ContMana inst;
+    public static ContMana Get() {
+        return inst;
+    }
+
+    private void Awake() {
+        if (inst != null && inst != this) {
+            Destroy(this.gameObject);
+        } else {
+            inst = this;
+        }
+    }
+
+    public void Start () {
 		InitBindings ();
         keyEnemyModifier = KeyCode.Tab;
+
+        arnManaReserves = new int[Mana.nManaTypes - 1]; //sub 1 since we don't give out effort
+        ResetManaReserves();
 	}
+
+
+    public void ResetManaReserves() {
+        for(int i=0; i<arnManaReserves.Length; i++) {
+            arnManaReserves[i] = nMaxReserves;
+        }
+    }
+
+    public Mana.MANATYPE GetTurnStartMana() {
+
+        int iManaToGive = Random.Range(0, Mana.nManaTypes - 1);
+        int nTypesTried = 0;
+        while(nTypesTried < Mana.nManaTypes) { 
+            if (arnManaReserves[iManaToGive%(Mana.nManaTypes-1)] > 0) {
+                arnManaReserves[iManaToGive%(Mana.nManaTypes - 1)]--;
+            return (Mana.MANATYPE)(iManaToGive % (Mana.nManaTypes - 1));
+            }
+            iManaToGive++;
+            nTypesTried++;
+        }
+        //If we reach here, then there's no mana left in any of the reserves
+        ResetManaReserves();
+        return GetTurnStartMana();
+    }
 
 	public void InitBindings(){
 		KeyBindings.SetBinding (AddPhysical, KeyCode.Q);
