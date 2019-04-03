@@ -42,9 +42,13 @@ public class ActionCloudCushion : Action {
                     chrSource = this.chrSource,
                     chrTarget = tarChr,
 
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("Rayne/sndCloudCushion", 3.467f) },
+
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
                         return new SoulCloudCushion(_chrSource, _chrTarget, this);
                     }
+
+
                 });
             }
         });

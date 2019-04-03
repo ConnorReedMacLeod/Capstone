@@ -31,6 +31,8 @@ public class SoulParry : Soul {
                     chrSource = this.chrTarget,
                     chrTarget = chrDamager,
 
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("Fischer/sndBucklerParry", 1.5f) },
+
                     dmg = dmgToApply,
                     fDelay = ContTurns.fDelayStandard,
                     sLabel = "Counterattacking"

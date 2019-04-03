@@ -51,6 +51,8 @@ public class ActionImpale : Action {
 
                     dmg = dmgToApply,
 
+                    arSoundEffects = new SoundEffect[]{new SoundEffect("Fischer/sndImpale", 1.833f)},
+
                     fDelay = ContTurns.fDelayStandard,
                     sLabel = tarChr.sName + " is being impaled"
                 });

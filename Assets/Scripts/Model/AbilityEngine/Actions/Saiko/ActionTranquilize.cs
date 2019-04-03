@@ -43,6 +43,8 @@ public class ActionTranquilize : Action {
 
                     GetDuration = () => nStunDuration,
 
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndTranquilize", 1.4f) },
+
                     fDelay = ContTurns.fDelayStandard,
                     sLabel = chrEnemyBlocker.sName + " is being stunned"
                 });

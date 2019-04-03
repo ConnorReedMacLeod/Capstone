@@ -55,6 +55,8 @@ public class ActionReverberate : Action {
                         chrTarget = tar.arChr[i],
 
                         dmg = dmgToApply,
+                        
+                        arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndReverberate", 1.633f) },
 
                         fDelay = ContTurns.fDelayNone,
                         sLabel = "Reverberating " + tar.arChr[i].sName

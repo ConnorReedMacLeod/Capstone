@@ -48,6 +48,9 @@ public class ActionHarpoonGun : Action {
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
                     chrTarget = tarChr,
+
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("Fischer/sndHarpoonGun", 2.067f) },
+
                     dmg = dmgToApply,
                     fDelay = ContTurns.fDelayStandard,
                     sLabel = tarChr.sName + " is being Harpooned"

@@ -28,7 +28,9 @@ public class SoulCheerleader : Soul {
                 return soulPowerBuff;
             },
 
-            fDelay = ContTurns.fDelayStandard,
+            arSoundEffects = new SoundEffect[] { new SoundEffect("Rayne/sndCheerleader", 4.667f) },
+
+            fDelay = ContTurns.fDelayNone,
             sLabel = chrAlly.sName + " is inspired by " + this.chrSource.sName
         });
     }
