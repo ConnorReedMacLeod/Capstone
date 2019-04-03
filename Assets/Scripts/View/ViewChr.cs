@@ -238,6 +238,14 @@ public class ViewChr : ViewInteractive {
         mod.subSoulApplied.Subscribe(cbSoulApplied);
         mod.subStunApplied.Subscribe(cbRecoil);
         mod.subLifeChange.Subscribe(cbOnInjured);
+
+        ContTurns.Get().subNextActingChrChange.Subscribe(cbOnNextActingChange);
+    }
+
+    public void cbOnNextActingChange(Object target, params object[] args) {
+
+        DecideIfHighlighted(mod);
+
     }
 
     public void cbUpdateDeath(Object target, params object[] args) {
@@ -462,25 +470,43 @@ public class ViewChr : ViewInteractive {
 
     public void DecideIfHighlighted(Chr chrActing) {
 
-        if(bSelectingChrTargettable || bSelectingTeamTargettable) {
-            if(goCurSelectionGlow == null) {
+        if (bSelectingChrTargettable || bSelectingTeamTargettable) {
+            Debug.Log(mod.sName + " can be targetted");
+            if (goCurSelectionGlow == null) {
                 goCurSelectionGlow = Instantiate(pfSelectionGlow, maskPortrait.transform);
-
-                //By default, assume the character is an enemy
-                string sSprPath = "Images/Chrs/imgGlow6";
-
-                //But if they're a friend, then make it a green border
-                if(chrActing.plyrOwner.id == mod.plyrOwner.id) {
-                    sSprPath = "Images/Chrs/imgGlow4";
-                }
-
-                Sprite sprGlow = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
-
-                Debug.Assert(sprGlow != null, "Could not find specificed sprite: " + sSprPath);
-
-                goCurSelectionGlow.GetComponent<SpriteRenderer>().sprite = sprGlow;
             }
-        } else {
+
+            //By default, assume the character is an enemy
+            string sSprPath = "Images/Chrs/imgGlow6";
+
+            //But if they're a friend, then make it a green border
+            if (chrActing.plyrOwner.id == mod.plyrOwner.id) {
+                sSprPath = "Images/Chrs/imgGlow4";
+            }
+
+            Sprite sprGlow = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
+
+            Debug.Assert(sprGlow != null, "Could not find specificed sprite: " + sSprPath);
+
+            goCurSelectionGlow.GetComponent<SpriteRenderer>().sprite = sprGlow;
+            
+        } else if (mod == ContTurns.Get().GetNextActingChr()) {
+            Debug.Log(mod.sName + " is next to act");
+
+            if (goCurSelectionGlow == null) {
+                goCurSelectionGlow = Instantiate(pfSelectionGlow, maskPortrait.transform);
+            }
+
+            //Set the colour of the glow to add to the character
+            string sSprPath = "Images/Chrs/imgGlow";
+
+            Sprite sprGlow = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
+
+            Debug.Assert(sprGlow != null, "Could not find specificed sprite: " + sSprPath);
+
+            goCurSelectionGlow.GetComponent<SpriteRenderer>().sprite = sprGlow;
+            
+        } else { 
            if(goCurSelectionGlow != null) {
                 Destroy(goCurSelectionGlow);
                 goCurSelectionGlow = null;
@@ -556,7 +582,7 @@ public class ViewChr : ViewInteractive {
 			case Chr.STATESELECT.SELECTED:
 				SetBorder ("ChrBorderSelected");
 
-				break;
+                break;
 
             //On switch to targetting, despawns the ActionWheel
 			case Chr.STATESELECT.TARGGETING:
@@ -565,6 +591,7 @@ public class ViewChr : ViewInteractive {
 
             //On switch to unselected, make changes depending on previous state
 			case Chr.STATESELECT.IDLE:
+
 
 				if (lastStateSelect == Chr.STATESELECT.TARGGETING) {
 					//Nothing needs to be done (currently, this may change)
@@ -581,7 +608,8 @@ public class ViewChr : ViewInteractive {
 				Debug.LogError ("UNRECOGNIZED VIEW CHR SELECT STATE!");
 				return;
 			}
-			lastStateSelect = mod.stateSelect;
+
+            lastStateSelect = mod.stateSelect;
 		}
 	}
 }

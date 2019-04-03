@@ -17,6 +17,7 @@ public class ContTurns : MonoBehaviour {
     public int nLiveCharacters;
     public int nTurnNumber;
 
+    public Subject subNextActingChrChange = new Subject();
     public static Subject subAllPriorityChange = new Subject();
 
     public static float fDelayChooseAction = 30.0f;
@@ -24,6 +25,8 @@ public class ContTurns : MonoBehaviour {
     public const float fDelayMinorAction = 0.0f;
     public const float fDelayNone = 0.0f;
     public const float fDelayStandard = 1.25f;
+
+
     
     //TODO CHANGE ALL .Get() calls in other classes to use properties
     //     so the syntax isn't as gross
@@ -86,7 +89,6 @@ public class ContTurns : MonoBehaviour {
             //Debug.Log("Resetting chrNextReady since " + chrNextReady.sName + " is in " + chrNextReady.curStateReadiness);
 
             chrNextReady = null;
-            
         }
 
         //Now we should look for the first character in our priority queue in a ready state
@@ -109,6 +111,7 @@ public class ContTurns : MonoBehaviour {
 
             i++;
         }
+
         //Whether we've found a ready character or not, just return whatever's stored in chrNextReady
         return chrNextReady;
 
