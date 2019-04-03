@@ -87,7 +87,7 @@ public class ViewChr : ViewInteractive {
 		SetPortrait ();
 		if (mod.plyrOwner.id == 1) {
 			//Find the portrait and flip it for one of the players
-			goPortrait.transform.localScale = new Vector3 (-0.2f, 0.2f, 1.0f);
+			goPortrait.transform.localScale = new Vector3 (-0.5f, 0.5f, 1.0f);
 
 			//Find the border and flip it for one of the players
 			//goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
@@ -176,7 +176,7 @@ public class ViewChr : ViewInteractive {
 
     //Sets the sprite used for the character's full picture portrait
     void SetPortrait(){
-		string sSprPath = "Images/Chrs/" + mod.sName + "/img" + mod.sName + "Portrait";
+		string sSprPath = "Images/Chrs/" + mod.sName + "/img" + mod.sName + "Neutral";
 
         switch (statePortrait) {
             case PortraitState.ACTING:
