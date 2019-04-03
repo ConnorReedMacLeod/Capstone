@@ -55,6 +55,8 @@ public class ActionThunderStorm : Action {
                         chrTarget = enemy.arChr[i],
                         dmg = dmgToApply,
 
+                        arSoundEffects = new SoundEffect[] { new SoundEffect("Rayne/sndStorm", 5.1f) },
+
                         fDelay = ContTurns.fDelayNone,
                         sLabel = enemy.arChr[i].sName + " is caught in the storm"
                     });

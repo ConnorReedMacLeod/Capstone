@@ -52,6 +52,8 @@ public class ActionSerenade : Action {
 
                     heal = healToApply,
 
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndSerenade", 5.3f) },
+
                     fDelay = ContTurns.fDelayStandard,
                     sLabel = "Healing " + tarChr.sName
                 });

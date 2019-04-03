@@ -69,6 +69,9 @@ public class ActionAmbush : Action {
                     chrTarget = tar,
 
                     dmg = dmgToApply,
+
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndAmbush", 3.433f) },
+
                     fDelay = ContTurns.fDelayStandard,
                     sLabel = chrSource.sName + " ambushed " + tar.sName + "!"
                 });

@@ -33,9 +33,9 @@ public class ContInfo : MonoBehaviour{
 
     public void cbSoulStartHover(Object target, params object[] args) {
         if (((ViewSoul)target).mod == null || ((ViewSoul)target).mod.actSource == null) {
-            Debug.Log("No action source to display");
+            //Debug.Log("No action source to display");
         } else {
-            Debug.Log("Displaying " + ((ViewSoul)target).mod.actSource.sName);
+            //Debug.Log("Displaying " + ((ViewSoul)target).mod.actSource.sName);
             DisplayAction(((ViewSoul)target).mod.actSource);
         }
     }

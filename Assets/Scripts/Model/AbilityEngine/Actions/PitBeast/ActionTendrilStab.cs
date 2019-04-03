@@ -50,6 +50,8 @@ public class ActionTendrilStab : Action {
                     chrTarget = tarChr,
                     dmg = dmgToApply,
 
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("PitBeast/sndTendrilStab", 3.067f) },
+
                     fDelay = ContTurns.fDelayStandard,
                     sLabel = tarChr.sName + " is being stabbed"
                 });

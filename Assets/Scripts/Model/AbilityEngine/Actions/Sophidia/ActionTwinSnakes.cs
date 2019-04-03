@@ -52,7 +52,9 @@ public class ActionTwinSnakes : Action {
                 ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
                     chrSource = this.chrSource,
                     chrTarget = tarChr,
-                    dmg  = dmgToApply,
+                    dmg = dmgToApply,
+
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("Sophidia/sndTwinSnakes", 2f) },
 
                     fDelay = ContTurns.fDelayStandard,
                     sLabel = "Snake Biting " + tarChr.sName

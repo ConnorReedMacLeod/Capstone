@@ -83,6 +83,8 @@ public class ActionTantrum : Action {
                         chrTarget = chrSource.plyrOwner.arChr[i],
                         dmg = dmgToApply,
 
+                        arSoundEffects = new SoundEffect[] { new SoundEffect("PitBeast/sndTantrum", 4.167f) },
+
                         fDelay = ContTurns.fDelayNone,
                         sLabel = chrSource.plyrOwner.arChr[i].sName + " is caught in the tantrum"
                     });

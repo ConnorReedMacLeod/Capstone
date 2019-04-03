@@ -51,6 +51,10 @@ public class ActionVenomousBite : Action {
                     chrSource = this.chrSource,
                     chrTarget = tarBlocker,
                     dmg = dmgToApply,
+
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("Sophidia/sndVenomousBite1", 2f),
+                                                         new SoundEffect("Sophidia/sndVenomousBite2", 2f)},
+
                     fDelay = ContTurns.fDelayStandard,
                     sLabel = tarBlocker.sName + " is being bitten"
                 });
