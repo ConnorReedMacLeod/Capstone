@@ -116,6 +116,7 @@ public class ContAbilitySelection : MonoBehaviour {
                 EndSelection();
 
                 ContAbilityEngine.Get().ProcessStacks();
+                return;
             }
 
             //If the targetting isn't valid, get the input for the current character, and let them know they
