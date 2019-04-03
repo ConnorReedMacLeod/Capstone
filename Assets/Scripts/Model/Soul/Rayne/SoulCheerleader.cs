@@ -30,7 +30,7 @@ public class SoulCheerleader : Soul {
 
             arSoundEffects = new SoundEffect[] { new SoundEffect("Rayne/sndCheerleader", 4.667f) },
 
-            fDelay = ContTurns.fDelayStandard,
+            fDelay = ContTurns.fDelayNone,
             sLabel = chrAlly.sName + " is inspired by " + this.chrSource.sName
         });
     }

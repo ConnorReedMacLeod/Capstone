@@ -53,7 +53,7 @@ public class ActionStickyBomb : Action {
                     chrTarget = tar,
                     dmg = dmgToApply,
 
-                    arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndBombToss", 2.133f) },
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndStickyBombToss", 2.133f) },
 
                     fDelay = ContTurns.fDelayStandard,
                     sLabel = tar.sName + " got a bomb thrown at them"

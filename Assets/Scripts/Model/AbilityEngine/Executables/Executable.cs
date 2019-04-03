@@ -52,7 +52,7 @@ public abstract class Executable {
             //Let the AudioManager play the associated sound effect (if there is one)
             if (arSoundEffects != null && arSoundEffects.Length != 0) {
                 float fPlayTime = AudioManager.Get().PlaySoundEffect(arSoundEffects);
-                Debug.Log("fPlayTime is " + fPlayTime);
+                Debug.Log("fPlayTime is " + fPlayTime + " for " + this.sLabel);
             }
 
             //Put our post-trigger effects onto the stack so they'll be executed next
