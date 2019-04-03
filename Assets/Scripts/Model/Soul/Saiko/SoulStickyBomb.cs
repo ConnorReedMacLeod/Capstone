@@ -19,7 +19,7 @@ public class SoulStickyBomb : Soul {
             chrTarget = this.chrTarget,
             dmg = dmgToApply,
 
-            arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndBombDetonate", 3.1f) },
+            arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndStickyBombDetonate", 3.1f) },
 
             fDelay = ContTurns.fDelayStandard,
             sLabel = this.chrTarget.sName + "'s bomb is exploding"

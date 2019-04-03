@@ -8,6 +8,8 @@ public class ViewAutoTurnsButton : MonoBehaviour {
 
     public void OnMouseDown() {
         subAllAutoExecuteEvent.NotifyObs(this);
+
+        this.gameObject.transform.position = new Vector3(-100f, -100f, 0f);
     }
 
 }
