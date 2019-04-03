@@ -14,7 +14,7 @@ public class Mana : MonoBehaviour{
 	//Provide string names to each of the mana types
 	public static string[] arsManaTypes = { "Physical", "Mental", "Energy", "Blood", "Effort" };
 
-	public static int nManaTypes = 5; //Number of mana types (PHYSICAL, MENTAL, ENERGY, BLOOD, EFFORT)
+	public const int nManaTypes = 5; //Number of mana types (PHYSICAL, MENTAL, ENERGY, BLOOD, EFFORT)
 
 	public int[] arMana;        //Player's mana totals for each type
 	public int[] arManaPool;    //Player's mana of each type in the pool

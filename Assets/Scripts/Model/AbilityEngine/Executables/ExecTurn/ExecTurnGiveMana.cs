@@ -36,9 +36,9 @@ public class ExecTurnGiveMana : Executable {
     }
 
     public void GiveMana() {
-        //TODO::Make this only semi-random
-        //TODO:: Consider breaking this up into smaller executables
-        Mana.MANATYPE manaGen = (Mana.MANATYPE)Random.Range(0, Mana.nManaTypes - 1);
+
+        Mana.MANATYPE manaGen = ContMana.Get().GetTurnStartMana();
+        Debug.Log("Gave out " + manaGen + " mana");
 
         //Give the mana to each player
         for (int i = 0; i < Match.Get().nPlayers; i++) {

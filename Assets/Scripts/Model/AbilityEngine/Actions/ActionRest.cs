@@ -30,7 +30,7 @@ public class ActionRest : Action {
 
 	override public void Execute(int[] lstTargettingIndices) {
 
-		Debug.Log (chrSource.sName + " is resting");
+		//Debug.Log (chrSource.sName + " is resting");
         stackClauses.Push(new Clause() {
             fExecute = () => {
                 //Check if the character has any fatigue already
