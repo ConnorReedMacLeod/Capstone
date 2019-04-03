@@ -150,7 +150,7 @@ public class Player : MonoBehaviour{
 				manaPanel.transform.position = new Vector3(0f, 2.85f, -0.4f);
 			} else {
 				//move it offscreen for now
-				manaPanel.transform.position = new Vector3(12.75f, 5.25f, -0.4f);
+				manaPanel.transform.position = new Vector3(100f, 100f, -0.4f);
 			}
 
 		}

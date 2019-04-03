@@ -64,6 +64,8 @@ public class StateTargetSelected : StateTarget {
         ViewAction.subAllClick.Subscribe(cbClickAction);
         ViewBlockerButton.subAllClick.Subscribe(cbClickBlockerButton);
         ViewRestButton.subAllClick.Subscribe(cbClickRestButton);
+        KeyBindings.SetBinding(cbClickRestButton, KeyCode.Space);
+        KeyBindings.SetBinding(cbClickBlockerButton, KeyCode.B);
 
         inputHuman.selected.Select (); 
 
@@ -75,6 +77,8 @@ public class StateTargetSelected : StateTarget {
         ViewAction.subAllClick.UnSubscribe(cbClickAction);
         ViewBlockerButton.subAllClick.UnSubscribe(cbClickBlockerButton);
         ViewRestButton.subAllClick.UnSubscribe(cbClickRestButton);
+        KeyBindings.Unbind(KeyCode.Space); //clear the binding
+        KeyBindings.Unbind(KeyCode.B);//clear the binding
     }
 
 

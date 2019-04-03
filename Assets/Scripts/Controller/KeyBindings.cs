@@ -91,7 +91,26 @@ public class KeyBindings : MonoBehaviour{
 		}
 	}
 
-	public static void SetBinding(Subject.FnCallback fnCallback, KeyCode _key, KeyCode _keyModifier = KeyCode.None){
+    public static void Unbind(KeyCode _key, KeyCode _keyModifier = KeyCode.None) {
+
+        KeyBind newBind = new KeyBind(_key, _keyModifier);
+
+        if (Get().dictBindToEvent.ContainsKey(newBind)) {
+            //If this binding is already linked to an event
+
+            //then find that action bound to the binding
+            Subject.FnCallback curCallback = Get().dictBindToEvent[newBind];
+
+            //and remove it
+            Get().dictEventToBind.Remove(curCallback);
+        }
+
+        //Now clear any function associated to that binding
+        Get().dictBindToEvent.Remove(newBind);
+
+     }
+
+    public static void SetBinding(Subject.FnCallback fnCallback, KeyCode _key, KeyCode _keyModifier = KeyCode.None){
 
         //If this event is already registered to some key binding
 		if (Get().dictEventToBind.ContainsKey(fnCallback)) {
