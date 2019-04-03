@@ -16,6 +16,7 @@ public abstract class Executable {
 
     public bool bStopAutoProcessing;
 
+    public SoundEffect[] arSoundEffects;
     
 
     public abstract Subject GetPreTrigger();
@@ -46,6 +47,13 @@ public abstract class Executable {
 
             //Perform all of the effects of the executable
             ExecuteEffect();
+
+
+            //Let the AudioManager play the associated sound effect (if there is one)
+            if (arSoundEffects != null && arSoundEffects.Length != 0) {
+                float fPlayTime = AudioManager.Get().PlaySoundEffect(arSoundEffects);
+                Debug.Log("fPlayTime is " + fPlayTime);
+            }
 
             //Put our post-trigger effects onto the stack so they'll be executed next
             GetPostTrigger().NotifyObs(null, this);

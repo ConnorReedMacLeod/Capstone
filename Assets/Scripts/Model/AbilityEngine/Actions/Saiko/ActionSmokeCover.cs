@@ -43,6 +43,8 @@ public class ActionSmokeCover : Action {
 
                     },
 
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndSmokeCover", 4.3f) },
+
                     fDelay = ContTurns.fDelayStandard,
                     sLabel = "Applying SmokeCover"
                 });

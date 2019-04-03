@@ -41,6 +41,8 @@ public class ActionForcedEvolution : Action {
 
                     },
 
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("PitBeast/sndForcedEvolution", 4.667f) },
+
                     fDelay = ContTurns.fDelayStandard,
                     sLabel = chrSource.sName + " is evolving"
                 });

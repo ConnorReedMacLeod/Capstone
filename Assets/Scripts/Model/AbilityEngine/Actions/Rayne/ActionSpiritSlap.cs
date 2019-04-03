@@ -49,6 +49,9 @@ public class ActionSpiritSlap : Action {
                     chrSource = this.chrSource,
                     chrTarget = tarChr,
                     dmg = dmgToApply,
+
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("Rayne/sndSpiritSlap", 3f) },
+
                     fDelay = ContTurns.fDelayStandard,
                     sLabel = tarChr.sName + " is being slapped"
                 });

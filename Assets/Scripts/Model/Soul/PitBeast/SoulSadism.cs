@@ -15,6 +15,8 @@ public class SoulSadism : Soul {
 
             heal = this.heal, //TODO:: Consider if this should be a copy
 
+            arSoundEffects = new SoundEffect[] { new SoundEffect("PitBeast/sndSadism", 1.067f) },
+
             fDelay = ContTurns.fDelayStandard,
             sLabel = this.chrSource.sName + " is revelling in the pain"
         });
