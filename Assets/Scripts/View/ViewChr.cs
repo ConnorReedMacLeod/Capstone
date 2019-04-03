@@ -180,11 +180,11 @@ public class ViewChr : ViewInteractive {
 
         switch (statePortrait) {
             case PortraitState.ACTING:
-                sSprPath = "Images/Chrs/imgMonika";
+                sSprPath = "Images/Chrs/" + mod.sName + "/img" + mod.sName + "Action";
                 break;
 
             case PortraitState.INJURED:
-                sSprPath = "Images/Chrs/imgLain";
+                sSprPath = "Images/Chrs/" + mod.sName + "/img" + mod.sName + "Hurt";
                 break;
 
             default:
@@ -193,6 +193,12 @@ public class ViewChr : ViewInteractive {
         }
 
 		Sprite sprChr = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
+
+        if(sprChr == null) {
+            Debug.LogError("Could not load " + sSprPath);
+            sSprPath = "Images/Chrs/" + mod.sName + "/img" + mod.sName + "Neutral";
+            sprChr = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
+        }
 
         Debug.Assert(sprChr != null, "Could not find specificed sprite: " + sSprPath);
 
