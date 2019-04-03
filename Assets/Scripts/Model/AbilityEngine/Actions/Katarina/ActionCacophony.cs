@@ -15,7 +15,7 @@ public class ActionCacophony : Action {
     public ActionCacophony(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
 
         //Since the base constructor initializes this array, we can start filling it
-        arArgs[0] = new TargetArgChr(Action.IsAnyCharacter); //Any character target is fine
+        arArgs[0] = new TargetArgChr(Action.IsEnemy); //Any enemy target
 
         sName = "Cacophony";
         sDisplayName = "Cacophony";

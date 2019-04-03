@@ -13,7 +13,7 @@ public class ActionHiss : Action {
         sName = "Hiss";
         sDisplayName = "Hiss";
 
-        type = new TypeActive(this);
+        type = new TypeCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 1 });
