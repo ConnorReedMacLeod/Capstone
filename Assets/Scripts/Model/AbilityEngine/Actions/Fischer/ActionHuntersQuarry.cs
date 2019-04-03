@@ -33,6 +33,8 @@
                     chrSource = this.chrSource,
                     chrTarget = tarChr,
 
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("Fischer/sndHuntersQuarry", 0.867f) },
+
                     funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
                         return new SoulHunted(_chrSource, _chrTarget, this);
                     }

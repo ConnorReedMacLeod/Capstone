@@ -59,7 +59,10 @@ public class ActionRegenerate : Action {
                     chrSource = this.chrSource,
                     chrTarget = this.chrSource,
                     
-                    heal = healToApply, 
+                    heal = healToApply,
+
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("Sophidia/sndHydrasRegen", 3f) },
+
                     fDelay = ContTurns.fDelayStandard,
                     sLabel = chrSource.sName + " is regenerating"
                 });

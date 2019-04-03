@@ -82,6 +82,8 @@ public class ActionCacophony : Action {
 
                     dmg = dmgToApply,
 
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndCacophony", 3.767f) },
+
                     fDelay = ContTurns.fDelayStandard,
                     sLabel = "Screeching at " + tarChr.sName
                 });

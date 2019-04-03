@@ -47,6 +47,10 @@ public class ActionHiss : Action {
                             return new SoulSpooked(_chrSource, _chrTarget, this);
                         },
 
+                        arSoundEffects = new SoundEffect[] { new SoundEffect("Sophidia/sndHiss1", 2f),
+                                                             new SoundEffect("Sophidia/sndHiss2", 2f),
+                                                             new SoundEffect("Sophidia/sndHiss3", 2f)},
+
                         fDelay = ContTurns.fDelayNone,
                         sLabel = "Applying Hiss "
                     });

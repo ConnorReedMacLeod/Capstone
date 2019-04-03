@@ -41,6 +41,8 @@ public class ActionFortissimo : Action {
 
                     },
 
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndFortissimo", 6.2f) },
+
                     fDelay = ContTurns.fDelayStandard,
                     sLabel = "Applying Fortissimo"
                 });
