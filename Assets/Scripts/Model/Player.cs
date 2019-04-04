@@ -22,6 +22,8 @@ public class Player : MonoBehaviour{
 
 	public Mana mana;
 
+    public static Subject subAllPlayerLost = new Subject();
+
     public enum InputType {
         HUMAN, AI
     };

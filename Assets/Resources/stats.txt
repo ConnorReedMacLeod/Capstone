@@ -1,4 +1,4 @@
-Wins:0
-Losses:0
-CharactersKilled:1
-CharactersLost:2
+Wins:1
+Losses:2
+CharactersKilled:5
+CharactersLost:6

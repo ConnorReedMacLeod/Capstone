@@ -15,7 +15,7 @@ public class StatsManager : MonoBehaviour {
         ReadStatsFile();
 
         Chr.subAllDeath.Subscribe(cbCharacterDied);
-        
+        Player.subAllPlayerLost.Subscribe(cbPlayerLost);
     }
 
     public void OnApplicationQuit() {
@@ -24,13 +24,15 @@ public class StatsManager : MonoBehaviour {
     }
 
 
-    public void cbWinGame(Object target, params object[] args) {
-        dictStats["Wins"]++;
+    public void cbPlayerLost(Object target, params object[] args) {
+        if(((Player)target).id == 0) {
+            dictStats["Losses"]++;
+        } else {
+            dictStats["Wins"]++;
+        }
+        
     }
 
-    public void cbLoseGame(Object target, params object[] args) {
-        dictStats["Losses"]++;
-    }
 
     public void cbCharacterDied(Object target, params object[] args) {
         if(((Chr)target).plyrOwner.id == 0) {
@@ -67,8 +69,7 @@ public class StatsManager : MonoBehaviour {
 
             //Split the stat file and load it into the hashmap
             string[] splitArray = sStat.Split(':');
-
-            Debug.Log("Adding " + splitArray[0] + " " + splitArray[1]);
+            
             string sCategory = splitArray[0];
             int nValue = int.Parse(splitArray[1]);
             dictStats.Add(sCategory, nValue);
