@@ -29,7 +29,7 @@ public class ActionHiss : Action {
 
     override public void Execute(int[] lstTargettingIndices) {
 
-        Player tarPlyr = chrSource.GetEnemyPlayer();
+        Player tarPlyr = chrSource.plyrOwner.GetEnemyPlayer();
 
         stackClauses.Push(new Clause() {
             fExecute = () => {

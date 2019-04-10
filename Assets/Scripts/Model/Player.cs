@@ -22,7 +22,10 @@ public class Player : MonoBehaviour{
 
 	public Mana mana;
 
+    public static Subject subAllInputTypeChanged = new Subject();
     public static Subject subAllPlayerLost = new Subject();
+
+    public InputType curInput;
 
     public enum InputType {
         HUMAN, AI
@@ -78,6 +81,8 @@ public class Player : MonoBehaviour{
             Destroy(inputController);
         }
 
+        curInput = inputType;
+
         switch (inputType) {
             case InputType.AI:
                 //Then we want a script to control this player's selection
@@ -96,6 +101,8 @@ public class Player : MonoBehaviour{
 
         //Let the controller know which player its representing
         inputController.SetOwner(this);
+
+        subAllInputTypeChanged.NotifyObs(this, curInput);
     }
 
     public void SetDefaultBlocker() {
@@ -133,8 +140,18 @@ public class Player : MonoBehaviour{
         return arChr[iBlocker];
     }
 
-	// Use this for initialization
-	public void Start () {
+    //Get a refernce to the enemy player
+    public Player GetEnemyPlayer() {
+        if (id == 0) {
+            return Match.Get().arPlayers[1];
+        } else {
+            return Match.Get().arPlayers[0];
+        }
+    }
+
+
+    // Use this for initialization
+    public void Start () {
 
 		if (bStarted == false) {
 			bStarted = true;

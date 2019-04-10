@@ -37,7 +37,7 @@ public class ActionThunderStorm : Action {
 
     override public void Execute(int[] lstTargettingIndices) {
 
-        Player enemy = chrSource.GetEnemyPlayer();
+        Player enemy = chrSource.plyrOwner.GetEnemyPlayer();
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
