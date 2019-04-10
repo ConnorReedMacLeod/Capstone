@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-//TODO: Make it so that the character selection/ability hovering isn't tied purely to human input
-//      - should still work even if playing with AIs
 public class InputHuman : InputAbilitySelection {
 
 	public StateTarget curState;
@@ -19,15 +17,22 @@ public class InputHuman : InputAbilitySelection {
     public static Subject subAllStartTargetting = new Subject();
     public static Subject subAllFinishTargetting = new Subject();
 
+    public static Subject subAllHumanStartSelection = new Subject();
+    public static Subject subAllHumanEndSelection = new Subject();
+
     public override void StartSelection() {
-        //I don't think anything special needs to be done here
+
+        //TODO - hookup character highlighting to this
+        subAllHumanStartSelection.NotifyObs(this);
 
     }
 
     public override void GaveInvalidTarget() {
         //If we somehow gave an invalid target, make an error message, then reset our targetting
-        Debug.Log("The human-input gave an invalid target");
+        Debug.Log("The human-input for player " + plyrOwner.id + " gave an invalid target");
+
         ResetTar();
+        subAllHumanStartSelection.NotifyObs(this);
     }
 
     // Start a new round of targetting
@@ -37,6 +42,7 @@ public class InputHuman : InputAbilitySelection {
         nSelectedAbility = -1;
         arTargetIndices = null;
 
+       
     }
 
     public void StoreTargettingIndex(int ind) {
@@ -44,9 +50,12 @@ public class InputHuman : InputAbilitySelection {
         
         //Save a copy of the submitted targetting index
         arTargetIndices[indexCurTarget] = ind;
+        Debug.Log("Saved submitted index of " + ind + " in arTargetIndices[" + indexCurTarget + "]");
 
         //Then advance to look for the next target
         indexCurTarget++;
+
+        Debug.Log("indexCurTarget is now " + indexCurTarget);
 
         //Now figure out and move to the next state required for the next target
         SetTargetArgState();
@@ -67,7 +76,8 @@ public class InputHuman : InputAbilitySelection {
 
 		//Let everything know that targetting has ended
 		subAllFinishTargetting.NotifyObs(this);
-	}
+        subAllHumanEndSelection.NotifyObs(this);
+    }
 
 	// Create the necessary state for selecting the needed type
 	public void SetTargetArgState(){
