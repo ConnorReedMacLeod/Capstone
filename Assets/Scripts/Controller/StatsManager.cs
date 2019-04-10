@@ -19,7 +19,6 @@ public class StatsManager : MonoBehaviour {
     }
 
     public void OnApplicationQuit() {
-        Debug.Log("Ending Game");
         WriteStatsFile();
     }
 
@@ -43,7 +42,7 @@ public class StatsManager : MonoBehaviour {
     }
 
     public void WriteStatsFile() {
-        string path = "Assets/Resources/stats.txt";
+        string path = "Logs/stats.txt";
 
         //Write some text to the test.txt file
         StreamWriter writer = new StreamWriter(path, false);
@@ -59,7 +58,7 @@ public class StatsManager : MonoBehaviour {
     }
 
     public void ReadStatsFile() {
-        string path = "Assets/Resources/stats.txt";
+        string path = "Logs/stats.txt";
 
         //Read the text from directly from the test.txt file
         StreamReader reader = new StreamReader(path);
