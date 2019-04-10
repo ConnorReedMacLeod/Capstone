@@ -17,20 +17,36 @@ public class StateTargetSelected : StateTarget {
     }
 
     public void cbClickAction(Object target, params object[] args) {
+        Debug.Log("In StateTargetSelected and clicked " + ((ViewAction)target).mod.sName);
+
+        //If we're clicking on the ability of a character we don't own, then don't do any selection for them
+        if (inputHuman.selected.plyrOwner.id != inputHuman.plyrOwner.id) return;
+
         ChooseAction(((ViewAction)target).mod);
     }
 
     public void cbClickBlockerButton(Object target, params object[] args) {
+
+        //If we're clicking on the ability of a character we don't own, then don't do any selection for them
+        if (inputHuman.selected.plyrOwner.id != inputHuman.plyrOwner.id) return;
+
         ChooseAction(inputHuman.selected.arActions[Chr.idBlocking]);
     }
 
     public void cbClickRestButton(Object target, params object[] args) {
+
+        //If we're clicking on the ability of a character we don't own, then don't do any selection for them
+        if (inputHuman.selected.plyrOwner.id != inputHuman.plyrOwner.id) return;
+
         ChooseAction(inputHuman.selected.arActions[Chr.idResting]);
     }
 
     public void ChooseAction(Action actChosen) {
+
+        Debug.Assert(actChosen.chrSource.plyrOwner.id == inputHuman.plyrOwner.id);
+
         // When we've clicked an action, use that action
-        //Debug.Log(actChosen + " is is being targetted");
+        Debug.Log(actChosen + " is is being targetted for character " + inputHuman.selected.sName);
 
         // But first, check if targetting is locked
         if (actChosen.chrSource.bLockedTargetting) {
