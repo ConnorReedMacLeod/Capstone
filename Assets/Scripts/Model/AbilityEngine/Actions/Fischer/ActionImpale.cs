@@ -35,7 +35,7 @@ public class ActionImpale : Action {
 
     override public void Execute(int[] lstTargettingIndices) {
 
-        Chr tarChr = chrSource.GetEnemyPlayer().GetBlocker();
+        Chr tarChr = chrSource.plyrOwner.GetEnemyPlayer().GetBlocker();
 
         stackClauses.Push(new Clause() {
             fExecute = () => {

@@ -31,7 +31,7 @@ public class ActionTranquilize : Action {
 
     override public void Execute(int[] lstTargettingIndices) {
 
-        Chr chrEnemyBlocker = chrSource.GetEnemyPlayer().GetBlocker();
+        Chr chrEnemyBlocker = chrSource.plyrOwner.GetEnemyPlayer().GetBlocker();
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
