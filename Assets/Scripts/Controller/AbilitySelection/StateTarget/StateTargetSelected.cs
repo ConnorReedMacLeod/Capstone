@@ -5,47 +5,48 @@ using UnityEngine;
 public class StateTargetSelected : StateTarget {
 
     public void cbDeselect(Object target, params object[] args) {
-        inputHuman.SetState(new StateTargetIdle(inputHuman));
+        ContCharacterSelection.Get().SetState(new StateTargetIdle());
     }
 
     public void cbReselectChar(Object target, params object[] args) {
         // If we now click on a different character, then we'll select them instead
-        inputHuman.selected.Idle(); // Need to deselect our current character first
-        inputHuman.selected = ((ViewChr)target).mod;
+        ContCharacterSelection.Get().chrSelected.Idle(); // Need to deselect our current character first
+        ContCharacterSelection.Get().chrSelected = ((ViewChr)target).mod;
 
-        inputHuman.SetState(new StateTargetSelected(inputHuman));
+        ContCharacterSelection.Get().SetState(new StateTargetSelected());
     }
 
     public void cbClickAction(Object target, params object[] args) {
 
-        //If we're clicking on the ability of a character we don't own, then don't do any selection for them
-        if (inputHuman.selected.plyrOwner.id != inputHuman.plyrOwner.id) return;
-
         ChooseAction(((ViewAction)target).mod);
+
     }
 
     public void cbClickBlockerButton(Object target, params object[] args) {
 
-        //If we're clicking on the ability of a character we don't own, then don't do any selection for them
-        if (inputHuman.selected.plyrOwner.id != inputHuman.plyrOwner.id) return;
+        ChooseAction(ContCharacterSelection.Get().chrSelected.arActions[Chr.idBlocking]);
 
-        ChooseAction(inputHuman.selected.arActions[Chr.idBlocking]);
     }
 
     public void cbClickRestButton(Object target, params object[] args) {
 
-        //If we're clicking on the ability of a character we don't own, then don't do any selection for them
-        if (inputHuman.selected.plyrOwner.id != inputHuman.plyrOwner.id) return;
+        ChooseAction(ContCharacterSelection.Get().chrSelected.arActions[Chr.idResting]);
 
-        ChooseAction(inputHuman.selected.arActions[Chr.idResting]);
     }
 
     public void ChooseAction(Action actChosen) {
 
-        Debug.Assert(actChosen.chrSource.plyrOwner.id == inputHuman.plyrOwner.id);
+        
+        Debug.Log(actChosen + " was clicked for " + ContCharacterSelection.Get().chrSelected.sName);
 
-        // When we've clicked an action, use that action
-        Debug.Log(actChosen + " is is being targetted for character " + inputHuman.selected.sName);
+        // When we've clicked an action, try to use that action
+
+        //If this character is owned by an AI-input player, then we don't have authority and we shouldn't select anything
+        if (ContCharacterSelection.Get().chrSelected.plyrOwner.curInput == Player.InputType.AI) {
+            //NOTE - This will eventually extend to check some authority setting for the local player
+            Debug.Log("We can't select actions for a character owned by an AI");
+            return;
+        }
 
         // But first, check if targetting is locked
         if (actChosen.chrSource.bLockedTargetting) {
@@ -64,11 +65,13 @@ public class StateTargetSelected : StateTarget {
             return;
         }
 
-        inputHuman.selected.Targetting();
+        //If we've reached this point, then we can start filling in the InputHuman's fields for this character
+
+        ContCharacterSelection.Get().chrSelected.selected.Targetting();
         
         inputHuman.nSelectedAbility = actChosen.id;
 
-        inputHuman.SetTargetArgState(); // Let the parent figure out what exact state we go to
+        ContCharacterSelection.Get().chrSelected.SetTargetArgState(); // Let the parent figure out what exact state we go to
     }
 
 	override public void OnEnter(){
@@ -95,10 +98,5 @@ public class StateTargetSelected : StateTarget {
         ViewRestButton.subAllClick.UnSubscribe(cbClickRestButton);
         KeyBindings.Unbind(KeyCode.Space); //clear the binding
         KeyBindings.Unbind(KeyCode.B);//clear the binding
-    }
-
-
-	public StateTargetSelected(InputHuman _inputHuman) : base(_inputHuman) {
-        
     }
 }

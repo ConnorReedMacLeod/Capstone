@@ -10,29 +10,17 @@ public class StateTargetIdle : StateTarget {
 
     public void cbClickChar(Object target, params object[] args) {
 
-        if(InputHuman.nHumanCount == 2){
+        ContCharacterSelection.Get().chrSelected = ((ViewChr)target).mod;
 
-            if (ContTurns.Get().GetNextActingChr() == null) {
-                //If there's two humans, and no character is acting next, then only allow selection by the input of the player
-                //who owns this character
-                if (inputHuman.plyrOwner.id != ((ViewChr)target).mod.plyrOwner.id) return;
-
-            } else if (inputHuman.plyrOwner.id != ((ViewChr)target).mod.plyrOwner.id) {
-                //If there are two players, then only allow selection by the player whose turn it is
-                if (inputHuman.plyrOwner.id != ContTurns.Get().GetNextActingChr().plyrOwner.id) return;
-            }
-        }
-
-        inputHuman.selected = ((ViewChr)target).mod;
-
-        inputHuman.SetState(new StateTargetSelected(inputHuman));
+        ContCharacterSelection.Get().SetState(new StateTargetSelected());
     }
 
 	override public void OnEnter(){
-		if (inputHuman.selected != null) {
-			inputHuman.selected.Idle ();
-		}		
-		inputHuman.selected = null;
+		if (ContCharacterSelection.Get().chrSelected != null) {
+            ContCharacterSelection.Get().chrSelected.Idle();
+		}
+        ContCharacterSelection.Get().chrSelected = null;
+
         ViewChr.subAllClick.Subscribe(cbClickChar);
     }
 
@@ -40,9 +28,5 @@ public class StateTargetIdle : StateTarget {
         ViewChr.subAllClick.UnSubscribe(cbClickChar);
     }
 
-    public StateTargetIdle(InputHuman _inputHuman) : base(_inputHuman) {
-
-
-	}
 
 }
