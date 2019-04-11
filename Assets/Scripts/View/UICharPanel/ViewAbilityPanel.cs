@@ -30,7 +30,7 @@ public class ViewAbilityPanel : ViewInteractive {
 
     
     public void ReverseAbilityPanel() {
-        Debug.Log("reversing the ability panel");
+
         for(int i=0; i<4/2; i++) {
             Vector3 v3Temp = arV3AbilityPositions[i];
             arV3AbilityPositions[i] = arV3AbilityPositions[4 - i - 1];

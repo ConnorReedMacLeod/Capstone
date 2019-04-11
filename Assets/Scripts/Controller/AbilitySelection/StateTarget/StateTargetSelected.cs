@@ -17,7 +17,6 @@ public class StateTargetSelected : StateTarget {
     }
 
     public void cbClickAction(Object target, params object[] args) {
-        Debug.Log("In StateTargetSelected and clicked " + ((ViewAction)target).mod.sName);
 
         //If we're clicking on the ability of a character we don't own, then don't do any selection for them
         if (inputHuman.selected.plyrOwner.id != inputHuman.plyrOwner.id) return;
@@ -73,6 +72,7 @@ public class StateTargetSelected : StateTarget {
     }
 
 	override public void OnEnter(){
+        Debug.Log("Entering StateTargetSelected");
 		Debug.Assert(inputHuman.selected != null);
 
         Arena.Get().view.subMouseClick.Subscribe(cbDeselect);

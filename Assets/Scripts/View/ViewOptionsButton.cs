@@ -13,7 +13,7 @@ public class ViewOptionsButton : ViewInteractive {
 
 
     public override void onMouseClick(params object[] args) {
-        Debug.Log("clicking on button");
+
         bSelected = true;
         Display();
 

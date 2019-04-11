@@ -9,6 +9,20 @@ using UnityEngine;
 public class StateTargetIdle : StateTarget {
 
     public void cbClickChar(Object target, params object[] args) {
+
+        if(InputHuman.nHumanCount == 2){
+
+            if (ContTurns.Get().GetNextActingChr() == null) {
+                //If there's two humans, and no character is acting next, then only allow selection by the input of the player
+                //who owns this character
+                if (inputHuman.plyrOwner.id != ((ViewChr)target).mod.plyrOwner.id) return;
+
+            } else if (inputHuman.plyrOwner.id != ((ViewChr)target).mod.plyrOwner.id) {
+                //If there are two players, then only allow selection by the player whose turn it is
+                if (inputHuman.plyrOwner.id != ContTurns.Get().GetNextActingChr().plyrOwner.id) return;
+            }
+        }
+
         inputHuman.selected = ((ViewChr)target).mod;
 
         inputHuman.SetState(new StateTargetSelected(inputHuman));
@@ -27,6 +41,7 @@ public class StateTargetIdle : StateTarget {
     }
 
     public StateTargetIdle(InputHuman _inputHuman) : base(_inputHuman) {
+
 
 	}
 

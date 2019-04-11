@@ -78,6 +78,13 @@ public class Player : MonoBehaviour{
 
         //If we already have an input Controller, then delete it
         if (inputController != null) {
+            if(curInput == InputType.HUMAN) {
+                InputHuman.nHumanCount--;
+
+                //unsubscribe all of the listeners for the left state
+                ((InputHuman)inputController).curState.OnLeave();
+            }
+            
             Destroy(inputController);
         }
 
@@ -94,6 +101,7 @@ public class Player : MonoBehaviour{
             case InputType.HUMAN:
                 //Then we want the player to control this player's selection
                 inputController = gameObject.AddComponent<InputHuman>();
+                InputHuman.nHumanCount++;
 
                 break;
 
