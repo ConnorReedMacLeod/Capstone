@@ -14,6 +14,8 @@ public class InputHuman : InputAbilitySelection {
 
 	public int indexCurTarget;
 
+    public static int nHumanCount = 0;
+
     public static Subject subAllStartTargetting = new Subject();
     public static Subject subAllFinishTargetting = new Subject();
 
@@ -50,12 +52,10 @@ public class InputHuman : InputAbilitySelection {
         
         //Save a copy of the submitted targetting index
         arTargetIndices[indexCurTarget] = ind;
-        Debug.Log("Saved submitted index of " + ind + " in arTargetIndices[" + indexCurTarget + "]");
 
         //Then advance to look for the next target
         indexCurTarget++;
-
-        Debug.Log("indexCurTarget is now " + indexCurTarget);
+        
 
         //Now figure out and move to the next state required for the next target
         SetTargetArgState();
@@ -159,6 +159,7 @@ public class InputHuman : InputAbilitySelection {
 	}
 
     public void Start() {
+        Debug.Log("Starting an InputHuman");
         SetState(new StateTargetIdle(this));
     }
 

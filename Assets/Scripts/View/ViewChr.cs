@@ -471,7 +471,7 @@ public class ViewChr : ViewInteractive {
     public void DecideIfHighlighted(Chr chrActing) {
 
         if (bSelectingChrTargettable || bSelectingTeamTargettable) {
-            Debug.Log(mod.sName + " can be targetted");
+
             if (goCurSelectionGlow == null) {
                 goCurSelectionGlow = Instantiate(pfSelectionGlow, maskPortrait.transform);
             }

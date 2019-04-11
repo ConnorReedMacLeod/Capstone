@@ -24,7 +24,7 @@ public class StateTargetChr : StateTarget {
             //move to next target
             inputHuman.StoreTargettingIndex(idTarget);
 
-            Debug.Log("Target successfully set to " + ((ViewChr)target).mod.sName + " with id " + idTarget + " for player " + inputHuman.plyrOwner.id);
+            //Debug.Log("Target successfully set to " + ((ViewChr)target).mod.sName + " with id " + idTarget + " for player " + inputHuman.plyrOwner.id);
 
         } else {
             Debug.Log(((ViewChr)target).mod.sName + ", on team " + ((ViewChr)target).mod.plyrOwner.id + " is not a valid character target");
