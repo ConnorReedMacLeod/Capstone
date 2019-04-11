@@ -71,7 +71,7 @@ public class InputScripted : InputAbilitySelection {
                     ContTurns.Get().GetNextActingChr().arActions[Chr.idResting].parCost.Get();
 
                     //Don't need to set the targetting indices, since they don't matter for resting
-                    ContAbilitySelection.Get().SubmitAbility(Chr.idResting, nextSelection.Value);
+                    ContAbilitySelection.Get().SubmitAbility(nActingChrid, Chr.idResting, nextSelection.Value);
                     return;
 
                 } else {
@@ -89,7 +89,7 @@ public class InputScripted : InputAbilitySelection {
         //We now need to ready enough effort mana to pay for the ability
         AutoPayCost(actToUse.parCost.Get());
 
-        ContAbilitySelection.Get().SubmitAbility(nextSelection.Key, nextSelection.Value);
+        ContAbilitySelection.Get().SubmitAbility(nActingChrid, nextSelection.Key, nextSelection.Value);
 
 
     }

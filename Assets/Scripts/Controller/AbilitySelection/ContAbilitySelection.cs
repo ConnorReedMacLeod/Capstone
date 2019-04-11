@@ -96,9 +96,14 @@ public class ContAbilitySelection : MonoBehaviour {
         fSelectionTimer = 0.0f;
     }
 
-    public void SubmitAbility(int indexAbility, int[] indexTargetting) {
+    public void SubmitAbility(int nActingChrid, int indexAbility, int[] indexTargetting) {
 
         Chr chrActing = ContTurns.Get().GetNextActingChr();
+
+        if(nActingChrid != chrActing.globalid) {
+            Debug.LogError("Error! Recieved ability selection for character " + nActingChrid + " even though its character " +
+                chrActing.globalid + "'s turn to select an ability");
+        }
 
         // confirm that the target is valid
         //(checks actionpoint usage, cd, mana, targetting)

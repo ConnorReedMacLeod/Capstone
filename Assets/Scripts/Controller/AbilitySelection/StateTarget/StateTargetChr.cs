@@ -72,8 +72,5 @@ public class StateTargetChr : StateTarget {
 
         subAllFinishSelection.NotifyObs(null, tarArg);
     }
-		
-	public StateTargetChr(InputHuman _inputHuman) : base(_inputHuman) {
 
-	}
 }
