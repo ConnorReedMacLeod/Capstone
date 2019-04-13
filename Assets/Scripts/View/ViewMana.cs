@@ -49,7 +49,7 @@ public class ViewMana : MonoBehaviour {
     public void PositionPanel() {
 
         //If both players are human
-        if (mod.plyr.curInput == Player.InputType.HUMAN && mod.plyr.GetEnemyPlayer().curInput == Player.InputType.HUMAN) {
+        if (mod.plyr.curInputType == Player.InputType.HUMAN && mod.plyr.GetEnemyPlayer().curInputType == Player.InputType.HUMAN) {
             //Then position the mana panels towards the sides of the screen
             if (mod.plyr.id == 0) {
                 this.transform.position = v3MiddleLeft;
@@ -57,11 +57,11 @@ public class ViewMana : MonoBehaviour {
                 this.transform.position = v3MiddleRight;
             }
            //If we are the only human
-        } else if (mod.plyr.curInput == Player.InputType.HUMAN) {
+        } else if (mod.plyr.curInputType == Player.InputType.HUMAN) {
             this.transform.position = v3TopMiddle;
 
             //If both players are AI
-        }else if (mod.plyr.curInput == Player.InputType.AI && mod.plyr.GetEnemyPlayer().curInput == Player.InputType.AI) {
+        }else if (mod.plyr.curInputType == Player.InputType.AI && mod.plyr.GetEnemyPlayer().curInputType == Player.InputType.AI) {
             //Currently we'll put the left players mana on the screen
             if (mod.plyr.id == 0) {
                 this.transform.position = v3TopMiddle;

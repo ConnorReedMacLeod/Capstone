@@ -12,17 +12,17 @@ public class StateTargetChr : StateTarget {
     public static Subject subAllFinishSelection = new Subject();
 
     public void cbCancelTargetting(object target, params object [] args) {
-        inputHuman.CancelTar();
+        ContLocalInputSelection.Get().CancelTar();
     }
 
     public void cbSetTargetChr(object target, params object [] args) {
 
         int idTarget = ((ViewChr)target).mod.GetTargettingId();
 
-        if (tarArg.WouldBeLegal(idTarget)) { 
+        if (tarArg.WouldBeLegal(idTarget)) {
 
             //move to next target
-            inputHuman.StoreTargettingIndex(idTarget);
+            ContLocalInputSelection.Get().StoreTargettingIndex(idTarget);
 
             //Debug.Log("Target successfully set to " + ((ViewChr)target).mod.sName + " with id " + idTarget + " for player " + inputHuman.plyrOwner.id);
 
@@ -32,23 +32,23 @@ public class StateTargetChr : StateTarget {
     }
 
     public void cbSwitchAction(Object target, params object [] args) {
-        Debug.Log("Initially, selected id is " + inputHuman.nSelectedAbility);
         Debug.Log("clicking on an action while asked to target a char");
 
-        inputHuman.ResetTar();
+        ContLocalInputSelection.Get().ResetTar();
 
-        inputHuman.nSelectedAbility = ((ViewAction)target).mod.id;
+        ContLocalInputSelection.Get().nSelectedAbility = ((ViewAction)target).mod.id;
 
-        Debug.Log("reselected action is now " + inputHuman.nSelectedAbility);
-        inputHuman.SetTargetArgState(); // Let the parent figure out what exact state we go to
+        Debug.Log("reselected action is now " + ContLocalInputSelection.Get().nSelectedAbility);
+        ContLocalInputSelection.Get().SetTargetArgState(); // Let the parent figure out what exact state we go to
 
     }
 
 	override public void OnEnter(){
 
-		Debug.Assert(inputHuman.selected != null);
-        //BUG :: THIS MAY CAUSE AN ERROR IF AN ALLY TARGET IS CAST TO A NORMAL CHR TARGET - MAY NOT CHECK FOR SAME TEAM
-		tarArg = (TargetArgChr)inputHuman.selected.arActions [inputHuman.nSelectedAbility].arArgs[inputHuman.indexCurTarget];
+		Debug.Assert(ContLocalInputSelection.Get().chrSelected != null);
+
+        //Get the appropriate current targetting type for the currently selected action
+		tarArg = (TargetArgChr)ContLocalInputSelection.Get().chrSelected.arActions [ContLocalInputSelection.Get().nSelectedAbility].arArgs[ContLocalInputSelection.Get().indexCurTarget];
 
         Arena.Get().view.subMouseClick.Subscribe(cbCancelTargetting);
         ViewInteractive.subGlobalMouseRightClick.Subscribe(cbCancelTargetting);

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class ContCharacterSelection : MonoBehaviour {
+public class ContLocalInputSelection : MonoBehaviour {
 
-    private static ContCharacterSelection inst;
-    public static ContCharacterSelection Get() {
+    private static ContLocalInputSelection inst;
+    public static ContLocalInputSelection Get() {
         return inst;
     }
 
@@ -70,6 +70,21 @@ public class ContCharacterSelection : MonoBehaviour {
         subAllFinishTargetting.NotifyObs(this);
     }
 
+    public void FinishTargetting() {
+
+        //Copy our selection information over to the human input controller
+        chrSelected.plyrOwner.inputController.nSelectedChrId = chrSelected.globalid;
+        chrSelected.plyrOwner.inputController.nSelectedAbility = nSelectedAbility;
+        chrSelected.plyrOwner.inputController.arTargetIndices = arTargetIndices;
+
+        ContAbilitySelection.Get().SubmitAbility(chrSelected.plyrOwner.inputController);
+
+        ResetTar();
+
+        //Let everything know that targetting has ended
+        subAllFinishTargetting.NotifyObs(this);
+    }
+
     // Create the necessary state for selecting the needed type
     public void SetTargetArgState() {
         //Before this is called, assume that IncTar/DecTar/ResetTar has been appropriately called
@@ -93,13 +108,11 @@ public class ContCharacterSelection : MonoBehaviour {
             SetState(new StateTargetIdle());
             //Debug.Log ("Targetting finished");
 
+
+
             //Submit our targetting selections to the InputAbilitySelection controller
-            ContAbilitySelection.Get().SubmitAbility(chrSelected.globalid, nSelectedAbility, arTargetIndices);
-
-            ResetTar();
-
-            //Let everything know that targetting has ended
-            subAllFinishTargetting.NotifyObs(this);
+            FinishTargetting();
+            
         } else {
 
 
@@ -154,7 +167,7 @@ public class ContCharacterSelection : MonoBehaviour {
         SetState(new StateTargetIdle());
     }
 
-    public ContCharacterSelection() {
+    public ContLocalInputSelection() {
 
         indexCurTarget = 0;
     }

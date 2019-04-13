@@ -15,7 +15,7 @@ public class InputHuman : InputAbilitySelection {
 
     public override void StartSelection() {
 
-        ResetTar();
+        ResetTargets();
 
         //TODO - hookup character highlighting to this
         subAllHumanStartSelection.NotifyObs(this);
@@ -26,19 +26,11 @@ public class InputHuman : InputAbilitySelection {
         //If we somehow gave an invalid target, make an error message, then reset our targetting
         Debug.Log("The human-input for player " + plyrOwner.id + " gave an invalid target");
 
-        ResetTar();
-    }
-
-    public void ResetTar(){
-
-        //Clear any previous targetting information we had
-        nSelectedAbility = -1;
-        arTargetIndices = null;
-
+        ResetTargets();
     }
 
 
     public InputHuman(){
-        ResetTar();
+        ResetTargets();
 	}
 }

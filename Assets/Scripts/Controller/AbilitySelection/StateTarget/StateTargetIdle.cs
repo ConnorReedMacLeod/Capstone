@@ -10,16 +10,16 @@ public class StateTargetIdle : StateTarget {
 
     public void cbClickChar(Object target, params object[] args) {
 
-        ContCharacterSelection.Get().chrSelected = ((ViewChr)target).mod;
+        ContLocalInputSelection.Get().chrSelected = ((ViewChr)target).mod;
 
-        ContCharacterSelection.Get().SetState(new StateTargetSelected());
+        ContLocalInputSelection.Get().SetState(new StateTargetSelected());
     }
 
 	override public void OnEnter(){
-		if (ContCharacterSelection.Get().chrSelected != null) {
-            ContCharacterSelection.Get().chrSelected.Idle();
+		if (ContLocalInputSelection.Get().chrSelected != null) {
+            ContLocalInputSelection.Get().chrSelected.Idle();
 		}
-        ContCharacterSelection.Get().chrSelected = null;
+        ContLocalInputSelection.Get().chrSelected = null;
 
         ViewChr.subAllClick.Subscribe(cbClickChar);
     }
