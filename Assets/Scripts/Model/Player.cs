@@ -25,7 +25,7 @@ public class Player : MonoBehaviour{
     public static Subject subAllInputTypeChanged = new Subject();
     public static Subject subAllPlayerLost = new Subject();
 
-    public InputType curInput;
+    public InputType curInputType;
 
     public enum InputType {
         HUMAN, AI
@@ -82,7 +82,7 @@ public class Player : MonoBehaviour{
             Destroy(inputController);
         }
 
-        curInput = inputType;
+        curInputType = inputType;
 
         switch (inputType) {
             case InputType.AI:
@@ -103,7 +103,7 @@ public class Player : MonoBehaviour{
         //Let the controller know which player its representing
         inputController.SetOwner(this);
 
-        subAllInputTypeChanged.NotifyObs(this, curInput);
+        subAllInputTypeChanged.NotifyObs(this, curInputType);
     }
 
     public void SetDefaultBlocker() {

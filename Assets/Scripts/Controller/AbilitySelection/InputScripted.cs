@@ -32,9 +32,8 @@ public class InputScripted : InputAbilitySelection {
 
     public void SubmitNextAbility() {
 
-        int nActingChrid = ContTurns.Get().GetNextActingChr().id;
+        nSelectedChrId= ContTurns.Get().GetNextActingChr().id;
 
-        Action actToUse;
         KeyValuePair<int, int[]> nextSelection;
         int nTargetsTried = 0;
 
@@ -42,54 +41,60 @@ public class InputScripted : InputAbilitySelection {
         while (true) {
 
             //Double check that the index we're on for this character is before the end of that character's script
-            if (arIndexTargetting[nActingChrid] >= arTargettingScript.GetLength(1)) {
+            if (arIndexTargetting[nSelectedChrId] >= arTargettingScript.GetLength(1)) {
                 Debug.LogError("ERROR - not enough targetting information stored in this script for this character - resetting");
-                arIndexTargetting[nActingChrid] = 0;
+                arIndexTargetting[nSelectedChrId] = 0;
             }
 
             //Get the current targetting information, then increase the index for next time
-            nextSelection = arTargettingScript[nActingChrid, arIndexTargetting[nActingChrid]];
-            arIndexTargetting[nActingChrid]++;
+            nextSelection = arTargettingScript[nSelectedChrId, arIndexTargetting[nSelectedChrId]];
+            arIndexTargetting[nSelectedChrId]++;
             nTargetsTried++;
 
-            actToUse = ContTurns.Get().GetNextActingChr().arActions[nextSelection.Key];
+            nSelectedAbility = nextSelection.Key;
+            arIndexTargetting = nextSelection.Value;
 
-           // Debug.Log(ContTurns.Get().GetNextActingChr().sName + " wants chosen to use " +
-           //     actToUse.sName + " with target index " + nextSelection.Value[0]);
+            Debug.Log(ContTurns.Get().GetNextActingChr().sName + " wants chosen to use " +
+               ContTurns.Get().GetNextActingChr().arActions[nSelectedAbility].sName + " with target index " + arIndexTargetting[0]);
 
             //Test to see if this ability would be valid
-            if (actToUse.CanActivate(nextSelection.Value) == false) {
-                //Debug.Log("The targets given would not be legal");
+            if (ContTurns.Get().GetNextActingChr().arActions[nSelectedAbility].CanActivate(arIndexTargetting) == false) {
+                Debug.Log("The targets given would not be legal");
 
                 if(nTargetsTried >= MAXTARGETATTEMPTS) {
                     //If we've tried too many abilities with no success, just end our selections
                     // by setting our action as a rest
 
+                    nSelectedAbility = Chr.idResting;
 
-
-                    //We now need to ready enough effort mana to pay for the ability (even though its a rest, maybe it costs something)
-                    ContTurns.Get().GetNextActingChr().arActions[Chr.idResting].parCost.Get();
-
-                    //Don't need to set the targetting indices, since they don't matter for resting
-                    ContAbilitySelection.Get().SubmitAbility(nActingChrid, Chr.idResting, nextSelection.Value);
-                    return;
+                    break; 
 
                 } else {
                     //Otherwise, just try selecting the next ability
                     continue;
                 }
+            } else {
+                //If the selection is valid
+
+                //Save our selection information
+                //nSelectedChrId is already set
+                arIndexTargetting = nextSelection.Value;
+
+
+                break;
             }
-            break;
+            
         }
 
-        //Debug.Log(ContTurns.Get().GetNextActingChr().sName + " has automatically chosen to use " +
-         //       actToUse.sName + " with target index " + nextSelection.Value[0]);
+        //At this point, we will have selected an action/targetting and saved the information in our fields
+        Debug.Log(ContTurns.Get().GetNextActingChr().sName + " has automatically chosen to use " +
+                ContTurns.Get().GetNextActingChr().arActions[nSelectedAbility].sName + " with target index " + arIndexTargetting[0]);
 
 
         //We now need to ready enough effort mana to pay for the ability
-        AutoPayCost(actToUse.parCost.Get());
+        AutoPayCost(ContTurns.Get().GetNextActingChr().arActions[nSelectedAbility].parCost.Get());
 
-        ContAbilitySelection.Get().SubmitAbility(nActingChrid, nextSelection.Key, nextSelection.Value);
+        ContAbilitySelection.Get().SubmitAbility(this);
 
 
     }
