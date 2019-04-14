@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class InputScripted : InputAbilitySelection {
 
-    public int[] arIndexTargetting;                         //Holds the current index of the script we're using for each character's next action
+
+    public int nSelectedChrLocalId;
+
+    public int[] arScriptedTargettingIndices;                         //Holds the current index of the script we're using for each character's next action
     public KeyValuePair<int, int[]>[,] arTargettingScript;
     public const int MAXTARGETATTEMPTS = 5;
 
     public override void StartSelection() {
+
+        ResetTargets();
 
         //Give a small delay before we return the ability selection
         // so that we can give a chance to clear the stack out
@@ -20,7 +25,7 @@ public class InputScripted : InputAbilitySelection {
 
         arTargettingScript = _arTargettingScript;
 
-        arIndexTargetting = new int[arTargettingScript.Length];
+        arScriptedTargettingIndices = new int[arTargettingScript.Length];
 
     }
 
@@ -32,7 +37,8 @@ public class InputScripted : InputAbilitySelection {
 
     public void SubmitNextAbility() {
 
-        nSelectedChrId= ContTurns.Get().GetNextActingChr().id;
+        nSelectedChrLocalId = ContTurns.Get().GetNextActingChr().id;
+        nSelectedChrId = ContTurns.Get().GetNextActingChr().globalid;
 
         KeyValuePair<int, int[]> nextSelection;
         int nTargetsTried = 0;
@@ -41,29 +47,30 @@ public class InputScripted : InputAbilitySelection {
         while (true) {
 
             //Double check that the index we're on for this character is before the end of that character's script
-            if (arIndexTargetting[nSelectedChrId] >= arTargettingScript.GetLength(1)) {
+            if (arScriptedTargettingIndices[nSelectedChrLocalId] >= arTargettingScript.GetLength(1)) {
                 Debug.LogError("ERROR - not enough targetting information stored in this script for this character - resetting");
-                arIndexTargetting[nSelectedChrId] = 0;
+                arScriptedTargettingIndices[nSelectedChrLocalId] = 0;
             }
 
             //Get the current targetting information, then increase the index for next time
-            nextSelection = arTargettingScript[nSelectedChrId, arIndexTargetting[nSelectedChrId]];
-            arIndexTargetting[nSelectedChrId]++;
+            nextSelection = arTargettingScript[nSelectedChrLocalId, arScriptedTargettingIndices[nSelectedChrLocalId]];
+            arScriptedTargettingIndices[nSelectedChrLocalId]++;
             nTargetsTried++;
 
             nSelectedAbility = nextSelection.Key;
-            arIndexTargetting = nextSelection.Value;
+            arTargetIndices = nextSelection.Value;
 
             Debug.Log(ContTurns.Get().GetNextActingChr().sName + " wants chosen to use " +
-               ContTurns.Get().GetNextActingChr().arActions[nSelectedAbility].sName + " with target index " + arIndexTargetting[0]);
+               ContTurns.Get().GetNextActingChr().arActions[nSelectedAbility].sName + " with target index " + arTargetIndices[0]);
 
             //Test to see if this ability would be valid
-            if (ContTurns.Get().GetNextActingChr().arActions[nSelectedAbility].CanActivate(arIndexTargetting) == false) {
+            if (ContTurns.Get().GetNextActingChr().arActions[nSelectedAbility].CanActivate(arTargetIndices) == false) {
                 Debug.Log("The targets given would not be legal");
 
                 if(nTargetsTried >= MAXTARGETATTEMPTS) {
                     //If we've tried too many abilities with no success, just end our selections
                     // by setting our action as a rest
+
 
                     nSelectedAbility = Chr.idResting;
 
@@ -75,10 +82,9 @@ public class InputScripted : InputAbilitySelection {
                 }
             } else {
                 //If the selection is valid
+                Debug.Log("Automatic selection is valid");
 
-                //Save our selection information
-                //nSelectedChrId is already set
-                arIndexTargetting = nextSelection.Value;
+                //Our selection information has already been saved
 
 
                 break;
@@ -88,11 +94,13 @@ public class InputScripted : InputAbilitySelection {
 
         //At this point, we will have selected an action/targetting and saved the information in our fields
         Debug.Log(ContTurns.Get().GetNextActingChr().sName + " has automatically chosen to use " +
-                ContTurns.Get().GetNextActingChr().arActions[nSelectedAbility].sName + " with target index " + arIndexTargetting[0]);
+                ContTurns.Get().GetNextActingChr().arActions[nSelectedAbility].sName + " with target index " + arTargetIndices[0]);
 
 
         //We now need to ready enough effort mana to pay for the ability
         AutoPayCost(ContTurns.Get().GetNextActingChr().arActions[nSelectedAbility].parCost.Get());
+
+        Debug.Log("arIndexTargetting[0] is " + arTargetIndices[0]);
 
         ContAbilitySelection.Get().SubmitAbility(this);
 

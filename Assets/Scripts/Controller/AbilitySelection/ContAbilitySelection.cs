@@ -93,6 +93,8 @@ public class ContAbilitySelection : MonoBehaviour {
 
             //Clear out the selection information stored in the provided input
             chrCurActing.plyrOwner.inputController.ResetTargets();
+
+            InputHuman.subAllHumanEndSelection.NotifyObs(chrCurActing);
         }
 
 
@@ -113,6 +115,17 @@ public class ContAbilitySelection : MonoBehaviour {
         }else if(input.nSelectedChrId != chrActing.globalid) {
             Debug.LogError("Error! Recieved ability selection for character " + input.nSelectedChrId + " even though its character " +
                 chrActing.sName + "'s turn to select an ability");
+        }
+
+        Debug.Log("input's type is " + input.GetType().ToString());
+
+
+        if (input.arTargetIndices == null) {
+            Debug.Log("arTargetIndices is null");
+        } else if (input.arTargetIndices.Length == 0) {
+            Debug.Log("arTargetIndices is empty");
+        }else {
+            Debug.Log("First target index is " + input.arTargetIndices[0]);
         }
 
         // confirm that the target is valid
