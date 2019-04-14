@@ -105,8 +105,8 @@ public class ContInfo : MonoBehaviour{
                 Debug.LogError("ERROR! NO VIEWINFOPANEL ON INFO-TAGGED OBJECT!");
             }
 
-            InputHuman.subAllStartTargetting.Subscribe(cbStartTargetting);
-            InputHuman.subAllFinishTargetting.Subscribe(cbFinishTargetting);
+            ContLocalInputSelection.subAllStartTargetting.Subscribe(cbStartTargetting);
+            ContLocalInputSelection.subAllFinishTargetting.Subscribe(cbFinishTargetting);
 
             ViewAction.subAllStartHover.Subscribe(cbActStartHover);
             ViewAction.subAllStopHover.Subscribe(cbActStopHover);

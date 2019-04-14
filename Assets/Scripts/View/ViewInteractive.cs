@@ -87,9 +87,10 @@ public class ViewInteractive : MonoBehaviour {
 
 	void Update () {
 		if (bDown) {
-			fTimeDown += ContTime.Get().fDeltaTime;
+            //Note that this uses the real Time.deltaTime as opposed to the ContTime.fDeltaTime
+            fTimeDown += Time.deltaTime;
         } else {
-			fTimeUp += ContTime.Get().fDeltaTime;
+			fTimeUp += Time.deltaTime;
         }
 
 		// Handle time related checks
