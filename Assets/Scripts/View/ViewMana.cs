@@ -22,16 +22,59 @@ public class ViewMana : MonoBehaviour {
 
 	public Mana mod;                   //Character model
 
-	// Use this for initialization
-	public void Start() {
+    public Vector3 v3TopMiddle = new Vector3(0f, 2.85f, 0f);
+    public Vector3 v3MiddleLeft = new Vector3(-4.59f, 0f, 0f);
+    public Vector3 v3MiddleRight = new Vector3(4.59f, 0f, 0f);
+    public Vector3 v3Offscreen = new Vector3(100f, 100f, 0f);
+
+
+    // Use this for initialization
+    public void Start() {
 		if (bStarted == false) {
 			bStarted = true;
 			InitModel();
 
             mod.subManaChange.Subscribe(cbManaChange);
             mod.subManaPoolChange.Subscribe(cbManaPoolChange);
-		}
+
+            Player.subAllInputTypeChanged.Subscribe(cbInputTypeChanged);
+
+        }
 	}
+
+    public void cbInputTypeChanged(Object target, params object[] args) {
+        PositionPanel();
+    }
+
+    public void PositionPanel() {
+
+        //If both players are human
+        if (mod.plyr.curInputType == Player.InputType.HUMAN && mod.plyr.GetEnemyPlayer().curInputType == Player.InputType.HUMAN) {
+            //Then position the mana panels towards the sides of the screen
+            if (mod.plyr.id == 0) {
+                this.transform.position = v3MiddleLeft;
+            } else if (mod.plyr.id == 1) {
+                this.transform.position = v3MiddleRight;
+            }
+           //If we are the only human
+        } else if (mod.plyr.curInputType == Player.InputType.HUMAN) {
+            this.transform.position = v3TopMiddle;
+
+            //If both players are AI
+        }else if (mod.plyr.curInputType == Player.InputType.AI && mod.plyr.GetEnemyPlayer().curInputType == Player.InputType.AI) {
+            //Currently we'll put the left players mana on the screen
+            if (mod.plyr.id == 0) {
+                this.transform.position = v3TopMiddle;
+            } else if (mod.plyr.id == 1) {
+                this.transform.position = v3Offscreen;
+            }
+           
+        } else {
+            //Otherwise, put the panel offscreen
+            this.transform.position = v3Offscreen;
+        }
+
+    }
 
 	public void InitModel() {
 		mod = GetComponent<Mana>();
@@ -80,4 +123,6 @@ public class ViewMana : MonoBehaviour {
                 break;
         }
     }
+
+    
 }

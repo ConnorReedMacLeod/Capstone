@@ -5,32 +5,45 @@ using UnityEngine;
 public class StateTargetSelected : StateTarget {
 
     public void cbDeselect(Object target, params object[] args) {
-        inputHuman.SetState(new StateTargetIdle(inputHuman));
+        ContLocalInputSelection.Get().SetState(new StateTargetIdle());
     }
 
     public void cbReselectChar(Object target, params object[] args) {
         // If we now click on a different character, then we'll select them instead
-        inputHuman.selected.Idle(); // Need to deselect our current character first
-        inputHuman.selected = ((ViewChr)target).mod;
+        ContLocalInputSelection.Get().chrSelected.Idle(); // Need to deselect our current character first
+        ContLocalInputSelection.Get().chrSelected = ((ViewChr)target).mod;
 
-        inputHuman.SetState(new StateTargetSelected(inputHuman));
+        ContLocalInputSelection.Get().SetState(new StateTargetSelected());
     }
 
     public void cbClickAction(Object target, params object[] args) {
+
         ChooseAction(((ViewAction)target).mod);
+
     }
 
     public void cbClickBlockerButton(Object target, params object[] args) {
-        ChooseAction(inputHuman.selected.arActions[Chr.idBlocking]);
+
+        ChooseAction(ContLocalInputSelection.Get().chrSelected.arActions[Chr.idBlocking]);
+
     }
 
     public void cbClickRestButton(Object target, params object[] args) {
-        ChooseAction(inputHuman.selected.arActions[Chr.idResting]);
+
+        ChooseAction(ContLocalInputSelection.Get().chrSelected.arActions[Chr.idResting]);
+
     }
 
     public void ChooseAction(Action actChosen) {
-        // When we've clicked an action, use that action
-        //Debug.Log(actChosen + " is is being targetted");
+
+        // When we've clicked an action, try to use that action
+
+        //If this character is owned by an AI-input player, then we don't have authority and we shouldn't select anything
+        if (ContLocalInputSelection.Get().chrSelected.plyrOwner.curInputType == Player.InputType.AI) {
+            //NOTE - This will eventually extend to check some authority setting for the local player
+            Debug.Log("We can't select actions for a character owned by an AI");
+            return;
+        }
 
         // But first, check if targetting is locked
         if (actChosen.chrSource.bLockedTargetting) {
@@ -49,15 +62,17 @@ public class StateTargetSelected : StateTarget {
             return;
         }
 
-        inputHuman.selected.Targetting();
-        
-        inputHuman.nSelectedAbility = actChosen.id;
+        //If we've reached this point, then we can start filling in the ContCharacterSelection's fields for this character
 
-        inputHuman.SetTargetArgState(); // Let the parent figure out what exact state we go to
+        ContLocalInputSelection.Get().chrSelected.Targetting();
+
+        ContLocalInputSelection.Get().nSelectedAbility = actChosen.id;
+
+        ContLocalInputSelection.Get().SetTargetArgState(); // Let the parent figure out what exact state we go to
     }
 
 	override public void OnEnter(){
-		Debug.Assert(inputHuman.selected != null);
+		Debug.Assert(ContLocalInputSelection.Get().chrSelected != null);
 
         Arena.Get().view.subMouseClick.Subscribe(cbDeselect);
         ViewChr.subAllClick.Subscribe(cbReselectChar);
@@ -67,11 +82,12 @@ public class StateTargetSelected : StateTarget {
         KeyBindings.SetBinding(cbClickRestButton, KeyCode.Space);
         KeyBindings.SetBinding(cbClickBlockerButton, KeyCode.B);
 
-        inputHuman.selected.Select (); 
+        ContLocalInputSelection.Get().chrSelected.Select (); 
 
 	}
 
 	override public void OnLeave(){
+
         Arena.Get().view.subMouseClick.UnSubscribe(cbDeselect);
         ViewChr.subAllClick.UnSubscribe(cbReselectChar);
         ViewAction.subAllClick.UnSubscribe(cbClickAction);
@@ -79,10 +95,5 @@ public class StateTargetSelected : StateTarget {
         ViewRestButton.subAllClick.UnSubscribe(cbClickRestButton);
         KeyBindings.Unbind(KeyCode.Space); //clear the binding
         KeyBindings.Unbind(KeyCode.B);//clear the binding
-    }
-
-
-	public StateTargetSelected(InputHuman _inputHuman) : base(_inputHuman) {
-        
     }
 }

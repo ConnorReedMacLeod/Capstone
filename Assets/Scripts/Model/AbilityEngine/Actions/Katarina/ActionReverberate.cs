@@ -35,7 +35,7 @@ public class ActionReverberate : Action {
 
     override public void Execute(int[] lstTargettingIndices) {
 
-        Player tar = chrSource.GetEnemyPlayer();
+        Player tar = chrSource.plyrOwner.GetEnemyPlayer();
 
         stackClauses.Push(new Clause() {
             fExecute = () => {
