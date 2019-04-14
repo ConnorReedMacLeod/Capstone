@@ -90,20 +90,48 @@ public class ContAbilitySelection : MonoBehaviour {
 
         if (chrCurActing != null) {
             chrCurActing.LockTargetting();
+
+            //Clear out the selection information stored in the provided input
+            chrCurActing.plyrOwner.inputController.ResetTargets();
+
+            InputHuman.subAllHumanEndSelection.NotifyObs(chrCurActing);
         }
+
+
 
         bSelectingAbility = false;
         fSelectionTimer = 0.0f;
     }
 
-    public void SubmitAbility(int indexAbility, int[] indexTargetting) {
+
+    //Check what input has been stored in the provided InputAbilitySelection for the next acting character
+    public void SubmitAbility(InputAbilitySelection input) {
 
         Chr chrActing = ContTurns.Get().GetNextActingChr();
 
+        if(input.plyrOwner.id != chrActing.plyrOwner.id) {
+            Debug.LogError("Error! Recieved ability selection for player " + input.plyrOwner.id + " even though its character " +
+                chrActing.sName + "'s turn to select an ability");
+        }else if(input.nSelectedChrId != chrActing.globalid) {
+            Debug.LogError("Error! Recieved ability selection for character " + input.nSelectedChrId + " even though its character " +
+                chrActing.sName + "'s turn to select an ability");
+        }
+
+        Debug.Log("input's type is " + input.GetType().ToString());
+
+
+        if (input.arTargetIndices == null) {
+            Debug.Log("arTargetIndices is null");
+        } else if (input.arTargetIndices.Length == 0) {
+            Debug.Log("arTargetIndices is empty");
+        }else {
+            Debug.Log("First target index is " + input.arTargetIndices[0]);
+        }
+
         // confirm that the target is valid
         //(checks actionpoint usage, cd, mana, targetting)
-        if (chrActing.arActions[indexAbility].CanActivate(indexTargetting) == false ||
-            chrActing.arActions[indexAbility].CanPayMana() == false) {
+        if (chrActing.arActions[input.nSelectedAbility].CanActivate(input.arTargetIndices) == false ||
+            chrActing.arActions[input.nSelectedAbility].CanPayMana() == false) {
 
             //This is somewhat of a bandaid to fix some infinite looping in the AI ability selection code
             nBadSelectionsGiven++;
@@ -111,7 +139,7 @@ public class ContAbilitySelection : MonoBehaviour {
 
                 Debug.LogError("Too many bad selections given - assigning a rest action");
                 nSelectedAbility = Chr.idResting;
-                lstSelectedTargets = indexTargetting;
+                lstSelectedTargets = input.arTargetIndices;
 
                 EndSelection();
 
@@ -130,8 +158,8 @@ public class ContAbilitySelection : MonoBehaviour {
         //If we get this far, then the selecting is valid
 
         //Save the validly selected abilities
-        nSelectedAbility = indexAbility;
-        lstSelectedTargets = indexTargetting;
+        nSelectedAbility = input.nSelectedAbility;
+        lstSelectedTargets = input.arTargetIndices;
 
         EndSelection();
 
