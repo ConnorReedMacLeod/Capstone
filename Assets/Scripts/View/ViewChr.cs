@@ -471,7 +471,7 @@ public class ViewChr : ViewInteractive {
     public void DecideIfHighlighted(Chr chrActing) {
 
         if (bSelectingChrTargettable || bSelectingTeamTargettable) {
-            Debug.Log(mod.sName + " can be targetted");
+
             if (goCurSelectionGlow == null) {
                 goCurSelectionGlow = Instantiate(pfSelectionGlow, maskPortrait.transform);
             }
@@ -491,7 +491,7 @@ public class ViewChr : ViewInteractive {
             goCurSelectionGlow.GetComponent<SpriteRenderer>().sprite = sprGlow;
             
         } else if (mod == ContTurns.Get().GetNextActingChr()) {
-            Debug.Log(mod.sName + " is next to act");
+            //Debug.Log(mod.sName + " is next to act");
 
             if (goCurSelectionGlow == null) {
                 goCurSelectionGlow = Instantiate(pfSelectionGlow, maskPortrait.transform);

@@ -37,7 +37,7 @@ public class ActionVenomousBite : Action {
 
     override public void Execute(int[] lstTargettingIndices) {
 
-        Chr tarBlocker = chrSource.GetEnemyPlayer().GetBlocker();
+        Chr tarBlocker = chrSource.plyrOwner.GetEnemyPlayer().GetBlocker();
 
         stackClauses.Push(new Clause() {
             fExecute = () => {

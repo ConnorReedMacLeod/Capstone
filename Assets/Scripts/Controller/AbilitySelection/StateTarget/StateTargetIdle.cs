@@ -9,16 +9,18 @@ using UnityEngine;
 public class StateTargetIdle : StateTarget {
 
     public void cbClickChar(Object target, params object[] args) {
-        inputHuman.selected = ((ViewChr)target).mod;
 
-        inputHuman.SetState(new StateTargetSelected(inputHuman));
+        ContLocalInputSelection.Get().chrSelected = ((ViewChr)target).mod;
+
+        ContLocalInputSelection.Get().SetState(new StateTargetSelected());
     }
 
 	override public void OnEnter(){
-		if (inputHuman.selected != null) {
-			inputHuman.selected.Idle ();
-		}		
-		inputHuman.selected = null;
+		if (ContLocalInputSelection.Get().chrSelected != null) {
+            ContLocalInputSelection.Get().chrSelected.Idle();
+		}
+        ContLocalInputSelection.Get().chrSelected = null;
+
         ViewChr.subAllClick.Subscribe(cbClickChar);
     }
 
@@ -26,8 +28,5 @@ public class StateTargetIdle : StateTarget {
         ViewChr.subAllClick.UnSubscribe(cbClickChar);
     }
 
-    public StateTargetIdle(InputHuman _inputHuman) : base(_inputHuman) {
-
-	}
 
 }

@@ -393,15 +393,6 @@ public class Chr : MonoBehaviour {
         }
     }
 
-    //Get a refernce to the enemy player
-    public Player GetEnemyPlayer() {
-        if (plyrOwner.id == 0) {
-            return Match.Get().arPlayers[1];
-        } else {
-            return Match.Get().arPlayers[0];
-        }
-    }
-
     public void SetAction(int i, Action actNew) {
         //If there is an action already in this slot
         if (arActions[i] != null) {

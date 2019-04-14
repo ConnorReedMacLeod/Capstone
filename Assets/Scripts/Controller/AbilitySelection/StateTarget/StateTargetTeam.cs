@@ -11,7 +11,7 @@ public class StateTargetTeam : StateTarget {
     public static Subject subAllFinishSelection = new Subject();
 
     public void cbCancelTargetting(Object target, params object[] args) {
-        inputHuman.CancelTar();
+        ContLocalInputSelection.Get().CancelTar();
     }
 
     public void cbClickChr(Object target, params object[] args) {
@@ -21,7 +21,7 @@ public class StateTargetTeam : StateTarget {
         if (tarArg.WouldBeLegal(idTarget)) {
 
             //move to next target
-            inputHuman.StoreTargettingIndex(idTarget);
+            ContLocalInputSelection.Get().StoreTargettingIndex(idTarget);
 
             Debug.Log("Target successfully set to Player " + ((ViewChr)target).mod.plyrOwner.id);
 
@@ -32,20 +32,20 @@ public class StateTargetTeam : StateTarget {
 
     public void cbSwitchAction(Object target, params object[] args) {
 
-        inputHuman.nSelectedAbility = ((ViewAction)target).mod.id;
+        ContLocalInputSelection.Get().nSelectedAbility = ((ViewAction)target).mod.id;
 
         // TODO:: Save the current targets if there are any, so that you can 
         // revert to those targets if you've failed targetting
-        inputHuman.ResetTar();
-        inputHuman.SetTargetArgState(); // Let the parent figure out what exact state we go to
+        ContLocalInputSelection.Get().ResetTar();
+        ContLocalInputSelection.Get().SetTargetArgState(); // Let the parent figure out what exact state we go to
 
     }
 
     override public void OnEnter() {
         //TODO:: ADD AN OVERLAY FOR SELECTING A PLAYER
 
-        Debug.Assert(inputHuman.selected != null);
-        tarArg = (TargetArgTeam)inputHuman.selected.arActions[inputHuman.nSelectedAbility].arArgs[inputHuman.indexCurTarget];
+        Debug.Assert(ContLocalInputSelection.Get().chrSelected != null);
+        tarArg = (TargetArgTeam)ContLocalInputSelection.Get().chrSelected.arActions[ContLocalInputSelection.Get().nSelectedAbility].arArgs[ContLocalInputSelection.Get().indexCurTarget];
 
         Arena.Get().view.subMouseClick.Subscribe(cbCancelTargetting);
         ViewInteractive.subGlobalMouseRightClick.Subscribe(cbCancelTargetting);
@@ -69,7 +69,4 @@ public class StateTargetTeam : StateTarget {
 
     }
 
-    public StateTargetTeam(InputHuman _inputHuman) : base(_inputHuman) {
-        
-    }
 }
