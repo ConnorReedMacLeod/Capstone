@@ -36,9 +36,6 @@ public class StateTargetSelected : StateTarget {
 
     public void ChooseAction(Action actChosen) {
 
-        
-        Debug.Log(actChosen + " was clicked for " + ContLocalInputSelection.Get().chrSelected.sName);
-
         // When we've clicked an action, try to use that action
 
         //If this character is owned by an AI-input player, then we don't have authority and we shouldn't select anything
@@ -75,7 +72,6 @@ public class StateTargetSelected : StateTarget {
     }
 
 	override public void OnEnter(){
-        Debug.Log("Entering StateTargetSelected");
 		Debug.Assert(ContLocalInputSelection.Get().chrSelected != null);
 
         Arena.Get().view.subMouseClick.Subscribe(cbDeselect);
@@ -91,6 +87,7 @@ public class StateTargetSelected : StateTarget {
 	}
 
 	override public void OnLeave(){
+
         Arena.Get().view.subMouseClick.UnSubscribe(cbDeselect);
         ViewChr.subAllClick.UnSubscribe(cbReselectChar);
         ViewAction.subAllClick.UnSubscribe(cbClickAction);

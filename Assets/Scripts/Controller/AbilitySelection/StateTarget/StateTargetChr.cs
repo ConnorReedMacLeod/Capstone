@@ -47,8 +47,10 @@ public class StateTargetChr : StateTarget {
 
 		Debug.Assert(ContLocalInputSelection.Get().chrSelected != null);
 
+        Debug.Log("chrSelected is " + ContLocalInputSelection.Get().chrSelected.sName);
+
         //Get the appropriate current targetting type for the currently selected action
-		tarArg = (TargetArgChr)ContLocalInputSelection.Get().chrSelected.arActions [ContLocalInputSelection.Get().nSelectedAbility].arArgs[ContLocalInputSelection.Get().indexCurTarget];
+        tarArg = (TargetArgChr)ContLocalInputSelection.Get().chrSelected.arActions [ContLocalInputSelection.Get().nSelectedAbility].arArgs[ContLocalInputSelection.Get().indexCurTarget];
 
         Arena.Get().view.subMouseClick.Subscribe(cbCancelTargetting);
         ViewInteractive.subGlobalMouseRightClick.Subscribe(cbCancelTargetting);
@@ -62,6 +64,7 @@ public class StateTargetChr : StateTarget {
     }
 
 	override public void OnLeave(){
+
         Arena.Get().view.subMouseClick.UnSubscribe(cbCancelTargetting);
         ViewInteractive.subGlobalMouseRightClick.UnSubscribe(cbCancelTargetting);
 

@@ -7,9 +7,6 @@ public class InputHuman : InputAbilitySelection {
 
 	public StateTarget curState;
 
-    public static Subject subAllStartTargetting = new Subject();
-    public static Subject subAllFinishTargetting = new Subject();
-
     public static Subject subAllHumanStartSelection = new Subject();
     public static Subject subAllHumanEndSelection = new Subject();
 

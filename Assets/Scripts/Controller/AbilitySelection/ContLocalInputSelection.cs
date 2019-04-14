@@ -81,6 +81,9 @@ public class ContLocalInputSelection : MonoBehaviour {
 
         ResetTar();
 
+        // Can now go back idle and wait for the next targetting
+        SetState(new StateTargetIdle());
+
         //Let everything know that targetting has ended
         subAllFinishTargetting.NotifyObs(this);
     }
@@ -104,11 +107,7 @@ public class ContLocalInputSelection : MonoBehaviour {
         if (indexCurTarget == chrSelected.arActions[nSelectedAbility].nArgs) {
             //Then we've filled of the targetting arguments
 
-            // Can now go back idle and wait for the next targetting
-            SetState(new StateTargetIdle());
-            //Debug.Log ("Targetting finished");
-
-
+            Debug.Log ("Targetting finished");
 
             //Submit our targetting selections to the InputAbilitySelection controller
             FinishTargetting();
@@ -163,7 +162,6 @@ public class ContLocalInputSelection : MonoBehaviour {
     }
 
     public void Start() {
-        Debug.Log("Starting an InputHuman");
         SetState(new StateTargetIdle());
     }
 
