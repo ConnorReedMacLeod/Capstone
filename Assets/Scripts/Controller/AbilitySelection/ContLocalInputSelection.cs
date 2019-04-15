@@ -107,7 +107,7 @@ public class ContLocalInputSelection : MonoBehaviour {
         if (indexCurTarget == chrSelected.arActions[nSelectedAbility].nArgs) {
             //Then we've filled of the targetting arguments
 
-            Debug.Log ("Targetting finished");
+            //Debug.Log ("Targetting finished");
 
             //Submit our targetting selections to the InputAbilitySelection controller
             FinishTargetting();
