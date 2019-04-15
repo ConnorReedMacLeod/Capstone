@@ -9,6 +9,7 @@ public class StatsManager : MonoBehaviour {
     //From strings -> T
     public Dictionary<string, int> dictStats;
 
+    public const string sSTATSPATH = "Stats/stats.txt";
 
     public void Start() {
         dictStats = new Dictionary<string, int>();
@@ -42,10 +43,9 @@ public class StatsManager : MonoBehaviour {
     }
 
     public void WriteStatsFile() {
-        string path = "Logs/stats.txt";
 
         //Write some text to the test.txt file
-        StreamWriter writer = new StreamWriter(path, false);
+        StreamWriter writer = new StreamWriter(sSTATSPATH, false);
         
         foreach(KeyValuePair<string, int> entry in dictStats) {
             
@@ -58,10 +58,10 @@ public class StatsManager : MonoBehaviour {
     }
 
     public void ReadStatsFile() {
-        string path = "Logs/stats.txt";
+        
 
         //Read the text from directly from the test.txt file
-        StreamReader reader = new StreamReader(path);
+        StreamReader reader = new StreamReader(sSTATSPATH);
         while(reader.EndOfStream != true) {
             //Read the stat file in
             string sStat = reader.ReadLine();
