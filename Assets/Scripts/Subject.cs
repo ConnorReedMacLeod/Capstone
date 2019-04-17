@@ -12,6 +12,7 @@ public class Subject{
     public enum SubType { ALL };
 
     //Keep a static list of all static subjects (so that we can reset them as needed)
+    public static List<Subject> lstAllStaticSubjects;
 
     public delegate void FnCallback(Object target, params object[] args);
 
