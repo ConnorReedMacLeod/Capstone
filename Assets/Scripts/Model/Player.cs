@@ -7,8 +7,8 @@ public class Player : MonoBehaviour{
 	bool bStarted;
 
 	public int id;
-	public static int MAXCHRS = 3;
-	public static int MAXPLAYERS = 2;
+	public const int MAXCHRS = 3;
+	public const int MAXPLAYERS = 2;
 	public Chr[] arChr;
 	public Chr.CHARTYPE[] arChrTypeSelection;
 	public int nChrs;
@@ -22,8 +22,8 @@ public class Player : MonoBehaviour{
 
 	public Mana mana;
 
-    public static Subject subAllInputTypeChanged = new Subject();
-    public static Subject subAllPlayerLost = new Subject();
+    public static Subject subAllInputTypeChanged = new Subject(Subject.SubType.ALL);
+    public static Subject subAllPlayerLost = new Subject(Subject.SubType.ALL);
 
     public InputType curInputType;
 

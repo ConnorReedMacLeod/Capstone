@@ -64,7 +64,7 @@ public class ViewInteractive : MonoBehaviour {
     }
 
     public Subject subMouseRightClick = new Subject();
-    public static Subject subGlobalMouseRightClick = new Subject();
+    public static Subject subGlobalMouseRightClick = new Subject(Subject.SubType.ALL);
     public virtual void onMouseRightClick(params object[] args) {
         subMouseRightClick.NotifyObs(this, args);
         subGlobalMouseRightClick.NotifyObs(this, args);

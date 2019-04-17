@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContTurns : MonoBehaviour {
+public class ContTurns : Singleton<ContTurns> {
 
     public bool bStarted = false;
 
     public enum STATETURN {RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSEACTIONS, EXECUTEACTIONS, TURNEND };
     public STATETURN curStateTurn;
-
-    public static ContTurns instance;
 
     public Chr []arChrPriority = new Chr[Player.MAXCHRS];
     public Chr chrNextReady; //Stores the currently acting character this turn (or null if none are acting)
@@ -18,7 +16,7 @@ public class ContTurns : MonoBehaviour {
     public int nTurnNumber;
 
     public Subject subNextActingChrChange = new Subject();
-    public static Subject subAllPriorityChange = new Subject();
+    public static Subject subAllPriorityChange = new Subject(Subject.SubType.ALL);
 
     public static float fDelayChooseAction = 30.0f;
     public const float fDelayTurnAction = 0.0f;
@@ -26,25 +24,6 @@ public class ContTurns : MonoBehaviour {
     public const float fDelayNone = 0.0f;
     public const float fDelayStandard = 1.25f;
 
-
-    
-    //TODO CHANGE ALL .Get() calls in other classes to use properties
-    //     so the syntax isn't as gross
-
-    public static ContTurns Get() {
-        if (instance == null) {
-            GameObject go = GameObject.FindGameObjectWithTag("Controller");
-            if (go == null) {
-                Debug.LogError("ERROR! NO OBJECT HAS A Controller TAG!");
-            }
-            instance = go.GetComponent<ContTurns>();
-            if (instance == null) {
-                Debug.LogError("ERROR! Controller TAGGED OBJECT DOES NOT HAVE A ContTurns COMPONENT!");
-            }
-            instance.Start();
-        }
-        return instance;
-    }
 
     public void FixSortedPriority(Chr chr) {
         //Find the referenced character

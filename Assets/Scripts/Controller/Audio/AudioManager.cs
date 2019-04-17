@@ -2,31 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioManager : MonoBehaviour {
+public class AudioManager : SingletonPersistent<AudioManager> {
 
     public AudioSource srcEffect;                   //A reference to the audiosource that we'll play
-    public static AudioManager inst = null;     //singleton pattern reference           
+    
     public float lowPitchRange = .95f;              //The lowest a sound effect will be randomly pitched
     public float highPitchRange = 1.05f;            //The highest a sound effect will be randomly pitched
-
-
-    public static AudioManager Get() {
-        return inst;
-    }
-
-    void Awake() {
-        //Check if there is already an instance of SoundManager
-        if (inst == null)
-            //if not, set it to this.
-            inst = this;
-        //If instance already exists:
-        else if (inst != this)
-            //Destroy this, which enforces our singleton pattern so there can only be one instance of SoundManager.
-            Destroy(gameObject);
-
-        //Set SoundManager to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.
-        DontDestroyOnLoad(gameObject);
-    }
 
 
     //Used to play single sound clips.

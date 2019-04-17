@@ -3,12 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class ContLocalInputSelection : MonoBehaviour {
-
-    private static ContLocalInputSelection inst;
-    public static ContLocalInputSelection Get() {
-        return inst;
-    }
+public class ContLocalInputSelection : Singleton<ContLocalInputSelection> {
 
     public StateTarget curState;
 
@@ -19,16 +14,8 @@ public class ContLocalInputSelection : MonoBehaviour {
 
     public int indexCurTarget;
 
-    public static Subject subAllStartTargetting = new Subject();
-    public static Subject subAllFinishTargetting = new Subject();
-
-    private void Awake() {
-        if (inst != null && inst != this) {
-            Destroy(this.gameObject);
-        } else {
-            inst = this;
-        }
-    }
+    public static Subject subAllStartTargetting = new Subject(Subject.SubType.ALL);
+    public static Subject subAllFinishTargetting = new Subject(Subject.SubType.ALL);
 
     // Start a new round of targetting
     public void ResetTar() {

@@ -210,14 +210,6 @@ public class Action { //This should probably be made abstract
     //Determine if the ability could be used targetting the passed indices (Note: doesn't include mana check)
 	public virtual bool CanActivate(int[] lstTargettingIndices) {// Maybe this doesn't need to be virtual
 
-        if (lstTargettingIndices == null) {
-            Debug.Log("lstTargettingIndices is null");
-        } else if (lstTargettingIndices.Length == 0) {
-            Debug.Log("lstTargettingIndices is empty");
-        } else {
-            Debug.Log("First target index is " + lstTargettingIndices[0]);
-        }
-
         //Check that the ability isn't on cooldown
         if (nCurCD != 0) {
 			//Debug.Log ("Ability on cd");

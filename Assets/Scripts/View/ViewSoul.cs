@@ -10,8 +10,8 @@ public class ViewSoul : ViewInteractive {
     public Text txtDuration;
 
 
-    public static Subject subAllStartHover = new Subject();
-    public static Subject subAllStopHover = new Subject();
+    public static Subject subAllStartHover = new Subject(Subject.SubType.ALL);
+    public static Subject subAllStopHover = new Subject(Subject.SubType.ALL);
 
 
     public override void onMouseStartHover(params object[] args) {

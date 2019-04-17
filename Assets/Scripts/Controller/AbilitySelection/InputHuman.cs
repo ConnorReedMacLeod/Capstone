@@ -7,8 +7,8 @@ public class InputHuman : InputAbilitySelection {
 
 	public StateTarget curState;
 
-    public static Subject subAllHumanStartSelection = new Subject();
-    public static Subject subAllHumanEndSelection = new Subject();
+    public static Subject subAllHumanStartSelection = new Subject(Subject.SubType.ALL);
+    public static Subject subAllHumanEndSelection = new Subject(Subject.SubType.ALL);
 
     public override void StartSelection() {
 
