@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContAbilityEngine : MonoBehaviour {
+public class ContAbilityEngine : Singleton<ContAbilityEngine> {
 
     public bool bStarted = false;
     public bool bAutoTurns = false;
@@ -16,24 +16,6 @@ public class ContAbilityEngine : MonoBehaviour {
     public const bool bDEBUGENGINE = false;
 
     public static ContAbilityEngine instance;
-
-    //Rather than having a static Get() method, it should be easier to just have
-    // static methods for all of the exec/clause stuff so that you can just directly call them
-    // rather than fetching the static instance first
-    public static ContAbilityEngine Get() {
-        if (instance == null) {
-            GameObject go = GameObject.FindGameObjectWithTag("Controller");
-            if (go == null) {
-                Debug.LogError("ERROR! NO OBJECT HAS A Controller TAG!");
-            }
-            instance = go.GetComponent<ContAbilityEngine>();
-            if (instance == null) {
-                Debug.LogError("ERROR! Controller TAGGED OBJECT DOES NOT HAVE A ContAbilityEngine COMPONENT!");
-            }
-            instance.Start();
-        }
-        return instance;
-    }
 
     public void cbAutoProcessStacks(Object target, params object[] args) {
         if (bAutoTurns == true) return; //If the button is already pressed

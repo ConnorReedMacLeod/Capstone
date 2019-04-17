@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ViewManualTurnsButton : MonoBehaviour {
 
-    public static Subject subAllManualExecuteEvent = new Subject();
+    public static Subject subAllManualExecuteEvent = new Subject(Subject.SubType.ALL);
 
 	public void OnMouseDown(){
         subAllManualExecuteEvent.NotifyObs(this);

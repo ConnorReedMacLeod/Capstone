@@ -19,9 +19,9 @@ public class ViewAction : ViewInteractive {
     public Text txtCooldown;
     public Text txtFatigue;
 
-    public static Subject subAllClick = new Subject();
-    public static Subject subAllStartHover = new Subject();
-    public static Subject subAllStopHover = new Subject();
+    public static Subject subAllClick = new Subject(Subject.SubType.ALL);
+    public static Subject subAllStartHover = new Subject(Subject.SubType.ALL);
+    public static Subject subAllStopHover = new Subject(Subject.SubType.ALL);
 
     public override void onMouseClick(params object[] args) {
 

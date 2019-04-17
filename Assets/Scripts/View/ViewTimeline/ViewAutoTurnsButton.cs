@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ViewAutoTurnsButton : MonoBehaviour {
 
-    public static Subject subAllAutoExecuteEvent = new Subject();
+    public static Subject subAllAutoExecuteEvent = new Subject(Subject.SubType.ALL);
 
     public void OnMouseDown() {
         subAllAutoExecuteEvent.NotifyObs(this);

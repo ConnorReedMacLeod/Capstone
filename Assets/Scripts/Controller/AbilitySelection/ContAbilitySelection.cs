@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContAbilitySelection : MonoBehaviour {
+public class ContAbilitySelection : Singleton<ContAbilitySelection> {
 
     public bool bSelectingAbility;
     public float fMaxSelectionTime;
@@ -23,22 +23,6 @@ public class ContAbilitySelection : MonoBehaviour {
     //As a fix for an infinite loop in the AI controller (which really should be fixed at some point), keep track of how many bad inputs we've been given
     public int nBadSelectionsGiven;
 
-    public static ContAbilitySelection instance;
-
-    public static ContAbilitySelection Get() {
-        if (instance == null) {
-            GameObject go = GameObject.FindGameObjectWithTag("Controller");
-            if (go == null) {
-                Debug.LogError("ERROR! NO OBJECT HAS A Controller TAG!");
-            }
-            instance = go.GetComponent<ContAbilitySelection>();
-            if (instance == null) {
-                Debug.LogError("ERROR! Controller TAGGED OBJECT DOES NOT HAVE A ContTarget COMPONENT!");
-            }
-            instance.Start();
-        }
-        return instance;
-    }
 
     public void SetMaxSelectionTime(DELAYOPTIONS delay) {
         switch (delay) {

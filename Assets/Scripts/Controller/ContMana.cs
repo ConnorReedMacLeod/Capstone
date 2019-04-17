@@ -2,25 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContMana : MonoBehaviour{
+public class ContMana : Singleton<ContMana>{
 
     public KeyCode keyEnemyModifier; //For testing, holding this will make you change the enemies mana pool
 
     public int[] arnManaReserves;
     public const int nMaxReserves = 3;
-
-    private static ContMana inst;
-    public static ContMana Get() {
-        return inst;
-    }
-
-    private void Awake() {
-        if (inst != null && inst != this) {
-            Destroy(this.gameObject);
-        } else {
-            inst = this;
-        }
-    }
 
     public void Start () {
 		InitBindings ();

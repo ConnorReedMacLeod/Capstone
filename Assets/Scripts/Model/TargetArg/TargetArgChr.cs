@@ -14,7 +14,6 @@ public class TargetArgChr : TargetArg {
 	}
 
     public override bool WouldBeLegal(int indexTarget){
-        Debug.Log("indexTarget is " + indexTarget);
 
         if(indexTarget >= Chr.arAllChrs.Length) {
             Debug.LogError("Trying to select a character with index " + indexTarget + " that doesn't exist");
