@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class ContAbilityEngine : Singleton<ContAbilityEngine> {
 
-    public bool bStarted = false;
     public bool bAutoTurns = false;
 
     public Stack<Clause> stackClause = new Stack<Clause>();
@@ -264,10 +263,7 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
 
     }
 
-    public void Start() {
-        if (bStarted) return;
-        bStarted = true;
-
+    public override void Init() {
 
         ViewAutoTurnsButton.subAllAutoExecuteEvent.Subscribe(cbAutoProcessStacks);
         ViewManualTurnsButton.subAllManualExecuteEvent.Subscribe(cbManualExecuteEvent);

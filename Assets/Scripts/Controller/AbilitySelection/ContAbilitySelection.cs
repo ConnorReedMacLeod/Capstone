@@ -40,10 +40,9 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
         }
     }
 
-    public void Start() {
+    public override void Init() {
 
-        //Set our delay time to sync up with the constant
-        SetMaxSelectionTime(DELAYOPTIONS.MEDIUM);
+        //SetMaxSelectionTime(DELAYOPTIONS.MEDIUM);
 
         EndSelection();
 

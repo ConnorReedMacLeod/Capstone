@@ -9,7 +9,8 @@ using UnityEngine;
 
 public class Subject{
 
-    public enum SubType { ALL };
+    public enum SubType { ALL }; //A flag to pass to the constructor when initiallizing 
+                                 // static subjects 
 
     //Keep a static list of all static subjects (so that we can reset them as needed)
     public static List<Subject> lstAllStaticSubjects;

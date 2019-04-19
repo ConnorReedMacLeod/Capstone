@@ -20,6 +20,11 @@ public class ContTime : Singleton<ContTime> {
     };
 
 
+    public override void Init() {
+        //Nothing to initialize right now
+
+    }
+
     public List<InvokeFunc> lstInvokes = new List<InvokeFunc>();
 
 
