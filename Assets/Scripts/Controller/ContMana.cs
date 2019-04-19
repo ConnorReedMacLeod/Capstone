@@ -9,13 +9,16 @@ public class ContMana : Singleton<ContMana>{
     public int[] arnManaReserves;
     public const int nMaxReserves = 3;
 
-    public void Start () {
-		InitBindings ();
+    public override void Init() {
+
+        //TODO:: These bindings should probably be set somewhere else - they shouldn't really be re-initialized here every time
+
+        InitBindings();
         keyEnemyModifier = KeyCode.Tab;
 
         arnManaReserves = new int[Mana.nManaTypes - 1]; //sub 1 since we don't give out effort
         ResetManaReserves();
-	}
+    }
 
 
     public void ResetManaReserves() {

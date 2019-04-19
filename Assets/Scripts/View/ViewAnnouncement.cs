@@ -14,11 +14,10 @@ public class ViewAnnouncement : Singleton<ViewAnnouncement> {
 
     public string sLabel;
 
-    private void Start() {
+    public override void Init() {
         sAnnouncement = "";
         SetText();
     }
-
 
     public void SetText() {
         txtTime.text = sAnnouncement;

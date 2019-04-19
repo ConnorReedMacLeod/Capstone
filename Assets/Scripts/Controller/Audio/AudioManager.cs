@@ -45,4 +45,8 @@ public class AudioManager : SingletonPersistent<AudioManager> {
         //Play the selected clip and return the time of that clip
         return PlaySingle(clip);
     }
+
+    public override void Init() {
+       //Don't need to do anything for now - At some point, maybe we want to initialize things like volume options
+    }
 }

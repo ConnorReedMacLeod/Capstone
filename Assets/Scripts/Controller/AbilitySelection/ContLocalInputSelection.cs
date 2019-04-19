@@ -148,9 +148,12 @@ public class ContLocalInputSelection : Singleton<ContLocalInputSelection> {
         }
     }
 
-    public void Start() {
+    public override void Init() {
+
         SetState(new StateTargetIdle());
+
     }
+
 
     public ContLocalInputSelection() {
 

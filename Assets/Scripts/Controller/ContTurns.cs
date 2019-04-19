@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class ContTurns : Singleton<ContTurns> {
 
-    public bool bStarted = false;
-
     public enum STATETURN {RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSEACTIONS, EXECUTEACTIONS, TURNEND };
     public STATETURN curStateTurn;
 
@@ -201,17 +199,14 @@ public class ContTurns : Singleton<ContTurns> {
         curStateTurn = _curStateTurn;
     }
 
-    // Use this for initialization
-    void Start () {
-        if (bStarted) return;
+    public override void Init() {
 
-        bStarted = true;
         InitChrPriority();
         InitChrTurns();
 
         nTurnNumber = 1;
 
         nLiveCharacters = Player.MAXPLAYERS * Player.MAXCHRS;
-
     }
+
 }
