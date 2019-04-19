@@ -42,12 +42,20 @@ public class Subject{
 
     }
 
+    public void ResetSubject() {
+
+        lstCallbacks = new List<FnCallback>();
+
+    }
+
     public static void ResetAllStaticSubjects() {
 
         //Reinitalize all of the static subjects so that they can be reinitialized properly
         // when restarting the game
         for(int i=0; i<lstAllStaticSubjects.Count; i++) {
-            lstAllStaticSubjects[i] = new Subject();
+            Debug.Log("length of callbacks is " + lstAllStaticSubjects[i].lstCallbacks.Count);
+            lstAllStaticSubjects[i].ResetSubject();
+            Debug.Log("length of callbacks is " + lstAllStaticSubjects[i].lstCallbacks.Count);
         }
 
     }
