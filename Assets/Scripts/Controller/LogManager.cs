@@ -47,11 +47,8 @@ public class LogManager : MonoBehaviour {
 
         Debug.Log(sLogfilePath);
 
-        File.Create(sLogfilePath);
-  
-
         //Initialize the writer
-        swFileWriter = new StreamWriter(sLogfilePath, true);
+        swFileWriter = new StreamWriter(sLogfilePath, false);
 
     }
 
