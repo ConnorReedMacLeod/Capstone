@@ -1,0 +1,2 @@
+UnityEngine.Random+State
+ApplicationQuit
