@@ -37,28 +37,14 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
 
     }
 
-    public virtual void ResetSingleton() {
-        bStarted = false;
-        Start();
-    }
-
-   /* public static void ResetAllSingletons() {
-
-        //Call the reset method for each singleton so they can initialize anything they need
-        for (int i = 0; i < lstAllSinglestons.Count; i++) {
-            lstAllSinglestons[i].ResetSingleton();
-        }
-
-    }*/
-
+    //Singletons will Initialize themselves once when they're created (but will only get to exist if another instance doesn't already exist
+    // - switching scenes will delete the previous instance and let a new one Init itself and become the new singleton instance
     public abstract void Init();
 
     public virtual void Start() {
 
         if (bStarted == true) return;
         bStarted = true;
-
-        //lstAllSinglestons.Add(this);
 
         Init();
 

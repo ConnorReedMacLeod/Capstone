@@ -102,8 +102,7 @@ public class Player : MonoBehaviour{
 
         //Let the controller know which player its representing
         inputController.SetOwner(this);
-
-        Debug.Log("subAllInputTypeChanged has " + subAllInputTypeChanged.lstCallbacks.Count + " callbacks in its list");
+        
         subAllInputTypeChanged.NotifyObs(this, curInputType);
     }
 
@@ -155,12 +154,8 @@ public class Player : MonoBehaviour{
     // Use this for initialization
     public void Start () {
 
-        Debug.Log("In Player's start method");
-
 		if (bStarted == false) {
 			bStarted = true;
-
-            Debug.Log("Actually starting a Player");
 
             arChr = new Chr[MAXCHRS];
 			arChrTypeSelection = new Chr.CHARTYPE[MAXCHRS];
