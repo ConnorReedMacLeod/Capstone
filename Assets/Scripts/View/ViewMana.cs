@@ -30,16 +30,13 @@ public class ViewMana : MonoBehaviour {
 
     // Use this for initialization
     public void Start() {
-        Debug.Log("in start method of instance owned by " + gameObject.name);
 		if (bStarted == false) {
-            Debug.Log("actually starting");
 			bStarted = true;
 			InitModel();
 
             mod.subManaChange.Subscribe(cbManaChange);
             mod.subManaPoolChange.Subscribe(cbManaPoolChange);
-
-            Debug.Log("subscribing ViewMana to subAllInputTypeChanged to have count " + Player.subAllInputTypeChanged.lstCallbacks.Count);
+            
             Player.subAllInputTypeChanged.Subscribe(cbInputTypeChanged);
 
         }
@@ -50,12 +47,6 @@ public class ViewMana : MonoBehaviour {
     }
 
     public void PositionPanel() {
-        
-        //Start();//Ensure we've started before trying to positions ourselves
-
-        Debug.Log(mod);
-        Debug.Log(mod.plyr);
-        Debug.Log(mod.plyr.curInputType);
 
         //If both players are human
         if (mod.plyr.curInputType == Player.InputType.HUMAN && mod.plyr.GetEnemyPlayer().curInputType == Player.InputType.HUMAN) {
