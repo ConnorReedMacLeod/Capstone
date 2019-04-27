@@ -2,12 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContTime : MonoBehaviour {
-
-    private static ContTime inst;
-    public static ContTime Get() {
-        return inst;
-    }
+public class ContTime : Singleton<ContTime> {
 
 
     public bool bPaused;
@@ -24,6 +19,11 @@ public class ContTime : MonoBehaviour {
         }
     };
 
+
+    public override void Init() {
+        //Nothing to initialize right now
+
+    }
 
     public List<InvokeFunc> lstInvokes = new List<InvokeFunc>();
 
@@ -54,15 +54,6 @@ public class ContTime : MonoBehaviour {
             return inv.fDelay <= 0f;
         });
 
-    }
-
-
-    private void Awake() {
-        if (inst != null && inst != this) {
-            Destroy(this.gameObject);
-        } else {
-            inst = this;
-        }
     }
 
     private void SetDeltaTime() {

@@ -7,8 +7,8 @@ public class StateTargetTeam : StateTarget {
 
     TargetArgTeam tarArg;
 
-    public static Subject subAllStartSelection = new Subject();
-    public static Subject subAllFinishSelection = new Subject();
+    public static Subject subAllStartSelection = new Subject(Subject.SubType.ALL);
+    public static Subject subAllFinishSelection = new Subject(Subject.SubType.ALL);
 
     public void cbCancelTargetting(Object target, params object[] args) {
         ContLocalInputSelection.Get().CancelTar();
