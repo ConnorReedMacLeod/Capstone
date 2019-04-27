@@ -58,9 +58,9 @@ public class ViewChr : ViewInteractive {
     public SpriteMask maskPortrait;     //SpriteMask Reference
     public ViewSoulContainer viewSoulContainer;  //SoulContainer Reference
 
-    public static Subject subAllStartHover = new Subject();
-    public static Subject subAllStopHover = new Subject();
-    public static Subject subAllClick = new Subject();
+    public static Subject subAllStartHover = new Subject(Subject.SubType.ALL);
+    public static Subject subAllStopHover = new Subject(Subject.SubType.ALL);
+    public static Subject subAllClick = new Subject(Subject.SubType.ALL);
 
     public void Start()
     {

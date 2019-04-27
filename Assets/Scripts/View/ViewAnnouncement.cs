@@ -3,12 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ViewAnnouncement : MonoBehaviour {
-
-    private static ViewAnnouncement inst;
-    public static ViewAnnouncement Get() {
-        return inst;
-    }
+public class ViewAnnouncement : Singleton<ViewAnnouncement> {
 
     public Text txtTime;
 
@@ -19,19 +14,10 @@ public class ViewAnnouncement : MonoBehaviour {
 
     public string sLabel;
 
-    private void Start() {
+    public override void Init() {
         sAnnouncement = "";
         SetText();
     }
-
-    private void Awake() {
-        if(inst != null && inst != this) {
-            Destroy(this.gameObject);
-        } else {
-            inst = this;
-        }
-    }
-
 
     public void SetText() {
         txtTime.text = sAnnouncement;

@@ -9,6 +9,12 @@ using UnityEngine;
 
 public class Subject{
 
+    public enum SubType { ALL }; //A flag to pass to the constructor when initiallizing 
+                                 // static subjects 
+
+    //Keep a static list of all static subjects (so that we can reset them as needed)
+    public static List<Subject> lstAllStaticSubjects;
+
     public delegate void FnCallback(Object target, params object[] args);
 
     public List<FnCallback> lstCallbacks = new List<FnCallback>();
@@ -20,6 +26,37 @@ public class Subject{
     public Subject(Subject subToCopy) {
 
         lstCallbacks = new List<FnCallback>(subToCopy.lstCallbacks);
+    }
+
+    //To be called only when creating static instances of Subjects
+    public Subject(SubType subType) {
+
+        if(lstAllStaticSubjects == null) {
+            lstAllStaticSubjects = new List<Subject>();
+        }
+
+        //Note - in principle, since these are static, they should never be destroyed
+        //       and thus should never need to be removed from this list
+        lstAllStaticSubjects.Add(this);
+        //Debug.Log("added to lstAllStaticSubjects " + this.ToString());
+
+    }
+
+    public void ResetSubject() {
+
+        //Clear the list of callback functions
+        lstCallbacks = new List<FnCallback>();
+
+    }
+
+    public static void ResetAllStaticSubjects() {
+
+        //Reinitalize all of the static subjects so that they can be reinitialized properly
+        // when restarting the game
+        for(int i=0; i<lstAllStaticSubjects.Count; i++) {
+            lstAllStaticSubjects[i].ResetSubject();
+        }
+
     }
 
 	public void Subscribe(FnCallback fnCallback){

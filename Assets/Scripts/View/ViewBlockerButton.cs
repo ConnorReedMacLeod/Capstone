@@ -9,9 +9,9 @@ public class ViewBlockerButton : ViewInteractive {
 
     public const int id = Chr.idBlocking;                              //The standard id for the block action
 
-    public static Subject subAllClick = new Subject();
-    public static Subject subAllStartHover = new Subject();
-    public static Subject subAllStopHover = new Subject();
+    public static Subject subAllClick = new Subject(Subject.SubType.ALL);
+    public static Subject subAllStartHover = new Subject(Subject.SubType.ALL);
+    public static Subject subAllStopHover = new Subject(Subject.SubType.ALL);
 
     public bool ButtonVisible() {
         //Needs to have a character that's acting next this turn, and is selected (and maybe should be in the ability selection phase)
