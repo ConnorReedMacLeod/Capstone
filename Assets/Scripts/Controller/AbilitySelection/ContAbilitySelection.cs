@@ -100,16 +100,6 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
                 chrActing.sName + "'s turn to select an ability");
         }
 
-        Debug.Log("input's type is " + input.GetType().ToString());
-
-
-        if (input.arTargetIndices == null) {
-            Debug.Log("arTargetIndices is null");
-        } else if (input.arTargetIndices.Length == 0) {
-            Debug.Log("arTargetIndices is empty");
-        }else {
-            Debug.Log("First target index is " + input.arTargetIndices[0]);
-        }
 
         // confirm that the target is valid
         //(checks actionpoint usage, cd, mana, targetting)

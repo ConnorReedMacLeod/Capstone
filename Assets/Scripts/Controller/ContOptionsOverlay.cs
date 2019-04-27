@@ -28,11 +28,6 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
         //Clear out any static subject lists
         Subject.ResetAllStaticSubjects();
 
-        //Now reset any singleton classes
-        //TODONOW:: Figure this out
-
-        Debug.Log("Transitioning to new scene");
-
         //Now transition back to this level (reset the scene)
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 

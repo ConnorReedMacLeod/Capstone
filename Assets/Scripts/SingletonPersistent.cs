@@ -11,8 +11,4 @@ public abstract class SingletonPersistent<T> : Singleton<T> where T : MonoBehavi
 
         DontDestroyOnLoad(gameObject);
     }
-
-    public override void ResetSingleton() {
-        //Don't do anything - Since we are persistent, we shouldn't (by default) do any resetting between scenes
-    }
 }
