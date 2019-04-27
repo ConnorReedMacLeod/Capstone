@@ -30,10 +30,10 @@ public class Mana : MonoBehaviour{
 	public LinkedList<MANATYPE> qManaPool;
 
     public Subject subManaChange = new Subject();
-    public static Subject subAllManaChange = new Subject();
+    public static Subject subAllManaChange = new Subject(Subject.SubType.ALL);
 
     public Subject subManaPoolChange = new Subject();
-    public static Subject subAllManaPoolChange = new Subject();
+    public static Subject subAllManaPoolChange = new Subject(Subject.SubType.ALL);
 
 
     public static int[] ConvertToCost(int[] arCost) {

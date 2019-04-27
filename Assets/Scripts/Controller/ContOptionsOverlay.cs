@@ -1,10 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class ContOptionsOverlay : MonoBehaviour {
-
-    public bool bStarted = false;
+public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
 
     public ViewOptionsButton btnPlyr0Human;
     public ViewOptionsButton btnPlyr0AI;
@@ -14,7 +13,7 @@ public class ContOptionsOverlay : MonoBehaviour {
     public ViewOptionsButton btnTimerMedium;
     public ViewOptionsButton btnTimerInf;
 
-    //public ViewOptionsButton btnRestart;
+    public ViewOptionsButton btnRestart;
 
     public Subject subPlayer0SelectedInGroup = new Subject();
     public Subject subPlayer1SelectedInGroup = new Subject();
@@ -23,6 +22,21 @@ public class ContOptionsOverlay : MonoBehaviour {
     public Vector3 v3OnScreen = new Vector3(0f, 0f, -1f);
     public Vector3 v3OffScreen = new Vector3(-100f, -100f, -1f);
 
+
+    public void cbClickRestart(Object target, params object[] args) {
+
+        //Clear out any static subject lists
+        Subject.ResetAllStaticSubjects();
+
+        //Now reset any singleton classes
+        //TODONOW:: Figure this out
+
+        Debug.Log("Transitioning to new scene");
+
+        //Now transition back to this level (reset the scene)
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+    }
 
 
     public void cbClickPlyr0Human(Object target, params object[] args) {
@@ -91,6 +105,7 @@ public class ContOptionsOverlay : MonoBehaviour {
         btnTimerFast.subClick.Subscribe(cbClickTimerFast);
         btnTimerMedium.subClick.Subscribe(cbClickTimerMedium);
         btnTimerInf.subClick.Subscribe(cbClickTimerInf);
+        btnRestart.subClick.Subscribe(cbClickRestart);
 
         //And listen for the open menu shortcut
         KeyBindings.SetBinding(cbOnLeave, KeyCode.Escape);
@@ -111,6 +126,7 @@ public class ContOptionsOverlay : MonoBehaviour {
         btnTimerFast.subClick.UnSubscribe(cbClickTimerFast);
         btnTimerMedium.subClick.UnSubscribe(cbClickTimerMedium);
         btnTimerInf.subClick.UnSubscribe(cbClickTimerInf);
+        btnRestart.subClick.UnSubscribe(cbClickRestart);
 
         //And listen for the open menu shortcut
         KeyBindings.SetBinding(cbOnEnter, KeyCode.Escape);
@@ -136,25 +152,25 @@ public class ContOptionsOverlay : MonoBehaviour {
         //Initially Set the default options
         btnPlyr0Human.bSelected = true;
         subPlayer0SelectedInGroup.NotifyObs(btnPlyr0Human);
+
         btnPlyr1AI.bSelected = true;
         subPlayer1SelectedInGroup.NotifyObs(btnPlyr1AI);
+
+        ContAbilitySelection.Get().SetMaxSelectionTime(ContAbilitySelection.DELAYOPTIONS.MEDIUM);
         btnTimerMedium.bSelected = true;
         subTimerSelectedInGroup.NotifyObs(btnTimerMedium);
     }
 
-    void Start () {
-	    if(bStarted == false) {
-            bStarted = true;
+    public override void Init() {
+        //TODO:: Decide what things should persist between scene changes (default options/keybinds)
+        InitButtonGroups();
+        InitDefaultOptions();
 
-            InitButtonGroups();
-            InitDefaultOptions();
+        //Initially hide the menu
+        this.transform.position = v3OffScreen;
 
-            //Initially hide the menu
-            this.transform.position = v3OffScreen;
+        //And listen for the open menu shortcut
+        KeyBindings.SetBinding(cbOnEnter, KeyCode.Escape);
+    }
 
-            //And listen for the open menu shortcut
-            KeyBindings.SetBinding(cbOnEnter, KeyCode.Escape);
-
-        }	
-	}
 }
