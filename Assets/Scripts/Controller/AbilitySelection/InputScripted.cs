@@ -60,12 +60,12 @@ public class InputScripted : InputAbilitySelection {
             nSelectedAbility = nextSelection.Key;
             arTargetIndices = nextSelection.Value;
 
-            Debug.Log(ContTurns.Get().GetNextActingChr().sName + " wants chosen to use " +
-               ContTurns.Get().GetNextActingChr().arActions[nSelectedAbility].sName + " with target index " + arTargetIndices[0]);
+            //Debug.Log(ContTurns.Get().GetNextActingChr().sName + " wants chosen to use " +
+             //  ContTurns.Get().GetNextActingChr().arActions[nSelectedAbility].sName + " with target index " + arTargetIndices[0]);
 
             //Test to see if this ability would be valid
             if (ContTurns.Get().GetNextActingChr().arActions[nSelectedAbility].CanActivate(arTargetIndices) == false) {
-                Debug.Log("The targets given would not be legal");
+                //Debug.Log("The targets given would not be legal");
 
                 if(nTargetsTried >= MAXTARGETATTEMPTS) {
                     //If we've tried too many abilities with no success, just end our selections
@@ -82,7 +82,7 @@ public class InputScripted : InputAbilitySelection {
                 }
             } else {
                 //If the selection is valid
-                Debug.Log("Automatic selection is valid");
+                //Debug.Log("Automatic selection is valid");
 
                 //Our selection information has already been saved
 
@@ -93,14 +93,14 @@ public class InputScripted : InputAbilitySelection {
         }
 
         //At this point, we will have selected an action/targetting and saved the information in our fields
-        Debug.Log(ContTurns.Get().GetNextActingChr().sName + " has automatically chosen to use " +
-                ContTurns.Get().GetNextActingChr().arActions[nSelectedAbility].sName + " with target index " + arTargetIndices[0]);
+        //Debug.Log(ContTurns.Get().GetNextActingChr().sName + " has automatically chosen to use " +
+        //        ContTurns.Get().GetNextActingChr().arActions[nSelectedAbility].sName + " with target index " + arTargetIndices[0]);
 
 
         //We now need to ready enough effort mana to pay for the ability
         AutoPayCost(ContTurns.Get().GetNextActingChr().arActions[nSelectedAbility].parCost.Get());
 
-        Debug.Log("arIndexTargetting[0] is " + arTargetIndices[0]);
+        //Debug.Log("arIndexTargetting[0] is " + arTargetIndices[0]);
 
         ContAbilitySelection.Get().SubmitAbility(this);
 
