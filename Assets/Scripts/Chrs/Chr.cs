@@ -68,29 +68,29 @@ public class Chr : MonoBehaviour {
 	public STATESELECT stateSelect; //The character's state
 
     public Subject subStartSelect = new Subject();
-    public static Subject subAllStartSelect = new Subject();
+    public static Subject subAllStartSelect = new Subject(Subject.SubType.ALL);
     public Subject subStartTargetting = new Subject();
-    public static Subject subAllStartTargetting = new Subject();
+    public static Subject subAllStartTargetting = new Subject(Subject.SubType.ALL);
     public Subject subStartIdle = new Subject();
-    public static Subject subAllStartIdle = new Subject();
+    public static Subject subAllStartIdle = new Subject(Subject.SubType.ALL);
 
 
     public Subject subBeforeActivatingAction = new Subject();
-    public static Subject subAllBeforeActivatingAction = new Subject();
+    public static Subject subAllBeforeActivatingAction = new Subject(Subject.SubType.ALL);
     public Subject subPreExecuteAbility = new Subject();
-    public static Subject subAllPreExecuteAbility = new Subject();
+    public static Subject subAllPreExecuteAbility = new Subject(Subject.SubType.ALL);
     public Subject subPostExecuteAbility = new Subject();
-    public static Subject subAllPostExecuteAbility = new Subject();
+    public static Subject subAllPostExecuteAbility = new Subject(Subject.SubType.ALL);
 
     public Subject subLifeChange = new Subject();
     public Subject subArmourCleared = new Subject();
     public Subject subFatigueChange = new Subject();
-    public static Subject subAllFatigueChange = new Subject();
+    public static Subject subAllFatigueChange = new Subject(Subject.SubType.ALL);
     public Subject subChannelTimeChange = new Subject();
     public Subject subBlockerChanged = new Subject();
 
     public Subject subStatusChange = new Subject();
-    public static Subject subAllStatusChange = new Subject();
+    public static Subject subAllStatusChange = new Subject(Subject.SubType.ALL);
 
     public Subject subSoulApplied = new Subject();
     public Subject subSoulRemoved = new Subject();
@@ -98,7 +98,7 @@ public class Chr : MonoBehaviour {
     public Subject subStunApplied = new Subject();
 
     public Subject subDeath = new Subject();
-    public static Subject subAllDeath = new Subject();
+    public static Subject subAllDeath = new Subject(Subject.SubType.ALL);
 
     public void SetStateReadiness(StateReadiness newState) {
 

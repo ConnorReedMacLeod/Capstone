@@ -2,33 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContMana : MonoBehaviour{
+public class ContMana : Singleton<ContMana>{
 
     public KeyCode keyEnemyModifier; //For testing, holding this will make you change the enemies mana pool
 
     public int[] arnManaReserves;
     public const int nMaxReserves = 3;
 
-    private static ContMana inst;
-    public static ContMana Get() {
-        return inst;
-    }
+    public override void Init() {
 
-    private void Awake() {
-        if (inst != null && inst != this) {
-            Destroy(this.gameObject);
-        } else {
-            inst = this;
-        }
-    }
+        //TODO:: These bindings should probably be set somewhere else - they shouldn't really be re-initialized here every time
 
-    public void Start () {
-		InitBindings ();
+        InitBindings();
         keyEnemyModifier = KeyCode.Tab;
 
         arnManaReserves = new int[Mana.nManaTypes - 1]; //sub 1 since we don't give out effort
         ResetManaReserves();
-	}
+    }
 
 
     public void ResetManaReserves() {

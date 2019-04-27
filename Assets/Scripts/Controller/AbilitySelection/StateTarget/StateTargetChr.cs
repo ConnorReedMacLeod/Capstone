@@ -8,8 +8,8 @@ public class StateTargetChr : StateTarget {
 	TargetArgChr tarArg;
 
 
-    public static Subject subAllStartSelection = new Subject();
-    public static Subject subAllFinishSelection = new Subject();
+    public static Subject subAllStartSelection = new Subject(Subject.SubType.ALL);
+    public static Subject subAllFinishSelection = new Subject(Subject.SubType.ALL);
 
     public void cbCancelTargetting(object target, params object [] args) {
         ContLocalInputSelection.Get().CancelTar();

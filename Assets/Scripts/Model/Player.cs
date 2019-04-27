@@ -7,8 +7,8 @@ public class Player : MonoBehaviour{
 	bool bStarted;
 
 	public int id;
-	public static int MAXCHRS = 3;
-	public static int MAXPLAYERS = 2;
+	public const int MAXCHRS = 3;
+	public const int MAXPLAYERS = 2;
 	public Chr[] arChr;
 	public Chr.CHARTYPE[] arChrTypeSelection;
 	public int nChrs;
@@ -22,8 +22,8 @@ public class Player : MonoBehaviour{
 
 	public Mana mana;
 
-    public static Subject subAllInputTypeChanged = new Subject();
-    public static Subject subAllPlayerLost = new Subject();
+    public static Subject subAllInputTypeChanged = new Subject(Subject.SubType.ALL);
+    public static Subject subAllPlayerLost = new Subject(Subject.SubType.ALL);
 
     public InputType curInputType;
 
@@ -103,6 +103,7 @@ public class Player : MonoBehaviour{
         //Let the controller know which player its representing
         inputController.SetOwner(this);
 
+        Debug.Log("subAllInputTypeChanged has " + subAllInputTypeChanged.lstCallbacks.Count + " callbacks in its list");
         subAllInputTypeChanged.NotifyObs(this, curInputType);
     }
 
@@ -154,8 +155,12 @@ public class Player : MonoBehaviour{
     // Use this for initialization
     public void Start () {
 
+        Debug.Log("In Player's start method");
+
 		if (bStarted == false) {
 			bStarted = true;
+
+            Debug.Log("Actually starting a Player");
 
             arChr = new Chr[MAXCHRS];
 			arChrTypeSelection = new Chr.CHARTYPE[MAXCHRS];
@@ -165,7 +170,7 @@ public class Player : MonoBehaviour{
 
 			mana.SetPlayer (this);
 
-			//TODO: Change this, all this, too work with networking
+			//TODO: Change this, all this, to work with networking
 			if (id == 0) {
 				manaPanel.transform.position = new Vector3(0f, 2.85f, -0.4f);
 			} else {
