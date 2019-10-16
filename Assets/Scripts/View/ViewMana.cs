@@ -103,6 +103,7 @@ public class ViewMana : MonoBehaviour {
                 DisplayMana(txtManaBlood, mod.arMana[(int)Mana.MANATYPE.BLOOD]);
                 break;
         }
+
     }
 
     public void cbManaPoolChange(Object target, params object[] args) {
