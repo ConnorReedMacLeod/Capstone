@@ -26,16 +26,26 @@ public class ContTime : Singleton<ContTime> {
     }
 
     public List<InvokeFunc> lstInvokes = new List<InvokeFunc>();
+    public List<InvokeFunc> lstBufferToInvoke = new List<InvokeFunc>();
 
 
     public void Invoke(float _fDelay, System.Action _funcToCall) {
-        lstInvokes.Add(new InvokeFunc(_fDelay, _funcToCall));
-
+        lstBufferToInvoke.Add(new InvokeFunc(_fDelay, _funcToCall));
     }
 
 
     public void ProgressInvokes() {
 
+        //Make a copy of the functions we need to add to our list of invoked function (to avoid issues of insertion when iterating through it)
+        InvokeFunc[] arTemp = lstBufferToInvoke.ToArray();
+        //Once our copies made, clear out the buffer so that we can accept new additions
+        lstBufferToInvoke.Clear();
+
+        //Add each function to the list we will actually tick down
+        foreach(InvokeFunc inv in arTemp) {
+            lstInvokes.Add(inv);
+        }
+        
 
         lstInvokes.ForEach(delegate (InvokeFunc inv) {
             //Tick down the remaining time
@@ -53,6 +63,8 @@ public class ContTime : Singleton<ContTime> {
         lstInvokes.RemoveAll(delegate (InvokeFunc inv) {
             return inv.fDelay <= 0f;
         });
+
+        
 
     }
 
