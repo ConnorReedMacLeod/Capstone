@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Photon.Pun;
+
 // Will generally contain everything in a match
 // responsible for creating and managing the game
 
@@ -152,6 +154,15 @@ public class Match : MonoBehaviour {
 		return controller;
 	}
 
+    public void InitNetworking() {
+
+        //Spawn the  client networking manager for our local player (and let the opponent spawn their own controller)
+        GameObject goNetworkController = PhotonNetwork.Instantiate("pfNetworkController", Vector3.zero, Quaternion.identity);
+
+        if(goNetworkController = null) {
+            Debug.LogError("No prefab found for network controller");
+        }
+    }
 
 	public void Start(){
         if (bStarted) {
@@ -171,6 +182,8 @@ public class Match : MonoBehaviour {
 		InitAllChrs ();
 
         InitAllBlockers();
+
+        InitNetworking();
 
 		Cursor.SetCursor(txCursor, v2HotSpot, cursorMode);
 

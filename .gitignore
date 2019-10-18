@@ -1,8 +1,9 @@
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
-/[Bb]uilds/
+/Builds*
 /[Ll]ogs/
+/[Ss]tats/
 /Assets/AssetStoreTools*
 /Assets/Photon*
 
