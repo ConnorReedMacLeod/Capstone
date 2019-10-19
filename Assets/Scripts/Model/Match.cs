@@ -156,6 +156,8 @@ public class Match : MonoBehaviour {
 
     public void InitNetworking() {
 
+        Debug.Log("Spawning networkcontroller");
+
         //Spawn the  client networking manager for our local player (and let the opponent spawn their own controller)
         GameObject goNetworkController = PhotonNetwork.Instantiate("pfNetworkController", Vector3.zero, Quaternion.identity);
 
