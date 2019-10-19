@@ -16,6 +16,8 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
     public Text txtDisplayMessage;
 
+    public bool bOfflineMode;
+
     public bool bTriesToConnectToMaster;
     public bool bTriesToConnectToRoom;
 
@@ -23,16 +25,44 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
     public static int nMyLevel = 1;
 
-    public enum MATCHTYPE { SOLO, STANDARD };
-    public static MATCHTYPE matchType;
+    public enum MATCHTYPE { SOLO, STANDARD, AI };
+    public MATCHTYPE matchType;
 
-    // Start is called before the first frame update
-    void Start() {
+    public static NetworkConnectionManager inst;
+
+    public void Awake() {
+
+        if (inst != null) {
+            //If an static instance exists,
+            // then panic!  Destroy ourselves
+            Debug.LogError("Warning!  This singleton already exists (" + gameObject.name + "), so we shouldn't instantiate a new one");
+            Destroy(gameObject);
+
+        } else {
+            inst = this;
+        }
 
         DontDestroyOnLoad(gameObject);
+    }
+
+    public static NetworkConnectionManager Get() {
+
+        if (inst == null) {
+            Debug.LogError("Error! Static instance not set!");
+        }
+
+        return inst;
+    }
+
+    // Start is called before the first frame update
+    void Start() { 
+
         bTriesToConnectToMaster = false;
         bTriesToConnectToRoom = false;
         bInMatch = false;
+
+        Debug.Log("Offline mode is " + bOfflineMode);
+        PhotonNetwork.OfflineMode = bOfflineMode; //true would "fake" an online connection
     }
 
     // Update is called once per frame
@@ -71,15 +101,18 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
             bInMatch = true;
 
-            PhotonNetwork.LoadLevel("_MATCH");
+            if(SceneManager.GetActiveScene().name == "_MATCH") {
+                Debug.Log("We're already in the _MATCH scene, so no need to transfer to it");
+            } else {
+                PhotonNetwork.LoadLevel("_MATCH");
+            }
         }
 
     }
 
 
     public void OnClickConnectToMaster() {
-        //Settings (optional for tutorial purposes)
-        PhotonNetwork.OfflineMode = false; //true would "fake" an online connection
+
         PhotonNetwork.NickName = "Name_" + Time.time; //sets the player's name
         PhotonNetwork.AutomaticallySyncScene = true; //PhotonNetwork.LoadLevel() will keep the same
                                                      // level for everyone in the room
@@ -115,6 +148,11 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
                 nMaxPlayers = 2;
                 break;
 
+            case MATCHTYPE.AI:
+                expectedRoomProperties = new ExitGames.Client.Photon.Hashtable() { { "type", matchType } };
+                nMaxPlayers = 1;
+                break;
+
             default:
                 nMaxPlayers = 0;
                 expectedRoomProperties = new ExitGames.Client.Photon.Hashtable();
@@ -140,6 +178,11 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         base.OnConnectedToMaster();
         bTriesToConnectToMaster = false;
         Debug.Log("Connected to Master!");
+
+        if (bOfflineMode) {
+            //Pretend like we clicked a button to join a room
+            OnClickConnectToRoom();
+        }
     }
 
     public override void OnJoinedRoom() {

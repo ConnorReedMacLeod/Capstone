@@ -20,9 +20,21 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
     private static ClientNetworkController inst;
     
 
-    public void SetEnemyID() {
-        //TODO:: This isn't very secure;
-        nEnemyPlayerID = 3 - nLocalPlayerID;
+    public void SetPlayerIDs() {
+        nLocalPlayerID = PhotonNetwork.LocalPlayer.ActorNumber;
+
+        SetDebugText(NetworkConnectionManager.Get().matchType.ToString());
+
+        if(PhotonNetwork.CurrentRoom.MaxPlayers < 2) {
+            //If there's only 1 player in the room, we'll have to generate the enemy's id manually
+            Debug.Log("Setting IDs manually");
+            nEnemyPlayerID = 2;
+
+        } else {
+            //If we have another player in the room, then we'll select their actor number
+            // NOTE - this assumes that there are only two players in the room
+            nEnemyPlayerID = PhotonNetwork.PlayerListOthers[0].ActorNumber;
+        }
     }
 
     public void OnEnable() {
@@ -33,10 +45,9 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
             return;
         }
         inst = this;
-        
-        nLocalPlayerID = photonView.Owner.ActorNumber;
-        SetEnemyID();
 
+        SetPlayerIDs();
+        
         //playerMe = RoomManager.Get().playerMe;
         //playerEnemy = RoomManager.Get().playerEnemy;
 
@@ -102,7 +113,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
     }
     public void HandleTimerTick(int nTime) {
         //Debug.Log("Timer: " + nTime);
-        SetDebugText("Timer: " + nTime);
+       // SetDebugText("Timer: " + nTime);
     }
 
     public void HandleAbilityUsed(int nPlayerID, int nCharacter, int nAbility) {
