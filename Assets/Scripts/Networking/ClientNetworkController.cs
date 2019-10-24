@@ -54,6 +54,8 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
         Debug.Log("local PlayerId is " + nLocalPlayerID);
         //playerMe.SetPlayerID(nLocalPlayerID);
         //playerEnemy.SetPlayerID(nEnemyPlayerID);
+
+        SendCharacterSelections();
     }
 
     public void OnDisable() {
@@ -64,20 +66,39 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
         return inst;
     }
 
+    public void SendCharacterSelections() {
+
+        //If we're the first player to connect
+        if (PhotonNetwork.LocalPlayer.ActorNumber == 1) {
+            //Then we can save our picks in the chr1 slot
+            CharacterSelection.Get().SubmitSelection(1);
+
+            //Note: At some point this maybe should be changed to fetch the match type stored in the room properties
+            NetworkConnectionManager.MATCHTYPE type = NetworkConnectionManager.Get().matchType;
+
+            //If we're playing alone, then we can also submit chr2's character selections
+            if (type == NetworkConnectionManager.MATCHTYPE.AI || type == NetworkConnectionManager.MATCHTYPE.SOLO) {
+
+                //Debug.Log("Since we're alone, we'll also submit our selections for player 2");
+                CharacterSelection.Get().SubmitSelection(2);
+            }
+        } else {
+            //Debug.Log("We're not the player id 1, so we should submit our selection under slot 2");
+            //Otherwise, if we are the second player to connect, then we have to move our character selection data into 
+            // the character 2 array, then submit under the chr2 slot
+            CharacterSelection.Get().SwapPlayerSelections();
+            CharacterSelection.Get().SubmitSelection(2);
+        }
+    }
+
     public void OnButtonClick(int nPlayerID, int _nAbility) {
         Debug.Log("Locally registered a button click");
-
-        byte evCode = MasterNetworkController.evtMSubmitAbility; // Custom Event
+        
         int nCharacter = 1 + (_nAbility / 2);
         int nAbility = 1 + (_nAbility % 2);
         object[] arnContent = new object[3] { nPlayerID, nCharacter, nAbility };
 
-        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient };
-        // We set this to MasterClient so that only the master client will recieve and judge if this ability can actually be used
-
-        ExitGames.Client.Photon.SendOptions sendOptions = new ExitGames.Client.Photon.SendOptions { Reliability = true };
-
-        PhotonNetwork.RaiseEvent(evCode, arnContent, raiseEventOptions, sendOptions);
+        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMSubmitAbility, arnContent);
 
     }
 
@@ -103,6 +124,11 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
             case MasterNetworkController.evtCAbilityUsed:
                 Debug.Log("Recieved ability clicked in PlayerNetwork");
                 HandleAbilityUsed((int)arContent[0], (int)arContent[1], (int)arContent[2]);
+                break;
+
+            case MasterNetworkController.evtCCharactersSelected:
+                CharacterSelection.Get().SaveSelections((int[][])arContent);
+
                 break;
 
             default:
@@ -137,8 +163,23 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
     // Update is called once per frame
     void Update() {
 
+        DebugPrintCharacterSelections();
 
+    }
 
+    public void DebugPrintCharacterSelections() {
+
+        string sSelections1 = "Player 1: Unreceived";
+        if(CharacterSelection.Get().arChrTeam1 != null) {
+            sSelections1 = "Player 1: " + CharacterSelection.Get().arChrTeam1[0] + ", " + CharacterSelection.Get().arChrTeam1[1] + ", " + CharacterSelection.Get().arChrTeam1[2];
+        }
+
+        string sSelections2 = "Player 2: Unreceived";
+        if (CharacterSelection.Get().arChrTeam2 != null) {
+            sSelections2 = "Player 2: " + CharacterSelection.Get().arChrTeam2[0] + ", " + CharacterSelection.Get().arChrTeam2[1] + ", " + CharacterSelection.Get().arChrTeam2[2];
+        }
+
+        SetDebugText(sSelections1 + "\n" + sSelections2);
     }
 
     public void SetDebugText(string sMessage) {

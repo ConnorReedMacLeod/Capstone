@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 using Photon.Pun;
 using Photon.Realtime;
+using ExitGames.Client.Photon;
 
 public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
@@ -13,6 +14,10 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
     public Button btnConnectRoom;
     public Slider sliderLevel;
     public Dropdown dropdownMatchType;
+
+    public Dropdown dropdownChrSelect1;
+    public Dropdown dropdownChrSelect2;
+    public Dropdown dropdownChrSelect3;
 
     public Text txtDisplayMessage;
 
@@ -65,6 +70,13 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         PhotonNetwork.OfflineMode = bOfflineMode; //true would "fake" an online connection
     }
 
+    public void ShowIfFindingRoom(MonoBehaviour uiElem) {
+        if(uiElem != null) {
+            uiElem.gameObject.SetActive(PhotonNetwork.IsConnected && bTriesToConnectToMaster == false
+                && bTriesToConnectToRoom == false && PhotonNetwork.InRoom == false);
+        }
+    }
+
     // Update is called once per frame
     void Update() {
 
@@ -72,14 +84,14 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         if (btnConnectMaster != null) {
             btnConnectMaster.gameObject.SetActive(PhotonNetwork.IsConnected == false && bTriesToConnectToMaster == false);
         }
-        if (btnConnectRoom != null) {
-            btnConnectRoom.gameObject.SetActive(PhotonNetwork.IsConnected && bTriesToConnectToMaster == false
-                && bTriesToConnectToRoom == false && PhotonNetwork.InRoom == false);
-        }
-        if (sliderLevel != null) {
-            sliderLevel.gameObject.SetActive(PhotonNetwork.IsConnected && bTriesToConnectToMaster == false
-                && bTriesToConnectToRoom == false && PhotonNetwork.InRoom == false);
-        }
+
+        ShowIfFindingRoom(btnConnectRoom);
+        ShowIfFindingRoom(sliderLevel);
+        ShowIfFindingRoom(dropdownMatchType);
+        ShowIfFindingRoom(dropdownChrSelect1);
+        ShowIfFindingRoom(dropdownChrSelect2);
+        ShowIfFindingRoom(dropdownChrSelect3);
+
         if (txtDisplayMessage != null) {
             txtDisplayMessage.gameObject.SetActive(PhotonNetwork.InRoom);
             if (PhotonNetwork.InRoom) {
@@ -88,10 +100,6 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
             }
         }
 
-        if (dropdownMatchType != null) {
-            dropdownMatchType.gameObject.SetActive(PhotonNetwork.IsConnected && bTriesToConnectToMaster == false
-                && bTriesToConnectToRoom == false && PhotonNetwork.InRoom == false);
-        }
 
         //We should direct loading the next level if we are the master client
         if (bInMatch == false &&
@@ -101,7 +109,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
             bInMatch = true;
 
-            if(SceneManager.GetActiveScene().name == "_MATCH") {
+            if (SceneManager.GetActiveScene().name == "_MATCH") {
                 Debug.Log("We're already in the _MATCH scene, so no need to transfer to it");
             } else {
                 PhotonNetwork.LoadLevel("_MATCH");
@@ -127,7 +135,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         //If we're not connected to the network service, then we can't possibly join a room
         if (PhotonNetwork.IsConnected == false) return;
 
-        Debug.Log("Trying to connect to level " + nMyLevel);
+        //Debug.Log("Trying to connect to level " + nMyLevel);
 
         bTriesToConnectToRoom = true;
         //PhotonNetwork.CreateRoom("Custom Name"); // Create a specific room - Error: OnCreateRoomFailed
@@ -197,6 +205,23 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
     }
 
+    public static void SendEventToMaster(byte evtCode, object content) {
+
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient };
+        ExitGames.Client.Photon.SendOptions sendOptions = new ExitGames.Client.Photon.SendOptions { Reliability = true };
+
+        PhotonNetwork.RaiseEvent(evtCode, content, raiseEventOptions, sendOptions);
+    }
+
+    public static void SendEventToClients(byte evtCode, object content) {
+
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+        ExitGames.Client.Photon.SendOptions sendOptions = new ExitGames.Client.Photon.SendOptions { Reliability = true };
+
+        PhotonNetwork.RaiseEvent(evtCode, content, raiseEventOptions, sendOptions);
+    }
+
+
     public override void OnJoinRandomFailed(short returnCode, string message) {
         base.OnJoinRandomFailed(returnCode, message);
 
@@ -226,7 +251,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
         }
 
-        Debug.Log("Creating a room with properties " + roomOptions.CustomRoomProperties["lvl"]);
+        //Debug.Log("Creating a room with properties " + roomOptions.CustomRoomProperties["lvl"]);
 
         PhotonNetwork.CreateRoom(null, roomOptions);
     }
