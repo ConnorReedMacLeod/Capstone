@@ -15,7 +15,6 @@ public class DropDownMatchTypeSelect : MonoBehaviour {
 
         NetworkConnectionManager.Get().matchType = (NetworkConnectionManager.MATCHTYPE)nMatchTypeSelection;
 
-        Debug.Log(NetworkConnectionManager.Get().matchType);
     }
 
 }

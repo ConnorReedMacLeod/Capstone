@@ -16,14 +16,20 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     public const byte evtCNewReadiedCharacter = TOCLIENTEVENTBASE + 0;
     public const byte evtCAbilityUsed = TOCLIENTEVENTBASE + 1;
     public const byte evtCTimerTick = TOCLIENTEVENTBASE + 2;
+    public const byte evtCCharactersSelected = TOCLIENTEVENTBASE + 3;
 
     public const byte TOMASTEREVENTBASE = 100;
     public const byte evtMSubmitAbility = TOMASTEREVENTBASE + 1;
+    public const byte evtMSubmitCharacters = TOMASTEREVENTBASE + 2;
 
     public Text txtMasterDisplay;
     public bool bIsMaster;
 
     int nTime;
+
+    //We'll keep this as an int since we can't transmit custom types with photon events
+    public int[][] arnCharacterSelectsReceived = new int[Player.MAXPLAYERS][];
+
 
     // Start is called before the first frame update
     public void OnEnable() {
@@ -42,6 +48,8 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         txtMasterDisplay.text = "bIsMaster: " + bIsMaster;
 
         nTime = 0;
+
+        Debug.Log("Master has now been enabled");
 
     }
 
@@ -64,16 +72,33 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
                 Debug.Log("Recieved ability clicked in MasterGameflow");
                 if (CanUseAbility((int)arnContent[0], (int)arnContent[1], (int)arnContent[2])) {
                     Debug.Log("Can use this ability");
-
-                    RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
-                    // We set this to All so that every player can react to this ability in the same way
-
-                    ExitGames.Client.Photon.SendOptions sendOptions = new ExitGames.Client.Photon.SendOptions { Reliability = true };
-
-                    PhotonNetwork.RaiseEvent(MasterNetworkController.evtCAbilityUsed, arnContent, raiseEventOptions, sendOptions);
+                    
+                    NetworkConnectionManager.SendEventToClients(evtCAbilityUsed, arnContent);
                 } else {
                     Debug.LogError("Cannot use this ability!  It shouldn't have been legal to send this reqest");
                 }
+                break;
+
+            case MasterNetworkController.evtMSubmitCharacters:
+                Debug.Log("Recieved submitted characters");
+
+                int nPlayer = (int)arnContent[0];
+
+                Debug.Assert(nPlayer == 1 | nPlayer == 2);
+
+                //Save the results in the appropriate selection
+                arnCharacterSelectsReceived[nPlayer-1] = new int[Player.MAXCHRS];
+                ((int[])arnContent[1]).CopyTo(arnCharacterSelectsReceived[nPlayer-1], 0);
+
+                Debug.LogError("Master recieved selections for player " + nPlayer + " of " + arnCharacterSelectsReceived[nPlayer - 1][0] + ", " + arnCharacterSelectsReceived[nPlayer - 1][1] + ", " + arnCharacterSelectsReceived[nPlayer - 1][2]);
+
+                //Now check if we've received selections for all players
+                if (HasReceivedAllCharacterSelections()) {
+
+                    Debug.Log("Sending out player selections since all player selections have been received");
+                    OnReceivedAllCharacterSelections();
+                }
+
                 break;
 
             default:
@@ -83,35 +108,34 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     }
 
+    public bool HasReceivedAllCharacterSelections() {
+       
+        //Check through all received selections and ensure none are missing
+        for(int i=0; i<Player.MAXPLAYERS; i++) {
+            if (arnCharacterSelectsReceived[i] == null) {
 
-    public void SendTimerTick() {
-        byte evCode = evtCTimerTick;
-        object[] arnContent = new object[1] { nTime };
+                Debug.Log("arnCharacterSelectsReceived["+i+"] is still null, so we haven't receieved everything yet");
+                return false;
 
-        //Debug.Log("Sending Timer: " + nTime);
+            }
+        }
 
-        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
-        // We set this to All so that everyone (including the local client) recieves this message
+        return true;
+    }
+    
+    public void OnReceivedAllCharacterSelections() {
 
-        ExitGames.Client.Photon.SendOptions sendOptions = new ExitGames.Client.Photon.SendOptions { Reliability = true };
-        PhotonNetwork.RaiseEvent(evCode, arnContent, raiseEventOptions, sendOptions);
+        NetworkConnectionManager.SendEventToClients(evtCCharactersSelected, arnCharacterSelectsReceived);
+
     }
 
     //Should only be decided by the master client
     public void SelectNextReadyCharacter() {
 
-        byte evCode = evtCNewReadiedCharacter;
         int nPlayer = Random.Range(1, 3);
         int nCharacter = Random.Range(1, 4);
-        object[] arnContent = new object[2] { nPlayer, nCharacter };
 
-        Debug.Log("Selected player " + nPlayer + " and character " + nCharacter);
-
-        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
-        // We set this to All so that everyone (including the local client) recieves this message
-
-        ExitGames.Client.Photon.SendOptions sendOptions = new ExitGames.Client.Photon.SendOptions { Reliability = true };
-        PhotonNetwork.RaiseEvent(evCode, arnContent, raiseEventOptions, sendOptions);
+        NetworkConnectionManager.SendEventToClients(evtCNewReadiedCharacter, new object[2] { nPlayer, nCharacter });
     }
 
     public void Update() {
@@ -120,7 +144,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         int nNewTime = Mathf.FloorToInt(Time.time);
         if (nNewTime > nTime) {
             nTime = nNewTime;
-            SendTimerTick();
+            NetworkConnectionManager.SendEventToClients(evtCTimerTick, new object[1] { nTime });
         }
     }
 

@@ -96,9 +96,6 @@ public class Match : MonoBehaviour {
 		case Chr.CHARTYPE.FISCHER:
 			newChr.InitChr(player, id, new ChrFischer(newChr));
 			break;
-		case Chr.CHARTYPE.SKELCOWBOY:
-			newChr.InitChr(player, id, new ChrSkelCowboy(newChr));
-			break;
         case Chr.CHARTYPE.SOHPIDIA:
             newChr.InitChr(player, id, new ChrSophidia(newChr));
             break;
