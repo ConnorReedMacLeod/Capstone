@@ -24,6 +24,7 @@ public class ContTurns : Singleton<ContTurns> {
 
 
     public void FixSortedPriority(Chr chr) {
+
         //Find the referenced character
         int i = 0;
         while (arChrPriority[i] != chr) {
@@ -115,7 +116,7 @@ public class ContTurns : Singleton<ContTurns> {
     public void InitChrPriority() {
         for (int i = 0; i < Match.Get().nPlayers; i++) {
             for (int j = 0; j < Match.Get().arPlayers[i].nChrs; j++) {
-
+                
                 arChrPriority[i + 2*j] = Match.Get().arChrs[i][j];
             }
         }
@@ -199,14 +200,22 @@ public class ContTurns : Singleton<ContTurns> {
         curStateTurn = _curStateTurn;
     }
 
-    public override void Init() {
+    public void InitializePriorities() {
 
         InitChrPriority();
         InitChrTurns();
+        
 
         nTurnNumber = 1;
 
         nLiveCharacters = Player.MAXPLAYERS * Player.MAXCHRS;
+        
+        ViewPriorityList.Get().InitViewPriorityList();
+    }
+
+    public override void Init() {
+
+       
     }
 
 }

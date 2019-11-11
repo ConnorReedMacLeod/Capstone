@@ -68,10 +68,12 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
 
     public void SendCharacterSelections() {
 
+        Debug.Log("Sending Character Selections");
+
         //If we're the first player to connect
         if (PhotonNetwork.LocalPlayer.ActorNumber == 1) {
             //Then we can save our picks in the chr1 slot
-            CharacterSelection.Get().SubmitSelection(1);
+            CharacterSelection.Get().SubmitSelection(0);
 
             //Note: At some point this maybe should be changed to fetch the match type stored in the room properties
             NetworkConnectionManager.MATCHTYPE type = NetworkConnectionManager.Get().matchType;
@@ -79,15 +81,15 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
             //If we're playing alone, then we can also submit chr2's character selections
             if (type == NetworkConnectionManager.MATCHTYPE.AI || type == NetworkConnectionManager.MATCHTYPE.SOLO) {
 
-                //Debug.Log("Since we're alone, we'll also submit our selections for player 2");
-                CharacterSelection.Get().SubmitSelection(2);
+                Debug.Log("Since we're alone, we'll also submit our selections for player 2");
+                CharacterSelection.Get().SubmitSelection(1);
             }
         } else {
-            //Debug.Log("We're not the player id 1, so we should submit our selection under slot 2");
+            Debug.Log("We're not the player id 1, so we should submit our selection under slot 2");
             //Otherwise, if we are the second player to connect, then we have to move our character selection data into 
             // the character 2 array, then submit under the chr2 slot
             CharacterSelection.Get().SwapPlayerSelections();
-            CharacterSelection.Get().SubmitSelection(2);
+            CharacterSelection.Get().SubmitSelection(1);
         }
     }
 
@@ -170,13 +172,13 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
     public void DebugPrintCharacterSelections() {
 
         string sSelections1 = "Player 1: Unreceived";
-        if(CharacterSelection.Get().arChrTeam1 != null) {
-            sSelections1 = "Player 1: " + CharacterSelection.Get().arChrTeam1[0] + ", " + CharacterSelection.Get().arChrTeam1[1] + ", " + CharacterSelection.Get().arChrTeam1[2];
+        if(CharacterSelection.Get().arChrSelections[0] != null) {
+            sSelections1 = "Player 1: " + CharacterSelection.Get().arChrSelections[0][0] + ", " + CharacterSelection.Get().arChrSelections[0][1] + ", " + CharacterSelection.Get().arChrSelections[0][2];
         }
 
         string sSelections2 = "Player 2: Unreceived";
-        if (CharacterSelection.Get().arChrTeam2 != null) {
-            sSelections2 = "Player 2: " + CharacterSelection.Get().arChrTeam2[0] + ", " + CharacterSelection.Get().arChrTeam2[1] + ", " + CharacterSelection.Get().arChrTeam2[2];
+        if (CharacterSelection.Get().arChrSelections[1] != null) {
+            sSelections2 = "Player 2: " + CharacterSelection.Get().arChrSelections[1][0] + ", " + CharacterSelection.Get().arChrSelections[1][1] + ", " + CharacterSelection.Get().arChrSelections[1][2];
         }
 
         SetDebugText(sSelections1 + "\n" + sSelections2);
