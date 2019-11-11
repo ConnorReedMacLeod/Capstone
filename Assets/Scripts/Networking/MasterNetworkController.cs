@@ -49,8 +49,6 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
         nTime = 0;
 
-        Debug.Log("Master has now been enabled");
-
     }
 
     public void OnDisable() {
@@ -63,17 +61,17 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         byte eventCode = photonEvent.Code;
         if (eventCode >= 200) return; //Don't respond to built-in events
 
-        object[] arnContent = (object[])photonEvent.CustomData;
+        object[] arContent = (object[])photonEvent.CustomData;
 
         //The master controller should only react to player-submitted input events
         switch (eventCode) {
 
             case MasterNetworkController.evtMSubmitAbility:
                 Debug.Log("Recieved ability clicked in MasterGameflow");
-                if (CanUseAbility((int)arnContent[0], (int)arnContent[1], (int)arnContent[2])) {
+                if (CanUseAbility((int)arContent[0], (int)arContent[1], (int)arContent[2])) {
                     Debug.Log("Can use this ability");
                     
-                    NetworkConnectionManager.SendEventToClients(evtCAbilityUsed, arnContent);
+                    NetworkConnectionManager.SendEventToClients(evtCAbilityUsed, arContent);
                 } else {
                     Debug.LogError("Cannot use this ability!  It shouldn't have been legal to send this reqest");
                 }
@@ -82,15 +80,13 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
             case MasterNetworkController.evtMSubmitCharacters:
                 Debug.Log("Recieved submitted characters");
 
-                int nPlayer = (int)arnContent[0];
-
-                Debug.Assert(nPlayer == 1 | nPlayer == 2);
+                int nPlayer = (int)arContent[0];
 
                 //Save the results in the appropriate selection
-                arnCharacterSelectsReceived[nPlayer-1] = new int[Player.MAXCHRS];
-                ((int[])arnContent[1]).CopyTo(arnCharacterSelectsReceived[nPlayer-1], 0);
+                arnCharacterSelectsReceived[nPlayer] = new int[Player.MAXCHRS];
+                ((int[])arContent[1]).CopyTo(arnCharacterSelectsReceived[nPlayer], 0);
 
-                Debug.LogError("Master recieved selections for player " + nPlayer + " of " + arnCharacterSelectsReceived[nPlayer - 1][0] + ", " + arnCharacterSelectsReceived[nPlayer - 1][1] + ", " + arnCharacterSelectsReceived[nPlayer - 1][2]);
+                Debug.LogError("Master recieved selections for player " + nPlayer + " of " + arnCharacterSelectsReceived[nPlayer][0] + ", " + arnCharacterSelectsReceived[nPlayer][1] + ", " + arnCharacterSelectsReceived[nPlayer][2]);
 
                 //Now check if we've received selections for all players
                 if (HasReceivedAllCharacterSelections()) {

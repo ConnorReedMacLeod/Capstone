@@ -67,7 +67,7 @@ public class Match : MonoBehaviour {
 
 			newPlayer.SetID (i);
 			newPlayer.Start ();
-			newPlayer.setChrs (); /// TODO:: replace with actual character selection
+
             if (i == 0) {
                 newPlayer.SetInputType(Player.InputType.HUMAN);
             } else {
@@ -123,14 +123,24 @@ public class Match : MonoBehaviour {
 
 	}
 
-	void InitAllChrs(){
+    IEnumerator InitAllChrs(){
+
+        //Keep looping until we've properly setup our character selections
+        while(CharacterSelection.Get().bSavedSelections == false) {
+            //Debug.Log("Waiting for character selections to be registered and distributed");
+            yield return null;
+        }
+
 		for (int i = 0; i < nPlayers; i++) {
 			arChrs [i] = new Chr[Player.MAXCHRS];
+            arPlayers[i].nChrs = Player.MAXCHRS;
 
 			for (int j = 0; j < arPlayers [i].nChrs; j++) {
-				InitChr(arPlayers[i].arChrTypeSelection[j], arPlayers[i], j);
+				InitChr(CharacterSelection.Get().arChrSelections[i][j], arPlayers[i], j);
 			}
 		}
+
+        Debug.Log("Exitting");
 	}
 
     void InitAllBlockers() {
@@ -163,9 +173,10 @@ public class Match : MonoBehaviour {
         }
     }
 
-	public void Start(){
+
+    public IEnumerator Start(){
         if (bStarted) {
-            return;
+            yield return null;
         }
         bStarted = true;
 
@@ -178,11 +189,18 @@ public class Match : MonoBehaviour {
 
 		InitPlayers (nPlayers);
 
-		InitAllChrs ();
+        InitNetworking();
+
+        //Note that this is a coroutine
+        yield return StartCoroutine(InitAllChrs());
+
+        Debug.Log("After InitAllChrs");
+
+        ContTurns.Get().InitializePriorities();
+
+        Debug.Log("After InitializePriorities");
 
         InitAllBlockers();
-
-        InitNetworking();
 
 		Cursor.SetCursor(txCursor, v2HotSpot, cursorMode);
 

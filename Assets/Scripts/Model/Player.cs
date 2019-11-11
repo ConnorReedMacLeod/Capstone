@@ -10,7 +10,6 @@ public class Player : MonoBehaviour{
 	public const int MAXCHRS = 3;
 	public const int MAXPLAYERS = 2;
 	public Chr[] arChr;
-	public Chr.CHARTYPE[] arChrTypeSelection;
 	public int nChrs;
 
     public int iBlocker; // the index of the currently selected blocker
@@ -47,28 +46,6 @@ public class Player : MonoBehaviour{
 
         arAllPlayers[plyr.id] = plyr;
     }
-
-    public void setChrs(){
-        //placeholder until character selection is available
-
-        nChrs = 3;
-
-        if (id == 0) {
-            arChrTypeSelection[0] = Chr.CHARTYPE.FISCHER;
-            arChrTypeSelection[1] = Chr.CHARTYPE.RAYNE;
-            arChrTypeSelection[2] = Chr.CHARTYPE.SOHPIDIA;
-            
-
-        } else {
-            arChrTypeSelection[0] = Chr.CHARTYPE.SAIKO;
-            arChrTypeSelection[1] = Chr.CHARTYPE.PITBEAST;
-            arChrTypeSelection[2] = Chr.CHARTYPE.KATARINA;
-             
-             
-            
-
-        }
-	}
 
 	public void SetID(int _id){
 		id = _id;
@@ -119,7 +96,7 @@ public class Player : MonoBehaviour{
 
    public void SetBlocker(int _iBlocker) {
 
-        Debug.Assert(arChr[_iBlocker] != null, "Assigned a blocker as a character that doesn't exist");
+        Debug.Assert(arChr[_iBlocker] != null, "Assigned a blocker as a character that doesn't exist: " + _iBlocker);
         if(iBlocker == _iBlocker) {
             Debug.Log("Then this character is already the blocker");
             return;
@@ -158,7 +135,6 @@ public class Player : MonoBehaviour{
 			bStarted = true;
 
             arChr = new Chr[MAXCHRS];
-			arChrTypeSelection = new Chr.CHARTYPE[MAXCHRS];
 
 			GameObject manaPanel = Instantiate(pfManaPanel, Match.Get().transform);
 			mana = manaPanel.GetComponent<Mana>();
