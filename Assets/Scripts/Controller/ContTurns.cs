@@ -138,61 +138,15 @@ public class ContTurns : Singleton<ContTurns> {
 
     
     //This is called if we've cleared out processing the current part of the turn, 
-    // so we should add an ExecTurn Executable to next be processed
-    public void HandleTurnPhase() {
+    // so we should send a signal to the master letting them know that this player is done that
+    // phase of the turn.
+    public void FinishedTurnPhase() {
 
-        if (ContAbilityEngine.bDEBUGENGINE) Debug.Log("Handling the turn for phase: " + curStateTurn);
+        if (ContAbilityEngine.bDEBUGENGINE) Debug.Log("Finished the turn phase: " + curStateTurn);
 
-        switch (curStateTurn) {
-            case STATETURN.RECHARGE:
+        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMFinishedTurnPhase, (int)curStateTurn);
 
-                ContAbilityEngine.Get().AddExec(new ExecTurnRecharge());
 
-                break;
-
-            case STATETURN.READY:
-
-                ContAbilityEngine.Get().AddExec(new ExecTurnReady());
-
-                break;
-
-            case STATETURN.REDUCECOOLDOWNS:
-
-                ContAbilityEngine.Get().AddExec(new ExecTurnReduceCooldowns());
-
-                break;
-
-            case STATETURN.GIVEMANA:
-
-                ContAbilityEngine.Get().AddExec(new ExecTurnGiveMana());
-
-                break;
-            
-            
-            case STATETURN.TURNSTART:
-
-                ContAbilityEngine.Get().AddExec(new ExecTurnStartTurn());
-
-                break;
-
-            case STATETURN.CHOOSEACTIONS:
-
-                ContAbilityEngine.Get().AddExec(new ExecTurnChooseActions());
-
-                break;
-
-            case STATETURN.EXECUTEACTIONS:
-
-                ContAbilityEngine.Get().AddExec(new ExecTurnExecuteAction());
-
-                break;
-
-            case STATETURN.TURNEND:
-
-                ContAbilityEngine.Get().AddExec(new ExecTurnEndTurn());
-
-                break;
-        }
     }
 
 
