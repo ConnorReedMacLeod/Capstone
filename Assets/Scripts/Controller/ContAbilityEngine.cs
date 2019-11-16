@@ -222,10 +222,12 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
         //So ask the ContTurn to add the executable for the next phase in the turn
 
         if (bDEBUGENGINE) Debug.Log("No Clauses or Executables so move to the next part of the turn");
-        ContTurns.Get().HandleTurnPhase();
+        ContTurns.Get().FinishedTurnPhase();
 
-        //And recurse to process the newly added Executable
-        ProcessStacks();
+        //We used to recurse here since the HandleTurnPhase would immediately put a new executable on the stack.  
+        //  As is, we'll need to wait for the master network to let us know when we can progress to the next phase 
+        //  of the turn, at which point we can start ProcessStacks() then
+        //ProcessStacks();
 
     }
 

@@ -17,10 +17,12 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     public const byte evtCAbilityUsed = TOCLIENTEVENTBASE + 1;
     public const byte evtCTimerTick = TOCLIENTEVENTBASE + 2;
     public const byte evtCCharactersSelected = TOCLIENTEVENTBASE + 3;
+    public const byte evtCMoveToNewTurnPhase = TOCLIENTEVENTBASE + 4;
 
     public const byte TOMASTEREVENTBASE = 100;
     public const byte evtMSubmitAbility = TOMASTEREVENTBASE + 1;
     public const byte evtMSubmitCharacters = TOMASTEREVENTBASE + 2;
+    public const byte evtMFinishedTurnPhase = TOMASTEREVENTBASE + 3;
 
     public Text txtMasterDisplay;
     public bool bIsMaster;

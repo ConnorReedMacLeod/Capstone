@@ -14,9 +14,6 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
 
     public Text txtNetworkDebug;
 
-    //public PlayerController playerMe;
-    //public PlayerController playerEnemy;
-
     private static ClientNetworkController inst;
     
 
@@ -47,13 +44,8 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
         inst = this;
 
         SetPlayerIDs();
-        
-        //playerMe = RoomManager.Get().playerMe;
-        //playerEnemy = RoomManager.Get().playerEnemy;
 
         Debug.Log("local PlayerId is " + nLocalPlayerID);
-        //playerMe.SetPlayerID(nLocalPlayerID);
-        //playerEnemy.SetPlayerID(nEnemyPlayerID);
 
         SendCharacterSelections();
     }
