@@ -51,8 +51,5 @@ public class ExecTurnExecuteAction : Executable {
 
         fDelay = ContTurns.fDelayStandard;
 
-        //Move back to choosing actions (in case there's more actions to be chosen)
-        ContTurns.Get().SetTurnState(ContTurns.STATETURN.CHOOSEACTIONS);
-
     }
 }

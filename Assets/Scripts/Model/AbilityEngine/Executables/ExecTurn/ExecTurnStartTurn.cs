@@ -38,8 +38,6 @@ public class ExecTurnStartTurn : Executable {
 
     public override void ExecuteEffect() {
 
-        ContTurns.Get().SetTurnState(ContTurns.STATETURN.CHOOSEACTIONS);
-
         sLabel = "Beginning of Turn";
         fDelay = ContTurns.fDelayStandard;
 

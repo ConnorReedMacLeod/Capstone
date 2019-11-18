@@ -29,8 +29,9 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     int nTime;
 
-    //We'll keep this as an int since we can't transmit custom types with photon events
+    //We'll keep these as ints since we can't transmit custom types with photon events
     public int[][] arnCharacterSelectsReceived = new int[Player.MAXPLAYERS][];
+    public int[] arnPlayersTurnPhases = new int[Player.MAXPLAYERS];
 
 
     // Start is called before the first frame update
@@ -50,6 +51,11 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         txtMasterDisplay.text = "bIsMaster: " + bIsMaster;
 
         nTime = 0;
+
+        //Initialize the starting phase of the game
+        for(int i=0; i<arnPlayersTurnPhases.Length; i++) {
+            arnPlayersTurnPhases[i] = 0;
+        }
 
     }
 
@@ -99,6 +105,15 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
                 break;
 
+            case MasterNetworkController.evtMFinishedTurnPhase:
+                int nPlayerID = (int)arContent[0];
+                int nTurnState = (int)arContent[1];
+                Debug.Log("Recieved signal that player " + nPlayerID + " has finished phase " + ((ContTurns.STATETURN)nTurnState).ToString());
+
+                OnPlayerFinishedPhase(nPlayerID, nTurnState);
+
+                break;
+
             default:
                 //Debug.Log(name + " shouldn't handle event code " + eventCode);
                 break;
@@ -125,6 +140,44 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
         NetworkConnectionManager.SendEventToClients(evtCCharactersSelected, arnCharacterSelectsReceived);
 
+    }
+
+    public void MoveToPhase(int nNewTurnState) {
+        //First we'll clear out any cached ability submissions so that they don't get transferred to future phases
+        //TODO
+
+        for(int i=0; i<Player.MAXPLAYERS; i++) {
+            //Updated the expected phase for each player (maybe not strictly necessary but could be useful if
+            //  more asynchronization of phases between players is allowed
+            arnPlayersTurnPhases[i] = nNewTurnState;
+
+            //Let each player know that they can progress to that phase
+            NetworkConnectionManager.SendEventToClients(evtCMoveToNewTurnPhase, "TO FILL IN DEPENDING ON PHASE");
+            //TODONOW - figure out a good way to send along auxilliary information depending on the phase
+            // eg - the type of mana generated for the turn, or the ability that's set to be used
+        }
+
+
+    }
+
+    public void OnPlayerFinishedPhase(int nPlayerID, int nCurTurnState) {
+
+        //Double check that the phase they claim to have ended is the one we expect them to be on
+        Debug.Assert(arnPlayersTurnPhases[nPlayerID] == nCurTurnState);
+
+        
+        if(nCurTurnState == (int)ContTurns.STATETURN.CHOOSEACTIONS && /*we've received a submitted ability*/ false) {
+            //Then check if we received an ability and should process it, or if no ability was submitted (timed out/selected rest action) then we should move to the end of turn
+
+            //ALERT - BE CAREFUL THAT THERE'S NO RACE CONDITION BETWEEN A SUBMITTED ABILITY SELECTION AND THE FINISHING OF A PHASE
+
+            MoveToPhase((int)ContTurns.STATETURN.CHOOSEACTIONS);
+
+        } else {
+
+            MoveToPhase((nCurTurnState + 1) % ((int)ContTurns.STATETURN.ENDFLAG));
+        }
+        
     }
 
     //Should only be decided by the master client

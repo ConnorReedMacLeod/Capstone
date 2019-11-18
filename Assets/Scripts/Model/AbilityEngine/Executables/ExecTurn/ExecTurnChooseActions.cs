@@ -45,15 +45,11 @@ public class ExecTurnChooseActions : Executable {
         //First, test if we actually have any character who is ready to act right now
         if(ContTurns.Get().GetNextActingChr() == null) {
 
-            //If no character is in the ready state, then we'll move to the end of turn
-            ContTurns.Get().SetTurnState(ContTurns.STATETURN.TURNEND);
+            //If no character is in the ready state, then we can directly end this phase
 
         } else {
 
             //If we do have a character who can act, then set them up to be able to act
-
-            //Prepare to execute the action that they will have selected
-            ContTurns.Get().SetTurnState(ContTurns.STATETURN.EXECUTEACTIONS);
 
             //Let the controller for ability selection know that it should start selecting an ability
             ContAbilitySelection.Get().StartSelection();
