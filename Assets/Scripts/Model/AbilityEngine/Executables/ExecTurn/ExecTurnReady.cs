@@ -55,8 +55,6 @@ public class ExecTurnReady : Executable {
 
         ReadyAll();
 
-        ContTurns.Get().SetTurnState(ContTurns.STATETURN.REDUCECOOLDOWNS);
-
         sLabel = "Readying Characters";
         fDelay = ContTurns.fDelayTurnAction;
 

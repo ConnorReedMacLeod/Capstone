@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ContTurns : Singleton<ContTurns> {
 
-    public enum STATETURN {RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSEACTIONS, EXECUTEACTIONS, TURNEND };
+    public enum STATETURN {RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSEACTIONS, EXECUTEACTIONS, TURNEND, ENDFLAG };
     public STATETURN curStateTurn;
 
     public Chr []arChrPriority = new Chr[Player.MAXCHRS];
@@ -144,14 +144,70 @@ public class ContTurns : Singleton<ContTurns> {
 
         if (ContAbilityEngine.bDEBUGENGINE) Debug.Log("Finished the turn phase: " + curStateTurn);
 
-        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMFinishedTurnPhase, (int)curStateTurn);
+        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMFinishedTurnPhase, new object[2] { ClientNetworkController.Get().nLocalPlayerID, (int)curStateTurn });
 
+        //We then wait til we get back a signal from the master saying that we can progress to the next phase of the turn
 
     }
 
 
     public void SetTurnState(STATETURN _curStateTurn) {
         curStateTurn = _curStateTurn;
+
+        switch (curStateTurn) {
+            case STATETURN.RECHARGE:
+
+                ContAbilityEngine.Get().AddExec(new ExecTurnRecharge());
+
+                break;
+
+            case STATETURN.READY:
+
+                ContAbilityEngine.Get().AddExec(new ExecTurnReady());
+
+                break;
+
+            case STATETURN.REDUCECOOLDOWNS:
+
+                ContAbilityEngine.Get().AddExec(new ExecTurnReduceCooldowns());
+
+                break;
+
+            case STATETURN.GIVEMANA:
+
+                ContAbilityEngine.Get().AddExec(new ExecTurnGiveMana());
+
+                break;
+
+
+            case STATETURN.TURNSTART:
+
+                ContAbilityEngine.Get().AddExec(new ExecTurnStartTurn());
+
+                break;
+
+            case STATETURN.CHOOSEACTIONS:
+
+                ContAbilityEngine.Get().AddExec(new ExecTurnChooseActions());
+
+                break;
+
+            case STATETURN.EXECUTEACTIONS:
+
+                ContAbilityEngine.Get().AddExec(new ExecTurnExecuteAction());
+
+                break;
+
+            case STATETURN.TURNEND:
+
+                ContAbilityEngine.Get().AddExec(new ExecTurnEndTurn());
+
+                break;
+        }
+
+        //Now that the appropriate ExecTurn as been added, we can resume processing the stack
+
+        ContAbilityEngine.Get().ProcessStacks();
     }
 
     public void InitializePriorities() {

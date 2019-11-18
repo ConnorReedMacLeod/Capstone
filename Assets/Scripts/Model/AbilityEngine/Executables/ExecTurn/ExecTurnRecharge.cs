@@ -62,8 +62,6 @@ public class ExecTurnRecharge : Executable {
 
         RechargeChars();
 
-        ContTurns.Get().SetTurnState(ContTurns.STATETURN.READY);
-
         sLabel = "Reducing Fatigue/ChannelTimes";
         fDelay = ContTurns.fDelayTurnAction;
 
