@@ -92,7 +92,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
         int nAbility = 1 + (_nAbility % 2);
         object[] arnContent = new object[3] { nPlayerID, nCharacter, nAbility };
 
-        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMSubmitAbility, arnContent);
+        //NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMSubmitAbility, arnContent);
 
     }
 

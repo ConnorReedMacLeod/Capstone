@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//This should just be in charge of maintaining the state of the local ability selection process
+// It can then submit its selection to the master client, and respond to feedback signals from that master
 public class ContAbilitySelection : Singleton<ContAbilitySelection> {
 
     public bool bSelectingAbility;
@@ -142,26 +144,14 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
 
     }
 
-    public void Update() {
+    public void OnTimedOut() {
+        Debug.Log("No Ability Selected in time");
 
-        if (bSelectingAbility) {
-            fSelectionTimer += ContTime.Get().fDeltaTime;
+        nSelectedAbility = Chr.idResting;
+        bSelectingAbility = false;
+    }
 
-            if (fSelectionTimer >= fMaxSelectionTime) {
-                //Then the time has expired 
-                Debug.Log("TIME IS UP! NO ABILITY SELECTED! MOVING ON");
-
-                //Consider if we need to have some cancel-targetting call here
-
-                //Set the used action to be a resting action
-                nSelectedAbility = Chr.idResting;
-
-                EndSelection();
-
-                ContAbilityEngine.Get().ProcessStacks();
-
-            }
-        }
+    public void OnSubmittedAbility() {
 
     }
 
