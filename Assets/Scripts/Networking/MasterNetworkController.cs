@@ -20,7 +20,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     public const byte evtCMoveToNewTurnPhase = TOCLIENTEVENTBASE + 4;
 
     public const byte TOMASTEREVENTBASE = 100;
-    public const byte evtMSubmitAbility = TOMASTEREVENTBASE + 1;
+
     public const byte evtMSubmitCharacters = TOMASTEREVENTBASE + 2;
     public const byte evtMFinishedTurnPhase = TOMASTEREVENTBASE + 3;
 
@@ -29,9 +29,14 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     int nTime;
 
+    int nSavedChrGlobalID;
+    int nSavedAbilityIDSelection;
+    int[] arnSavedTargetsSelection;
+
     //We'll keep these as ints since we can't transmit custom types with photon events
     public int[][] arnCharacterSelectsReceived = new int[Player.MAXPLAYERS][];
-    public int[] arnPlayersTurnPhases = new int[Player.MAXPLAYERS];
+
+    public int[] arnPlayerExpectedPhase = new int[Player.MAXPLAYERS];
 
 
     // Start is called before the first frame update
@@ -53,8 +58,8 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         nTime = 0;
 
         //Initialize the starting phase of the game
-        for(int i=0; i<arnPlayersTurnPhases.Length; i++) {
-            arnPlayersTurnPhases[i] = 0;
+        for(int i=0; i<arnPlayerExpectedPhase.Length; i++) {
+            arnPlayerExpectedPhase[i] = 0;
         }
 
     }
@@ -73,17 +78,6 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
         //The master controller should only react to player-submitted input events
         switch (eventCode) {
-
-            case MasterNetworkController.evtMSubmitAbility:
-                Debug.Log("Recieved ability clicked in MasterGameflow");
-                if (CanUseAbility((int)arContent[0], (int)arContent[1], (int)arContent[2])) {
-                    Debug.Log("Can use this ability");
-                    
-                    NetworkConnectionManager.SendEventToClients(evtCAbilityUsed, arContent);
-                } else {
-                    Debug.LogError("Cannot use this ability!  It shouldn't have been legal to send this reqest");
-                }
-                break;
 
             case MasterNetworkController.evtMSubmitCharacters:
                 Debug.Log("Recieved submitted characters");
@@ -108,9 +102,10 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
             case MasterNetworkController.evtMFinishedTurnPhase:
                 int nPlayerID = (int)arContent[0];
                 int nTurnState = (int)arContent[1];
+                object[] arAdditionalInfo = (object[])arContent[2];
                 Debug.Log("Recieved signal that player " + nPlayerID + " has finished phase " + ((ContTurns.STATETURN)nTurnState).ToString());
 
-                OnPlayerFinishedPhase(nPlayerID, nTurnState);
+                OnPlayerFinishedPhase(nPlayerID, nTurnState, arAdditionalInfo);
 
                 break;
 
@@ -120,6 +115,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         }
 
     }
+
 
     public bool HasReceivedAllCharacterSelections() {
        
@@ -143,39 +139,96 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     }
 
     public void MoveToPhase(int nNewTurnState) {
-        //First we'll clear out any cached ability submissions so that they don't get transferred to future phases
-        //TODO
 
-        for(int i=0; i<Player.MAXPLAYERS; i++) {
-            //Updated the expected phase for each player (maybe not strictly necessary but could be useful if
-            //  more asynchronization of phases between players is allowed
-            arnPlayersTurnPhases[i] = nNewTurnState;
-
-            //Let each player know that they can progress to that phase
-            NetworkConnectionManager.SendEventToClients(evtCMoveToNewTurnPhase, "TO FILL IN DEPENDING ON PHASE");
-            //TODONOW - figure out a good way to send along auxilliary information depending on the phase
-            // eg - the type of mana generated for the turn, or the ability that's set to be used
+        //First, check if everyone has actually reached this expected phase - if not, we don't need to officially do anything yet
+        for (int i = 0; i < Player.MAXPLAYERS; i++) {
+            if(arnPlayerExpectedPhase[i] != nNewTurnState) {
+                //At least one player hasn't reached the expected turn yet
+                return;
+            }
         }
 
+        //At this point, all players are expecting to move to the same next phase, so let's move all of them
+        for(int i=0; i<Player.MAXPLAYERS; i++) {
+
+            object[] arAdditionalInfo = null;
+
+            switch (nNewTurnState) {
+                case (int)ContTurns.STATETURN.GIVEMANA:
+
+                    //Consult the ContMana to decide what mana should be given out this turn
+                    //TODO:: Ensure that this works even if the master client switches part way through 
+                    //        - both clients need to keep track of what mana is distributed so that it's not repeated too much
+                    arAdditionalInfo = new object[1] { (int)ContMana.Get().GetTurnStartMana() };
+
+                    break;
+
+                case (int)ContTurns.STATETURN.EXECUTEACTIONS:
+
+                    //Fetch the saved ability selection info and pass it along so each client knows what ability is being used
+                    arAdditionalInfo = new object[3] { nSavedChrGlobalID, nSavedAbilityIDSelection, arnSavedTargetsSelection };
+                    break;
+
+            }
+
+            //Let each player know that they can actually progress to that phase
+            NetworkConnectionManager.SendEventToClients(evtCMoveToNewTurnPhase, arAdditionalInfo);
+
+        }
 
     }
 
-    public void OnPlayerFinishedPhase(int nPlayerID, int nCurTurnState) {
+    public void MoveToNextPhase(int nCurTurnPhase) {
+        MoveToPhase((nCurTurnPhase + 1) % ((int)ContTurns.STATETURN.ENDFLAG));
+    }
+
+    public void OnPlayerFinishedPhase(int nPlayerID, int nCurTurnPhase, object[] arAdditionalInfo) {
 
         //Double check that the phase they claim to have ended is the one we expect them to be on
-        Debug.Assert(arnPlayersTurnPhases[nPlayerID] == nCurTurnState);
+        Debug.Assert(arnPlayerExpectedPhase[nPlayerID] == nCurTurnPhase);
 
-        
-        if(nCurTurnState == (int)ContTurns.STATETURN.CHOOSEACTIONS && /*we've received a submitted ability*/ false) {
-            //Then check if we received an ability and should process it, or if no ability was submitted (timed out/selected rest action) then we should move to the end of turn
+        //Check if we're in any weird phases that need us to do something special
+        if (nCurTurnPhase == (int)ContTurns.STATETURN.CHOOSEACTIONS) {
 
-            //ALERT - BE CAREFUL THAT THERE'S NO RACE CONDITION BETWEEN A SUBMITTED ABILITY SELECTION AND THE FINISHING OF A PHASE
+            //If we're receiving this signal from the non-active player, they can just advance and wait
+            if (nPlayerID != ContTurns.Get().GetNextActingChr().plyrOwner.id) {
+                MoveToNextPhase(nCurTurnPhase);
+            } else {
+                //Otherwise, we are the active player so we should examine the Additional Info to see if the passed ability is valid
+                if (arAdditionalInfo == null) {
 
-            MoveToPhase((int)ContTurns.STATETURN.CHOOSEACTIONS);
+                    //If no additional info was passed, then interpret this as a rest action
+                    SaveAbilitySelection(ContTurns.Get().GetNextActingChr().globalid, Chr.idResting, null);
 
-        } else {
+                } else if (CanUseAbility((int)arAdditionalInfo[0], (int)arAdditionalInfo[1], (int[])arAdditionalInfo[2])) {
 
-            MoveToPhase((nCurTurnState + 1) % ((int)ContTurns.STATETURN.ENDFLAG));
+                    //If the ability selection and targetting passed can be used, then save that selection and try to move to the next phase
+
+                    SaveAbilitySelection((int)arAdditionalInfo[0], (int)arAdditionalInfo[1], (int[])arAdditionalInfo[2]);
+
+                } else {
+                    //Otherwise, if we were passed an invalid ability selection 
+
+                    Debug.LogError("Invalid ability selection of " + (int)arAdditionalInfo[0] + " " + (int)arAdditionalInfo[1] + " " + (int[])arAdditionalInfo[2]);
+
+                    //Then we'll override that ability selection and just assign them a rest (they can locally fail to select a correct ability as many times as they 
+                    // want, but they should only ever submit to the master if they're sure they have a finallized good selection)
+
+                    SaveAbilitySelection(ContTurns.Get().GetNextActingChr().globalid, Chr.idResting, null);
+
+                }
+
+                MoveToNextPhase(nCurTurnPhase);
+            }
+
+        }else if(nCurTurnPhase == (int)ContTurns.STATETURN.EXECUTEACTIONS){ 
+            //Then we need to decide if we should move back to another ability selection phase, or if it's time to end the turn
+
+            //TODONOW
+        }else {
+            //If it's not a special case, then we can just move to the next phase;
+
+            MoveToNextPhase(nCurTurnPhase);
         }
         
     }
@@ -199,10 +252,24 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         }
     }
 
-    public bool CanUseAbility(int nPlayerID, int nCharacter, int nAbility) {
+    public void SaveAbilitySelection(int nChrGlobalID, int nAbilityID, int[] arTargets) {
+        nSavedChrGlobalID = nChrGlobalID;
+        nSavedAbilityIDSelection = nAbilityID;
+        arnSavedTargetsSelection = arTargets;
+    }
+
+    public void ResetSavedAbilitySelection() {
+        nSavedAbilityIDSelection = -1;
+        arnSavedTargetsSelection = null;
+    }
+
+    public bool CanUseAbility(int nChrGlobalID, int nAbility, int[] arTargetIndices) {
         //Just piggyback off of the local player to determine if we can use the ability
-        Debug.LogError("Need to implement a check to ensure the ability can be used");
-        return true;
+
+        Debug.Assert(Chr.arAllChrs[nChrGlobalID] == ContTurns.Get().GetNextActingChr());
+
+        return (Chr.arAllChrs[nChrGlobalID].arActions[nAbility].CanActivate(arTargetIndices) == false &&
+                Chr.arAllChrs[nChrGlobalID].arActions[nAbility].CanPayMana() == false);
     }
 
     
