@@ -127,7 +127,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
 
             case MasterNetworkController.evtCMoveToNewTurnPhase:
                 //Pass along whatever phase of the turn we're now in to the ContTurns
-                ContTurns.Get().SetTurnState((ContTurns.STATETURN)arContent[0]);
+                ContTurns.Get().SetTurnState((ContTurns.STATETURN)arContent[0], arContent[1]);
                 break;
 
             default:
