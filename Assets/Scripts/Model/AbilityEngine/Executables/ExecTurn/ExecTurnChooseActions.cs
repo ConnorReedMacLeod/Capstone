@@ -38,6 +38,8 @@ public class ExecTurnChooseActions : Executable {
     }
 
 
+    //All that choose actions needs to do is store the selection information for the
+    // chosen action so that ContTurns->FinishedTurnPhase can post this information to the master
     public override void ExecuteEffect() {
         //Debug.Log("Executing ExecTurnChooseAction");
         

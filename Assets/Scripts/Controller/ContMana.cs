@@ -6,9 +6,6 @@ public class ContMana : Singleton<ContMana>{
 
     public KeyCode keyEnemyModifier; //For testing, holding this will make you change the enemies mana pool
 
-    public int[] arnManaReserves;
-    public const int nMaxReserves = 3;
-
     public override void Init() {
 
         //TODO:: These bindings should probably be set somewhere else - they shouldn't really be re-initialized here every time
@@ -16,33 +13,8 @@ public class ContMana : Singleton<ContMana>{
         InitBindings();
         keyEnemyModifier = KeyCode.Tab;
 
-        arnManaReserves = new int[Mana.nManaTypes - 1]; //sub 1 since we don't give out effort
-        ResetManaReserves();
     }
 
-
-    public void ResetManaReserves() {
-        for(int i=0; i<arnManaReserves.Length; i++) {
-            arnManaReserves[i] = nMaxReserves;
-        }
-    }
-
-    public Mana.MANATYPE GetTurnStartMana() {
-
-        int iManaToGive = Random.Range(0, Mana.nManaTypes - 1);
-        int nTypesTried = 0;
-        while(nTypesTried < Mana.nManaTypes) { 
-            if (arnManaReserves[iManaToGive%(Mana.nManaTypes-1)] > 0) {
-                arnManaReserves[iManaToGive%(Mana.nManaTypes - 1)]--;
-            return (Mana.MANATYPE)(iManaToGive % (Mana.nManaTypes - 1));
-            }
-            iManaToGive++;
-            nTypesTried++;
-        }
-        //If we reach here, then there's no mana left in any of the reserves
-        ResetManaReserves();
-        return GetTurnStartMana();
-    }
 
 	public void InitBindings(){
 		KeyBindings.SetBinding (AddPhysical, KeyCode.Q);

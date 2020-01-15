@@ -144,14 +144,16 @@ public class ContTurns : Singleton<ContTurns> {
 
         if (ContAbilityEngine.bDEBUGENGINE) Debug.Log("Finished the turn phase: " + curStateTurn);
 
-        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMFinishedTurnPhase, new object[2] { ClientNetworkController.Get().nLocalPlayerID, (int)curStateTurn });
+        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMFinishedTurnPhase, new object[2] {
+            ClientNetworkController.Get().nLocalPlayerID,
+            (int)curStateTurn });
 
         //We then wait til we get back a signal from the master saying that we can progress to the next phase of the turn
 
     }
 
 
-    public void SetTurnState(STATETURN _curStateTurn) {
+    public void SetTurnState(STATETURN _curStateTurn, object oAdditionalInfo=null) {
         curStateTurn = _curStateTurn;
 
         switch (curStateTurn) {
@@ -175,7 +177,11 @@ public class ContTurns : Singleton<ContTurns> {
 
             case STATETURN.GIVEMANA:
 
-                ContAbilityEngine.Get().AddExec(new ExecTurnGiveMana());
+                //Interpret the additional info as an array of the types of mana given to each player,
+                // and pass this along to the ExecTurnGiveMana that's put on the stack
+                Debug.Assert(oAdditionalInfo != null);
+
+                ContAbilityEngine.Get().AddExec(new ExecTurnGiveMana() { arManaToGive = (int[])oAdditionalInfo });
 
                 break;
 

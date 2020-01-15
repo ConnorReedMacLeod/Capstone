@@ -38,6 +38,8 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     public int[] arnPlayerExpectedPhase = new int[Player.MAXPLAYERS];
 
+    public MasterManaDistributer manadistributer;
+
 
     // Start is called before the first frame update
     public void OnEnable() {
@@ -50,6 +52,8 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         } else {
             bIsMaster = true;
         }
+
+        manadistributer = GetComponent<MasterManaDistributer>();
 
         PhotonNetwork.AddCallbackTarget(this);
 
@@ -156,19 +160,21 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
             switch (nNewTurnState) {
                 case (int)ContTurns.STATETURN.GIVEMANA:
 
-                    //Consult the ContMana to decide what mana should be given out this turn
-                    //TODO:: Ensure that this works even if the master client switches part way through 
-                    //        - both clients need to keep track of what mana is distributed so that it's not repeated too much
-                    arAdditionalInfo = new object[1] { (int)ContMana.Get().GetTurnStartMana() };
+                    //Ask our MasterManaDistributer component to determine what mana should be given to each player
+                    arAdditionalInfo = new object[2] { nNewTurnState, manadistributer.TakeNextMana() };
 
                     break;
 
                 case (int)ContTurns.STATETURN.EXECUTEACTIONS:
 
                     //Fetch the saved ability selection info and pass it along so each client knows what ability is being used
-                    arAdditionalInfo = new object[3] { nSavedChrGlobalID, nSavedAbilityIDSelection, arnSavedTargetsSelection };
+                    arAdditionalInfo = new object[4] { nNewTurnState, nSavedChrGlobalID, nSavedAbilityIDSelection, arnSavedTargetsSelection };
                     break;
 
+                default:
+
+                    arAdditionalInfo = new object[1] { nNewTurnState };
+                    break;
             }
 
             //Let each player know that they can actually progress to that phase
