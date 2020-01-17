@@ -13,15 +13,27 @@ using UnityEngine;
 // add a number of Executables to the executable stack
 
 //Can be initialized like ... = new Clause(){ fExecute = (() => ...)};
-public class Clause {
+public abstract class Clause<T> {
 
-    public delegate void funcExecuteClause();
+    public Action action;
+
+    public Targetter<T> targetter;
+
+    public delegate void funcExecuteClause(T t);
     public funcExecuteClause fExecute;
 
     public void Execute() {
 
-        fExecute();
+        List<T> lstTargets = targetter.GetTargets();
 
+        for (int i = 0; i < lstTargets.Count; i++) {
+            fExecute(lstTargets[i]);
+        }
+
+    }
+
+    public Clause (Action _action){
+        action = _action;
     }
 
 }
