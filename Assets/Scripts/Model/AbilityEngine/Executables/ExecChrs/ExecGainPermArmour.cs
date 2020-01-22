@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnEndTurn : ExecTargetless {
+//Can create executables like ...= new ExecGainArmour(){chrTarget = ..., nAmount = ...};
+
+public class ExecGainPermArmour : ExecChr {
+
+    public int nArmour;
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -31,25 +35,18 @@ public class ExecTurnEndTurn : ExecTargetless {
     // This is the end of the section that should be copied and pasted
 
 
-    public override bool isLegal() {
-        //Can't invalidate a turn action
-        return true;
-    }
-
     public override void ExecuteEffect() {
 
-        sLabel = "End of Turn";
-        fDelay = ContTurns.fDelayTurnAction;
-
-        ContTurns.Get().nTurnNumber++;
+        //NOTE - THIS IS FOR PERMANENT ARMOUR
+        chrTarget.AddArmour(nArmour);
 
     }
 
-    public ExecTurnEndTurn(ExecTurnEndTurn other): base(other) {
-
+    public ExecGainPermArmour(ExecGainPermArmour other) {
+        nArmour = other.nArmour;
     }
 
     public override Executable MakeCopy() {
-        return new ExecTurnEndTurn(this);
+        return new ExecGainPermArmour(this);
     }
 }

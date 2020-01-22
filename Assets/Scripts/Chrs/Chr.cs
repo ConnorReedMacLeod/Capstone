@@ -29,7 +29,8 @@ public class Chr : MonoBehaviour {
 	public string sName;			//The name of the character
 	public Player plyrOwner;        //The player who controls the character
 
-    public static Chr[] arAllChrs;  //A static list of all characters
+    public static List<Chr> lstChrInPlay; //A static list of the characters in play (not on the bench)
+    public static List<Chr> lstAllChrs;  //A static list of all characters
 
     public int globalid;            //The character's unique identifier across all characters
     public int id;                  //The character's unique identifier for this team

@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnReduceCooldowns : Executable {
-
-
+public class ExecTurnReduceCooldowns : ExecTargetless {
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -65,5 +63,13 @@ public class ExecTurnReduceCooldowns : Executable {
         sLabel = "Reducing Cooldowns";
         fDelay = ContTurns.fDelayTurnAction;
 
+    }
+
+    public ExecTurnReduceCooldowns(ExecTurnReduceCooldowns other): base(other) {
+
+    }
+
+    public override Executable MakeCopy() {
+        return new ExecTurnReduceCooldowns(this);
     }
 }

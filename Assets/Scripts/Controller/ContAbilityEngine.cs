@@ -49,11 +49,11 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
 
     }
 
-    public static void AddClauseStack( ref Stack<Clause> stackClauses) {
+    public static void PushClauses( List<Clause> lstClauses) {
 
-        //Pop each clause from the given stack and push them onto the ability engine's stack
-        while (stackClauses.Count != 0) {
-            ContAbilityEngine.Get().AddClause(stackClauses.Pop());
+        //Push each clause in sequence onto the stack
+        for(int i=0; i<lstClauses.Count; i++) { 
+            ContAbilityEngine.Get().AddClause(lstClauses[i]);
         }
 
     }
@@ -227,6 +227,7 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
         //We used to recurse here since the HandleTurnPhase would immediately put a new executable on the stack.  
         //  As is, we'll need to wait for the master network to let us know when we can progress to the next phase 
         //  of the turn, at which point we can start ProcessStacks() then
+
         //ProcessStacks();
 
     }

@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnEndTurn : ExecTargetless {
+//Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
+
+public class ExecHeal : ExecChr {
+
+    public Healing heal;
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -31,25 +35,22 @@ public class ExecTurnEndTurn : ExecTargetless {
     // This is the end of the section that should be copied and pasted
 
 
-    public override bool isLegal() {
-        //Can't invalidate a turn action
-        return true;
-    }
-
     public override void ExecuteEffect() {
 
-        sLabel = "End of Turn";
-        fDelay = ContTurns.fDelayTurnAction;
-
-        ContTurns.Get().nTurnNumber++;
+        chrTarget.TakeHealing(heal);
 
     }
 
-    public ExecTurnEndTurn(ExecTurnEndTurn other): base(other) {
+    public ExecHeal(): base() {
+        //By default, if the healer dies, then the target doesn't get healed
+        bCancelIfSourceDies = true;
+    }
 
+    public ExecHeal(ExecHeal other) : base(other) {
+        heal = new Healing(other.heal);
     }
 
     public override Executable MakeCopy() {
-        return new ExecTurnEndTurn(this);
+        return new ExecHeal(this);
     }
 }

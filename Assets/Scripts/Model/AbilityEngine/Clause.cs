@@ -9,31 +9,22 @@ using UnityEngine;
 ///  will only take effect if they are present when the clause is evaluated
 /// </summary>
 
-//This class should be set up to have an fExecute method that will
-// add a number of Executables to the executable stack
-
-//Can be initialized like ... = new Clause(){ fExecute = (() => ...)};
-public abstract class Clause<T> {
+public abstract class Clause {
 
     public Action action;
 
-    public Targetter<T> targetter;
+    public List<Executable> lstExec = new List<Executable>();
 
-    public delegate void funcExecuteClause(T t);
-    public funcExecuteClause fExecute;
-
-    public void Execute() {
-
-        List<T> lstTargets = targetter.GetTargets();
-
-        for (int i = 0; i < lstTargets.Count; i++) {
-            fExecute(lstTargets[i]);
-        }
-
-    }
+    public abstract void Execute();
 
     public Clause (Action _action){
         action = _action;
     }
 
+    public Clause(Clause other) {
+        action = other.action;
+        lstExec = new List<Executable>(other.lstExec);
+    }
+
+    public abstract Clause MakeCopy();
 }

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnEndTurn : ExecTargetless {
 
+//Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
+
+public class ExecCompleteChannel : ExecChr {
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -31,25 +33,24 @@ public class ExecTurnEndTurn : ExecTargetless {
     // This is the end of the section that should be copied and pasted
 
 
-    public override bool isLegal() {
-        //Can't invalidate a turn action
-        return true;
-    }
-
     public override void ExecuteEffect() {
 
-        sLabel = "End of Turn";
-        fDelay = ContTurns.fDelayTurnAction;
 
-        ContTurns.Get().nTurnNumber++;
+        StateFatigued newState = new StateFatigued(chrTarget);
+
+        //Just transition to the fatigued state (which will trigger the channel completion)
+        chrTarget.SetStateReadiness(newState);
+
+        fDelay = ContTurns.fDelayTurnAction;
+        sLabel = chrTarget.sName + " has completed their channel";
 
     }
 
-    public ExecTurnEndTurn(ExecTurnEndTurn other): base(other) {
+    public ExecCompleteChannel(ExecCompleteChannel other) : base(other) {
 
     }
 
     public override Executable MakeCopy() {
-        return new ExecTurnEndTurn(this);
+        return new ExecCompleteChannel(this);
     }
 }

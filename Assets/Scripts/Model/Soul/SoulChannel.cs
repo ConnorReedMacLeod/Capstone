@@ -33,11 +33,9 @@ public class SoulChannel : Soul {
     }
 
     public void onSuccessfulCompletion() {
-        //Use the action's execute method
-        act.Execute(((StateChanneling)chrSource.curStateReadiness).lstStoredTargettingIndices);
 
         //Then give that action's stack of clauses to the Ability Engine to process
-        ContAbilityEngine.AddClauseStack(ref act.stackClauses);
+        ContAbilityEngine.PushClauses(act.lstClauses);
 
         //Then pay for the action (increase cooldown)
         act.PayCooldown();

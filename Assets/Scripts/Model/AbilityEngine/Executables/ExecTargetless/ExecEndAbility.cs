@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnEndTurn : ExecTargetless {
+public class ExecEndAbility : ExecTargetless {
 
+    public Action act; //The action that this marker represents the end of
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -30,26 +31,33 @@ public class ExecTurnEndTurn : ExecTargetless {
     }
     // This is the end of the section that should be copied and pasted
 
-
     public override bool isLegal() {
-        //Can't invalidate a turn action
+        //For now, this is just a marker to know when the end of a turn is
+        //TODO:: In the future, this marker could check if the ability targetting is still legal,
+        //       and if it's not, pop off items from the top of the stack until it reaches the
+        //       end marker to cancel all effects of the ability
         return true;
+
     }
 
     public override void ExecuteEffect() {
+        //Debug.Log("Notifying that an ability has ended");
 
-        sLabel = "End of Turn";
-        fDelay = ContTurns.fDelayTurnAction;
-
-        ContTurns.Get().nTurnNumber++;
-
+        //Notify everyone that we've just completed the effects of an action
+        chrSource.subPostExecuteAbility.NotifyObs(chrSource, act);
+        Chr.subAllPostExecuteAbility.NotifyObs(chrSource, act);
     }
 
-    public ExecTurnEndTurn(ExecTurnEndTurn other): base(other) {
+    public ExecEndAbility(Action _act) {
+        act = _act;
+        chrSource = act.chrSource;
+    }
+
+    public ExecEndAbility(ExecEndAbility other) {
 
     }
 
     public override Executable MakeCopy() {
-        return new ExecTurnEndTurn(this);
+        return new ExecEndAbility(this);
     }
 }

@@ -5,19 +5,17 @@ using UnityEngine;
 public abstract class Executable {
 
     public Chr chrSource;
-    public Chr chrTarget;
 
     public string sLabel;
     public float fDelay;
 
     public bool bPreTriggered;
 
-    public bool bCancelSourceDies;
+    public bool bCancelIfSourceDies;
 
     public bool bStopAutoProcessing;
 
     public SoundEffect[] arSoundEffects;
-    
 
     public abstract Subject GetPreTrigger();
     public abstract Subject GetPostTrigger();
@@ -25,16 +23,10 @@ public abstract class Executable {
     public abstract List<Replacement> GetFullReplacements();
 
     public virtual bool isLegal() {
-        if (bCancelSourceDies && chrSource != null && chrSource.bDead) {
+        if (bCancelIfSourceDies && chrSource != null && chrSource.bDead) {
             Debug.Log("Executable of type  " + this.GetType().ToString() + " not legal since " + chrSource.sName + "(source) is dead");
             return false;
         }
-
-        if (chrTarget != null && chrTarget.bDead) {
-            Debug.Log("Executable of type  " + this.GetType().ToString() + " not legal since " + chrSource.sName + "(target) is dead");
-            return false;
-        }
-
         return true;
     }
 
@@ -65,5 +57,26 @@ public abstract class Executable {
     }
 
     public abstract void ExecuteEffect();
+
+    public abstract void SetTarget();
+
+    public Executable() {
+
+    }
+
+    public Executable(Executable other) {
+        
+        chrSource = other.chrSource;
+        sLabel = other.sLabel;
+        fDelay = other.fDelay;
+        bPreTriggered = other.bPreTriggered;
+        bStopAutoProcessing = other.bStopAutoProcessing;
+        bCancelIfSourceDies = other.bCancelIfSourceDies;
+
+        arSoundEffects = other.arSoundEffects;
+
+    }
+
+    public abstract Executable MakeCopy();
 
 }

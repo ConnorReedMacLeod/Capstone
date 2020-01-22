@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnEndTurn : ExecTargetless {
+//Can create executables like ...= new Exec(){chrSource = ..., chrTarget = ..., soulToRemove = ...};
+
+public class ExecRemoveSoul : ExecSoul {
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -31,25 +33,20 @@ public class ExecTurnEndTurn : ExecTargetless {
     // This is the end of the section that should be copied and pasted
 
 
-    public override bool isLegal() {
-        //Can't invalidate a turn action
-        return true;
-    }
-
     public override void ExecuteEffect() {
 
-        sLabel = "End of Turn";
-        fDelay = ContTurns.fDelayTurnAction;
+        Debug.Log("In ExecRemoveSoul's execute method");
 
-        ContTurns.Get().nTurnNumber++;
+        soulTarget.chrTarget.soulContainer.RemoveSoul(soulTarget);
 
     }
 
-    public ExecTurnEndTurn(ExecTurnEndTurn other): base(other) {
-
+    public ExecRemoveSoul(ExecRemoveSoul other): base(other) {
+        soulTarget = other.soulTarget;
     }
 
     public override Executable MakeCopy() {
-        return new ExecTurnEndTurn(this);
+        return new ExecRemoveSoul(this);
     }
 }
+

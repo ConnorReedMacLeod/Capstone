@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnExecuteAction : Executable {
+public class ExecTurnExecuteAction : ExecTargetless {
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -52,4 +52,13 @@ public class ExecTurnExecuteAction : Executable {
         fDelay = ContTurns.fDelayStandard;
 
     }
+
+    public ExecTurnExecuteAction(ExecTurnExecuteAction other): base(other) {
+
+    }
+
+    public override Executable MakeCopy() {
+        return new ExecTurnExecuteAction(this);
+    }
+
 }

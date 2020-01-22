@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnChooseActions : Executable {
+public class ExecTurnChooseActions : ExecTargetless {
 
 
 
@@ -76,5 +76,13 @@ public class ExecTurnChooseActions : Executable {
 
         }
 
+    }
+
+    public ExecTurnChooseActions(ExecTurnChooseActions other): base(other) {
+
+    }
+
+    public override Executable MakeCopy() {
+        return new ExecTurnChooseActions(this);
     }
 }
