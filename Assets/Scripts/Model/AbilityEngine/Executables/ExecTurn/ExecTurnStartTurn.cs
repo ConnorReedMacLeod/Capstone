@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnStartTurn : Executable {
-
+public class ExecTurnStartTurn : ExecTargetless {
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -41,5 +40,13 @@ public class ExecTurnStartTurn : Executable {
         sLabel = "Beginning of Turn";
         fDelay = ContTurns.fDelayStandard;
 
+    }
+
+    public ExecTurnStartTurn(ExecTurnStartTurn other) : base(other) {
+
+    }
+
+    public override Executable MakeCopy() {
+        return new ExecTurnStartTurn(this);
     }
 }

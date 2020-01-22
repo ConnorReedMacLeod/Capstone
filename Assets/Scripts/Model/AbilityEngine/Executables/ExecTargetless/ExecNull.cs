@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnEndTurn : ExecTargetless {
-
+//This Executable does nothing on resolution - it's useful for if you want to nullify some replaced effect
+public class ExecNull : ExecTargetless {
+    //TODO:: Consider if all of these lists and triggers are even necessary
+    //         I'm fairly sure they wouldn't be used, but I'm not sure I can just delete them
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -30,26 +32,23 @@ public class ExecTurnEndTurn : ExecTargetless {
     }
     // This is the end of the section that should be copied and pasted
 
-
     public override bool isLegal() {
-        //Can't invalidate a turn action
+        //Can't invalidate a Null action
         return true;
     }
 
     public override void ExecuteEffect() {
 
-        sLabel = "End of Turn";
-        fDelay = ContTurns.fDelayTurnAction;
-
-        ContTurns.Get().nTurnNumber++;
+        this.sLabel = "Nothing happens";
 
     }
 
-    public ExecTurnEndTurn(ExecTurnEndTurn other): base(other) {
+    public ExecNull(ExecNull other) : base(other) {
 
     }
 
     public override Executable MakeCopy() {
-        return new ExecTurnEndTurn(this);
+        return new ExecNull(this);
     }
+
 }

@@ -15,12 +15,12 @@ public class TargetArgChr : TargetArg {
 
     public override bool WouldBeLegal(int indexTarget){
 
-        if(indexTarget >= Chr.arAllChrs.Length) {
+        if(indexTarget >= Chr.lstAllChrs.Count) {
             Debug.LogError("Trying to select a character with index " + indexTarget + " that doesn't exist");
             return false;
         }
 
-		return Chr.arAllChrs[indexTarget].bDead == false && fLegalCheck (chrOwner, Chr.arAllChrs[indexTarget]);
+		return Chr.lstAllChrs[indexTarget].bDead == false && fLegalCheck (chrOwner, Chr.lstAllChrs[indexTarget]);
 	}
 
 }

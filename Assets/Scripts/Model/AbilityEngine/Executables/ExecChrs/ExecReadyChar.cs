@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnEndTurn : ExecTargetless {
 
+//Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
+
+public class ExecReadyChar : ExecChr {
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -30,26 +32,28 @@ public class ExecTurnEndTurn : ExecTargetless {
     }
     // This is the end of the section that should be copied and pasted
 
-
-    public override bool isLegal() {
-        //Can't invalidate a turn action
-        return true;
-    }
-
     public override void ExecuteEffect() {
 
-        sLabel = "End of Turn";
-        fDelay = ContTurns.fDelayTurnAction;
+        //TODO:: Consider if you could have an ability that directly readies a character
+        Debug.Assert(chrTarget.nFatigue == 0);
 
-        ContTurns.Get().nTurnNumber++;
+        //Initially give the character Action Points equal to their maximum
+        StateReady newState = new StateReady(chrTarget, chrTarget.nMaxActionsLeft); 
+
+        //Just transition to the ready state
+        chrTarget.SetStateReadiness(newState);
+
+        fDelay = ContTurns.fDelayStandard;
+        sLabel = chrTarget.sName + " has Readied";
 
     }
 
-    public ExecTurnEndTurn(ExecTurnEndTurn other): base(other) {
+
+    public ExecReadyChar(ExecReadyChar other) : base(other) {
 
     }
 
     public override Executable MakeCopy() {
-        return new ExecTurnEndTurn(this);
+        return new ExecReadyChar(this);
     }
 }

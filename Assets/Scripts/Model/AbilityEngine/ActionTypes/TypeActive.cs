@@ -22,11 +22,9 @@ public class TypeActive : TypeAction {
     }
 
     public override void UseAction(int[] lstTargettingIndices) {
-        //Get the action to push all of its effects onto its stack
-        act.Execute(lstTargettingIndices);
 
         //Then give that action's stack of clauses to the Ability Engine to process
-        ContAbilityEngine.AddClauseStack(ref act.stackClauses);
+        ContAbilityEngine.PushClauses(act.lstClauses);
 
         PayActionPoints();
 

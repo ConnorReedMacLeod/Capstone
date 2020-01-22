@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnEndTurn : ExecTargetless {
+public class ExecStartAbility : ExecTargetless {
 
+    public Action act; //The action that this marker represents the start of
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -30,26 +31,33 @@ public class ExecTurnEndTurn : ExecTargetless {
     }
     // This is the end of the section that should be copied and pasted
 
-
     public override bool isLegal() {
-        //Can't invalidate a turn action
+        //For now, this is just a marker to know when the end of a turn is
+        //TODO:: In the future, this marker could check if the ability targetting is still legal,
+        //       and if it's not, pop off items from the top of the stack until it reaches the
+        //       end marker to cancel all effects of the ability
         return true;
+
+    }
+
+    public ExecStartAbility(Action _act) {
+        act = _act;
+        chrSource = act.chrSource;
     }
 
     public override void ExecuteEffect() {
+        //Debug.Log("Notifying that an ability has started");
 
-        sLabel = "End of Turn";
-        fDelay = ContTurns.fDelayTurnAction;
-
-        ContTurns.Get().nTurnNumber++;
-
+        //Notify everyone that we're just about to start the effects of an ability
+        chrSource.subPreExecuteAbility.NotifyObs(chrSource, act);
+        Chr.subAllPreExecuteAbility.NotifyObs(chrSource, act);
     }
 
-    public ExecTurnEndTurn(ExecTurnEndTurn other): base(other) {
-
+    public ExecStartAbility(ExecStartAbility other) : base(other) {
+        act = other.act;
     }
 
     public override Executable MakeCopy() {
-        return new ExecTurnEndTurn(this);
+        return new ExecStartAbility(this);
     }
 }

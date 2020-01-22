@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnGiveMana : Executable {
+public class ExecTurnGiveMana : ExecTargetless {
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -46,8 +46,7 @@ public class ExecTurnGiveMana : Executable {
         for (int i = 0; i < arManaToGive.Length; i++) {
 
             ContAbilityEngine.Get().AddExec(new ExecChangeMana(Match.Get().arPlayers[i], (Mana.MANATYPE)arManaToGive[i]) {
-                chrSource = null,
-                chrTarget = null,
+                chrSource = null
             });
         }
     }
@@ -59,5 +58,13 @@ public class ExecTurnGiveMana : Executable {
         sLabel = "Giving Mana to each player";
         fDelay = ContTurns.fDelayTurnAction;
 
+    }
+
+    public ExecTurnGiveMana(ExecTurnGiveMana other): base(other) {
+
+    }
+
+    public override Executable MakeCopy() {
+        return new ExecTurnGiveMana(this);
     }
 }

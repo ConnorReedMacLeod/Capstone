@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnRecharge : Executable {
+public class ExecTurnRecharge : ExecTargetless {
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -67,5 +67,13 @@ public class ExecTurnRecharge : Executable {
 
         ViewAnnouncement.Get().InitAnnouncement(2.0f, "TURN " + ContTurns.Get().nTurnNumber);
 
+    }
+
+    public ExecTurnRecharge(ExecTurnRecharge other) : base(other) {
+
+    }
+
+    public override Executable MakeCopy() {
+        return new ExecTurnRecharge(this);
     }
 }

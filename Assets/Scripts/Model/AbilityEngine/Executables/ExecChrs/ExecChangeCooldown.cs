@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnEndTurn : ExecTargetless {
 
+//Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
+
+public class ExecChangeCooldown : ExecSkill {
+
+    public int nAmount;
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -31,25 +35,25 @@ public class ExecTurnEndTurn : ExecTargetless {
     // This is the end of the section that should be copied and pasted
 
 
-    public override bool isLegal() {
-        //Can't invalidate a turn action
-        return true;
-    }
+
 
     public override void ExecuteEffect() {
 
-        sLabel = "End of Turn";
-        fDelay = ContTurns.fDelayTurnAction;
+        skTarget.ChangeCD(nAmount);
 
-        ContTurns.Get().nTurnNumber++;
+        fDelay = ContTurns.fDelayMinorAction;
+        sLabel = "Reducing " + skTarget.chrSource.sName + "'s " + skTarget.sDisplayName + " cooldown";
 
     }
 
-    public ExecTurnEndTurn(ExecTurnEndTurn other): base(other) {
-
+    public ExecChangeCooldown(ExecChangeCooldown other): base(other) {
+        nAmount = other.nAmount;
     }
 
     public override Executable MakeCopy() {
-        return new ExecTurnEndTurn(this);
+        return new ExecChangeCooldown(this);
     }
+
+
+
 }

@@ -35,7 +35,9 @@ public class Action { //This should probably be made abstract
 
 	public Property<int[]> parCost;
 
-    public Stack<Clause> stackClauses = new Stack<Clause>();
+    public List<Clause> lstClauses = new List<Clause>();
+    public List<Clause> lstClausesOnEquip = new List<Clause>();
+    public List<Clause> lstClausesOnUnequip = new List<Clause>();
 
     public Subject subAbilityChange = new Subject();
 
@@ -82,20 +84,14 @@ public class Action { //This should probably be made abstract
     //What should happen when this action is added to the list of abilities
     public virtual void OnEquip() {
 
-        while (stackClauses.Count != 0) {
-            //Add each clause in this ability to the stack
-            ContAbilityEngine.Get().AddClause(stackClauses.Pop());
-        }
+        ContAbilityEngine.Get().PushClauses(lstClausesOnEquip);
 
     }
 
     //What should happen when this action is remove from the list of abilities
     public virtual void OnUnequip() {
 
-        while (stackClauses.Count != 0) {
-            //Add each clause in this ability to the stack
-            ContAbilityEngine.Get().AddClause(stackClauses.Pop());
-        }
+        ContAbilityEngine.Get().PushClauses(lstClausesOnUnEquip);
 
     }
 
@@ -170,13 +166,19 @@ public class Action { //This should probably be made abstract
         PayManaCost();
 
         //Add a marker for the end of the ability below all of the effects for this ability
-        ContAbilityEngine.Get().AddClause(new ClauseEndAbility(this));
+        ContAbilityEngine.Get().AddClause(
+            new ClauseSpecial(this) {
+                lstExec = new List<Executable> { new ExecEndAbility(this) }
+            });
 
         //Let the type of this action dictate the behaviour and push all relevant effects onto the stack
         type.UseAction(lstTargettingIndices);
 
         //Add a marker on top for where the ability starts
-        ContAbilityEngine.Get().AddClause(new ClauseStartAbility(this));
+        ContAbilityEngine.Get().AddClause(
+            new ClauseSpecial(this) {
+                lstExec = new List<Executable> { new ExecStartAbility(this) }
+            });
 
 
     }

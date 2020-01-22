@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnReady : Executable {
+public class ExecTurnReady : ExecTargetless {
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -58,5 +58,13 @@ public class ExecTurnReady : Executable {
         sLabel = "Readying Characters";
         fDelay = ContTurns.fDelayTurnAction;
 
+    }
+
+    public ExecTurnReady(ExecTurnReady other) : base(other) {
+
+    }
+
+    public override Executable MakeCopy() {
+        return new ExecTurnReady(this);
     }
 }

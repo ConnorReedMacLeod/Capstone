@@ -2,8 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnEndTurn : ExecTargetless {
 
+//Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
+
+public class ExecChangeFatigue : ExecChr {
+
+    public int nAmount;
+    public bool bBeginningTurn;
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -31,25 +36,24 @@ public class ExecTurnEndTurn : ExecTargetless {
     // This is the end of the section that should be copied and pasted
 
 
-    public override bool isLegal() {
-        //Can't invalidate a turn action
-        return true;
-    }
+
 
     public override void ExecuteEffect() {
+        
+        chrTarget.ChangeFatigue(nAmount, bBeginningTurn);
 
-        sLabel = "End of Turn";
-        fDelay = ContTurns.fDelayTurnAction;
-
-        ContTurns.Get().nTurnNumber++;
-
+        //Debug.Log(chrTarget.sName + " is changing their fatigue by " + nAmount);
+        fDelay = ContTurns.fDelayMinorAction;
+        
     }
 
-    public ExecTurnEndTurn(ExecTurnEndTurn other): base(other) {
-
+    public ExecChangeFatigue(ExecChangeFatigue other) : base(other) {
+        nAmount = other.nAmount;
+        bBeginningTurn = other.bBeginningTurn;
     }
 
     public override Executable MakeCopy() {
-        return new ExecTurnEndTurn(this);
+        return new ExecChangeFatigue(this);
     }
+
 }

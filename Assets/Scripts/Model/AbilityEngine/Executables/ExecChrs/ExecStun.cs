@@ -2,7 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnEndTurn : ExecTargetless {
+//Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
+
+public class ExecStun : ExecChr {
+
+    public LibFunc.Get<int> GetDuration;
+
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -31,25 +36,29 @@ public class ExecTurnEndTurn : ExecTargetless {
     // This is the end of the section that should be copied and pasted
 
 
-    public override bool isLegal() {
-        //Can't invalidate a turn action
-        return true;
-    }
+
 
     public override void ExecuteEffect() {
 
-        sLabel = "End of Turn";
-        fDelay = ContTurns.fDelayTurnAction;
+        //First interrupt the character if they're channeling
+        chrTarget.curStateReadiness.InterruptChannel();
 
-        ContTurns.Get().nTurnNumber++;
+        //Create a new stun state to let our character transition to
+        StateStunned newState = new StateStunned(chrTarget, GetDuration());
+
+        //Transition to the new state
+        chrTarget.SetStateReadiness(newState);
+
+        chrTarget.subStunApplied.NotifyObs(chrTarget, GetDuration());
 
     }
 
-    public ExecTurnEndTurn(ExecTurnEndTurn other): base(other) {
-
+    public ExecStun(ExecStun other) : base(other) {
+        GetDuration = other.GetDuration;
     }
 
     public override Executable MakeCopy() {
-        return new ExecTurnEndTurn(this);
+        return new ExecStun(this);
     }
+
 }
