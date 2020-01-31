@@ -40,12 +40,12 @@ public class ExecLoseLife : ExecChr {
 
     }
 
-    public ExecLoseLife(ExecLoseLife other) : base(other) {
-        nLifeLoss = other.nLifeLoss;
+    public ExecLoseLife(Chr _chrSource, Chr _chrTarget, int _nLifeLoss) : base(_chrSource, _chrTarget) {
+        nLifeLoss = _nLifeLoss;
     }
 
-    public override Executable MakeCopy() {
-        return new ExecLoseLife(this);
+    public ExecLoseLife(ExecLoseLife other) : base(other) {
+        nLifeLoss = other.nLifeLoss;
     }
 }
 

@@ -6,10 +6,6 @@ public abstract class ExecSkill  : Executable {
 
     public Action skTarget;
 
-    public delegate Action Targetter();
-
-    public Targetter GetSkillTarget;
-
     public override bool isLegal() {
 
         if (skTarget == null || skTarget.chrSource.bDead) {
@@ -19,18 +15,12 @@ public abstract class ExecSkill  : Executable {
         return base.isLegal();
     }
 
-    public override void SetTarget() {
-        //Just call whatever custom function has been given as the method for selecting our target
-        skTarget = GetSkillTarget();
-    }
-
-    public ExecSkill() : base() {
-
+    public ExecSkill(Chr _chrSource, Action _skTarget) : base(_chrSource) {
+        skTarget = _skTarget;
     }
 
     public ExecSkill(ExecSkill other) : base(other) {
         skTarget = other.skTarget;
-        GetSkillTarget = other.GetSkillTarget;
     }
 
 }

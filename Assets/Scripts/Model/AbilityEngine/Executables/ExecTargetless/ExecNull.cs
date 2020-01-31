@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //This Executable does nothing on resolution - it's useful for if you want to nullify some replaced effect
-public class ExecNull : ExecTargetless {
+public class ExecNull : Executable {
     //TODO:: Consider if all of these lists and triggers are even necessary
     //         I'm fairly sure they wouldn't be used, but I'm not sure I can just delete them
 
@@ -43,12 +43,12 @@ public class ExecNull : ExecTargetless {
 
     }
 
+    public ExecNull(Chr _chrSource) : base(_chrSource) {
+
+    }
+
     public ExecNull(ExecNull other) : base(other) {
-
+        
     }
-
-    public override Executable MakeCopy() {
-        return new ExecNull(this);
-    }
-
+    
 }

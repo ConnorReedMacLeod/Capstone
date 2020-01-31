@@ -8,7 +8,6 @@ public class ExecGainPermArmour : ExecChr {
 
     public int nArmour;
 
-
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
     //        this.GetType().GetMember("subAllPreTrigger", BindingFlags.Public |BindingFlags.Static);
@@ -42,11 +41,11 @@ public class ExecGainPermArmour : ExecChr {
 
     }
 
-    public ExecGainPermArmour(ExecGainPermArmour other) {
-        nArmour = other.nArmour;
+    public ExecGainPermArmour(Chr _chrSource, Chr _chrTarget, int _nArmour) : base(_chrSource, _chrTarget) {
+        nArmour = _nArmour;
     }
 
-    public override Executable MakeCopy() {
-        return new ExecGainPermArmour(this);
+    public ExecGainPermArmour(ExecGainPermArmour other) : base(other) {
+        nArmour = other.nArmour;
     }
 }

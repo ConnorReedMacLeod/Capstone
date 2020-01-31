@@ -7,12 +7,12 @@ public class StateChanneling : StateReadiness {
     public int nChannelTime;  
 
     public SoulChannel soulBehaviour; //Handles all customized behaviour of what the channel effect should do
-    public int[] lstStoredTargettingIndices;
+    public SelectionSerializer.SelectionInfo selectioninfoStored;
 
-    public StateChanneling(Chr _chrOwner, int _nChannelTime, SoulChannel _soulBehaviour, int[] lstTargettingIndices) : base(_chrOwner) {
+    public StateChanneling(Chr _chrOwner, int _nChannelTime, SoulChannel _soulBehaviour) : base(_chrOwner) {
 
         nChannelTime = _nChannelTime;
-        lstStoredTargettingIndices = lstTargettingIndices;
+        selectioninfoStored = lstTargettingIndices; //TODONOW - figure out where the selection info is retrievable at
 
         //Double check that the soul isn't visible - should just be a hidden implementation
         Debug.Assert(_soulBehaviour.bVisible == false);

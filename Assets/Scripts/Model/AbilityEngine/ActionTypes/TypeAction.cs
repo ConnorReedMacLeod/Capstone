@@ -33,6 +33,6 @@ public abstract class TypeAction {
         stateReady.nCurActionsLeft -= GetActionPointCost();
     }
 
-    public abstract void UseAction(int[] lstTargettingIndices);
+    public abstract void UseAction();
 
 }

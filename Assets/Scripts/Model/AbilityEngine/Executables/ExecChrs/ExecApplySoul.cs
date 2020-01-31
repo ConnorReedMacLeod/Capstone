@@ -44,11 +44,12 @@ public class ExecApplySoul : ExecChr {
 
     }
 
+    public ExecApplySoul(Chr _chrSource, Chr _chrTarget, FuncCreateSoul _funcCreateSoul): base(_chrSource, _chrTarget) {
+        funcCreateSoul = _funcCreateSoul;
+    }
+
     public ExecApplySoul(ExecApplySoul other) : base(other) {
         funcCreateSoul = other.funcCreateSoul;
     }
 
-    public override Executable MakeCopy() {
-        return new ExecApplySoul(this);
-    }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecEndAbility : ExecTargetless {
+public class ExecEndAbility : Executable {
 
     public Action act; //The action that this marker represents the end of
 
@@ -48,16 +48,13 @@ public class ExecEndAbility : ExecTargetless {
         Chr.subAllPostExecuteAbility.NotifyObs(chrSource, act);
     }
 
-    public ExecEndAbility(Action _act) {
+    public ExecEndAbility(Chr _chrSource, Action _act): base(_chrSource) {
         act = _act;
         chrSource = act.chrSource;
     }
 
-    public ExecEndAbility(ExecEndAbility other) {
+    public ExecEndAbility(ExecEndAbility other) :base (other) {
 
     }
-
-    public override Executable MakeCopy() {
-        return new ExecEndAbility(this);
-    }
+    
 }

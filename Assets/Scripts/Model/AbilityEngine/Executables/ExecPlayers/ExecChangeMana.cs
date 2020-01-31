@@ -39,12 +39,12 @@ public class ExecChangeMana : ExecPlayer {
     }
     // This is the end of the section that should be copied and pasted
 
-    public ExecChangeMana(Player _plyrTarget, int[] _arnAmount) {
+    public ExecChangeMana(Chr _chrSource, Player _plyrTarget, int[] _arnAmount) :base (_chrSource, _plyrTarget) {
         plyrTarget = _plyrTarget;
         arnAmount = _arnAmount;
     }
 
-    public ExecChangeMana(Player _plyrTarget, Mana.MANATYPE _manaType, int _nAmount = 1) {
+    public ExecChangeMana(Chr _chrSource, Player _plyrTarget, Mana.MANATYPE _manaType, int _nAmount = 1): base(_chrSource, _plyrTarget) {
         plyrTarget = _plyrTarget;
         manaType = _manaType;
 
@@ -77,10 +77,6 @@ public class ExecChangeMana : ExecPlayer {
         fDelay = ContTurns.fDelayMinorAction;
         sLabel = "Changing mana for player " + plyrTarget.id;
 
-    }
-
-    public override Executable MakeCopy() {
-        return new ExecChangeMana(this);
     }
 
 }

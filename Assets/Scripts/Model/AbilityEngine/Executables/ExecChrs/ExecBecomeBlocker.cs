@@ -38,11 +38,11 @@ public class ExecBecomeBlocker : ExecChr {
 
     }
 
-    public ExecBecomeBlocker(ExecBecomeBlocker other) : base(other) {
+    public ExecBecomeBlocker(Chr _chrSource, Chr _chrTarget): base(_chrSource, _chrTarget) {
 
     }
 
-    public override Executable MakeCopy() {
-        return new ExecBecomeBlocker(this);
+    public ExecBecomeBlocker(ExecBecomeBlocker other) : base(other) {
+
     }
 }

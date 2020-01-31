@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecStartAbility : ExecTargetless {
+public class ExecStartAbility : Executable {
 
     public Action act; //The action that this marker represents the start of
 
@@ -40,7 +40,7 @@ public class ExecStartAbility : ExecTargetless {
 
     }
 
-    public ExecStartAbility(Action _act) {
+    public ExecStartAbility(Chr _chrSource, Action _act): base(_chrSource) {
         act = _act;
         chrSource = act.chrSource;
     }
@@ -56,8 +56,5 @@ public class ExecStartAbility : ExecTargetless {
     public ExecStartAbility(ExecStartAbility other) : base(other) {
         act = other.act;
     }
-
-    public override Executable MakeCopy() {
-        return new ExecStartAbility(this);
-    }
+    
 }

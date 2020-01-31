@@ -35,21 +35,34 @@ public class ExecDealDamage : ExecChr {
 
     public override void ExecuteEffect() {
 
+        Debug.Assert(chrTarget == dmg.chrTarget);
+
+        //Apply the stored damage to the target
         chrTarget.TakeDamage(dmg);
 
+        sLabel = chrSource.sName + " is harming " + chrTarget.sName + " for " + dmg.Get();
+
+        fDelay = ContTurns.fDelayMinorAction;
     }
 
-    public ExecDealDamage() : base() {
-        //If the source of the damage dies, then by default, cancel the executable
-        bCancelIfSourceDies = true;
+    //If you're always expecting the same base amount, then just have an interface that just requires an integer for the damage amount
+    public ExecDealDamage(Chr _chrSource, Chr _chrTarget, int nBaseDamage) : this(_chrSource, _chrTarget, (__chrSource, __chrTarget) => nBaseDamage) {
+    }
+
+    public ExecDealDamage(Chr _chrSource, Chr _chrTarget, Damage.FuncBaseDamage funcBaseDamage) : base(_chrSource, _chrTarget) {
+        dmg = new Damage(_chrSource, _chrTarget, funcBaseDamage);
+    }
+
+    //Have a constructor that just accepts a premade Healing instance and copies it
+    public ExecDealDamage(Chr _chrSource, Chr _chrTarget, Damage _dmg) : base(_chrSource, _chrTarget) {
+        dmg = new Damage(_dmg);
+
+        dmg.chrSource = _chrSource;
+        dmg.chrTarget = _chrTarget;
     }
 
     public ExecDealDamage(ExecDealDamage other) : base(other){
         dmg = new Damage(other.dmg);
-    }
-
-    public override Executable MakeCopy() {
-        return new ExecDealDamage(this);
     }
 
 }

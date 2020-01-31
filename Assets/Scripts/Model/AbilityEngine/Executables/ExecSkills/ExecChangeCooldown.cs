@@ -46,14 +46,11 @@ public class ExecChangeCooldown : ExecSkill {
 
     }
 
+    public ExecChangeCooldown(Chr _chrSource, Action _skTarget, int _nAmount) : base(_chrSource, _skTarget) {
+        nAmount = _nAmount;
+    }
+
     public ExecChangeCooldown(ExecChangeCooldown other): base(other) {
         nAmount = other.nAmount;
     }
-
-    public override Executable MakeCopy() {
-        return new ExecChangeCooldown(this);
-    }
-
-
-
 }

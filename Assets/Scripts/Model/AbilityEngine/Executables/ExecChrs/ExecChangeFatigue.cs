@@ -36,8 +36,6 @@ public class ExecChangeFatigue : ExecChr {
     // This is the end of the section that should be copied and pasted
 
 
-
-
     public override void ExecuteEffect() {
         
         chrTarget.ChangeFatigue(nAmount, bBeginningTurn);
@@ -47,13 +45,14 @@ public class ExecChangeFatigue : ExecChr {
         
     }
 
+    public ExecChangeFatigue(Chr _chrSource, Chr _chrTarget, int _nAmount, bool _bBeginningTurn) : base(_chrSource, _chrTarget) {
+        nAmount = _nAmount;
+        bBeginningTurn = _bBeginningTurn;
+    }
+
     public ExecChangeFatigue(ExecChangeFatigue other) : base(other) {
         nAmount = other.nAmount;
         bBeginningTurn = other.bBeginningTurn;
-    }
-
-    public override Executable MakeCopy() {
-        return new ExecChangeFatigue(this);
     }
 
 }

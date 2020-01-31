@@ -7,21 +7,22 @@ public class Healing {
     public Chr chrSource;
     public Chr chrTarget;
 
-    public LibFunc.Get<int> GetBase;
+    public delegate int FuncBaseHeal(Chr chrSource, Chr chrTarget);
+    public FuncBaseHeal GetBase;
     public LibFunc.Get<int> GetPower;
 
     //For convenience, allow a constructor that just accepts a number, rather than a function
     public Healing(Chr _chrSource, Chr _chrTarget, int _nBase) {
 
-        //Copy the fields as they've been passed in
-        GetBase = () => _nBase;
+        //If a simple number is provided, then don't have GetBase depend on consume ChrSource/ChrTarget
+        GetBase = (Chr __chrSource, Chr __chrTarget) => _nBase;
 
         //Store the chrSource and apply its power buff
         SetChrSource(_chrSource);
         SetChrTarget(_chrTarget);
     }
 
-    public Healing(Chr _chrSource, Chr _chrTarget, LibFunc.Get<int> _GetBase) {
+    public Healing(Chr _chrSource, Chr _chrTarget, FuncBaseHeal _GetBase) {
 
         //Copy the fields as they've been passed in
         GetBase = _GetBase;
@@ -32,7 +33,7 @@ public class Healing {
     }
 
     public int Get() {
-        return GetBase() + GetPower();
+        return GetBase(chrSource, chrTarget) + GetPower();
     }
 
     public void SnapShotPower() {
@@ -58,7 +59,7 @@ public class Healing {
     }
 
     public Healing(Healing healToCopy) {
-        //Copy over all the attributes of the original Damage instance
+        //Copy over all the attributes of the original Healing instance
         chrSource = healToCopy.chrSource;
         chrTarget = healToCopy.chrTarget;
 
