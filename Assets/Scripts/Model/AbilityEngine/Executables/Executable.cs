@@ -58,10 +58,8 @@ public abstract class Executable {
 
     public abstract void ExecuteEffect();
 
-    public abstract void SetTarget();
-
-    public Executable() {
-
+    public Executable(Chr _chrSource) {
+        chrSource = _chrSource;
     }
 
     public Executable(Executable other) {
@@ -76,7 +74,5 @@ public abstract class Executable {
         arSoundEffects = other.arSoundEffects;
 
     }
-
-    public abstract Executable MakeCopy();
 
 }

@@ -19,13 +19,8 @@ public abstract class ExecSoul : Executable {
         return base.isLegal();
     }
 
-    public override void SetTarget() {
-        //Just call whatever custom function has been given as the method for selecting our target
-        soulTarget = GetSoulTarget();
-    }
-
-    public ExecSoul() : base() {
-
+    public ExecSoul(Chr _chrSource, Soul _soulTarget) : base(_chrSource) {
+        soulTarget = _soulTarget;
     }
 
     public ExecSoul(ExecSoul other) : base(other) {

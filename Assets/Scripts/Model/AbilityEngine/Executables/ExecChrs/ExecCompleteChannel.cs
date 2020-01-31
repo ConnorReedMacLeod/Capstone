@@ -46,11 +46,11 @@ public class ExecCompleteChannel : ExecChr {
 
     }
 
-    public ExecCompleteChannel(ExecCompleteChannel other) : base(other) {
+    public ExecCompleteChannel(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
 
     }
 
-    public override Executable MakeCopy() {
-        return new ExecCompleteChannel(this);
+    public ExecCompleteChannel(ExecCompleteChannel other) : base(other) {
+
     }
 }

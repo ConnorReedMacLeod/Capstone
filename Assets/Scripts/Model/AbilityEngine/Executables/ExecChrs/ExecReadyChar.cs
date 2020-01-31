@@ -48,12 +48,12 @@ public class ExecReadyChar : ExecChr {
 
     }
 
+    public ExecReadyChar(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
+
+    }
 
     public ExecReadyChar(ExecReadyChar other) : base(other) {
 
     }
-
-    public override Executable MakeCopy() {
-        return new ExecReadyChar(this);
-    }
+    
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClauseChr : Clause {
+public abstract class ClauseChr : Clause {
 
     public Property<List<ClauseTagChr>> plstTags;
 
@@ -43,27 +43,16 @@ public class ClauseChr : Clause {
 
     }
 
+    public abstract void ClauseEffect(Chr chrSelected);
+
     public override void Execute() {
         List<Chr> lstTargets = GetFinalTargets();
 
         for (int i = 0; i < lstTargets.Count; i++) {
-            //Supply a reference to the current processed character
-            chrCurrentProcessingTarget = lstTargets[i];
 
-            for (int j = 0; j < lstExec.Count; j++) {
-
-                //Make a new copy of the mold of the current executable
-                Executable execCopy = lstExec[j].MakeCopy();
-
-                //Ensure its targetting information is properly filled out
-                execCopy.SetTarget();
-
-                //Push the new copy onto the stack
-                ContAbilityEngine.Get().AddExec(execCopy);
-            }
-
-            //Clear out that reference as soon as we've finished processing this character
-            chrCurrentProcessingTarget = null;
+            //Execute the effect of this clause on this particular target
+            ClauseEffect(lstTargets[i]);
+            
         }
     }
 
@@ -71,10 +60,6 @@ public class ClauseChr : Clause {
 
     public ClauseChr(ClauseChr other) : base(other) {
         plstTags = new Property<List<ClauseTagChr>>(other.plstTags);
-    }
-
-    public override Clause MakeCopy() {
-        return new ClauseChr(this);
     }
 }
 

@@ -27,7 +27,7 @@ public class TypePassive : TypeAction {
         return 0;
     }
 
-    public override void UseAction(int[] lstTargettingIndices) {
+    public override void UseAction() {
 
         Debug.LogError("Can't use a passive action");
 

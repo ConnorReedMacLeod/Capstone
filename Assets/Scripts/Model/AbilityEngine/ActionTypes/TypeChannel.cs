@@ -33,14 +33,14 @@ public class TypeChannel : TypeAction {
         return nActionPointCost;
     }
 
-    public override void UseAction(int[] lstTargettingIndices) {
+    public override void UseAction() {
 
         //It's a bit weird to reduce your action cost on a channel since you're
         //gonna be switching states, but it should be done for the sake of completeness
         PayActionPoints();
 
         //Move to a Channel State
-        act.chrSource.SetStateReadiness(new StateChanneling(act.chrSource, nStartChannelTime, new SoulChannel(soulBehaviour, act), lstTargettingIndices));
+        act.chrSource.SetStateReadiness(new StateChanneling(act.chrSource, nStartChannelTime, new SoulChannel(soulBehaviour, act)));
 
         //Pay the fatigue cost for the action
         act.PayFatigue();

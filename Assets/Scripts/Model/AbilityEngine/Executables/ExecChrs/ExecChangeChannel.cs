@@ -44,11 +44,11 @@ public class ExecChangeChannel : ExecChr {
         
     }
 
-    public ExecChangeChannel(ExecChangeChannel other) : base(other) {
-        nAmount = other.nAmount;
+    public ExecChangeChannel(Chr _chrSource, Chr _chrTarget, int _nAmount) : base(_chrSource, _chrTarget) {
+        nAmount = _nAmount;
     }
 
-    public override Executable MakeCopy() {
-        return new ExecChangeChannel(this);
+    public ExecChangeChannel(ExecChangeChannel other) : base(other) {
+        nAmount = other.nAmount;
     }
 }

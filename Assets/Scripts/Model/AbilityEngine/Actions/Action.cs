@@ -6,8 +6,6 @@ public class Action { //This should probably be made abstract
 
     public int id;
 
-    public int nArgs; // Note that this should only ever be 0 or 1
-    public TargetArg[] arArgs;
     public string sName;
     public string sDisplayName;
     public TypeAction type;
@@ -25,10 +23,6 @@ public class Action { //This should probably be made abstract
     public int nCharges;
     public int nCurCharges;
 
-    public string sDescription1;
-    public string sDescription2;
-	public string sDescription3;
-
     public bool bProperActive;  //Usually true - only false for non-standard actions that shouldn't 
                                 // switch the character sprite to an acting portrait (for example)
 
@@ -41,23 +35,12 @@ public class Action { //This should probably be made abstract
 
     public Subject subAbilityChange = new Subject();
 
-    public Action(int _nArgs, Chr _chrOwner) {
-        nArgs = _nArgs;
+    public Action(Chr _chrOwner) {
         chrSource = _chrOwner;
 
         bProperActive = true;
 
-
-        arArgs = new TargetArg[nArgs];
-
     }
-
-    public void SetArgOwners() {
-        for (int i = 0; i < nArgs; i++) {
-            arArgs[i].setOwner(chrSource);
-        }
-    }
-
 
     public void ChangeCD(int _nChange) {
         if (_nChange + nCurCD < 0) {
@@ -84,20 +67,20 @@ public class Action { //This should probably be made abstract
     //What should happen when this action is added to the list of abilities
     public virtual void OnEquip() {
 
-        ContAbilityEngine.Get().PushClauses(lstClausesOnEquip);
+        ContAbilityEngine.PushClauses(lstClausesOnEquip);
 
     }
 
     //What should happen when this action is remove from the list of abilities
     public virtual void OnUnequip() {
 
-        ContAbilityEngine.Get().PushClauses(lstClausesOnUnEquip);
+        ContAbilityEngine.PushClauses(lstClausesOnUnequip);
 
     }
 
     public void PayManaCost() {
 
-        ContAbilityEngine.Get().AddClause(new Clause() {
+        ContAbilityEngine.PushSingleClause(new Clause() {
 
             fExecute = () => {
                 //Pay for the Action
@@ -183,11 +166,11 @@ public class Action { //This should probably be made abstract
 
     }
 
-    // Perform the actual effect this action should do
-    // This is the main effect of the action for actives/cantrips
-    //  and is the completion action for cantrips
-    public virtual void Execute(int[] lstTargettingIndices) {
-        //By default do nothing - just override this to make the action do something
+
+    public void Execute() {
+
+        //Give our list of clauses to evaluate to the engine to push onto the stack
+        ContAbilityEngine.PushClauses(lstClauses);
     }
 
     //Check if the owner is alive and that the proposed targets are legal

@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class ExecStun : ExecChr {
 
+    //TODO - make a generic 'IntBasedOnContext' function type that consumes the 'context' of the game
+    //       and decides the returned value (of type <T>) based on the context
     public LibFunc.Get<int> GetDuration;
-
-
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -53,12 +53,13 @@ public class ExecStun : ExecChr {
 
     }
 
-    public ExecStun(ExecStun other) : base(other) {
-        GetDuration = other.GetDuration;
+    public ExecStun(Chr _chrSource, Chr _chrTarget, int nBaseStunDuration) : base(_chrSource, _chrTarget) {
+        GetDuration = () => nBaseStunDuration;
     }
 
-    public override Executable MakeCopy() {
-        return new ExecStun(this);
+
+    public ExecStun(ExecStun other) : base(other) {
+        GetDuration = other.GetDuration;
     }
 
 }

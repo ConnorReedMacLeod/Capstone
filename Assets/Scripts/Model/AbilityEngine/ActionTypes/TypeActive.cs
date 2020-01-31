@@ -21,10 +21,9 @@ public class TypeActive : TypeAction {
         return nActionPointCost;
     }
 
-    public override void UseAction(int[] lstTargettingIndices) {
+    public override void UseAction() {
 
-        //Then give that action's stack of clauses to the Ability Engine to process
-        ContAbilityEngine.PushClauses(act.lstClauses);
+        act.Execute();
 
         PayActionPoints();
 

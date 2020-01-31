@@ -51,19 +51,36 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
 
     public static void PushClauses( List<Clause> lstClauses) {
 
-        //Push each clause in sequence onto the stack
-        for(int i=0; i<lstClauses.Count; i++) { 
-            ContAbilityEngine.Get().AddClause(lstClauses[i]);
+        //Push each Clause in sequence onto the stack, and ensure that the first
+        // Clause in the sequence ends up at the top of the stack
+        for(int i = lstClauses.Count - 1; i>=0; i--) {
+            PushSingleClause(lstClauses[i]);
         }
 
     }
 
-    public void AddClause(Clause clause) {
+    public static void PushSingleClause(Clause clause) {
 
         if(bDEBUGENGINE) Debug.Log("Pushing a Clause");
 
-        stackClause.Push(clause);
+        instance.stackClause.Push(clause);
 
+    }
+
+    public static void PushExecutables( List<Executable> lstExecs) {
+
+        //Push each Executable in sequence onto the stack, and ensure that the 
+        // first executable in the sequence ends up at the top of the stack
+        for(int i = lstExecs.Count - 1; i>=0; i--) {
+            PushSingleExecutable(lstExecs[i]);
+        }
+    }
+
+    public static void PushSingleExecutable(Executable exec) {
+
+        if (bDEBUGENGINE) Debug.Log("Pushing an Executable of type " + exec.GetType().ToString());
+
+        instance.stackExec.Push(exec);
     }
 
 

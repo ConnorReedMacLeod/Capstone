@@ -13,8 +13,7 @@ public abstract class Clause {
 
     public Action action;
 
-    public List<Executable> lstExec = new List<Executable>();
-
+    public abstract string GetDescription();
     public abstract void Execute();
 
     public Clause (Action _action){
@@ -23,8 +22,5 @@ public abstract class Clause {
 
     public Clause(Clause other) {
         action = other.action;
-        lstExec = new List<Executable>(other.lstExec);
     }
-
-    public abstract Clause MakeCopy();
 }
