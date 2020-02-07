@@ -4,19 +4,29 @@ using UnityEngine;
 
 public abstract class ClauseTag<T> {
 
+    //TODO:: Think about if it's more efficient to just create a mapping of T->Bool and then unflagging each possible 
+    //       target as it gets filtered out as being untargettable.  Reduces the possibility of needing to reinitialize lists constantly with LINQ
+
     //A reference to the clause this is attached to
     public Clause clause;
 
-    //This controls what is selectable in the initial selection process
+    //This controls what is selectable in the initial selection process (while you are deciding what targets could be selected,
+    //  before executing the ability)
     public abstract List<T> ApplySelectionFiltering (List<T> lstTargets);
 
-    //This controls what is targettable upon being given a list of targetted characters, as well as any selectionInfo
-    // NOTE - This is passed a base selectionInfo, but since only a few tags will actually peek into this selectionInfo, 
-    //        they can cast it to the appropriate derived type anyway as they need
-    public virtual List<T> ApplyTargettingFiltering(List<T> lstTargets, SelectionSerializer.SelectionInfo selectionInfo) {
-        //By default, most tags will just filter their targets in the same way as their selections - some cases
-        //  like sweeping may need to expand this list or reselect things as needed
-        return ApplySelectionFiltering(lstTargets);
+
+    // NOTE: This is relevant only for Base Tags
+    //Use the selection info from the player to choose what the final targetting should be. 
+    // This is mainly relevant for abilities (channels) that could have a window between selection and execution, 
+    // where the selected target becomes invalid at the time of execution.  This means that the ability needs to decide
+    // what interprettation of the original selection should be used to determine the final target.  
+    public virtual List<T> DisambiguateFinalTargetting(List<T> lstTargets, SelectionSerializer.SelectionInfo selectionInfo) {
+        Debug.LogError("Attempted to disambiguate final targetting with a non-base tag!");
+        return null;
+    }
+
+    public ClauseTag(Clause _clause){
+        clause = _clause;
     }
 
 

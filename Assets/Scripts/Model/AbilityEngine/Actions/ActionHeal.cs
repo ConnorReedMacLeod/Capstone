@@ -35,7 +35,9 @@ public class ActionHeal : Action {
 
         public Clause1(Action _act) : base(_act) {
             //TODONOW:: fill in
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() { });
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this), //Base Tag always goes first
+            });
 
             heal = new Healing(action.chrSource, null, ((ActionHeal)action).nBaseHealing);
         }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnGiveMana : ExecTargetless {
+public class ExecTurnGiveMana : Executable {
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -62,9 +62,5 @@ public class ExecTurnGiveMana : ExecTargetless {
 
     public ExecTurnGiveMana(ExecTurnGiveMana other): base(other) {
 
-    }
-
-    public override Executable MakeCopy() {
-        return new ExecTurnGiveMana(this);
     }
 }

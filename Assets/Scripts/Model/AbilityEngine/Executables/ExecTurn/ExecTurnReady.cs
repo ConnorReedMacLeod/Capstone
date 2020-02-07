@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnReady : ExecTargetless {
+public class ExecTurnReady : Executable {
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -62,9 +62,5 @@ public class ExecTurnReady : ExecTargetless {
 
     public ExecTurnReady(ExecTurnReady other) : base(other) {
 
-    }
-
-    public override Executable MakeCopy() {
-        return new ExecTurnReady(this);
     }
 }
