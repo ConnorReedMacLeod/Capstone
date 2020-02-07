@@ -9,6 +9,10 @@ public abstract class ClauseChr : Clause {
     //Stores the character that is currently being processed by this clause
     public Chr chrCurrentProcessingTarget;
 
+    public ClauseTagChr GetBaseTag() {
+        return plstTags.Get()[0];
+    }
+
     public List<Chr> GetSelectableUniverse() {
         //Returns all possible entities of our type (Chr)
         return Chr.lstChrInPlay;
@@ -30,16 +34,8 @@ public abstract class ClauseChr : Clause {
     //Can interpret any serialized targetting info as needed
     public List<Chr> GetFinalTargets(SelectionSerializer.SelectionChr selectionInfo) {
 
-        List<Chr> lstSelectable = GetSelectableUniverse();
-
-        List<ClauseTagChr> lstTags = plstTags.Get();
-        //Apply each of our tags filtering one-by-one to trim the universe down 
-        //  to what the clause can properly select
-        for (int i = 0; i < lstTags.Count; i++) {
-            lstSelectable = lstTags[i].ApplyTargettingFiltering(lstSelectable, selectionInfo);
-        }
-
-        return lstSelectable;
+        //Ask the base tag to interpret selection info
+        return GetBaseTag().DisambiguateFinalTargetting(GetSelectable(), selectionInfo);
 
     }
 

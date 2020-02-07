@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnReduceCooldowns : ExecTargetless {
+public class ExecTurnReduceCooldowns : Executable {
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -67,9 +67,5 @@ public class ExecTurnReduceCooldowns : ExecTargetless {
 
     public ExecTurnReduceCooldowns(ExecTurnReduceCooldowns other): base(other) {
 
-    }
-
-    public override Executable MakeCopy() {
-        return new ExecTurnReduceCooldowns(this);
     }
 }

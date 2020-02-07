@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class ClauseSpecial : Clause {
 
+    //TODO:: Is this even necessary to have this class?
+
     public abstract void ClauseEffect();
 
 

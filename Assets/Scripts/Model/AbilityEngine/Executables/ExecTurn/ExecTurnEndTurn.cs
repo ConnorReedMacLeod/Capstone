@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnEndTurn : ExecTargetless {
+public class ExecTurnEndTurn : Executable {
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -49,7 +49,4 @@ public class ExecTurnEndTurn : ExecTargetless {
 
     }
 
-    public override Executable MakeCopy() {
-        return new ExecTurnEndTurn(this);
-    }
 }

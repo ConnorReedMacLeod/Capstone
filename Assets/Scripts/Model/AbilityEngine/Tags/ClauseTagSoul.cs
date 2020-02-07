@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class ClauseTagChr : ClauseTag<Chr> {
+public abstract class ClauseTagSoul : ClauseTag<Soul> {
 
     public enum TYPE { SELF, MELEE, RANGED, SWEEPING, ALLY, ENEMY, NONSELF };
 
     public TYPE type;
 
-    public ClauseTagChr(Clause _clause) : base(_clause) {
+    public ClauseTagSoul(Clause _clause) : base(_clause) {
 
     }
+
 }

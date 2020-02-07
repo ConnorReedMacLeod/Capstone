@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Action { //This should probably be made abstract
 
-    public int id;
+    public int id; //TODO: Consider if you could make a ID<T> class that could dynamically generate new IDS as needed for the type T
 
     public string sName;
     public string sDisplayName;
@@ -33,10 +33,13 @@ public class Action { //This should probably be made abstract
     public List<Clause> lstClausesOnEquip = new List<Clause>();
     public List<Clause> lstClausesOnUnequip = new List<Clause>();
 
+    public int iBaseClause;
+
     public Subject subAbilityChange = new Subject();
 
-    public Action(Chr _chrOwner) {
+    public Action(Chr _chrOwner, int _iBaseClause) {
         chrSource = _chrOwner;
+        iBaseClause = _iBaseClause;
 
         bProperActive = true;
 
