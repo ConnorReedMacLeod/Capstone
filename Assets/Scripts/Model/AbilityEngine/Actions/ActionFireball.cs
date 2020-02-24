@@ -4,13 +4,7 @@ using UnityEngine;
 
 public class ActionFireball : Action {
 
-    public Damage dmg;
-    public int nBaseDamage;
-
-    public ActionFireball(Chr _chrOwner): base(1, _chrOwner){//number of target arguments
-
-		//Since the base constructor initializes this array, we can start filling it
-		arArgs [0] = new TargetArgChr ((own, tar) => own.plyrOwner != tar.plyrOwner);
+    public ActionFireball(Chr _chrOwner): base(_chrOwner, 0){
 
 		sName = "Fireball";
         sDisplayName = "Fireball";
@@ -24,55 +18,68 @@ public class ActionFireball : Action {
         nFatigue = 4;
         nActionCost = 1;
 
-        nBaseDamage = 5;
-        //Create a base Damage object that this action will apply
-        dmg = new Damage(this.chrSource, null, nBaseDamage);
 
-        sDescription1 = "Deal 5 damage to the chosen character.";
 
-		SetArgOwners ();
+        lstClauses = new List<Clause> {
+            new Clause1(this),
+            new Clause2(this)
+        };
 	}
 
-	override public void Execute(int[] lstTargettingIndices) {
+    class Clause1 : ClauseChr {
 
-        Chr tar = Chr.GetTargetByIndex(lstTargettingIndices[0]);
+        Damage dmg;
+        public int nBaseDamage = 5;
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                Debug.Log("This Fireball Clause put an ExecDamage on the stack");
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this), //Base Tag always goes first
+                new ClauseTagChrEnemy(this)
+            });
+            
 
-                //Make a copy of the damage object to give to the executable
-                Damage dmgToApply = new Damage(dmg);
-                //Give the damage object its target
-                dmgToApply.SetChrTarget(tar);
+            dmg = new Damage(action.chrSource, null, nBaseDamage);
+        }
 
-                ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                    chrSource = this.chrSource,
-                    chrTarget = tar,
-                    dmg = dmgToApply,
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = "Fireballing"
-                });
-            }
-        });
+        public override string GetDescription() {
+            
+            return string.Format("Deal {0} damage to an Enemy", dmg.Get());
+        }
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                Debug.Log("Fireball's second clause put an ExecApplySoul on the stack");
-                ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-                    chrSource = this.chrSource,
-                    chrTarget = tar,
+        public override void ClauseEffect(Chr chrSelected) {
 
-                    funcCreateSoul = (_chrSource, _chrTarget) => {
-                        return new SoulBurning(_chrSource, _chrTarget, this);
-                    },
+            ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(action.chrSource, chrSelected, dmg) {
+                sLabel = "Hurling a fireball"
+            });
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = "Applying Burn Effect"
-                });
-            }
-        });
+        }
 
-	}
+    };
+
+    class Clause2 : ClauseChr {
+
+        public SoulBurning soulToCopy;
+
+        public Clause2(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this), //Base Tag always goes first
+                new ClauseTagChrEnemy(this)
+            });
+
+            soulToCopy = new SoulBurning(action.chrSource, null, action);
+        }
+
+        public override string GetDescription() {
+
+            return string.Format("Apply Burning(4) to that enemy");
+        }
+
+        public override void ClauseEffect(Chr chrSelected) {
+
+            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulBurning(soulToCopy, chrSelected)));
+
+        }
+
+    };
 
 }

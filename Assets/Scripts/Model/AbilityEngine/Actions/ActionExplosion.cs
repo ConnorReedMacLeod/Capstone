@@ -4,13 +4,7 @@ using UnityEngine;
 
 public class ActionExplosion : Action {
 
-    public Damage dmg;
-    public int nBaseDamage;
-
-    public ActionExplosion(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
-
-        //Since the base constructor initializes this array, we can start filling it
-        arArgs[0] = new TargetArgTeam((own, tar) => true); // any team selection is fine
+    public ActionExplosion(Chr _chrOwner) : base(_chrOwner, 0) {//number of target arguments
 
         sName = "Explosion";
         sDisplayName = "Explosion";
@@ -24,41 +18,38 @@ public class ActionExplosion : Action {
         nFatigue = 6;
         nActionCost = 1;
 
-        nBaseDamage = 5;
-        //Create a base Damage object that this action will apply
-        dmg = new Damage(this.chrSource, null, nBaseDamage);
-
-        sDescription1 = "Deal 5 damage to all characters on the chosen team.";
-
-        SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
     }
 
-    override public void Execute(int[] lstTargettingIndices) {
+    class Clause1 : ClauseChr {
 
-        Player tarPlyr = Player.GetTargetByIndex(lstTargettingIndices[0]);
+        Damage dmg;
+        public int nBaseDamage = 5;
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                for (int i = 0; i < tarPlyr.arChr.Length; i++) {
-                    Debug.Log("This Explosion Clause put an ExecDamage on the stack");
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrSweeping(this) //Base Tag always goes first
+            });
 
-                    //Make a copy of the damage object to give to the executable
-                    Damage dmgToApply = new Damage(dmg);
-                    //Give the damage object its target
-                    dmgToApply.SetChrTarget(tarPlyr.arChr[i]);
 
-                    //TODO:: Organize this in the correct order
-                    ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                        chrSource = this.chrSource,
-                        chrTarget = tarPlyr.arChr[i],
-                        dmg = dmgToApply,
-                        fDelay = ContTurns.fDelayStandard,
-                        sLabel = "Exploding"
-                    });
-                }
-            }
-        });
+            dmg = new Damage(action.chrSource, null, nBaseDamage);
+        }
 
-    }
+        public override string GetDescription() {
+
+            return string.Format("Deal {0} damage to all characters on the target character's team", dmg.Get());
+        }
+
+        public override void ClauseEffect(Chr chrSelected) {
+
+            ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(action.chrSource, chrSelected, dmg) {
+                sLabel = "Explodin'"
+            });
+
+        }
+
+    };
 
 }

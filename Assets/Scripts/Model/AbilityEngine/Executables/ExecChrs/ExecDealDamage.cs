@@ -53,7 +53,6 @@ public class ExecDealDamage : ExecChr {
         dmg = new Damage(_chrSource, _chrTarget, funcBaseDamage);
     }
 
-    //Have a constructor that just accepts a premade Healing instance and copies it
     public ExecDealDamage(Chr _chrSource, Chr _chrTarget, Damage _dmg) : base(_chrSource, _chrTarget) {
         dmg = new Damage(_dmg);
 

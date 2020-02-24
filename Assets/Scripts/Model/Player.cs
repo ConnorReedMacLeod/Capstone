@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Player : MonoBehaviour{
 
@@ -14,7 +15,7 @@ public class Player : MonoBehaviour{
 
     public int iBlocker; // the index of the currently selected blocker
 
-    public static Player[] arAllPlayers;
+    public static List<Player> lstAllPlayers;
 	public GameObject pfManaPanel;
 
     public InputAbilitySelection inputController;
@@ -30,21 +31,24 @@ public class Player : MonoBehaviour{
         HUMAN, AI
     };
 
+    public List<Chr> GetActiveChrs() {
+        return arChr.ToList<Chr>();
+    }
 
     public int GetTargettingId() {
         return id;
     }
 
     public static Player GetTargetByIndex(int ind) {
-        return arAllPlayers[ind];
+        return lstAllPlayers[ind];
     }
 
     public static void RegisterPlayer(Player plyr) {
-        if (arAllPlayers == null) {
-            arAllPlayers = new Player[Player.MAXCHRS];
+        if (lstAllPlayers == null) {
+            lstAllPlayers = new List<Player>(Player.MAXCHRS);
         }
 
-        arAllPlayers[plyr.id] = plyr;
+        lstAllPlayers[plyr.id] = plyr;
     }
 
 	public void SetID(int _id){

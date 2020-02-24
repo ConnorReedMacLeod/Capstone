@@ -4,13 +4,7 @@ using UnityEngine;
 
 public class ActionSerenade : Action {
 
-    public Healing heal;
-    public int nBaseHealing;
-
-    public ActionSerenade(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
-
-        //Since the base constructor initializes this array, we can start filling it
-        arArgs[0] = new TargetArgChr(Action.IsFriendly);
+    public ActionSerenade(Chr _chrOwner) : base(_chrOwner, 0) {
 
         sName = "Serenade";
         sDisplayName = "Serenade";
@@ -24,41 +18,45 @@ public class ActionSerenade : Action {
         nFatigue = 4;
         nActionCost = 1;
 
-        nBaseHealing = 25;
-        //Create a base Healing object that this action will apply
-        heal = new Healing(this.chrSource, null, nBaseHealing);
-
-        sDescription1 = "Heal 25 to the chosen ally.";
-
-
-        SetArgOwners();
-    }
-
-    override public void Execute(int[] lstTargettingIndices) {
-
-        Chr tarChr = Chr.GetTargetByIndex(lstTargettingIndices[0]);
-
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-
-                //Make a copy of the heal object to give to the executable
-                Healing healToApply = new Healing(heal);
-                //Give the healing object its target
-                healToApply.SetChrTarget(tarChr);
-
-                ContAbilityEngine.Get().AddExec(new ExecHeal() {
-                    chrSource = this.chrSource,
-                    chrTarget = tarChr,
-
-                    heal = healToApply,
-
-                    arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndSerenade", 5.3f) },
-
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = "Healing " + tarChr.sName
-                });
-            }
-        });
+        lstClauses = new List<Clause> {
+            new Clause1(this)
+        };
 
     }
+
+    class Clause1 : ClauseChr {
+
+        Healing heal;
+        int nBaseHealing = 25;      
+
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this), //Base Tag always goes first
+                new ClauseTagChrAlly(this)
+            });
+
+            //Create and store a copy of the intended healing effect so that any information/effects
+            // can be updated accurately
+            heal = new Healing(action.chrSource, null, nBaseHealing);
+
+        }
+
+        public override string GetDescription() {
+
+            //TODO - eventually figure out how I'm gonna dynamically generate the text targets
+            return string.Format("Heal {0} life to the chosen Ally", heal.Get());
+        }
+
+        public override void ClauseEffect(Chr chrSelected) {
+
+            //Push an executable with this action's owner as the source, the selected character as the target,
+            // and we can copy the stored healing instance to apply
+            ContAbilityEngine.PushSingleExecutable(new ExecHeal(action.chrSource, chrSelected, heal) {
+                arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndSerenade", 5.3f) },
+                sLabel = "<Darude's Sandstorm on Recorder>"
+            });
+
+        }
+
+    };
 }

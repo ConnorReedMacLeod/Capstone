@@ -33,20 +33,26 @@ public class SoulBurning : Soul {
                     //Give the damage object its target
                     dmgToApply.SetChrTarget(this.chrTarget);
 
-                    ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                        chrSource = this.chrSource,
-                        chrTarget = this.chrTarget,
-
-                        //Make a copy of the initially calculated damage when the soul was applied
-                        dmg = new Damage(dmgToApply), 
-
-                        fDelay = ContTurns.fDelayStandard,
-                        sLabel = this.chrTarget.sName + " is Burning"
+                    ContAbilityEngine.Get().AddExec(new ExecDealDamage(this.chrSource, this.chrTarget, new Damage(dmgToApply)) {
+                        sLabel = "Taking damage from Burn effect"
                     });
 
                  }
             }
         };
+    }
+
+    public SoulBurning(SoulBurning other, Chr _chrTarget=null) : base(other) {
+        if(_chrTarget != null) {
+            //If a Target was provided, then we'll use that
+            chrTarget = _chrTarget;
+        } else {
+            //Otherwise, just copy from the other object
+            chrTarget = other.chrTarget;
+        }
+     
+        nBaseDamage = other.nBaseDamage;
+        dmg = new Damage(other.dmg);
     }
 
 }
