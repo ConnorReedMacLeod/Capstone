@@ -7,12 +7,11 @@ public class StateChanneling : StateReadiness {
     public int nChannelTime;  
 
     public SoulChannel soulBehaviour; //Handles all customized behaviour of what the channel effect should do
-    public SelectionSerializer.SelectionInfo selectioninfoStored;
+    public SelectionSerializer.SelectionInfo selectioninfoStored;//TODONOW - figure out where to initialize this
 
     public StateChanneling(Chr _chrOwner, int _nChannelTime, SoulChannel _soulBehaviour) : base(_chrOwner) {
 
         nChannelTime = _nChannelTime;
-        selectioninfoStored = lstTargettingIndices; //TODONOW - figure out where the selection info is retrievable at
 
         //Double check that the soul isn't visible - should just be a hidden implementation
         Debug.Assert(_soulBehaviour.bVisible == false);
@@ -36,7 +35,7 @@ public class StateChanneling : StateReadiness {
     // this should be subcribed to each potentially invalidating subject
     public void cbInterruptifInvalid(Object target, params object[] args) {
 
-        if (!soulBehaviour.act.LegalTargets(lstStoredTargettingIndices)) {
+        if (!soulBehaviour.act.LegalTargets(selectioninfoStored)) {
             //If targetting has become invalid (maybe because someone has died)
             InterruptChannel();
 
@@ -54,8 +53,8 @@ public class StateChanneling : StateReadiness {
 
         Debug.Log("Interuptting an ability with " + soulBehaviour.act);
 
-        //Change the function's onRemoval effect to its interrupted function
-        soulBehaviour.funcOnRemoval = soulBehaviour.OnInterruptedCompletion;
+        //Activate any Interruption trigger on the soul effect
+        soulBehaviour.OnInterrupted();
     }
 
     public override void ChangeChanneltime(int _nChange) {
@@ -75,6 +74,7 @@ public class StateChanneling : StateReadiness {
         //If, for any reason, we've now been put to 0 channeltime, then our channel completes
         // and we transition to the fatigued state
         if(nChannelTime == 0) {
+
             ContAbilityEngine.Get().AddExec(new ExecCompleteChannel() {
 
                 chrSource = null, //This is a game action, so there's no source
@@ -108,7 +108,7 @@ public class StateChanneling : StateReadiness {
 
         //TODO:: Add a subscription list of potentially cancelling triggers to listen for a channel
         // which we can then subcribe cbInterrupifInvalid to
-        Chr.subAllDeath.Subscribe(cbInterruptifInvalid);
+        //Chr.subAllDeath.Subscribe(cbInterruptifInvalid);
 
         //Once we're in this state, let people know that the channel time has taken effect
         chrOwner.subChannelTimeChange.NotifyObs();
@@ -118,7 +118,7 @@ public class StateChanneling : StateReadiness {
     public override void OnLeave() {
 
         //TODO:: unsubscribe from all of these cancelling triggers
-        Chr.subAllDeath.UnSubscribe(cbInterruptifInvalid);
+        //Chr.subAllDeath.UnSubscribe(cbInterruptifInvalid);
 
         chrOwner.soulContainer.RemoveSoul(soulBehaviour);
 

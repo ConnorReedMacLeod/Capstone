@@ -19,7 +19,7 @@ public class TargetArgTeam : TargetArg {
             return false;
         }
 
-        return fLegalCheck(chrOwner, Player.arAllPlayers[indexTarget]);
+        return fLegalCheck(chrOwner, Player.lstAllPlayers[indexTarget]);
     }
 
 }

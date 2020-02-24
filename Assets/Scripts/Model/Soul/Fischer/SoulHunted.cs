@@ -8,15 +8,9 @@ public class SoulHunted : Soul {
 
     public void ApplyDefenseDebuff() {
 
-        ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-            chrSource = this.chrSource,
-            chrTarget = this.chrTarget,
+        ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(chrSource, chrTarget, new SoulChangeDefense(chrTarget, chrTarget, this.actSource, nDefenseLoss, 1)));
 
-            funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                return new SoulChangeDefense(_chrSource, _chrTarget, this.actSource, nDefenseLoss, 1);
-            }
-        });
-        }
+    }
 
     public SoulHunted(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
 
@@ -50,6 +44,19 @@ public class SoulHunted : Soul {
                 }
             }
         };
+    }
+
+    public SoulHunted(SoulHunted other, Chr _chrTarget = null) : base(other) {
+        if (_chrTarget != null) {
+            //If a Target was provided, then we'll use that
+            chrTarget = _chrTarget;
+        } else {
+            //Otherwise, just copy from the other object
+            chrTarget = other.chrTarget;
+        }
+
+        nDefenseLoss = other.nDefenseLoss;
+
     }
 
 }

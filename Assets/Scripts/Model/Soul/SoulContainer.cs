@@ -148,4 +148,14 @@ public class SoulContainer : MonoBehaviour {
 
 
     }
+
+    public SoulContainer(SoulContainer other) {
+        lstSoul = new List<Soul>(other.lstSoul);
+
+        chrOwner = other.chrOwner;
+
+        nMaxVisibleSoul = other.nMaxVisibleSoul;
+
+        subVisibleSoulUpdate = new Subject(other.subVisibleSoulUpdate);
+    }
 }

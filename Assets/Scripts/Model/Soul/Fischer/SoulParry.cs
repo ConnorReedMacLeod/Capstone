@@ -6,7 +6,7 @@ public class SoulParry : Soul {
 
     public int nDamage;
     public int nDefense;
-    public Damage dmg;
+    public Damage dmgCounterAttack;
 
     /* Removed while switching this to give defense rather than armour
     public LinkedListNode<Property<int>.Modifier> nodeArmourModifier;
@@ -19,25 +19,10 @@ public class SoulParry : Soul {
         soulContainer.RemoveSoul(this);
 
         //Then retaliate with damage
-        ContAbilityEngine.Get().AddClause(new Clause() {
-            fExecute = () => {
+        ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(chrSource, chrDamager, dmgCounterAttack) {
+            arSoundEffects = new SoundEffect[] { new SoundEffect("Fischer/sndBucklerParry", 1.5f) },
 
-                //Make a copy of the damage object to give to the executable
-                Damage dmgToApply = new Damage(dmg);
-                //Give the damage object its target
-                dmgToApply.SetChrTarget(chrDamager);
-
-                ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                    chrSource = this.chrTarget,
-                    chrTarget = chrDamager,
-
-                    arSoundEffects = new SoundEffect[] { new SoundEffect("Fischer/sndBucklerParry", 1.5f) },
-
-                    dmg = dmgToApply,
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = "Counterattacking"
-                });
-            }
+            sLabel = "Counterattacking"
         });
        
     }
@@ -55,7 +40,7 @@ public class SoulParry : Soul {
         nDamage = 15;
         nDefense = 15;
         //Create a base Damage object that this action will apply
-        dmg = new Damage(this.chrSource, null, nDamage);
+        dmgCounterAttack = new Damage(this.chrSource, null, nDamage);
 
 
         lstTriggers = new List<TriggerEffect>() {
@@ -113,6 +98,21 @@ public class SoulParry : Soul {
         // destroyed - for this particular buff, since we do more than just provide
         // armour, then we shouldn't remove the buff.  If this only gave armour,
         // then it would be reasonable to remove this buff when the armour is broken
+
+    }
+
+    public SoulParry(SoulParry other, Chr _chrTarget = null) : base(other) {
+        if (_chrTarget != null) {
+            //If a Target was provided, then we'll use that
+            chrTarget = _chrTarget;
+        } else {
+            //Otherwise, just copy from the other object
+            chrTarget = other.chrTarget;
+        }
+
+        nDamage = other.nDamage;
+        nDefense = other.nDefense;
+        dmgCounterAttack = new Damage(other.dmgCounterAttack);
 
     }
 }

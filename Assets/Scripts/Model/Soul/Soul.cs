@@ -54,10 +54,11 @@ public class Soul {
 
     }
 
-    //These are functions that we can set to nonnull values if we want something to happen on these triggers
-    public System.Action funcOnApplication;
-    public System.Action funcOnRemoval;
-    public System.Action funcOnExpiration;//Specifically when the soul effect reaches the end of its duration
+    //These are functions that we can override if we want certain effects to happen on application/removal/expiration
+    //  By default, these just to nothing though
+    public virtual void ApplicationEffect() { }
+    public virtual void RemoveEffect() { }
+    public virtual void ExpirationEffect() { }//Specifically when the soul effect reaches the end of its duration
    
     public void OnApply(SoulContainer _soulContainer) {
 
@@ -84,8 +85,8 @@ public class Soul {
 
         chrTarget.subDeath.Subscribe(cbOnChrTargetDeath);
         chrSource.subDeath.Subscribe(cbOnChrSourceDeath);
-        
-        if(funcOnApplication != null) funcOnApplication();
+
+        ApplicationEffect();
 
         if(ContAbilityEngine.bDEBUGENGINE)Debug.Log(sName + " has been applied");
     }
@@ -107,11 +108,11 @@ public class Soul {
             Replacement.Unregister(rep);
         }
 
-        if (funcOnRemoval != null) funcOnRemoval();
+        RemoveEffect();
         if (ContAbilityEngine.bDEBUGENGINE) Debug.Log(sName + " has been removed");
 
         if (bDuration == true && nCurDuration == 0) {
-            if (funcOnExpiration != null) funcOnExpiration();
+            ExpirationEffect();
             if (ContAbilityEngine.bDEBUGENGINE) Debug.Log(sName + " has expired");
         }
 
@@ -132,12 +133,19 @@ public class Soul {
         }
     }
 
-    public Soul(Soul soulToCopy) {
+    public Soul(Soul soulToCopy, Chr _chrTarget = null) {
         chrSource = soulToCopy.chrSource;
-        chrTarget = soulToCopy.chrTarget;
 
-        soulContainer = soulToCopy.soulContainer;
-        sName = soulToCopy.sName;
+        if (_chrTarget != null) {
+            //If a Target was provided, then we'll use that
+            chrTarget = _chrTarget;
+        } else {
+            //Otherwise, just copy from the other object
+            chrTarget = soulToCopy.chrTarget;
+        }
+
+        soulContainer = new SoulContainer(soulToCopy.soulContainer);
+        sName = string.Copy(soulToCopy.sName);
         bVisible = soulToCopy.bVisible;
         bLocked = soulToCopy.bLocked;
         bRemoveOnChrDeath = soulToCopy.bRemoveOnChrDeath;
@@ -159,12 +167,6 @@ public class Soul {
         if (soulToCopy.lstTriggers != null) {
             lstTriggers = new List<TriggerEffect>(soulToCopy.lstTriggers);
         }
-
-        //These might cause errors if the soul's function's change later, and we don't want our previously
-        // started channel to change and reflect them
-        funcOnApplication = soulToCopy.funcOnApplication;
-        funcOnExpiration = soulToCopy.funcOnExpiration;
-        funcOnRemoval = soulToCopy.funcOnRemoval;
-
+  
     }
 }

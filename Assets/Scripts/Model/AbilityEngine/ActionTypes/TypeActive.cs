@@ -21,15 +21,4 @@ public class TypeActive : TypeAction {
         return nActionPointCost;
     }
 
-    public override void UseAction() {
-
-        act.Execute();
-
-        PayActionPoints();
-
-        act.PayCooldown();
-        act.PayFatigue();
-
-        //Stay in a Ready state for now
-    }
 }

@@ -4,15 +4,7 @@ using UnityEngine;
 
 public class ActionTwinSnakes : Action {
 
-    public Damage dmg;
-    public int nBaseDamage;
-
-    public int nLifeLoss;
-
-    public ActionTwinSnakes(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
-
-        //Since the base constructor initializes this array, we can start filling it
-        arArgs[0] = new TargetArgChr(Action.IsEnemy);
+    public ActionTwinSnakes(Chr _chrOwner) : base(_chrOwner ,0) {
 
         sName = "TwinSnakes";
         sDisplayName = "Twin Snakes";
@@ -32,81 +24,41 @@ public class ActionTwinSnakes : Action {
 
         nLifeLoss = 5;
 
-        sDescription1 = "Deal 20 damage to the chosen character twice.  Lose 5 health twice";
-
-        SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this),
+            new Clause1(this)
+        };
     }
 
-    override public void Execute(int[] lstTargettingIndices) {
+    class Clause1 : ClauseChr {
 
-        Chr tarChr = Chr.GetTargetByIndex(lstTargettingIndices[0]);
+        Damage dmg;
+        public int nBaseDamage = 20;
+        public int nLifeloss = 5;
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this) //Base Tag always goes first
+            });
 
-                //Make a copy of the damage object to give to the executable
-                Damage dmgToApply = new Damage(dmg);
-                //Give the damage object its target
-                dmgToApply.SetChrTarget(tarChr);
 
-                ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                    chrSource = this.chrSource,
-                    chrTarget = tarChr,
-                    dmg = dmgToApply,
+            dmg = new Damage(action.chrSource, null, nBaseDamage);
+        }
 
-                    arSoundEffects = new SoundEffect[] { new SoundEffect("Sophidia/sndTwinSnakes", 2f) },
+        public override string GetDescription() {
 
-                    fDelay = ContTurns.fDelayNone,
-                    sLabel = "Snake Biting " + tarChr.sName
-                });
-            }
-        });
+            return string.Format("Deal {0} damage to the chosen character twice.  Lose {1} health twice", dmg.Get(), nLifeloss);
+        }
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
+        public override void ClauseEffect(Chr chrSelected) {
 
-                //Make a copy of the damage object to give to the executable
-                Damage dmgToApply = new Damage(dmg);
-                //Give the damage object its target
-                dmgToApply.SetChrTarget(tarChr);
+            ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(action.chrSource, chrSelected, dmg) {
+                arSoundEffects = new SoundEffect[] { new SoundEffect("Sophidia/sndTwinSnakes", 2f) },
+                sLabel = "Snakey, no!"
+            });
 
-                ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                    chrSource = this.chrSource,
-                    chrTarget = tarChr,
-                    dmg = dmgToApply,
+        }
 
-                    fDelay = ContTurns.fDelayNone,
-                    sLabel = "Snake Biting " + tarChr.sName
-                });
-            }
-        });
-
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                ContAbilityEngine.Get().AddExec(new ExecLoseLife() {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
-                    nLifeLoss = nLifeLoss,
-
-                    fDelay = ContTurns.fDelayNone,
-                    sLabel = this.chrSource.sName + " has lost her Snakes"
-                });
-            }
-        });
-
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                ContAbilityEngine.Get().AddExec(new ExecLoseLife() {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
-                    nLifeLoss = nLifeLoss,
-
-                    fDelay = ContTurns.fDelayNone,
-                    sLabel = this.chrSource.sName + " has lost her Snakes"
-                });
-            }
-        });
-
-    }
+    };
 
 }

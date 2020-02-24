@@ -6,9 +6,6 @@ public abstract class ClauseChr : Clause {
 
     public Property<List<ClauseTagChr>> plstTags;
 
-    //Stores the character that is currently being processed by this clause
-    public Chr chrCurrentProcessingTarget;
-
     public ClauseTagChr GetBaseTag() {
         return plstTags.Get()[0];
     }
@@ -42,7 +39,7 @@ public abstract class ClauseChr : Clause {
     public abstract void ClauseEffect(Chr chrSelected);
 
     public override void Execute() {
-        List<Chr> lstTargets = GetFinalTargets();
+        List<Chr> lstTargets = GetFinalTargets((SelectionSerializer.SelectionChr)GetSelectionInfo());
 
         for (int i = 0; i < lstTargets.Count; i++) {
 
@@ -54,8 +51,5 @@ public abstract class ClauseChr : Clause {
 
     public ClauseChr(Action _action) : base(_action) { }
 
-    public ClauseChr(ClauseChr other) : base(other) {
-        plstTags = new Property<List<ClauseTagChr>>(other.plstTags);
-    }
 }
 

@@ -8,6 +8,7 @@ public class TypeChannel : TypeAction {
 
     public SoulChannel soulBehaviour;
     public int nStartChannelTime;
+    public SelectionSerializer.SelectionInfo infoStoredSelection;
 
     public TypeChannel(Action act, int _nStartChannelTime, SoulChannel _soulBehaviour) : base(act) {
 
@@ -33,16 +34,26 @@ public class TypeChannel : TypeAction {
         return nActionPointCost;
     }
 
+    public override void PayActionPoints() {
+        base.PayActionPoints();
+
+        //After paying the action point cost (even though it likely shouldn't matter)
+        // we can then transition our readiness state to a channel state
+        act.chrSource.SetStateReadiness(new StateChanneling(act.chrSource, nStartChannelTime, new SoulChannel(soulBehaviour, act)));
+    }
+
     public override void UseAction() {
 
-        //It's a bit weird to reduce your action cost on a channel since you're
-        //gonna be switching states, but it should be done for the sake of completeness
-        PayActionPoints();
+        //When initially using a channel, we don't need to perform any action, so
+        // just store the current selections so that we can use them when we complete the channel
+        // and execute the effect
+        // Note - we just use the base implementation's selection information location
+        infoStoredSelection = base.GetSelectionInfo().GetCopy();
 
-        //Move to a Channel State
-        act.chrSource.SetStateReadiness(new StateChanneling(act.chrSource, nStartChannelTime, new SoulChannel(soulBehaviour, act)));
+    }
 
-        //Pay the fatigue cost for the action
-        act.PayFatigue();
+    public override SelectionSerializer.SelectionInfo GetSelectionInfo() {
+        //Return the selection info that's been stored
+        return infoStoredSelection;
     }
 }

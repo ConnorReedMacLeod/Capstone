@@ -33,13 +33,13 @@ public class Action { //This should probably be made abstract
     public List<Clause> lstClausesOnEquip = new List<Clause>();
     public List<Clause> lstClausesOnUnequip = new List<Clause>();
 
-    public int iBaseClause;
+    public int iDominantClause;
 
     public Subject subAbilityChange = new Subject();
 
-    public Action(Chr _chrOwner, int _iBaseClause) {
+    public Action(Chr _chrOwner, int _iDominantClause) {
         chrSource = _chrOwner;
-        iBaseClause = _iBaseClause;
+        iDominantClause = _iDominantClause;
 
         bProperActive = true;
 
@@ -81,50 +81,40 @@ public class Action { //This should probably be made abstract
 
     }
 
+    //TODO - don't make new instances of these, just store one modifiable copy in the action and 
+    //       push a reference to it onto the stack instead
+    public void PayActionPoints() {
+
+        ContAbilityEngine.PushSingleClause(new ClausePayActionPoints(this));
+
+    }
+
     public void PayManaCost() {
 
-        ContAbilityEngine.PushSingleClause(new Clause() {
+        ContAbilityEngine.PushSingleClause(new ClausePayMana(this));
 
-            fExecute = () => {
-                //Pay for the Action
-                ContAbilityEngine.Get().AddExec(new ExecChangeMana(chrSource.plyrOwner, Mana.ConvertToCost(parCost.Get())) {
-                    chrSource = this.chrSource,
-                    chrTarget = null,
-                });
-            }
-        });
     }
 
     public void PayCooldown() {
-        ContAbilityEngine.Get().AddClause(new Clause() {
 
-            fExecute = () => {
-                //Increase this Action's cooldown
-                ContAbilityEngine.Get().AddExec(new ExecChangeCooldown() {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
-
-                    actTarget = this,
-                    nAmount = nCd
-                });
-            }
-        });
+        ContAbilityEngine.PushSingleClause(new ClausePayCooldown(this));
     }
 
     public void PayFatigue() {
 
-        ContAbilityEngine.Get().AddClause(new Clause() {
+        ContAbilityEngine.PushSingleClause(new ClausePayFatigue(this));
 
-            fExecute = () => {
-                //Increase the character's fatigue
-                ContAbilityEngine.Get().AddExec(new ExecChangeFatigue {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
+    }
 
-                    nAmount = nFatigue
-                });
-            }
-        });
+    public void PushStartingMarker() {
+
+        ContAbilityEngine.PushSingleClause(new ClauseStartAbility(this));
+
+    }
+
+    public void PushEndingMarker() {
+
+        ContAbilityEngine.PushSingleClause(new ClauseEndAbility(this));
 
     }
 
@@ -138,7 +128,7 @@ public class Action { //This should probably be made abstract
     }
 
     //Use the selected action with the supplied targets
-    public void UseAction(int[] lstTargettingIndices) {
+    public void UseAction(SelectionSerializer.SelectionInfo infoSelection) {
 
         if(CanPayMana() == false) {
             Debug.LogError("Tried to use action, but didn't have enough mana");
@@ -148,31 +138,37 @@ public class Action { //This should probably be made abstract
             Debug.LogError("Tried to use action, but it's not a valid selection");
         }
 
-        //First pay the mana cost for the action
-        PayManaCost();
+        // IMPORTANT - since we're pushing these effects onto the stack, we'll want to 
+        //             push them in reverse order so that we will evaluate the most recently pushed effect first
 
-        //Add a marker for the end of the ability below all of the effects for this ability
-        ContAbilityEngine.Get().AddClause(
-            new ClauseSpecial(this) {
-                lstExec = new List<Executable> { new ExecEndAbility(this) }
-            });
+
+
+        //Finally, add an ending marker after the abilities' executed
+        PushEndingMarker();
 
         //Let the type of this action dictate the behaviour and push all relevant effects onto the stack
-        type.UseAction(lstTargettingIndices);
+        type.UseAction();
 
-        //Add a marker on top for where the ability starts
-        ContAbilityEngine.Get().AddClause(
-            new ClauseSpecial(this) {
-                lstExec = new List<Executable> { new ExecStartAbility(this) }
-            });
+        //Then, add a starting marker before the abilities' effects
+        PushStartingMarker();
 
+        //Fourth, pay the cooldown
+        PayCooldown();
 
+        //Third, pay the fatigue
+        PayFatigue();
+
+        //Second pay the mana cost for the action
+        PayManaCost();
+
+        //First pay the action points (note that this doesn't use the stack since nothing should interact with it)
+        PayActionPoints();
     }
 
 
     public void Execute() {
 
-        //Give our list of clauses to evaluate to the engine to push onto the stack
+        //Push a reference to each of our clauses onto the stack so they may be evaluated later
         ContAbilityEngine.PushClauses(lstClauses);
     }
 
@@ -230,5 +226,105 @@ public class Action { //This should probably be made abstract
     public static bool IsAnyCharacter(Chr owner, Chr tar) {
         return true;
     }
+
+    class ClausePayMana : Clause {
+
+        public ClausePayMana(Action _act) : base(_act) {
+        }
+
+        public override string GetDescription() {
+            return string.Format("Paying mana for skill");
+        }
+
+        public override void Execute() {
+
+            ContAbilityEngine.PushSingleExecutable(new ExecChangeMana(action.chrSource, action.chrSource.plyrOwner, action.parCost.Get()));
+
+        }
+
+    };
+
+    class ClausePayCooldown : Clause {
+
+        public ClausePayCooldown(Action _act) : base(_act) {
+        }
+
+        public override string GetDescription() {
+            return string.Format("Paying cooldown for skill");
+        }
+
+        public override void Execute() {
+            
+            ContAbilityEngine.PushSingleExecutable(new ExecChangeCooldown(action.chrSource, action, action.nCd));
+
+        }
+
+    };
+
+    class ClausePayFatigue : Clause {
+
+        public ClausePayFatigue(Action _act) : base(_act) {
+        }
+
+        public override string GetDescription() {
+            return string.Format("Paying fatigue for skill");
+        }
+
+        public override void Execute() {
+
+            ContAbilityEngine.PushSingleExecutable(new ExecChangeFatigue(action.chrSource, action.chrSource, action.nFatigue, false));
+
+        }
+
+    };
+
+    class ClausePayActionPoints : Clause {
+
+        public ClausePayActionPoints(Action _act) : base(_act) {
+
+        }
+
+        public override string GetDescription() {
+            return string.Format("Paying action points");
+        }
+
+        public override void Execute() {
+            ContAbilityEngine.PushSingleExecutable(new ExecPayActionPoints(action.chrSource, action.chrSource, action));
+        }
+    };
+
+    class ClauseStartAbility : Clause {
+
+        public ClauseStartAbility(Action _act) : base(_act) {
+        }
+
+        public override string GetDescription() {
+            return string.Format("Starting marker for this skill");
+        }
+
+        public override void Execute() {
+
+            ContAbilityEngine.PushSingleExecutable(new ExecStartAbility(action.chrSource, action));
+
+        }
+
+    };
+
+    class ClauseEndAbility : Clause {
+
+        public ClauseEndAbility(Action _act) : base(_act) {
+        }
+
+        public override string GetDescription() {
+            return string.Format("Ending marker for this skill");
+        }
+
+        public override void Execute() {
+
+            ContAbilityEngine.PushSingleExecutable(new ExecEndAbility(action.chrSource, action));
+
+        }
+
+    };
 
 }

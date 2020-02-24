@@ -24,26 +24,20 @@ public class SoulChannel : Soul {
 
         act = _act;
 
+        sName = "Channel-" + act.sName;
+    }
+
+    public override void ExpirationEffect() {
+
+        //If we reach the end of the duration of the effect, then execute the effects of the 
+        // stored action
+        act.Execute();
+
+    }
+
+    public void OnInterrupted() {
         
 
-        sName = "Channel-" + act.sName;
-
-        //By default, we will do the successful completion action
-        funcOnRemoval = onSuccessfulCompletion;
-    }
-
-    public void onSuccessfulCompletion() {
-
-        //Then give that action's stack of clauses to the Ability Engine to process
-        ContAbilityEngine.PushClauses(act.lstClauses);
-
-        //Then pay for the action (increase cooldown)
-        act.PayCooldown();
-    }
-
-    public void OnInterruptedCompletion() {
-        //Then just pay for the action (increase cooldown)
-        act.PayCooldown();
     }
 
     public SoulChannel(SoulChannel soulToCopy, Action _act) : base(soulToCopy) {

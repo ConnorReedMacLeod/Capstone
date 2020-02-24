@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class ActionRest : Action {
 
-    public int nRestFatigue;
-
-	public ActionRest(Chr _chrOwner): base(0, _chrOwner){//number of target arguments
+	public ActionRest(Chr _chrOwner): base(_chrOwner, 0){
 
 		sName = "Rest";
         sDisplayName = "Rest";
@@ -22,33 +20,35 @@ public class ActionRest : Action {
 
         bProperActive = false; //This is a special action that shouldn't change our character's sprite to the active
 
-        nRestFatigue = 3;
-
-		sDescription1 = _chrOwner.sName + " finishes selecting abilities for the turn.";
-
 	}
 
-	override public void Execute(int[] lstTargettingIndices) {
+    class Clause1 : ClauseSpecial {
 
-		//Debug.Log (chrSource.sName + " is resting");
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                //Check if the character has any fatigue already
-                if (chrSource.nFatigue == 0) {
-                    //If not, then give them three fatigue
-                    ContAbilityEngine.Get().AddExec(new ExecChangeFatigue() {
-                        chrSource = this.chrSource,
-                        chrTarget = this.chrSource,
+        public int nRestFatigue;
 
-                        nAmount = this.nRestFatigue,
+        public Clause1(Action _act) : base(_act) {
+            //TODO add in tags for base action, and rest
+            
+            nRestFatigue = 3;
+        }
 
-                        fDelay = ContTurns.fDelayStandard,
-                        sLabel = this.chrSource.sName + " is resting"
-                    });
-                }
+        public override string GetDescription() {
+
+            return string.Format("Finish this character's turn");
+        }
+
+        public override void ClauseEffect() {
+
+            //Check if the character has any fatigue already
+            if (action.chrSource.nFatigue == 0) {
+                //If not, then give them the rest fatigue
+                ContAbilityEngine.Get().AddExec(new ExecChangeFatigue(action.chrSource, action.chrSource, nRestFatigue, false) {
+                    sLabel = "Resting"
+                });
             }
-        });
 
-    }
+        }
+
+    };
 
 }

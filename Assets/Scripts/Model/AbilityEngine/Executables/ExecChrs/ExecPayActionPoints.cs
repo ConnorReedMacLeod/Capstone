@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Can create executables like ...= new Exec(){chrSource = ..., chrTarget = ..., funcApplySoul = ...};
 
-public class ExecApplySoul : ExecChr {
+//Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
 
-    public delegate Soul FuncCreateSoul(Chr _chrSource, Chr _chrTarget);
+public class ExecPayActionPoints : ExecChr {
 
-    public Soul soulToApply;
-
+    public Action actUsing;
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -38,17 +36,19 @@ public class ExecApplySoul : ExecChr {
 
 
     public override void ExecuteEffect() {
-       
-        chrTarget.soulContainer.ApplySoul(soulToApply);
+
+        actUsing.type.PayActionPoints();
+
+        fDelay = ContTurns.fDelayTurnAction;
+        sLabel = chrTarget.sName + " is paying their action point cost (and potentially transitioning readiness state";
 
     }
 
-    public ExecApplySoul(Chr _chrSource, Chr _chrTarget, Soul _soulToApply): base(_chrSource, _chrTarget) {
-        soulToApply = _soulToApply;
+    public ExecPayActionPoints(Chr _chrSource, Chr _chrTarget, Action _actUsing) : base(_chrSource, _chrTarget) {
+        actUsing = _actUsing;
     }
 
-    public ExecApplySoul(ExecApplySoul other) : base(other) {
-        soulToApply = other.soulToApply;
+    public ExecPayActionPoints(ExecPayActionPoints other) : base(other) {
+        actUsing = other.actUsing;
     }
-
 }

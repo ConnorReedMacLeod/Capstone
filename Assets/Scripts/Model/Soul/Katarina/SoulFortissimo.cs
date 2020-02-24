@@ -23,24 +23,38 @@ public class SoulFortissimo : Soul {
         bDuration = true;
         bRecoilWhenApplied = false;
 
-        pnMaxDuration = new Property<int>(4);
+        pnMaxDuration = new Property<int>(4);    
 
-        funcOnApplication = () => {
+    }
 
-            //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
-            soulChangePower = new SoulChangePower(chrSource, chrTarget, actSource, nPowerBuff);
-            chrTarget.soulContainer.ApplySoul(soulChangePower);
+    public override void ApplicationEffect() {
+        //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
+        soulChangePower = new SoulChangePower(chrSource, chrTarget, actSource, nPowerBuff);
+        chrTarget.soulContainer.ApplySoul(soulChangePower);
 
-            //Make a Permanent SoulChangeDefense, and save a reference to it, so it can be removed later
-            soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, actSource, nDefenseBuff);
-            chrTarget.soulContainer.ApplySoul(soulChangeDefense);
-        };
+        //Make a Permanent SoulChangeDefense, and save a reference to it, so it can be removed later
+        soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, actSource, nDefenseBuff);
+        chrTarget.soulContainer.ApplySoul(soulChangeDefense);
+    }
 
-        funcOnRemoval = () => {
+    public override void RemoveEffect() {
 
-            chrTarget.soulContainer.RemoveSoul(soulChangePower);
-            chrTarget.soulContainer.RemoveSoul(soulChangeDefense);
-        };
+        chrTarget.soulContainer.RemoveSoul(soulChangePower);
+        chrTarget.soulContainer.RemoveSoul(soulChangeDefense);
+
+    }
+
+    public SoulFortissimo(SoulFortissimo other, Chr _chrTarget = null) : base(other) {
+        if (_chrTarget != null) {
+            //If a Target was provided, then we'll use that
+            chrTarget = _chrTarget;
+        } else {
+            //Otherwise, just copy from the other object
+            chrTarget = other.chrTarget;
+        }
+
+        nPowerBuff = other.nPowerBuff;
+        nDefenseBuff = other.nDefenseBuff;
 
     }
 }

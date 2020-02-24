@@ -21,7 +21,7 @@ public abstract class TypeAction {
         return true;
     }
 
-    public void PayActionPoints() {
+    public virtual void PayActionPoints() {
         //Ensure we're in a ready state
         Debug.Assert(act.chrSource.curStateReadiness.Type() == StateReadiness.TYPE.READY);
 
@@ -33,6 +33,17 @@ public abstract class TypeAction {
         stateReady.nCurActionsLeft -= GetActionPointCost();
     }
 
-    public abstract void UseAction();
+    public virtual void UseAction() {
+        //By default, just execute the ability
+        act.Execute();
+
+    }
+
+    //Fetch the current selection information for the player using this ability
+    public virtual SelectionSerializer.SelectionInfo GetSelectionInfo() {
+        //TODONOW - implement this
+        //By default, grab the player's current selection
+
+    }
 
 }
