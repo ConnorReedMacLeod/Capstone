@@ -7,10 +7,7 @@ public class ActionSpiritSlap : Action {
     public Damage dmg;
     public int nBaseDamage;
 
-    public ActionSpiritSlap(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
-
-        //Since the base constructor initializes this array, we can start filling it
-        //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); we don't have any targets
+    public ActionSpiritSlap(Chr _chrOwner) : base(_chrOwner, 0) {//Set the dominant clause
 
         sName = "SpiritSlap";
         sDisplayName = "Spirit Slap";
@@ -23,58 +20,47 @@ public class ActionSpiritSlap : Action {
         nCd = 0;
         nFatigue = 2;
         nActionCost = 1;
-
-        nBaseDamage = 5;
-        //Create a base Damage object that this action will apply
-        dmg = new Damage(this.chrSource, null, nBaseDamage);
-
-		sDescription1 = "Deal 5 damage to the enemy blocker and apply DISPIRITED (4).";
-		sDescription2 = "[DISPIRITED]\n" + "This character's cantrips cost [O] more.";
-
-        SetArgOwners();
+        
+        lstClauses = new List<Clause>() {
+            new Clause1(this),
+        };
     }
 
-    override public void Execute(int[] lstTargettingIndices) {
+    class Clause1 : ClauseChr {
 
-        Chr tarChr = chrSource.plyrOwner.GetEnemyPlayer().GetBlocker();
+        Damage dmg;
+        public int nBaseDamage = 5;
+        public SoulDispirited soulToCopy;
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                //Make a copy of the damage object to give to the executable
-                Damage dmgToApply = new Damage(dmg);
-                //Give the damage object its target
-                dmgToApply.SetChrTarget(tarChr);
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrMelee(this), //Base Tag always goes first
+                new ClauseTagChrEnemy(this)
+            });
+            
+            dmg = new Damage(action.chrSource, null, nBaseDamage);
+            soulToCopy = new SoulDispirited(action.chrSource, null, action);
+        }
 
-                ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                    chrSource = this.chrSource,
-                    chrTarget = tarChr,
-                    dmg = dmgToApply,
+        public override string GetDescription() {
 
-                    arSoundEffects = new SoundEffect[] { new SoundEffect("Rayne/sndSpiritSlap", 3f) },
+            return string.Format("Deal {0} damage to the enemy blocker and  apply DISPIRITED (4).\n" +
+                "[DISPIRITED]: This character's cantrips cost [O] more.", dmg.Get());
+        }
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = tarChr.sName + " is being slapped"
-                });
-            }
-        });
+        public override void ClauseEffect(Chr chrSelected) {
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-                    chrSource = this.chrSource,
-                    chrTarget = tarChr,
+            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulDispirited(soulToCopy, chrSelected)) {
+                sLabel = "The pain is momentary, but the shame lasts..."
+            });
 
-                    funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                        return new SoulDispirited(_chrSource, _chrTarget, this);
-                    },
+            ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(action.chrSource, chrSelected, dmg) {
+                arSoundEffects = new SoundEffect[] { new SoundEffect("Rayne/sndSpiritSlap", 3f) },
+                sLabel = "Got slapped"
+            });
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = tarChr.sName + "'s soul is drained"
+        }
 
-                });
-            }
-        });
-
-    }
+    };
 
 }

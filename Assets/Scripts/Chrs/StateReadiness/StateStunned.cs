@@ -67,7 +67,7 @@ public class StateStunned : StateReadiness {
             },
 
             //Just replace the executable with a completely new null executable
-            execReplace = (Executable exec) => new ExecNull()
+            execReplace = (Executable exec) => new ExecNull(exec.chrSource)
 
         };
 

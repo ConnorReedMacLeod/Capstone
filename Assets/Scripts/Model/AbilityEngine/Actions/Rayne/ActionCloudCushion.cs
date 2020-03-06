@@ -4,13 +4,7 @@ using UnityEngine;
 
 public class ActionCloudCushion : Action {
 
-    public int nDefenseGain;
-    public int nDuration;
-
-    public ActionCloudCushion(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
-
-        //Since the base constructor initializes this array, we can start filling it
-        arArgs[0] = new TargetArgChr(Action.IsFriendly); //Choose any friendly character
+    public ActionCloudCushion(Chr _chrOwner) : base(_chrOwner, 0) {//set the dominant clause
 
         sName = "CloudCushion";
         sDisplayName = "Cloud Cushion";
@@ -24,33 +18,38 @@ public class ActionCloudCushion : Action {
         nFatigue = 1;
         nActionCost = 1;
 
-        nDefenseGain = 25;
-        nDuration = 4;
-
-        sDescription1 = "Target ally gains 25 DEFENSE for 4 turns.";
-
-        SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
     }
 
-    override public void Execute(int[] lstTargettingIndices) {
+    class Clause1 : ClauseChr {
+        
+        public SoulCloudCushion soulToCopy;
 
-        Chr tarChr = Chr.GetTargetByIndex(lstTargettingIndices[0]);
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this), //Base Tag always goes first
+                new ClauseTagChrAlly(this)
+            });
+            
+            soulToCopy = new SoulCloudCushion(action.chrSource, null, action);
+        }
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-                    chrSource = this.chrSource,
-                    chrTarget = tarChr,
+        public override string GetDescription() {
 
-                    arSoundEffects = new SoundEffect[] { new SoundEffect("Rayne/sndCloudCushion", 3.467f) },
+            return string.Format("Target ally gains {0} DEFENSE for {1} turns.", soulToCopy.nDefenseBuff, soulToCopy.pnMaxDuration.Get());
+        }
 
-                    funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                        return new SoulCloudCushion(_chrSource, _chrTarget, this);
-                    }
+        public override void ClauseEffect(Chr chrSelected) {
 
+            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulCloudCushion(soulToCopy, chrSelected)) {
+                arSoundEffects = new SoundEffect[] { new SoundEffect("Rayne/sndCloudCushion", 3.467f) },
+                sLabel = "Ooh, so soft"
+            });
 
-                });
-            }
-        });
-    }
+        }
+
+    };
+    
 }

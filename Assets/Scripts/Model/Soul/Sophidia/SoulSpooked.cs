@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SoulSpooked : Soul {
 
-    int nPowerDebuff;
+    public int nPowerDebuff;
 
     public SoulChangePower soulChangePower;
 
@@ -18,14 +18,28 @@ public class SoulSpooked : Soul {
         bDuration = true;
         pnMaxDuration = new Property<int>(3);
 
-        funcOnApplication = () => {
-            //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
-            soulChangePower = new SoulChangePower(chrSource, chrTarget, actSource, nPowerDebuff);
-            chrTarget.soulContainer.ApplySoul(soulChangePower);
-        };
+    }
 
-        funcOnRemoval = () => {
-            chrTarget.soulContainer.RemoveSoul(soulChangePower);
-        };
+    public override void ApplicationEffect() {
+        //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
+        soulChangePower = new SoulChangePower(chrSource, chrTarget, actSource, nPowerDebuff);
+        chrTarget.soulContainer.ApplySoul(soulChangePower);
+    }
+
+    public override void RemoveEffect() {
+        chrTarget.soulContainer.RemoveSoul(soulChangePower);
+    }
+
+    public SoulSpooked(SoulSpooked other, Chr _chrTarget = null) : base(other) {
+        if (_chrTarget != null) {
+            //If a Target was provided, then we'll use that
+            chrTarget = _chrTarget;
+        } else {
+            //Otherwise, just copy from the other object
+            chrTarget = other.chrTarget;
+        }
+
+        nPowerDebuff = other.nPowerDebuff;
+
     }
 }

@@ -9,25 +9,7 @@ public class SoulDispirited : Soul {
     //Maintain a list of all of the cost modifiers we've applied
     public LinkedListNode<Property<int[]>.Modifier>[] arnodeCostModifier;
 
-
-
-    //Not currently useing this - was used for if this only makes the next ability you use cost more
-    public void OnAbilityUsage(Object target, params object[] args) {
-
-        //Ignore if the action used wasn't used by the character who has this soul effect
-        if (((Action)args[0]).chrSource != this.chrTarget) return;
-
-        //Check if the action that was just used is a character action - not a generic (block/rest)
-        if (((Action)args[0]).id < Chr.nCharacterActions) {
-
-            //Otherwise dispell the debuff
-            soulContainer.RemoveSoul(this);
-        }
-
-
-
-    }
-
+    
     public SoulDispirited(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
 
         sName = "Dispirited";
@@ -41,39 +23,82 @@ public class SoulDispirited : Soul {
 
         arnodeCostModifier = new LinkedListNode<Property<int[]>.Modifier>[Chr.nCharacterActions];
 
-        funcOnApplication = () => {
+    }
 
-            //Loop through each ability on the targetted character
-            for (int i = 0; i < Chr.nCharacterActions; i++) {
+    public override void ApplicationEffect() {
+        //Loop through each ability on the targetted character
+        for (int i = 0; i < Chr.nCharacterActions; i++) {
 
-                LibFunc.Get<Action> getAction = LibFunc.ReturnSnapShot<Action>(chrTarget.arActions[i]);
+            ApplyCostIncreaseToSkill(i);
+        }
 
-                Property<int[]>.Modifier costIncrease =
-                    (arCost) => {
-                        if (getAction().type.Type() == TypeAction.TYPE.CANTRIP) {
+        
+    }
+
+    public void ApplyCostIncreaseToSkill(int iSkill) {
+        //TODO BUG (FUTURE) - eventually when you can adapt/switch abilities, this will only affect the 
+        //                    abilities at the time this soul effect was applied.  So if you switch to an ability
+        //                    then that ability (even if a cantrip) won't have its cost increased.  Will have to 
+        //                    a trigger listener for an ability switch event that will remove swap the applied cost
+        //                    modifier for the old ability and apply it to the newly swapped in ability
+
+        Property<int[]>.Modifier costIncrease =
+                (arCost) => {
+                    if (chrTarget.arActions[iSkill].type.Type() == TypeAction.TYPE.CANTRIP) {
                         //Increase the cost if the ability is a cantrip
                         return LibFunc.AddArray<int>(arCost, arnCostDebuff, (x, y) => (x + y));
-                        } else {
+                    } else {
                         //Otherwise, keep the cost the same
                         return arCost;
-                        }
-                    };
+                    }
+                };
 
-                arnodeCostModifier[i] = chrTarget.arActions[i].ChangeCost(costIncrease);
+        arnodeCostModifier[iSkill] = chrTarget.arActions[iSkill].ChangeCost(costIncrease);
 
-            }
+        //UNNEEDED CURRENTLY - ONLY FOR AFFECTING THE FIRST USED ABILITY
+        //chrTarget.subPostExecuteAbility.Subscribe(OnAbilityUsage);
+    }
 
-            //chrTarget.subPostExecuteAbility.Subscribe(OnAbilityUsage);
-        };
+    public SoulDispirited(SoulDispirited other, Chr _chrTarget = null) : base(other) {
+        if (_chrTarget != null) {
+            //If a Target was provided, then we'll use that
+            chrTarget = _chrTarget;
+        } else {
+            //Otherwise, just copy from the other object
+            chrTarget = other.chrTarget;
+        }
 
-        funcOnRemoval = () => {
-            //When removed we'll clear all the cost modifiers we've applied
-            for (int i = 0; i < Chr.nCharacterActions; i++) {
-                chrTarget.arActions[i].parCost.RemoveModifier(arnodeCostModifier[i]);
-            }
-
-            //chrTarget.subPostExecuteAbility.UnSubscribe(OnAbilityUsage);
-        };
+        arnCostDebuff = new int[Mana.nManaTypes];
+        System.Array.Copy(arnCostDebuff, other.arnCostDebuff, other.arnCostDebuff.Length);
 
     }
+
+    public override void RemoveEffect() {
+        //When removed we'll clear all the cost modifiers we've applied
+        for (int i = 0; i < Chr.nCharacterActions; i++) {
+            chrTarget.arActions[i].parCost.RemoveModifier(arnodeCostModifier[i]);
+        }
+
+        //chrTarget.subPostExecuteAbility.UnSubscribe(OnAbilityUsage);
+    }
+
+    // **** CURRENTLY UNUSED EFFECT TO MAKE NEXT ABILITY COST 1 MORE ******
+
+    public void OnAbilityUsage(Object target, params object[] args) {
+
+        //Ignore if the action used wasn't used by the character who has this soul effect
+        if (((Action)args[0]).chrSource != this.chrTarget) return;
+
+        //Check if the action that was just used is a character action - not a generic (block/rest)
+        if (((Action)args[0]).id < Chr.nCharacterActions) {
+
+            //if the used action was a character action, then we can dispell this effect
+            // sicne we only want to make the first used skill cost more
+            soulContainer.RemoveSoul(this);
+        }
+    }
+
 }
+
+
+
