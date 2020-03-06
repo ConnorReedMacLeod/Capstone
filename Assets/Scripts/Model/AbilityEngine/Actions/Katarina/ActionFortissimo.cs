@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class ActionFortissimo : Action {
 
-    public ActionFortissimo(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
-
-        //Note that we don't have any targets for this ability
-        //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner);
+    public ActionFortissimo(Chr _chrOwner) : base(_chrOwner, 0) {//Set the dominant clause
 
         sName = "Fortissimo";
         sDisplayName = "Fortissimo";
@@ -21,32 +18,38 @@ public class ActionFortissimo : Action {
         nFatigue = 0;
         nActionCost = 0;//0 since this is a cantrip
 
-        sDescription1 = "Gain 10 POWER and 10 DEFENSE for 4 turns.";
-
-        SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
     }
 
 
-    override public void Execute(int[] lstTargettingIndices) {
+    class Clause1 : ClauseChr {
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
+        public SoulFortissimo soulToCopy;
 
-                    funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this), //Base Tag always goes first
+                new ClauseTagChrSelf(this)
+            });
 
-                        return new SoulFortissimo(_chrSource, _chrTarget, this);
+            soulToCopy = new SoulFortissimo(action.chrSource, null, action);
+        }
 
-                    },
+        public override string GetDescription() {
 
-                    arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndFortissimo", 6.2f) },
+            return string.Format("Gain {0} POWER and {1} DEFENSE for {2} turns.", soulToCopy.nPowerBuff, soulToCopy.nDefenseBuff, soulToCopy.pnMaxDuration.Get());
+        }
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = "Applying Fortissimo"
-                });
-            }
-        });
-    }
+        public override void ClauseEffect(Chr chrSelected) {
+
+            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulFortissimo(soulToCopy, chrSelected)) {
+                arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndFortissimo", 6.2f) },
+                sLabel = "Let's do it louder this time"
+            });
+
+        }
+
+    };
 }

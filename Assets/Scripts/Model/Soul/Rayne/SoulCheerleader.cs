@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SoulCheerleader : Soul {
 
-    int nPowerGain;
+    public int nPowerGain;
 
     public void ApplyBuff(Chr chrAlly) {
 
@@ -12,26 +12,21 @@ public class SoulCheerleader : Soul {
         if (chrAlly == this.chrTarget) return;
 
         //Don't target dead characters
-        if (chrAlly.bDead) return;
+        if (chrAlly.bDead) {
+            Debug.LogError("Attempting to buff a dead character - shouldn't have been supplied as an active character");
+            return;
+        }
 
         //So we're sure we're buffing a valid character at this point
 
-        ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-            chrSource = this.chrSource,
-            chrTarget = chrAlly,
-
-            funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                SoulChangePower soulPowerBuff = new SoulChangePower(_chrSource, _chrTarget, this.actSource, nPowerGain, 1);
-
-                soulPowerBuff.bRemoveOnChrSourceDeath = true;
-
-                return soulPowerBuff;
-            },
-
-            arSoundEffects = new SoundEffect[] { new SoundEffect("Rayne/sndCheerleader", 4.667f) },
-
-            fDelay = ContTurns.fDelayNone,
+        ContAbilityEngine.Get().AddExec(new ExecApplySoul(chrSource, chrAlly,
+            new SoulChangePower(chrSource, chrAlly, actSource, nPowerGain, 1) {
+                //Set up the hidden soul effect that's buffing the ally's power
+                bRemoveOnChrSourceDeath = true
+            }) {
+            //Set up the properties of the soul application executable
             sLabel = chrAlly.sName + " is inspired by " + this.chrSource.sName
+
         });
     }
     public SoulCheerleader(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
@@ -51,21 +46,24 @@ public class SoulCheerleader : Soul {
         lstTriggers = new List<TriggerEffect>() {
 
             new TriggerEffect() {
-                sub = ExecTurnStartTurn.subAllPostTrigger,
-                cb = (target, args) => {
-
-                    //Only trigger if Rayna will act this turn
-                    if (chrTarget.nFatigue > 0) return;
-
-                    //Loop through each of the characters on this character's team, and let ApplyBuff decide
-                    // if they should recieve a buff
-                    foreach (Chr chrAlly in chrSource.plyrOwner.arChr) {
-                        ApplyBuff(chrAlly);
-                    }
-
-                }
+                sub = ExecReadyChar.subAllPostTrigger,
+                cb = cbOnReady
             }
         };
+    }
+
+    public void cbOnReady(Object target, object[] args) {
+        //Check which character is about to be taking damage
+        Chr chrReadied = ((ExecReadyChar)args[0]).chrTarget;
+
+        //Only trigger if the readied character is our target
+        if (chrTarget != chrReadied) return;
+
+        //Loop through each of the characters on this character's team, and let ApplyBuff decide
+        // if they should recieve a buff
+        foreach (Chr chrAlly in chrTarget.plyrOwner.GetActiveChrs()) {
+            ApplyBuff(chrAlly);
+        }
     }
 
 }

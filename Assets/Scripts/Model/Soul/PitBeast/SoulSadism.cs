@@ -9,16 +9,10 @@ public class SoulSadism : Soul {
 
     public void GainLife() {
 
-        ContAbilityEngine.Get().AddExec(new ExecHeal() {
-            chrSource = this.chrSource,
-            chrTarget = this.chrSource,
-
-            heal = this.heal, //TODO:: Consider if this should be a copy
+        ContAbilityEngine.Get().AddExec(new ExecHeal(chrTarget, chrTarget, heal) {
 
             arSoundEffects = new SoundEffect[] { new SoundEffect("PitBeast/sndSadism", 1.067f) },
-
-            fDelay = ContTurns.fDelayStandard,
-            sLabel = this.chrSource.sName + " is revelling in the pain"
+            sLabel = "ooh it hurts so good"
         });
     }
 
@@ -31,6 +25,7 @@ public class SoulSadism : Soul {
         bRecoilWhenApplied = false;
 
         nBaseHealing = 5;
+
         //Create a base Healing object that this action will apply 
         heal = new Healing(this.chrSource, this.chrSource, nBaseHealing);
 
@@ -38,27 +33,27 @@ public class SoulSadism : Soul {
 
             new TriggerEffect() {
                 sub = ExecDealDamage.subAllPreTrigger,
-                cb = (target, args) => {
-                    //Check which character is about to be dealing damage
-                    Chr dmgSource = ((ExecDealDamage)args[0]).chrSource;
-
-                    //Check which character is about to be taking damage
-                    Chr dmgTarget = ((ExecDealDamage)args[0]).chrTarget;
-
-                    //If the source of the damage is the chr this buff is on
-                    // and if we're dealing damage to an enemy
-                    if(dmgSource == this.chrTarget && this.chrTarget.plyrOwner != dmgTarget.plyrOwner) {
-                        
-                        //Then check if the chr this buff is on has higher health than
-                        //who they are attacking
-                        if(this.chrTarget.nCurHealth < dmgTarget.nCurHealth) {
-                            GainLife();
-                        }
-                    }
-
-                }
+                cb = cbOnDealDamage
             }
         };
     }
 
+    public void cbOnDealDamage(Object target, object[] args) {
+        //Check which character is about to be dealing damage
+        Chr dmgSource = ((ExecDealDamage)args[0]).chrSource;
+
+        //Check which character is about to be taking damage
+        Chr dmgTarget = ((ExecDealDamage)args[0]).chrTarget;
+
+        //If the source of the damage is the chr this buff is on
+        // and if we're dealing damage to an enemy
+        if (dmgSource == this.chrTarget && this.chrTarget.plyrOwner != dmgTarget.plyrOwner) {
+
+            //Then check if the chr this buff is on has lower health than
+            //who they are attacking
+            if (this.chrTarget.nCurHealth < dmgTarget.nCurHealth) {
+                GainLife();
+            }
+        }
+    }
 }

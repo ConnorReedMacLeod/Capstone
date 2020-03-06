@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class ActionBucklerParry : Action {
 
-    public ActionBucklerParry(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
-
-        //Since the base constructor initializes this array, we can start filling it
-        //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); //no targets needed
+    public ActionBucklerParry(Chr _chrOwner) : base(_chrOwner, 0) {// 0 is the dominant clause
 
         sName = "BucklerParry";
         sDisplayName = "Buckler Parry";
@@ -21,29 +18,36 @@ public class ActionBucklerParry : Action {
         nFatigue = 2;
         nActionCost = 0;
 
-
-		sDescription1 = "Gain 15 DEFENSE and PARRY (4).";
-		sDescription2 = "[PARRY]\n" + "When an enemy would deal damage to " + chrSource.sName + ", deal 15 damage to them and dispel.";
-
-        SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
     }
 
-    override public void Execute(int[] lstTargettingIndices) {
+    class Clause1 : ClauseChr {
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
+        public SoulParry soulToCopy;
 
-                    funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                        return new SoulParry(_chrSource, _chrTarget, this);
-                    }
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this), //Base Tag always goes first
+                new ClauseTagChrSelf(this)
+            });
 
-                });
-            }
-        });
+            soulToCopy = new SoulParry(action.chrSource, null, action);
+        }
 
-    }
+        public override string GetDescription() {
+
+            return string.Format("Gain 15 DEFENSE and PARRY (4).\n" +
+                "[PARRY]: When an enemy would deal damage to {0}, deal {1} damage to them and dispel.", action.chrSource.sName, soulToCopy.dmgCounterAttack.Get());
+        }
+
+        public override void ClauseEffect(Chr chrSelected) {
+
+            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulParry(soulToCopy, chrSelected)));
+
+        }
+
+    };
 
 }

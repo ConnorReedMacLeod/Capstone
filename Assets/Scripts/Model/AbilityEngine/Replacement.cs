@@ -8,7 +8,8 @@ public class Replacement {
     public bool bHasReplaced; //Raise this trigger to ensure that we don't encounter cycles of fullreplacements
     public static List<Replacement> lstAllReplacements = new List<Replacement>();
 
-    public List<Replacement> lstExecReplacements; //a reference to our executable's list of Replacements (either full or modifiers)
+    public List<Replacement> lstExecReplacements; //a reference to our executable type's list of Replacements (either full or modifiers)
+                                                  // so that we know what channel we should be watching to replace effects for
 
     public delegate bool ReplacePred(Executable exec);
     public delegate Executable ReplaceNewExec(Executable exec);

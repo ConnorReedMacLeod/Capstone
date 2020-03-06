@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SoulEvolved : Soul {
 
-    int nPowerBuff;
+    public int nPowerBuff;
 
     public SoulChangePower soulChangePower;
 

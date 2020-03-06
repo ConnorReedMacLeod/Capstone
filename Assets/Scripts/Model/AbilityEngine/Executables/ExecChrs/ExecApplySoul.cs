@@ -38,6 +38,8 @@ public class ExecApplySoul : ExecChr {
 
 
     public override void ExecuteEffect() {
+
+        Debug.Assert(chrTarget == soulToApply.chrTarget);
        
         chrTarget.soulContainer.ApplySoul(soulToApply);
 

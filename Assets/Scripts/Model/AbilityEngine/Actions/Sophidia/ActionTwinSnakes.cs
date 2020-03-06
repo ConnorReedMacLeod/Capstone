@@ -18,12 +18,6 @@ public class ActionTwinSnakes : Action {
         nFatigue = 4;
         nActionCost = 1;
 
-        nBaseDamage = 20;
-        //Create a base Damage object that this action will apply
-        dmg = new Damage(this.chrSource, null, nBaseDamage);
-
-        nLifeLoss = 5;
-
         lstClauses = new List<Clause>() {
             new Clause1(this),
             new Clause1(this)

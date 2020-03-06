@@ -7,10 +7,7 @@ public class ActionImpale : Action {
     public Damage dmg;
     public int nBaseDamage;
 
-    public ActionImpale(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
-
-        //Since the base constructor initializes this array, we can start filling it
-        //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); we don't have any targets
+    public ActionImpale(Chr _chrOwner) : base(_chrOwner, 0) {//set the dominant clause to 0
 
         sName = "Impale";
         sDisplayName = "Impale";
@@ -28,51 +25,45 @@ public class ActionImpale : Action {
         //Create a base Damage object that this action will apply
         dmg = new Damage(this.chrSource, null, nBaseDamage);
 
-        sDescription1 = "Deal 20 damage to the enemy Vanguard and reduce their max health by 10.";
-
-        SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
     }
 
-    override public void Execute(int[] lstTargettingIndices) {
+    class Clause1 : ClauseChr {
 
-        Chr tarChr = chrSource.plyrOwner.GetEnemyPlayer().GetBlocker();
+        Damage dmg;
+        public int nBaseDamage = 20;
+        public SoulImpaled soulToCopy;
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrMelee(this), //Base Tag always goes first
+                new ClauseTagChrEnemy(this)
+            });
 
-                //Make a copy of the damage object to give to the executable
-                Damage dmgToApply = new Damage(dmg);
-                //Give the damage object its target
-                dmgToApply.SetChrTarget(tarChr);
 
-                ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                    chrSource = this.chrSource,
-                    chrTarget = tarChr,
+            dmg = new Damage(action.chrSource, null, nBaseDamage);
+            soulToCopy = new SoulImpaled(action.chrSource, null, action);
+        }
 
-                    dmg = dmgToApply,
+        public override string GetDescription() {
 
-                    arSoundEffects = new SoundEffect[]{new SoundEffect("Fischer/sndImpale", 1.833f)},
+            return string.Format("Deal {0} damage to the enemy Vanguard and reduce their max health by {1}.", dmg.Get(), soulToCopy.nMaxLifeReduction);
+        }
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = tarChr.sName + " is being impaled"
-                });
-            }
-        });
+        public override void ClauseEffect(Chr chrSelected) {
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-                    chrSource = this.chrSource,
-                    chrTarget = tarChr,
+            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulImpaled(soulToCopy, chrSelected)));
 
-                    funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                        return new SoulImpaled(_chrSource, _chrTarget, this);
-                    }
+            ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(action.chrSource, chrSelected, dmg) {
+                arSoundEffects = new SoundEffect[] { new SoundEffect("Fischer/sndImpale", 1.833f) },
+                sLabel = "Get Kakyoin'd"
+            });
 
-                });
-            }
-        });
+            
+        }
 
-    }
+    };
 
 }
