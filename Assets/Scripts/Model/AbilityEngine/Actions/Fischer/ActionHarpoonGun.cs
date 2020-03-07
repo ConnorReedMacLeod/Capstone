@@ -18,7 +18,6 @@ public class ActionHarpoonGun : Action {
 
         nCd = 5;
         nFatigue = 2;
-        nActionCost = 1;
 
         lstClauses = new List<Clause>() {
             new Clause1(this),

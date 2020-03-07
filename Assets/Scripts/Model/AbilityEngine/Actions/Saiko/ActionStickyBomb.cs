@@ -19,7 +19,6 @@ public class ActionStickyBomb : Action {
 
         nCd = 6;
         nFatigue = 3;
-        nActionCost = 1;
 
         lstClauses = new List<Clause>() {
             new Clause1(this),

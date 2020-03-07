@@ -65,7 +65,4 @@ public class ExecTurnReduceCooldowns : Executable {
 
     }
 
-    public ExecTurnReduceCooldowns(ExecTurnReduceCooldowns other): base(other) {
-
-    }
 }

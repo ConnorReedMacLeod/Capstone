@@ -272,10 +272,10 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     public bool CanUseAbility(int nChrGlobalID, int nAbility, int[] arTargetIndices) {
         //Just piggyback off of the local player to determine if we can use the ability
 
-        Debug.Assert(Chr.arAllChrs[nChrGlobalID] == ContTurns.Get().GetNextActingChr());
+        Debug.Assert(Chr.lstAllChrs[nChrGlobalID] == ContTurns.Get().GetNextActingChr());
 
-        return (Chr.arAllChrs[nChrGlobalID].arActions[nAbility].CanActivate(arTargetIndices) == false &&
-                Chr.arAllChrs[nChrGlobalID].arActions[nAbility].CanPayMana() == false);
+        return (Chr.lstAllChrs[nChrGlobalID].arActions[nAbility].CanActivate(arTargetIndices) == false &&
+                Chr.lstAllChrs[nChrGlobalID].arActions[nAbility].CanPayMana() == false);
     }
 
     

@@ -16,7 +16,6 @@ public class ActionFortissimo : Action {
 
         nCd = 8;
         nFatigue = 0;
-        nActionCost = 0;//0 since this is a cantrip
 
         lstClauses = new List<Clause>() {
             new Clause1(this)

@@ -77,8 +77,4 @@ public class ExecTurnChooseActions : Executable {
         }
 
     }
-
-    public ExecTurnChooseActions(ExecTurnChooseActions other): base(other) {
-
-    }
 }

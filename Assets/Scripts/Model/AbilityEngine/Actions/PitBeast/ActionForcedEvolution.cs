@@ -16,7 +16,6 @@ public class ActionForcedEvolution : Action {
 
         nCd = 6;
         nFatigue = 1;
-        nActionCost = 1;
 
         lstClauses = new List<Clause>() {
             new Clause1(this),

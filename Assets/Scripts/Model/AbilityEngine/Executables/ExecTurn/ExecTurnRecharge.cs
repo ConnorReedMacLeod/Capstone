@@ -68,9 +68,4 @@ public class ExecTurnRecharge : Executable {
         ViewAnnouncement.Get().InitAnnouncement(2.0f, "TURN " + ContTurns.Get().nTurnNumber);
 
     }
-
-    public ExecTurnRecharge(ExecTurnRecharge other) : base(other) {
-
-    }
-
 }

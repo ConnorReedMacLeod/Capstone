@@ -19,6 +19,7 @@ public class TypeChannel : TypeAction {
             soulBehaviour = _soulBehaviour;
         } else {
             //Otherwise just make a blank one
+            Debug.Log("Warning - making a blank channel soul behaviour");
             soulBehaviour = new SoulChannel(act);
         }
     }
@@ -34,19 +35,12 @@ public class TypeChannel : TypeAction {
         return nActionPointCost;
     }
 
-    public override void PayActionPoints() {
-        base.PayActionPoints();
-
-        //After paying the action point cost (even though it likely shouldn't matter)
-        // we can then transition our readiness state to a channel state
-        act.chrSource.SetStateReadiness(new StateChanneling(act.chrSource, nStartChannelTime, new SoulChannel(soulBehaviour, act)));
-    }
-
     public override void UseAction() {
 
-        //When initially using a channel, we don't need to perform any action, so
-        // just store the current selections so that we can use them when we complete the channel
-        // and execute the effect
+        //We don't need to perform any real action on starting channeling other than changing our readiness state so that the 
+        // soulchannel effect can be applied (and do any on-application effects if necesary)
+        act.chrSource.SetStateReadiness(new StateChanneling(act.chrSource, nStartChannelTime, new SoulChannel(soulBehaviour, act)));
+
         // Note - we just use the base implementation's selection information location
         infoStoredSelection = base.GetSelectionInfo().GetCopy();
 

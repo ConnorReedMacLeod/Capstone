@@ -19,7 +19,6 @@ public class ActionSpiritSlap : Action {
 
         nCd = 0;
         nFatigue = 2;
-        nActionCost = 1;
         
         lstClauses = new List<Clause>() {
             new Clause1(this),

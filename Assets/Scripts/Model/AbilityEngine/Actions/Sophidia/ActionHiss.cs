@@ -17,7 +17,6 @@ public class ActionHiss : Action {
 
         nCd = 10;
         nFatigue = 1;
-        nActionCost = 0;
 
         lstClauses = new List<Clause>() {
             new Clause1(this)

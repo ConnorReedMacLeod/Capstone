@@ -60,7 +60,4 @@ public class ExecTurnReady : Executable {
 
     }
 
-    public ExecTurnReady(ExecTurnReady other) : base(other) {
-
-    }
 }

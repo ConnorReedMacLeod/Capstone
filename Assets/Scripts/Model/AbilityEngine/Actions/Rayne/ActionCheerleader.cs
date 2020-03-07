@@ -18,7 +18,6 @@ public class ActionCheerleader : Action {
 
         nCd = 0;
         nFatigue = 0;
-        nActionCost = 0;
 
         soulPassive = new SoulCheerleader(this.chrSource, this.chrSource, this);
 

@@ -16,11 +16,6 @@ public class ActionTendrilStab : Action {
 
         nCd = 6;
         nFatigue = 3;
-        nActionCost = 1;
-
-        nBaseDamage = 25;
-        //Create a base Damage object that this action will apply
-        dmg = new Damage(this.chrSource, null, nBaseDamage, true);
 
         lstClauses = new List<Clause>() {
             new Clause1(this)

@@ -45,8 +45,4 @@ public class ExecTurnEndTurn : Executable {
 
     }
 
-    public ExecTurnEndTurn(ExecTurnEndTurn other): base(other) {
-
-    }
-
 }

@@ -42,8 +42,4 @@ public class ExecTurnStartTurn : Executable {
 
     }
 
-    public ExecTurnStartTurn(ExecTurnStartTurn other) : base(other) {
-
-    }
-
 }

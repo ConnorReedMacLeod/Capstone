@@ -4,11 +4,7 @@ using UnityEngine;
 
 public class ActionTranquilize : Action {
 
-    public int nStunDuration;
-
-    public ActionTranquilize(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
-
-        // arArgs[0] = new TargetArgTeam((own, tar) => true); 
+    public ActionTranquilize(Chr _chrOwner) : base(_chrOwner, 0) {//Set the dominant clause
 
         sName = "Tranquilize";
         sDisplayName = "Tranquilize";
@@ -20,37 +16,39 @@ public class ActionTranquilize : Action {
 
         nCd = 11;
         nFatigue = 3;
-        nActionCost = 1;
 
-        sDescription1 = "Deal 4 fatigue to the enemy Vanguard.";
-
-        nStunDuration = 4;
-
-        SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
     }
 
-    override public void Execute(int[] lstTargettingIndices) {
+    class Clause1 : ClauseChr {
+        
+        public int nStunAmount;
 
-        Chr chrEnemyBlocker = chrSource.plyrOwner.GetEnemyPlayer().GetBlocker();
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrMelee(this), //Base Tag always goes first
+                new ClauseTagChrEnemy(this)
+            });
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
+            nStunAmount = 4;
+        }
 
-                //Stun the enemy blocker
-                ContAbilityEngine.Get().AddExec(new ExecStun() {
-                    chrSource = this.chrSource,
-                    chrTarget = chrEnemyBlocker,
+        public override string GetDescription() {
 
-                    GetDuration = () => nStunDuration,
+            return string.Format("Deal {0} fatigue to the enemy Vanguard.", nStunAmount);
+        }
 
-                    arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndTranquilize", 1.4f) },
+        public override void ClauseEffect(Chr chrSelected) {
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = chrEnemyBlocker.sName + " is being stunned"
-                });
-            }
-        });
+            ContAbilityEngine.PushSingleExecutable(new ExecStun(action.chrSource, chrSelected, nStunAmount) {
+                arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndTranquilize", 1.4f) },
+                sLabel = "Shhh... Look at my daughter."
+            });
 
-    }
+        }
 
+    };
+    
 }

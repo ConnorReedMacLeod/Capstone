@@ -18,7 +18,6 @@ public class ActionSadism : Action {
 
         nCd = 0;
         nFatigue = 0;
-        nActionCost = 0;
 
 
         soulPassive = new SoulSadism(this.chrSource, this.chrSource, this);

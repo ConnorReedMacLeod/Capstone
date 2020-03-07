@@ -16,7 +16,6 @@ public class ActionReverberate : Action {
 
         nCd = 8;
         nFatigue = 4;
-        nActionCost = 1;
         
 
         lstClauses = new List<Clause>() {

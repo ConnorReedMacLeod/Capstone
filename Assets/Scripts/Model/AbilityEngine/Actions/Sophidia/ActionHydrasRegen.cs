@@ -2,80 +2,57 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActionRegenerate : Action {
+public class ActionHydrasRegen : Action {
 
-    public Healing heal;
-    public int nBaseHealing;
+    public SoulChannelHydrasRegen soulChannelBehaviour;
 
-    public ActionRegenerate(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
+    public ActionHydrasRegen(Chr _chrOwner) : base(_chrOwner, 0) {//Set the dominant clause
 
-        //Since the base constructor initializes this array, we can start filling it
-        //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner);
+        sName = "HydrasRegen";
+        sDisplayName = "Hydra's Regeneration";
 
-        sName = "Regenerate";
-        sDisplayName = "Regenerate";
+        //Create an instance of the soulChannel effect
+        soulChannelBehaviour = new SoulChannelHydrasRegen(this);
 
-        SoulChannel soulChannelEffect = new SoulChannel(this) {
-            
-            lstTriggers = new List<Soul.TriggerEffect>() {
-                new Soul.TriggerEffect() {
-                    sub = ExecTurnEndTurn.subAllPostTrigger,
-                    cb = (target, args) => {
-
-                        onTurnEnd();
-
-                    }
-                }
-            }
-        };
-
-        type = new TypeChannel(this, 4, soulChannelEffect);
+        //Pass a reference into the channel-type so that it can copy our behaviour for channeling
+        type = new TypeChannel(this, 4, soulChannelBehaviour);
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 1, 0 });
 
         nCd = 6;
         nFatigue = 1;
-        nActionCost = 1;
 
-        nBaseHealing = 10;
-        //Create a base Healing object that this action will apply
-        heal = new Healing(this.chrSource, this.chrSource, nBaseHealing);
-
-        sDescription1 = "While channeling, at the end of turn heal 10.";
-
-        SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
     }
 
-    public void onTurnEnd() {
+    class Clause1 : ClauseChr {
 
-        ContAbilityEngine.Get().AddClause(new Clause() {
-            fExecute = () => {
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this), //Base Tag always goes first
+                new ClauseTagChrSelf(this)
+            });
 
-                //Make a copy of the heal object to give to the executable
-                Healing healToApply = new Healing(heal);
+        }
 
-                ContAbilityEngine.Get().AddExec(new ExecHeal() {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
-                    
-                    heal = healToApply,
+        public override string GetDescription() {
 
-                    arSoundEffects = new SoundEffect[] { new SoundEffect("Sophidia/sndHydrasRegen", 3f) },
+            return string.Format("Channel ({0}).\n" +
+                "While channeling, at the end of turn heal {1}.", ((ActionHydrasRegen)action).soulChannelBehaviour.pnMaxDuration.Get(),
+                ((ActionHydrasRegen)action).soulChannelBehaviour.nBaseHealing);
+        }
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = chrSource.sName + " is regenerating"
-                });
-            }
-        });
+        public override void ClauseEffect(Chr chrSelected) {
 
-    }
+            //Since this is a channel, we only have to include effects here that would happen upon
+            // channel completion.  
+            // For this particular ability, there's nothing
 
+        }
 
-    override public void Execute(int[] lstTargettingIndices) {
-
-       
-
-    }
+    };
 
 }
