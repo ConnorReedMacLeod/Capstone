@@ -16,7 +16,6 @@ public class ActionExplosion : Action {
 
         nCd = 10;
         nFatigue = 6;
-        nActionCost = 1;
 
         lstClauses = new List<Clause>() {
             new Clause1(this)

@@ -16,7 +16,6 @@ public class ActionFireball : Action {
 
 		nCd = 6;
         nFatigue = 4;
-        nActionCost = 1;
 
 
 

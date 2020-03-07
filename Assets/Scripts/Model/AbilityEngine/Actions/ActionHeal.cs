@@ -19,7 +19,6 @@ public class ActionHeal : Action {
 
         nCd = 3;
         nFatigue = 3;
-        nActionCost = 0;
 
         lstClauses = new List<Clause> {
             new Clause1(this)

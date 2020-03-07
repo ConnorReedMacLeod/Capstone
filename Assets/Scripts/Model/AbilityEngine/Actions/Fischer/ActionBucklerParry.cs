@@ -16,7 +16,6 @@ public class ActionBucklerParry : Action {
 
         nCd = 8;
         nFatigue = 2;
-        nActionCost = 0;
 
         lstClauses = new List<Clause>() {
             new Clause1(this)

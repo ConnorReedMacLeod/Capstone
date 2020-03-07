@@ -16,7 +16,6 @@ public class ActionCloudCushion : Action {
 
         nCd = 7;
         nFatigue = 1;
-        nActionCost = 1;
 
         lstClauses = new List<Clause>() {
             new Clause1(this)

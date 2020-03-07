@@ -14,9 +14,6 @@ public class Action { //This should probably be made abstract
     public int nCurCD;
     public int nFatigue;
 
-    public SoulChannel soulChannel; // Stores behaviour for how this channel should work (if this is a channel)
-    public int nActionCost; // How many action 'points' this ability uses - cantrips would cost 0
-
     public Chr chrSource;
 
     public bool bCharges;
@@ -25,6 +22,7 @@ public class Action { //This should probably be made abstract
 
     public bool bProperActive;  //Usually true - only false for non-standard actions that shouldn't 
                                 // switch the character sprite to an acting portrait (for example)
+                                // like resting
 
 
 	public Property<int[]> parCost;
@@ -161,7 +159,7 @@ public class Action { //This should probably be made abstract
         //Second pay the mana cost for the action
         PayManaCost();
 
-        //First pay the action points (note that this doesn't use the stack since nothing should interact with it)
+        //First pay the action points
         PayActionPoints();
     }
 

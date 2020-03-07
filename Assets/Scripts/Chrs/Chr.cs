@@ -119,15 +119,15 @@ public class Chr : MonoBehaviour {
     }
 
     public static Chr GetTargetByIndex(int ind) {
-        return arAllChrs[ind];
+        return lstAllChrs[ind];
     }
 
     public static void RegisterChr(Chr chr) {
-        if(arAllChrs == null) {
-            arAllChrs = new Chr[Player.MAXCHRS * Player.MAXCHRS];
+        if(lstAllChrs == null) {
+            lstAllChrs = new List<Chr>(Player.MAXCHRS * Player.MAXCHRS);
         }
 
-        arAllChrs[chr.globalid] = chr;
+        lstAllChrs[chr.globalid] = chr;
     }
 
     public void ChangeChanneltime(int _nChange) {

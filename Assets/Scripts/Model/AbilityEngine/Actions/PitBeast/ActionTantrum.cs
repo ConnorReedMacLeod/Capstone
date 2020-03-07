@@ -16,7 +16,6 @@ public class ActionTantrum : Action {
 
         nCd = 9;
         nFatigue = 5;
-        nActionCost = 1;
 
         lstClauses = new List<Clause>() {
             new Clause1(this)

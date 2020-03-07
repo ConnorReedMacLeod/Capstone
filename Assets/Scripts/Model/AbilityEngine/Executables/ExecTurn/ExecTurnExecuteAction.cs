@@ -53,8 +53,4 @@ public class ExecTurnExecuteAction : Executable {
 
     }
 
-    public ExecTurnExecuteAction(ExecTurnExecuteAction other): base(other) {
-
-    }
-
 }

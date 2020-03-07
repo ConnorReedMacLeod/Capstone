@@ -19,7 +19,6 @@ public class ActionImpale : Action {
 
         nCd = 6;
         nFatigue = 2;
-        nActionCost = 1;
 
         nBaseDamage = 20;
         //Create a base Damage object that this action will apply

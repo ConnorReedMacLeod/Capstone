@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class ActionSmokeCover : Action {
 
-    public ActionSmokeCover(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
-
-        //Note that we don't have any targets for this ability
-        //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner);
+    public ActionSmokeCover(Chr _chrOwner) : base(_chrOwner, 0) {//Set the dominant clause
 
         sName = "SmokeCover";
         sDisplayName = "Smoke Cover";
@@ -19,37 +16,40 @@ public class ActionSmokeCover : Action {
 
         nCd = 10;
         nFatigue = 2;
-        nActionCost = 0;//0 since this is a cantrip
 
-		sDescription1 = "Gain SHROUDED (4).";
-		sDescription2 = "[SHROUDED]\n" + _chrOwner.sName + " is immune to damage.  If " + _chrOwner.sName + " becomes the Vanguard, dispel this.";
-
-        SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
     }
 
+    class Clause1 : ClauseChr {
 
-    override public void Execute(int[] lstTargettingIndices) {
+        public SoulCloudCushion soulToCopy;
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                
-                ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this), //Base Tag always goes first
+                new ClauseTagChrSelf(this)
+            });
 
-                    funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
+            soulToCopy = new SoulCloudCushion(action.chrSource, null, action);
+        }
 
-                        return new SoulSmokeCover(_chrSource, _chrTarget, this);
+        public override string GetDescription() {
 
-                    },
+            return string.Format("Gain SHROUDED (4)\n" +
+                "[SHROUDED]: This character is immune to damage.  If this character becomes the Vanguard, dispel this.", soulToCopy.nDefenseBuff, soulToCopy.pnMaxDuration.Get());
+        }
 
-                    arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndSmokeCover", 4.3f) },
+        public override void ClauseEffect(Chr chrSelected) {
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = "Applying SmokeCover"
-                });
-            }
-        });
+            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulCloudCushion(soulToCopy, chrSelected)) {
+                arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndSmokeCover", 4.3f) },
+                sLabel = "Disappearing into the shadows..."
+            });
 
-    }
+        }
+
+    };
+
 }

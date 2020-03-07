@@ -60,7 +60,4 @@ public class ExecTurnGiveMana : Executable {
 
     }
 
-    public ExecTurnGiveMana(ExecTurnGiveMana other): base(other) {
-
-    }
 }
