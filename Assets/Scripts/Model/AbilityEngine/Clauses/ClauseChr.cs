@@ -36,6 +36,11 @@ public abstract class ClauseChr : Clause {
 
     }
 
+    public override bool IsValidSelection(SelectionSerializer.SelectionInfo selectionInfo) {
+        //Targetting is valid if the selection would result in at least one character being affected by the ability's selection
+        return GetFinalTargets((SelectionSerializer.SelectionChr)selectionInfo).Count >= 1;
+    }
+
     public abstract void ClauseEffect(Chr chrSelected);
 
     public override void Execute() {

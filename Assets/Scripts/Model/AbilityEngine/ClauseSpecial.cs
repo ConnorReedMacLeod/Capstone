@@ -6,6 +6,10 @@ public abstract class ClauseSpecial : Clause {
 
     public abstract void ClauseEffect();
 
+    public override bool IsValidSelection(SelectionSerializer.SelectionInfo selectionInfo) {
+        // Any use of a special clause should always be legal
+        return true;
+    }
 
     public override void Execute() {
 

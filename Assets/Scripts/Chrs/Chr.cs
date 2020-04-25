@@ -194,12 +194,7 @@ public class Chr : MonoBehaviour {
 
             //Only reduce the cooldown if it is not currently off cooldown
             if (arActions[i].nCurCD > 0) { 
-                ContAbilityEngine.Get().AddExec(new ExecChangeCooldown() {
-                    chrSource = null, //No source - just a game action
-                    chrTarget = this,
-
-                    nAmount = -1,
-                    actTarget = arActions[i],
+                ContAbilityEngine.Get().AddExec(new ExecChangeCooldown(null, arActions[i], -1) {
 
                     fDelay = ContTurns.fDelayMinorAction
                 });

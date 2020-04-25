@@ -132,7 +132,7 @@ public class Action { //This should probably be made abstract
             Debug.LogError("Tried to use action, but didn't have enough mana");
         }
 
-        if (CanActivate(lstTargettingIndices) == false) {
+        if (CanActivate(infoSelection) == false) {
             Debug.LogError("Tried to use action, but it's not a valid selection");
         }
 
@@ -171,26 +171,27 @@ public class Action { //This should probably be made abstract
     }
 
     //Check if the owner is alive and that the proposed targets are legal
-    public virtual bool LegalTargets(int[] lstTargettingIndices) {
+    public virtual bool LegalTargets(SelectionSerializer.SelectionInfo selectionInfo) {
 
         if (chrSource.bDead) {
             Debug.Log("The character source is dead");
             return false;
         }
 
-        for (int i = 0; i < arArgs.Length; i++) {
-            if (arArgs[i].WouldBeLegal(lstTargettingIndices[i]) == false) {
-                Debug.Log("Argument " + i + " would be invalid");
-                return false;
-            }
+        //If this selection would result in the dominant clause doing nothing, then this isn't legal
+        // TODO:: consider if this should be checked for all clauses?  At least one clause?
+        if (lstClauses[iDominantClause].IsValidSelection(selectionInfo) == false){  
+            Debug.Log("This selection would make the dominant clause invalid");
+            return false;
         }
+        
 
         return true;
     }
 
 
     //Determine if the ability could be used targetting the passed indices (Note: doesn't include mana check)
-	public virtual bool CanActivate(int[] lstTargettingIndices) {// Maybe this doesn't need to be virtual
+	public virtual bool CanActivate(SelectionSerializer.SelectionInfo selectionInfo) {// Maybe this doesn't need to be virtual
 
         //Check that the ability isn't on cooldown
         if (nCurCD != 0) {
@@ -204,7 +205,7 @@ public class Action { //This should probably be made abstract
             return false;
         }
 
-        if(LegalTargets(lstTargettingIndices) == false) {
+        if(LegalTargets(selectionInfo) == false) {
             //Debug.Log("Targets aren't legal");
             return false;
         }
@@ -225,7 +226,7 @@ public class Action { //This should probably be made abstract
         return true;
     }
 
-    class ClausePayMana : Clause {
+    class ClausePayMana : ClauseSpecial {
 
         public ClausePayMana(Action _act) : base(_act) {
         }
@@ -234,7 +235,7 @@ public class Action { //This should probably be made abstract
             return string.Format("Paying mana for skill");
         }
 
-        public override void Execute() {
+        public override void ClauseEffect() {
 
             ContAbilityEngine.PushSingleExecutable(new ExecChangeMana(action.chrSource, action.chrSource.plyrOwner, action.parCost.Get()));
 
@@ -242,7 +243,7 @@ public class Action { //This should probably be made abstract
 
     };
 
-    class ClausePayCooldown : Clause {
+    class ClausePayCooldown : ClauseSpecial {
 
         public ClausePayCooldown(Action _act) : base(_act) {
         }
@@ -251,7 +252,7 @@ public class Action { //This should probably be made abstract
             return string.Format("Paying cooldown for skill");
         }
 
-        public override void Execute() {
+        public override void ClauseEffect() {
             
             ContAbilityEngine.PushSingleExecutable(new ExecChangeCooldown(action.chrSource, action, action.nCd));
 
@@ -259,7 +260,7 @@ public class Action { //This should probably be made abstract
 
     };
 
-    class ClausePayFatigue : Clause {
+    class ClausePayFatigue : ClauseSpecial {
 
         public ClausePayFatigue(Action _act) : base(_act) {
         }
@@ -268,7 +269,7 @@ public class Action { //This should probably be made abstract
             return string.Format("Paying fatigue for skill");
         }
 
-        public override void Execute() {
+        public override void ClauseEffect() {
 
             ContAbilityEngine.PushSingleExecutable(new ExecChangeFatigue(action.chrSource, action.chrSource, action.nFatigue, false));
 
@@ -276,7 +277,7 @@ public class Action { //This should probably be made abstract
 
     };
 
-    class ClausePayActionPoints : Clause {
+    class ClausePayActionPoints : ClauseSpecial {
 
         public ClausePayActionPoints(Action _act) : base(_act) {
 
@@ -286,12 +287,12 @@ public class Action { //This should probably be made abstract
             return string.Format("Paying action points");
         }
 
-        public override void Execute() {
+        public override void ClauseEffect() {
             ContAbilityEngine.PushSingleExecutable(new ExecPayActionPoints(action.chrSource, action.chrSource, action));
         }
     };
 
-    class ClauseStartAbility : Clause {
+    class ClauseStartAbility : ClauseSpecial {
 
         public ClauseStartAbility(Action _act) : base(_act) {
         }
@@ -300,7 +301,7 @@ public class Action { //This should probably be made abstract
             return string.Format("Starting marker for this skill");
         }
 
-        public override void Execute() {
+        public override void ClauseEffect() {
 
             ContAbilityEngine.PushSingleExecutable(new ExecStartAbility(action.chrSource, action));
 
@@ -308,7 +309,7 @@ public class Action { //This should probably be made abstract
 
     };
 
-    class ClauseEndAbility : Clause {
+    class ClauseEndAbility : ClauseSpecial {
 
         public ClauseEndAbility(Action _act) : base(_act) {
         }
@@ -317,7 +318,7 @@ public class Action { //This should probably be made abstract
             return string.Format("Ending marker for this skill");
         }
 
-        public override void Execute() {
+        public override void ClauseEffect() {
 
             ContAbilityEngine.PushSingleExecutable(new ExecEndAbility(action.chrSource, action));
 

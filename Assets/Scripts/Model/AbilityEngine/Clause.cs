@@ -13,6 +13,9 @@ public abstract class Clause {
 
     public Action action;
 
+    //Does the proposed targetting result in a non-null ability effect?
+    public abstract bool IsValidSelection(SelectionSerializer.SelectionInfo SelectionInfo);
+
     public abstract string GetDescription();
     public abstract void Execute();
 
