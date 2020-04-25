@@ -37,10 +37,15 @@ public abstract class ClausePlyr : Clause {
 
     }
 
+    public override bool IsValidSelection(SelectionSerializer.SelectionInfo selectionInfo) {
+        //Targetting is valid if the selection would result in at least one player being affected by the ability's selection
+        return GetFinalTargets((SelectionSerializer.SelectionPlayer)selectionInfo).Count >= 1;
+    }
+
     public abstract void ClauseEffect(Player plyrSelected);
 
     public override void Execute() {
-        List<Player> lstTargets = GetFinalTargets(infoStoredSelection);
+        List<Player> lstTargets = GetFinalTargets((SelectionSerializer.SelectionPlayer)GetSelectionInfo());
 
         for (int i = 0; i < lstTargets.Count; i++) {
 
@@ -54,7 +59,6 @@ public abstract class ClausePlyr : Clause {
 
     public ClausePlyr(ClausePlyr other, SelectionSerializer.SelectionInfo _infoStoredSelection) : base(other) {
         plstTags = new Property<List<ClauseTagPlayer>>(other.plstTags);
-        infoStoredSelection = (SelectionSerializer.SelectionPlayer)_infoStoredSelection;
     }
 }
 

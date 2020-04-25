@@ -38,7 +38,7 @@ public class TypeChannel : TypeAction {
     public override void UseAction() {
 
         //We don't need to perform any real action on starting channeling other than changing our readiness state so that the 
-        // soulchannel effect can be applied (and do any on-application effects if necesary)
+        // soulchannel effect can be applied (and do any on-application effects if necessary)
         act.chrSource.SetStateReadiness(new StateChanneling(act.chrSource, nStartChannelTime, new SoulChannel(soulBehaviour, act)));
 
         // Note - we just use the base implementation's selection information location
