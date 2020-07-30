@@ -355,30 +355,22 @@ public class Chr : MonoBehaviour {
     }
 
     //Performs the character's queued action
-	public void ExecuteAction(int nActionIndex, int[] lstTargettingIndices) {
+	public void ExecuteAction(SelectionSerializer.SelectionInfo infoSelection) {
 
-        if (!ValidAction(nActionIndex, lstTargettingIndices)) {
+        if (infoSelection.actUsed.CanActivate(infoSelection) == false) {
             Debug.LogError("ERROR! This ability was targetted, but is no longer a valid action");
-            nActionIndex = Chr.idResting; //Recover by setting the used action to a rest
+            infoSelection.actUsed = infoSelection.chrOwner.arActions[Chr.idResting];  //Recover by setting the used action to a rest
         }
 
-        //Make a convenient reference to the action to be used
-        Action actToUse = arActions[nActionIndex];
-
         //Notify everyone that we're about to use this action
-        subBeforeActivatingAction.NotifyObs(this, actToUse);
-        subAllBeforeActivatingAction.NotifyObs(this, actToUse);
+        subBeforeActivatingAction.NotifyObs(this, infoSelection);
+        subAllBeforeActivatingAction.NotifyObs(this, infoSelection);
 
         //Actually use the action
-        actToUse.UseAction (lstTargettingIndices);
+        infoSelection.actUsed.UseAction (infoSelection);
         
 	}
 
-    //Checks if the proposed action and targetting list would be valid to use (doesn't check mana)
-	public bool ValidAction(int nActionIndex, int[] lstTargettingIndices) {
-		//Debug.Log (bSetAction + " is the setaction");
-		return (arActions [nActionIndex].CanActivate (lstTargettingIndices));
-	}
 
 
     //By default, set all character actions to resting

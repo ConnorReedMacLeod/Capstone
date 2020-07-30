@@ -19,8 +19,11 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
 
     public float fSelectionTimer;
 
+    //TODONOW remove these
     public int nSelectedAbility;
     public int[] lstSelectedTargets;
+
+    public SelectionSerializer.SelectionInfo infoSelection; 
 
     //As a fix for an infinite loop in the AI controller (which really should be fixed at some point), keep track of how many bad inputs we've been given
     public int nBadSelectionsGiven;
@@ -113,8 +116,9 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
             if(nBadSelectionsGiven >= 5) {
 
                 Debug.LogError("Too many bad selections given - assigning a rest action");
-                nSelectedAbility = Chr.idResting;
-                lstSelectedTargets = input.arTargetIndices;
+
+                //Reset the infoSelection to just be the current character choosing a rest action
+                infoSelection = SelectionSerializer.MakeRestSelection(ContTurns.Get().GetNextActingChr());
 
                 EndSelection();
 
@@ -147,7 +151,8 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
     public void OnTimedOut() {
         Debug.Log("No Ability Selected in time");
 
-        nSelectedAbility = Chr.idResting;
+        //Reset the infoSelection to just be the current character choosing a rest action
+        infoSelection = SelectionSerializer.MakeRestSelection(ContTurns.Get().GetNextActingChr());
         bSelectingAbility = false;
     }
 
