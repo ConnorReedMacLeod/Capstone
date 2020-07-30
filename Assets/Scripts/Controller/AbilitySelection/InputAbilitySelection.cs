@@ -25,4 +25,7 @@ public abstract class InputAbilitySelection : MonoBehaviour {
         plyrOwner = _plyrOwner;
     }
 
+    //TODONOW - this can store temporary information in it's nSelectedChrId/Ability fields, but then 
+    //          formally bind this into a SelectionInfo when the targetting is finished so that it can be used by outside sources
+
 }

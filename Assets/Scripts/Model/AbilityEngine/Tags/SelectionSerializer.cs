@@ -52,6 +52,12 @@ public static class SelectionSerializer {
             actUsed = DeserializeAction(chrOwner, GetByte(0, nSerialized));
         }
 
+        //Give a constructor for a single byte if making custom selectionInfos outside of the standard process
+        public SelectionInfo(Chr _chrOwner, byte bAction) {
+            chrOwner = _chrOwner;
+            actUsed = DeserializeAction(chrOwner, bAction);
+        }
+
         public SelectionInfo(SelectionInfo other) {
             chrOwner = other.chrOwner;
             actUsed = other.actUsed;
@@ -194,4 +200,7 @@ public static class SelectionSerializer {
         return SerializeSpecialSelection(actUsed);
     }
 
+    public static SelectionInfo MakeRestSelection(Chr chrOwner) {
+        return new SelectionInfo(chrOwner, (byte)Chr.idResting);
+    }
 }
