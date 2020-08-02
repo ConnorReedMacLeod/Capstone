@@ -94,7 +94,7 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
 
 
     //Check what input has been stored in the provided InputAbilitySelection for the next acting character
-    public void SubmitAbility(InputAbilitySelection input) {
+    public void SubmitAbility(SelectionSerializer.SelectionInfo infoSelection) {
 
         Chr chrActing = ContTurns.Get().GetNextActingChr();
 

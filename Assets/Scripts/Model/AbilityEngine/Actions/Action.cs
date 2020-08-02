@@ -25,7 +25,7 @@ public class Action { //This should probably be made abstract
                                 // like resting
 
 
-	public Property<int[]> parCost;
+    public Property<int[]> parCost;
 
     public List<Clause> lstClauses = new List<Clause>();
     public List<Clause> lstClausesOnEquip = new List<Clause>();
@@ -44,7 +44,7 @@ public class Action { //This should probably be made abstract
     }
 
     public void ChangeCD(int _nChange) {
-        if (_nChange + nCurCD < 0) {
+        if(_nChange + nCurCD < 0) {
             // Don't let reductions go negative
             nCurCD = 0;
         } else {
@@ -52,6 +52,14 @@ public class Action { //This should probably be made abstract
             subAbilityChange.NotifyObs();
 
         }
+    }
+
+    public Clause.TargetType GetTargetType() {
+        return GetDominantClause().targetType;
+    }
+
+    public Clause GetDominantClause() {
+        return lstClauses[iDominantClause];
     }
 
     //Changes the cost of this action, and returns the node that is modifying that cost (so you can remove it later)
@@ -118,7 +126,7 @@ public class Action { //This should probably be made abstract
 
     public bool CanPayMana() {
         //Check if you have enough mana
-        if (chrSource.plyrOwner.mana.HasMana(parCost.Get()) == false) {
+        if(chrSource.plyrOwner.mana.HasMana(parCost.Get()) == false) {
             Debug.Log("Not enough mana");
             return false;
         }
@@ -132,7 +140,7 @@ public class Action { //This should probably be made abstract
             Debug.LogError("Tried to use action, but didn't have enough mana");
         }
 
-        if (CanActivate(infoSelection) == false) {
+        if(CanActivate(infoSelection) == false) {
             Debug.LogError("Tried to use action, but it's not a valid selection");
         }
 
@@ -173,34 +181,34 @@ public class Action { //This should probably be made abstract
     //Check if the owner is alive and that the proposed targets are legal
     public virtual bool LegalTargets(SelectionSerializer.SelectionInfo selectionInfo) {
 
-        if (chrSource.bDead) {
+        if(chrSource.bDead) {
             Debug.Log("The character source is dead");
             return false;
         }
 
         //If this selection would result in the dominant clause doing nothing, then this isn't legal
         // TODO:: consider if this should be checked for all clauses?  At least one clause?
-        if (lstClauses[iDominantClause].IsValidSelection(selectionInfo) == false){  
+        if(lstClauses[iDominantClause].IsValidSelection(selectionInfo) == false) {
             Debug.Log("This selection would make the dominant clause invalid");
             return false;
         }
-        
+
 
         return true;
     }
 
 
     //Determine if the ability could be used targetting the passed indices (Note: doesn't include mana check)
-	public virtual bool CanActivate(SelectionSerializer.SelectionInfo selectionInfo) {// Maybe this doesn't need to be virtual
+    public virtual bool CanActivate(SelectionSerializer.SelectionInfo selectionInfo) {// Maybe this doesn't need to be virtual
 
         //Check that the ability isn't on cooldown
-        if (nCurCD != 0) {
-			//Debug.Log ("Ability on cd");
-			return false;
-		}
+        if(nCurCD != 0) {
+            //Debug.Log ("Ability on cd");
+            return false;
+        }
 
         //Check that we're in a readiness state (with enough usable actions left)
-        if (!chrSource.curStateReadiness.CanSelectAction(this)) {
+        if(!chrSource.curStateReadiness.CanSelectAction(this)) {
             //Debug.Log("Not in a state where we can use this action");
             return false;
         }
@@ -210,9 +218,9 @@ public class Action { //This should probably be made abstract
             return false;
         }
 
-		
-		return true;
-	}
+
+        return true;
+    }
 
     public static bool IsEnemy(Chr owner, Chr tar) {
         return owner.plyrOwner != tar.plyrOwner;
@@ -253,7 +261,7 @@ public class Action { //This should probably be made abstract
         }
 
         public override void ClauseEffect() {
-            
+
             ContAbilityEngine.PushSingleExecutable(new ExecChangeCooldown(action.chrSource, action, action.nCd));
 
         }

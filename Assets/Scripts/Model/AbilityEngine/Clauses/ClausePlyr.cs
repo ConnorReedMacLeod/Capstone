@@ -22,7 +22,7 @@ public abstract class ClausePlyr : Clause {
         List<ClauseTagPlayer> lstTags = plstTags.Get();
         //Apply each of our tags filtering one-by-one to trim the universe down 
         //  to what the clause can properly select
-        for (int i = 0; i < lstTags.Count; i++) {
+        for(int i = 0; i < lstTags.Count; i++) {
             lstSelectable = lstTags[i].ApplySelectionFiltering(lstSelectable);
         }
 
@@ -47,7 +47,7 @@ public abstract class ClausePlyr : Clause {
     public override void Execute() {
         List<Player> lstTargets = GetFinalTargets((SelectionSerializer.SelectionPlayer)GetSelectionInfo());
 
-        for (int i = 0; i < lstTargets.Count; i++) {
+        for(int i = 0; i < lstTargets.Count; i++) {
 
             //Execute the effect of this clause on this particular target
             ClauseEffect(lstTargets[i]);
@@ -58,6 +58,8 @@ public abstract class ClausePlyr : Clause {
     public ClausePlyr(Action _action) : base(_action) { }
 
     public ClausePlyr(ClausePlyr other, SelectionSerializer.SelectionInfo _infoStoredSelection) : base(other) {
+        targetType = TargetType.PLAYER;
+
         plstTags = new Property<List<ClauseTagPlayer>>(other.plstTags);
     }
 }

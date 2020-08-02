@@ -11,6 +11,10 @@ using UnityEngine;
 
 public abstract class Clause {
 
+    public enum TargetType { CHR, PLAYER, ACTION, SPECIAL };
+
+    public TargetType targetType;
+
     public Action action;
 
     //Does the proposed targetting result in a non-null ability effect?
@@ -20,13 +24,13 @@ public abstract class Clause {
     public abstract void Execute();
 
     //TODO - make a generic list of tags for qualitative effects (fire/teamwork/combo/etc.)
-    
+
     public SelectionSerializer.SelectionInfo GetSelectionInfo() {
         //Ask the type of the ability to fetch the selection information we should be using to determine our targets
         return action.type.GetSelectionInfo();
     }
 
-    public Clause (Action _action){
+    public Clause(Action _action) {
         action = _action;
     }
 
