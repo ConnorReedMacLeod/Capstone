@@ -8,14 +8,14 @@ using Photon.Realtime;
 
 //
 public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
-    
+
     public int nLocalPlayerID;
     public int nEnemyPlayerID;
 
     public Text txtNetworkDebug;
 
     private static ClientNetworkController inst;
-    
+
 
     public void SetPlayerIDs() {
         nLocalPlayerID = PhotonNetwork.LocalPlayer.ActorNumber;
@@ -37,7 +37,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
     public void OnEnable() {
         PhotonNetwork.AddCallbackTarget(this);
 
-        if (photonView.Owner.IsLocal == false) {
+        if(photonView.Owner.IsLocal == false) {
             gameObject.SetActive(false);
             return;
         }
@@ -63,7 +63,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
         Debug.Log("Sending Character Selections");
 
         //If we're the first player to connect
-        if (PhotonNetwork.LocalPlayer.ActorNumber == 1) {
+        if(PhotonNetwork.LocalPlayer.ActorNumber == 1) {
             //Then we can save our picks in the chr1 slot
             CharacterSelection.Get().SubmitSelection(0);
 
@@ -71,7 +71,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
             NetworkConnectionManager.MATCHTYPE type = NetworkConnectionManager.Get().matchType;
 
             //If we're playing alone, then we can also submit chr2's character selections
-            if (type == NetworkConnectionManager.MATCHTYPE.AI || type == NetworkConnectionManager.MATCHTYPE.SOLO) {
+            if(type == NetworkConnectionManager.MATCHTYPE.AI || type == NetworkConnectionManager.MATCHTYPE.SOLO) {
 
                 Debug.Log("Since we're alone, we'll also submit our selections for player 2");
                 CharacterSelection.Get().SubmitSelection(1);
@@ -85,9 +85,20 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
         }
     }
 
+    //Can optionally pass in any extra serialized fields to communicate player choices to the master
+    public void SendTurnPhaseFinished(int nSerializedInfo = 0) {
+
+        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMFinishedTurnPhase, new object[3] {
+            ClientNetworkController.Get().nLocalPlayerID,
+            (int)ContTurns.Get().curStateTurn,
+            nSerializedInfo
+        });
+
+    }
+
     public void OnButtonClick(int nPlayerID, int _nAbility) {
         Debug.Log("Locally registered a button click");
-        
+
         int nCharacter = 1 + (_nAbility / 2);
         int nAbility = 1 + (_nAbility % 2);
         object[] arnContent = new object[3] { nPlayerID, nCharacter, nAbility };
@@ -99,46 +110,46 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
     public void OnEvent(ExitGames.Client.Photon.EventData photonEvent) {
 
         byte eventCode = photonEvent.Code;
-        if (eventCode >= 200) return; //Don't respond to built-in events
+        if(eventCode >= 200) return; //Don't respond to built-in events
 
         object[] arContent = (object[])photonEvent.CustomData;
 
         //Players should only react to authoritative commands from the master 
-        switch (eventCode) {
-            case MasterNetworkController.evtCNewReadiedCharacter:
-                Debug.Log("Received ReadiedCharacter event with " + arContent[0] + " and " + arContent[1]);
-                break;
+        switch(eventCode) {
+        case MasterNetworkController.evtCNewReadiedCharacter:
+            Debug.Log("Received ReadiedCharacter event with " + arContent[0] + " and " + arContent[1]);
+            break;
 
-            case MasterNetworkController.evtCTimerTick:
-                //Debug.Log("Recieved timer tick with " + arContent[0]);
-                int nTime = (int)arContent[0];
-                HandleTimerTick(nTime);
-                break;
+        case MasterNetworkController.evtCTimerTick:
+            //Debug.Log("Recieved timer tick with " + arContent[0]);
+            int nTime = (int)arContent[0];
+            HandleTimerTick(nTime);
+            break;
 
-            case MasterNetworkController.evtCAbilityUsed:
-                Debug.Log("Recieved ability clicked in PlayerNetwork");
-                HandleAbilityUsed((int)arContent[0], (int)arContent[1], (int)arContent[2]);
-                break;
+        case MasterNetworkController.evtCAbilityUsed:
+            Debug.Log("Recieved ability clicked in PlayerNetwork");
+            HandleAbilityUsed((int)arContent[0], (int)arContent[1], (int)arContent[2]);
+            break;
 
-            case MasterNetworkController.evtCCharactersSelected:
-                CharacterSelection.Get().SaveSelections((int[][])arContent);
+        case MasterNetworkController.evtCCharactersSelected:
+            CharacterSelection.Get().SaveSelections((int[][])arContent);
 
-                break;
+            break;
 
-            case MasterNetworkController.evtCMoveToNewTurnPhase:
-                //Pass along whatever phase of the turn we're now in to the ContTurns
-                ContTurns.Get().SetTurnState((ContTurns.STATETURN)arContent[0], arContent[1]);
-                break;
+        case MasterNetworkController.evtCMoveToNewTurnPhase:
+            //Pass along whatever phase of the turn we're now in to the ContTurns
+            ContTurns.Get().SetTurnState((ContTurns.STATETURN)arContent[0], arContent[1]);
+            break;
 
-            default:
-                //Debug.Log(name + " shouldn't handle event code " + eventCode);
-                break;
+        default:
+            //Debug.Log(name + " shouldn't handle event code " + eventCode);
+            break;
         }
 
     }
     public void HandleTimerTick(int nTime) {
         //Debug.Log("Timer: " + nTime);
-       // SetDebugText("Timer: " + nTime);
+        // SetDebugText("Timer: " + nTime);
     }
 
     public void HandleAbilityUsed(int nPlayerID, int nCharacter, int nAbility) {
@@ -174,7 +185,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
         }
 
         string sSelections2 = "Player 2: Unreceived";
-        if (CharacterSelection.Get().arChrSelections[1] != null) {
+        if(CharacterSelection.Get().arChrSelections[1] != null) {
             sSelections2 = "Player 2: " + CharacterSelection.Get().arChrSelections[1][0] + ", " + CharacterSelection.Get().arChrSelections[1][1] + ", " + CharacterSelection.Get().arChrSelections[1][2];
         }
 
