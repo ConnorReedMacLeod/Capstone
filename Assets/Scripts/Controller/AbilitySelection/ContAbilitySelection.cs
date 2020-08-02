@@ -19,29 +19,27 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
 
     public float fSelectionTimer;
 
-    //TODONOW remove these
-    public int nSelectedAbility;
-    public int[] lstSelectedTargets;
-
-    public SelectionSerializer.SelectionInfo infoSelection; 
+    //Store the ability selection set by the local client to be sent to the master when finalized,
+    // and stores the broadcasted selection info that has been sent out by the master once approved to be executed
+    public SelectionSerializer.SelectionInfo infoSelection;
 
     //As a fix for an infinite loop in the AI controller (which really should be fixed at some point), keep track of how many bad inputs we've been given
     public int nBadSelectionsGiven;
 
 
     public void SetMaxSelectionTime(DELAYOPTIONS delay) {
-        switch (delay) {
-            case DELAYOPTIONS.FAST:
-                fMaxSelectionTime = fDelayChooseActionFast;
-                break;
+        switch(delay) {
+        case DELAYOPTIONS.FAST:
+            fMaxSelectionTime = fDelayChooseActionFast;
+            break;
 
-            case DELAYOPTIONS.MEDIUM:
-                fMaxSelectionTime = fDelayChooseActionMedium;
-                break;
+        case DELAYOPTIONS.MEDIUM:
+            fMaxSelectionTime = fDelayChooseActionMedium;
+            break;
 
-            case DELAYOPTIONS.INF:
-                fMaxSelectionTime = fDelayChooseActionInf;
-                break;
+        case DELAYOPTIONS.INF:
+            fMaxSelectionTime = fDelayChooseActionInf;
+            break;
         }
     }
 
@@ -72,11 +70,14 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
 
     }
 
+    //TODONOW - Consider putting this at the beginning of the ExecuteAction Phase,
+    //          since then we know that we've completely finished any possible selection
+    //          (either successfully or unsuccessfully)
     public void EndSelection() {
 
         Chr chrCurActing = ContTurns.Get().GetNextActingChr();
 
-        if (chrCurActing != null) {
+        if(chrCurActing != null) {
             chrCurActing.LockTargetting();
 
             //Clear out the selection information stored in the provided input
@@ -100,7 +101,7 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
         if(input.plyrOwner.id != chrActing.plyrOwner.id) {
             Debug.LogError("Error! Recieved ability selection for player " + input.plyrOwner.id + " even though its character " +
                 chrActing.sName + "'s turn to select an ability");
-        }else if(input.nSelectedChrId != chrActing.globalid) {
+        } else if(input.nSelectedChrId != chrActing.globalid) {
             Debug.LogError("Error! Recieved ability selection for character " + input.nSelectedChrId + " even though its character " +
                 chrActing.sName + "'s turn to select an ability");
         }
@@ -108,7 +109,7 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
 
         // confirm that the target is valid
         //(checks actionpoint usage, cd, mana, targetting)
-        if (chrActing.arActions[input.nSelectedAbility].CanActivate(input.arTargetIndices) == false ||
+        if(chrActing.arActions[input.nSelectedAbility].CanActivate(input.infoSelection) == false ||
             chrActing.arActions[input.nSelectedAbility].CanPayMana() == false) {
 
             //This is somewhat of a bandaid to fix some infinite looping in the AI ability selection code
@@ -137,14 +138,18 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
         //If we get this far, then the selecting is valid
 
         //Save the validly selected abilities
-        nSelectedAbility = input.nSelectedAbility;
-        lstSelectedTargets = input.arTargetIndices;
+        infoSelection = input.infoSelection;
 
         EndSelection();
 
+        //Subtmit the ability selection to the master
+        ClientNetworkController.Get().SendTurnPhaseFinished(input.infoSelection);
+
+        //UPDATE - We used to just process the stacks ourselves, but now we'll wait to the master to tell us
+        // when it's safe to start processing the stacks since all players are ready
         //If we've successfully selected an action, call the ProcessStack function (on an empty stack)
         //which will put an execExecuteAction on the stack
-        ContAbilityEngine.Get().ProcessStacks();
+        //ContAbilityEngine.Get().ProcessStacks();
 
     }
 

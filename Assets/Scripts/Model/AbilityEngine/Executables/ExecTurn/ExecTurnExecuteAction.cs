@@ -43,9 +43,11 @@ public class ExecTurnExecuteAction : Executable {
 
         sLabel = chrNextToAct.sName + " is using " + ContAbilitySelection.Get().infoSelection.actUsed.sDisplayName;
 
+        //TODONOW - figure out how to hook up the master's broadcasted ability selection information so that we can
+        //          execute that selection here
         chrNextToAct.ExecuteAction(ContAbilitySelection.Get().infoSelection);
 
-        if (ContAbilitySelection.Get().nSelectedAbility == Chr.idResting) {
+        if(ContAbilitySelection.Get().infoSelection.actUsed.id == Chr.idResting) {
             chrNextToAct.SetStateReadiness(new StateFatigued(chrNextToAct));
         }
 
