@@ -5,29 +5,29 @@ using UnityEngine;
 [RequireComponent(typeof(ViewChr))]
 public class Chr : MonoBehaviour {
 
-	bool bStarted;
+    bool bStarted;
 
-	public enum CHARTYPE {          //CHARTYPE's possible values include all characters in the game
-		FISCHER, KATARINA, PITBEAST, RAYNE, SAIKO, SOHPIDIA
-	};
+    public enum CHARTYPE {          //CHARTYPE's possible values include all characters in the game
+        FISCHER, KATARINA, PITBEAST, RAYNE, SAIKO, SOHPIDIA
+    };
 
-	public enum STATESELECT{
-		SELECTED,                   //Selected a character (to see status effects, actions)
-		TARGGETING,                 //Targetting of character actions
-		IDLE                 		//Default character state
-	};
+    public enum STATESELECT {
+        SELECTED,                   //Selected a character (to see status effects, actions)
+        TARGGETING,                 //Targetting of character actions
+        IDLE                        //Default character state
+    };
 
-	public enum SIZE{
-		SMALL,
-		MEDIUM,
-		LARGE,
-		GIANT
-	};
+    public enum SIZE {
+        SMALL,
+        MEDIUM,
+        LARGE,
+        GIANT
+    };
 
-	Arena arena;                    //The field of play
+    Arena arena;                    //The field of play
 
-	public string sName;			//The name of the character
-	public Player plyrOwner;        //The player who controls the character
+    public string sName;            //The name of the character
+    public Player plyrOwner;        //The player who controls the character
 
     public static List<Chr> lstChrInPlay; //A static list of the characters in play (not on the bench)
     public static List<Chr> lstAllChrs;  //A static list of all characters
@@ -39,8 +39,8 @@ public class Chr : MonoBehaviour {
 
     public int nMaxActionsLeft;     //The total maximum number of actions a character can use in a turn (usually 1, cantrips cost 0)
 
-	public int nCurHealth;          //The character's current health
-	public Property<int> pnMaxHealth;          //The character's max health
+    public int nCurHealth;          //The character's current health
+    public Property<int> pnMaxHealth;          //The character's max health
 
     public bool bDead;                         //If the character is dead or not
 
@@ -64,9 +64,9 @@ public class Chr : MonoBehaviour {
 
     public SoulContainer soulContainer; //A reference to the characters list of soul effects
 
-	public ViewChr view;
+    public ViewChr view;
 
-	public STATESELECT stateSelect; //The character's state
+    public STATESELECT stateSelect; //The character's state
 
     public Subject subStartSelect = new Subject();
     public static Subject subAllStartSelect = new Subject(Subject.SubType.ALL);
@@ -103,13 +103,13 @@ public class Chr : MonoBehaviour {
 
     public void SetStateReadiness(StateReadiness newState) {
 
-        if (curStateReadiness != null) {
+        if(curStateReadiness != null) {
             curStateReadiness.OnLeave();
         }
 
         curStateReadiness = newState;
 
-        if (curStateReadiness != null) {
+        if(curStateReadiness != null) {
             curStateReadiness.OnEnter();
         }
     }
@@ -120,6 +120,14 @@ public class Chr : MonoBehaviour {
 
     public static Chr GetTargetByIndex(int ind) {
         return lstAllChrs[ind];
+    }
+
+    public static Chr GetRandomChr() {
+        return lstChrInPlay[Random.Range(0, lstChrInPlay.Count)];
+    }
+
+    public Action GetRandomActionOfChr() {
+        return arActions[Random.Range(0, arActions.Length)];
     }
 
     public static void RegisterChr(Chr chr) {
@@ -139,7 +147,7 @@ public class Chr : MonoBehaviour {
 
 
     public void KillCharacter() {
-        if (bDead) {
+        if(bDead) {
             Debug.Log("Trying to kill a character thast's already dead");
             return;
         }
@@ -156,18 +164,18 @@ public class Chr : MonoBehaviour {
 
 
     // Apply this amount of fatigue to the character
-    public void ChangeFatigue(int _nChange, bool bBeginningTurn = false){
-		if (_nChange + nFatigue < 0) {
-			nFatigue = 0;
-		} else {
-			nFatigue += _nChange;
-		}
+    public void ChangeFatigue(int _nChange, bool bBeginningTurn = false) {
+        if(_nChange + nFatigue < 0) {
+            nFatigue = 0;
+        } else {
+            nFatigue += _nChange;
+        }
 
         subFatigueChange.NotifyObs(this);
         subAllFatigueChange.NotifyObs(this);
 
         //TODO:: Probably delete this bBeginningTurn flag once I get a nice solution for priority handling
-        if (!bBeginningTurn) {
+        if(!bBeginningTurn) {
             //Then this is a stun or an actions used
             ContTurns.Get().FixSortedPriority(this);
             //So make sure we're in the right place in the priority list
@@ -190,10 +198,10 @@ public class Chr : MonoBehaviour {
 
     public void RechargeActions() {
 
-        for (int i = 0; i < Chr.nActions; i++) {
+        for(int i = 0; i < Chr.nActions; i++) {
 
             //Only reduce the cooldown if it is not currently off cooldown
-            if (arActions[i].nCurCD > 0) { 
+            if(arActions[i].nCurCD > 0) {
                 ContAbilityEngine.Get().AddExec(new ExecChangeCooldown(null, arActions[i], -1) {
 
                     fDelay = ContTurns.fDelayMinorAction
@@ -207,9 +215,9 @@ public class Chr : MonoBehaviour {
     // having an armour buff expire), then check if we have no armour left
     public void CheckNoArmour() {
 
-        if (pnArmour.Get() < nAbsorbedArmour) {
+        if(pnArmour.Get() < nAbsorbedArmour) {
             //Debug.LogError("ERROR - " + sName + "'s armour is at " + pnArmour.Get() + " but we've absorbed " + nAbsorbedArmour);
-        } else if (pnArmour.Get() == 0) {
+        } else if(pnArmour.Get() == 0) {
             //Then we have used up all of our armour
 
             //Reset the armour absorbed amount to 0
@@ -232,7 +240,7 @@ public class Chr : MonoBehaviour {
         //       by the same amount
 
         pnArmour.AddModifier((nBelow) => nBelow += nChange);
-        
+
     }
 
     public void DamageArmour(int nDamage) {
@@ -253,19 +261,19 @@ public class Chr : MonoBehaviour {
         int nDamageToTake = dmgToTake.Get();
 
         //If the damage isn't piercing, then reduce it by the defense amount
-        if (dmgToTake.bPiercing == false) {
+        if(dmgToTake.bPiercing == false) {
             //Reduce the damage to take by our defense (but ensure it doesn't go below 0)
             nDamageToTake = Mathf.Max(0, nDamageToTake - pnDefense.Get());
         }
 
         int nArmouredDamage = 0;
 
-        if (dmgToTake.bPiercing == false) {
+        if(dmgToTake.bPiercing == false) {
             //Deal as much damage as we can (but not more than how much armour we have)
             nArmouredDamage = Mathf.Min(nDamageToTake, pnArmour.Get());
 
             //If there's actually damage that needs to be dealt to armour
-            if (nArmouredDamage > 0) {
+            if(nArmouredDamage > 0) {
                 DamageArmour(nArmouredDamage);
             }
         }
@@ -274,7 +282,7 @@ public class Chr : MonoBehaviour {
         int nAfterArmourDamage = nDamageToTake - nArmouredDamage;
 
         //If there's damage to be done, then deal it to health
-        if (nAfterArmourDamage > 0) {
+        if(nAfterArmourDamage > 0) {
             ChangeHealth(-nAfterArmourDamage);
         }
 
@@ -287,7 +295,7 @@ public class Chr : MonoBehaviour {
         int nHealingToTake = healToTake.Get();
 
         //If there's healing to be done, then apply it to our health
-        if (nHealingToTake > 0) {
+        if(nHealingToTake > 0) {
             ChangeHealth(nHealingToTake);
         }
 
@@ -295,9 +303,9 @@ public class Chr : MonoBehaviour {
     }
 
     public void ChangeHealth(int nChange) {
-        if (nCurHealth + nChange > pnMaxHealth.Get()) {
+        if(nCurHealth + nChange > pnMaxHealth.Get()) {
             nCurHealth = pnMaxHealth.Get();
-        } else if (nCurHealth + nChange <= 0) {
+        } else if(nCurHealth + nChange <= 0) {
             nCurHealth = 0;
 
             KillCharacter();
@@ -318,10 +326,10 @@ public class Chr : MonoBehaviour {
         return !bBlocker && pbCanBlock.Get();
     }
 
-  //Counts down the character's recharge with the timeline
-	public void TimeTick(){
-		ChangeFatigue (-1, true);
-	}
+    //Counts down the character's recharge with the timeline
+    public void TimeTick() {
+        ChangeFatigue(-1, true);
+    }
 
     public void ChangeState(STATESELECT _stateSelect) {
         stateSelect = _stateSelect;
@@ -331,7 +339,7 @@ public class Chr : MonoBehaviour {
     }
 
     //Sets character state to selected
-	public void Select(){
+    public void Select() {
         ChangeState(STATESELECT.SELECTED);
 
         subStartSelect.NotifyObs(this);
@@ -339,25 +347,25 @@ public class Chr : MonoBehaviour {
     }
 
     //Sets character state to targetting
-	public void Targetting(){
-		ChangeState(STATESELECT.TARGGETING);
+    public void Targetting() {
+        ChangeState(STATESELECT.TARGGETING);
 
         subStartTargetting.NotifyObs(this);
         subAllStartTargetting.NotifyObs(this);
     }
 
     //Set character state to unselected
-	public void Idle (){
-		ChangeState(STATESELECT.IDLE);
+    public void Idle() {
+        ChangeState(STATESELECT.IDLE);
 
         subStartIdle.NotifyObs(this);
         subAllStartIdle.NotifyObs(this);
     }
 
     //Performs the character's queued action
-	public void ExecuteAction(SelectionSerializer.SelectionInfo infoSelection) {
+    public void ExecuteAction(SelectionSerializer.SelectionInfo infoSelection) {
 
-        if (infoSelection.actUsed.CanActivate(infoSelection) == false) {
+        if(infoSelection.actUsed.CanActivate(infoSelection) == false) {
             Debug.LogError("ERROR! This ability was targetted, but is no longer a valid action");
             infoSelection.actUsed = infoSelection.chrOwner.arActions[Chr.idResting];  //Recover by setting the used action to a rest
         }
@@ -367,23 +375,23 @@ public class Chr : MonoBehaviour {
         subAllBeforeActivatingAction.NotifyObs(this, infoSelection);
 
         //Actually use the action
-        infoSelection.actUsed.UseAction (infoSelection);
-        
-	}
+        infoSelection.actUsed.UseAction(infoSelection);
+
+    }
 
 
 
     //By default, set all character actions to resting
     public virtual void SetDefaultActions() {//TODO:: probably add some parameter for this at some point like an array of ids
 
-        for (int i = 0; i < nActions; i++) {
+        for(int i = 0; i < nActions; i++) {
             arActions[i] = new ActionRest(this);
         }
     }
 
     public void SetAction(int i, Action actNew) {
         //If there is an action already in this slot
-        if (arActions[i] != null) {
+        if(arActions[i] != null) {
             //Then call it's unequip method since it's leaving
             arActions[i].OnUnequip();
         }
@@ -407,9 +415,9 @@ public class Chr : MonoBehaviour {
 
     // Used to initiallize information fields of the Chr
     // Call this after creating to set information
-    public void InitChr(Player _plyrOwner, int _id, BaseChr baseChr){
-		plyrOwner = _plyrOwner;
-		id = _id;
+    public void InitChr(Player _plyrOwner, int _id, BaseChr baseChr) {
+        plyrOwner = _plyrOwner;
+        id = _id;
         globalid = id + plyrOwner.id * Player.MAXCHRS;
         RegisterChr(this);
 
@@ -420,12 +428,12 @@ public class Chr : MonoBehaviour {
         baseChr.SetActions();
         baseChr.SetMaxHealth();
 
-		view.Init ();
-	}
+        view.Init();
+    }
 
     // Sets up fundamental class connections for the Chr
-	public void Start(){
-		if (bStarted == false) {
+    public void Start() {
+        if(bStarted == false) {
             bStarted = true;
 
             nMaxActionsLeft = 1;
@@ -447,12 +455,12 @@ public class Chr : MonoBehaviour {
             SetStateReadiness(new StateFatigued(this));
 
             view = GetComponent<ViewChr>();
-            view.Start ();
+            view.Start();
         }
 
-	}
+    }
 }
 
 
-    //Add a max health initializer in each instance of a character - add an 
-    // initializer in the base chr that sets curhealth to max health
+//Add a max health initializer in each instance of a character - add an 
+// initializer in the base chr that sets curhealth to max health

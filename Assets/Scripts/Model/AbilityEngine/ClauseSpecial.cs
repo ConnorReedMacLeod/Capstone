@@ -14,10 +14,10 @@ public abstract class ClauseSpecial : Clause {
     public override void Execute() {
 
         ClauseEffect();
-        
+
     }
 
-    public ClauseSpecial(Action _action): base(_action) {
-
+    public ClauseSpecial(Action _action) : base(_action) {
+        targetType = TargetType.SPECIAL;
     }
 }

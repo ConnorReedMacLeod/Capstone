@@ -21,7 +21,7 @@ public abstract class ClauseChr : Clause {
         List<ClauseTagChr> lstTags = plstTags.Get();
         //Apply each of our tags filtering one-by-one to trim the universe down 
         //  to what the clause can properly select
-        for (int i = 0; i < lstTags.Count; i++) {
+        for(int i = 0; i < lstTags.Count; i++) {
             lstSelectable = lstTags[i].ApplySelectionFiltering(lstSelectable);
         }
 
@@ -46,15 +46,17 @@ public abstract class ClauseChr : Clause {
     public override void Execute() {
         List<Chr> lstTargets = GetFinalTargets((SelectionSerializer.SelectionChr)GetSelectionInfo());
 
-        for (int i = 0; i < lstTargets.Count; i++) {
+        for(int i = 0; i < lstTargets.Count; i++) {
 
             //Execute the effect of this clause on this particular target
             ClauseEffect(lstTargets[i]);
-            
+
         }
     }
 
-    public ClauseChr(Action _action) : base(_action) { }
+    public ClauseChr(Action _action) : base(_action) {
+        targetType = TargetType.CHR;
+    }
 
 }
 
