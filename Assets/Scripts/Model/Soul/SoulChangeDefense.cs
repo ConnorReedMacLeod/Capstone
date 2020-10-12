@@ -21,7 +21,7 @@ public class SoulChangeDefense : Soul {
         bRemoveOnChrDeath = true;
 
         //Check if a duration was specified
-        if (_nDuration == -1) {
+        if(_nDuration == -1) {
             bDuration = false;
         } else {
             bDuration = true;
@@ -31,17 +31,10 @@ public class SoulChangeDefense : Soul {
 
         lstTriggers = new List<TriggerEffect>();
 
-        funcOnApplication = () => {
-            nodeDefenseModifier = chrTarget.pnDefense.AddModifier((nDefenseBelow) => this.nDefenseChange + nDefenseBelow);
-        };
-
-        funcOnRemoval = () => {
-            chrTarget.pnDefense.RemoveModifier(nodeDefenseModifier);
-        };
     }
 
     public SoulChangeDefense(SoulChangeDefense other, Chr _chrTarget = null) : base(other) {
-        if (_chrTarget != null) {
+        if(_chrTarget != null) {
             //If a Target was provided, then we'll use that
             chrTarget = _chrTarget;
         } else {
@@ -51,5 +44,16 @@ public class SoulChangeDefense : Soul {
 
         nDefenseChange = other.nDefenseChange;
 
+    }
+
+    public override void ApplicationEffect() {
+        base.ApplicationEffect();
+        nodeDefenseModifier = chrTarget.pnDefense.AddModifier((nDefenseBelow) => this.nDefenseChange + nDefenseBelow);
+
+    }
+
+    public override void RemoveEffect() {
+        base.RemoveEffect();
+        chrTarget.pnDefense.RemoveModifier(nodeDefenseModifier);
     }
 }

@@ -197,28 +197,33 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
             if(nPlayerID != ContTurns.Get().GetNextActingChr().plyrOwner.id) {
                 MoveToNextPhase(nCurTurnPhase);
             } else {
+
                 //Otherwise, we are the active player so we should examine the Additional Info to see if the passed ability is valid
+
                 if(arAdditionalInfo == null) {
 
                     //If no additional info was passed, then interpret this as a rest action
                     ResetSavedAbilitySelection();
 
-                } else if(CanUseAbility((int)arAdditionalInfo[0], (int)arAdditionalInfo[1])) {
-
-                    //If the ability selection and targetting passed can be used, then save that selection and try to move to the next phase
-
-                    SaveAbilitySelection((int)arAdditionalInfo[0], (int)arAdditionalInfo[1]);
-
                 } else {
-                    //Otherwise, if we were passed an invalid ability selection 
+                    if(
+                    CanUseAbility((int)arAdditionalInfo[0], (int)arAdditionalInfo[1])) {
 
-                    Debug.LogError("Invalid ability selection of " + (int)arAdditionalInfo[0] + " " + (int)arAdditionalInfo[1] + " " + (int[])arAdditionalInfo[2]);
+                        //If the ability selection and targetting passed can be used, then save that selection and try to move to the next phase
 
-                    //Then we'll override that ability selection and just assign them a rest (they can locally fail to select a correct ability as many times as they 
-                    // want, but they should only ever submit to the master if they're sure they have a finallized good selection)
+                        SaveAbilitySelection((int)arAdditionalInfo[0], (int)arAdditionalInfo[1]);
 
-                    SaveAbilitySelection(ContTurns.Get().GetNextActingChr().globalid, Chr.idResting, null);
+                    } else {
+                        //Otherwise, if we were passed an invalid ability selection 
 
+                        Debug.LogError("Invalid ability selection of " + (int)arAdditionalInfo[0] + " " + (int)arAdditionalInfo[1] + " " + (int[])arAdditionalInfo[2]);
+
+                        //Then we'll override that ability selection and just assign them a rest (they can locally fail to select a correct ability as many times as they 
+                        // want, but they should only ever submit to the master if they're sure they have a finallized good selection)
+
+                        SaveAbilitySelection(ContTurns.Get().GetNextActingChr().globalid, Chr.idResting, null);
+
+                    }
                 }
 
                 MoveToNextPhase(nCurTurnPhase);
@@ -255,23 +260,25 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         }
     }
 
-    public void SaveAbilitySelection(int nChrGlobalID, int nAbilityID, int[] arTargets) {
-        nSavedChrGlobalID = nChrGlobalID;
-        nSavedAbilityIDSelection = nAbilityID;
-        arnSavedTargetsSelection = arTargets;
+    public void SaveAbilitySelection(int _nSavedSerializedTargetSelection) {
+        nSavedSerializedTargetSelection = _nSavedSerializedTargetSelection;
     }
 
     public void ResetSavedAbilitySelection() {
         nSavedSerializedTargetSelection = SelectionSerializer.SerializeRest();
     }
 
-    public bool CanUseAbility(int nChrGlobalID, int nSerializedSelectionInfo) {
+    public bool CanUseAbility(int nSerializedSelectionInfo) {
         //Just piggyback off of the local player to determine if we can use the ability
 
-        Debug.Assert(Chr.lstAllChrs[nChrGlobalID] == ContTurns.Get().GetNextActingChr());
+        SelectionSerializer.SelectionInfo infoDeserialized = SelectionSerializer.Deserialize(ContTurns.Get().chrNextReady, nSerializedSelectionInfo);
 
-        return (Chr.lstAllChrs[nChrGlobalID].arActions[nAbility].CanActivate(arTargetIndices) == false &&
-                Chr.lstAllChrs[nChrGlobalID].arActions[nAbility].CanPayMana() == false);
+
+        //Ensure the serialized selection is indeed for this 
+        Debug.Assert(infoDeserialized.chrOwner == ContTurns.Get().GetNextActingChr());
+
+        return (infoDeserialized.actUsed.CanPayMana() && infoDeserialized.CanActivate());
+
     }
 
 

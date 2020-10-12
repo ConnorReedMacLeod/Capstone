@@ -41,13 +41,11 @@ public class ExecTurnExecuteAction : Executable {
         //We assume that we have just come from choosing an action, so get that character
         Chr chrNextToAct = ContTurns.Get().GetNextActingChr();
 
-        sLabel = chrNextToAct.sName + " is using " + ContAbilitySelection.Get().infoSelection.actUsed.sDisplayName;
+        sLabel = chrNextToAct.sName + " is using " + ContAbilitySelection.Get().infoSelectionFromMaster.actUsed.sDisplayName;
 
-        //TODONOW - figure out how to hook up the master's broadcasted ability selection information so that we can
-        //          execute that selection here
-        chrNextToAct.ExecuteAction(ContAbilitySelection.Get().infoSelection);
+        chrNextToAct.ExecuteAction(ContAbilitySelection.Get().infoSelectionFromMaster);
 
-        if(ContAbilitySelection.Get().infoSelection.actUsed.id == Chr.idResting) {
+        if(ContAbilitySelection.Get().infoSelectionFromMaster.actUsed.id == Chr.idResting) {
             chrNextToAct.SetStateReadiness(new StateFatigued(chrNextToAct));
         }
 
