@@ -43,7 +43,7 @@ public class ContLocalInputSelection : Singleton<ContLocalInputSelection> {
     // Ends targetting
     public void CancelTar() {
 
-        if (curState.GetType() == typeof(StateTargetIdle) || curState.GetType() == typeof(StateTargetSelected)) {
+        if(curState.GetType() == typeof(StateTargetIdle) || curState.GetType() == typeof(StateTargetSelected)) {
             // If we're waiting to select a character, or aren't in the process of targetting
             // an ability with the selected character, then no resetting is needed
             return;
@@ -59,10 +59,6 @@ public class ContLocalInputSelection : Singleton<ContLocalInputSelection> {
 
     public void FinishTargetting() {
 
-        //Copy our selection information over to the human input controller
-        chrSelected.plyrOwner.inputController.nSelectedChrId = chrSelected.globalid;
-        chrSelected.plyrOwner.inputController.nSelectedAbility = nSelectedAbility;
-        chrSelected.plyrOwner.inputController.arTargetIndices = arTargetIndices;
 
         ContAbilitySelection.Get().SubmitAbility(chrSelected.plyrOwner.inputController);
 
@@ -79,11 +75,11 @@ public class ContLocalInputSelection : Singleton<ContLocalInputSelection> {
     public void SetTargetArgState() {
         //Before this is called, assume that IncTar/DecTar/ResetTar has been appropriately called
 
-        if (indexCurTarget < 0) {
+        if(indexCurTarget < 0) {
             //Then we've cancelled the targetting action so go back to... idle?
             CancelTar();
 
-        } else if (indexCurTarget == 0) {
+        } else if(indexCurTarget == 0) {
             //Then create the targetting array with the correct size
             arTargetIndices = new int[chrSelected.arActions[nSelectedAbility].nArgs];
 
@@ -91,14 +87,14 @@ public class ContLocalInputSelection : Singleton<ContLocalInputSelection> {
             subAllStartTargetting.NotifyObs(chrSelected, nSelectedAbility);
         }
 
-        if (indexCurTarget == chrSelected.arActions[nSelectedAbility].nArgs) {
+        if(indexCurTarget == chrSelected.arActions[nSelectedAbility].nArgs) {
             //Then we've filled of the targetting arguments
 
             //Debug.Log ("Targetting finished");
 
             //Submit our targetting selections to the InputAbilitySelection controller
             FinishTargetting();
-            
+
         } else {
 
 
@@ -108,23 +104,23 @@ public class ContLocalInputSelection : Singleton<ContLocalInputSelection> {
 
             StateTarget newState;
 
-            switch (sArgType) { //TODO:: Maybe make this not rely on a string comparison... bleh
-                case "TargetArgChr":
-                    newState = new StateTargetChr();
-                    break;
+            switch(sArgType) { //TODO:: Maybe make this not rely on a string comparison... bleh
+            case "TargetArgChr":
+                newState = new StateTargetChr();
+                break;
 
-                case "TargetArgTeam":
-                    newState = new StateTargetTeam();
-                    break;
+            case "TargetArgTeam":
+                newState = new StateTargetTeam();
+                break;
 
-                case "TargetArgAlly":
-                    newState = new StateTargetChr();
-                    break;
+            case "TargetArgAlly":
+                newState = new StateTargetChr();
+                break;
 
-                default:
+            default:
 
-                    Debug.LogError(sArgType + " is not a recognized ArgType!");
-                    return;
+                Debug.LogError(sArgType + " is not a recognized ArgType!");
+                return;
             }
 
             // Transition to the appropriate state
@@ -135,14 +131,14 @@ public class ContLocalInputSelection : Singleton<ContLocalInputSelection> {
 
     public void SetState(StateTarget newState) {
 
-        if (curState != null) {
+        if(curState != null) {
             //Debug.Log("Leaving State " + curState.ToString());
             curState.OnLeave();
         }
 
         curState = newState;
 
-        if (curState != null) {
+        if(curState != null) {
             curState.OnEnter();
             //Debug.Log("Entering State " + curState.ToString());
         }

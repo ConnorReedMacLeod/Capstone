@@ -75,6 +75,10 @@ public static class SelectionSerializer {
         public override string ToString() {
             return chrOwner.sName + " using " + actUsed.sName;
         }
+
+        public bool CanActivate() {
+            return actUsed.CanActivate(this);
+        }
     };
 
     // *****************   CHR SELECTIONS   *****************
@@ -272,7 +276,6 @@ public static class SelectionSerializer {
     public static int SerializeRest() {
         return Serialize(Chr.idResting, 0, 0, 0);
     }
-
 
     //Remember to cast the result to the type that you expect
     public static SelectionInfo Deserialize(Chr chrOwner, int nSerialized) {

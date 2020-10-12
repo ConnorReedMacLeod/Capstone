@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class StateChanneling : StateReadiness {
 
-    public int nChannelTime;  
+    public int nChannelTime;
 
     public SoulChannel soulBehaviour; //Handles all customized behaviour of what the channel effect should do
     public SelectionSerializer.SelectionInfo selectioninfoStored;//TODONOW - figure out where to initialize this
@@ -35,7 +35,7 @@ public class StateChanneling : StateReadiness {
     // this should be subcribed to each potentially invalidating subject
     public void cbInterruptifInvalid(Object target, params object[] args) {
 
-        if (!soulBehaviour.act.LegalTargets(selectioninfoStored)) {
+        if(!soulBehaviour.act.LegalTargets(selectioninfoStored)) {
             //If targetting has become invalid (maybe because someone has died)
             InterruptChannel();
 
@@ -58,14 +58,14 @@ public class StateChanneling : StateReadiness {
     }
 
     public override void ChangeChanneltime(int _nChange) {
-        if (chrOwner.bDead) {
+        if(chrOwner.bDead) {
             Debug.Log("Tried to change channeltime, but " + chrOwner.sName + " is dead");
             return;
         }
 
         //We can actually reduce the channel time if we're in this state
 
-        if (_nChange + nChannelTime < 0) {
+        if(_nChange + nChannelTime < 0) {
             nChannelTime = 0;
         } else {
             nChannelTime += _nChange;
@@ -75,30 +75,20 @@ public class StateChanneling : StateReadiness {
         // and we transition to the fatigued state
         if(nChannelTime == 0) {
 
-            ContAbilityEngine.Get().AddExec(new ExecCompleteChannel() {
-
-                chrSource = null, //This is a game action, so there's no source
-                chrTarget = chrOwner
-
-            });
+            ContAbilityEngine.Get().AddExec(new ExecCompleteChannel(null, chrOwner));
         }
 
     }
 
 
     public override void Recharge() {
-        if (chrOwner.bDead) {
+        if(chrOwner.bDead) {
             Debug.Log("Tried to recharge, but " + chrOwner.sName + " is dead");
             return;
         }
 
         //If we're channeling, instead of reducing fatigue, we only reduce the channel time
-        ContAbilityEngine.Get().AddExec(new ExecChangeChannel() {
-            chrSource = null, //This is a game action, so there's no source
-            chrTarget = chrOwner,
-
-            nAmount = -1,
-        });
+        ContAbilityEngine.Get().AddExec(new ExecChangeChannel(null, chrOwner, -1));
 
     }
 

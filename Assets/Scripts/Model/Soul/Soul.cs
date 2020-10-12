@@ -25,12 +25,12 @@ public class Soul {
     public bool bRemoveOnChrDeath; //Should the ability be removed when the character its on dies?
     public bool bRemoveOnChrSourceDeath; //Should the ability be removed when the character who applied it dies?
 
-    public bool bDuration; 
+    public bool bDuration;
     public Property<int> pnMaxDuration;
     public int nCurDuration;
 
     public List<Replacement> lstReplacements = new List<Replacement>(); //A (potentially empty) list of replacement effects for this effect
-    
+
     //A structure to hold information about a single trigger needed by a Soul effect
     public struct TriggerEffect {
         public Subject sub;
@@ -55,11 +55,11 @@ public class Soul {
     }
 
     //These are functions that we can override if we want certain effects to happen on application/removal/expiration
-    //  By default, these just to nothing though
+    //  By default, these just do nothing though
     public virtual void ApplicationEffect() { }
     public virtual void RemoveEffect() { }
     public virtual void ExpirationEffect() { }//Specifically when the soul effect reaches the end of its duration
-   
+
     public void OnApply(SoulContainer _soulContainer) {
 
         //Save a reference to the soulContainer we're in
@@ -70,15 +70,15 @@ public class Soul {
             nCurDuration = pnMaxDuration.Get();
         }
 
-        if (lstTriggers != null) { //Then we have some triggers to subscribe
+        if(lstTriggers != null) { //Then we have some triggers to subscribe
             //Each triggeredeffect we have should subscribe to the trigger it needs
-            foreach (TriggerEffect trig in lstTriggers) {
+            foreach(TriggerEffect trig in lstTriggers) {
                 //Debug.Log("*** ADDING TRIGGER SUBSCRIPTION ***");
                 trig.sub.Subscribe(trig.cb);
             }
         }
 
-        foreach (Replacement rep in lstReplacements) {
+        foreach(Replacement rep in lstReplacements) {
             //For each replacement effect this soul effect has, register it so it'll take effect
             Replacement.Register(rep);
         }
@@ -88,7 +88,7 @@ public class Soul {
 
         ApplicationEffect();
 
-        if(ContAbilityEngine.bDEBUGENGINE)Debug.Log(sName + " has been applied");
+        if(ContAbilityEngine.bDEBUGENGINE) Debug.Log(sName + " has been applied");
     }
 
     public void OnRemoval() {
@@ -96,30 +96,30 @@ public class Soul {
         chrTarget.subDeath.UnSubscribe(cbOnChrTargetDeath);
         chrSource.subDeath.UnSubscribe(cbOnChrSourceDeath);
 
-        if (lstTriggers != null) { //Then we have some triggers to unsubscribe
-                                   //Each triggeredeffect should unsubscribe from each of its triggers its observing
-            foreach (TriggerEffect trig in lstTriggers) {
+        if(lstTriggers != null) { //Then we have some triggers to unsubscribe
+                                  //Each triggeredeffect should unsubscribe from each of its triggers its observing
+            foreach(TriggerEffect trig in lstTriggers) {
                 trig.sub.UnSubscribe(trig.cb);
             }
         }
 
-        foreach (Replacement rep in lstReplacements) {
+        foreach(Replacement rep in lstReplacements) {
             //For each replacement effect this soul effect has, unregister it so it'll stop taking effect
             Replacement.Unregister(rep);
         }
 
         RemoveEffect();
-        if (ContAbilityEngine.bDEBUGENGINE) Debug.Log(sName + " has been removed");
+        if(ContAbilityEngine.bDEBUGENGINE) Debug.Log(sName + " has been removed");
 
-        if (bDuration == true && nCurDuration == 0) {
+        if(bDuration == true && nCurDuration == 0) {
             ExpirationEffect();
-            if (ContAbilityEngine.bDEBUGENGINE) Debug.Log(sName + " has expired");
+            if(ContAbilityEngine.bDEBUGENGINE) Debug.Log(sName + " has expired");
         }
 
     }
 
     public void cbOnChrTargetDeath(Object target, params object[] args) {
-        if (bRemoveOnChrDeath) {
+        if(bRemoveOnChrDeath) {
             //When the character this is on dies, then we can dispel this soul effect
             soulContainer.RemoveSoul(this);
         }
@@ -127,7 +127,7 @@ public class Soul {
 
     public void cbOnChrSourceDeath(Object target, params object[] args) {
 
-        if (bRemoveOnChrSourceDeath) {
+        if(bRemoveOnChrSourceDeath) {
             //When the character who applied this dies, then we can dispel this soul effect
             soulContainer.RemoveSoul(this);
         }
@@ -136,7 +136,7 @@ public class Soul {
     public Soul(Soul soulToCopy, Chr _chrTarget = null) {
         chrSource = soulToCopy.chrSource;
 
-        if (_chrTarget != null) {
+        if(_chrTarget != null) {
             //If a Target was provided, then we'll use that
             chrTarget = _chrTarget;
         } else {
@@ -157,16 +157,16 @@ public class Soul {
         bDuration = soulToCopy.bDuration;
         nCurDuration = soulToCopy.nCurDuration;
 
-        if (soulToCopy.pnMaxDuration != null) {
+        if(soulToCopy.pnMaxDuration != null) {
             pnMaxDuration = new Property<int>(soulToCopy.pnMaxDuration);
         }
 
-        if (soulToCopy.lstReplacements != null) {
+        if(soulToCopy.lstReplacements != null) {
             lstReplacements = new List<Replacement>(soulToCopy.lstReplacements);
         }
-        if (soulToCopy.lstTriggers != null) {
+        if(soulToCopy.lstTriggers != null) {
             lstTriggers = new List<TriggerEffect>(soulToCopy.lstTriggers);
         }
-  
+
     }
 }

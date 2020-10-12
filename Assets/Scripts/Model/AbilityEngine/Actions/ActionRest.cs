@@ -4,23 +4,23 @@ using UnityEngine;
 
 public class ActionRest : Action {
 
-	public ActionRest(Chr _chrOwner): base(_chrOwner, 0){
+    public ActionRest(Chr _chrOwner) : base(_chrOwner, 0) {
 
-		sName = "Rest";
+        sName = "Rest";
         sDisplayName = "Rest";
 
         type = new TypeCantrip(this);
 
         chrSource = _chrOwner;
 
-        parCost = new Property<int[]>(new int[]{0,0,0,0,0});
+        parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 0 });
 
-		nCd = 0;
+        nCd = 0;
         nFatigue = 0;
 
         bProperActive = false; //This is a special action that shouldn't change our character's sprite to the active
 
-	}
+    }
 
     class Clause1 : ClauseSpecial {
 
@@ -28,7 +28,7 @@ public class ActionRest : Action {
 
         public Clause1(Action _act) : base(_act) {
             //TODO add in tags for base action, and rest
-            
+
             nRestFatigue = 3;
         }
 
@@ -40,12 +40,14 @@ public class ActionRest : Action {
         public override void ClauseEffect() {
 
             //Check if the character has any fatigue already
-            if (action.chrSource.nFatigue == 0) {
+            if(action.chrSource.nFatigue == 0) {
                 //If not, then give them the rest fatigue
                 ContAbilityEngine.Get().AddExec(new ExecChangeFatigue(action.chrSource, action.chrSource, nRestFatigue, false) {
                     sLabel = "Resting"
                 });
             }
+
+            action.chrSource.SetStateReadiness(new StateFatigued(action.chrSource));
 
         }
 
