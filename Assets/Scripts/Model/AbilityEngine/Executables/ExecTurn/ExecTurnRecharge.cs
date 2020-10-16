@@ -40,13 +40,13 @@ public class ExecTurnRecharge : Executable {
     //Want to stack up a recharge executable (change fatigue/channeltime) for each character one by one
     public void RechargeChars() {
 
-        for (int i = 0; i < Match.Get().nPlayers; i++) {
-            for (int j = 0; j < Player.MAXCHRS; j++) {
-                if (Match.Get().arChrs[i][j] == null) {
+        for(int i = 0; i < Match.Get().nPlayers; i++) {
+            for(int j = 0; j < Player.MAXCHRS; j++) {
+                if(Match.Get().arChrs[i][j] == null) {
                     continue; // A character isn't actually here (extra space for characters)
                 }
 
-                if (Match.Get().arChrs[i][j].bDead) {
+                if(Match.Get().arChrs[i][j].bDead) {
                     Debug.Log("skipping recharge since " + Match.Get().arChrs[i][j].sName + " is dead");
                     continue; //The character's already dead
                 }
@@ -66,6 +66,14 @@ public class ExecTurnRecharge : Executable {
         fDelay = ContTurns.fDelayTurnAction;
 
         ViewAnnouncement.Get().InitAnnouncement(2.0f, "TURN " + ContTurns.Get().nTurnNumber);
+
+    }
+
+    public ExecTurnRecharge(Chr _chrSource) : base(_chrSource) {
+
+    }
+
+    public ExecTurnRecharge(ExecTurnRecharge other) : base(other) {
 
     }
 }

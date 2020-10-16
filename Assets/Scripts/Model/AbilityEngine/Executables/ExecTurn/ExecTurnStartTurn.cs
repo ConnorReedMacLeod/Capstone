@@ -42,4 +42,11 @@ public class ExecTurnStartTurn : Executable {
 
     }
 
+    public ExecTurnStartTurn(Chr _chrSource) : base(_chrSource) {
+
+    }
+
+    public ExecTurnStartTurn(ExecTurnStartTurn other) : base(other) {
+
+    }
 }

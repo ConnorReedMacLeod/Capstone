@@ -53,4 +53,12 @@ public class ExecTurnExecuteAction : Executable {
 
     }
 
+
+    public ExecTurnExecuteAction(Chr _chrSource) : base(_chrSource) {
+
+    }
+
+    public ExecTurnExecuteAction(ExecTurnExecuteAction other) : base(other) {
+
+    }
 }

@@ -43,9 +43,11 @@ public class ExecTurnGiveMana : Executable {
         Debug.Assert(arManaToGive.Length == Match.Get().nPlayers);
 
         //Give the mana to each player as stored in arManaToGive
-        for (int i = 0; i < arManaToGive.Length; i++) {
+        for(int i = 0; i < arManaToGive.Length; i++) {
 
-            ContAbilityEngine.Get().AddExec(new ExecChangeMana(Match.Get().arPlayers[i], (Mana.MANATYPE)arManaToGive[i]) {
+            Player plyrToGive = Match.Get().arPlayers[i];
+
+            ContAbilityEngine.Get().AddExec(new ExecChangeMana(null, plyrToGive, (Mana.MANATYPE)arManaToGive[i]) {
                 chrSource = null
             });
         }
@@ -57,6 +59,15 @@ public class ExecTurnGiveMana : Executable {
 
         sLabel = "Giving Mana to each player";
         fDelay = ContTurns.fDelayTurnAction;
+
+    }
+
+
+    public ExecTurnGiveMana(Chr _chrSource) : base(_chrSource) {
+
+    }
+
+    public ExecTurnGiveMana(ExecTurnGiveMana other) : base(other) {
 
     }
 

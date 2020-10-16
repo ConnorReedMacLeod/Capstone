@@ -33,9 +33,9 @@ public class ExecTurnReady : Executable {
     public void ReadyAll() {
         //Loop through all characters and transition any 0 fatigue characters to be ready
 
-        for (int i = 0; i < Match.Get().nPlayers; i++) {
-            for (int j = 0; j < Player.MAXCHRS; j++) {
-                if (Match.Get().arChrs[i][j] == null) {
+        for(int i = 0; i < Match.Get().nPlayers; i++) {
+            for(int j = 0; j < Player.MAXCHRS; j++) {
+                if(Match.Get().arChrs[i][j] == null) {
                     continue; // A character isn't actually here (extra space for characters)
                 }
 
@@ -57,6 +57,14 @@ public class ExecTurnReady : Executable {
 
         sLabel = "Readying Characters";
         fDelay = ContTurns.fDelayTurnAction;
+
+    }
+
+    public ExecTurnReady(Chr _chrSource) : base(_chrSource) {
+
+    }
+
+    public ExecTurnReady(ExecTurnReady other) : base(other) {
 
     }
 
