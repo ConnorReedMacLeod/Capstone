@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class TypeAction {
 
     public Action act;
-    public enum TYPE {ACTIVE, CANTRIP, CHANNEL, PASSIVE };
+    public enum TYPE { ACTIVE, CANTRIP, CHANNEL, PASSIVE };
 
     public TypeAction(Action _act) {
         act = _act;
@@ -39,10 +39,10 @@ public abstract class TypeAction {
 
     }
 
-    //Fetch the current selection information for the player using this ability
+    //Fetch the current selection information for the character using this ability
     public virtual SelectionSerializer.SelectionInfo GetSelectionInfo() {
-        //TODONOW - implement this
-        //By default, grab the player's current selection
+
+        return act.chrSource.infoSelectionStored;
 
     }
 

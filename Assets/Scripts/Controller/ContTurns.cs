@@ -157,19 +157,19 @@ public class ContTurns : Singleton<ContTurns> {
         switch(curStateTurn) {
         case STATETURN.RECHARGE:
 
-            ContAbilityEngine.Get().AddExec(new ExecTurnRecharge());
+            ContAbilityEngine.Get().AddExec(new ExecTurnRecharge(_chrSource: null));
 
             break;
 
         case STATETURN.READY:
 
-            ContAbilityEngine.Get().AddExec(new ExecTurnReady());
+            ContAbilityEngine.Get().AddExec(new ExecTurnReady(_chrSource: null));
 
             break;
 
         case STATETURN.REDUCECOOLDOWNS:
 
-            ContAbilityEngine.Get().AddExec(new ExecTurnReduceCooldowns());
+            ContAbilityEngine.Get().AddExec(new ExecTurnReduceCooldowns(_chrSource: null));
 
             break;
 
@@ -179,32 +179,32 @@ public class ContTurns : Singleton<ContTurns> {
             // and pass this along to the ExecTurnGiveMana that's put on the stack
             Debug.Assert(oAdditionalInfo != null);
 
-            ContAbilityEngine.Get().AddExec(new ExecTurnGiveMana() { arManaToGive = (int[])oAdditionalInfo });
+            ContAbilityEngine.Get().AddExec(new ExecTurnGiveMana(_chrSource: null) { arManaToGive = (int[])oAdditionalInfo });
 
             break;
 
 
         case STATETURN.TURNSTART:
 
-            ContAbilityEngine.Get().AddExec(new ExecTurnStartTurn());
+            ContAbilityEngine.Get().AddExec(new ExecTurnStartTurn(_chrSource: null));
 
             break;
 
         case STATETURN.CHOOSEACTIONS:
 
-            ContAbilityEngine.Get().AddExec(new ExecTurnChooseActions());
+            ContAbilityEngine.Get().AddExec(new ExecTurnChooseActions(_chrSource: null));
 
             break;
 
         case STATETURN.EXECUTEACTIONS:
 
-            ContAbilityEngine.Get().AddExec(new ExecTurnExecuteAction());
+            ContAbilityEngine.Get().AddExec(new ExecTurnExecuteAction(_chrSource: null));
 
             break;
 
         case STATETURN.TURNEND:
 
-            ContAbilityEngine.Get().AddExec(new ExecTurnEndTurn());
+            ContAbilityEngine.Get().AddExec(new ExecTurnEndTurn(_chrSource: null));
 
             break;
         }
@@ -231,5 +231,7 @@ public class ContTurns : Singleton<ContTurns> {
 
 
     }
+
+
 
 }

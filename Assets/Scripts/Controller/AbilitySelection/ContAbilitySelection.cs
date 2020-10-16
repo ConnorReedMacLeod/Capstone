@@ -72,6 +72,15 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
     }
 
     public void EndSelection() {
+        //TODONOW - consider what even needs to be done here.  It's not clear that this will
+        //  only ever be interacted with by a human.  I also don't see what LockTargetting() should
+        //  really do since this should be a human-interaction based action.  Locking only makes sense for the surface
+        //  interactions with the game and not any game-altering effects.
+
+        if(bSelectingAbility == true) {
+            //If this flag is still raised, then we were still in the middle of trying to submit an ability
+            // when we got the message 
+        }
 
         Chr chrCurActing = ContTurns.Get().GetNextActingChr();
 
@@ -134,27 +143,24 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
 
         //If we get this far, then the selecting is valid
 
-        //TODO - consider putting a flag here to register that we did indeed submit an ability.
-        //       When we get the signal back from the master, we'll know we didn't time-out or anything
-        //       if this flag is raised
+        //Turn off the flag that we're still in the process of selecting an ability
+        bSelectingAbility = false;
 
         //Submit the ability selection to the master
-        ClientNetworkController.Get().SendTurnPhaseFinished(infoSelectionFromMaster.Serialize());
-
-        //UPDATE - We used to just process the stacks ourselves, but now we'll wait to the master to tell us
-        // when it's safe to start processing the stacks since all players are ready
-        //If we've successfully selected an action, call the ProcessStack function (on an empty stack)
-        //which will put an execExecuteAction on the stack
-        //ContAbilityEngine.Get().ProcessStacks();
+        ClientNetworkController.Get().SendTurnPhaseFinished(infoSelectionSubmitted.Serialize());
 
     }
 
     public void ReceiveSelectionFromMaster(int nSerializedSelection) {
+        Debug.Assert(ContTurns.Get().curStateTurn == ContTurns.STATETURN.EXECUTEACTIONS);
 
         Chr chrActing = ContTurns.Get().GetNextActingChr();
 
         //Save the result that the master broadcasted out
         infoSelectionFromMaster = SelectionSerializer.Deserialize(chrActing, nSerializedSelection);
+
+        //Ensure the passed action is valid
+        Debug.Assert(infoSelectionFromMaster.CanActivate());
 
         //Stop the selection process (if it's still ongoing) since the decision has already been finalized by the master
         EndSelection();

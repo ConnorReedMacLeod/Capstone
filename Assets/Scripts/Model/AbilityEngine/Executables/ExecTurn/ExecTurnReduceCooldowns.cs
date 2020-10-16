@@ -39,13 +39,13 @@ public class ExecTurnReduceCooldowns : Executable {
 
     public void ReduceCooldowns() {
 
-        for (int i = 0; i < Match.Get().nPlayers; i++) {
-            for (int j = 0; j < Player.MAXCHRS; j++) {
-                if (Match.Get().arChrs[i][j] == null) {
+        for(int i = 0; i < Match.Get().nPlayers; i++) {
+            for(int j = 0; j < Player.MAXCHRS; j++) {
+                if(Match.Get().arChrs[i][j] == null) {
                     continue; // A character isn't actually here (extra space for characters)
                 }
 
-                if (Match.Get().arChrs[i][j].bDead) {
+                if(Match.Get().arChrs[i][j].bDead) {
                     continue; //The character's already dead
                 }
 
@@ -65,4 +65,11 @@ public class ExecTurnReduceCooldowns : Executable {
 
     }
 
+    public ExecTurnReduceCooldowns(Chr _chrSource) : base(_chrSource) {
+
+    }
+
+    public ExecTurnReduceCooldowns(ExecTurnReduceCooldowns other) : base(other) {
+
+    }
 }

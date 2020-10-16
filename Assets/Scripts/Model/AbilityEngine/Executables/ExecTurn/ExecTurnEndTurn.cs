@@ -45,4 +45,11 @@ public class ExecTurnEndTurn : Executable {
 
     }
 
+    public ExecTurnEndTurn(Chr _chrSource) : base(_chrSource) {
+
+    }
+
+    public ExecTurnEndTurn(ExecTurnEndTurn other) : base(other) {
+
+    }
 }
