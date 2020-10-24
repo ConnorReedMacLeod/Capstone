@@ -61,7 +61,7 @@ public class ExecTurnChooseActions : Executable {
 
 
             //If a human player is asked to use an ability
-            if(ContTurns.Get().GetNextActingChr().plyrOwner.inputController.GetType() == typeof(InputHuman)) {
+            if(ContTurns.Get().GetNextActingChr().plyrOwner.inputController.GetType() == typeof(LocalInputHuman)) {
                 //Then set up a timer countdown for them
                 sLabel = "Select Your Action for " + ContTurns.Get().GetNextActingChr().sName;
                 fDelay = ContAbilitySelection.Get().fMaxSelectionTime;

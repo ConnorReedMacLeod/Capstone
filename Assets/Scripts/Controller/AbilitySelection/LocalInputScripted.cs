@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputScripted : InputAbilitySelection {
+public class LocalInputScripted : LocalInputType {
 
 
     public int[] arScriptedTargettingIndices;                         //Holds the current index of the script we're using for each character's next action
@@ -10,8 +10,7 @@ public class InputScripted : InputAbilitySelection {
     public const int MAXTARGETATTEMPTS = 5;
 
     public override void StartSelection() {
-
-        ResetTargets();
+        base.StartSelection();
 
         //Give a small delay before we return the ability selection
         // so that we can give a chance to clear the stack out
@@ -25,12 +24,6 @@ public class InputScripted : InputAbilitySelection {
 
         arScriptedTargettingIndices = new int[arTargettingScript.Length];
 
-    }
-
-    public override void GaveInvalidTarget() {
-        Debug.LogError("ERROR! - The scripted player input gave an invalid targetting selection - trying next available");
-
-        SubmitNextAbility();
     }
 
     public void SubmitNextAbility() {
@@ -97,7 +90,7 @@ public class InputScripted : InputAbilitySelection {
         //We now need to ready enough effort mana to pay for the ability
         AutoPayCost(infoSelection.actUsed.parCost.Get());
 
-        ContAbilitySelection.Get().SubmitAbility(infoSelection);
+        ContAbilitySelection.Get().SubmitAbility(infoSelection, this);
 
 
     }
@@ -181,7 +174,7 @@ public class InputScripted : InputAbilitySelection {
     }
 
 
-    public static void SetRandomAbilities(InputScripted input) {
+    public static void SetRandomAbilities(LocalInputScripted input) {
 
         int nScriptLength = 100;
         KeyValuePair<int, int>[,] arListRandomSelections = new KeyValuePair<int, int>[Player.MAXCHRS, nScriptLength];
