@@ -362,7 +362,7 @@ public class Chr : MonoBehaviour {
         subAllStartIdle.NotifyObs(this);
     }
 
-    //Performs the character's queued action
+    //Performs the consumed action 
     public void ExecuteAction(SelectionSerializer.SelectionInfo infoSelection) {
 
         if(infoSelection.actUsed.CanActivate(infoSelection) == false) {

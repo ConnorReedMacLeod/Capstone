@@ -5,15 +5,15 @@ using UnityEngine;
 public class StateTargetSelected : StateTarget {
 
     public void cbDeselect(Object target, params object[] args) {
-        ContLocalInputSelection.Get().SetState(new StateTargetIdle());
+        ContLocalUIInteraction.Get().SetState(new StateTargetIdle());
     }
 
     public void cbReselectChar(Object target, params object[] args) {
         // If we now click on a different character, then we'll select them instead
-        ContLocalInputSelection.Get().chrSelected.Idle(); // Need to deselect our current character first
-        ContLocalInputSelection.Get().chrSelected = ((ViewChr)target).mod;
+        ContLocalUIInteraction.Get().chrSelected.Idle(); // Need to deselect our current character first
+        ContLocalUIInteraction.Get().chrSelected = ((ViewChr)target).mod;
 
-        ContLocalInputSelection.Get().SetState(new StateTargetSelected());
+        ContLocalUIInteraction.Get().SetState(new StateTargetSelected());
     }
 
     public void cbClickAction(Object target, params object[] args) {
@@ -24,13 +24,13 @@ public class StateTargetSelected : StateTarget {
 
     public void cbClickBlockerButton(Object target, params object[] args) {
 
-        ChooseAction(ContLocalInputSelection.Get().chrSelected.arActions[Chr.idBlocking]);
+        ChooseAction(ContLocalUIInteraction.Get().chrSelected.arActions[Chr.idBlocking]);
 
     }
 
     public void cbClickRestButton(Object target, params object[] args) {
 
-        ChooseAction(ContLocalInputSelection.Get().chrSelected.arActions[Chr.idResting]);
+        ChooseAction(ContLocalUIInteraction.Get().chrSelected.arActions[Chr.idResting]);
 
     }
 
@@ -39,7 +39,7 @@ public class StateTargetSelected : StateTarget {
         // When we've clicked an action, try to use that action
 
         //If this character is owned by an AI-input player, then we don't have authority and we shouldn't select anything
-        if (ContLocalInputSelection.Get().chrSelected.plyrOwner.curInputType == Player.InputType.AI) {
+        if (ContLocalUIInteraction.Get().chrSelected.plyrOwner.curInputType == Player.InputType.AI) {
             //NOTE - This will eventually extend to check some authority setting for the local player
             Debug.Log("We can't select actions for a character owned by an AI");
             return;
@@ -64,15 +64,15 @@ public class StateTargetSelected : StateTarget {
 
         //If we've reached this point, then we can start filling in the ContCharacterSelection's fields for this character
 
-        ContLocalInputSelection.Get().chrSelected.Targetting();
+        ContLocalUIInteraction.Get().chrSelected.Targetting();
 
-        ContLocalInputSelection.Get().nSelectedAbility = actChosen.id;
+        ContLocalUIInteraction.Get().nSelectedAbility = actChosen.id;
 
-        ContLocalInputSelection.Get().SetTargetArgState(); // Let the parent figure out what exact state we go to
+        ContLocalUIInteraction.Get().SetTargetArgState(); // Let the parent figure out what exact state we go to
     }
 
 	override public void OnEnter(){
-		Debug.Assert(ContLocalInputSelection.Get().chrSelected != null);
+		Debug.Assert(ContLocalUIInteraction.Get().chrSelected != null);
 
         Arena.Get().view.subMouseClick.Subscribe(cbDeselect);
         ViewChr.subAllClick.Subscribe(cbReselectChar);
@@ -82,7 +82,7 @@ public class StateTargetSelected : StateTarget {
         KeyBindings.SetBinding(cbClickRestButton, KeyCode.Space);
         KeyBindings.SetBinding(cbClickBlockerButton, KeyCode.B);
 
-        ContLocalInputSelection.Get().chrSelected.Select (); 
+        ContLocalUIInteraction.Get().chrSelected.Select (); 
 
 	}
 

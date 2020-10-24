@@ -2,8 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public class ContLocalInputSelection : Singleton<ContLocalInputSelection> {
+//This class handles the UI interaction flow for clicking on characters/skills/selections
+//
+// It maintains the state of the interaction (i.e. if we're not currently selecting any
+//  character, if we're selecting a character and showing their skills, if we're selecting
+//  the target for a particular skill (and which type of entity we're trying to select dependent
+//  on the ability.
+//
+// Will often consule the LocalInputType to see what interactions are possible to proceed
+//  with given the control-level we have for the local player (i.e., if the local
+//  player is human then we have permission to move ahead with selecting abilities.  If
+//  the local player is an AI, then we should only be able to click characters and hover over
+//  skills to see information on them, but not to take any action with them.
+public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
     public StateTarget curState;
 
@@ -151,7 +162,7 @@ public class ContLocalInputSelection : Singleton<ContLocalInputSelection> {
     }
 
 
-    public ContLocalInputSelection() {
+    public ContLocalUIInteraction() {
 
         indexCurTarget = 0;
     }

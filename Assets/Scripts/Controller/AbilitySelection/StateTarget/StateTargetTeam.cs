@@ -11,7 +11,7 @@ public class StateTargetTeam : StateTarget {
     public static Subject subAllFinishSelection = new Subject(Subject.SubType.ALL);
 
     public void cbCancelTargetting(Object target, params object[] args) {
-        ContLocalInputSelection.Get().CancelTar();
+        ContLocalUIInteraction.Get().CancelTar();
     }
 
     public void cbClickChr(Object target, params object[] args) {
@@ -21,7 +21,7 @@ public class StateTargetTeam : StateTarget {
         if (tarArg.WouldBeLegal(idTarget)) {
 
             //move to next target
-            ContLocalInputSelection.Get().StoreTargettingIndex(idTarget);
+            ContLocalUIInteraction.Get().StoreTargettingIndex(idTarget);
 
             Debug.Log("Target successfully set to Player " + ((ViewChr)target).mod.plyrOwner.id);
 
@@ -32,20 +32,20 @@ public class StateTargetTeam : StateTarget {
 
     public void cbSwitchAction(Object target, params object[] args) {
 
-        ContLocalInputSelection.Get().nSelectedAbility = ((ViewAction)target).mod.id;
+        ContLocalUIInteraction.Get().nSelectedAbility = ((ViewAction)target).mod.id;
 
         // TODO:: Save the current targets if there are any, so that you can 
         // revert to those targets if you've failed targetting
-        ContLocalInputSelection.Get().ResetTar();
-        ContLocalInputSelection.Get().SetTargetArgState(); // Let the parent figure out what exact state we go to
+        ContLocalUIInteraction.Get().ResetTar();
+        ContLocalUIInteraction.Get().SetTargetArgState(); // Let the parent figure out what exact state we go to
 
     }
 
     override public void OnEnter() {
         //TODO:: ADD AN OVERLAY FOR SELECTING A PLAYER
 
-        Debug.Assert(ContLocalInputSelection.Get().chrSelected != null);
-        tarArg = (TargetArgTeam)ContLocalInputSelection.Get().chrSelected.arActions[ContLocalInputSelection.Get().nSelectedAbility].arArgs[ContLocalInputSelection.Get().indexCurTarget];
+        Debug.Assert(ContLocalUIInteraction.Get().chrSelected != null);
+        tarArg = (TargetArgTeam)ContLocalUIInteraction.Get().chrSelected.arActions[ContLocalUIInteraction.Get().nSelectedAbility].arArgs[ContLocalUIInteraction.Get().indexCurTarget];
 
         Arena.Get().view.subMouseClick.Subscribe(cbCancelTargetting);
         ViewInteractive.subGlobalMouseRightClick.Subscribe(cbCancelTargetting);
