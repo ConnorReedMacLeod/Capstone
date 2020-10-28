@@ -15,11 +15,13 @@ public class StateTargetIdle : StateTarget {
         ContLocalUIInteraction.Get().SetState(new StateTargetSelected());
     }
 
-	override public void OnEnter(){
-		if (ContLocalUIInteraction.Get().chrSelected != null) {
+    override public void OnEnter() {
+        if(ContLocalUIInteraction.Get().chrSelected != null) {
             ContLocalUIInteraction.Get().chrSelected.Idle();
-		}
+        }
         ContLocalUIInteraction.Get().chrSelected = null;
+
+        ContLocalUIInteraction.Get().ResetTar();
 
         ViewChr.subAllClick.Subscribe(cbClickChar);
     }

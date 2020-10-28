@@ -20,47 +20,28 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
     public Chr chrSelected;
 
-    public int nSelectedAbility;
-    public int[] arTargetIndices;
+    public Action actSelected;
 
-    public int indexCurTarget;
+    //Note - for now, we're assuming we'll only ever target one thing (or, more broadly,
+    //  require one click for finalizing selection of an ability's targets).  If this ever changes,
+    //  we can make a list of needed selection types and record the chosen selections here
+
 
     public static Subject subAllStartTargetting = new Subject(Subject.SubType.ALL);
     public static Subject subAllFinishTargetting = new Subject(Subject.SubType.ALL);
 
     // Start a new round of targetting
     public void ResetTar() {
-        indexCurTarget = 0;
         //Clear any previous targetting information we had
-        nSelectedAbility = -1;
-        arTargetIndices = null;
+        actSelected = null;
 
-    }
-
-    public void StoreTargettingIndex(int ind) {
-        //We assume the passed in index would be a legal target
-
-        //Save a copy of the submitted targetting index
-        arTargetIndices[indexCurTarget] = ind;
-
-        //Then advance to look for the next target
-        indexCurTarget++;
-
-
-        //Now figure out and move to the next state required for the next target
-        SetTargetArgState();
     }
 
     // Ends targetting
     public void CancelTar() {
 
-        if(curState.GetType() == typeof(StateTargetIdle) || curState.GetType() == typeof(StateTargetSelected)) {
-            // If we're waiting to select a character, or aren't in the process of targetting
-            // an ability with the selected character, then no resetting is needed
-            return;
-        }
-
-        ResetTar();
+        //Potentially don't fully reset to the idle state if we're just selecting
+        // a character, but not selecting targets for an ability of theirs
 
         SetState(new StateTargetIdle());
 
@@ -70,10 +51,10 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
     public void FinishTargetting() {
 
+        //Only allow manual selections when the local player is human
+        Debug.Assert(Match.Get().GetLocalPlayer().curInputType == Player.InputType.HUMAN);
 
         ContAbilitySelection.Get().SubmitAbility(chrSelected.plyrOwner.inputController);
-
-        ResetTar();
 
         // Can now go back idle and wait for the next targetting
         SetState(new StateTargetIdle());
@@ -84,13 +65,12 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
     // Create the necessary state for selecting the needed type
     public void SetTargetArgState() {
-        //Before this is called, assume that IncTar/DecTar/ResetTar has been appropriately called
 
-        if(indexCurTarget < 0) {
+        if(iTargetIndex < 0) {
             //Then we've cancelled the targetting action so go back to... idle?
             CancelTar();
 
-        } else if(indexCurTarget == 0) {
+        } else if(iTargetIndex == 0) {
             //Then create the targetting array with the correct size
             arTargetIndices = new int[chrSelected.arActions[nSelectedAbility].nArgs];
 
@@ -98,7 +78,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
             subAllStartTargetting.NotifyObs(chrSelected, nSelectedAbility);
         }
 
-        if(indexCurTarget == chrSelected.arActions[nSelectedAbility].nArgs) {
+        if(iTargetIndex == chrSelected.arActions[nSelectedAbility].nArgs) {
             //Then we've filled of the targetting arguments
 
             //Debug.Log ("Targetting finished");
@@ -111,21 +91,23 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
 
             // Get the type of the target arg that we need to handle
-            string sArgType = chrSelected.arActions[nSelectedAbility].arArgs[indexCurTarget].GetType().ToString();
+            Clause.TargetType tarType = actSelected.GetTargetType();
 
-            StateTarget newState;
+            switch(tarType) {
+            case Clause.TargetType.ACTION:
+                //TODONOW
+                break;
 
-            switch(sArgType) { //TODO:: Maybe make this not rely on a string comparison... bleh
-            case "TargetArgChr":
+            case Clause.TargetType.PLAYER:
+                //TODONOW
+                break;
+
+            case Clause.TargetType.CHR:
                 newState = new StateTargetChr();
                 break;
 
-            case "TargetArgTeam":
-                newState = new StateTargetTeam();
-                break;
-
-            case "TargetArgAlly":
-                newState = new StateTargetChr();
+            case Clause.TargetType.SPECIAL:
+                //TODONOW
                 break;
 
             default:
@@ -164,6 +146,6 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
     public ContLocalUIInteraction() {
 
-        indexCurTarget = 0;
+        iTargetIndex = 0;
     }
 }
