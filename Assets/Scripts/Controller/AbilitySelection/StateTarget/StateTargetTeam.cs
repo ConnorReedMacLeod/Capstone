@@ -45,7 +45,7 @@ public class StateTargetTeam : StateTarget {
         //TODO:: ADD AN OVERLAY FOR SELECTING A PLAYER
 
         Debug.Assert(ContLocalUIInteraction.Get().chrSelected != null);
-        tarArg = (TargetArgTeam)ContLocalUIInteraction.Get().chrSelected.arActions[ContLocalUIInteraction.Get().nSelectedAbility].arArgs[ContLocalUIInteraction.Get().indexCurTarget];
+        tarArg = (TargetArgTeam)ContLocalUIInteraction.Get().chrSelected.arActions[ContLocalUIInteraction.Get().nSelectedAbility].arArgs[ContLocalUIInteraction.Get().iTargetIndex];
 
         Arena.Get().view.subMouseClick.Subscribe(cbCancelTargetting);
         ViewInteractive.subGlobalMouseRightClick.Subscribe(cbCancelTargetting);
