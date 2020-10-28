@@ -26,7 +26,6 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
     //  require one click for finalizing selection of an ability's targets).  If this ever changes,
     //  we can make a list of needed selection types and record the chosen selections here
 
-
     public static Subject subAllStartTargetting = new Subject(Subject.SubType.ALL);
     public static Subject subAllFinishTargetting = new Subject(Subject.SubType.ALL);
 
@@ -49,12 +48,32 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         subAllFinishTargetting.NotifyObs(this);
     }
 
-    public void FinishTargetting() {
+    public void SelectCharacter(Chr _chrSelected) {
+
+        //We've clicked on a character to select them
+        chrSelected = _chrSelected;
+
+        SetState(new StateTargetSelected());
+
+    }
+
+    public void StartTargetting(Action _actSelected) {
+
+
+
+    }
+
+    public void FinishTargetting(SelectionSerializer.SelectionInfo infoSelected) {
+
+        //Ensure the submission matches out local information
+        Debug.Assert(chrSelected == infoSelected.chrOwner);
+        Debug.Assert(actSelected == infoSelected.actUsed);
 
         //Only allow manual selections when the local player is human
         Debug.Assert(Match.Get().GetLocalPlayer().curInputType == Player.InputType.HUMAN);
+        Debug.Assert(chrSelected.plyrOwner.id == ClientNetworkController.Get().nLocalPlayerID, "Error - can only submit abilities for locally-owned human's characters");
 
-        ContAbilitySelection.Get().SubmitAbility(chrSelected.plyrOwner.inputController);
+        ContAbilitySelection.Get().SubmitAbility(infoSelected, chrSelected.plyrOwner.inputController);
 
         // Can now go back idle and wait for the next targetting
         SetState(new StateTargetIdle());
@@ -125,7 +144,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
     public void SetState(StateTarget newState) {
 
         if(curState != null) {
-            //Debug.Log("Leaving State " + curState.ToString());
+            Debug.Log("Leaving State " + curState.ToString());
             curState.OnLeave();
         }
 
@@ -133,7 +152,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
         if(curState != null) {
             curState.OnEnter();
-            //Debug.Log("Entering State " + curState.ToString());
+            Debug.Log("Entering State " + curState.ToString());
         }
     }
 
@@ -146,6 +165,6 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
     public ContLocalUIInteraction() {
 
-        iTargetIndex = 0;
+        actSelected = null;
     }
 }

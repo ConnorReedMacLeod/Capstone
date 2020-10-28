@@ -41,17 +41,11 @@ public class StateTargetSelected : StateTarget {
         //If this character is owned by an AI-input player, then we don't have authority and we shouldn't select anything
         if (ContLocalUIInteraction.Get().chrSelected.plyrOwner.curInputType == Player.InputType.AI) {
             //NOTE - This will eventually extend to check some authority setting for the local player
-            Debug.Log("We can't select actions for a character owned by an AI");
+            Debug.Log("We can't select actions for a character owned by an AI *** THIS SHOULDN'T BE NEEDED ***");
             return;
         }
 
-        // But first, check if targetting is locked
-        if (actChosen.chrSource.bLockedTargetting) {
-            Debug.Log("We can't choose an action for a locked character");
-            return;
-        }
-
-        // And check if it's on cooldown
+        // Check if it's on cooldown
         if(actChosen.nCurCD > 0) {
             Debug.Log("We can't use an ability that's on cooldown");
             return;
@@ -66,7 +60,7 @@ public class StateTargetSelected : StateTarget {
 
         ContLocalUIInteraction.Get().chrSelected.Targetting();
 
-        ContLocalUIInteraction.Get().nSelectedAbility = actChosen.id;
+        ContLocalUIInteraction.Get().actSelected = actChosen;
 
         ContLocalUIInteraction.Get().SetTargetArgState(); // Let the parent figure out what exact state we go to
     }

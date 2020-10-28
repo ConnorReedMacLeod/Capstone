@@ -49,8 +49,7 @@ public class Chr : MonoBehaviour {
 
     public Property<int> pnArmour;          //The character's current armour
     public int nAbsorbedArmour;             //The amount of damage currently taken by armour
-
-    public bool bLockedTargetting;  //Whether or not the character can select their action
+    
     public Action[] arActions;      //The characters actions
     public static int nActions = 9; //Number of actions the character can perform
     public static int nCharacterActions = 8; // Number of non-standard actions

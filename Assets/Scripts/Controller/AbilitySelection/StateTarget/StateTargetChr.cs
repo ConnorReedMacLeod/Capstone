@@ -12,19 +12,21 @@ public class StateTargetChr : StateTarget {
     public static Subject subAllFinishSelection = new Subject(Subject.SubType.ALL);
 
     public void cbCancelTargetting(object target, params object [] args) {
-        ContLocalInputSelection.Get().CancelTar();
+        ContLocalUIInteraction.Get().CancelTar();
     }
 
-    public void cbSetTargetChr(object target, params object [] args) {
+    public void cbTargetChr(object target, params object [] args) {
 
-        int idTarget = ((ViewChr)target).mod.GetTargettingId();
+        //We clicked on a character, so let's make a SelectionInfo package for it
+        SelectionSerializer.SelectionChr infoSelectionChr =
+            new SelectionSerializer.SelectionChr(
+                ContLocalUIInteraction.Get().chrSelected,
+                ContLocalUIInteraction.Get().actSelected,
+                ((ViewChr)target).mod);
 
-        if (tarArg.WouldBeLegal(idTarget)) {
+        if (infoSelectionChr.CanActivate()) {
 
-            //move to next target
-            ContLocalInputSelection.Get().StoreTargettingIndex(idTarget);
-
-            //Debug.Log("Target successfully set to " + ((ViewChr)target).mod.sName + " with id " + idTarget + " for player " + inputHuman.plyrOwner.id);
+            ContLocalUIInteraction.Get().FinishTargetting(infoSelectionChr);
 
         } else {
             Debug.Log(((ViewChr)target).mod.sName + ", on team " + ((ViewChr)target).mod.plyrOwner.id + " is not a valid character target");
@@ -34,12 +36,12 @@ public class StateTargetChr : StateTarget {
     public void cbSwitchAction(Object target, params object [] args) {
         Debug.Log("clicking on an action while asked to target a char");
 
-        ContLocalInputSelection.Get().ResetTar();
+        ContLocalUIInteraction.Get().ResetTar();
 
-        ContLocalInputSelection.Get().nSelectedAbility = ((ViewAction)target).mod.id;
+        ContLocalUIInteraction.Get().actSelected = ((ViewAction)target).mod;
 
-        Debug.Log("reselected action is now " + ContLocalInputSelection.Get().nSelectedAbility);
-        ContLocalInputSelection.Get().SetTargetArgState(); // Let the parent figure out what exact state we go to
+        Debug.Log("reselected action is now " + ContLocalUIInteraction.Get().actSelected.sDisplayName);
+        ContLocalUIInteraction.Get().SetTargetArgState(); // Let the parent figure out what exact state we go to
 
     }
 
@@ -55,7 +57,7 @@ public class StateTargetChr : StateTarget {
         Arena.Get().view.subMouseClick.Subscribe(cbCancelTargetting);
         ViewInteractive.subGlobalMouseRightClick.Subscribe(cbCancelTargetting);
 
-        ViewChr.subAllClick.Subscribe(cbSetTargetChr);
+        ViewChr.subAllClick.Subscribe(cbTargetChr);
         ViewAction.subAllClick.Subscribe(cbSwitchAction);
         ViewBlockerButton.subAllClick.Subscribe(cbSwitchAction);
         ViewRestButton.subAllClick.Subscribe(cbSwitchAction);
@@ -68,7 +70,7 @@ public class StateTargetChr : StateTarget {
         Arena.Get().view.subMouseClick.UnSubscribe(cbCancelTargetting);
         ViewInteractive.subGlobalMouseRightClick.UnSubscribe(cbCancelTargetting);
 
-        ViewChr.subAllClick.UnSubscribe(cbSetTargetChr);
+        ViewChr.subAllClick.UnSubscribe(cbTargetChr);
         ViewAction.subAllClick.UnSubscribe(cbSwitchAction);
         ViewBlockerButton.subAllClick.UnSubscribe(cbSwitchAction);
         ViewRestButton.subAllClick.UnSubscribe(cbSwitchAction);
