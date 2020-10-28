@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Used for targgeting a specific character
+//Used for targgeting a player/team (currently by just clicking on a character they own)
 public class StateTargetTeam : StateTarget {
 
     TargetArgTeam tarArg;
@@ -16,14 +16,16 @@ public class StateTargetTeam : StateTarget {
 
     public void cbClickChr(Object target, params object[] args) {
 
-        int idTarget = ((ViewChr)target).mod.plyrOwner.GetTargettingId();
+        //We clicked on a character, so let's make a SelectionInfo package for it
+        SelectionSerializer.SelectionPlayer infoSelectionPlyr =
+            new SelectionSerializer.SelectionPlayer(
+                ContLocalUIInteraction.Get().chrSelected,
+                ContLocalUIInteraction.Get().actSelected,
+                ((ViewChr)target).mod.plyrOwner);
 
-        if (tarArg.WouldBeLegal(idTarget)) {
+        if (infoSelectionPlyr.CanActivate()) {
 
-            //move to next target
-            ContLocalUIInteraction.Get().StoreTargettingIndex(idTarget);
-
-            Debug.Log("Target successfully set to Player " + ((ViewChr)target).mod.plyrOwner.id);
+            ContLocalUIInteraction.Get().FinishTargetting(infoSelectionPlyr);
 
         } else {
             Debug.Log("Player " + ((ViewChr)target).mod.plyrOwner.id + " is not a valid player target");

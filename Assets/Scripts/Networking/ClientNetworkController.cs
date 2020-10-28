@@ -54,6 +54,8 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
         PhotonNetwork.RemoveCallbackTarget(this);
     }
 
+    //TODONOW:  Make the ClientController maintain a list of the players it manages for local selections
+    //          so that we can support manual selections for multiple players on the same computer
     public static ClientNetworkController Get() {
         return inst;
     }
@@ -89,7 +91,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
     public void SendTurnPhaseFinished(int nSerializedInfo = 0) {
 
         NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMFinishedTurnPhase, new object[3] {
-            ClientNetworkController.Get().nLocalPlayerID,
+            nLocalPlayerID,
             (int)ContTurns.Get().curStateTurn,
             nSerializedInfo
         });
