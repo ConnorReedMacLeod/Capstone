@@ -10,12 +10,11 @@ public class LocalInputHuman : LocalInputType {
     public static Subject subAllHumanStartSelection = new Subject(Subject.SubType.ALL);
     public static Subject subAllHumanEndSelection = new Subject(Subject.SubType.ALL);
 
-    public override bool CanProceedWithSkillSelection(Chr chrSelected) {
-        //We're only okay with skill selections for characters owned by the local player
-        if(chrSelected.plyrOwner.id != plyrOwner.id) {
-            Debug.Log("Error - can't select skills for characters the local player doesn't control");
-            return false;
-        }
+    public override bool CanProceedWithSkillSelection() {
+
+        //We can only proceed with slecting an ability if it's our turn to actually
+        // be using an ability
+
         if(bCurrentlySelectingSkill == false) {
             Debug.Log("Error - can't select a skill to be used when it's not the local player's turn");
             return false;

@@ -132,6 +132,13 @@ public class Player : MonoBehaviour {
     }
 
 
+    public bool IsLocallyControlled() {
+        //TODONOW: figure out how to support multiple locally controlled players
+        //         rather than just relying on storing a single local player's id
+
+        return ClientNetworkController.Get().nLocalPlayerID == id;
+    }
+
     // Use this for initialization
     public void Start() {
 

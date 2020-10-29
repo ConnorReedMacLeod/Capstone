@@ -18,55 +18,27 @@ public class StateTargetSelected : StateTarget {
 
     public void cbClickAction(Object target, params object[] args) {
 
-        ChooseAction(((ViewAction)target).mod);
+        ContLocalUIInteraction.Get().StartTargetting(((ViewAction)target).mod);
 
     }
 
     public void cbClickBlockerButton(Object target, params object[] args) {
 
-        ChooseAction(ContLocalUIInteraction.Get().chrSelected.arActions[Chr.idBlocking]);
+        Action actBlocking = ContLocalUIInteraction.Get().chrSelected.arActions[Chr.idBlocking];
+        ContLocalUIInteraction.Get().StartTargetting(actBlocking);
 
     }
 
     public void cbClickRestButton(Object target, params object[] args) {
 
-        ChooseAction(ContLocalUIInteraction.Get().chrSelected.arActions[Chr.idResting]);
+        Action actRest = ContLocalUIInteraction.Get().chrSelected.arActions[Chr.idResting];
+        ContLocalUIInteraction.Get().StartTargetting(actRest);
 
     }
 
-    public void ChooseAction(Action actChosen) {
 
-        // When we've clicked an action, try to use that action
-
-        //If this character is owned by an AI-input player, then we don't have authority and we shouldn't select anything
-        if (ContLocalUIInteraction.Get().chrSelected.plyrOwner.curInputType == Player.InputType.AI) {
-            //NOTE - This will eventually extend to check some authority setting for the local player
-            Debug.Log("We can't select actions for a character owned by an AI *** THIS SHOULDN'T BE NEEDED ***");
-            return;
-        }
-
-        // Check if it's on cooldown
-        if(actChosen.nCurCD > 0) {
-            Debug.Log("We can't use an ability that's on cooldown");
-            return;
-        }
-
-        if(!actChosen.chrSource.curStateReadiness.CanSelectAction(actChosen)) {
-            Debug.Log("We can't use an action right now cause our state doesn't allow it");
-            return;
-        }
-
-        //If we've reached this point, then we can start filling in the ContCharacterSelection's fields for this character
-
-        ContLocalUIInteraction.Get().chrSelected.Targetting();
-
-        ContLocalUIInteraction.Get().actSelected = actChosen;
-
-        ContLocalUIInteraction.Get().SetTargetArgState(); // Let the parent figure out what exact state we go to
-    }
-
-	override public void OnEnter(){
-		Debug.Assert(ContLocalUIInteraction.Get().chrSelected != null);
+    override public void OnEnter() {
+        Debug.Assert(ContLocalUIInteraction.Get().chrSelected != null);
 
         Arena.Get().view.subMouseClick.Subscribe(cbDeselect);
         ViewChr.subAllClick.Subscribe(cbReselectChar);
@@ -76,11 +48,11 @@ public class StateTargetSelected : StateTarget {
         KeyBindings.SetBinding(cbClickRestButton, KeyCode.Space);
         KeyBindings.SetBinding(cbClickBlockerButton, KeyCode.B);
 
-        ContLocalUIInteraction.Get().chrSelected.Select (); 
+        ContLocalUIInteraction.Get().chrSelected.Select();
 
-	}
+    }
 
-	override public void OnLeave(){
+    override public void OnLeave() {
 
         Arena.Get().view.subMouseClick.UnSubscribe(cbDeselect);
         ViewChr.subAllClick.UnSubscribe(cbReselectChar);

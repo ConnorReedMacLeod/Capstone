@@ -5,17 +5,14 @@ using UnityEngine;
 //Used for targgeting a specific character
 public class StateTargetChr : StateTarget {
 
-	TargetArgChr tarArg;
-
-
     public static Subject subAllStartSelection = new Subject(Subject.SubType.ALL);
     public static Subject subAllFinishSelection = new Subject(Subject.SubType.ALL);
 
-    public void cbCancelTargetting(object target, params object [] args) {
+    public void cbCancelTargetting(object target, params object[] args) {
         ContLocalUIInteraction.Get().CancelTar();
     }
 
-    public void cbTargetChr(object target, params object [] args) {
+    public void cbTargetChr(object target, params object[] args) {
 
         //We clicked on a character, so let's make a SelectionInfo package for it
         SelectionSerializer.SelectionChr infoSelectionChr =
@@ -24,7 +21,7 @@ public class StateTargetChr : StateTarget {
                 ContLocalUIInteraction.Get().actSelected,
                 ((ViewChr)target).mod);
 
-        if (infoSelectionChr.CanActivate()) {
+        if(infoSelectionChr.CanActivate()) {
 
             ContLocalUIInteraction.Get().FinishTargetting(infoSelectionChr);
 
@@ -33,26 +30,19 @@ public class StateTargetChr : StateTarget {
         }
     }
 
-    public void cbSwitchAction(Object target, params object [] args) {
-        Debug.Log("clicking on an action while asked to target a char");
+    public void cbSwitchAction(Object target, params object[] args) {
 
-        ContLocalUIInteraction.Get().ResetTar();
+        Debug.Log("attempting to reselect" + ((ViewAction)target).mod.sDisplayName);
 
-        ContLocalUIInteraction.Get().actSelected = ((ViewAction)target).mod;
-
-        Debug.Log("reselected action is now " + ContLocalUIInteraction.Get().actSelected.sDisplayName);
-        ContLocalUIInteraction.Get().SetTargetArgState(); // Let the parent figure out what exact state we go to
+        ContLocalUIInteraction.Get().StartTargetting(((ViewAction)target).mod);
 
     }
 
-	override public void OnEnter(){
+    override public void OnEnter() {
 
-		Debug.Assert(ContLocalInputSelection.Get().chrSelected != null);
+        Debug.Assert(ContLocalUIInteraction.Get().chrSelected != null);
 
-        Debug.Log("chrSelected is " + ContLocalInputSelection.Get().chrSelected.sName);
-
-        //Get the appropriate current targetting type for the currently selected action
-        tarArg = (TargetArgChr)ContLocalInputSelection.Get().chrSelected.arActions [ContLocalInputSelection.Get().nSelectedAbility].arArgs[ContLocalInputSelection.Get().indexCurTarget];
+        Debug.Log("chrSelected is " + ContLocalUIInteraction.Get().chrSelected.sName);
 
         Arena.Get().view.subMouseClick.Subscribe(cbCancelTargetting);
         ViewInteractive.subGlobalMouseRightClick.Subscribe(cbCancelTargetting);
@@ -62,10 +52,9 @@ public class StateTargetChr : StateTarget {
         ViewBlockerButton.subAllClick.Subscribe(cbSwitchAction);
         ViewRestButton.subAllClick.Subscribe(cbSwitchAction);
 
-        subAllStartSelection.NotifyObs(null, tarArg);
     }
 
-	override public void OnLeave(){
+    override public void OnLeave() {
 
         Arena.Get().view.subMouseClick.UnSubscribe(cbCancelTargetting);
         ViewInteractive.subGlobalMouseRightClick.UnSubscribe(cbCancelTargetting);
@@ -75,7 +64,6 @@ public class StateTargetChr : StateTarget {
         ViewBlockerButton.subAllClick.UnSubscribe(cbSwitchAction);
         ViewRestButton.subAllClick.UnSubscribe(cbSwitchAction);
 
-        subAllFinishSelection.NotifyObs(null, tarArg);
     }
 
 }

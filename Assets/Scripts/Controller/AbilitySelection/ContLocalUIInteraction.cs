@@ -9,7 +9,7 @@ using UnityEngine;
 //  the target for a particular skill (and which type of entity we're trying to select dependent
 //  on the ability.
 //
-// Will often consule the LocalInputType to see what interactions are possible to proceed
+// Will often consult the LocalInputType to see what interactions are possible to proceed
 //  with given the control-level we have for the local player (i.e., if the local
 //  player is human then we have permission to move ahead with selecting abilities.  If
 //  the local player is an AI, then we should only be able to click characters and hover over
@@ -59,6 +59,54 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
     public void StartTargetting(Action _actSelected) {
 
+        // When we've clicked an action, try to use that action
+        // There's a bunch of checks we have to do for this though first to ensure we should be selecting this ability
+
+        // If this ability isn't owned by a locally-controlled human, then reject this selection
+        if(_actSelected.chrSource.plyrOwner.IsLocallyControlled() == false) {
+
+            Debug.Log("We can't select actions for a character we don't locally control");
+            return;
+        }
+
+        // Check if it's actually got a LocalInputType that will allow us to select an ability
+        if(_actSelected.chrSource.plyrOwner.inputController.CanProceedWithSkillSelection()) {
+
+            Debug.Log("This character is owner by a local player, but selection of abilities is not available currently");
+            return;
+        }
+
+        // Check if it's on cooldown
+        if(_actSelected.nCurCD > 0) {
+            Debug.Log("We can't use an ability that's on cooldown");
+            return;
+        }
+
+        if(!_actSelected.chrSource.curStateReadiness.CanSelectAction(_actSelected)) {
+            Debug.Log("We can't use an action right now cause our state doesn't allow it");
+            return;
+        }
+
+        actSelected = _actSelected;
+
+
+        //If we've gotten this far, then the ability should be valid (maybe not mana - need to consult the target first),
+        //  so we need to transition into the state that listens for that type of target
+
+        switch(_actSelected.GetTargetType()) {
+
+        case Clause.TargetType.CHR:
+            SetState(new StateTargetChr());
+            break;
+
+        case Clause.TargetType.PLAYER:
+            SetState(new StateTargetTeam());
+            break;
+
+        default:
+            Debug.LogError("Unsupported selection type of " + _actSelected.GetTargetType());
+            break;
+        }
 
 
     }
@@ -80,65 +128,6 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
         //Let everything know that targetting has ended
         subAllFinishTargetting.NotifyObs(this);
-    }
-
-    // Create the necessary state for selecting the needed type
-    public void SetTargetArgState() {
-
-        if(iTargetIndex < 0) {
-            //Then we've cancelled the targetting action so go back to... idle?
-            CancelTar();
-
-        } else if(iTargetIndex == 0) {
-            //Then create the targetting array with the correct size
-            arTargetIndices = new int[chrSelected.arActions[nSelectedAbility].nArgs];
-
-            //Then we should let things know that a new targetting has begun
-            subAllStartTargetting.NotifyObs(chrSelected, nSelectedAbility);
-        }
-
-        if(iTargetIndex == chrSelected.arActions[nSelectedAbility].nArgs) {
-            //Then we've filled of the targetting arguments
-
-            //Debug.Log ("Targetting finished");
-
-            //Submit our targetting selections to the InputAbilitySelection controller
-            FinishTargetting();
-
-        } else {
-
-
-
-            // Get the type of the target arg that we need to handle
-            Clause.TargetType tarType = actSelected.GetTargetType();
-
-            switch(tarType) {
-            case Clause.TargetType.ACTION:
-                //TODONOW
-                break;
-
-            case Clause.TargetType.PLAYER:
-                //TODONOW
-                break;
-
-            case Clause.TargetType.CHR:
-                newState = new StateTargetChr();
-                break;
-
-            case Clause.TargetType.SPECIAL:
-                //TODONOW
-                break;
-
-            default:
-
-                Debug.LogError(sArgType + " is not a recognized ArgType!");
-                return;
-            }
-
-            // Transition to the appropriate state
-            SetState(newState);
-
-        }
     }
 
     public void SetState(StateTarget newState) {
