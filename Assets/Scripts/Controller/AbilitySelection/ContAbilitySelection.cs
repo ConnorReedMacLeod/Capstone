@@ -128,11 +128,22 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
 
         if(chrCurActing == null) {
             Debug.LogError("Error! Can't select actions if no character is set to act");
+            return;
         }
 
         //At this point, we can start the selection process, and notify the controller
         // of the owner of the currently acting character
-        nBadSelectionsGiven = 0;
+
+        if(chrCurActing.plyrOwner.inputController == null) {
+            //This character doesn't have a local controller, so we're good to just send a turn-phase ending signal since it's
+            //   a different player's job to submit the skill and targetting selection information for their character
+            Debug.Log("This character isn't owned locally - passing priority");
+
+            ClientNetworkController.Get().SendTurnPhaseFinished();
+            return;
+        }
+
+        //Get the controller of the character and let them know they can start selecting their skill and their targets for that skill
         chrCurActing.plyrOwner.inputController.StartSelection();
 
     }
