@@ -148,6 +148,7 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
 
     }
 
+
     public void EndSelection() {
         //TODONOW - consider what even needs to be done here.  It's not clear that this will
         //  only ever be interacted with by a human.  I also don't see what LockTargetting() should

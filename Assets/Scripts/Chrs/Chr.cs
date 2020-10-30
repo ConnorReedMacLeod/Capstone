@@ -49,7 +49,7 @@ public class Chr : MonoBehaviour {
 
     public Property<int> pnArmour;          //The character's current armour
     public int nAbsorbedArmour;             //The amount of damage currently taken by armour
-    
+
     public Action[] arActions;      //The characters actions
     public static int nActions = 9; //Number of actions the character can perform
     public static int nCharacterActions = 8; // Number of non-standard actions
@@ -185,14 +185,6 @@ public class Chr : MonoBehaviour {
 
         //Just ask our readiness state what our priority is
         return curStateReadiness.GetPriority();
-    }
-
-    public void UnlockTargetting() {
-        bLockedTargetting = false;
-    }
-
-    public void LockTargetting() {
-        bLockedTargetting = true;
     }
 
     public void RechargeActions() {
@@ -440,8 +432,6 @@ public class Chr : MonoBehaviour {
             arActions = new Action[nActions];
 
             stateSelect = STATESELECT.IDLE;
-
-            bLockedTargetting = true;
 
             pbCanBlock = new Property<bool>(true);
 
