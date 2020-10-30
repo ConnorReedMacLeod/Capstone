@@ -87,6 +87,23 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
         }
     }
 
+
+    public void AssignLocalInputController(Player plyr) {
+
+        //If the player isn't controlled locally, just set the plyr's controller to null since it's not our job to control them
+        if(plyr.IsLocallyControlled()) {
+            plyr.inputController = null;
+            return;
+        }
+
+        //TODOSOON: Make this variable and decided when doing the ability selection process
+        if(plyr.id == 0) {
+            plyr.SetInputType(Player.InputType.HUMAN);
+        } else {
+            plyr.SetInputType(Player.InputType.AI);
+        }
+    }
+
     //Can optionally pass in any extra serialized fields to communicate player choices to the master
     public void SendTurnPhaseFinished(int nSerializedInfo = 0) {
 
@@ -128,11 +145,6 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
             HandleTimerTick(nTime);
             break;
 
-        case MasterNetworkController.evtCAbilityUsed:
-            Debug.Log("Recieved ability clicked in PlayerNetwork");
-            HandleAbilityUsed((int)arContent[0], (int)arContent[1], (int)arContent[2]);
-            break;
-
         case MasterNetworkController.evtCCharactersSelected:
             CharacterSelection.Get().SaveSelections((int[][])arContent);
 
@@ -150,27 +162,9 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
 
     }
     public void HandleTimerTick(int nTime) {
-        //Debug.Log("Timer: " + nTime);
-        // SetDebugText("Timer: " + nTime);
+        Debug.Log("Timer: " + nTime);
+        SetDebugText("Timer: " + nTime);
     }
-
-    public void HandleAbilityUsed(int nPlayerID, int nCharacter, int nAbility) {
-        Debug.Log("HandleAbility");
-        SetDebugText("Button for Player " + nPlayerID + ", character:" + nCharacter + ", Ability: " + nAbility);
-
-        //For this test, just choose the opposite player
-        //PlayerController playerAffected = playerMe;
-        //if (playerAffected.nPlayerID == nPlayerID) {
-        //    playerAffected = playerEnemy;
-        //}
-
-        //playerAffected.ChangeHealth(nCharacter);
-    }
-
-    public bool CanUseAbility(int nPlayerID, int nCharacter, int nAbility) {
-        return true;
-    }
-
 
     // Update is called once per frame
     void Update() {

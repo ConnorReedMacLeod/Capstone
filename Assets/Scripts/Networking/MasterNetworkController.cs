@@ -80,7 +80,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
         object[] arContent = (object[])photonEvent.CustomData;
 
-        //The master controller should only react to player-submitted input events
+        //The master controller should only react to player-submitted input events (addressed to evtM...)
         switch(eventCode) {
 
         case MasterNetworkController.evtMSubmitCharacters:
@@ -99,6 +99,8 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
                 Debug.Log("Sending out player selections since all player selections have been received");
                 OnReceivedAllCharacterSelections();
+
+                Debug.Log("NOTE - once everything's correct with character selection, can move ahead with turn processing by adding more code here");
             }
 
             break;
@@ -195,6 +197,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
             //If we're receiving this signal from the non-active player, they can just advance and wait
             if(nPlayerID != ContTurns.Get().GetNextActingChr().plyrOwner.id) {
+                //Just have this player advance to their next phase
                 MoveToNextPhase(nCurTurnPhase);
             } else {
 

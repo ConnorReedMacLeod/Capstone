@@ -24,6 +24,7 @@ public class CharacterSelection : SingletonPersistent<CharacterSelection> {
     }
 
     //Use when player 2 realizes that their selections should shift to the player 2 slot
+    // before being submitted to the master 
     public void SwapPlayerSelections() {
 
         Chr.CHARTYPE[] temp = arChrSelections[0];
@@ -32,6 +33,8 @@ public class CharacterSelection : SingletonPersistent<CharacterSelection> {
 
     }
 
+    //Send the signal to the master client that our locally saved character selection data
+    // is what should be used to initialize the game
     public void SubmitSelection(int nPlayer) {
 
         Debug.Assert(0 <= nPlayer && nPlayer < Player.MAXCHRS);
@@ -46,7 +49,7 @@ public class CharacterSelection : SingletonPersistent<CharacterSelection> {
     private int[] ArChrTypeToArInt(Chr.CHARTYPE[] _arChrTypes) {
         int[] arInt = new int[_arChrTypes.Length];
 
-        for(int i=0; i<_arChrTypes.Length; i++) {
+        for(int i = 0; i < _arChrTypes.Length; i++) {
             arInt[i] = (int)_arChrTypes[i];
         }
 
@@ -56,18 +59,20 @@ public class CharacterSelection : SingletonPersistent<CharacterSelection> {
     private Chr.CHARTYPE[] ArIntToArChrType(int[] _arInt) {
         Chr.CHARTYPE[] arChrTypes = new Chr.CHARTYPE[_arInt.Length];
 
-        for (int i = 0; i < _arInt.Length; i++) {
+        for(int i = 0; i < _arInt.Length; i++) {
             arChrTypes[i] = (Chr.CHARTYPE)_arInt[i];
         }
 
         return arChrTypes;
     }
 
+    // When the master has finalized all selections from players
+    // he'll broadcast them out and we can save it here locally
     public void SaveSelections(int[][] _arChrSelections) {
 
         Debug.Log("Saving received selections");
 
-        for(int i=0; i<Player.MAXPLAYERS; i++) {
+        for(int i = 0; i < Player.MAXPLAYERS; i++) {
             _arChrSelections[i].CopyTo(arChrSelections[i], 0);
         }
 

@@ -48,32 +48,16 @@ public class ExecTurnChooseActions : Executable {
         if(ContTurns.Get().GetNextActingChr() == null) {
 
             //If no character is in the ready state, then we can directly end this phase
+            // without needing to do anything
 
         } else {
-
-            //If we do have a character who can act, then set them up to be able to act
-
-            //Let the controller for ability selection know that it should start selecting an ability
-            ContAbilitySelection.Get().StartSelection();
 
             //Ensure that we actually don't automatically move to process the next event
             bStopAutoProcessing = true;
 
-
-            //If a human player is asked to use an ability
-            if(ContTurns.Get().GetNextActingChr().plyrOwner.inputController.GetType() == typeof(LocalInputHuman)) {
-                //Then set up a timer countdown for them
-                sLabel = "Select Your Action for " + ContTurns.Get().GetNextActingChr().sName;
-                fDelay = ContAbilitySelection.Get().fMaxSelectionTime;
-
-            } else {
-                Debug.Log("An AI is deciding their ability");
-                sLabel = ContTurns.Get().GetNextActingChr().sName + " is selecting their action";
-                fDelay = ContAbilitySelection.Get().fMaxSelectionTime;
-            }
-
-
-
+            //If we do have a character who can act, then let their controller for ability selection
+            // know that it should start selecting an ability
+            ContAbilitySelection.Get().StartSelection();
         }
 
     }
