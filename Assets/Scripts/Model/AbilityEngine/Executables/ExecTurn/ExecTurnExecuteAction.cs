@@ -38,7 +38,7 @@ public class ExecTurnExecuteAction : Executable {
 
     public override void ExecuteEffect() {
 
-        //We assume that we have just come from choosing an action, so get that character
+        //We assume that we have recieved our selection info from the Master already
         Chr chrNextToAct = ContTurns.Get().GetNextActingChr();
 
         sLabel = chrNextToAct.sName + " is using " + ContAbilitySelection.Get().infoSelectionFromMaster.actUsed.sDisplayName;

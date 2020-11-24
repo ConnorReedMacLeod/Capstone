@@ -17,10 +17,10 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
     public static ContAbilityEngine instance;
 
     public void cbAutoProcessStacks(Object target, params object[] args) {
-        if (bAutoTurns == true) return; //If the button is already pressed
+        if(bAutoTurns == true) return; //If the button is already pressed
         bAutoTurns = true;
 
-        if (bAutoTurns) {
+        if(bAutoTurns) {
             Debug.Log("Going to next event in " + 2.0f);
 
             ContTime.Get().Invoke(2.0f, AutoProcessStacks);
@@ -28,7 +28,7 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
     }
     public void AutoProcessStacks() {
 
-        if (!bAutoTurns) {
+        if(!bAutoTurns) {
             //Then we must have switched to manual turns while waiting for this event,
             //so don't actually execute anything automatically
             return;
@@ -49,11 +49,11 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
 
     }
 
-    public static void PushClauses( List<Clause> lstClauses) {
+    public static void PushClauses(List<Clause> lstClauses) {
 
         //Push each Clause in sequence onto the stack, and ensure that the first
         // Clause in the sequence ends up at the top of the stack
-        for(int i = lstClauses.Count - 1; i>=0; i--) {
+        for(int i = lstClauses.Count - 1; i >= 0; i--) {
             PushSingleClause(lstClauses[i]);
         }
 
@@ -67,18 +67,18 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
 
     }
 
-    public static void PushExecutables( List<Executable> lstExecs) {
+    public static void PushExecutables(List<Executable> lstExecs) {
 
         //Push each Executable in sequence onto the stack, and ensure that the 
         // first executable in the sequence ends up at the top of the stack
-        for(int i = lstExecs.Count - 1; i>=0; i--) {
+        for(int i = lstExecs.Count - 1; i >= 0; i--) {
             PushSingleExecutable(lstExecs[i]);
         }
     }
 
     public static void PushSingleExecutable(Executable exec) {
 
-        if (bDEBUGENGINE) Debug.Log("Pushing an Executable of type " + exec.GetType().ToString());
+        if(bDEBUGENGINE) Debug.Log("Pushing an Executable of type " + exec.GetType().ToString());
 
         instance.stackExec.Push(exec);
     }
@@ -95,13 +95,13 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
     public Executable ResolveFullReplacements(Executable execToResolve) {
 
         //Loop through each effect that could replace us
-        for(int i=0; i<execToResolve.GetFullReplacements().Count; i++) {
+        for(int i = 0; i < execToResolve.GetFullReplacements().Count; i++) {
 
             //If we have already applied this effect, then move on to the next replacement
-            if (execToResolve.GetFullReplacements()[i].bHasReplaced) continue;
+            if(execToResolve.GetFullReplacements()[i].bHasReplaced) continue;
 
             //If the replacement effect shouldn't take effect, then also move on to the next replacement
-            if (!execToResolve.GetFullReplacements()[i].shouldReplace(execToResolve)) continue;
+            if(!execToResolve.GetFullReplacements()[i].shouldReplace(execToResolve)) continue;
 
             //If we haven't moved on by this point, then we should implement this replacement effect
             //then recurse on this new executable to see if it needs to be replaced
@@ -118,17 +118,17 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
 
         Executable execToResolve = execBaseExecutable;
 
-        List<Replacement> lstReplacements = execToResolve.GetReplacements(); 
+        List<Replacement> lstReplacements = execToResolve.GetReplacements();
         //This should stay constant since our executable type isn't changing, so neither is the static lstReplacements
 
         //Loop through each effect that could replace us
-        for (int i = 0; i < lstReplacements.Count; i++) {
+        for(int i = 0; i < lstReplacements.Count; i++) {
 
             //If we have already applied this effect, then move on to the next replacement
-            if (lstReplacements[i].bHasReplaced) continue;
+            if(lstReplacements[i].bHasReplaced) continue;
 
             //If the replacement effect shouldn't take effect, then also move on to the next replacement
-            if (!lstReplacements[i].shouldReplace(execToResolve)) continue;
+            if(!lstReplacements[i].shouldReplace(execToResolve)) continue;
 
             //If we haven't moved on by this point, then we should implement this replacement effect
             // unlike the full replacements, we don't need to completely recurse - just change the current executable
@@ -156,7 +156,7 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
     public void SpawnTimer(float fDelay, string sLabel) {
         GameObject goTimer = Instantiate(pfTimer, Match.Get().transform); //TIMER SPAWN POSITION
         ViewTimer viewTimer = goTimer.GetComponent<ViewTimer>();
-        if (viewTimer == null) {
+        if(viewTimer == null) {
             Debug.LogError("ERROR - pfTimer doesn't have a viewTimer component");
         }
         viewTimer.InitTimer(fDelay, sLabel);
@@ -173,14 +173,14 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
 
     public void ProcessStacks() {
 
-        
+
 
         //First, check if there's any executables to process
         if(stackExec.Count > 0) {
-            
+
             //If we're seeing this executable for the first time and have
             //to process replacement and pre-trigger effects
-            if (!stackExec.Peek().bPreTriggered) {
+            if(!stackExec.Peek().bPreTriggered) {
 
                 //Debug.Log("Performing Replacement effects and Pre-Triggers");
 
@@ -212,7 +212,7 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
             } else {
                 //at this point, we can actually evaluate this executable
 
-                if (bDEBUGENGINE) Debug.Log("Resolving an Executable");
+                if(bDEBUGENGINE) Debug.Log("Resolving an Executable");
                 ResolveExec();
 
             }
@@ -221,13 +221,13 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
         }
 
         //Debug.Log("Processing stack with no executables");
-            
+
         //Check statebased actions
         MaintainStateBasedActions();
 
         //Next, check if there's any clauses to process
         if(stackClause.Count > 0) {
-            if (bDEBUGENGINE) Debug.Log("No Executables, so unpack a Clause");
+            if(bDEBUGENGINE) Debug.Log("No Executables, so unpack a Clause");
             ResolveClause();
 
             //Then recurse to find something new we can process
@@ -236,9 +236,9 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
         }
 
         //Then we have nothing left to process
-        //So ask the ContTurn to add the executable for the next phase in the turn
+        //So pass along the message to the Master that we're done this phase of the turn
 
-        if (bDEBUGENGINE) Debug.Log("No Clauses or Executables so move to the next part of the turn");
+        if(bDEBUGENGINE) Debug.Log("No Clauses or Executables so move to the next part of the turn");
         ContTurns.Get().FinishedTurnPhase();
 
         //We used to recurse here since the HandleTurnPhase would immediately put a new executable on the stack.  
@@ -251,14 +251,14 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
 
     //Other classes can call this to invoke the ProcessStack method after a delay
     public void InvokeProcessStack(float fDelay, string sLabel, bool bCancelInvoke) {
-        if (bAutoTurns) {
+        if(bAutoTurns) {
 
-            if (fDelay > 0) {
+            if(fDelay > 0) {
                 //Check if we need to spawn a timer
 
                 SpawnTimer(fDelay, sLabel);
             }
-            if (bCancelInvoke == false) {
+            if(bCancelInvoke == false) {
                 ContTime.Get().Invoke(fDelay, AutoProcessStacks);
             }
         } else {
@@ -276,10 +276,10 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
 
                 SpawnTimer(1.0f, sLabel);
             }
-            
-            
+
+
         }
-        
+
 
     }
 
