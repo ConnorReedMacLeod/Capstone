@@ -142,6 +142,16 @@ public class ContTurns : Singleton<ContTurns> {
     // phase of the turn.
     public void FinishedTurnPhase() {
 
+
+        if(curStateTurn == STATETURN.CHOOSEACTIONS) {
+            //If the current phase of the turn is for choosing actions, then just let
+            // the selection controller send it's result for when the phase should end
+            // (since this may require waiting for AI calculation or human input)
+
+            return;
+        }
+
+
         if(ContAbilityEngine.bDEBUGENGINE) Debug.Log("Finished the turn phase: " + curStateTurn);
 
         ClientNetworkController.Get().SendTurnPhaseFinished();
@@ -197,6 +207,10 @@ public class ContTurns : Singleton<ContTurns> {
             break;
 
         case STATETURN.EXECUTEACTIONS:
+
+            //Interpret the additional info passed from Master as ability selection info from the active player
+            int nSerializedSelectionInfo = (int)oAdditionalInfo;
+            ContAbilitySelection.Get().ReceiveSelectionFromMaster(nSerializedSelectionInfo);
 
             ContAbilityEngine.Get().AddExec(new ExecTurnExecuteAction(_chrSource: null));
 

@@ -52,9 +52,6 @@ public class ExecTurnChooseActions : Executable {
 
         } else {
 
-            //Ensure that we actually don't automatically move to process the next event
-            bStopAutoProcessing = true;
-
             //If we do have a character who can act, then let their controller for ability selection
             // know that it should start selecting an ability
             ContAbilitySelection.Get().StartSelection();

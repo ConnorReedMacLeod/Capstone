@@ -134,8 +134,8 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
         //At this point, we can start the selection process, and notify the controller
         // of the owner of the currently acting character
 
-        if(chrCurActing.plyrOwner.inputController == null) {
-            //This character doesn't have a local controller, so we're good to just send a turn-phase ending signal since it's
+        if(chrCurActing.plyrOwner.IsLocallyControlled() == false) {
+            //This character is controlled by someone else on the network, so we're good to just send a turn-phase ending signal since it's
             //   a different player's job to submit the skill and targetting selection information for their character
             Debug.Log("This character isn't owned locally - passing priority");
 

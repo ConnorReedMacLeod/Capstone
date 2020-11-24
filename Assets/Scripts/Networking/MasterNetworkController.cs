@@ -41,7 +41,6 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     public MasterManaDistributer manadistributer;
 
 
-    // Start is called before the first frame update
     public void OnEnable() {
 
         //TODO:: Make sure this works when the current master disconnects so the other player's
@@ -73,7 +72,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     }
 
     public void OnEvent(ExitGames.Client.Photon.EventData photonEvent) {
-        if(bIsMaster == false) return;
+        if(bIsMaster == false) return; //Only respond to Master events if we're the master
 
         byte eventCode = photonEvent.Code;
         if(eventCode >= 200) return; //Don't respond to built-in events
@@ -154,6 +153,8 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
             }
         }
 
+        //At this point, everyone agrees on what turnstate we should be moving to, so prep it
+        //  and let everyone know they can progress to it
 
         object[] arAdditionalInfo = null;
 
@@ -209,22 +210,21 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
                     ResetSavedAbilitySelection();
 
                 } else {
-                    if(
-                    CanUseAbility((int)arAdditionalInfo[0], (int)arAdditionalInfo[1])) {
+                    if(CanUseAbility((int)arAdditionalInfo[0])) {
 
                         //If the ability selection and targetting passed can be used, then save that selection and try to move to the next phase
 
-                        SaveAbilitySelection((int)arAdditionalInfo[0], (int)arAdditionalInfo[1]);
+                        SaveAbilitySelection((int)arAdditionalInfo[0]);
 
                     } else {
                         //Otherwise, if we were passed an invalid ability selection 
 
-                        Debug.LogError("Invalid ability selection of " + (int)arAdditionalInfo[0] + " " + (int)arAdditionalInfo[1] + " " + (int[])arAdditionalInfo[2]);
+                        Debug.LogError("MASTER: Invalid ability selection of " + (int)arAdditionalInfo[0] + " " + (int)arAdditionalInfo[1] + " " + (int[])arAdditionalInfo[2]);
 
                         //Then we'll override that ability selection and just assign them a rest (they can locally fail to select a correct ability as many times as they 
                         // want, but they should only ever submit to the master if they're sure they have a finallized good selection)
 
-                        SaveAbilitySelection(ContTurns.Get().GetNextActingChr().globalid, Chr.idResting, null);
+                        ResetSavedAbilitySelection();
 
                     }
                 }
@@ -235,7 +235,10 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         } else if(nCurTurnPhase == (int)ContTurns.STATETURN.EXECUTEACTIONS) {
             //Then we need to decide if we should move back to another ability selection phase, or if it's time to end the turn
 
-            //TODONOW
+            //If the player set to act has put them in a fatigued state or a channel state, then we're good to progress
+            // to a new phase.  Otherwise, head back to choosing more abilities.
+
+            //TODONOW - check how ContTurns used to decide which state (choose more actions or end turn) we should progress to
         } else {
             //If it's not a special case, then we can just move to the next phase;
 
