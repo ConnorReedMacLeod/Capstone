@@ -143,9 +143,12 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     }
 
-    public void MoveToPhase(int nNewTurnState) {
+    public void MoveToPhase(int nPlayerId, int nNewTurnState) {
 
-        //First, check if everyone has actually reached this expected phase - if not, we don't need to officially do anything yet
+        //First set that player's expected turn phase to the passed state
+        arnPlayerExpectedPhase[nPlayerId] = nNewTurnState;
+
+        //Then, check if everyone has actually reached this expected phase - if not, we don't need to officially do anything yet
         for(int i = 0; i < Player.MAXPLAYERS; i++) {
             if(arnPlayerExpectedPhase[i] != nNewTurnState) {
                 //At least one player hasn't reached the expected turn yet
@@ -166,11 +169,23 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
             break;
 
+        case (int)ContTurns.STATETURN.CHOOSEACTIONS:
+
+            //Reset any old stored abilityselection
+            ResetSavedAbilitySelection();
+
+            break;
+
         case (int)ContTurns.STATETURN.EXECUTEACTIONS:
 
             //Fetch the saved ability selection info and pass it along so each client knows what ability is being used
             arAdditionalInfo = new object[2] { nNewTurnState, nSavedSerializedTargetSelection };
             break;
+
+        case (int)ContTurns.STATETURN.TURNEND:
+
+            //Reset any old stored ability selection
+            ResetSavedAbilitySelection();
 
         default:
 
@@ -184,8 +199,38 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     }
 
-    public void MoveToNextPhase(int nCurTurnPhase) {
-        MoveToPhase((nCurTurnPhase + 1) % ((int)ContTurns.STATETURN.ENDFLAG));
+    public void MoveToNextPhase(int nPlayerID, int nCurTurnPhase) {
+
+        int nNextTurnPhase;
+
+        switch(nCurTurnPhase) {
+
+        case (int)ContTurns.STATETURN.CHOOSEACTIONS:
+            //If no character is set to act, then we jump directly ahead to TurnEnd
+            if(ContTurns.Get().GetNextActingChr() == null) {
+                nNextTurnPhase = (int)ContTurns.STATETURN.TURNEND;
+            } else {
+                //Otherwise, execute whatever action the active player has chosen
+                nNextTurnPhase = (int)ContTurns.STATETURN.EXECUTEACTIONS;
+            }
+            break;
+
+        case (int)ContTurns.STATETURN.EXECUTEACTIONS:
+            //If we've finished executing an action, then we can move back to
+            //  selecting an action for the character that is next set to act this turn
+            nNextTurnPhase = (int)ContTurns.STATETURN.CHOOSEACTIONS;
+
+            break;
+
+        default:
+            //By default, just advance to the next sequential phase (wrapping around if reaching the end)
+            nNextTurnPhase = (nCurTurnPhase + 1) % ((int)ContTurns.STATETURN.ENDFLAG);
+
+            break;
+        }
+
+
+        MoveToPhase(nPlayerID, nNextTurnPhase);
     }
 
     public void OnPlayerFinishedPhase(int nPlayerID, int nCurTurnPhase, object[] arAdditionalInfo) {
@@ -196,54 +241,42 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         //Check if we're in any weird phases that need us to do something special
         if(nCurTurnPhase == (int)ContTurns.STATETURN.CHOOSEACTIONS) {
 
-            //If we're receiving this signal from the non-active player, they can just advance and wait
-            if(nPlayerID != ContTurns.Get().GetNextActingChr().plyrOwner.id) {
-                //Just have this player advance to their next phase
-                MoveToNextPhase(nCurTurnPhase);
-            } else {
+            //We only need to do something special if we received this end-phase signal from a character
+            //  who has actually submitted an ability selection for his active character
+            if(ContTurns.Get().GetNextActingChr() != null && ContTurns.Get().GetNextActingChr().plyrOwner.id == nPlayerID) {
 
-                //Otherwise, we are the active player so we should examine the Additional Info to see if the passed ability is valid
-
+                //We need to move ahead with finalizing an ability selection.  Check if their selection was valid, and store it.
+                // If it's not valid, then reset it to a rest which will always be fine
                 if(arAdditionalInfo == null) {
 
                     //If no additional info was passed, then interpret this as a rest action
                     ResetSavedAbilitySelection();
 
+                } else if(CanUseAbility((int)arAdditionalInfo[0])) {
+
+                    //If the ability selection and targetting passed can be used, then save that selection and try to move to the next phase
+
+                    SaveAbilitySelection((int)arAdditionalInfo[0]);
+
                 } else {
-                    if(CanUseAbility((int)arAdditionalInfo[0])) {
+                    //Otherwise, if we were passed an invalid ability selection 
 
-                        //If the ability selection and targetting passed can be used, then save that selection and try to move to the next phase
+                    Debug.LogError("MASTER: Invalid ability selection of " + (int)arAdditionalInfo[0] + " " + (int)arAdditionalInfo[1] + " " + (int[])arAdditionalInfo[2]);
 
-                        SaveAbilitySelection((int)arAdditionalInfo[0]);
+                    //Then we'll override that ability selection and just assign them a rest (they can locally fail to select a correct ability as many times as they 
+                    // want, but they should only ever submit to the master if they're sure they have a finallized good selection)
 
-                    } else {
-                        //Otherwise, if we were passed an invalid ability selection 
+                    ResetSavedAbilitySelection();
 
-                        Debug.LogError("MASTER: Invalid ability selection of " + (int)arAdditionalInfo[0] + " " + (int)arAdditionalInfo[1] + " " + (int[])arAdditionalInfo[2]);
+                    //TODO - put a signal in here to let the current player know that they somehow submitted an invalid ability
 
-                        //Then we'll override that ability selection and just assign them a rest (they can locally fail to select a correct ability as many times as they 
-                        // want, but they should only ever submit to the master if they're sure they have a finallized good selection)
-
-                        ResetSavedAbilitySelection();
-
-                    }
                 }
 
-                MoveToNextPhase(nCurTurnPhase);
             }
-
-        } else if(nCurTurnPhase == (int)ContTurns.STATETURN.EXECUTEACTIONS) {
-            //Then we need to decide if we should move back to another ability selection phase, or if it's time to end the turn
-
-            //If the player set to act has put them in a fatigued state or a channel state, then we're good to progress
-            // to a new phase.  Otherwise, head back to choosing more abilities.
-
-            //TODONOW - check how ContTurns used to decide which state (choose more actions or end turn) we should progress to
-        } else {
-            //If it's not a special case, then we can just move to the next phase;
-
-            MoveToNextPhase(nCurTurnPhase);
         }
+
+        //If we're done any special actions for this phase, then we can just progress this player to the next phase
+        MoveToNextPhase(nPlayerID, nCurTurnPhase);
 
     }
 
