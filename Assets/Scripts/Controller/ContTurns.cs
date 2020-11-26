@@ -145,8 +145,10 @@ public class ContTurns : Singleton<ContTurns> {
 
         if(curStateTurn == STATETURN.CHOOSEACTIONS) {
             //If the current phase of the turn is for choosing actions, then just let
-            // the selection controller send it's result for when the phase should end
+            // the selection controller send its result for when the phase should end
             // (since this may require waiting for AI calculation or human input)
+            //They might send it immediately if it's not their turn or if there's no
+            // character acting this turn.
 
             return;
         }

@@ -45,10 +45,6 @@ public class ExecTurnExecuteAction : Executable {
 
         chrNextToAct.ExecuteAction(ContAbilitySelection.Get().infoSelectionFromMaster);
 
-        if(ContAbilitySelection.Get().infoSelectionFromMaster.actUsed.id == Chr.idResting) {
-            chrNextToAct.SetStateReadiness(new StateFatigued(chrNextToAct));
-        }
-
         fDelay = ContTurns.fDelayStandard;
 
     }

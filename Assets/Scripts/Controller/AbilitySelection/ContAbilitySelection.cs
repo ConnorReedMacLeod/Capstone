@@ -127,7 +127,9 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
         Chr chrCurActing = ContTurns.Get().GetNextActingChr();
 
         if(chrCurActing == null) {
-            Debug.LogError("Error! Can't select actions if no character is set to act");
+            Debug.LogError("No character is set to act this turn - just move to the next phase");
+
+            ClientNetworkController.Get().SendTurnPhaseFinished();
             return;
         }
 

@@ -43,19 +43,8 @@ public class ExecTurnChooseActions : Executable {
     public override void ExecuteEffect() {
         //Debug.Log("Executing ExecTurnChooseAction");
 
-
-        //First, test if we actually have any character who is ready to act right now
-        if(ContTurns.Get().GetNextActingChr() == null) {
-
-            //If no character is in the ready state, then we can directly end this phase
-            // without needing to do anything
-
-        } else {
-
-            //If we do have a character who can act, then let their controller for ability selection
-            // know that it should start selecting an ability
-            ContAbilitySelection.Get().StartSelection();
-        }
+        //Let the AbilitySelection controller handle what should be done here
+        ContAbilitySelection.Get().StartSelection();
 
     }
 
