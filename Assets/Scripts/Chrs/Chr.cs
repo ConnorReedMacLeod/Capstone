@@ -358,7 +358,7 @@ public class Chr : MonoBehaviour {
 
         if(infoSelection.actUsed.CanActivate(infoSelection) == false) {
             Debug.LogError("ERROR! This ability was targetted, but is no longer a valid action");
-            infoSelection.actUsed = infoSelection.chrOwner.arActions[Chr.idResting];  //Recover by setting the used action to a rest
+            infoSelection = SelectionSerializer.MakeRestSelection(this);
         }
 
         //Notify everyone that we're about to use this action

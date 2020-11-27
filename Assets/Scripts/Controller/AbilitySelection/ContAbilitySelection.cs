@@ -122,6 +122,10 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
 
     }
 
+    public void ResetStoredSelection() {
+        infoSelectionFromMaster = null;
+    }
+
     public void StartSelection() {
 
         Chr chrCurActing = ContTurns.Get().GetNextActingChr();

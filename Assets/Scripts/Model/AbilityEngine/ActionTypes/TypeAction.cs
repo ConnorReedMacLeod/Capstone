@@ -39,10 +39,20 @@ public abstract class TypeAction {
 
     }
 
-    //Fetch the current selection information for the character using this ability
+    //Fetch the current selection information passed to us from the Master
     public virtual SelectionSerializer.SelectionInfo GetSelectionInfo() {
 
-        return act.chrSource.infoSelectionStored;
+        SelectionSerializer.SelectionInfo infoSelection = ContAbilitySelection.Get().infoSelectionFromMaster;
+
+        //You can only get legitimate selection info for this ability if the selection info is referring to
+        //  this ability
+        Debug.Assert(infoSelection != null, "ERROR - Master has passed no selectionInfo at this point");
+
+        Debug.Assert(ContTurns.Get().GetNextActingChr() == act.chrSource, "ERROR - The acting character isn't the owner of this action");
+
+        Debug.Assert(infoSelection.actUsed == act, "ERROR - The selected action from the player does not match this action");
+
+        return infoSelection;
 
     }
 

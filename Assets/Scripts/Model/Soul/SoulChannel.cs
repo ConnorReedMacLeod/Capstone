@@ -11,12 +11,12 @@ using UnityEngine;
 public class SoulChannel : Soul {
 
     public Action act; //Store a reference to the action we represent
-    
+
 
     /// <summary>
-    /// Creates a properly configured SoulChannel based on the given Action's Execute method
+    /// Creates a properly configured SoulChannel that will call the Action's Execute method
     /// </summary>
-	public SoulChannel(Action _act):base(_act.chrSource, _act.chrSource, _act) {
+    public SoulChannel(Action _act) : base(_act.chrSource, _act.chrSource, _act) {
         bVisible = false;
         bDuration = false;
 
@@ -30,13 +30,16 @@ public class SoulChannel : Soul {
     public override void ExpirationEffect() {
 
         //If we reach the end of the duration of the effect, then execute the effects of the 
-        // stored action
+        // stored action and apply it to the stored target of the channel action
         act.Execute();
+
+        //Clear out the stored selection now that we're done with it
+        ((TypeChannel)act.type).ClearStoredSelectionInfo();
 
     }
 
     public void OnInterrupted() {
-        
+
 
     }
 
