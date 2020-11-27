@@ -15,7 +15,7 @@ public class TypeChannel : TypeAction {
         nStartChannelTime = _nStartChannelTime;
 
         //If we've been given special soul effect, then use it
-        if (_soulBehaviour != null) {
+        if(_soulBehaviour != null) {
             soulBehaviour = _soulBehaviour;
         } else {
             //Otherwise just make a blank one
@@ -37,17 +37,23 @@ public class TypeChannel : TypeAction {
 
     public override void UseAction() {
 
+        //Store a copy of the current SelectionInfo so that we can use it later when the channel finishes (or triggers in some way)
+        infoStoredSelection = base.GetSelectionInfo().GetCopy();
+
         //We don't need to perform any real action on starting channeling other than changing our readiness state so that the 
         // soulchannel effect can be applied (and do any on-application effects if necessary)
         act.chrSource.SetStateReadiness(new StateChanneling(act.chrSource, nStartChannelTime, new SoulChannel(soulBehaviour, act)));
 
-        // Note - we just use the base implementation's selection information location
-        infoStoredSelection = base.GetSelectionInfo().GetCopy();
+
 
     }
 
     public override SelectionSerializer.SelectionInfo GetSelectionInfo() {
         //Return the selection info that's been stored
         return infoStoredSelection;
+    }
+
+    public void ClearStoredSelectionInfo() {
+        infoStoredSelection = null;
     }
 }

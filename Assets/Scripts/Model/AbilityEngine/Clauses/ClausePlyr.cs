@@ -57,7 +57,8 @@ public abstract class ClausePlyr : Clause {
 
     public ClausePlyr(Action _action) : base(_action) { }
 
-    public ClausePlyr(ClausePlyr other, SelectionSerializer.SelectionInfo _infoStoredSelection) : base(other) {
+
+    public ClausePlyr(ClausePlyr other) : base(other) {
         targetType = TargetType.PLAYER;
 
         plstTags = new Property<List<ClauseTagPlayer>>(other.plstTags);

@@ -45,6 +45,8 @@ public class ExecTurnExecuteAction : Executable {
 
         chrNextToAct.ExecuteAction(ContAbilitySelection.Get().infoSelectionFromMaster);
 
+        ContAbilitySelection.Get().ResetStoredSelection();
+
         fDelay = ContTurns.fDelayStandard;
 
     }

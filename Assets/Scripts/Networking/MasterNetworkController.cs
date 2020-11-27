@@ -166,14 +166,12 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
             //Ask our MasterManaDistributer component to determine what mana should be given to each player
             arAdditionalInfo = new object[2] { nNewTurnState, manadistributer.TakeNextMana() };
-
             break;
 
         case (int)ContTurns.STATETURN.CHOOSEACTIONS:
 
             //Reset any old stored abilityselection
             ResetSavedAbilitySelection();
-
             break;
 
         case (int)ContTurns.STATETURN.EXECUTEACTIONS:
@@ -186,6 +184,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
             //Reset any old stored ability selection
             ResetSavedAbilitySelection();
+            break;
 
         default:
 
