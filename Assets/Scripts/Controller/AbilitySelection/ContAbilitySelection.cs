@@ -19,8 +19,6 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
     public const float fDelayChooseActionMedium = 30.0f;
     public const float fDelayChooseActionInf = 9999999.0f;
 
-    public float fSelectionTimer;
-
     //As a fix for an infinite loop in the AI controller (which really should be fixed at some point), keep track of how many bad inputs we've been given
     public int nBadSelectionsGiven;
 

@@ -16,10 +16,8 @@ public class ContTurns : Singleton<ContTurns> {
     public Subject subNextActingChrChange = new Subject();
     public static Subject subAllPriorityChange = new Subject(Subject.SubType.ALL);
 
-    public static float fDelayChooseAction = 30.0f;
     public const float fDelayTurnAction = 0.0f;
     public const float fDelayMinorAction = 0.0f;
-    public const float fDelayNone = 0.0f;
     public const float fDelayStandard = 1.25f;
 
 

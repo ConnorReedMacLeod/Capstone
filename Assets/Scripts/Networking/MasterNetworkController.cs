@@ -39,6 +39,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     public int[] arnPlayerExpectedPhase = new int[Player.MAXPLAYERS];
 
     public MasterManaDistributer manadistributer;
+    public MasterTimeoutController timeoutcontroller;
 
 
     public void OnEnable() {
@@ -53,6 +54,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         }
 
         manadistributer = GetComponent<MasterManaDistributer>();
+        timeoutcontroller = GetComponent<MasterTimeoutController>();
 
         PhotonNetwork.AddCallbackTarget(this);
 
@@ -152,6 +154,9 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         for(int i = 0; i < Player.MAXPLAYERS; i++) {
             if(arnPlayerExpectedPhase[i] != nNewTurnState) {
                 //At least one player hasn't reached the expected turn yet
+
+                //Start the timeout timer to ensure the finished players aren't waiting forever on a stalled toaster
+                timeoutcontroller.StartTimeoutTimer();
                 return;
             }
         }
@@ -195,7 +200,8 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         //Let each player know that they can actually progress to that phase
         NetworkConnectionManager.SendEventToClients(evtCMoveToNewTurnPhase, arAdditionalInfo);
 
-
+        //Stop the timeout timer
+        timeoutcontroller.EndTimeoutTimer();
     }
 
     public void MoveToNextPhase(int nPlayerID, int nCurTurnPhase) {
@@ -276,6 +282,19 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
         //If we're done any special actions for this phase, then we can just progress this player to the next phase
         MoveToNextPhase(nPlayerID, nCurTurnPhase);
+
+    }
+
+    public void ForceAllPlayersEndPhase(ContTurns.STATETURN stateTurn) {
+
+        for(int i = 0; i < Player.MAXPLAYERS; i++) {
+            if(arnPlayerExpectedPhase[i] == stateTurn) {
+                //Then this is one of the players we have to manually nudge to end their phase
+
+                OnPlayerFinishedPhase(i, stateTurn, null);
+            }
+
+        }
 
     }
 
