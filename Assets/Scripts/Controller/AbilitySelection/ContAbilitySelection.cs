@@ -8,7 +8,6 @@ using UnityEngine;
 public class ContAbilitySelection : Singleton<ContAbilitySelection> {
 
 
-    //***** TODONOW - move this section to some master-controlled area
     public float fMaxSelectionTime;
 
     public enum DELAYOPTIONS {
@@ -38,7 +37,6 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
         }
     }
 
-    //*****
 
     //Stores the broadcasted selection information for what action should be used by the next acting character
     // (regardless of it's our local player's turn to move or not) - This should only be read from (the master
@@ -159,10 +157,6 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
         //  really do since this should be a human-interaction based action.  Locking only makes sense for the surface
         //  interactions with the game and not any game-altering effects.
 
-        if(bSelectingAbility == true) {
-            //If this flag is still raised, then we were still in the middle of trying to submit an ability
-            // when we got the message 
-        }
 
         Chr chrCurActing = ContTurns.Get().GetNextActingChr();
 
@@ -172,14 +166,6 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
             LocalInputHuman.subAllHumanEndSelection.NotifyObs(chrCurActing);
         }
 
-
-
-        bSelectingAbility = false;
-        fSelectionTimer = 0.0f;
     }
-
-
-
-
 
 }

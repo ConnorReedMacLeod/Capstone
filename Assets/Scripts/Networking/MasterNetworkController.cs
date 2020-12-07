@@ -156,7 +156,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
                 //At least one player hasn't reached the expected turn yet
 
                 //Start the timeout timer to ensure the finished players aren't waiting forever on a stalled toaster
-                timeoutcontroller.StartTimeoutTimer();
+                timeoutcontroller.StartTimeoutTimer((ContTurns.STATETURN)arnPlayerExpectedPhase[i]);
                 return;
             }
         }
@@ -288,10 +288,10 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     public void ForceAllPlayersEndPhase(ContTurns.STATETURN stateTurn) {
 
         for(int i = 0; i < Player.MAXPLAYERS; i++) {
-            if(arnPlayerExpectedPhase[i] == stateTurn) {
+            if(arnPlayerExpectedPhase[i] == (int)stateTurn) {
                 //Then this is one of the players we have to manually nudge to end their phase
 
-                OnPlayerFinishedPhase(i, stateTurn, null);
+                OnPlayerFinishedPhase(i, (int)stateTurn, null);
             }
 
         }
