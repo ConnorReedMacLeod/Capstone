@@ -16,8 +16,10 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     public const byte evtCNewReadiedCharacter = TOCLIENTEVENTBASE + 0;
     public const byte evtCAbilityUsed = TOCLIENTEVENTBASE + 1;
     public const byte evtCTimerTick = TOCLIENTEVENTBASE + 2;
-    public const byte evtCCharactersSelected = TOCLIENTEVENTBASE + 3;
-    public const byte evtCMoveToNewTurnPhase = TOCLIENTEVENTBASE + 4;
+    public const byte evtCOwnershipSelected = TOCLIENTEVENTBASE + 3;
+    public const byte evtCInputTypesSelected = TOCLIENTEVENTBASE + 4;
+    public const byte evtCCharactersSelected = TOCLIENTEVENTBASE + 5;
+    public const byte evtCMoveToNewTurnPhase = TOCLIENTEVENTBASE + 6;
 
     public const byte TOMASTEREVENTBASE = 100;
 
@@ -25,7 +27,10 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     public const byte evtMFinishedTurnPhase = TOMASTEREVENTBASE + 3;
 
     public Text txtMasterDisplay;
-    public bool bIsMaster;
+
+    public bool bIsMaster {
+        get { return PhotonNetwork.IsMasterClient; }
+    }
 
     int nTime;
 
@@ -36,6 +41,11 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     //We'll keep these as ints since we can't transmit custom types with photon events
     public int[][] arnCharacterSelectsReceived = new int[Player.MAXPLAYERS][];
 
+    //Whenever we recieve character selections, record which client sent it,
+    //  and claim ownership of that player for that client
+    public int[] arnPlayerOwners = new int[Player.MAXPLAYERS];
+    public int[] arnPlayerInputTypes = new int[Player.MAXPLAYERS];
+
     public int[] arnPlayerExpectedPhase = new int[Player.MAXPLAYERS];
 
     public MasterManaDistributer manadistributer;
@@ -43,15 +53,6 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
 
     public void OnEnable() {
-
-        //TODO:: Make sure this works when the current master disconnects so the other player's
-        //       MasterNetworkController will become enabled
-        if(PhotonNetwork.IsMasterClient == false) {
-            bIsMaster = false;
-            return;
-        } else {
-            bIsMaster = true;
-        }
 
         manadistributer = GetComponent<MasterManaDistributer>();
         timeoutcontroller = GetComponent<MasterTimeoutController>();
@@ -85,9 +86,23 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         switch(eventCode) {
 
         case MasterNetworkController.evtMSubmitCharacters:
+            //Submitted as 0:PlayerID, 1:arCharacterSelections, 2:InputType
             Debug.Log("Recieved submitted characters");
 
+            int nClientID = photonEvent.Sender;
+
+            Debug.Log("Submission was sent by client " + nClientID);
+
             int nPlayer = (int)arContent[0];
+
+            //Save a record of which client sent the selections for this character
+            // - they will claim ownership of that player (can be overwritten by later selection submittals)
+            arnPlayerOwners[nPlayer] = nClientID;
+
+            //Grab and save what type of input type (human/computer) we're expecting for this player
+            int nInputType = (int)arContent[2];
+
+            arnPlayerInputTypes[nPlayer] = nInputType;
 
             //Save the results in the appropriate selection
             arnCharacterSelectsReceived[nPlayer] = new int[Player.MAXCHRS];
@@ -141,6 +156,13 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     public void OnReceivedAllCharacterSelections() {
 
+        //Let all clients know who is controlling which player
+        NetworkConnectionManager.SendEventToClients(evtCOwnershipSelected, arnPlayerOwners);
+
+        //Let all clients know what type of input each player is using (human/ai)
+        NetworkConnectionManager.SendEventToClients(evtCInputTypesSelected, arnPlayerInputTypes);
+
+        //Let everyone know which characters should be populated for each team
         NetworkConnectionManager.SendEventToClients(evtCCharactersSelected, arnCharacterSelectsReceived);
 
     }

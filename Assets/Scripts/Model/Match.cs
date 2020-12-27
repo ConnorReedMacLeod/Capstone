@@ -68,11 +68,6 @@ public class Match : MonoBehaviour {
             newPlayer.SetID(i);
             newPlayer.Start();
 
-
-            // We need to assign an input controller for who should command this player
-
-            ClientNetworkController.Get().AssignLocalInputController(newPlayer);
-
             arPlayers[i] = newPlayer;
         }
     }
@@ -140,7 +135,7 @@ public class Match : MonoBehaviour {
             }
         }
 
-        Debug.Log("Exitting");
+        Debug.Log("Ending Character Initializations");
     }
 
     void InitAllBlockers() {

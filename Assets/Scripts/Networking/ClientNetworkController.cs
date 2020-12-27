@@ -6,11 +6,18 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 
-//
+
 public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
 
     public int nLocalPlayerID;
     public int nEnemyPlayerID;
+
+
+    public int[] arnPlayerOwners = new int[Player.MAXPLAYERS];
+    public Player.InputType[] arInputTypes = new Player.InputType[Player.MAXPLAYERS];
+
+    public bool bSavedInputTypes;
+    public bool bSavedOwners;
 
     public Text txtNetworkDebug;
 
@@ -54,8 +61,6 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
         PhotonNetwork.RemoveCallbackTarget(this);
     }
 
-    //TODONOW:  Make the ClientController maintain a list of the players it manages for local selections
-    //          so that we can support manual selections for multiple players on the same computer
     public static ClientNetworkController Get() {
         return inst;
     }
@@ -87,20 +92,52 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
         }
     }
 
+    //When the master has finalized selections, he'll broadcast out 
+    // which clients are controlling which players.
+    public void SaveOwnerships(int[] _arnPlayerOwners) {
+
+        Debug.Log("Saving received owners of players");
+
+        _arnPlayerOwners.CopyTo(arnPlayerOwners, 0);
+
+        bSavedOwners = true;
+
+        //Attempt to assign local input controllers for each player
+        AssignAllLocalInputControllers();
+    }
+
+    //When the master has finalized selections, he'll inform each
+    // client about what input type each player is using
+    public void SaveInputTypes(Player.InputType[] _arInputTypes) {
+
+        Debug.Log("Saving received input types for each player");
+
+        _arInputTypes.CopyTo(arInputTypes, 0);
+
+        bSavedInputTypes = true;
+
+        //Attempt to assign local input controllers for each player
+        AssignAllLocalInputControllers();
+
+    }
+
+    public void AssignAllLocalInputControllers() {
+        //Only allow input controller additions if we've recieved enough information about who is controlling which player
+        if(bSavedInputTypes == false || bSavedOwners == false) return;
+
+        for(int i = 0; i < Player.MAXPLAYERS; i++) {
+            AssignLocalInputController(Match.Get().arPlayers[i]);
+        }
+    }
 
     public void AssignLocalInputController(Player plyr) {
 
         //If the player isn't controlled locally, just set the plyr's controller to null since it's not our job to control them
-        if(plyr.IsLocallyControlled()) {
-            plyr.inputController = null;
-            return;
-        }
-
-        //TODOSOON: Make this variable and decided when doing the ability selection process
-        if(plyr.id == 0) {
-            plyr.SetInputType(Player.InputType.HUMAN);
+        if(nLocalPlayerID != arnPlayerOwners[plyr.id]) {
+            plyr.SetInputType(Player.InputType.NONE);
         } else {
-            plyr.SetInputType(Player.InputType.AI);
+            //Otherwise, this character is controlled by this local client - figure out which input type they'll need and add it
+            plyr.SetInputType((Player.InputType)arInputTypes[plyr.id]);
         }
     }
 
@@ -143,6 +180,17 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
             //Debug.Log("Recieved timer tick with " + arContent[0]);
             int nTime = (int)arContent[0];
             HandleTimerTick(nTime);
+            break;
+
+        case MasterNetworkController.evtCOwnershipSelected:
+            //Note - we ignore arContent, since we need to cast to an int[],
+            //       so we just do the proper cast directly from the stored CustomData
+            SaveOwnerships((int[])photonEvent.CustomData);
+            break;
+
+        case MasterNetworkController.evtCInputTypesSelected:
+            //Note - have to directly cast PhotonEvent.CustomData, since we can't convert back from arContent
+            SaveInputTypes((Player.InputType[])photonEvent.CustomData);
             break;
 
         case MasterNetworkController.evtCCharactersSelected:

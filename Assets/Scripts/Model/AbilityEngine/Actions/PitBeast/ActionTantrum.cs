@@ -32,7 +32,7 @@ public class ActionTantrum : Action {
 
         public Clause1(Action _act) : base(_act) {
             //TODO - add tags as needed
-            
+
             dmgEnemy = new Damage(action.chrSource, null, nEnemyDamage);
             dmgAlly = new Damage(action.chrSource, null, nAllyDamage);
         }
@@ -47,8 +47,8 @@ public class ActionTantrum : Action {
             //First, deal damage to all enemies
             List<Chr> lstChrEnemy = action.chrSource.plyrOwner.GetEnemyPlayer().GetActiveChrs();
 
-            for (int i = 0; i < lstChrEnemy.Count; i++) {
-                //For each ally, deal our dmgAlly to them
+            for(int i = 0; i < lstChrEnemy.Count; i++) {
+                //For each enemy, deal our dmgEnemy to them
                 ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(action.chrSource, lstChrEnemy[i], dmgEnemy) {
                     sLabel = "WAAAAAAAHWAAHWAHHH"
                 });
@@ -57,7 +57,7 @@ public class ActionTantrum : Action {
             //Then damage each of our allies
             List<Chr> lstChrAlly = action.chrSource.plyrOwner.GetActiveChrs();
 
-            for(int i=0; i<lstChrAlly.Count; i++) {
+            for(int i = 0; i < lstChrAlly.Count; i++) {
                 //For each ally, deal our dmgAlly to them
                 ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(action.chrSource, lstChrAlly[i], dmgAlly) {
                     sLabel = "Really, dude?"
