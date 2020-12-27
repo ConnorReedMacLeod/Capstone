@@ -28,7 +28,7 @@ public class Player : MonoBehaviour {
     public InputType curInputType;
 
     public enum InputType {
-        HUMAN, AI
+        NONE, HUMAN, AI
     };
 
     public List<Chr> GetActiveChrs() {
@@ -71,18 +71,27 @@ public class Player : MonoBehaviour {
             inputController = gameObject.AddComponent<LocalInputScripted>();
             LocalInputScripted.SetRandomAbilities((LocalInputScripted)inputController);
 
+            //Let the controller know which player its representing
+            inputController.SetOwner(this);
+
             break;
 
         case InputType.HUMAN:
             //Then we want the player to control this player's selection
             inputController = gameObject.AddComponent<LocalInputHuman>();
 
+            //Let the controller know which player its representing
+            inputController.SetOwner(this);
+
             break;
 
+        case InputType.NONE:
+            //Then no inputcontroller needs to be present for this player
+            inputController = null;
+
+            break;
         }
 
-        //Let the controller know which player its representing
-        inputController.SetOwner(this);
 
         subAllInputTypeChanged.NotifyObs(this, curInputType);
     }
@@ -129,14 +138,6 @@ public class Player : MonoBehaviour {
         } else {
             return Match.Get().arPlayers[0];
         }
-    }
-
-
-    public bool IsLocallyControlled() {
-        //TODONOW: figure out how to support multiple locally controlled players
-        //         rather than just relying on storing a single local player's id
-
-        return ClientNetworkController.Get().nLocalPlayerID == id;
     }
 
     // Use this for initialization

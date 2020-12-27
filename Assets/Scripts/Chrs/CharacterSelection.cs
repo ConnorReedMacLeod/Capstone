@@ -15,12 +15,15 @@ public class CharacterSelection : SingletonPersistent<CharacterSelection> {
     public bool bSavedSelections;
 
     public override void Init() {
+
+        bSavedSelections = false;
+
         arChrSelections[0] = new Chr.CHARTYPE[Player.MAXCHRS];
         arChrSelections[1] = new Chr.CHARTYPE[Player.MAXCHRS];
         arChrVIEWABLE1.CopyTo(arChrSelections[0], 0);
         arChrVIEWABLE2.CopyTo(arChrSelections[1], 0);
 
-        Debug.Log("Finished initializing Character Selections");
+        Debug.Log("Finished CharacterSelection.Init");
     }
 
     //Use when player 2 realizes that their selections should shift to the player 2 slot
@@ -34,7 +37,7 @@ public class CharacterSelection : SingletonPersistent<CharacterSelection> {
     }
 
     //Send the signal to the master client that our locally saved character selection data
-    // is what should be used to initialize the game
+    // is what should be used to initialize the game for this player
     public void SubmitSelection(int nPlayer) {
 
         Debug.Assert(0 <= nPlayer && nPlayer < Player.MAXCHRS);
@@ -78,6 +81,7 @@ public class CharacterSelection : SingletonPersistent<CharacterSelection> {
 
         bSavedSelections = true;
 
-        Debug.Log("Saving Selections");
     }
+
+
 }

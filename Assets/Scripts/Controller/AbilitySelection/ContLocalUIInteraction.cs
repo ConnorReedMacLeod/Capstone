@@ -62,8 +62,8 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         // When we've clicked an action, try to use that action
         // There's a bunch of checks we have to do for this though first to ensure we should be selecting this ability
 
-        // If this ability isn't owned by a locally-controlled human, then reject this selection
-        if(_actSelected.chrSource.plyrOwner.IsLocallyControlled() == false) {
+        // If this ability isn't owned by a locally-controlled client, then reject this selection
+        if(_actSelected.chrSource.plyrOwner.inputController == null) {
 
             Debug.Log("We can't select actions for a character we don't locally control");
             return;
