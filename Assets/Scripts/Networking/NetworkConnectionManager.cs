@@ -30,14 +30,11 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
     public static int nMyLevel = 1;
 
-    public enum MATCHTYPE { SOLO, STANDARD, AI };
-    public MATCHTYPE matchType;
-
     public static NetworkConnectionManager inst;
 
     public void Awake() {
 
-        if (inst != null) {
+        if(inst != null) {
             //If an static instance exists,
             // then panic!  Destroy ourselves
             Debug.LogError("Warning!  This singleton already exists (" + gameObject.name + "), so we shouldn't instantiate a new one");
@@ -52,7 +49,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
     public static NetworkConnectionManager Get() {
 
-        if (inst == null) {
+        if(inst == null) {
             Debug.LogError("Error! Static instance not set!");
         }
 
@@ -60,7 +57,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
     }
 
     // Start is called before the first frame update
-    void Start() { 
+    void Start() {
 
         bTriesToConnectToMaster = false;
         bTriesToConnectToRoom = false;
@@ -81,7 +78,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
     void Update() {
 
         //TODO:: Changing this on every frame seems atrocious
-        if (btnConnectMaster != null) {
+        if(btnConnectMaster != null) {
             btnConnectMaster.gameObject.SetActive(PhotonNetwork.IsConnected == false && bTriesToConnectToMaster == false);
         }
 
@@ -92,9 +89,9 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         ShowIfFindingRoom(dropdownChrSelect2);
         ShowIfFindingRoom(dropdownChrSelect3);
 
-        if (txtDisplayMessage != null) {
+        if(txtDisplayMessage != null) {
             txtDisplayMessage.gameObject.SetActive(PhotonNetwork.InRoom);
-            if (PhotonNetwork.InRoom) {
+            if(PhotonNetwork.InRoom) {
                 txtDisplayMessage.text = "Waiting for players: " + PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers
                     + "\n with level " + PhotonNetwork.CurrentRoom.CustomProperties["lvl"] + " in room " + PhotonNetwork.CurrentRoom.Name;
             }
@@ -102,14 +99,14 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
 
         //We should direct loading the next level if we are the master client
-        if (bInMatch == false &&
+        if(bInMatch == false &&
             PhotonNetwork.IsMasterClient &&
             PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers) {
             Debug.Log("We now have enough players to start the match!");
 
             bInMatch = true;
 
-            if (SceneManager.GetActiveScene().name == "_MATCH") {
+            if(SceneManager.GetActiveScene().name == "_MATCH") {
                 Debug.Log("We're already in the _MATCH scene, so no need to transfer to it");
             } else {
                 PhotonNetwork.LoadLevel("_MATCH");
@@ -133,9 +130,9 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
     public void OnClickConnectToRoom() {
         //If we're not connected to the network service, then we can't possibly join a room
-        if (PhotonNetwork.IsConnected == false) return;
+        if(PhotonNetwork.IsConnected == false) return;
 
-        //Debug.Log("Trying to connect to level " + nMyLevel);
+        Debug.Log("Trying to connect to level " + nMyLevel);
 
         bTriesToConnectToRoom = true;
         //PhotonNetwork.CreateRoom("Custom Name"); // Create a specific room - Error: OnCreateRoomFailed
@@ -145,28 +142,9 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         ExitGames.Client.Photon.Hashtable expectedRoomProperties;
         byte nMaxPlayers;
 
-        switch (matchType) {
-            case MATCHTYPE.SOLO:
-                expectedRoomProperties = new ExitGames.Client.Photon.Hashtable() { { "type", matchType } };
-                nMaxPlayers = 1;
-                break;
 
-            case MATCHTYPE.STANDARD:
-                expectedRoomProperties = new ExitGames.Client.Photon.Hashtable() { { "type", matchType }, { "lvl", nMyLevel } };
-                nMaxPlayers = 2;
-                break;
-
-            case MATCHTYPE.AI:
-                expectedRoomProperties = new ExitGames.Client.Photon.Hashtable() { { "type", matchType } };
-                nMaxPlayers = 1;
-                break;
-
-            default:
-                nMaxPlayers = 0;
-                expectedRoomProperties = new ExitGames.Client.Photon.Hashtable();
-                break;
-
-        }
+        expectedRoomProperties = new ExitGames.Client.Photon.Hashtable() { { "lvl", nMyLevel } };
+        nMaxPlayers = 2;
 
         PhotonNetwork.JoinRandomRoom(expectedRoomProperties, nMaxPlayers);
     }
@@ -187,7 +165,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         bTriesToConnectToMaster = false;
         Debug.Log("Connected to Master!");
 
-        if (bOfflineMode) {
+        if(bOfflineMode) {
             //Pretend like we clicked a button to join a room
             OnClickConnectToRoom();
         }
@@ -231,25 +209,10 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         //Debug.LogError("Failed to join a room: " + returnCode + " " + message);
 
         RoomOptions roomOptions = new RoomOptions();
-        roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable() { { "type", matchType }, { "lvl", nMyLevel }, { "trn", 0 } };
+        roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable() { { "lvl", nMyLevel }, { "trn", 0 } };
         roomOptions.CustomRoomPropertiesForLobby = new string[] { "type", "lvl" };
 
-        switch (matchType) {
-            case MATCHTYPE.SOLO:
-
-                roomOptions.MaxPlayers = 1;
-                break;
-
-            case MATCHTYPE.STANDARD:
-
-                roomOptions.MaxPlayers = 2;
-                break;
-
-            default:
-                roomOptions.MaxPlayers = 0;
-                break;
-
-        }
+        roomOptions.MaxPlayers = 2;
 
         //Debug.Log("Creating a room with properties " + roomOptions.CustomRoomProperties["lvl"]);
 
