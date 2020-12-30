@@ -13,11 +13,9 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
     public Button btnConnectMaster;
     public Button btnConnectRoom;
     public Slider sliderLevel;
-    public Dropdown dropdownMatchType;
 
-    public Dropdown dropdownChrSelect1;
-    public Dropdown dropdownChrSelect2;
-    public Dropdown dropdownChrSelect3;
+    public PlayerSelector plyrselector1;
+    public PlayerSelector plyrselector2;
 
     public Text txtDisplayMessage;
 
@@ -84,10 +82,8 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
         ShowIfFindingRoom(btnConnectRoom);
         ShowIfFindingRoom(sliderLevel);
-        ShowIfFindingRoom(dropdownMatchType);
-        ShowIfFindingRoom(dropdownChrSelect1);
-        ShowIfFindingRoom(dropdownChrSelect2);
-        ShowIfFindingRoom(dropdownChrSelect3);
+        ShowIfFindingRoom(plyrselector1);
+        ShowIfFindingRoom(plyrselector2);
 
         if(txtDisplayMessage != null) {
             txtDisplayMessage.gameObject.SetActive(PhotonNetwork.InRoom);
@@ -101,7 +97,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         //We should direct loading the next level if we are the master client
         if(bInMatch == false &&
             PhotonNetwork.IsMasterClient &&
-            PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers) {
+            ArePlayersConnected()) {
             Debug.Log("We now have enough players to start the match!");
 
             bInMatch = true;
@@ -112,6 +108,11 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
                 PhotonNetwork.LoadLevel("_MATCH");
             }
         }
+
+    }
+
+    public bool ArePlayersConnected() {
+        return PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers;
 
     }
 
@@ -144,9 +145,26 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
 
         expectedRoomProperties = new ExitGames.Client.Photon.Hashtable() { { "lvl", nMyLevel } };
-        nMaxPlayers = 2;
+        nMaxPlayers = (byte)CalcMaxPlayersInRoom();
+
+        Debug.Log(nMaxPlayers);
 
         PhotonNetwork.JoinRandomRoom(expectedRoomProperties, nMaxPlayers);
+    }
+
+    //This currently will calculate the number of input types set to None, and expect one unique
+    // client per needed player.  Will eventually need to expand to allow other clients to control
+    // multiple players and to allow for spectators
+    public int CalcMaxPlayersInRoom() {
+
+        int nNeededPlayers = 1;
+        for(int i = 0; i < Player.MAXPLAYERS; i++) {
+            if(CharacterSelection.Get().arInputTypes[i] == Player.InputType.NONE) {
+                nNeededPlayers++;
+            }
+        }
+
+        return nNeededPlayers;
     }
 
 
@@ -179,7 +197,8 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
             " | On Region: " + PhotonNetwork.CloudRegion +
             " | In Room: " + PhotonNetwork.CurrentRoom.Name +
             " | Level: " + PhotonNetwork.CurrentRoom.CustomProperties["lvl"] +
-            " | Number of Players: " + PhotonNetwork.CurrentRoom.PlayerCount);
+            " | Number of Players: " + PhotonNetwork.CurrentRoom.PlayerCount +
+            " | Max Number of Players: " + PhotonNetwork.CurrentRoom.MaxPlayers);
 
     }
 
@@ -212,7 +231,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable() { { "lvl", nMyLevel }, { "trn", 0 } };
         roomOptions.CustomRoomPropertiesForLobby = new string[] { "type", "lvl" };
 
-        roomOptions.MaxPlayers = 2;
+        roomOptions.MaxPlayers = (byte)CalcMaxPlayersInRoom();
 
         //Debug.Log("Creating a room with properties " + roomOptions.CustomRoomProperties["lvl"]);
 

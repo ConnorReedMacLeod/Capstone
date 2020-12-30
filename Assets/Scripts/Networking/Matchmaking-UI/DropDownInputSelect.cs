@@ -5,7 +5,6 @@ using UnityEngine;
 public class DropDownInputSelect : MonoBehaviour {
 
     public PlayerSelector plyrselectorParent;
-    public int idPlayer;
 
     public void OnInputSelectChange(int nInputSelect) {
 

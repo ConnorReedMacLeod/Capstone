@@ -6,7 +6,6 @@ public class PlayerSelector : MonoBehaviour {
 
     public int idPlayer;
 
-
     public void SubmitSelection() {
         CharacterSelection.Get().SubmitSelection(idPlayer);
     }
