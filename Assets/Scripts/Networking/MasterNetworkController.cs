@@ -82,6 +82,9 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
         object[] arContent = (object[])photonEvent.CustomData;
 
+
+        Debug.Log("Master Event Received: " + eventCode);
+
         //The master controller should only react to player-submitted input events (addressed to evtM...)
         switch(eventCode) {
 
@@ -124,10 +127,10 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         case MasterNetworkController.evtMFinishedTurnPhase:
             int nPlayerID = (int)arContent[0];
             int nTurnState = (int)arContent[1];
-            object[] arAdditionalInfo = (object[])arContent[2];
+            int nSerializedInfo = (int)arContent[2];
             Debug.Log("Recieved signal that player " + nPlayerID + " has finished phase " + ((ContTurns.STATETURN)nTurnState).ToString());
 
-            OnPlayerFinishedPhase(nPlayerID, nTurnState, arAdditionalInfo);
+            OnPlayerFinishedPhase(nPlayerID, nTurnState, nSerializedInfo);
 
             break;
 
@@ -156,14 +159,22 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     public void OnReceivedAllCharacterSelections() {
 
+        Debug.Log("Master received all character selections");
+
         //Let all clients know who is controlling which player
-        NetworkConnectionManager.SendEventToClients(evtCOwnershipSelected, arnPlayerOwners);
+        NetworkConnectionManager.SendEventToClients(evtCOwnershipSelected, LibConversions.ArIntToArObj(arnPlayerOwners));
+
+        Debug.Log("Master sent out evtCOwnershipSelected");
 
         //Let all clients know what type of input each player is using (human/ai)
-        NetworkConnectionManager.SendEventToClients(evtCInputTypesSelected, arnPlayerInputTypes);
+        NetworkConnectionManager.SendEventToClients(evtCInputTypesSelected, LibConversions.ArIntToArObj(arnPlayerInputTypes));
+
+        Debug.Log("Master sent out evtCInputTypesSelected");
 
         //Let everyone know which characters should be populated for each team
-        NetworkConnectionManager.SendEventToClients(evtCCharactersSelected, arnCharacterSelectsReceived);
+        NetworkConnectionManager.SendEventToClients(evtCCharactersSelected, (object[])arnCharacterSelectsReceived);
+
+        Debug.Log("Master sent out evtCCharactersSelected");
 
     }
 
@@ -260,7 +271,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         MoveToPhase(nPlayerID, nNextTurnPhase);
     }
 
-    public void OnPlayerFinishedPhase(int nPlayerID, int nCurTurnPhase, object[] arAdditionalInfo) {
+    public void OnPlayerFinishedPhase(int nPlayerID, int nCurTurnPhase, int nSerializedInfo = 0) {
 
         //Double check that the phase they claim to have ended is the one we expect them to be on
         Debug.Assert(arnPlayerExpectedPhase[nPlayerID] == nCurTurnPhase);
@@ -274,21 +285,21 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
                 //We need to move ahead with finalizing an ability selection.  Check if their selection was valid, and store it.
                 // If it's not valid, then reset it to a rest which will always be fine
-                if(arAdditionalInfo == null) {
+                if(nSerializedInfo == 0) {
 
                     //If no additional info was passed, then interpret this as a rest action
                     ResetSavedAbilitySelection();
 
-                } else if(CanUseAbility((int)arAdditionalInfo[0])) {
+                } else if(SelectionSerializer.Deserialize(ContTurns.Get().GetNextActingChr(), nSerializedInfo).CanActivate()) {
 
                     //If the ability selection and targetting passed can be used, then save that selection and try to move to the next phase
 
-                    SaveAbilitySelection((int)arAdditionalInfo[0]);
+                    SaveAbilitySelection(nSerializedInfo);
 
                 } else {
                     //Otherwise, if we were passed an invalid ability selection 
 
-                    Debug.LogError("MASTER: Invalid ability selection of " + (int)arAdditionalInfo[0] + " " + (int)arAdditionalInfo[1] + " " + (int[])arAdditionalInfo[2]);
+                    Debug.LogError("MASTER: Invalid ability selection of " + nSerializedInfo);
 
                     //Then we'll override that ability selection and just assign them a rest (they can locally fail to select a correct ability as many times as they 
                     // want, but they should only ever submit to the master if they're sure they have a finallized good selection)
@@ -313,7 +324,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
             if(arnPlayerExpectedPhase[i] == (int)stateTurn) {
                 //Then this is one of the players we have to manually nudge to end their phase
 
-                OnPlayerFinishedPhase(i, (int)stateTurn, null);
+                OnPlayerFinishedPhase(i, (int)stateTurn);
             }
 
         }

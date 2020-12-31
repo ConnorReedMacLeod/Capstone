@@ -200,6 +200,11 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
             " | Number of Players: " + PhotonNetwork.CurrentRoom.PlayerCount +
             " | Max Number of Players: " + PhotonNetwork.CurrentRoom.MaxPlayers);
 
+        //Now that we've connected to the new room, we can send our character selections
+        for(int i = 0; i < Player.MAXPLAYERS; i++) {
+            CharacterSelection.Get().SubmitSelection(i);
+        }
+
     }
 
     public static void SendEventToMaster(byte evtCode, object content) {
