@@ -83,7 +83,10 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
         byte eventCode = photonEvent.Code;
         if(eventCode >= 200) return; //Don't respond to built-in events
 
+        Debug.Log("Client Event Received: " + eventCode);
+
         object[] arContent = (object[])photonEvent.CustomData;
+
 
         //Players should only react to authoritative commands from the master 
         switch(eventCode) {
@@ -100,12 +103,12 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
         case MasterNetworkController.evtCOwnershipSelected:
             //Note - we ignore arContent, since we need to cast to an int[],
             //       so we just do the proper cast directly from the stored CustomData
-            CharacterSelection.Get().SaveOwnerships((int[])photonEvent.CustomData);
+            CharacterSelection.Get().SaveOwnerships(LibConversions.ArObjToArInt((object[])photonEvent.CustomData));
             break;
 
         case MasterNetworkController.evtCInputTypesSelected:
             //Note - have to directly cast PhotonEvent.CustomData, since we can't convert back from arContent
-            CharacterSelection.Get().SaveInputTypes((Player.InputType[])photonEvent.CustomData);
+            CharacterSelection.Get().SaveInputTypes(LibConversions.ArObjToArInputType((object[])photonEvent.CustomData));
             break;
 
         case MasterNetworkController.evtCCharactersSelected:

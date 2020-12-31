@@ -39,34 +39,13 @@ public class CharacterSelection : SingletonPersistent<CharacterSelection> {
 
         Debug.Assert(0 <= nPlayer && nPlayer < Player.MAXCHRS);
 
-        int[] arnTeamSelection = ArChrTypeToArInt(arChrSelections[nPlayer]);
+        int[] arnTeamSelection = LibConversions.ArChrTypeToArInt(arChrSelections[nPlayer]);
         Debug.LogError("Sending selections for player " + nPlayer + " of " + arnTeamSelection[0] + ", " + arnTeamSelection[1] + ", " + arnTeamSelection[2] +
             "\nAnd input type: " + arInputTypes[nPlayer]);
         NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMSubmitCharacters, new object[3] { nPlayer, arnTeamSelection, arInputTypes[nPlayer] });
 
     }
 
-
-    //TODO:: Eventually figure out if this can be generalized
-    private int[] ArChrTypeToArInt(Chr.CHARTYPE[] _arChrTypes) {
-        int[] arInt = new int[_arChrTypes.Length];
-
-        for(int i = 0; i < _arChrTypes.Length; i++) {
-            arInt[i] = (int)_arChrTypes[i];
-        }
-
-        return arInt;
-    }
-
-    private Chr.CHARTYPE[] ArIntToArChrType(int[] _arInt) {
-        Chr.CHARTYPE[] arChrTypes = new Chr.CHARTYPE[_arInt.Length];
-
-        for(int i = 0; i < _arInt.Length; i++) {
-            arChrTypes[i] = (Chr.CHARTYPE)_arInt[i];
-        }
-
-        return arChrTypes;
-    }
 
     // When the master has finalized all selections from players
     // he'll broadcast them out and we can save it here locally

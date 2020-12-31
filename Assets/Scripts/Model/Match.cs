@@ -122,7 +122,7 @@ public class Match : MonoBehaviour {
 
         //Keep looping until we've properly setup our character selections
         while(CharacterSelection.Get().bSavedSelections == false) {
-            //Debug.Log("Waiting for character selections to be registered and distributed");
+            Debug.Log("Waiting for character selections to be registered and distributed");
             yield return null;
         }
 
@@ -182,9 +182,15 @@ public class Match : MonoBehaviour {
 
         arena.Start();
 
+
+
         InitPlayers(nPlayers);
 
+        Debug.Log("Finished initializing players");
+
         InitNetworking();
+
+        Debug.Log("Finished Initializing Networking");
 
         //Note that this is a coroutine
         yield return StartCoroutine(InitAllChrs());
