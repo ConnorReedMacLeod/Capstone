@@ -17,7 +17,7 @@ public class ActionSerenade : Action {
         nCd = 8;
         nFatigue = 4;
 
-        lstClauses = new List<Clause> {
+        lstClauses = new List<Clause>() {
             new Clause1(this)
         };
 
@@ -26,7 +26,7 @@ public class ActionSerenade : Action {
     class Clause1 : ClauseChr {
 
         Healing heal;
-        int nBaseHealing = 25;      
+        int nBaseHealing = 25;
 
         public Clause1(Action _act) : base(_act) {
             plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {

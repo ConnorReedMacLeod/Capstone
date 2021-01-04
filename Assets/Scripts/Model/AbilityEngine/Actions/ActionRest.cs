@@ -20,6 +20,9 @@ public class ActionRest : Action {
 
         bProperActive = false; //This is a special action that shouldn't change our character's sprite to the active
 
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
     }
 
     class Clause1 : ClauseSpecial {

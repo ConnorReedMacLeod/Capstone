@@ -13,11 +13,13 @@ public class ActionBlock : Action {
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 0 });
-        
+
         nCd = 1; //This might have issues if you can reduce cooldowns a lot - don't want looping
         nFatigue = 0;
-        
 
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
     }
 
     class Clause1 : ClauseSpecial {

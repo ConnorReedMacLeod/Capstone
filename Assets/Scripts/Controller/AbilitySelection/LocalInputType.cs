@@ -40,6 +40,7 @@ public abstract class LocalInputType : MonoBehaviour {
 
     public void SetOwner(Player _plyrOwner) {
         plyrOwner = _plyrOwner;
+
     }
 
 

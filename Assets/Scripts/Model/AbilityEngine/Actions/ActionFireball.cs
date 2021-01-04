@@ -4,26 +4,26 @@ using UnityEngine;
 
 public class ActionFireball : Action {
 
-    public ActionFireball(Chr _chrOwner): base(_chrOwner, 0){
+    public ActionFireball(Chr _chrOwner) : base(_chrOwner, 0) {
 
-		sName = "Fireball";
+        sName = "Fireball";
         sDisplayName = "Fireball";
 
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[]{0,0,1,0,0});
+        parCost = new Property<int[]>(new int[] { 0, 0, 1, 0, 0 });
 
-		nCd = 6;
+        nCd = 6;
         nFatigue = 4;
 
 
 
-        lstClauses = new List<Clause> {
+        lstClauses = new List<Clause>() {
             new Clause1(this),
             new Clause2(this)
         };
-	}
+    }
 
     class Clause1 : ClauseChr {
 
@@ -35,13 +35,13 @@ public class ActionFireball : Action {
                 new ClauseTagChrRanged(this), //Base Tag always goes first
                 new ClauseTagChrEnemy(this)
             });
-            
+
 
             dmg = new Damage(action.chrSource, null, nBaseDamage);
         }
 
         public override string GetDescription() {
-            
+
             return string.Format("Deal {0} damage to an Enemy", dmg.Get());
         }
 

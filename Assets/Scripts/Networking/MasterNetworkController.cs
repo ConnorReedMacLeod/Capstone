@@ -161,6 +161,11 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
         Debug.Log("Master received all character selections");
 
+        //Let everyone know which characters should be populated for each team
+        NetworkConnectionManager.SendEventToClients(evtCCharactersSelected, (object[])arnCharacterSelectsReceived);
+
+        Debug.Log("Master sent out evtCCharactersSelected");
+
         //Let all clients know who is controlling which player
         NetworkConnectionManager.SendEventToClients(evtCOwnershipSelected, LibConversions.ArIntToArObj(arnPlayerOwners));
 
@@ -170,11 +175,6 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         NetworkConnectionManager.SendEventToClients(evtCInputTypesSelected, LibConversions.ArIntToArObj(arnPlayerInputTypes));
 
         Debug.Log("Master sent out evtCInputTypesSelected");
-
-        //Let everyone know which characters should be populated for each team
-        NetworkConnectionManager.SendEventToClients(evtCCharactersSelected, (object[])arnCharacterSelectsReceived);
-
-        Debug.Log("Master sent out evtCCharactersSelected");
 
     }
 

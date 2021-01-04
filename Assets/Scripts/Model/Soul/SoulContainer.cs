@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class SoulContainer : MonoBehaviour {
 
-    public List<Soul> lstSoul = new List<Soul>();//TODO:: Lists have pretty bad runtime as we're using them  - worth changing?
+    public List<Soul> lstSoul;//TODO:: Lists have pretty bad runtime as we're using them  - worth changing?
 
     public Chr chrOwner;
 
     public int nMaxVisibleSoul;
 
-    public Subject subVisibleSoulUpdate = new Subject();
+    public Subject subVisibleSoulUpdate;
 
     //returns a list of the visible events in the soul (oldest elements first)
     public List<Soul> GetVisibleSoul() {
         //TODO:: Just make this consistently maintained so we don't have to recalculate it each time
         List<Soul> lstVisibleSoul = new List<Soul>();
 
-        for(int i=0; i < lstSoul.Count; i++) {
+        for(int i = 0; i < lstSoul.Count; i++) {
             if(lstSoul[i].bVisible == true) {
                 lstVisibleSoul.Add(lstSoul[i]);
             }
@@ -39,8 +39,8 @@ public class SoulContainer : MonoBehaviour {
         List<Soul> lstExpiredSoul = new List<Soul>();
 
         //Search through the list from the back (most recently added) to the front
-        for (int i = lstSoul.Count - 1; i >= 0; i--) {
-            if (lstSoul[i].bDuration == true) {
+        for(int i = lstSoul.Count - 1; i >= 0; i--) {
+            if(lstSoul[i].bDuration == true) {
                 lstSoul[i].nCurDuration--;
 
                 if(lstSoul[i].nCurDuration == 0) {
@@ -53,7 +53,7 @@ public class SoulContainer : MonoBehaviour {
         }
 
         //Remove each effect that was noted as having no duration left
-        foreach (Soul SoulToRemove in lstExpiredSoul) {
+        foreach(Soul SoulToRemove in lstExpiredSoul) {
             RemoveSoul(SoulToRemove);
         }
 
@@ -80,12 +80,12 @@ public class SoulContainer : MonoBehaviour {
 
         //Debug.Log("After removing " + toRemove.sName);
 
-        if (ContAbilityEngine.bDEBUGENGINE) PrintAllSoul();
+        if(ContAbilityEngine.bDEBUGENGINE) PrintAllSoul();
 
     }
 
     public void ApplySoul(Soul newSoul) {
-        
+
         if(newSoul.bVisible == true) {
             //Then check if we have enough slots
             List<Soul> lstVisibleSoul = GetVisibleSoul();
@@ -115,19 +115,19 @@ public class SoulContainer : MonoBehaviour {
         subVisibleSoulUpdate.NotifyObs(this);
         chrOwner.subSoulApplied.NotifyObs(this, newSoul);
 
-        if (ContAbilityEngine.bDEBUGENGINE) PrintAllSoul();
+        if(ContAbilityEngine.bDEBUGENGINE) PrintAllSoul();
 
     }
 
     public void PrintAllSoul() {
         Debug.Log("********** Printing all Soul for " + chrOwner.sName + "*****************");
-        for (int i = 0; i < lstSoul.Count; i++) {
+        for(int i = 0; i < lstSoul.Count; i++) {
             string sVisible = "";
             string sDuration = "";
-            if (lstSoul[i].bVisible == true) {
+            if(lstSoul[i].bVisible == true) {
                 sVisible = "(Visible)";
             }
-            if (lstSoul[i].bDuration == true) {
+            if(lstSoul[i].bDuration == true) {
                 sDuration = " with duration " + lstSoul[i].nCurDuration + "/" + lstSoul[i].pnMaxDuration.Get();
             }
             Debug.Log("[" + i + "] - " + lstSoul[i].sName + " " + sVisible + sDuration);
@@ -138,14 +138,21 @@ public class SoulContainer : MonoBehaviour {
 
 
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start() {
 
         nMaxVisibleSoul = 3;
 
         ExecTurnEndTurn.subAllPostTrigger.Subscribe(cbReduceDurations);
         //TODO::  At somepoint, fix the order of the notifications to be sent out to next-character-to-act first
 
+
+    }
+
+    public SoulContainer() {
+        lstSoul = new List<Soul>();
+
+        subVisibleSoulUpdate = new Subject();
 
     }
 
@@ -157,5 +164,6 @@ public class SoulContainer : MonoBehaviour {
         nMaxVisibleSoul = other.nMaxVisibleSoul;
 
         subVisibleSoulUpdate = new Subject(other.subVisibleSoulUpdate);
+
     }
 }
