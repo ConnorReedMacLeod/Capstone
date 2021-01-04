@@ -69,10 +69,11 @@ public class Player : MonoBehaviour {
         case InputType.AI:
             //Then we want a script to control this player's selection
             inputController = gameObject.AddComponent<LocalInputScripted>();
-            LocalInputScripted.SetRandomAbilities((LocalInputScripted)inputController);
 
             //Let the controller know which player its representing
             inputController.SetOwner(this);
+
+            LocalInputScripted.SetRandomAbilities((LocalInputScripted)inputController);
 
             break;
 

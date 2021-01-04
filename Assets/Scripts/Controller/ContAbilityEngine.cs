@@ -14,8 +14,6 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
 
     public const bool bDEBUGENGINE = false;
 
-    public static ContAbilityEngine instance;
-
     public void cbAutoProcessStacks(Object target, params object[] args) {
         if(bAutoTurns == true) return; //If the button is already pressed
         bAutoTurns = true;
@@ -63,7 +61,7 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
 
         if(bDEBUGENGINE) Debug.Log("Pushing a Clause");
 
-        instance.stackClause.Push(clause);
+        Get().stackClause.Push(clause);
 
     }
 
@@ -80,7 +78,7 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
 
         if(bDEBUGENGINE) Debug.Log("Pushing an Executable of type " + exec.GetType().ToString());
 
-        instance.stackExec.Push(exec);
+        Get().stackExec.Push(exec);
     }
 
 

@@ -182,8 +182,6 @@ public class Match : MonoBehaviour {
 
         arena.Start();
 
-
-
         InitPlayers(nPlayers);
 
         Debug.Log("Finished initializing players");
@@ -192,10 +190,13 @@ public class Match : MonoBehaviour {
 
         Debug.Log("Finished Initializing Networking");
 
-        //Note that this is a coroutine
+        //Initialize characters (and spin until we get their selections)
         yield return StartCoroutine(InitAllChrs());
 
         Debug.Log("After InitAllChrs");
+
+        //Assign local input controllers for each player
+        yield return StartCoroutine(CharacterSelection.Get().AssignAllLocalInputControllers());
 
         ContTurns.Get().InitializePriorities();
 

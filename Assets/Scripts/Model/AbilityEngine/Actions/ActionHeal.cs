@@ -20,7 +20,7 @@ public class ActionHeal : Action {
         nCd = 3;
         nFatigue = 3;
 
-        lstClauses = new List<Clause> {
+        lstClauses = new List<Clause>() {
             new Clause1(this)
         };
 
@@ -40,7 +40,7 @@ public class ActionHeal : Action {
             //Create and store a copy of the intended healing effect so that any information/effects
             // can be updated accurately
             heal = new Healing(action.chrSource, null, nBaseHealing);
-            
+
         }
 
         public override string GetDescription() {

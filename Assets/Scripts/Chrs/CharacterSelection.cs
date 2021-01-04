@@ -71,8 +71,6 @@ public class CharacterSelection : SingletonPersistent<CharacterSelection> {
 
         bSavedOwners = true;
 
-        //Attempt to assign local input controllers for each player
-        AssignAllLocalInputControllers();
     }
 
     //When the master has finalized selections, he'll inform each
@@ -85,14 +83,14 @@ public class CharacterSelection : SingletonPersistent<CharacterSelection> {
 
         bSavedInputTypes = true;
 
-        //Attempt to assign local input controllers for each player
-        AssignAllLocalInputControllers();
-
     }
 
-    public void AssignAllLocalInputControllers() {
-        //Only allow input controller additions if we've recieved enough information about who is controlling which player
-        if(bSavedInputTypes == false || bSavedOwners == false) return;
+    public IEnumerator AssignAllLocalInputControllers() {
+        //Sleep until we've recieved enough information to actually assign input controllers
+        while(bSavedSelections == false || bSavedInputTypes == false || bSavedOwners == false) {
+            Debug.Log("Waiting to assign input controllers until selections have all been recieved");
+            yield return null;
+        }
 
         for(int i = 0; i < Player.MAXPLAYERS; i++) {
             AssignLocalInputController(Match.Get().arPlayers[i]);

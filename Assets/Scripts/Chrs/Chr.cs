@@ -131,11 +131,21 @@ public class Chr : MonoBehaviour {
 
     public static void RegisterChr(Chr chr) {
         if(lstAllChrs == null) {
-            lstAllChrs = new List<Chr>(Player.MAXCHRS * Player.MAXCHRS);
+            lstAllChrs = new List<Chr>(Player.MAXPLAYERS * Player.MAXCHRS);
         }
 
-        lstAllChrs[chr.globalid] = chr;
+        lstAllChrs.Insert(chr.globalid, chr);
+
+        //TODO:: do something more sophisticated for this once the bench is added
+        if(lstChrInPlay == null) {
+            lstChrInPlay = new List<Chr>(Player.MAXPLAYERS * Player.MAXCHRS);
+        }
+
+        lstChrInPlay.Add(chr);
+
+
     }
+
 
     public void ChangeChanneltime(int _nChange) {
         //Just let our readiness state deal with this
@@ -410,6 +420,7 @@ public class Chr : MonoBehaviour {
         plyrOwner = _plyrOwner;
         id = _id;
         globalid = id + plyrOwner.id * Player.MAXCHRS;
+
         RegisterChr(this);
 
         SetDefaultActions();
