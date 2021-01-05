@@ -32,13 +32,23 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
             return;
         }
 
+        //TODONOW - change this to initially send a starting signal to the master
         ProcessStacks();
     }
 
     public void cbManualExecuteEvent(Object target, params object[] args) {
         bAutoTurns = false;
 
-        ProcessStacks();
+        //Check if there's any stack to process
+        if(AreStacksEmpty()) {
+            //If the stacks are empty, then manual execution of the phase just means
+            // submitting a signal to the master to let it know we're done with the phase
+            ContTurns.Get().FinishedTurnPhase();
+        } else {
+            //There's still effects to process, so process the contents of the stacks just once
+            ProcessStacks();
+        }
+
     }
 
     public void ResolveClause() {
@@ -169,6 +179,10 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
 
     }
 
+    public bool AreStacksEmpty() {
+        return stackExec.Count == 0 && stackClause.Count == 0;
+    }
+
     public void ProcessStacks() {
 
 
@@ -236,10 +250,16 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
         //Then we have nothing left to process
         //So pass along the message to the Master that we're done this phase of the turn
 
-        if(bDEBUGENGINE) Debug.Log("No Clauses or Executables so move to the next part of the turn");
-        ContTurns.Get().FinishedTurnPhase();
 
-        //We used to recurse here since the HandleTurnPhase would immediately put a new executable on the stack.  
+        //If we're using manual turn evaluation, then wait for the user to click the manual button again so
+        //  that we're ready to progress to the next phase of the turn; if automatic, then we can move
+        //  to just finish the phase now
+        if(ContAbilityEngine.Get().bAutoTurns) {
+            if(bDEBUGENGINE) Debug.Log("No Clauses or Executables so move to the next part of the turn");
+            ContTurns.Get().FinishedTurnPhase();
+        }
+
+        //We used to recurse here since the FinishedTurnPhase would immediately put a new executable on the stack.  
         //  As is, we'll need to wait for the master network to let us know when we can progress to the next phase 
         //  of the turn, at which point we can start ProcessStacks() then
 
