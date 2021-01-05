@@ -140,6 +140,10 @@ public class ContTurns : Singleton<ContTurns> {
     // phase of the turn.
     public void FinishedTurnPhase() {
 
+        if(ContAbilityEngine.Get().AreStacksEmpty() == false) {
+            Debug.LogError("There's still more to evaluate on the stacks, so we can't finish the turn yet");
+            return;
+        }
 
         if(curStateTurn == STATETURN.CHOOSEACTIONS) {
             //If the current phase of the turn is for choosing actions, then just let

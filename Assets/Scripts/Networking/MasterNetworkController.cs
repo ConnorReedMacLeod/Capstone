@@ -347,6 +347,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         if(nNewTime > nTime) {
             nTime = nNewTime;
             NetworkConnectionManager.SendEventToClients(evtCTimerTick, new object[1] { nTime });
+            PrintExpectedPhases();
         }
     }
 
@@ -371,5 +372,15 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     }
 
+
+
+    public void PrintExpectedPhases() {
+        string sPrint = "[MASTER] Expected Phases:  ";
+        for(int i = 0; i < arnPlayerExpectedPhase.Length; i++) {
+            sPrint += "Player " + i + ": " + ((ContTurns.STATETURN)arnPlayerExpectedPhase[i]).ToString() + " | ";
+        }
+
+        Debug.Log(sPrint);
+    }
 
 }

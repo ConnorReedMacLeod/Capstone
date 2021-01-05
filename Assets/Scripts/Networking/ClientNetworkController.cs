@@ -118,6 +118,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
 
         case MasterNetworkController.evtCMoveToNewTurnPhase:
             //Pass along whatever phase of the turn we're now in to the ContTurns
+            Debug.Log("Master told us to move to " + (ContTurns.STATETURN)arContent[0].ToString());
             ContTurns.Get().SetTurnState((ContTurns.STATETURN)arContent[0], arContent[1]);
             break;
 
@@ -128,14 +129,12 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
 
     }
     public void HandleTimerTick(int nTime) {
-        Debug.Log("Timer: " + nTime);
         SetDebugText("Timer: " + nTime);
     }
 
     // Update is called once per frame
     void Update() {
 
-        DebugPrintCharacterSelections();
 
     }
 
@@ -151,7 +150,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
             sSelections2 = "Player 2: " + CharacterSelection.Get().arChrSelections[1][0] + ", " + CharacterSelection.Get().arChrSelections[1][1] + ", " + CharacterSelection.Get().arChrSelections[1][2];
         }
 
-        SetDebugText(sSelections1 + "\n" + sSelections2);
+        //SetDebugText(sSelections1 + "\n" + sSelections2);
     }
 
     public void SetDebugText(string sMessage) {
