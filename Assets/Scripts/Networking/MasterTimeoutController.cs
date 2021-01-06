@@ -40,7 +40,7 @@ public class MasterTimeoutController : MonoBehaviour {
 
         //If the time limit has been reached, force all players to move onto the next
         //  phase of the turn (whether ready or not) - TODO - does this make sense?
-        master.ForceAllPlayersEndPhase(stateTurnWaitingOn);
+        master.ForceAllClientsEndPhase(stateTurnWaitingOn);
 
         EndTimeoutTimer();
     }

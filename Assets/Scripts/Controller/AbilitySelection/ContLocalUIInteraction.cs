@@ -118,8 +118,11 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         Debug.Assert(actSelected == infoSelected.actUsed);
 
         //Only allow manual selections when the local player is human
-        Debug.Assert(Match.Get().GetLocalPlayer().curInputType == Player.InputType.HUMAN);
-        Debug.Assert(chrSelected.plyrOwner.id == ClientNetworkController.Get().nLocalPlayerID, "Error - can only submit abilities for locally-owned human's characters");
+        Debug.Assert(Match.Get().GetLocalPlayer().curInputType == Player.InputType.HUMAN,
+            "Error - can only submit abilities for locally-owned human's characters");
+
+        Debug.Assert(ClientNetworkController.Get().IsPlayerLocallyControlled(chrSelected.plyrOwner),
+            "Error - can only submit abilities for locally-owned human's characters");
 
         ContAbilitySelection.Get().SubmitAbility(infoSelected, chrSelected.plyrOwner.inputController);
 

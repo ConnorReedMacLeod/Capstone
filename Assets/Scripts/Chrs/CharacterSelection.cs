@@ -100,7 +100,7 @@ public class CharacterSelection : SingletonPersistent<CharacterSelection> {
     public void AssignLocalInputController(Player plyr) {
 
         //If the player isn't controlled locally, just set the plyr's controller to null since it's not our job to control them
-        if(ClientNetworkController.Get().nLocalPlayerID != arnPlayerOwners[plyr.id]) {
+        if(ClientNetworkController.Get().IsPlayerLocallyControlled(plyr) == false) {
             plyr.SetInputType(Player.InputType.NONE);
         } else {
             //Otherwise, this character is controlled by this local client - figure out which input type they'll need and add it

@@ -9,27 +9,19 @@ using Photon.Realtime;
 
 public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
 
-    public int nLocalPlayerID;
-    public int nEnemyPlayerID;
+    public int nLocalClientID;
 
     public Text txtNetworkDebug;
 
     private static ClientNetworkController inst;
 
 
-    public void SetPlayerIDs() {
-        nLocalPlayerID = PhotonNetwork.LocalPlayer.ActorNumber;
+    public bool IsPlayerLocallyControlled(Player plyr) {
+        return nLocalClientID == CharacterSelection.Get().arnPlayerOwners[plyr.id];
+    }
 
-        if(PhotonNetwork.CurrentRoom.MaxPlayers < 2) {
-            //If there's only 1 player in the room, we'll have to generate the enemy's id manually
-            Debug.Log("Setting IDs manually");
-            nEnemyPlayerID = 2;
-
-        } else {
-            //If we have another player in the room, then we'll select their actor number
-            // NOTE - this assumes that there are only two players in the room
-            nEnemyPlayerID = PhotonNetwork.PlayerListOthers[0].ActorNumber;
-        }
+    public void SetLocalClientID() {
+        nLocalClientID = PhotonNetwork.LocalPlayer.ActorNumber;
     }
 
     public void OnEnable() {
@@ -41,9 +33,9 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
         }
         inst = this;
 
-        SetPlayerIDs();
+        SetLocalClientID();
 
-        Debug.Log("local PlayerId is " + nLocalPlayerID);
+        Debug.Log("local PlayerId is " + nLocalClientID);
     }
 
     public void OnDisable() {
@@ -59,8 +51,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
     //Can optionally pass in any extra serialized fields to communicate player choices to the master
     public void SendTurnPhaseFinished(int nSerializedInfo = 0) {
 
-        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMFinishedTurnPhase, new object[3] {
-            nLocalPlayerID,
+        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMFinishedTurnPhase, new object[2] {
             (int)ContTurns.Get().curStateTurn,
             nSerializedInfo
         });
@@ -118,7 +109,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
 
         case MasterNetworkController.evtCMoveToNewTurnPhase:
             //Pass along whatever phase of the turn we're now in to the ContTurns
-            Debug.Log("Master told us to move to " + (ContTurns.STATETURN)arContent[0].ToString());
+            Debug.Log("Master told us to move to " + ((ContTurns.STATETURN)arContent[0]).ToString());
             ContTurns.Get().SetTurnState((ContTurns.STATETURN)arContent[0], arContent[1]);
             break;
 

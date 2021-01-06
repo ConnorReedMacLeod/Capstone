@@ -46,7 +46,8 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     public int[] arnPlayerOwners = new int[Player.MAXPLAYERS];
     public int[] arnPlayerInputTypes = new int[Player.MAXPLAYERS];
 
-    public int[] arnPlayerExpectedPhase = new int[Player.MAXPLAYERS];
+    //TODO - look at making this into a dynamic list of connected players
+    public Dictionary<int, int> dictClientExpectedPhase;
 
     public MasterManaDistributer manadistributer;
     public MasterTimeoutController timeoutcontroller;
@@ -63,9 +64,11 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
         nTime = 0;
 
+
+        dictClientExpectedPhase = new Dictionary<int, int>();
         //Initialize the starting phase of the game
-        for(int i = 0; i < arnPlayerExpectedPhase.Length; i++) {
-            arnPlayerExpectedPhase[i] = 0;
+        foreach(Photon.Realtime.Player player in PhotonNetwork.PlayerList) {
+            dictClientExpectedPhase[player.ActorNumber] = 0;
         }
 
     }
@@ -80,8 +83,8 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         byte eventCode = photonEvent.Code;
         if(eventCode >= 200) return; //Don't respond to built-in events
 
+        int nClientID = photonEvent.Sender;
         object[] arContent = (object[])photonEvent.CustomData;
-
 
         Debug.Log("Master Event Received: " + eventCode);
 
@@ -91,8 +94,6 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         case MasterNetworkController.evtMSubmitCharacters:
             //Submitted as 0:PlayerID, 1:arCharacterSelections, 2:InputType
             Debug.Log("Recieved submitted characters");
-
-            int nClientID = photonEvent.Sender;
 
             Debug.Log("Submission was sent by client " + nClientID);
 
@@ -125,12 +126,13 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
             break;
 
         case MasterNetworkController.evtMFinishedTurnPhase:
-            int nPlayerID = (int)arContent[0];
-            int nTurnState = (int)arContent[1];
-            int nSerializedInfo = (int)arContent[2];
-            Debug.Log("Recieved signal that player " + nPlayerID + " has finished phase " + ((ContTurns.STATETURN)nTurnState).ToString());
+            int nTurnState = (int)arContent[0];
+            int nSerializedInfo = (int)arContent[1];
+            Debug.Log("Recieved signal that client " + nClientID + " has finished phase " + ((ContTurns.STATETURN)nTurnState).ToString());
 
-            OnPlayerFinishedPhase(nPlayerID, nTurnState, nSerializedInfo);
+            //TODONOW - this doesn't account for multiple players on the same client - each needs to send a turn-end signal separately
+
+            OnClientFinishedPhase(nClientID, nTurnState, nSerializedInfo);
 
             break;
 
@@ -178,18 +180,18 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     }
 
-    public void MoveToPhase(int nPlayerId, int nNewTurnState) {
+    public void MoveToPhase(int nClientID, int nNewTurnState) {
 
-        //First set that player's expected turn phase to the passed state
-        arnPlayerExpectedPhase[nPlayerId] = nNewTurnState;
+        //First set that client's expected turn phase to the passed state
+        dictClientExpectedPhase[nClientID] = nNewTurnState;
 
         //Then, check if everyone has actually reached this expected phase - if not, we don't need to officially do anything yet
-        for(int i = 0; i < Player.MAXPLAYERS; i++) {
-            if(arnPlayerExpectedPhase[i] != nNewTurnState) {
-                //At least one player hasn't reached the expected turn yet
+        foreach(int i in dictClientExpectedPhase.Keys) {
+            if(dictClientExpectedPhase[i] != nNewTurnState) {
+                //At least one client hasn't reached the expected turn yet
 
                 //Start the timeout timer to ensure the finished players aren't waiting forever on a stalled toaster
-                timeoutcontroller.StartTimeoutTimer((ContTurns.STATETURN)arnPlayerExpectedPhase[i]);
+                timeoutcontroller.StartTimeoutTimer((ContTurns.STATETURN)dictClientExpectedPhase[i]);
                 return;
             }
         }
@@ -197,13 +199,13 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         //At this point, everyone agrees on what turnstate we should be moving to, so prep it
         //  and let everyone know they can progress to it
 
-        object[] arAdditionalInfo = null;
+        object[] arAdditionalInfo = new object[2] { nNewTurnState, null };//Pass null for default extra info
 
         switch(nNewTurnState) {
         case (int)ContTurns.STATETURN.GIVEMANA:
 
             //Ask our MasterManaDistributer component to determine what mana should be given to each player
-            arAdditionalInfo = new object[2] { nNewTurnState, manadistributer.TakeNextMana() };
+            arAdditionalInfo[1] = manadistributer.TakeNextMana();
             break;
 
         case (int)ContTurns.STATETURN.CHOOSEACTIONS:
@@ -215,7 +217,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         case (int)ContTurns.STATETURN.EXECUTEACTIONS:
 
             //Fetch the saved ability selection info and pass it along so each client knows what ability is being used
-            arAdditionalInfo = new object[2] { nNewTurnState, nSavedSerializedTargetSelection };
+            arAdditionalInfo[1] = nSavedSerializedTargetSelection;
             break;
 
         case (int)ContTurns.STATETURN.TURNEND:
@@ -226,11 +228,11 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
         default:
 
-            arAdditionalInfo = new object[1] { nNewTurnState };
+
             break;
         }
 
-        //Let each player know that they can actually progress to that phase
+        //Let each client know that they can actually progress to that phase
         NetworkConnectionManager.SendEventToClients(evtCMoveToNewTurnPhase, arAdditionalInfo);
 
         //Stop the timeout timer
@@ -271,17 +273,18 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         MoveToPhase(nPlayerID, nNextTurnPhase);
     }
 
-    public void OnPlayerFinishedPhase(int nPlayerID, int nCurTurnPhase, int nSerializedInfo = 0) {
+    public void OnClientFinishedPhase(int nClientID, int nCurTurnPhase, int nSerializedInfo = 0) {
 
         //Double check that the phase they claim to have ended is the one we expect them to be on
-        Debug.Assert(arnPlayerExpectedPhase[nPlayerID] == nCurTurnPhase);
+        Debug.Assert(dictClientExpectedPhase[nClientID] == nCurTurnPhase);
 
         //Check if we're in any weird phases that need us to do something special
         if(nCurTurnPhase == (int)ContTurns.STATETURN.CHOOSEACTIONS) {
 
             //We only need to do something special if we received this end-phase signal from a character
             //  who has actually submitted an ability selection for his active character
-            if(ContTurns.Get().GetNextActingChr() != null && ContTurns.Get().GetNextActingChr().plyrOwner.id == nPlayerID) {
+            if(ContTurns.Get().GetNextActingChr() != null &&
+                arnPlayerOwners[ContTurns.Get().GetNextActingChr().plyrOwner.id] == nClientID) {
 
                 //We need to move ahead with finalizing an ability selection.  Check if their selection was valid, and store it.
                 // If it's not valid, then reset it to a rest which will always be fine
@@ -314,17 +317,17 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         }
 
         //If we're done any special actions for this phase, then we can just progress this player to the next phase
-        MoveToNextPhase(nPlayerID, nCurTurnPhase);
+        MoveToNextPhase(nClientID, nCurTurnPhase);
 
     }
 
-    public void ForceAllPlayersEndPhase(ContTurns.STATETURN stateTurn) {
+    public void ForceAllClientsEndPhase(ContTurns.STATETURN stateTurn) {
 
-        for(int i = 0; i < Player.MAXPLAYERS; i++) {
-            if(arnPlayerExpectedPhase[i] == (int)stateTurn) {
-                //Then this is one of the players we have to manually nudge to end their phase
+        foreach(int i in dictClientExpectedPhase.Keys) {
+            if(dictClientExpectedPhase[i] == (int)stateTurn) {
+                //Then this is one of the clients we have to manually nudge to end their phase
 
-                OnPlayerFinishedPhase(i, (int)stateTurn);
+                OnClientFinishedPhase(i, (int)stateTurn);
             }
 
         }
@@ -376,8 +379,8 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     public void PrintExpectedPhases() {
         string sPrint = "[MASTER] Expected Phases:  ";
-        for(int i = 0; i < arnPlayerExpectedPhase.Length; i++) {
-            sPrint += "Player " + i + ": " + ((ContTurns.STATETURN)arnPlayerExpectedPhase[i]).ToString() + " | ";
+        foreach(int i in dictClientExpectedPhase.Keys) {
+            sPrint += "Client " + i + ": " + ((ContTurns.STATETURN)dictClientExpectedPhase[i]).ToString() + " | ";
         }
 
         Debug.Log(sPrint);
