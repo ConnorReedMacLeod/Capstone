@@ -103,6 +103,27 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
             SetState(new StateTargetTeam());
             break;
 
+        case Clause.TargetType.SPECIAL:
+            //TODO - eventually figure out how to handle specialized custom selections for abilities
+            //        i.e., bringing up a custom menu to select an option from
+            Debug.Log("Choosing a special action - serialize and submit it right away");
+
+            //Make a SelectionInfo package for this action
+            SelectionSerializer.SelectionSpecial infoSelectionSpec =
+                new SelectionSerializer.SelectionSpecial(
+                    actSelected.chrSource,
+                    actSelected);
+
+            if(infoSelectionSpec.CanActivate() == false) {
+                Debug.Log("This special action isn't valid to select");
+                SetState(new StateTargetIdle());
+
+            } else {
+                FinishTargetting(infoSelectionSpec);
+            }
+
+
+            break;
         default:
             Debug.LogError("Unsupported selection type of " + _actSelected.GetTargetType());
             break;
@@ -113,7 +134,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
     public void FinishTargetting(SelectionSerializer.SelectionInfo infoSelected) {
 
-        //Ensure the submission matches out local information
+        //Ensure the submission matches our local information
         Debug.Assert(chrSelected == infoSelected.chrOwner);
         Debug.Assert(actSelected == infoSelected.actUsed);
 
