@@ -94,6 +94,8 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
         // selection process was completed
         inputSentFrom.CompletedSelection();
 
+        Debug.Log("Client is about to send " + infoSelectionSubmitted.Serialize() + " - " + infoSelectionSubmitted.ToString());
+
         //Submit the ability selection to the master
         ClientNetworkController.Get().SendTurnPhaseFinished(infoSelectionSubmitted.Serialize());
 
@@ -107,18 +109,18 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
         //Save the result that the master broadcasted out
         infoSelectionFromMaster = SelectionSerializer.Deserialize(chrActing, nSerializedSelection);
 
+        Debug.Log("Client received selection of " + infoSelectionFromMaster.ToString());
+
         //Ensure the passed action is valid
         Debug.Assert(infoSelectionFromMaster.CanActivate());
 
         //Stop the selection process (if it's still ongoing) since the decision has already been finalized by the master
         Match.Get().GetLocalPlayer().inputController.EndSelection();
 
-        //Since the master has sent out the selection information to everyone, we're good to start processing the effect
-        ContAbilityEngine.Get().ProcessStacks();
-
     }
 
     public void ResetStoredSelection() {
+        Debug.Log("Resetting stored selection from master");
         infoSelectionFromMaster = null;
     }
 
@@ -127,7 +129,7 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
         Chr chrCurActing = ContTurns.Get().GetNextActingChr();
 
         if(chrCurActing == null) {
-            Debug.LogError("No character is set to act this turn - just move to the next phase");
+            Debug.Log("No character is set to act this turn - just move to the next phase");
 
             ClientNetworkController.Get().SendTurnPhaseFinished();
             return;

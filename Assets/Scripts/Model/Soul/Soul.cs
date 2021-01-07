@@ -144,7 +144,7 @@ public class Soul {
             chrTarget = soulToCopy.chrTarget;
         }
 
-        soulContainer = new SoulContainer(soulToCopy.soulContainer);
+        soulContainer = soulToCopy.soulContainer;
         sName = string.Copy(soulToCopy.sName);
         bVisible = soulToCopy.bVisible;
         bLocked = soulToCopy.bLocked;

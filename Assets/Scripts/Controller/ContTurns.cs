@@ -153,6 +153,10 @@ public class ContTurns : Singleton<ContTurns> {
             // character acting this turn.
 
             return;
+        } else if(curStateTurn == STATETURN.EXECUTEACTIONS) {
+            //After we're done executing the action (and processing all associated effects) that was passed to us,
+            //  then we can clear out the selection info that the master passed to us since we're done with it
+            ContAbilitySelection.Get().ResetStoredSelection();
         }
 
 

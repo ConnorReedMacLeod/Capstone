@@ -43,9 +43,9 @@ public class ExecTurnExecuteAction : Executable {
 
         sLabel = chrNextToAct.sName + " is using " + ContAbilitySelection.Get().infoSelectionFromMaster.actUsed.sDisplayName;
 
-        chrNextToAct.ExecuteAction(ContAbilitySelection.Get().infoSelectionFromMaster);
+        Debug.Log("ExecTurnExecuteAction: " + sLabel);
 
-        ContAbilitySelection.Get().ResetStoredSelection();
+        chrNextToAct.ExecuteAction(ContAbilitySelection.Get().infoSelectionFromMaster);
 
         fDelay = ContTurns.fDelayStandard;
 

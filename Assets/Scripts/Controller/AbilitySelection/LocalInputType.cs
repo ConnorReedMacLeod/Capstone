@@ -10,6 +10,7 @@ public abstract class LocalInputType : MonoBehaviour {
     public virtual bool CanProceedWithSkillSelection() {
         // By default, we don't allow manual selection of any of our character skills
         // if this player is an AI/scripted
+
         return false;
     }
 

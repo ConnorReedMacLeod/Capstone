@@ -6,7 +6,8 @@ public static class SelectionSerializer {
 
     public static byte GetByte(int nPos, int nSerialized) {
         //Positions are (0, 1, 2, 3)
-        return (byte)(nSerialized & (255 << (8 * (3 - nPos))) >> (8 * (3 - nPos)));
+
+        return (byte)((nSerialized & (255 << (8 * (3 - nPos)))) >> (8 * (3 - nPos)));
     }
 
     public static int Serialize(byte b1, byte b2, byte b3, byte b4) {
@@ -18,7 +19,7 @@ public static class SelectionSerializer {
     }
 
     public static byte SerializeByte(Chr chr) {
-        return (byte)chr.id;
+        return (byte)chr.globalid;
     }
     public static Chr DeserializeChr(byte b) {
         return Chr.lstAllChrs[b];
