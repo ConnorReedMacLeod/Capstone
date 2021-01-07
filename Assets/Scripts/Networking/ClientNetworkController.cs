@@ -74,7 +74,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
         byte eventCode = photonEvent.Code;
         if(eventCode >= 200) return; //Don't respond to built-in events
 
-        Debug.Log("Client Event Received: " + eventCode);
+        //Debug.Log("Client Event Received: " + eventCode);
 
         object[] arContent = (object[])photonEvent.CustomData;
 

@@ -86,7 +86,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         int nClientID = photonEvent.Sender;
         object[] arContent = (object[])photonEvent.CustomData;
 
-        Debug.Log("Master Event Received: " + eventCode);
+        //Debug.Log("Master Event Received: " + eventCode);
 
         //The master controller should only react to player-submitted input events (addressed to evtM...)
         switch(eventCode) {
@@ -112,7 +112,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
             arnCharacterSelectsReceived[nPlayer] = new int[Player.MAXCHRS];
             ((int[])arContent[1]).CopyTo(arnCharacterSelectsReceived[nPlayer], 0);
 
-            Debug.LogError("Master recieved selections for player " + nPlayer + " of " + arnCharacterSelectsReceived[nPlayer][0] + ", " + arnCharacterSelectsReceived[nPlayer][1] + ", " + arnCharacterSelectsReceived[nPlayer][2]);
+            //Debug.LogError("Master recieved selections for player " + nPlayer + " of " + arnCharacterSelectsReceived[nPlayer][0] + ", " + arnCharacterSelectsReceived[nPlayer][1] + ", " + arnCharacterSelectsReceived[nPlayer][2]);
 
             //Now check if we've received selections for all players
             if(HasReceivedAllCharacterSelections()) {
@@ -120,7 +120,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
                 Debug.Log("Sending out player selections since all player selections have been received");
                 OnReceivedAllCharacterSelections();
 
-                Debug.Log("NOTE - once everything's correct with character selection, can move ahead with turn processing by adding more code here");
+                Debug.Log("NOTE - once everything's correct with character selection, can move ahead with automatic turn processing by adding more code here");
             }
 
             break;
@@ -129,8 +129,6 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
             int nTurnState = (int)arContent[0];
             int nSerializedInfo = (int)arContent[1];
             Debug.Log("Recieved signal that client " + nClientID + " has finished phase " + ((ContTurns.STATETURN)nTurnState).ToString());
-
-            //TODONOW - this doesn't account for multiple players on the same client - each needs to send a turn-end signal separately
 
             OnClientFinishedPhase(nClientID, nTurnState, nSerializedInfo);
 
@@ -281,7 +279,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         //Check if we're in any weird phases that need us to do something special
         if(nCurTurnPhase == (int)ContTurns.STATETURN.CHOOSEACTIONS) {
 
-            //We only need to do something special if we received this end-phase signal from a character
+            //We only need to do something special if we received this end-phase signal from a client
             //  who has actually submitted an ability selection for his active character
             if(ContTurns.Get().GetNextActingChr() != null &&
                 arnPlayerOwners[ContTurns.Get().GetNextActingChr().plyrOwner.id] == nClientID) {
@@ -290,27 +288,33 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
                 // If it's not valid, then reset it to a rest which will always be fine
                 if(nSerializedInfo == 0) {
 
+                    Debug.Log("MASTER: Received selection has 0 passed as the additional info");
+
                     //If no additional info was passed, then interpret this as a rest action
                     ResetSavedAbilitySelection();
 
-                } else if(SelectionSerializer.Deserialize(ContTurns.Get().GetNextActingChr(), nSerializedInfo).CanActivate()) {
-
-                    //If the ability selection and targetting passed can be used, then save that selection and try to move to the next phase
-
-                    SaveAbilitySelection(nSerializedInfo);
-
                 } else {
-                    //Otherwise, if we were passed an invalid ability selection 
+                    SelectionSerializer.SelectionInfo infoReceived = SelectionSerializer.Deserialize(ContTurns.Get().GetNextActingChr(), nSerializedInfo);
+                    if(infoReceived.CanActivate()) {
 
-                    Debug.LogError("MASTER: Invalid ability selection of " + nSerializedInfo);
+                        //If the ability selection and targetting passed can be used, then save that selection and try to move to the next phase
 
-                    //Then we'll override that ability selection and just assign them a rest (they can locally fail to select a correct ability as many times as they 
-                    // want, but they should only ever submit to the master if they're sure they have a finallized good selection)
+                        Debug.Log("MASTER: Received valid selection for " + nSerializedInfo + " - " + infoReceived.ToString());
 
-                    ResetSavedAbilitySelection();
+                        SaveAbilitySelection(nSerializedInfo);
 
-                    //TODO - put a signal in here to let the current player know that they somehow submitted an invalid ability
+                    } else {
+                        //Otherwise, if we were passed an invalid ability selection 
 
+                        Debug.LogError("MASTER: Received invalid ability selection of " + infoReceived.ToString());
+
+                        //Then we'll override that ability selection and just assign them a rest (they can locally fail to select a correct ability as many times as they 
+                        // want, but they should only ever submit to the master if they're sure they have a finallized good selection)
+
+                        ResetSavedAbilitySelection();
+
+                        //TODO - put a signal in here to let the current player know that they somehow submitted an invalid ability
+                    }
                 }
 
             }

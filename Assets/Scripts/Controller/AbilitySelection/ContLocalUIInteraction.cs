@@ -70,7 +70,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         }
 
         // Check if it's actually got a LocalInputType that will allow us to select an ability
-        if(_actSelected.chrSource.plyrOwner.inputController.CanProceedWithSkillSelection()) {
+        if(_actSelected.chrSource.plyrOwner.inputController.CanProceedWithSkillSelection() == false) {
 
             Debug.Log("This character is owner by a local player, but selection of abilities is not available currently");
             return;

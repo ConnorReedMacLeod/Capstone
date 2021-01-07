@@ -12,7 +12,7 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
     public GameObject pfTimer;
     public ViewTimer viewTimerCur;
 
-    public const bool bDEBUGENGINE = false;
+    public const bool bDEBUGENGINE = true;
 
     public void cbAutoProcessStacks(Object target, params object[] args) {
         if(bAutoTurns == true) return; //If the button is already pressed
@@ -93,6 +93,8 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
 
 
     public void ResolveExec() {
+
+        if(bDEBUGENGINE) Debug.Log("Resolving an Executable of type" + stackExec.Peek().GetType().ToString());
 
         //Remove the Executable from the top of the stack and execute it
         stackExec.Pop().Execute();
@@ -224,7 +226,6 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
             } else {
                 //at this point, we can actually evaluate this executable
 
-                if(bDEBUGENGINE) Debug.Log("Resolving an Executable");
                 ResolveExec();
 
             }

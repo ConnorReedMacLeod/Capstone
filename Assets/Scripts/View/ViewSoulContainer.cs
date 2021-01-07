@@ -41,9 +41,6 @@ public class ViewSoulContainer : MonoBehaviour {
 
         SetNumSoulSlots(3);
 
-        Debug.Log("mod is " + mod);
-        Debug.Log("subVisibleSOulUpdate is " + mod.subVisibleSoulUpdate);
-
         mod.subVisibleSoulUpdate.Subscribe(cbUpdateVisibleSoul);
 
         cbUpdateVisibleSoul(null);//Initially update the soul to just be blanks
