@@ -12,7 +12,7 @@ public class ClauseTagChrRanged : ClauseTagChr {
     public override List<Chr> DisambiguateFinalTargetting(List<Chr> lstTargets, SelectionSerializer.SelectionInfo selectionInfo) {
         //For ranged, only accept the character that we specifically initially selected
 
-        return lstTargets.Where(c => c.id == ((SelectionSerializer.SelectionChr)selectionInfo).chrOwner.id).ToList<Chr>();
+        return lstTargets.Where(c => c.globalid == ((SelectionSerializer.SelectionChr)selectionInfo).chrSelected.globalid).ToList<Chr>();
     }
 
     public ClauseTagChrRanged(Clause _clause) : base(_clause) {

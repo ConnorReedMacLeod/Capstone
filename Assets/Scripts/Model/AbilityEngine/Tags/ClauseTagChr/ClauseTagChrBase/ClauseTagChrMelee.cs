@@ -13,7 +13,7 @@ public class ClauseTagChrMelee : ClauseTagChr {
         //Scan through the potential blockers (only blockers should remain at this point) and choose only the blocker 
         // on the same team as was originally selected
 
-        return lstTargets.Where(c => c.plyrOwner.id == ((SelectionSerializer.SelectionChr)selectionInfo).chrOwner.plyrOwner.id).ToList<Chr>();
+        return lstTargets.Where(c => c.plyrOwner.id == ((SelectionSerializer.SelectionChr)selectionInfo).chrSelected.plyrOwner.id).ToList<Chr>();
     }
 
     public ClauseTagChrMelee(Clause _clause) : base(_clause) {

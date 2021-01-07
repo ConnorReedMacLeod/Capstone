@@ -33,7 +33,7 @@ public abstract class LocalInputType : MonoBehaviour {
     }
 
     public void GaveInvalidTarget() {
-        Debug.Log("Warning: Master deemed the sent selectionInfo was invalid - must select another");
+        Debug.Log("Warning: The attempt selectionInfo was invalid - must select another");
 
         //We should resume looking for input for selecting an ability
         StartSelection();
