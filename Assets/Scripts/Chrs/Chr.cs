@@ -366,7 +366,7 @@ public class Chr : MonoBehaviour {
     //Performs the consumed action 
     public void ExecuteAction(SelectionSerializer.SelectionInfo infoSelection) {
 
-        if(infoSelection.actUsed.CanActivate(infoSelection) == false) {
+        if(infoSelection.CanActivate() == false || infoSelection.actUsed.CanPayMana() == false) {
             Debug.LogError("ERROR! This ability was targetted, but is no longer a valid action");
             infoSelection = SelectionSerializer.MakeRestSelection(this);
         }

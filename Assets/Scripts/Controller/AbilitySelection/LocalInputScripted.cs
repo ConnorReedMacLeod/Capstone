@@ -31,6 +31,9 @@ public class LocalInputScripted : LocalInputType {
         //Save the character who we'll be selecting abilities for
         Chr chrToAct = ContTurns.Get().chrNextReady;
 
+        Debug.Assert(chrToAct != null, "Scripted input was asked to submit an action for a character, but no character is acting");
+        Debug.Assert(chrToAct.plyrOwner.id == plyrOwner.id, "Scripted input was asked to submit an action for a character is doesn't own");
+
         KeyValuePair<int, int> nextSelection;
         int nTargetsTried = 0;
 
@@ -55,8 +58,9 @@ public class LocalInputScripted : LocalInputType {
             Debug.Log(chrToAct.sName + " wants chosen to use " + infoSelection.ToString());
 
             //Test to see if this ability would be valid
-            if(infoSelection.actUsed.CanActivate(infoSelection) == false) {
-                Debug.Log("The targets given would not be legal");
+            if(infoSelection.CanActivate() == false ||
+                infoSelection.actUsed.CanPayMana() == false) {
+                Debug.Log("The action selection would not be legal");
 
                 if(nTargetsTried >= MAXTARGETATTEMPTS) {
                     //If we've tried too many abilities with no success, just end our selections
