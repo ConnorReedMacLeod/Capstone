@@ -49,7 +49,7 @@ public class ExecTurnChooseActions : Executable {
     }
 
     public ExecTurnChooseActions(Chr _chrSource) : base(_chrSource) {
-
+        bStopAutoProcessing = true;
     }
 
     public ExecTurnChooseActions(ExecTurnChooseActions other) : base(other) {

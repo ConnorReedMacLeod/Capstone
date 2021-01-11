@@ -274,7 +274,8 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     public void OnClientFinishedPhase(int nClientID, int nCurTurnPhase, int nSerializedInfo = 0) {
 
         //Double check that the phase they claim to have ended is the one we expect them to be on
-        Debug.Assert(dictClientExpectedPhase[nClientID] == nCurTurnPhase);
+        Debug.Assert(dictClientExpectedPhase[nClientID] == nCurTurnPhase, "Client " + nClientID + " is expected to be in " +
+            (ContTurns.STATETURN)dictClientExpectedPhase[nClientID] + " but received the signal that they finished " + (ContTurns.STATETURN)nCurTurnPhase);
 
         //Check if we're in any weird phases that need us to do something special
         if(nCurTurnPhase == (int)ContTurns.STATETURN.CHOOSEACTIONS) {
@@ -354,7 +355,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         if(nNewTime > nTime) {
             nTime = nNewTime;
             NetworkConnectionManager.SendEventToClients(evtCTimerTick, new object[1] { nTime });
-            PrintExpectedPhases();
+            //PrintExpectedPhases();
         }
     }
 

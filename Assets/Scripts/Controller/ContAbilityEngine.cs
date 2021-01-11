@@ -12,7 +12,7 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
     public GameObject pfTimer;
     public ViewTimer viewTimerCur;
 
-    public const bool bDEBUGENGINE = true;
+    public const bool bDEBUGENGINE = false;
 
     public void cbAutoProcessStacks(Object target, params object[] args) {
         if(bAutoTurns == true) return; //If the button is already pressed
@@ -33,19 +33,23 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
         }
 
         //TODONOW - change this to initially send a starting signal to the master
+        Debug.Log("Autoprocessing stacks");
         ProcessStacks();
     }
 
     public void cbManualExecuteEvent(Object target, params object[] args) {
         bAutoTurns = false;
 
+        Debug.Log("********************************************");
         //Check if there's any stack to process
         if(AreStacksEmpty()) {
             //If the stacks are empty, then manual execution of the phase just means
             // submitting a signal to the master to let it know we're done with the phase
+            Debug.Log("Manually finishing a turn phase");
             ContTurns.Get().FinishedTurnPhase();
         } else {
             //There's still effects to process, so process the contents of the stacks just once
+            Debug.Log("Manually processing stacks");
             ProcessStacks();
         }
 
@@ -221,11 +225,11 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
                 top.bPreTriggered = true;
 
                 //Now recurse so that we can process whatever effect should come next
+                if(bDEBUGENGINE) Debug.Log("Recursing on ProcessStacks after resolving replacements");
                 ProcessStacks();
 
             } else {
                 //at this point, we can actually evaluate this executable
-
                 ResolveExec();
 
             }
@@ -244,6 +248,8 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
             ResolveClause();
 
             //Then recurse to find something new we can process
+
+            if(bDEBUGENGINE) Debug.Log("Recursing on ProcessStacks after unpacking a clause");
             ProcessStacks();
             return;
         }
@@ -266,6 +272,9 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
 
         //ProcessStacks();
 
+
+        if(bDEBUGENGINE) Debug.Log("Reached the end of ProcessStacks");
+
     }
 
     //Other classes can call this to invoke the ProcessStack method after a delay
@@ -278,6 +287,8 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
                 SpawnTimer(fDelay, sLabel);
             }
             if(bCancelInvoke == false) {
+
+                if(bDEBUGENGINE) Debug.Log("Calling autoprocessstacks with a delay after finishing processing a previous executable");
                 ContTime.Get().Invoke(fDelay, AutoProcessStacks);
             }
         } else {
@@ -288,6 +299,8 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
                 //If there wouldn't be any delay on evaluating anyway, then just immediately 
                 //Process the next event immediately without spawning a timer
 
+
+                if(bDEBUGENGINE) Debug.Log("Immediately calling ProcessStacks since there's no delay between executions");
                 ProcessStacks();
             } else {
                 //If there is a delay, then just spawn the timer and wait for the user to click to move

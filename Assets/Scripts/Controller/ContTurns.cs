@@ -16,8 +16,8 @@ public class ContTurns : Singleton<ContTurns> {
     public Subject subNextActingChrChange = new Subject();
     public static Subject subAllPriorityChange = new Subject(Subject.SubType.ALL);
 
-    public const float fDelayTurnAction = 0.0f;
-    public const float fDelayMinorAction = 0.0f;
+    public const float fDelayTurnAction = 0.5f;
+    public const float fDelayMinorAction = 0.5f;
     public const float fDelayStandard = 1.25f;
 
 
@@ -231,9 +231,11 @@ public class ContTurns : Singleton<ContTurns> {
             break;
         }
 
-        //Now that the appropriate ExecTurn as been added, we can resume processing the stack
-
-        ContAbilityEngine.Get().ProcessStacks();
+        if(ContAbilityEngine.Get().bAutoTurns) {
+            //Now that the appropriate ExecTurn as been added, we can resume processing the stack
+            Debug.Log("Calling ProcessStacks to start setting up the actions for this phase");
+            ContAbilityEngine.Get().ProcessStacks();
+        }
     }
 
     public void InitializePriorities() {
