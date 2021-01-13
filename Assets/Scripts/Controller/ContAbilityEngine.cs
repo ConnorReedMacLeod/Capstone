@@ -32,8 +32,6 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
             return;
         }
 
-        //TODONOW - change this to initially send a starting signal to the master
-        Debug.Log("Autoprocessing stacks");
         ProcessStacks();
     }
 

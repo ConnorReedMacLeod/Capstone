@@ -52,7 +52,7 @@ public class Chr : MonoBehaviour {
 
     public Action[] arActions;      //The characters actions
     public static int nActions = 9; //Number of actions the character can perform
-    public static int nCharacterActions = 8; // Number of non-standard actions
+    public static int nCharacterActions = 8; // Number of standard actions
     public const int NUSABLEACTIONS = 4; //The number of actions available at a time for a character to use
 
     public const int idResting = 7;  //id for the resting action
@@ -74,6 +74,11 @@ public class Chr : MonoBehaviour {
     public Subject subStartIdle = new Subject();
     public static Subject subAllStartIdle = new Subject(Subject.SubType.ALL);
 
+    public Subject subBecomesActiveForHumans = new Subject(); // When this character's turn for selecting abilities begins
+    public Subject subEndsActiveForHumans = new Subject(); // When this character's turn for selecting abilities ends
+
+    public Subject subBecomesTargettable = new Subject(); // When an ability that is choosing targets can target this character
+    public Subject subEndsTargettable = new Subject(); // When the ability that could target this character stops its targetting process
 
     public Subject subBeforeActivatingAction = new Subject();
     public static Subject subAllBeforeActivatingAction = new Subject(Subject.SubType.ALL);

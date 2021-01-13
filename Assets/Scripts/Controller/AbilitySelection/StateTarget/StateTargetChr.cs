@@ -38,6 +38,26 @@ public class StateTargetChr : StateTarget {
 
     }
 
+    public void NotifySelectableTargets() {
+
+        Action actTargetting = ContLocalUIInteraction.Get().actSelected;
+
+        foreach(Chr chrPossibleTarget in ((ClauseChr)actTargetting.GetDominantClause()).GetSelectable()) {
+            //Let each targettable character know that they are targettable by this currently selected ability - can highlight them 
+            chrPossibleTarget.subBecomesTargettable.NotifyObs(null, actTargetting);
+        }
+    }
+
+    public void NotifySelectableTargetsEnded() {
+
+        Action actTargetting = ContLocalUIInteraction.Get().actSelected;
+
+        foreach(Chr chrPossibleTarget in ((ClauseChr)actTargetting.GetDominantClause()).GetSelectable()) {
+            //Let each targettable character know that this ability is done targetting, so we can clear anything out that was done when they were targettable
+            chrPossibleTarget.subEndsTargettable.NotifyObs(null, actTargetting);
+        }
+    }
+
     override public void OnEnter() {
 
         Debug.Assert(ContLocalUIInteraction.Get().chrSelected != null);
@@ -52,6 +72,7 @@ public class StateTargetChr : StateTarget {
         ViewBlockerButton.subAllClick.Subscribe(cbSwitchAction);
         ViewRestButton.subAllClick.Subscribe(cbSwitchAction);
 
+        NotifySelectableTargets();
     }
 
     override public void OnLeave() {
@@ -64,6 +85,7 @@ public class StateTargetChr : StateTarget {
         ViewBlockerButton.subAllClick.UnSubscribe(cbSwitchAction);
         ViewRestButton.subAllClick.UnSubscribe(cbSwitchAction);
 
+        NotifySelectableTargetsEnded();
     }
 
 }

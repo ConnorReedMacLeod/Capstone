@@ -179,7 +179,7 @@ public class Action { //This should probably be made abstract
     }
 
     //Check if the owner is alive and that the proposed targets are legal
-    public virtual bool LegalTargets(SelectionSerializer.SelectionInfo selectionInfo) {
+    public virtual bool IsLegalSelectionInfo(SelectionSerializer.SelectionInfo selectionInfo) {
 
         if(chrSource.bDead) {
             Debug.Log("The character source is dead");
@@ -213,7 +213,7 @@ public class Action { //This should probably be made abstract
             return false;
         }
 
-        if(LegalTargets(selectionInfo) == false) {
+        if(IsLegalSelectionInfo(selectionInfo) == false) {
             //Debug.Log("Targets aren't legal");
             return false;
         }

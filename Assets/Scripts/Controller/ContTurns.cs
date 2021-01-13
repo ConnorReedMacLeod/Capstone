@@ -233,7 +233,6 @@ public class ContTurns : Singleton<ContTurns> {
 
         if(ContAbilityEngine.Get().bAutoTurns) {
             //Now that the appropriate ExecTurn as been added, we can resume processing the stack
-            Debug.Log("Calling ProcessStacks to start setting up the actions for this phase");
             ContAbilityEngine.Get().ProcessStacks();
         }
     }
