@@ -25,7 +25,7 @@ public class LocalInputHuman : LocalInputType {
     public override void StartSelection() {
         base.StartSelection();
 
-        //TODO - hookup character highlighting to this
+        ContTurns.Get().chrNextReady.subBecomesActiveForHumans.NotifyObs();
         subAllHumanStartSelection.NotifyObs(this);
 
     }
@@ -33,7 +33,7 @@ public class LocalInputHuman : LocalInputType {
     public override void EndSelection() {
         base.EndSelection();
 
-        //TODO - should close any mid-selection UI for targetting skills
+        ContTurns.Get().chrNextReady.subEndsActiveForHumans.NotifyObs();
         subAllHumanEndSelection.NotifyObs(this);
 
     }

@@ -26,8 +26,8 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
     //  require one click for finalizing selection of an ability's targets).  If this ever changes,
     //  we can make a list of needed selection types and record the chosen selections here
 
-    public static Subject subAllStartTargetting = new Subject(Subject.SubType.ALL);
-    public static Subject subAllFinishTargetting = new Subject(Subject.SubType.ALL);
+    public static Subject subAllStartManualTargetting = new Subject(Subject.SubType.ALL);
+    public static Subject subAllFinishManualTargetting = new Subject(Subject.SubType.ALL);
 
     // Start a new round of targetting
     public void ResetTar() {
@@ -45,7 +45,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         SetState(new StateTargetIdle());
 
         //Let everything know that targetting has ended
-        subAllFinishTargetting.NotifyObs(this);
+        subAllFinishManualTargetting.NotifyObs(this);
     }
 
     public void SelectCharacter(Chr _chrSelected) {
@@ -151,7 +151,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         SetState(new StateTargetIdle());
 
         //Let everything know that targetting has ended
-        subAllFinishTargetting.NotifyObs(this);
+        subAllFinishManualTargetting.NotifyObs(this);
     }
 
     public void SetState(StateTarget newState) {

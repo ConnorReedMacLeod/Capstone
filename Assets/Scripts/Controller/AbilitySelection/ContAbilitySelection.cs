@@ -120,7 +120,7 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
     }
 
     public void ResetStoredSelection() {
-        Debug.Log("Resetting stored selection from master");
+        //Debug.Log("Resetting stored selection from master");
         infoSelectionFromMaster = null;
     }
 
