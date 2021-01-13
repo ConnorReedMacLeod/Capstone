@@ -245,7 +245,7 @@ public class Action { //This should probably be made abstract
 
         public override void ClauseEffect() {
 
-            ContAbilityEngine.PushSingleExecutable(new ExecChangeMana(action.chrSource, action.chrSource.plyrOwner, action.parCost.Get()));
+            ContAbilityEngine.PushSingleExecutable(new ExecChangeMana(action.chrSource, action.chrSource.plyrOwner, Mana.ConvertToCost(action.parCost.Get())));
 
         }
 
