@@ -48,9 +48,19 @@ public class SoulSmokeCover : Soul {
 
     public void cbOnBecomeBlocker(Object target, object[] args) {
         //Only continue if the buffed character is the one about to become the blocker
-        if (((ExecBecomeBlocker)args[0]).chrTarget != this.chrTarget) return;
+        if(((ExecBecomeBlocker)args[0]).chrTarget != this.chrTarget) return;
 
         //When we become blocker, dispel this soul effect
         soulContainer.RemoveSoul(this);
+    }
+
+    public SoulSmokeCover(SoulSmokeCover other, Chr _chrTarget = null) : base(other) {
+        if(_chrTarget != null) {
+            //If a Target was provided, then we'll use that
+            chrTarget = _chrTarget;
+        } else {
+            //Otherwise, just copy from the other object
+            chrTarget = other.chrTarget;
+        }
     }
 }

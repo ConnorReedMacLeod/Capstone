@@ -7,7 +7,7 @@ public class StateChanneling : StateReadiness {
     public int nChannelTime;
 
     public SoulChannel soulBehaviour; //Handles all customized behaviour of what the channel effect should do
-    public SelectionSerializer.SelectionInfo selectioninfoStored;//TODONOW - figure out where to initialize this
+    public SelectionSerializer.SelectionInfo selectioninfoStored;
 
     public StateChanneling(Chr _chrOwner, int _nChannelTime, SoulChannel _soulBehaviour) : base(_chrOwner) {
 
@@ -17,7 +17,9 @@ public class StateChanneling : StateReadiness {
         Debug.Assert(_soulBehaviour.bVisible == false);
         soulBehaviour = _soulBehaviour;
 
-        Debug.Log("soulBehaviour's action is initially " + soulBehaviour.act);
+        //Set the channel time to be equal to whatever the soul's duration is
+
+        Debug.Log("soulBehaviour's action is initially " + soulBehaviour.act + " with duration " + nChannelTime);
     }
 
     public override TYPE Type() {

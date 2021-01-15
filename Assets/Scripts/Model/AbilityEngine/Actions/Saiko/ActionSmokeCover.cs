@@ -24,7 +24,7 @@ public class ActionSmokeCover : Action {
 
     class Clause1 : ClauseChr {
 
-        public SoulCloudCushion soulToCopy;
+        public SoulSmokeCover soulToCopy;
 
         public Clause1(Action _act) : base(_act) {
             plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
@@ -32,18 +32,18 @@ public class ActionSmokeCover : Action {
                 new ClauseTagChrSelf(this)
             });
 
-            soulToCopy = new SoulCloudCushion(action.chrSource, null, action);
+            soulToCopy = new SoulSmokeCover(action.chrSource, null, action);
         }
 
         public override string GetDescription() {
 
             return string.Format("Gain SHROUDED (4)\n" +
-                "[SHROUDED]: This character is immune to damage.  If this character becomes the Vanguard, dispel this.", soulToCopy.nDefenseBuff, soulToCopy.pnMaxDuration.Get());
+                "[SHROUDED]: This character is immune to damage.  If this character becomes the Vanguard, dispel this.");
         }
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulCloudCushion(soulToCopy, chrSelected)) {
+            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulSmokeCover(soulToCopy, chrSelected)) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndSmokeCover", 4.3f) },
                 sLabel = "Disappearing into the shadows..."
             });

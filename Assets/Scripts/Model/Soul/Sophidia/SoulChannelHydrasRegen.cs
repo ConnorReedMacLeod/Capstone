@@ -7,7 +7,7 @@ public class SoulChannelHydrasRegen : SoulChannel {
     public int nBaseHealing;
     public Healing heal;
 
-    public SoulChannelHydrasRegen(Action _act): base(_act){
+    public SoulChannelHydrasRegen(Action _act) : base(_act) {
 
         nBaseHealing = 10;
         heal = new Healing(chrSource, null, nBaseHealing);
@@ -28,5 +28,5 @@ public class SoulChannelHydrasRegen : SoulChannel {
              }
         };
     }
-    
+
 }

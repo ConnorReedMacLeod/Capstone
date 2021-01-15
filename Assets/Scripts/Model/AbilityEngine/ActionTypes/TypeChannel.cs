@@ -22,6 +22,10 @@ public class TypeChannel : TypeAction {
             Debug.Log("Warning - making a blank channel soul behaviour");
             soulBehaviour = new SoulChannel(act);
         }
+
+        //Note that the soulbehaviour will be invisible and have infinite duration - it will just be removed
+        //  by some non-time related trigger (typically the character transitioning away from a Channeling State)
+        Debug.Log("Creating TypeChannel with duration: " + nStartChannelTime);
     }
 
     public override string getName() {
@@ -40,12 +44,9 @@ public class TypeChannel : TypeAction {
         //Store a copy of the current SelectionInfo so that we can use it later when the channel finishes (or triggers in some way)
         infoStoredSelection = base.GetSelectionInfo().GetCopy();
 
-        //We don't need to perform any real action on starting channeling other than changing our readiness state so that the 
-        // soulchannel effect can be applied (and do any on-application effects if necessary)
-        act.chrSource.SetStateReadiness(new StateChanneling(act.chrSource, nStartChannelTime, new SoulChannel(soulBehaviour, act)));
+        Debug.Log("Pushing a begin channel clause");
 
-
-
+        ContAbilityEngine.PushSingleClause(new ClauseBeginChannel(act));
     }
 
     public override SelectionSerializer.SelectionInfo GetSelectionInfo() {
@@ -56,4 +57,22 @@ public class TypeChannel : TypeAction {
     public void ClearStoredSelectionInfo() {
         infoStoredSelection = null;
     }
+
+    class ClauseBeginChannel : ClauseSpecial {
+
+        public ClauseBeginChannel(Action _act) : base(_act) {
+        }
+
+        public override string GetDescription() {
+            return string.Format("Transition to a channeling state");
+        }
+
+        public override void ClauseEffect() {
+
+            ContAbilityEngine.PushSingleExecutable(new ExecBeginChannel(action.chrSource, action.chrSource, action));
+
+        }
+
+    };
+
 }

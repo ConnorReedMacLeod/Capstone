@@ -77,8 +77,8 @@ public class ActionHarpoonGun : Action {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulBurning(soulToCopy, chrSelected)){
-              sLabel = "Hey, I caught one!"  
+            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulBurning(soulToCopy, chrSelected)) {
+                sLabel = "Hey, I caught one!"
             });
 
         }

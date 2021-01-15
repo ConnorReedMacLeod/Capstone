@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ActionTwinSnakes : Action {
 
-    public ActionTwinSnakes(Chr _chrOwner) : base(_chrOwner ,0) {
+    public ActionTwinSnakes(Chr _chrOwner) : base(_chrOwner, 0) {
 
         sName = "TwinSnakes";
         sDisplayName = "Twin Snakes";
@@ -40,7 +40,7 @@ public class ActionTwinSnakes : Action {
 
         public override string GetDescription() {
 
-            return string.Format("Deal {0} damage to the chosen character twice.  Lose {1} health twice", dmg.Get(), nLifeloss);
+            return string.Format("Deal {0} damage to the chosen character.  Lose {1} health", dmg.Get(), nLifeloss);
         }
 
         public override void ClauseEffect(Chr chrSelected) {

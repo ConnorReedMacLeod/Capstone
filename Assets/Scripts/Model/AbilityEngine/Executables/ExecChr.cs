@@ -6,9 +6,11 @@ public abstract class ExecChr : Executable {
 
     public Chr chrTarget;
 
-    public override bool isLegal() { 
+    public override bool isLegal() {
 
-        if (chrTarget == null || chrTarget.bDead) {
+        if(chrTarget == null) {
+            Debug.Log("Executable of type " + this.GetType().ToString() + " not legal since chrTarget is null");
+        } else if(chrTarget.bDead) {
             Debug.Log("Executable of type  " + this.GetType().ToString() + " not legal since " + chrTarget.sName + "(target) is dead");
             return false;
         }
@@ -19,7 +21,7 @@ public abstract class ExecChr : Executable {
         chrTarget = _chrTarget;
     }
 
-    public ExecChr(ExecChr other) : base (other){
+    public ExecChr(ExecChr other) : base(other) {
         chrTarget = other.chrTarget;
     }
 
