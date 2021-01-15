@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 //Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
 
-public class ExecStun : ExecChr {
-
-    //TODO - make a generic 'IntBasedOnContext' function type that consumes the 'context' of the game
-    //       and decides the returned value (of type <T>) based on the context
-    public LibFunc.Get<int> GetDuration;
+public class ExecBeginChannel : ExecChr {
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -35,33 +32,32 @@ public class ExecStun : ExecChr {
     }
     // This is the end of the section that should be copied and pasted
 
-
-
+    Action actChannel;
 
     public override void ExecuteEffect() {
+        Debug.Log("Beginning of ExecBeginChannel.ExecuteEffect");
 
-        //First interrupt the character if they're channeling
-        chrTarget.curStateReadiness.InterruptChannel();
+        TypeChannel typeChannel = (TypeChannel)actChannel.type;
 
-        Debug.Log("Stun duration will last for: " + GetDuration());
+        StateChanneling newState = new StateChanneling(chrTarget, typeChannel.nStartChannelTime, new SoulChannel(typeChannel.soulBehaviour, actChannel));
 
-        //Create a new stun state to let our character transition to
-        StateStunned newState = new StateStunned(chrTarget, GetDuration());
+        Debug.Log("Before SetStateReadiness");
 
-        //Transition to the new state
+        //We don't need to perform any real action on starting channeling other than changing our readiness state so that the 
+        // soulchannel effect can be applied (and do any on-application effects if necessary)
         chrTarget.SetStateReadiness(newState);
 
-        chrTarget.subStunApplied.NotifyObs(chrTarget, GetDuration());
+        fDelay = ContTurns.fDelayTurnAction;
+        sLabel = chrTarget.sName + " is beginning their channel";
+        Debug.Log("After SetStateReadiness");
 
     }
 
-    public ExecStun(Chr _chrSource, Chr _chrTarget, int nBaseStunDuration) : base(_chrSource, _chrTarget) {
-        GetDuration = () => nBaseStunDuration;
+    public ExecBeginChannel(Chr _chrSource, Chr _chrTarget, Action _actChannel) : base(_chrSource, _chrTarget) {
+        actChannel = _actChannel;
     }
 
+    public ExecBeginChannel(ExecCompleteChannel other) : base(other) {
 
-    public ExecStun(ExecStun other) : base(other) {
-        GetDuration = other.GetDuration;
     }
-
 }

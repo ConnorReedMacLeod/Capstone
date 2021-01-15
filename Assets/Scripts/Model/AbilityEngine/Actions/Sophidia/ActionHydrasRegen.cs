@@ -39,9 +39,12 @@ public class ActionHydrasRegen : Action {
         }
 
         public override string GetDescription() {
+            Debug.Log(action);
+            Debug.Log(((ActionHydrasRegen)action).sName);
+            Debug.Log(((TypeChannel)((ActionHydrasRegen)action).type).nStartChannelTime);
 
             return string.Format("Channel ({0}).\n" +
-                "While channeling, at the end of turn heal {1}.", ((ActionHydrasRegen)action).soulChannelBehaviour.pnMaxDuration.Get(),
+                "While channeling, at the end of turn heal {1}.", ((TypeChannel)((ActionHydrasRegen)action).type).nStartChannelTime,
                 ((ActionHydrasRegen)action).soulChannelBehaviour.nBaseHealing);
         }
 

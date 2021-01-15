@@ -20,7 +20,6 @@ public class SoulDispirited : Soul {
 
         //Increase the cost by one effort
         arnCostDebuff = new int[] { 0, 0, 0, 0, 1 };
-        Debug.Log("arnCostDebuff[4] = " + arnCostDebuff[4]);
 
         arnodeCostModifier = new LinkedListNode<Property<int[]>.Modifier>[Chr.nCharacterActions];
 
@@ -60,16 +59,9 @@ public class SoulDispirited : Soul {
                     }
                 };
 
-        Debug.Log("chrTarget = " + chrTarget.sName);
-        Debug.Log("iSkill = " + iSkill);
-        Debug.Log("chrTarget.arActions[iSkill] = " + chrTarget.arActions[iSkill]);
-        Debug.Log("arnCostDebuff[4] = " + arnCostDebuff[4]);
-
         LinkedListNode<Property<int[]>.Modifier> costChange = chrTarget.arActions[iSkill].ChangeCost(costIncrease);
 
         arnodeCostModifier.SetValue(costChange, iSkill);
-
-        Debug.Log("arnodeCostModifier[iSkill] = " + arnodeCostModifier[iSkill]);
 
         //UNNEEDED CURRENTLY - ONLY FOR AFFECTING THE FIRST USED ABILITY
         //chrTarget.subPostExecuteAbility.Subscribe(OnAbilityUsage);
@@ -88,8 +80,6 @@ public class SoulDispirited : Soul {
         System.Array.Copy(other.arnCostDebuff, arnCostDebuff, other.arnCostDebuff.Length);
         arnodeCostModifier = new LinkedListNode<Property<int[]>.Modifier>[Chr.nCharacterActions];
         System.Array.Copy(other.arnodeCostModifier, arnodeCostModifier, other.arnodeCostModifier.Length);
-
-        Debug.Log("arnCostDebuff[4] = " + arnCostDebuff[4]);
 
     }
 

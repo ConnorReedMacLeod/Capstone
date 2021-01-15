@@ -149,7 +149,7 @@ public class Action { //This should probably be made abstract
 
 
 
-        //Finally, add an ending marker after the abilities' executed
+        //Finally, add an ending marker after the ability is executed
         PushEndingMarker();
 
         //Let the type of this action dictate the behaviour and push all relevant effects onto the stack
