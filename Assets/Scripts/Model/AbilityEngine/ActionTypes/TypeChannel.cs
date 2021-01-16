@@ -25,7 +25,6 @@ public class TypeChannel : TypeAction {
 
         //Note that the soulbehaviour will be invisible and have infinite duration - it will just be removed
         //  by some non-time related trigger (typically the character transitioning away from a Channeling State)
-        Debug.Log("Creating TypeChannel with duration: " + nStartChannelTime);
     }
 
     public override string getName() {

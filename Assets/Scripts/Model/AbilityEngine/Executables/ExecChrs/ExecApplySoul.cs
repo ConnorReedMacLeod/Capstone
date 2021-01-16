@@ -40,17 +40,19 @@ public class ExecApplySoul : ExecChr {
     public override void ExecuteEffect() {
 
         Debug.Assert(chrTarget == soulToApply.chrTarget);
-       
+
         chrTarget.soulContainer.ApplySoul(soulToApply);
 
     }
 
-    public ExecApplySoul(Chr _chrSource, Chr _chrTarget, Soul _soulToApply): base(_chrSource, _chrTarget) {
+    public ExecApplySoul(Chr _chrSource, Chr _chrTarget, Soul _soulToApply) : base(_chrSource, _chrTarget) {
         soulToApply = _soulToApply;
     }
 
     public ExecApplySoul(ExecApplySoul other) : base(other) {
         soulToApply = other.soulToApply;
+
+        Debug.Log("ExecApplySoul copyconstructor has chrTarget as " + chrTarget);
     }
 
 }

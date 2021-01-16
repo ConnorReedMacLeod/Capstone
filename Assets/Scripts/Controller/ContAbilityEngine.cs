@@ -12,7 +12,7 @@ public class ContAbilityEngine : Singleton<ContAbilityEngine> {
     public GameObject pfTimer;
     public ViewTimer viewTimerCur;
 
-    public const bool bDEBUGENGINE = true;
+    public const bool bDEBUGENGINE = false;
 
     public void cbAutoProcessStacks(Object target, params object[] args) {
         if(bAutoTurns == true) return; //If the button is already pressed

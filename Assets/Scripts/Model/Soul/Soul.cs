@@ -73,7 +73,8 @@ public class Soul {
         if(lstTriggers != null) { //Then we have some triggers to subscribe
             //Each triggeredeffect we have should subscribe to the trigger it needs
             foreach(TriggerEffect trig in lstTriggers) {
-                //Debug.Log("*** ADDING TRIGGER SUBSCRIPTION ***");
+                Debug.Log("*** ADDING TRIGGER SUBSCRIPTION ***");
+                Debug.Log("Our chrTarget is " + chrTarget);
                 trig.sub.Subscribe(trig.cb);
             }
         }
@@ -134,6 +135,7 @@ public class Soul {
     }
 
     public Soul(Soul soulToCopy, Chr _chrTarget = null) {
+        Debug.Log("Calling Soul copy constructor at " + Time.time);
         chrSource = soulToCopy.chrSource;
 
         if(_chrTarget != null) {
@@ -167,6 +169,8 @@ public class Soul {
         if(soulToCopy.lstTriggers != null) {
             lstTriggers = new List<TriggerEffect>(soulToCopy.lstTriggers);
         }
+
+        Debug.Log("Soul created with ChrTarget = " + chrTarget);
 
     }
 }
