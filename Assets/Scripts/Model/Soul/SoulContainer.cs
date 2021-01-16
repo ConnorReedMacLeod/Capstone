@@ -86,6 +86,8 @@ public class SoulContainer : MonoBehaviour {
 
     public void ApplySoul(Soul newSoul) {
 
+        Debug.Log("Applying Soul with chrTarget of " + newSoul.chrTarget);
+
         if(newSoul.bVisible == true) {
             //Then check if we have enough slots
             List<Soul> lstVisibleSoul = GetVisibleSoul();

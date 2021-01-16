@@ -157,7 +157,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
     public void SetState(StateTarget newState) {
 
         if(curState != null) {
-            Debug.Log("Leaving State " + curState.ToString());
+            //Debug.Log("Leaving State " + curState.ToString());
             curState.OnLeave();
         }
 
@@ -165,7 +165,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
         if(curState != null) {
             curState.OnEnter();
-            Debug.Log("Entering State " + curState.ToString());
+            //Debug.Log("Entering State " + curState.ToString());
         }
     }
 

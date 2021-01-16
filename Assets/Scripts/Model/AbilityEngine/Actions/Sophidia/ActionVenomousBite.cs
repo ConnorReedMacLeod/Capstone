@@ -47,6 +47,8 @@ public class ActionVenomousBite : Action {
 
         public override void ClauseEffect(Chr chrSelected) {
 
+            Debug.Log("Executing clause effect with chrSelected = " + chrSelected.sName);
+
             ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulEnvenomed(soulToCopy, chrSelected)) {
                 sLabel = "Applying poison"
             });
@@ -60,5 +62,5 @@ public class ActionVenomousBite : Action {
         }
 
     };
-    
+
 }
