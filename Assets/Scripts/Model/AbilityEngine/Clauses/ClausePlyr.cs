@@ -58,10 +58,5 @@ public abstract class ClausePlyr : Clause {
     public ClausePlyr(Action _action) : base(_action) { }
 
 
-    public ClausePlyr(ClausePlyr other) : base(other) {
-        targetType = TargetType.PLAYER;
-
-        plstTags = new Property<List<ClauseTagPlayer>>(other.plstTags);
-    }
 }
 

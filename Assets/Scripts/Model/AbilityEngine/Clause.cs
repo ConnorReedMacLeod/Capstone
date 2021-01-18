@@ -34,7 +34,4 @@ public abstract class Clause {
         action = _action;
     }
 
-    public Clause(Clause other) {
-        action = other.action;
-    }
 }

@@ -17,6 +17,10 @@ public class SoulHunted : Soul {
 
         nDefenseLoss = -5;
 
+        InitTriggers();
+    }
+
+    public override void InitTriggers() {
         lstTriggers = new List<TriggerEffect>() {
 
             new TriggerEffect() {
@@ -25,6 +29,7 @@ public class SoulHunted : Soul {
             }
         };
     }
+
 
     public void cbOnDealDamage(Object target, object[] args) {
         //Check which character is about to be dealing damage
@@ -35,7 +40,7 @@ public class SoulHunted : Soul {
 
         //If the source of the damage is the chr who applied this soul
         // AND if the target of the damage is the target of this soul
-        if (chrSource == this.chrSource && chrTarget == this.chrTarget) {
+        if(chrSource == this.chrSource && chrTarget == this.chrTarget) {
             //Then decrease the target's defense for the turn
             ApplyDefenseDebuff();
         }
@@ -43,13 +48,13 @@ public class SoulHunted : Soul {
 
     public void ApplyDefenseDebuff() {
 
-        ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(chrSource, chrTarget, 
+        ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(chrSource, chrTarget,
             new SoulChangeDefense(chrTarget, chrTarget, this.actSource, nDefenseLoss, 1)));
 
     }
 
     public SoulHunted(SoulHunted other, Chr _chrTarget = null) : base(other) {
-        if (_chrTarget != null) {
+        if(_chrTarget != null) {
             //If a Target was provided, then we'll use that
             chrTarget = _chrTarget;
         } else {
@@ -59,6 +64,7 @@ public class SoulHunted : Soul {
 
         nDefenseLoss = other.nDefenseLoss;
 
+        InitTriggers();
     }
 
 }

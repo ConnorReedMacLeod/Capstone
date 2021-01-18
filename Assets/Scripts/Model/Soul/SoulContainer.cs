@@ -86,8 +86,6 @@ public class SoulContainer : MonoBehaviour {
 
     public void ApplySoul(Soul newSoul) {
 
-        Debug.Log("Applying Soul with chrTarget of " + newSoul.chrTarget);
-
         if(newSoul.bVisible == true) {
             //Then check if we have enough slots
             List<Soul> lstVisibleSoul = GetVisibleSoul();
@@ -155,17 +153,6 @@ public class SoulContainer : MonoBehaviour {
         lstSoul = new List<Soul>();
 
         subVisibleSoulUpdate = new Subject();
-
-    }
-
-    public SoulContainer(SoulContainer other) {
-        lstSoul = new List<Soul>(other.lstSoul);
-
-        chrOwner = other.chrOwner;
-
-        nMaxVisibleSoul = other.nMaxVisibleSoul;
-
-        subVisibleSoulUpdate = new Subject(other.subVisibleSoulUpdate);
 
     }
 }

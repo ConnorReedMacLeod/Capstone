@@ -28,9 +28,6 @@ public class SoulChangeDefense : Soul {
             pnMaxDuration = new Property<int>(_nDuration);
         }
 
-
-        lstTriggers = new List<TriggerEffect>();
-
     }
 
     public SoulChangeDefense(SoulChangeDefense other, Chr _chrTarget = null) : base(other) {

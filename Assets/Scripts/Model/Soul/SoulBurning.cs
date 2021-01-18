@@ -7,7 +7,7 @@ public class SoulBurning : Soul {
     public Damage dmg;
     public int nBaseDamage;
 
-    public SoulBurning(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource){
+    public SoulBurning(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
 
         sName = "Test";
 
@@ -20,6 +20,11 @@ public class SoulBurning : Soul {
         //Create a base Damage object that this action will apply
         dmg = new Damage(this.chrSource, null, nBaseDamage, true);
 
+        InitTriggers();
+    }
+
+    public override void InitTriggers() {
+
         lstTriggers = new List<TriggerEffect>() {
             new TriggerEffect() {
                 sub = ExecTurnEndTurn.subAllPostTrigger,
@@ -28,7 +33,7 @@ public class SoulBurning : Soul {
         };
     }
 
-    public void cbOnEndTurn (Object target, object[] args) {
+    public void cbOnEndTurn(Object target, object[] args) {
         Debug.Log("We have been triggered at the end of turn to add a burn damage exec");
 
         ContAbilityEngine.Get().AddExec(new ExecDealDamage(this.chrSource, this.chrTarget, new Damage(dmg)) {
@@ -36,7 +41,7 @@ public class SoulBurning : Soul {
         });
     }
 
-    public SoulBurning(SoulBurning other, Chr _chrTarget=null) : base(other) {
+    public SoulBurning(SoulBurning other, Chr _chrTarget = null) : base(other) {
         if(_chrTarget != null) {
             //If a Target was provided, then we'll use that
             chrTarget = _chrTarget;
@@ -44,9 +49,11 @@ public class SoulBurning : Soul {
             //Otherwise, just copy from the other object
             chrTarget = other.chrTarget;
         }
-     
+
         nBaseDamage = other.nBaseDamage;
         dmg = new Damage(other.dmg);
+
+        InitTriggers();
     }
 
 }

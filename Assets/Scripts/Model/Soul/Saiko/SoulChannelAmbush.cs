@@ -12,6 +12,11 @@ public class SoulChannelAmbush : SoulChannel {
         nBaseDamage = 20;
         dmg = new Damage(chrSource, null, nBaseDamage);
 
+        InitTriggers();
+    }
+
+    public override void InitTriggers() {
+
         lstTriggers = new List<Soul.TriggerEffect>() {
             new Soul.TriggerEffect() {
                 sub = Chr.subAllPostExecuteAbility,
