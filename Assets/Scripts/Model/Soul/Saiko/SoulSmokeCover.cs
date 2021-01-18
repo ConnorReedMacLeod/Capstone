@@ -15,13 +15,7 @@ public class SoulSmokeCover : Soul {
 
         pnMaxDuration = new Property<int>(4);
 
-        lstTriggers = new List<TriggerEffect>() {
-
-            new TriggerEffect() {
-                sub = ExecBecomeBlocker.subAllPostTrigger,
-                cb = cbOnBecomeBlocker
-            }
-        };
+        InitTriggers();
 
         lstReplacements = new List<Replacement>() {
             new Replacement() {
@@ -46,6 +40,16 @@ public class SoulSmokeCover : Soul {
 
     }
 
+    public override void InitTriggers() {
+        lstTriggers = new List<TriggerEffect>() {
+
+            new TriggerEffect() {
+                sub = ExecBecomeBlocker.subAllPostTrigger,
+                cb = cbOnBecomeBlocker
+            }
+        };
+    }
+
     public void cbOnBecomeBlocker(Object target, object[] args) {
         //Only continue if the buffed character is the one about to become the blocker
         if(((ExecBecomeBlocker)args[0]).chrTarget != this.chrTarget) return;
@@ -62,5 +66,7 @@ public class SoulSmokeCover : Soul {
             //Otherwise, just copy from the other object
             chrTarget = other.chrTarget;
         }
+
+        InitTriggers();
     }
 }

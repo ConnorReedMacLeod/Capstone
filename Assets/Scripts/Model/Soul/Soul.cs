@@ -52,6 +52,19 @@ public class Soul {
 
         nMaxStacks = 1; //by Default
 
+        InitSubMaxDuration();
+
+    }
+
+    public virtual void InitSubMaxDuration() {
+        //By default, we don't need to do anything.  If a derived class ends up needing fixed
+        //  listeners for this property changing on creation, then we can initialize them here
+    }
+
+    public virtual void InitTriggers() {
+        //By default, we don't need to do anything, but if we have triggers for this ability, then we
+        // can initialize them here so that they get properly set up regardless of what constructor we use
+
     }
 
     //These are functions that we can override if we want certain effects to happen on application/removal/expiration
@@ -73,8 +86,7 @@ public class Soul {
         if(lstTriggers != null) { //Then we have some triggers to subscribe
             //Each triggeredeffect we have should subscribe to the trigger it needs
             foreach(TriggerEffect trig in lstTriggers) {
-                Debug.Log("*** ADDING TRIGGER SUBSCRIPTION ***");
-                Debug.Log("Our chrTarget is " + chrTarget);
+                //Debug.Log("*** ADDING TRIGGER SUBSCRIPTION ***");
                 trig.sub.Subscribe(trig.cb);
             }
         }
@@ -135,7 +147,7 @@ public class Soul {
     }
 
     public Soul(Soul soulToCopy, Chr _chrTarget = null) {
-        Debug.Log("Calling Soul copy constructor at " + Time.time);
+
         chrSource = soulToCopy.chrSource;
 
         if(_chrTarget != null) {
@@ -159,18 +171,20 @@ public class Soul {
         bDuration = soulToCopy.bDuration;
         nCurDuration = soulToCopy.nCurDuration;
 
+
         if(soulToCopy.pnMaxDuration != null) {
             pnMaxDuration = new Property<int>(soulToCopy.pnMaxDuration);
+            //Ensure any fixed subscribers to pnMaxDuration.subChanged are properly set up
+            InitSubMaxDuration();
         }
 
         if(soulToCopy.lstReplacements != null) {
             lstReplacements = new List<Replacement>(soulToCopy.lstReplacements);
         }
-        if(soulToCopy.lstTriggers != null) {
-            lstTriggers = new List<TriggerEffect>(soulToCopy.lstTriggers);
-        }
 
-        Debug.Log("Soul created with ChrTarget = " + chrTarget);
+        //If an extension of this class needs to copy triggers, then it'll be
+        //  respondible for doing that properly
+
 
     }
 }

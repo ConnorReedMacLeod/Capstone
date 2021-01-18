@@ -24,7 +24,7 @@ public class SoulParry : Soul {
 
             sLabel = "Counterattacking"
         });
-       
+
     }
 
     public SoulParry(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
@@ -43,6 +43,10 @@ public class SoulParry : Soul {
         dmgCounterAttack = new Damage(this.chrSource, null, nDamage);
 
 
+        InitTriggers();
+    }
+
+    public override void InitTriggers() {
         lstTriggers = new List<TriggerEffect>() {
 
             new TriggerEffect() {
@@ -50,7 +54,6 @@ public class SoulParry : Soul {
                 cb = cbOnDealDamage
             }
         };
-
     }
 
     public void cbOnDealDamage(Object target, object[] args) {
@@ -62,7 +65,7 @@ public class SoulParry : Soul {
 
         // If the source of the damage is owned by a different player
         // AND if the target of the damage is the target of this soul
-        if (chrSource.plyrOwner.id != this.chrSource.plyrOwner.id && chrTarget == this.chrTarget) {
+        if(chrSource.plyrOwner.id != this.chrSource.plyrOwner.id && chrTarget == this.chrTarget) {
             //Then perform a parry action
             OnDamaged(chrSource);
         }
@@ -92,7 +95,7 @@ public class SoulParry : Soul {
     }
 
     public SoulParry(SoulParry other, Chr _chrTarget = null) : base(other) {
-        if (_chrTarget != null) {
+        if(_chrTarget != null) {
             //If a Target was provided, then we'll use that
             chrTarget = _chrTarget;
         } else {
@@ -104,6 +107,7 @@ public class SoulParry : Soul {
         nDefense = other.nDefense;
         dmgCounterAttack = new Damage(other.dmgCounterAttack);
 
+        InitTriggers();
     }
 
 

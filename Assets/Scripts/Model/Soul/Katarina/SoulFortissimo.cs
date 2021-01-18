@@ -23,7 +23,7 @@ public class SoulFortissimo : Soul {
         bDuration = true;
         bRecoilWhenApplied = false;
 
-        pnMaxDuration = new Property<int>(4);    
+        pnMaxDuration = new Property<int>(4);
 
     }
 
@@ -45,7 +45,7 @@ public class SoulFortissimo : Soul {
     }
 
     public SoulFortissimo(SoulFortissimo other, Chr _chrTarget = null) : base(other) {
-        if (_chrTarget != null) {
+        if(_chrTarget != null) {
             //If a Target was provided, then we'll use that
             chrTarget = _chrTarget;
         } else {

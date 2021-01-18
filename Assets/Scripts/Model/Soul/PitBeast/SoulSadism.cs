@@ -29,6 +29,11 @@ public class SoulSadism : Soul {
         //Create a base Healing object that this action will apply 
         heal = new Healing(this.chrSource, this.chrSource, nBaseHealing);
 
+        InitTriggers();
+    }
+
+    public override void InitTriggers() {
+
         lstTriggers = new List<TriggerEffect>() {
 
             new TriggerEffect() {
@@ -36,6 +41,7 @@ public class SoulSadism : Soul {
                 cb = cbOnDealDamage
             }
         };
+
     }
 
     public void cbOnDealDamage(Object target, object[] args) {
@@ -47,11 +53,11 @@ public class SoulSadism : Soul {
 
         //If the source of the damage is the chr this buff is on
         // and if we're dealing damage to an enemy
-        if (dmgSource == this.chrTarget && this.chrTarget.plyrOwner != dmgTarget.plyrOwner) {
+        if(dmgSource == this.chrTarget && this.chrTarget.plyrOwner != dmgTarget.plyrOwner) {
 
             //Then check if the chr this buff is on has lower health than
             //who they are attacking
-            if (this.chrTarget.nCurHealth < dmgTarget.nCurHealth) {
+            if(this.chrTarget.nCurHealth < dmgTarget.nCurHealth) {
                 GainLife();
             }
         }

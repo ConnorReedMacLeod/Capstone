@@ -16,7 +16,11 @@ public class SoulEnvenomed : Soul {
         bDuration = true;
         pnMaxDuration = new Property<int>(3);
 
+        InitTriggers();
 
+    }
+
+    public override void InitTriggers() {
         lstTriggers = new List<TriggerEffect>() {
             new TriggerEffect() {
                 sub = ExecTurnEndTurn.subAllPostTrigger,
@@ -28,13 +32,10 @@ public class SoulEnvenomed : Soul {
                 cb = cbOnDamaged
             }
         };
-
-
     }
 
     public void cbOnEndTurn(Object target, object[] args) {
 
-        Debug.Log("End of turn for envenomed chr, chrTarget=" + chrTarget);
         ContAbilityEngine.Get().AddExec(new ExecLoseLife(chrSource, chrTarget, nLifeLoss) {
             sLabel = "Get me a cleanser booster!"
         });
@@ -56,8 +57,6 @@ public class SoulEnvenomed : Soul {
 
         nCurDuration++;
 
-        Debug.Log("Increasing envenomed duration to " + nCurDuration);
-
         //Change the Max duration to be one higher
         pnMaxDuration.SetBase(1 + pnMaxDuration.GetBase()());
 
@@ -66,7 +65,7 @@ public class SoulEnvenomed : Soul {
     }
 
     public SoulEnvenomed(SoulEnvenomed other, Chr _chrTarget = null) : base(other/*TODONOW - add ", _chrTarget" here*/) {
-        Debug.Log("Calling SoulEnvenomed Copy Constructor at " + Time.time);
+
         if(_chrTarget != null) {
             //If a Target was provided, then we'll use that
             chrTarget = _chrTarget;
@@ -77,13 +76,8 @@ public class SoulEnvenomed : Soul {
 
         nLifeLoss = other.nLifeLoss;
 
-        Debug.Log("Soulenvenomed created with chrTarget = " + chrTarget.sName);
-        Debug.Log("Test calling cbOnEndTurn");
-        cbOnEndTurn(null, null);
-        Debug.Log("Done calling cbOnEndTurn");
-        Debug.Log("Calling from trigger list");
-        lstTriggers[0].cb(null, null);
-        Debug.Log("Done calling lsttriggers");
+        InitTriggers();
+
     }
 
 }

@@ -28,8 +28,6 @@ public class SoulChangePower : Soul {
         }
 
 
-        lstTriggers = new List<TriggerEffect>();
-
     }
 
     public SoulChangePower(SoulChangePower other, Chr _chrTarget = null) : base(other) {

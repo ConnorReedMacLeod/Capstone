@@ -9,10 +9,10 @@ public class SoulCheerleader : Soul {
     public void ApplyBuff(Chr chrAlly) {
 
         //Make sure we are buffing an ally and not ourselves
-        if (chrAlly == this.chrTarget) return;
+        if(chrAlly == this.chrTarget) return;
 
         //Don't target dead characters
-        if (chrAlly.bDead) {
+        if(chrAlly.bDead) {
             Debug.LogError("Attempting to buff a dead character - shouldn't have been supplied as an active character");
             return;
         }
@@ -43,6 +43,10 @@ public class SoulCheerleader : Soul {
         nPowerGain = 5;
 
 
+        InitTriggers();
+    }
+
+    public override void InitTriggers() {
         lstTriggers = new List<TriggerEffect>() {
 
             new TriggerEffect() {
@@ -57,13 +61,28 @@ public class SoulCheerleader : Soul {
         Chr chrReadied = ((ExecReadyChar)args[0]).chrTarget;
 
         //Only trigger if the readied character is our target
-        if (chrTarget != chrReadied) return;
+        if(chrTarget != chrReadied) return;
 
         //Loop through each of the characters on this character's team, and let ApplyBuff decide
         // if they should recieve a buff
-        foreach (Chr chrAlly in chrTarget.plyrOwner.GetActiveChrs()) {
+        foreach(Chr chrAlly in chrTarget.plyrOwner.GetActiveChrs()) {
             ApplyBuff(chrAlly);
         }
+    }
+
+
+    public SoulCheerleader(SoulCheerleader other, Chr _chrTarget = null) : base(other) {
+        if(_chrTarget != null) {
+            //If a Target was provided, then we'll use that
+            chrTarget = _chrTarget;
+        } else {
+            //Otherwise, just copy from the other object
+            chrTarget = other.chrTarget;
+        }
+
+        nPowerGain = other.nPowerGain;
+
+        InitTriggers();
     }
 
 }
