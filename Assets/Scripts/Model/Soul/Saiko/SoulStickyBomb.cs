@@ -39,7 +39,7 @@ public class SoulStickyBomb : Soul {
     }
 
     public SoulStickyBomb(SoulStickyBomb other, Chr _chrTarget = null) : base(other) {
-        if (_chrTarget != null) {
+        if(_chrTarget != null) {
             //If a Target was provided, then we'll use that
             chrTarget = _chrTarget;
         } else {
@@ -47,7 +47,7 @@ public class SoulStickyBomb : Soul {
             chrTarget = other.chrTarget;
         }
         nDetonationDamage = other.nDetonationDamage;
-        dmg = new Damage(dmg);
+        dmg = new Damage(other.dmg);
 
     }
 }
