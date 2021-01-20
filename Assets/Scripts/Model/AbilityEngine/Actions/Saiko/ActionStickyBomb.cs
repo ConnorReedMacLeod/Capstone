@@ -35,7 +35,7 @@ public class ActionStickyBomb : Action {
             plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
                 new ClauseTagChrRanged(this), //Base Tag always goes first
             });
-            
+
             dmg = new Damage(action.chrSource, null, nBaseDamage);
             soulToCopy = new SoulStickyBomb(action.chrSource, null, action);
         }
@@ -46,6 +46,7 @@ public class ActionStickyBomb : Action {
         }
 
         public override void ClauseEffect(Chr chrSelected) {
+
 
             ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulStickyBomb(soulToCopy, chrSelected)) {
                 sLabel = "A bomb stuck"
