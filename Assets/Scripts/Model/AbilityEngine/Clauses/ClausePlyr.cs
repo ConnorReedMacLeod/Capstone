@@ -37,8 +37,24 @@ public abstract class ClausePlyr : Clause {
 
     }
 
-    public override bool IsValidSelection(SelectionSerializer.SelectionInfo selectionInfo) {
-        //Targetting is valid if the selection would result in at least one player being affected by the ability's selection
+    public override bool IsSelectable(SelectionSerializer.SelectionInfo selectionInfo) {
+        //Determines if this is an allowable selection to make
+        Player plyrTargetAttempt = ((SelectionSerializer.SelectionPlayer)selectionInfo).plyrSelected;
+
+        if(plyrTargetAttempt == null) Debug.LogError("PlyrSelected was given as null");
+
+        foreach(Player p in GetSelectable()) {
+            if(p == plyrTargetAttempt) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    public override bool HasFinalTarget(SelectionSerializer.SelectionInfo selectionInfo) {
+        //Determines if the selection would result in at least one character being affected by the ability's selection
         return GetFinalTargets((SelectionSerializer.SelectionPlayer)selectionInfo).Count >= 1;
     }
 

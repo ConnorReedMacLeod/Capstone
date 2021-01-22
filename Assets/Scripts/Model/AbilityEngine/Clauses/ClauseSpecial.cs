@@ -6,8 +6,13 @@ public abstract class ClauseSpecial : Clause {
 
     public abstract void ClauseEffect();
 
-    public override bool IsValidSelection(SelectionSerializer.SelectionInfo selectionInfo) {
+    public override bool IsSelectable(SelectionSerializer.SelectionInfo selectionInfo) {
         // Any use of a special clause should always be legal
+        return true;
+    }
+
+    public override bool HasFinalTarget(SelectionSerializer.SelectionInfo selectionInfo) {
+        //Special Clauses should always be legal by default
         return true;
     }
 

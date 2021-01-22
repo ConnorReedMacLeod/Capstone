@@ -21,7 +21,7 @@ public class StateTargetTeam : StateTarget {
                 ContLocalUIInteraction.Get().actSelected,
                 ((ViewChr)target).mod.plyrOwner);
 
-        if(infoSelectionPlyr.CanActivate()) {
+        if(infoSelectionPlyr.CanSelect()) {
 
             ContLocalUIInteraction.Get().FinishTargetting(infoSelectionPlyr);
 

@@ -77,8 +77,8 @@ public static class SelectionSerializer {
             return chrOwner.sName + " using " + actUsed.sName;
         }
 
-        public bool CanActivate() {
-            return actUsed.CanActivate(this);
+        public bool CanSelect() {
+            return actUsed.CanSelect(this);
         }
     };
 

@@ -296,7 +296,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
                 } else {
                     SelectionSerializer.SelectionInfo infoReceived = SelectionSerializer.Deserialize(ContTurns.Get().GetNextActingChr(), nSerializedInfo);
-                    if(infoReceived.CanActivate()) {
+                    if(infoReceived.CanSelect()) {
 
                         //If the ability selection and targetting passed can be used, then save that selection and try to move to the next phase
 
@@ -376,7 +376,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         //Ensure the serialized selection is indeed for this 
         Debug.Assert(infoDeserialized.chrOwner == ContTurns.Get().GetNextActingChr());
 
-        return (infoDeserialized.actUsed.CanPayMana() && infoDeserialized.CanActivate());
+        return (infoDeserialized.actUsed.CanPayMana() && infoDeserialized.CanSelect());
 
     }
 

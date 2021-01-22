@@ -45,6 +45,10 @@ public class ActionTwinSnakes : Action {
 
         public override void ClauseEffect(Chr chrSelected) {
 
+            ContAbilityEngine.PushSingleExecutable(new ExecLoseLife(action.chrSource, action.chrSource, nLifeloss) {
+                sLabel = "Owie"
+            });
+
             ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(action.chrSource, chrSelected, dmg) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Sophidia/sndTwinSnakes", 2f) },
                 sLabel = "Snakey, no!"

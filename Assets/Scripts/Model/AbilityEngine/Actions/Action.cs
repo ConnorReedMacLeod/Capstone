@@ -140,7 +140,7 @@ public class Action { //This should probably be made abstract
             Debug.LogError("Tried to use action, but didn't have enough mana");
         }
 
-        if(CanActivate(infoSelection) == false) {
+        if(CanSelect(infoSelection) == false) {
             Debug.LogError("Tried to use action, but it's not a valid selection");
         }
 
@@ -178,28 +178,19 @@ public class Action { //This should probably be made abstract
         ContAbilityEngine.PushClauses(lstClauses);
     }
 
-    //Check if the owner is alive and that the proposed targets are legal
-    public virtual bool IsLegalSelectionInfo(SelectionSerializer.SelectionInfo selectionInfo) {
-
-        if(chrSource.bDead) {
-            Debug.Log("The character source is dead");
-            return false;
-        }
-
-        //If this selection would result in the dominant clause doing nothing, then this isn't legal
-        // TODO:: consider if this should be checked for all clauses?  At least one clause?
-        if(lstClauses[iDominantClause].IsValidSelection(selectionInfo) == false) {
-            Debug.Log("This selection would make the dominant clause invalid");
-            return false;
-        }
-
-
-        return true;
-    }
-
-
     //Determine if the ability could be used targetting the passed indices (Note: doesn't include mana check)
-    public virtual bool CanActivate(SelectionSerializer.SelectionInfo selectionInfo) {// Maybe this doesn't need to be virtual
+    public virtual bool CanSelect(SelectionSerializer.SelectionInfo selectionInfo) {// Maybe this doesn't need to be virtual
+
+        //First, check if we're at least alive
+        if(chrSource.bDead == true) {
+            return false;
+        }
+
+        //Check that we're in a readiness state (with enough usable actions left)
+        if(chrSource.curStateReadiness.CanSelectAction(this) == false) {
+            //Debug.Log("Not in a state where we can use this action");
+            return false;
+        }
 
         //Check that the ability isn't on cooldown
         if(nCurCD != 0) {
@@ -207,17 +198,37 @@ public class Action { //This should probably be made abstract
             return false;
         }
 
+        if(lstClauses[iDominantClause].IsSelectable(selectionInfo) == false) {
+            Debug.Log("This selection would make the dominant clause invalid");
+            return false;
+        }
+
+        return true;
+    }
+
+    //Determine if the ability can be executed with the given selection parameters - this is more allowable
+    //  since we just want to ensure a prepped ability will not fizzle if it can at least do something
+    public bool CanExecute(SelectionSerializer.SelectionInfo selectionInfo) {
+
+        //First, check if we're at least alive
+        if(chrSource.bDead == true) {
+            return false;
+        }
+
         //Check that we're in a readiness state (with enough usable actions left)
-        if(!chrSource.curStateReadiness.CanSelectAction(this)) {
+        if(chrSource.curStateReadiness.CanSelectAction(this) == false) {
             //Debug.Log("Not in a state where we can use this action");
             return false;
         }
 
-        if(IsLegalSelectionInfo(selectionInfo) == false) {
-            //Debug.Log("Targets aren't legal");
+        //Finally, check if there's at least one valid target to execute on - some ability clauses
+        // without targets won't make sense to execute if the dominant clause has no targets.
+        //  E.g. - a vampire bite's healing clause wouldn't make sense to execute if its
+        //         damage clause has no viable target
+        if(lstClauses[iDominantClause].HasFinalTarget(selectionInfo) == false) {
+            Debug.Log("This selection would make the dominant clause invalid");
             return false;
         }
-
 
         return true;
     }
