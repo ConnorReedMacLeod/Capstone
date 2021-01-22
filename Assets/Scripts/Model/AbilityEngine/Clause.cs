@@ -17,8 +17,11 @@ public abstract class Clause {
 
     public Action action;
 
+    //Can this be submitted as a valid selection?
+    public abstract bool IsSelectable(SelectionSerializer.SelectionInfo SelectionInfo);
+
     //Does the proposed targetting result in a non-null ability effect?
-    public abstract bool IsValidSelection(SelectionSerializer.SelectionInfo SelectionInfo);
+    public abstract bool HasFinalTarget(SelectionSerializer.SelectionInfo selectionInfo);
 
     public abstract string GetDescription();
     public abstract void Execute();

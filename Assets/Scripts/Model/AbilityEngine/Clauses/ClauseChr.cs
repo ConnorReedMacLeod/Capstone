@@ -36,8 +36,23 @@ public abstract class ClauseChr : Clause {
 
     }
 
-    public override bool IsValidSelection(SelectionSerializer.SelectionInfo selectionInfo) {
-        //Targetting is valid if the selection would result in at least one character being affected by the ability's selection
+    public override bool IsSelectable(SelectionSerializer.SelectionInfo selectionInfo) {
+        //Determines if this is an allowable selection to make
+        Chr chrTargetAttempt = ((SelectionSerializer.SelectionChr)selectionInfo).chrSelected;
+
+        if(chrTargetAttempt == null) Debug.LogError("ChrTarget was given as null");
+
+        foreach(Chr c in GetSelectable()) {
+            if(c == chrTargetAttempt) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public override bool HasFinalTarget(SelectionSerializer.SelectionInfo selectionInfo) {
+        //Determines if the selection would result in at least one character being affected by the ability's selection
         return GetFinalTargets((SelectionSerializer.SelectionChr)selectionInfo).Count >= 1;
     }
 

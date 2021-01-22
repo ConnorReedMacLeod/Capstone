@@ -37,7 +37,7 @@ public class StateChanneling : StateReadiness {
     // this should be subcribed to each potentially invalidating subject
     public void cbInterruptifInvalid(Object target, params object[] args) {
 
-        if(!soulBehaviour.act.IsLegalSelectionInfo(selectioninfoStored)) {
+        if(!soulBehaviour.act.CanExecute(selectioninfoStored)) {
             //If targetting has become invalid (maybe because someone has died)
             InterruptChannel();
 

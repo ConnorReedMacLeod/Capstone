@@ -63,7 +63,7 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
 
         // confirm that the target is valid
         //(checks actionpoint usage, cd, mana, targetting)
-        if(infoSelectionSubmitted.CanActivate() == false || infoSelectionSubmitted.actUsed.CanPayMana() == false) {
+        if(infoSelectionSubmitted.CanSelect() == false || infoSelectionSubmitted.actUsed.CanPayMana() == false) {
 
             //If the selection was invalid for some reason, either send it back to the selector to choose again,
             // or just reset them to a rest action
@@ -112,7 +112,7 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
         Debug.Log("Client received selection of " + infoSelectionFromMaster.ToString());
 
         //Ensure the passed action is valid
-        Debug.Assert(infoSelectionFromMaster.CanActivate());
+        Debug.Assert(infoSelectionFromMaster.CanSelect());
 
         //Stop the selection process (if it's still ongoing) since the decision has already been finalized by the master
         Match.Get().GetLocalPlayer().inputController.EndSelection();

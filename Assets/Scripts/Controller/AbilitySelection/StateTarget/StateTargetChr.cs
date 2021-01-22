@@ -21,7 +21,7 @@ public class StateTargetChr : StateTarget {
                 ContLocalUIInteraction.Get().actSelected,
                 ((ViewChr)target).mod);
 
-        if(infoSelectionChr.CanActivate()) {
+        if(infoSelectionChr.CanSelect()) {
 
             ContLocalUIInteraction.Get().FinishTargetting(infoSelectionChr);
 

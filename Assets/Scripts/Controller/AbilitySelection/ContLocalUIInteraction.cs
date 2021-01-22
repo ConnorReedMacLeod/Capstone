@@ -114,7 +114,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
                     actSelected.chrSource,
                     actSelected);
 
-            if(infoSelectionSpec.CanActivate() == false) {
+            if(infoSelectionSpec.CanSelect() == false) {
                 Debug.Log("This special action isn't valid to select");
                 SetState(new StateTargetIdle());
 

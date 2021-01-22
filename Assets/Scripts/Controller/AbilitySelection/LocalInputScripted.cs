@@ -58,7 +58,7 @@ public class LocalInputScripted : LocalInputType {
             Debug.Log(chrToAct.sName + " wants chosen to use " + infoSelection.ToString());
 
             //Test to see if this ability would be valid
-            if(infoSelection.CanActivate() == false ||
+            if(infoSelection.CanSelect() == false ||
                 infoSelection.actUsed.CanPayMana() == false) {
                 Debug.Log("The action selection would not be legal");
 
