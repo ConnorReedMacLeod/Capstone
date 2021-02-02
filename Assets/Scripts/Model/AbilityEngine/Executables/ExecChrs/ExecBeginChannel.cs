@@ -57,7 +57,7 @@ public class ExecBeginChannel : ExecChr {
         actChannel = _actChannel;
     }
 
-    public ExecBeginChannel(ExecCompleteChannel other) : base(other) {
+    public ExecBeginChannel(ExecBeginChannel other) : base(other) {
 
     }
 }

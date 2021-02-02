@@ -7,7 +7,6 @@ public class StateChanneling : StateReadiness {
     public int nChannelTime;
 
     public SoulChannel soulBehaviour; //Handles all customized behaviour of what the channel effect should do
-    public SelectionSerializer.SelectionInfo selectioninfoStored;
 
     public StateChanneling(Chr _chrOwner, int _nChannelTime, SoulChannel _soulBehaviour) : base(_chrOwner) {
 
@@ -19,7 +18,7 @@ public class StateChanneling : StateReadiness {
 
         //Set the channel time to be equal to whatever the soul's duration is
 
-        Debug.Log("soulBehaviour's action is initially " + soulBehaviour.act + " with duration " + nChannelTime);
+        Debug.Log("soulBehaviour's action is initially " + soulBehaviour.actSource.sName + " with duration " + nChannelTime);
     }
 
     public override TYPE Type() {
@@ -37,7 +36,10 @@ public class StateChanneling : StateReadiness {
     // this should be subcribed to each potentially invalidating subject
     public void cbInterruptifInvalid(Object target, params object[] args) {
 
-        if(!soulBehaviour.act.CanExecute(selectioninfoStored)) {
+        Debug.Assert(soulBehaviour.actSource.type.Type() == TypeAction.TYPE.CHANNEL);
+
+        //Get the SelectionInfo stored for the channeled action and check if it is still completable
+        if(soulBehaviour.actSource.CanCompleteAsChannel(soulBehaviour.actSource.type.GetSelectionInfo()) == false) {
             //If targetting has become invalid (maybe because someone has died)
             InterruptChannel();
 
@@ -53,7 +55,7 @@ public class StateChanneling : StateReadiness {
     //To be called as part of a stun, before transitioning to the stunned state
     public override void InterruptChannel() {
 
-        Debug.Log("Interuptting an ability with " + soulBehaviour.act);
+        Debug.Log("Interuptting an ability with " + soulBehaviour.actSource.sName);
 
         //Activate any Interruption trigger on the soul effect
         soulBehaviour.OnInterrupted();
@@ -73,10 +75,12 @@ public class StateChanneling : StateReadiness {
             nChannelTime += _nChange;
         }
 
+        Debug.Log("Channel time changed to " + nChannelTime);
         //If, for any reason, we've now been put to 0 channeltime, then our channel completes
         // and we transition to the fatigued state
         if(nChannelTime == 0) {
 
+            Debug.Log("Naturally completed the channel, so pushing ExecCompleteChannel");
             ContAbilityEngine.Get().AddExec(new ExecCompleteChannel(null, chrOwner));
         }
 
@@ -100,7 +104,7 @@ public class StateChanneling : StateReadiness {
 
         //TODO:: Add a subscription list of potentially cancelling triggers to listen for a channel
         // which we can then subcribe cbInterrupifInvalid to
-        //Chr.subAllDeath.Subscribe(cbInterruptifInvalid);
+        Chr.subAllDeath.Subscribe(cbInterruptifInvalid);
 
         //Once we're in this state, let people know that the channel time has taken effect
         chrOwner.subChannelTimeChange.NotifyObs();
@@ -108,11 +112,16 @@ public class StateChanneling : StateReadiness {
     }
 
     public override void OnLeave() {
+        Debug.Log("Leaving channeling state");
 
         //TODO:: unsubscribe from all of these cancelling triggers
-        //Chr.subAllDeath.UnSubscribe(cbInterruptifInvalid);
+        Chr.subAllDeath.UnSubscribe(cbInterruptifInvalid);
 
         chrOwner.soulContainer.RemoveSoul(soulBehaviour);
+
+        //If we ever leave the channeling state, then we no longer need the stored selection info we prepped
+        Debug.LogError("Figure out when this following line should be uncommented and inserted");
+        //((TypeChannel)soulBehaviour.act.type).ClearStoredSelectionInfo();
 
     }
 

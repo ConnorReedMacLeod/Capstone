@@ -10,7 +10,7 @@ public class ActionHarpoonGun : Action {
         sDisplayName = "Harpoon Gun";
 
         //We don't have any specific effect to take place while channeling, so just leave the
-        // soulChannel effect null and let it copy our execution's effect for what it does on Expiration
+        // soulChannel effect null and let it copy our execution's effect for what it does when the channel completes
         type = new TypeChannel(this, 2, null);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -48,6 +48,8 @@ public class ActionHarpoonGun : Action {
 
         public override void ClauseEffect(Chr chrSelected) {
 
+            Debug.Log("Executing damaging clause");
+
             ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(action.chrSource, chrSelected, dmg) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Fischer/sndHarpoonGun", 2.067f) },
                 sLabel = "Behold, the power of my stand, Beach Boy!"
@@ -59,15 +61,11 @@ public class ActionHarpoonGun : Action {
 
     class Clause2 : ClauseChr {
 
-        public SoulBurning soulToCopy;
-
         public Clause2(Action _act) : base(_act) {
             plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
                 new ClauseTagChrRanged(this), //Base Tag always goes first
                 new ClauseTagChrEnemy(this)
             });
-
-            soulToCopy = new SoulBurning(action.chrSource, null, action);
         }
 
         public override string GetDescription() {
@@ -77,7 +75,9 @@ public class ActionHarpoonGun : Action {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulBurning(soulToCopy, chrSelected)) {
+            Debug.Log("Executing become blocker clause");
+
+            ContAbilityEngine.PushSingleExecutable(new ExecBecomeBlocker(action.chrSource, chrSelected) {
                 sLabel = "Hey, I caught one!"
             });
 

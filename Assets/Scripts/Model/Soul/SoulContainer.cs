@@ -93,15 +93,11 @@ public class SoulContainer : MonoBehaviour {
             if(lstVisibleSoul.Count == nMaxVisibleSoul) {
                 //Then were already using all of our slots
 
-                //So remove the oldest visible effect
-                Soul soulRemoved = lstVisibleSoul[0];
-
-                lstSoul.Remove(lstVisibleSoul[0]);
-
-                //Perform any action that needs to be done when this Soul is removed;
-                soulRemoved.OnRemoval();
-
                 //TODO:: Add in a check for locked events
+                //So remove the oldest visible effect
+                Soul soulToRemove = lstVisibleSoul[0];
+
+                RemoveSoul(soulToRemove);
             }
 
         }
