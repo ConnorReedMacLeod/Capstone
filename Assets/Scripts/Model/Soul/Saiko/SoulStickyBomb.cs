@@ -50,4 +50,5 @@ public class SoulStickyBomb : Soul {
         dmg = new Damage(other.dmg);
 
     }
+
 }

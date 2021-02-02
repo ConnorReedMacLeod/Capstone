@@ -22,7 +22,7 @@ public class SoulChannelAmbush : SoulChannel {
                 sub = Chr.subAllPostExecuteAbility,
                 cb = (target, args) => {
 
-                    Chr chrStoredSelection = ((SelectionSerializer.SelectionChr)act.type.GetSelectionInfo()).chrSelected;
+                    Chr chrStoredSelection = ((SelectionSerializer.SelectionChr)actSource.type.GetSelectionInfo()).chrSelected;
 
                     //If the character who used an ability is the one we targetted, and they are using a proper action (not a rest)
                     // Then we can ambush them

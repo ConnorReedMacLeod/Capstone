@@ -35,14 +35,23 @@ public class ExecCompleteChannel : ExecChr {
 
     public override void ExecuteEffect() {
 
+        Debug.Log("Executing ExecCompleteChannel");
 
-        StateFatigued newState = new StateFatigued(chrTarget);
-
-        //Just transition to the fatigued state (which will trigger the channel completion)
-        chrTarget.SetStateReadiness(newState);
 
         fDelay = ContTurns.fDelayTurnAction;
         sLabel = chrTarget.sName + " has completed their channel";
+
+        StateChanneling stateChannel = (StateChanneling)chrTarget.curStateReadiness;
+
+        Debug.Log("Setting the bChannelCompleted flag");
+
+        //Set the completed channel flag for this Channeling state's soul effect
+        stateChannel.soulBehaviour.bChannelCompleted = true;
+
+        StateFatigued newState = new StateFatigued(chrTarget);
+
+        //Transition into a fatigued state which will trigger the expiration effect
+        chrTarget.SetStateReadiness(newState);
 
     }
 

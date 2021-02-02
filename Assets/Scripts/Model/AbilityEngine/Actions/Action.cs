@@ -233,6 +233,27 @@ public class Action { //This should probably be made abstract
         return true;
     }
 
+    //Determine if the ability should continue as a channel.  If the character dies, or has no valid targets for completing
+    //  the channel targetting, then we can cancel it
+    public bool CanCompleteAsChannel(SelectionSerializer.SelectionInfo selectionInfo) {
+
+        //First, check if we're at least alive
+        if(chrSource.bDead == true) {
+            return false;
+        }
+
+        //Finally, check if there's at least one valid target to execute on - some ability clauses
+        // without targets won't make sense to execute if the dominant clause has no targets.
+        //  E.g. - a vampire bite's healing clause wouldn't make sense to execute if its
+        //         damage clause has no viable target
+        if(lstClauses[iDominantClause].HasFinalTarget(selectionInfo) == false) {
+            Debug.Log("This " + sName + " channel cannot complete since it has no valid targets");
+            return false;
+        }
+
+        return true;
+    }
+
     public static bool IsEnemy(Chr owner, Chr tar) {
         return owner.plyrOwner != tar.plyrOwner;
     }

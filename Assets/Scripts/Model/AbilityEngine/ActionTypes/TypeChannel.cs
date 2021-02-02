@@ -21,6 +21,10 @@ public class TypeChannel : TypeAction {
             //Otherwise just make a blank one
             Debug.Log("Warning - making a blank channel soul behaviour");
             soulBehaviour = new SoulChannel(act);
+
+            //Since this is a specially created soulBehaviour, we don't need to
+            //  do anything other than call act's Execute function when we complete channeling
+            soulBehaviour.bDelayedAction = true;
         }
 
         //Note that the soulbehaviour will be invisible and have infinite duration - it will just be removed
@@ -50,6 +54,7 @@ public class TypeChannel : TypeAction {
 
     public override SelectionSerializer.SelectionInfo GetSelectionInfo() {
         //Return the selection info that's been stored
+        Debug.Log("Returning stored selection");
         return infoStoredSelection;
     }
 
@@ -68,6 +73,7 @@ public class TypeChannel : TypeAction {
 
         public override void ClauseEffect() {
 
+            Debug.Log("Pushing begin channel executable");
             ContAbilityEngine.PushSingleExecutable(new ExecBeginChannel(action.chrSource, action.chrSource, action));
 
         }

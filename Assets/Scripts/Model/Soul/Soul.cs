@@ -70,7 +70,7 @@ public class Soul {
     //These are functions that we can override if we want certain effects to happen on application/removal/expiration
     //  By default, these just do nothing though
     public virtual void ApplicationEffect() { }
-    public virtual void RemoveEffect() { }
+    public virtual void RemoveEffect() { }    //When this soul effect is removed for any reason
     public virtual void ExpirationEffect() { }//Specifically when the soul effect reaches the end of its duration
 
     public void OnApply(SoulContainer _soulContainer) {
@@ -105,6 +105,7 @@ public class Soul {
     }
 
     public void OnRemoval() {
+        Debug.Log("Removing soul effect " + sName);
 
         chrTarget.subDeath.UnSubscribe(cbOnChrTargetDeath);
         chrSource.subDeath.UnSubscribe(cbOnChrSourceDeath);
@@ -124,7 +125,7 @@ public class Soul {
         RemoveEffect();
         if(ContAbilityEngine.bDEBUGENGINE) Debug.Log(sName + " has been removed");
 
-        if(bDuration == true && nCurDuration == 0) {
+        if(ShouldTriggerExpiration()) {
             ExpirationEffect();
             if(ContAbilityEngine.bDEBUGENGINE) Debug.Log(sName + " has expired");
         }
@@ -146,9 +147,16 @@ public class Soul {
         }
     }
 
+    public virtual bool ShouldTriggerExpiration() {
+        //By default, the effect will only count as expiring if it was set to have a duration,
+        //  and that duration reached 0
+        return bDuration == true && nCurDuration == 0;
+    }
+
     public Soul(Soul soulToCopy, Chr _chrTarget = null) {
 
         chrSource = soulToCopy.chrSource;
+        actSource = soulToCopy.actSource;
 
         if(_chrTarget != null) {
             //If a Target was provided, then we'll use that
