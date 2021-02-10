@@ -2,13 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 //Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
 
-public class ExecStun : ExecChr {
 
-    //TODO - make a generic 'IntBasedOnContext' function type that consumes the 'context' of the game
-    //       and decides the returned value (of type <T>) based on the context
-    public LibFunc.Get<int> GetDuration;
+/// <summary>
+/// This is a game action to clear out the stored selection parameters of a channel action
+/// after it has completed its execution - should only really be used when transitioning away
+/// from a channeling state
+/// </summary>
+
+public class ExecClearStoredSelection : ExecSkill {
+
+    //This really shouldn't be used since this is just a game-action
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -36,30 +42,20 @@ public class ExecStun : ExecChr {
     // This is the end of the section that should be copied and pasted
 
 
-
-
     public override void ExecuteEffect() {
 
-        //First interrupt the character if they're channeling
-        chrTarget.curStateReadiness.InterruptChannel();
+        ((TypeChannel)skTarget.type).ClearStoredSelectionInfo();
 
-        //Create a new stun state to let our character transition to
-        StateStunned newState = new StateStunned(chrTarget, GetDuration());
-
-        //Transition to the new state
-        chrTarget.SetStateReadiness(newState);
-
-        chrTarget.subStunApplied.NotifyObs(chrTarget, GetDuration());
+        fDelay = ContTurns.fDelayGameEffects;
+        sLabel = "Clearing stored " + skTarget.sDisplayName + "'s selections";
 
     }
 
-    public ExecStun(Chr _chrSource, Chr _chrTarget, int nBaseStunDuration) : base(_chrSource, _chrTarget) {
-        GetDuration = () => nBaseStunDuration;
+    public ExecClearStoredSelection(Chr _chrSource, Action _skTarget) : base(_chrSource, _skTarget) {
+
     }
 
+    public ExecClearStoredSelection(ExecClearStoredSelection other) : base(other) {
 
-    public ExecStun(ExecStun other) : base(other) {
-        GetDuration = other.GetDuration;
     }
-
 }

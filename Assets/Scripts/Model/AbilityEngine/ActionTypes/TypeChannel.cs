@@ -47,14 +47,11 @@ public class TypeChannel : TypeAction {
         //Store a copy of the current SelectionInfo so that we can use it later when the channel finishes (or triggers in some way)
         infoStoredSelection = base.GetSelectionInfo().GetCopy();
 
-        Debug.Log("Pushing a begin channel clause");
-
         ContAbilityEngine.PushSingleClause(new ClauseBeginChannel(act));
     }
 
     public override SelectionSerializer.SelectionInfo GetSelectionInfo() {
         //Return the selection info that's been stored
-        Debug.Log("Returning stored selection");
         return infoStoredSelection;
     }
 
@@ -73,7 +70,6 @@ public class TypeChannel : TypeAction {
 
         public override void ClauseEffect() {
 
-            Debug.Log("Pushing begin channel executable");
             ContAbilityEngine.PushSingleExecutable(new ExecBeginChannel(action.chrSource, action.chrSource, action));
 
         }
