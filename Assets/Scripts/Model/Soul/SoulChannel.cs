@@ -37,12 +37,10 @@ public class SoulChannel : Soul {
     }
 
     public override void ExpirationEffect() {
-        Debug.Log("In ExpirationEffect, bDelayedAction = " + bDelayedAction);
 
         //If we are purely a delayed action with no other side effects, then we can just call the
         //  execute method of our stored action
         if(bDelayedAction) {
-            Debug.Log("Executing the effects of a delayed action");
 
             //If we reach the end of the duration of the effect, then execute the effects of the 
             // stored action and apply it to the stored target of the channel action

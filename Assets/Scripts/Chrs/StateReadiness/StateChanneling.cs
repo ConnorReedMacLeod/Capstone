@@ -112,17 +112,36 @@ public class StateChanneling : StateReadiness {
     }
 
     public override void OnLeave() {
-        Debug.Log("Leaving channeling state");
+
+        //Push a clause onto the stack that will clear the stored selection of the channel we're using
+        //  - don't want that stale selection info floating around after it's relevant
+        //  - need to do it before removing the soulBehaviour so that the clause gets evaluated after all the
+        //    effects of the soulBehaviour have been resolved
+        ContAbilityEngine.PushSingleClause(new ClauseClearStoredSelection(soulBehaviour.actSource));
 
         //TODO:: unsubscribe from all of these cancelling triggers
         Chr.subAllDeath.UnSubscribe(cbInterruptifInvalid);
 
         chrOwner.soulContainer.RemoveSoul(soulBehaviour);
 
-        //If we ever leave the channeling state, then we no longer need the stored selection info we prepped
-        Debug.LogError("Figure out when this following line should be uncommented and inserted");
-        //((TypeChannel)soulBehaviour.act.type).ClearStoredSelectionInfo();
-
     }
+
+    class ClauseClearStoredSelection : ClauseSpecial {
+
+        public ClauseClearStoredSelection(Action _action) : base(_action) {
+        }
+
+        public override string GetDescription() {
+            return string.Format("Clear out stored selection info for " + action.sName);
+        }
+
+        public override void ClauseEffect() {
+
+            Debug.Log("Pushing ClearStoredSelection for " + action.sName);
+            ContAbilityEngine.PushSingleExecutable(new ExecClearStoredSelection(action.chrSource, action));
+
+        }
+
+    };
 
 }
