@@ -162,7 +162,7 @@ public class LocalInputScripted : LocalInputType {
             return new SelectionSerializer.SelectionChr(chrSource, actUsed, Chr.GetRandomChr(), 0, 0);//Just setting the extra bytes to 0
 
         case Clause.TargetType.ACTION:
-            return new SelectionSerializer.SelectionAction(chrSource, actUsed, Chr.GetRandomChr(), chrSource.GetRandomActionOfChr(), 0);
+            return new SelectionSerializer.SelectionAction(chrSource, actUsed, Chr.GetRandomChr(), chrSource.GetRandomActiveSkill(), 0);
 
         case Clause.TargetType.PLAYER:
             return new SelectionSerializer.SelectionPlayer(chrSource, actUsed, Player.GetTargetByIndex(Random.Range(0, Player.MAXPLAYERS)), 0, 0);
@@ -190,7 +190,7 @@ public class LocalInputScripted : LocalInputType {
             for(int j = 0; j < nScriptLength; j++) {
 
                 //Select a random action to be used
-                Action actRandom = chr.GetRandomActionOfChr();
+                Action actRandom = chr.GetRandomActiveSkill();
 
                 //Need to create an InfoSelection of the appropriate type
                 //Then need to randomly fill this InfoSelection with targetting information

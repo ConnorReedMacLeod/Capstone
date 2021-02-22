@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseChr {
+public abstract class BaseChr {
 
     public Chr chrOwner;
 
@@ -20,12 +20,41 @@ public class BaseChr {
         chrOwner.nCurHealth = chrOwner.pnMaxHealth.Get();
     }
 
-    public virtual void SetActions() {
-        chrOwner.arActions[0] = new ActionRest(chrOwner);
-        chrOwner.arActions[1] = new ActionRest(chrOwner);
-        chrOwner.arActions[2] = new ActionRest(chrOwner);
-        chrOwner.arActions[3] = new ActionRest(chrOwner);
+    public abstract void SetInitialSkills();
 
-        chrOwner.arActions[7] = new ActionRest(chrOwner);
+    public void SetGenericActiveSkills() {
+        //Sets the basic generic actions like resting and blocking
+
+        chrOwner.arSkills[Chr.idAdapt] = new ActionRest(chrOwner); //TODO - replace this with an actual adapt action
+        chrOwner.arSkills[Chr.idResting] = new ActionRest(chrOwner);
+        chrOwner.arSkills[Chr.idBlocking] = new ActionBlock(chrOwner);
+
+    }
+
+    //Just using this temporarily to fill the bench skills with fireballs
+    public void FillBenchWithFireballs() {
+        for(int i = Chr.nActiveCharacterSkills; i < Chr.nLoadoutSkills; i++) {
+            chrOwner.arSkills[i] = new ActionFireball(chrOwner);
+        }
+    }
+
+    //Once the actions have been selected, equip them all onto the character
+    public void EquipAllActions() {
+        for(int i = 0; i < Chr.nTotalSkills; i++) {
+            chrOwner.SetAction(i, chrOwner.arSkills[i]);
+        }
+    }
+
+    public void Init() {
+
+        SetName();
+        SetMaxHealth();
+
+        SetInitialSkills();
+        FillBenchWithFireballs();
+        SetGenericActiveSkills();
+
+        EquipAllActions();
+
     }
 }

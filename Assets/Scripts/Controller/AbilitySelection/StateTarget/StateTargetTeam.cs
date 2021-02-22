@@ -48,6 +48,8 @@ public class StateTargetTeam : StateTarget {
         ViewChr.subAllClick.Subscribe(cbClickChr);
         ViewAction.subAllClick.Subscribe(cbSwitchAction);
 
+
+        ContLocalUIInteraction.subAllStartManualTargetting.NotifyObs(this);
     }
 
     override public void OnLeave() {
