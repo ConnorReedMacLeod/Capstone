@@ -21,14 +21,14 @@ public class SoulDispirited : Soul {
         //Increase the cost by one effort
         arnCostDebuff = new int[] { 0, 0, 0, 0, 1 };
 
-        arnodeCostModifier = new LinkedListNode<Property<int[]>.Modifier>[Chr.nCharacterActions];
+        arnodeCostModifier = new LinkedListNode<Property<int[]>.Modifier>[Chr.nActiveSkills];
 
     }
 
     public override void ApplicationEffect() {
 
         //Loop through each ability on the targetted character
-        for(int i = 0; i < Chr.nCharacterActions; i++) {
+        for(int i = 0; i < Chr.nActiveSkills; i++) {
 
             ApplyCostIncreaseToSkill(i);
         }
@@ -44,13 +44,13 @@ public class SoulDispirited : Soul {
         //                    modifier for the old ability and apply it to the newly swapped in ability
 
         //No need to try to reduce the cost of an ability that is null - likely won't come up once characters get the full amount of abilities
-        if(chrTarget.arActions[iSkill] == null) {
+        if(chrTarget.arSkills[iSkill] == null) {
             return;
         }
 
         Property<int[]>.Modifier costIncrease =
                 (arCost) => {
-                    if(chrTarget.arActions[iSkill].type.Type() == TypeAction.TYPE.CANTRIP) {
+                    if(chrTarget.arSkills[iSkill].type.Type() == TypeAction.TYPE.CANTRIP) {
                         //Increase the cost if the ability is a cantrip
                         return LibFunc.AddArray<int>(arCost, arnCostDebuff, (x, y) => (x + y));
                     } else {
@@ -59,7 +59,7 @@ public class SoulDispirited : Soul {
                     }
                 };
 
-        LinkedListNode<Property<int[]>.Modifier> costChange = chrTarget.arActions[iSkill].ChangeCost(costIncrease);
+        LinkedListNode<Property<int[]>.Modifier> costChange = chrTarget.arSkills[iSkill].ChangeCost(costIncrease);
 
         arnodeCostModifier.SetValue(costChange, iSkill);
 
@@ -78,15 +78,15 @@ public class SoulDispirited : Soul {
 
         arnCostDebuff = new int[Mana.nManaTypes];
         System.Array.Copy(other.arnCostDebuff, arnCostDebuff, other.arnCostDebuff.Length);
-        arnodeCostModifier = new LinkedListNode<Property<int[]>.Modifier>[Chr.nCharacterActions];
+        arnodeCostModifier = new LinkedListNode<Property<int[]>.Modifier>[Chr.nActiveSkills];
         System.Array.Copy(other.arnodeCostModifier, arnodeCostModifier, other.arnodeCostModifier.Length);
 
     }
 
     public override void RemoveEffect() {
         //When removed we'll clear all the cost modifiers we've applied
-        for(int i = 0; i < Chr.nCharacterActions; i++) {
-            chrTarget.arActions[i].parCost.RemoveModifier(arnodeCostModifier[i]);
+        for(int i = 0; i < Chr.nActiveSkills; i++) {
+            chrTarget.arSkills[i].parCost.RemoveModifier(arnodeCostModifier[i]);
         }
 
         //chrTarget.subPostExecuteAbility.UnSubscribe(OnAbilityUsage);
@@ -100,7 +100,7 @@ public class SoulDispirited : Soul {
         if(((Action)args[0]).chrSource != this.chrTarget) return;
 
         //Check if the action that was just used is a character action - not a generic (block/rest)
-        if(((Action)args[0]).id < Chr.nCharacterActions) {
+        if(((Action)args[0]).id < Chr.nActiveCharacterSkills) {
 
             //if the used action was a character action, then we can dispell this effect
             // sicne we only want to make the first used skill cost more

@@ -13,12 +13,12 @@ public class ChrPitBeast : BaseChr {
     }
 
     //Defines all of a character's unique actions
-    public override void SetActions() {
+    public override void SetInitialSkills() {
 
-        chrOwner.SetAction(0, new ActionSadism(chrOwner));
-        chrOwner.SetAction(1, new ActionTendrilStab(chrOwner));
-        chrOwner.SetAction(2, new ActionForcedEvolution(chrOwner));
-        chrOwner.SetAction(3, new ActionTantrum(chrOwner));
+        chrOwner.arSkills[0] = new ActionSadism(chrOwner);
+        chrOwner.arSkills[1] = new ActionTendrilStab(chrOwner);
+        chrOwner.arSkills[2] = new ActionForcedEvolution(chrOwner);
+        chrOwner.arSkills[3] = new ActionTantrum(chrOwner);
     }
 
 }

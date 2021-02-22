@@ -29,7 +29,7 @@ public static class SelectionSerializer {
         return (byte)act.id;
     }
     public static Action DeserializeAction(Chr chrOwner, byte b) {
-        return chrOwner.arActions[b];
+        return chrOwner.arSkills[b];
     }
 
     public static byte SerializeByte(Player plyr) {

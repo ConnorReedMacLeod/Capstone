@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class ExecSkill  : Executable {
+public abstract class ExecSkill : Executable {
 
     public Action skTarget;
 
     public override bool isLegal() {
 
-        if (skTarget == null || skTarget.chrSource.bDead) {
+        if(skTarget == null) {
+            Debug.Log("Executable of type  " + this.GetType().ToString() + " not legal since skTarget is null");
+            return false;
+        }
+        if(skTarget.chrSource.bDead) {
             Debug.Log("Executable of type  " + this.GetType().ToString() + " not legal since " + skTarget.chrSource.sName + "(target) is dead");
             return false;
         }

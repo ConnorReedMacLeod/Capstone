@@ -50,13 +50,14 @@ public class Chr : MonoBehaviour {
     public Property<int> pnArmour;          //The character's current armour
     public int nAbsorbedArmour;             //The amount of damage currently taken by armour
 
-    public Action[] arActions;      //The characters actions
-    public static int nActions = 9; //Number of actions the character can perform
-    public static int nCharacterActions = 8; // Number of standard actions
-    public const int NUSABLEACTIONS = 4; //The number of actions available at a time for a character to use
+    public Action[] arSkills;      //The character's skills in the loadout for the character - first several are actively selectable
+    public const int nActiveCharacterSkills = 4; //Number of non-generic (rest/block/adapt) currently active on the character
+    public const int nLoadoutSkills = 8; //Number of skills the character has in their pool of skills to adapt to (includes actives)
+    public const int nTotalSkills = nLoadoutSkills + 3; //Number of total skills a character has access to (including benched actions and generics)
 
-    public const int idResting = 7;  //id for the resting action
-    public const int idBlocking = 8; //id for the blocking action
+    public const int idAdapt = 8;    //id for the adapt action (not sure if this will be permanent)
+    public const int idBlocking = 9; //id for the blocking action
+    public const int idResting = 10;  //id for the resting action
 
     public bool bBlocker;           //Whether or not the character is the assigned blocker
     public Property<bool> pbCanBlock;          //Whether the character is capable or not of blocking
@@ -130,8 +131,8 @@ public class Chr : MonoBehaviour {
         return lstChrInPlay[Random.Range(0, lstChrInPlay.Count)];
     }
 
-    public Action GetRandomActionOfChr() {
-        return arActions[Random.Range(0, arActions.Length)];
+    public Action GetRandomActiveSkill() {
+        return arSkills[Random.Range(0, nActiveCharacterSkills)];
     }
 
     public static void RegisterChr(Chr chr) {
@@ -204,11 +205,12 @@ public class Chr : MonoBehaviour {
 
     public void RechargeActions() {
 
-        for(int i = 0; i < Chr.nActions; i++) {
+        //Only bother recharging the active skills since those will be the only ones that can be on cooldown
+        for(int i = 0; i < Chr.nActiveCharacterSkills; i++) {
 
             //Only reduce the cooldown if it is not currently off cooldown
-            if(arActions[i].nCurCD > 0) {
-                ContAbilityEngine.Get().AddExec(new ExecChangeCooldown(null, arActions[i], -1) {
+            if(arSkills[i].nCurCD > 0) {
+                ContAbilityEngine.Get().AddExec(new ExecChangeCooldown(null, arSkills[i], -1) {
 
                     fDelay = ContTurns.fDelayMinorAction
                 });
@@ -385,38 +387,28 @@ public class Chr : MonoBehaviour {
 
     }
 
-
-
-    //By default, set all character actions to resting
-    public virtual void SetDefaultActions() {//TODO:: probably add some parameter for this at some point like an array of ids
-
-        for(int i = 0; i < nActions; i++) {
-            arActions[i] = new ActionRest(this);
-        }
-    }
-
     public void SetAction(int i, Action actNew) {
+        int nNewCooldown = 0;
+
         //If there is an action already in this slot
-        if(arActions[i] != null) {
+        if(arSkills[i] != null) {
+            //First, save the current cooldown of the skill being swapped out
+            nNewCooldown = arSkills[i].nCd;
+
             //Then call it's unequip method since it's leaving
-            arActions[i].OnUnequip();
+            arSkills[i].OnUnequip();
         }
 
-        arActions[i] = actNew;
+        arSkills[i] = actNew;
         actNew.id = i;
 
         //If we've set this to be a non-null action
-        if(arActions[i] != null) {
-            arActions[i].OnEquip();
+        if(arSkills[i] != null) {
+            arSkills[i].OnEquip();
+
+            //Restore the cooldown of the skill previously in the slot
+            arSkills[i].nCd = nNewCooldown;
         }
-    }
-
-    public void SetBaseActions() {
-        //Sets the basic generic actions like resting and blocking
-
-        SetAction(7, new ActionRest(this));
-        SetAction(8, new ActionBlock(this));
-
     }
 
     // Used to initiallize information fields of the Chr
@@ -428,12 +420,7 @@ public class Chr : MonoBehaviour {
 
         RegisterChr(this);
 
-        SetDefaultActions();
-
-        baseChr.SetName();
-        SetBaseActions();
-        baseChr.SetActions();
-        baseChr.SetMaxHealth();
+        baseChr.Init();
 
         view.Init();
     }
@@ -445,7 +432,7 @@ public class Chr : MonoBehaviour {
 
             nMaxActionsLeft = 1;
 
-            arActions = new Action[nActions];
+            arSkills = new Action[nTotalSkills];
 
             stateSelect = STATESELECT.IDLE;
 
