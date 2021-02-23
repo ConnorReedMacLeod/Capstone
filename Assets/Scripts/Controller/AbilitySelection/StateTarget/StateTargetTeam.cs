@@ -49,7 +49,7 @@ public class StateTargetTeam : StateTarget {
         ViewAction.subAllClick.Subscribe(cbSwitchAction);
 
 
-        ContLocalUIInteraction.subAllStartManualTargetting.NotifyObs(this);
+        ContLocalUIInteraction.subAllStartManualTargetting.NotifyObs();
     }
 
     override public void OnLeave() {

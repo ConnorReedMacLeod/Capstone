@@ -72,7 +72,7 @@ public class StateTargetChr : StateTarget {
         ViewBlockerButton.subAllClick.Subscribe(cbSwitchAction);
         ViewRestButton.subAllClick.Subscribe(cbSwitchAction);
 
-        ContLocalUIInteraction.subAllStartManualTargetting.NotifyObs(this);
+        ContLocalUIInteraction.subAllStartManualTargetting.NotifyObs();
         NotifySelectableTargets();
     }
 
