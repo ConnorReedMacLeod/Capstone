@@ -190,7 +190,7 @@ public class LocalInputScripted : LocalInputType {
             for(int j = 0; j < nScriptLength; j++) {
 
                 //Select a random action to be used
-                Action actRandom = chr.GetRandomActiveSkill();
+                Action actRandom = chr.GetRandomSkill();
 
                 //Need to create an InfoSelection of the appropriate type
                 //Then need to randomly fill this InfoSelection with targetting information

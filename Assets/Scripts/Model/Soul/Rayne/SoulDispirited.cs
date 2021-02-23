@@ -21,14 +21,14 @@ public class SoulDispirited : Soul {
         //Increase the cost by one effort
         arnCostDebuff = new int[] { 0, 0, 0, 0, 1 };
 
-        arnodeCostModifier = new LinkedListNode<Property<int[]>.Modifier>[Chr.nActiveSkills];
+        arnodeCostModifier = new LinkedListNode<Property<int[]>.Modifier>[Chr.nLoadoutSkills];
 
     }
 
     public override void ApplicationEffect() {
 
         //Loop through each ability on the targetted character
-        for(int i = 0; i < Chr.nActiveSkills; i++) {
+        for(int i = 0; i < Chr.nLoadoutSkills; i++) {
 
             ApplyCostIncreaseToSkill(i);
         }
@@ -78,14 +78,14 @@ public class SoulDispirited : Soul {
 
         arnCostDebuff = new int[Mana.nManaTypes];
         System.Array.Copy(other.arnCostDebuff, arnCostDebuff, other.arnCostDebuff.Length);
-        arnodeCostModifier = new LinkedListNode<Property<int[]>.Modifier>[Chr.nActiveSkills];
+        arnodeCostModifier = new LinkedListNode<Property<int[]>.Modifier>[Chr.nLoadoutSkills];
         System.Array.Copy(other.arnodeCostModifier, arnodeCostModifier, other.arnodeCostModifier.Length);
 
     }
 
     public override void RemoveEffect() {
         //When removed we'll clear all the cost modifiers we've applied
-        for(int i = 0; i < Chr.nActiveSkills; i++) {
+        for(int i = 0; i < Chr.nLoadoutSkills; i++) {
             chrTarget.arSkills[i].parCost.RemoveModifier(arnodeCostModifier[i]);
         }
 

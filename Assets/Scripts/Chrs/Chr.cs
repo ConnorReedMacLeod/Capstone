@@ -135,6 +135,19 @@ public class Chr : MonoBehaviour {
         return arSkills[Random.Range(0, nActiveCharacterSkills)];
     }
 
+    public Action GetRandomSkill() {
+        //Sometimes throw in random selections of resting/blocking with weighted changes
+        int nRand = Random.Range(0, 100);
+
+        if(nRand < 25) {
+            return arSkills[idResting];
+        } else if(nRand < 35) {
+            return arSkills[idBlocking];
+        } else {
+            return GetRandomActiveSkill();
+        }
+    }
+
     public static void RegisterChr(Chr chr) {
         if(lstAllChrs == null) {
             lstAllChrs = new List<Chr>(Player.MAXPLAYERS * Player.MAXCHRS);

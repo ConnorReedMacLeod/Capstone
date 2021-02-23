@@ -106,7 +106,7 @@ public class Match : MonoBehaviour {
         default:
             Debug.LogError("INVALID CHARACTER SELECTION");
             Application.Quit();
-            newChr.InitChr(player, id, new BaseChr(newChr)); //so the editor will let us compile
+            newChr.InitChr(player, id, new ChrKatarina(newChr)); //so the editor will let us compile
             break;
         }
         arChrs[player.id][id] = newChr;
