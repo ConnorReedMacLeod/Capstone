@@ -444,7 +444,7 @@ public class ViewChr : ViewInteractive {
     public void cbStartUsingAbility(Object target, params object[] args) {
 
 
-        if(((Action)args[0]).bProperActive == true) {
+        if(((Action)args[0]).iSlot != Chr.idResting) {
             statePortrait = PortraitState.ACTING;
 
             SetPortrait();

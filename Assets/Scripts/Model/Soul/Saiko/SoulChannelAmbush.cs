@@ -26,7 +26,7 @@ public class SoulChannelAmbush : SoulChannel {
 
                     //If the character who used an ability is the one we targetted, and they are using a proper action (not a rest)
                     // Then we can ambush them
-                    if((Chr)target == chrStoredSelection && ((Action)args[0]).bProperActive == true){
+                    if((Chr)target == chrStoredSelection && ((Action)args[0]).iSlot != Chr.idResting){
 
                          ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(chrSource, chrTarget, new Damage(dmg)){
                              arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndAmbush", 3.433f) },

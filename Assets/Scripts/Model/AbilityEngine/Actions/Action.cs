@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Action { //This should probably be made abstract
 
-    public int id; //TODO: Consider if you could make a ID<T> class that could dynamically generate new IDS as needed for the type T
+    public int iSlot; //TODO: Consider if you could make a ID<T> class that could dynamically generate new IDS as needed for the type T
 
     public string sName;
     public string sDisplayName;
@@ -20,11 +20,6 @@ public class Action { //This should probably be made abstract
     public int nCharges;
     public int nCurCharges;
 
-    public bool bProperActive;  //Usually true - only false for non-standard actions that shouldn't 
-                                // switch the character sprite to an acting portrait (for example)
-                                // like resting
-
-
     public Property<int[]> parCost;
 
     public List<Clause> lstClauses = new List<Clause>();
@@ -38,8 +33,6 @@ public class Action { //This should probably be made abstract
     public Action(Chr _chrOwner, int _iDominantClause) {
         chrSource = _chrOwner;
         iDominantClause = _iDominantClause;
-
-        bProperActive = true;
 
     }
 
@@ -60,6 +53,18 @@ public class Action { //This should probably be made abstract
 
     public Clause GetDominantClause() {
         return lstClauses[iDominantClause];
+    }
+
+    public bool IsActiveSkill() {
+        return iSlot < Chr.nActiveCharacterSkills;
+    }
+
+    public bool IsLoadoutSkill() {
+        return iSlot < Chr.nLoadoutSkills;
+    }
+
+    public bool IsBenchSkill() {
+        return IsLoadoutSkill() && !IsActiveSkill();
     }
 
     //Changes the cost of this action, and returns the node that is modifying that cost (so you can remove it later)

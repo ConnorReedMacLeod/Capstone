@@ -26,7 +26,7 @@ public static class SelectionSerializer {
     }
 
     public static byte SerializeByte(Action act) {
-        return (byte)act.id;
+        return (byte)act.iSlot;
     }
     public static Action DeserializeAction(Chr chrOwner, byte b) {
         return chrOwner.arSkills[b];

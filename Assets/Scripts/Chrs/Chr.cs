@@ -58,6 +58,7 @@ public class Chr : MonoBehaviour {
     public const int idAdapt = 8;    //id for the adapt action (not sure if this will be permanent)
     public const int idBlocking = 9; //id for the blocking action
     public const int idResting = 10;  //id for the resting action
+    public const int idSwapSlot = 11; //id for a slot at the end that is purely used to swap with for newly introduced adapting skills
 
     public bool bBlocker;           //Whether or not the character is the assigned blocker
     public Property<bool> pbCanBlock;          //Whether the character is capable or not of blocking
@@ -401,27 +402,62 @@ public class Chr : MonoBehaviour {
     }
 
     public void SetAction(int i, Action actNew) {
-        int nNewCooldown = 0;
 
-        //If there is an action already in this slot
-        if(arSkills[i] != null) {
-            //First, save the current cooldown of the skill being swapped out
-            nNewCooldown = arSkills[i].nCd;
+        arSkills[idSwapSlot] = actNew;
 
-            //Then call it's unequip method since it's leaving
-            arSkills[i].OnUnequip();
+        SwapSkills(i, idSwapSlot);
+
+        arSkills[idSwapSlot] = null;
+
+    }
+
+    //Just writing this to get some more intuition for abstraction
+    public void SwapSkills(int i, int j) {
+        Action acti = arSkills[i];
+        Action actj = arSkills[j];
+
+        int njCDNew = acti.nCurCD;
+        int niCDNew = actj.nCurCD;
+
+        //Check if we need to unequip the ith skill
+        if(acti != null && acti.IsActiveSkill() && !actj.IsActiveSkill()) {
+            //If we're swapping an active skill to a non-active skill, then we have to call its unequip method
+            acti.OnUnequip();
         }
 
-        arSkills[i] = actNew;
-        actNew.id = i;
-
-        //If we've set this to be a non-null action
-        if(arSkills[i] != null) {
-            arSkills[i].OnEquip();
-
-            //Restore the cooldown of the skill previously in the slot
-            arSkills[i].nCd = nNewCooldown;
+        //Check if we need to unequip the jth skill
+        if(actj != null && actj.IsActiveSkill() && !acti.IsActiveSkill()) {
+            //If we're swapping an active skill to a non-active skill, then we have to call its unequip method
+            actj.OnUnequip();
         }
+
+        acti.iSlot = j;
+        actj.iSlot = i;
+
+        arSkills[i] = actj;
+        arSkills[j] = acti;
+
+        //Decrease by the current cooldown and increase by the new one
+        Debug.Log("Changing " + acti.sName + "'s cooldown of " + acti.nCurCD + " by " + (niCDNew - njCDNew));
+        acti.ChangeCD(niCDNew - njCDNew);
+        Debug.Log(acti.sName + "'s cooldown is now " + acti.nCurCD);
+
+        Debug.Log("Changing " + actj.sName + "'s cooldown of " + actj.nCurCD + " by " + (njCDNew - niCDNew));
+        actj.ChangeCD(njCDNew - niCDNew);
+        Debug.Log(actj.sName + "'s cooldown is now " + actj.nCurCD);
+
+        //Check if we need to equip the ith skill
+        if(acti != null && acti.IsActiveSkill() && !actj.IsActiveSkill()) {
+            //If this skill is now active while the other swapped one isn't
+            acti.OnEquip();
+        }
+
+        //Check if we need to equip the jth skill
+        if(actj != null && actj.IsActiveSkill() && !acti.IsActiveSkill()) {
+            //If this skill is now active while the other swapped on isn't
+            actj.OnEquip();
+        }
+
     }
 
     // Used to initiallize information fields of the Chr
@@ -445,7 +481,7 @@ public class Chr : MonoBehaviour {
 
             nMaxActionsLeft = 1;
 
-            arSkills = new Action[nTotalSkills];
+            arSkills = new Action[nTotalSkills + 1];//Add in an extra slot for the purposes of swapping in new ones when transforming
 
             stateSelect = STATESELECT.IDLE;
 

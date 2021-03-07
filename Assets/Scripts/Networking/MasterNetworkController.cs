@@ -287,9 +287,9 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
                 //We need to move ahead with finalizing an ability selection.  Check if their selection was valid, and store it.
                 // If it's not valid, then reset it to a rest which will always be fine
-                if(nSerializedInfo == 0) {
+                if(nSerializedInfo == ContAbilitySelection.nNOABILITYSELECTION) {
 
-                    Debug.Log("MASTER: Received selection has 0 passed as the additional info");
+                    Debug.Log("MASTER: Received no selection from the client - issuing a Rest action");
 
                     //If no additional info was passed, then interpret this as a rest action
                     ResetSavedAbilitySelection();
@@ -332,7 +332,17 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
             if(dictClientExpectedPhase[i] == (int)stateTurn) {
                 //Then this is one of the clients we have to manually nudge to end their phase
 
-                OnClientFinishedPhase(i, (int)stateTurn);
+
+                if(stateTurn == ContTurns.STATETURN.CHOOSEACTIONS) {
+
+                    OnClientFinishedPhase(i, (int)stateTurn, ContAbilitySelection.nNOABILITYSELECTION);
+
+                } else {
+
+                    OnClientFinishedPhase(i, (int)stateTurn);
+
+                }
+
             }
 
         }
