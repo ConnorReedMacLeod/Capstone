@@ -18,8 +18,6 @@ public class ActionRest : Action {
         nCd = 0;
         nFatigue = 0;
 
-        bProperActive = false; //This is a special action that shouldn't change our character's sprite to the active
-
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };

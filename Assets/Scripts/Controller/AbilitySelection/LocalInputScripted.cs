@@ -196,7 +196,7 @@ public class LocalInputScripted : LocalInputType {
                 //Then need to randomly fill this InfoSelection with targetting information
                 int nRandomSerialization = MakeRandomSelection(chr, actRandom).Serialize();
 
-                arListRandomSelections[i, j] = new KeyValuePair<int, int>(actRandom.id, nRandomSerialization);
+                arListRandomSelections[i, j] = new KeyValuePair<int, int>(actRandom.iSlot, nRandomSerialization);
             }
         }
 

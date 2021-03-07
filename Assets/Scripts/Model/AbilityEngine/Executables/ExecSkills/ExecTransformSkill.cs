@@ -5,7 +5,7 @@ using UnityEngine;
 
 //Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
 
-public class ExecAdaptSkill : ExecSkill {
+public class ExecTransformSkill : ExecSkill {
 
     public Action skSwapTo;
 
@@ -41,18 +41,18 @@ public class ExecAdaptSkill : ExecSkill {
 
         Debug.Assert(skTarget.chrSource.id == skSwapTo.chrSource.id);
 
-        skTarget.chrSource.SwapSkills(skTarget.iSlot, skSwapTo.iSlot);
+        skTarget.chrSource.SetAction(skTarget.iSlot, skSwapTo);
 
         fDelay = ContTurns.fDelayMinorAction;
-        sLabel = skTarget.chrSource.sName + " is adapting " + skTarget.sName + " to " + skSwapTo.sName;
+        sLabel = skTarget.chrSource.sName + " is transforming " + skTarget.sName + " to " + skSwapTo.sName;
 
     }
 
-    public ExecAdaptSkill(Chr _chrSource, Action _skTarget, Action _skSwapTo) : base(_chrSource, _skTarget) {
+    public ExecTransformSkill(Chr _chrSource, Action _skTarget, Action _skSwapTo) : base(_chrSource, _skTarget) {
         skSwapTo = _skSwapTo;
     }
 
-    public ExecAdaptSkill(ExecAdaptSkill other) : base(other) {
+    public ExecTransformSkill(ExecTransformSkill other) : base(other) {
         skSwapTo = other.skSwapTo;
     }
 }

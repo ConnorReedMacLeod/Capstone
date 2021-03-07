@@ -100,7 +100,7 @@ public class SoulDispirited : Soul {
         if(((Action)args[0]).chrSource != this.chrTarget) return;
 
         //Check if the action that was just used is a character action - not a generic (block/rest)
-        if(((Action)args[0]).id < Chr.nActiveCharacterSkills) {
+        if(((Action)args[0]).iSlot < Chr.nActiveCharacterSkills) {
 
             //if the used action was a character action, then we can dispell this effect
             // sicne we only want to make the first used skill cost more

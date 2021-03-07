@@ -14,6 +14,8 @@ public class ContAbilitySelection : Singleton<ContAbilitySelection> {
         FAST, MEDIUM, INF
     };
 
+    public const int nNOABILITYSELECTION = 1;
+
     public const float fDelayChooseActionFast = 5.0f;
     public const float fDelayChooseActionMedium = 30.0f;
     public const float fDelayChooseActionInf = 9999999.0f;
