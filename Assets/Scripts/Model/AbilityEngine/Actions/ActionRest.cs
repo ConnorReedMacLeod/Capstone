@@ -4,51 +4,54 @@ using UnityEngine;
 
 public class ActionRest : Action {
 
-    public int nRestFatigue;
+    public ActionRest(Chr _chrOwner) : base(_chrOwner, 0) {
 
-	public ActionRest(Chr _chrOwner): base(0, _chrOwner){//number of target arguments
-
-		sName = "Rest";
+        sName = "Rest";
         sDisplayName = "Rest";
 
         type = new TypeCantrip(this);
 
         chrSource = _chrOwner;
 
-        parCost = new Property<int[]>(new int[]{0,0,0,0,0});
+        parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 0 });
 
-		nCd = 0;
+        nCd = 0;
         nFatigue = 0;
 
-        bProperActive = false; //This is a special action that shouldn't change our character's sprite to the active
-
-        nRestFatigue = 3;
-
-		sDescription1 = _chrOwner.sName + " finishes selecting abilities for the turn.";
-
-	}
-
-	override public void Execute(int[] lstTargettingIndices) {
-
-		//Debug.Log (chrSource.sName + " is resting");
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                //Check if the character has any fatigue already
-                if (chrSource.nFatigue == 0) {
-                    //If not, then give them three fatigue
-                    ContAbilityEngine.Get().AddExec(new ExecChangeFatigue() {
-                        chrSource = this.chrSource,
-                        chrTarget = this.chrSource,
-
-                        nAmount = this.nRestFatigue,
-
-                        fDelay = ContTurns.fDelayStandard,
-                        sLabel = this.chrSource.sName + " is resting"
-                    });
-                }
-            }
-        });
-
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
     }
+
+    class Clause1 : ClauseSpecial {
+
+        public int nRestFatigue;
+
+        public Clause1(Action _act) : base(_act) {
+            //TODO add in tags for base action, and rest
+
+            nRestFatigue = 3;
+        }
+
+        public override string GetDescription() {
+
+            return string.Format("Finish this character's turn");
+        }
+
+        public override void ClauseEffect() {
+
+            //Check if the character has any fatigue already
+            if(action.chrSource.nFatigue == 0) {
+                //If not, then give them the rest fatigue
+                ContAbilityEngine.Get().AddExec(new ExecChangeFatigue(action.chrSource, action.chrSource, nRestFatigue, false) {
+                    sLabel = "Resting"
+                });
+            }
+
+            action.chrSource.SetStateReadiness(new StateFatigued(action.chrSource));
+
+        }
+
+    };
 
 }

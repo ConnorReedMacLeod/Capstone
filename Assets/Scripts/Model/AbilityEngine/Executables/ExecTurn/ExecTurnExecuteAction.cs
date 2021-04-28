@@ -38,21 +38,25 @@ public class ExecTurnExecuteAction : Executable {
 
     public override void ExecuteEffect() {
 
-        //We assume that we have just come from choosing an action, so get that character
+        //We assume that we have recieved our selection info from the Master already
         Chr chrNextToAct = ContTurns.Get().GetNextActingChr();
 
-        sLabel = chrNextToAct.sName + " is using " + chrNextToAct.arActions[ContAbilitySelection.Get().nSelectedAbility].sDisplayName;
+        sLabel = chrNextToAct.sName + " is using " + ContAbilitySelection.Get().infoSelectionFromMaster.actUsed.sDisplayName;
 
-        chrNextToAct.ExecuteAction(ContAbilitySelection.Get().nSelectedAbility, ContAbilitySelection.Get().lstSelectedTargets);
+        Debug.Log("ExecTurnExecuteAction: " + sLabel);
 
-        if (ContAbilitySelection.Get().nSelectedAbility == Chr.idResting) {
-            chrNextToAct.SetStateReadiness(new StateFatigued(chrNextToAct));
-        }
+        chrNextToAct.ExecuteAction(ContAbilitySelection.Get().infoSelectionFromMaster);
 
         fDelay = ContTurns.fDelayStandard;
 
-        //Move back to choosing actions (in case there's more actions to be chosen)
-        ContTurns.Get().SetTurnState(ContTurns.STATETURN.CHOOSEACTIONS);
+    }
+
+
+    public ExecTurnExecuteAction(Chr _chrSource) : base(_chrSource) {
+
+    }
+
+    public ExecTurnExecuteAction(ExecTurnExecuteAction other) : base(other) {
 
     }
 }

@@ -40,14 +40,7 @@ public abstract class StateReadiness {
 	public virtual void Recharge() {
 
         //By default, we just reduce fatigue by 1 (with the beginning of turn flag)
-        ContAbilityEngine.Get().AddExec(new ExecChangeFatigue() {
-            chrSource = null,
-            chrTarget = chrOwner,
-
-            nAmount = -1,
-            bBeginningTurn = true,
-
-        });
+        ContAbilityEngine.Get().AddExec(new ExecChangeFatigue(null, chrOwner, -1, true));
 
     }
 

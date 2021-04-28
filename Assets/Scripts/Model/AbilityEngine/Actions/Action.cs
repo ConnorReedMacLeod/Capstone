@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class Action { //This should probably be made abstract
 
-    public int id;
+    public int iSlot; //TODO: Consider if you could make a ID<T> class that could dynamically generate new IDS as needed for the type T
 
-    public int nArgs; // Note that this should only ever be 0 or 1
-    public TargetArg[] arArgs;
     public string sName;
     public string sDisplayName;
     public TypeAction type;
@@ -16,49 +14,30 @@ public class Action { //This should probably be made abstract
     public int nCurCD;
     public int nFatigue;
 
-    public SoulChannel soulChannel; // Stores behaviour for how this channel should work (if this is a channel)
-    public int nActionCost; // How many action 'points' this ability uses - cantrips would cost 0
-
     public Chr chrSource;
 
     public bool bCharges;
     public int nCharges;
     public int nCurCharges;
 
-    public string sDescription1;
-    public string sDescription2;
-	public string sDescription3;
+    public Property<int[]> parCost;
 
-    public bool bProperActive;  //Usually true - only false for non-standard actions that shouldn't 
-                                // switch the character sprite to an acting portrait (for example)
+    public List<Clause> lstClauses = new List<Clause>();
+    public List<Clause> lstClausesOnEquip = new List<Clause>();
+    public List<Clause> lstClausesOnUnequip = new List<Clause>();
 
-
-	public Property<int[]> parCost;
-
-    public Stack<Clause> stackClauses = new Stack<Clause>();
+    public int iDominantClause;
 
     public Subject subAbilityChange = new Subject();
 
-    public Action(int _nArgs, Chr _chrOwner) {
-        nArgs = _nArgs;
+    public Action(Chr _chrOwner, int _iDominantClause) {
         chrSource = _chrOwner;
-
-        bProperActive = true;
-
-
-        arArgs = new TargetArg[nArgs];
+        iDominantClause = _iDominantClause;
 
     }
-
-    public void SetArgOwners() {
-        for (int i = 0; i < nArgs; i++) {
-            arArgs[i].setOwner(chrSource);
-        }
-    }
-
 
     public void ChangeCD(int _nChange) {
-        if (_nChange + nCurCD < 0) {
+        if(_nChange + nCurCD < 0) {
             // Don't let reductions go negative
             nCurCD = 0;
         } else {
@@ -66,6 +45,26 @@ public class Action { //This should probably be made abstract
             subAbilityChange.NotifyObs();
 
         }
+    }
+
+    public Clause.TargetType GetTargetType() {
+        return GetDominantClause().targetType;
+    }
+
+    public Clause GetDominantClause() {
+        return lstClauses[iDominantClause];
+    }
+
+    public bool IsActiveSkill() {
+        return iSlot < Chr.nActiveCharacterSkills;
+    }
+
+    public bool IsLoadoutSkill() {
+        return iSlot < Chr.nLoadoutSkills;
+    }
+
+    public bool IsBenchSkill() {
+        return IsLoadoutSkill() && !IsActiveSkill();
     }
 
     //Changes the cost of this action, and returns the node that is modifying that cost (so you can remove it later)
@@ -82,73 +81,57 @@ public class Action { //This should probably be made abstract
     //What should happen when this action is added to the list of abilities
     public virtual void OnEquip() {
 
-        while (stackClauses.Count != 0) {
-            //Add each clause in this ability to the stack
-            ContAbilityEngine.Get().AddClause(stackClauses.Pop());
-        }
+        ContAbilityEngine.PushClauses(lstClausesOnEquip);
 
     }
 
     //What should happen when this action is remove from the list of abilities
     public virtual void OnUnequip() {
 
-        while (stackClauses.Count != 0) {
-            //Add each clause in this ability to the stack
-            ContAbilityEngine.Get().AddClause(stackClauses.Pop());
-        }
+        ContAbilityEngine.PushClauses(lstClausesOnUnequip);
+
+    }
+
+    //TODO - don't make new instances of these, just store one modifiable copy in the action and 
+    //       push a reference to it onto the stack instead
+    public void PayActionPoints() {
+
+        ContAbilityEngine.PushSingleClause(new ClausePayActionPoints(this));
 
     }
 
     public void PayManaCost() {
 
-        ContAbilityEngine.Get().AddClause(new Clause() {
+        ContAbilityEngine.PushSingleClause(new ClausePayMana(this));
 
-            fExecute = () => {
-                //Pay for the Action
-                ContAbilityEngine.Get().AddExec(new ExecChangeMana(chrSource.plyrOwner, Mana.ConvertToCost(parCost.Get())) {
-                    chrSource = this.chrSource,
-                    chrTarget = null,
-                });
-            }
-        });
     }
 
     public void PayCooldown() {
-        ContAbilityEngine.Get().AddClause(new Clause() {
 
-            fExecute = () => {
-                //Increase this Action's cooldown
-                ContAbilityEngine.Get().AddExec(new ExecChangeCooldown() {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
-
-                    actTarget = this,
-                    nAmount = nCd
-                });
-            }
-        });
+        ContAbilityEngine.PushSingleClause(new ClausePayCooldown(this));
     }
 
     public void PayFatigue() {
 
-        ContAbilityEngine.Get().AddClause(new Clause() {
+        ContAbilityEngine.PushSingleClause(new ClausePayFatigue(this));
 
-            fExecute = () => {
-                //Increase the character's fatigue
-                ContAbilityEngine.Get().AddExec(new ExecChangeFatigue {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
+    }
 
-                    nAmount = nFatigue
-                });
-            }
-        });
+    public void PushStartingMarker() {
+
+        ContAbilityEngine.PushSingleClause(new ClauseStartAbility(this));
+
+    }
+
+    public void PushEndingMarker() {
+
+        ContAbilityEngine.PushSingleClause(new ClauseEndAbility(this));
 
     }
 
     public bool CanPayMana() {
         //Check if you have enough mana
-        if (chrSource.plyrOwner.mana.HasMana(parCost.Get()) == false) {
+        if(chrSource.plyrOwner.mana.HasMana(parCost.Get()) == false) {
             Debug.Log("Not enough mana");
             return false;
         }
@@ -156,80 +139,125 @@ public class Action { //This should probably be made abstract
     }
 
     //Use the selected action with the supplied targets
-    public void UseAction(int[] lstTargettingIndices) {
+    public void UseAction(SelectionSerializer.SelectionInfo infoSelection) {
 
         if(CanPayMana() == false) {
             Debug.LogError("Tried to use action, but didn't have enough mana");
         }
 
-        if (CanActivate(lstTargettingIndices) == false) {
+        if(CanSelect(infoSelection) == false) {
             Debug.LogError("Tried to use action, but it's not a valid selection");
         }
 
-        //First pay the mana cost for the action
-        PayManaCost();
+        // IMPORTANT - since we're pushing these effects onto the stack, we'll want to 
+        //             push them in reverse order so that we will evaluate the most recently pushed effect first
 
-        //Add a marker for the end of the ability below all of the effects for this ability
-        ContAbilityEngine.Get().AddClause(new ClauseEndAbility(this));
+
+
+        //Finally, add an ending marker after the ability is executed
+        PushEndingMarker();
 
         //Let the type of this action dictate the behaviour and push all relevant effects onto the stack
-        type.UseAction(lstTargettingIndices);
+        type.UseAction();
 
-        //Add a marker on top for where the ability starts
-        ContAbilityEngine.Get().AddClause(new ClauseStartAbility(this));
+        //Then, add a starting marker before the abilities' effects
+        PushStartingMarker();
 
+        //Fourth, pay the cooldown
+        PayCooldown();
 
+        //Third, pay the fatigue
+        PayFatigue();
+
+        //Second pay the mana cost for the action
+        PayManaCost();
+
+        //First pay the action points
+        PayActionPoints();
     }
 
-    // Perform the actual effect this action should do
-    // This is the main effect of the action for actives/cantrips
-    //  and is the completion action for cantrips
-    public virtual void Execute(int[] lstTargettingIndices) {
-        //By default do nothing - just override this to make the action do something
+
+    public void Execute() {
+
+        //Push a reference to each of our clauses onto the stack so they may be evaluated later
+        ContAbilityEngine.PushClauses(lstClauses);
     }
 
-    //Check if the owner is alive and that the proposed targets are legal
-    public virtual bool LegalTargets(int[] lstTargettingIndices) {
+    //Determine if the ability could be used targetting the passed indices (Note: doesn't include mana check)
+    public virtual bool CanSelect(SelectionSerializer.SelectionInfo selectionInfo) {// Maybe this doesn't need to be virtual
 
-        if (chrSource.bDead) {
-            Debug.Log("The character source is dead");
+        //First, check if we're at least alive
+        if(chrSource.bDead == true) {
             return false;
         }
 
-        for (int i = 0; i < arArgs.Length; i++) {
-            if (arArgs[i].WouldBeLegal(lstTargettingIndices[i]) == false) {
-                Debug.Log("Argument " + i + " would be invalid");
-                return false;
-            }
+        //Check that we're in a readiness state (with enough usable actions left)
+        if(chrSource.curStateReadiness.CanSelectAction(this) == false) {
+            //Debug.Log("Not in a state where we can use this action");
+            return false;
+        }
+
+        //Check that the ability isn't on cooldown
+        if(nCurCD != 0) {
+            //Debug.Log ("Ability on cd");
+            return false;
+        }
+
+        if(lstClauses[iDominantClause].IsSelectable(selectionInfo) == false) {
+            Debug.Log("This selection would make the dominant clause invalid");
+            return false;
         }
 
         return true;
     }
 
+    //Determine if the ability can be executed with the given selection parameters - this is more allowable
+    //  since we just want to ensure a prepped ability will not fizzle if it can at least do something
+    public bool CanExecute(SelectionSerializer.SelectionInfo selectionInfo) {
 
-    //Determine if the ability could be used targetting the passed indices (Note: doesn't include mana check)
-	public virtual bool CanActivate(int[] lstTargettingIndices) {// Maybe this doesn't need to be virtual
-
-        //Check that the ability isn't on cooldown
-        if (nCurCD != 0) {
-			//Debug.Log ("Ability on cd");
-			return false;
-		}
+        //First, check if we're at least alive
+        if(chrSource.bDead == true) {
+            return false;
+        }
 
         //Check that we're in a readiness state (with enough usable actions left)
-        if (!chrSource.curStateReadiness.CanSelectAction(this)) {
+        if(chrSource.curStateReadiness.CanSelectAction(this) == false) {
             //Debug.Log("Not in a state where we can use this action");
             return false;
         }
 
-        if(LegalTargets(lstTargettingIndices) == false) {
-            //Debug.Log("Targets aren't legal");
+        //Finally, check if there's at least one valid target to execute on - some ability clauses
+        // without targets won't make sense to execute if the dominant clause has no targets.
+        //  E.g. - a vampire bite's healing clause wouldn't make sense to execute if its
+        //         damage clause has no viable target
+        if(lstClauses[iDominantClause].HasFinalTarget(selectionInfo) == false) {
+            Debug.Log("This selection would make the dominant clause invalid");
             return false;
         }
 
-		
-		return true;
-	}
+        return true;
+    }
+
+    //Determine if the ability should continue as a channel.  If the character dies, or has no valid targets for completing
+    //  the channel targetting, then we can cancel it
+    public bool CanCompleteAsChannel(SelectionSerializer.SelectionInfo selectionInfo) {
+
+        //First, check if we're at least alive
+        if(chrSource.bDead == true) {
+            return false;
+        }
+
+        //Finally, check if there's at least one valid target to execute on - some ability clauses
+        // without targets won't make sense to execute if the dominant clause has no targets.
+        //  E.g. - a vampire bite's healing clause wouldn't make sense to execute if its
+        //         damage clause has no viable target
+        if(lstClauses[iDominantClause].HasFinalTarget(selectionInfo) == false) {
+            Debug.Log("This " + sName + " channel cannot complete since it has no valid targets");
+            return false;
+        }
+
+        return true;
+    }
 
     public static bool IsEnemy(Chr owner, Chr tar) {
         return owner.plyrOwner != tar.plyrOwner;
@@ -242,5 +270,105 @@ public class Action { //This should probably be made abstract
     public static bool IsAnyCharacter(Chr owner, Chr tar) {
         return true;
     }
+
+    class ClausePayMana : ClauseSpecial {
+
+        public ClausePayMana(Action _act) : base(_act) {
+        }
+
+        public override string GetDescription() {
+            return string.Format("Paying mana for skill");
+        }
+
+        public override void ClauseEffect() {
+
+            ContAbilityEngine.PushSingleExecutable(new ExecChangeMana(action.chrSource, action.chrSource.plyrOwner, Mana.ConvertToCost(action.parCost.Get())));
+
+        }
+
+    };
+
+    class ClausePayCooldown : ClauseSpecial {
+
+        public ClausePayCooldown(Action _act) : base(_act) {
+        }
+
+        public override string GetDescription() {
+            return string.Format("Paying cooldown for skill");
+        }
+
+        public override void ClauseEffect() {
+
+            ContAbilityEngine.PushSingleExecutable(new ExecChangeCooldown(action.chrSource, action, action.nCd));
+
+        }
+
+    };
+
+    class ClausePayFatigue : ClauseSpecial {
+
+        public ClausePayFatigue(Action _act) : base(_act) {
+        }
+
+        public override string GetDescription() {
+            return string.Format("Paying fatigue for skill");
+        }
+
+        public override void ClauseEffect() {
+
+            ContAbilityEngine.PushSingleExecutable(new ExecChangeFatigue(action.chrSource, action.chrSource, action.nFatigue, false));
+
+        }
+
+    };
+
+    class ClausePayActionPoints : ClauseSpecial {
+
+        public ClausePayActionPoints(Action _act) : base(_act) {
+
+        }
+
+        public override string GetDescription() {
+            return string.Format("Paying action points");
+        }
+
+        public override void ClauseEffect() {
+            ContAbilityEngine.PushSingleExecutable(new ExecPayActionPoints(action.chrSource, action.chrSource, action));
+        }
+    };
+
+    class ClauseStartAbility : ClauseSpecial {
+
+        public ClauseStartAbility(Action _act) : base(_act) {
+        }
+
+        public override string GetDescription() {
+            return string.Format("Starting marker for this skill");
+        }
+
+        public override void ClauseEffect() {
+
+            ContAbilityEngine.PushSingleExecutable(new ExecStartAbility(action.chrSource, action));
+
+        }
+
+    };
+
+    class ClauseEndAbility : ClauseSpecial {
+
+        public ClauseEndAbility(Action _act) : base(_act) {
+        }
+
+        public override string GetDescription() {
+            return string.Format("Ending marker for this skill");
+        }
+
+        public override void ClauseEffect() {
+
+            ContAbilityEngine.PushSingleExecutable(new ExecEndAbility(action.chrSource, action));
+
+        }
+
+    };
 
 }

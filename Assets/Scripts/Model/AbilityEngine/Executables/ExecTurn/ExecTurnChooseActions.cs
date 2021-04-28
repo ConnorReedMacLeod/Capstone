@@ -38,45 +38,22 @@ public class ExecTurnChooseActions : Executable {
     }
 
 
+    //All that choose actions needs to do is store the selection information for the
+    // chosen action so that ContTurns->FinishedTurnPhase can post this information to the master
     public override void ExecuteEffect() {
         //Debug.Log("Executing ExecTurnChooseAction");
-        
 
-        //First, test if we actually have any character who is ready to act right now
-        if(ContTurns.Get().GetNextActingChr() == null) {
-
-            //If no character is in the ready state, then we'll move to the end of turn
-            ContTurns.Get().SetTurnState(ContTurns.STATETURN.TURNEND);
-
-        } else {
-
-            //If we do have a character who can act, then set them up to be able to act
-
-            //Prepare to execute the action that they will have selected
-            ContTurns.Get().SetTurnState(ContTurns.STATETURN.EXECUTEACTIONS);
-
-            //Let the controller for ability selection know that it should start selecting an ability
-            ContAbilitySelection.Get().StartSelection();
-
-            //Ensure that we actually don't automatically move to process the next event
-            bStopAutoProcessing = true;
-
-
-            //If a human player is asked to use an ability
-            if (ContTurns.Get().GetNextActingChr().plyrOwner.inputController.GetType() == typeof(InputHuman)) {
-                //Then set up a timer countdown for them
-                sLabel = "Select Your Action for " + ContTurns.Get().GetNextActingChr().sName;
-                fDelay = ContAbilitySelection.Get().fMaxSelectionTime;
-
-            } else {
-                Debug.Log("An AI is deciding their ability");
-                sLabel = ContTurns.Get().GetNextActingChr().sName  + " is selecting their action";
-                fDelay = ContAbilitySelection.Get().fMaxSelectionTime; 
-            }
-
-            
-
-        }
+        //Let the AbilitySelection controller handle what should be done here
+        ContAbilitySelection.Get().StartSelection();
 
     }
+
+    public ExecTurnChooseActions(Chr _chrSource) : base(_chrSource) {
+        bStopAutoProcessing = true;
+    }
+
+    public ExecTurnChooseActions(ExecTurnChooseActions other) : base(other) {
+
+    }
+
 }

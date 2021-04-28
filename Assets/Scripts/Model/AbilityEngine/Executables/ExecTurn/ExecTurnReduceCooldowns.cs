@@ -5,8 +5,6 @@ using UnityEngine;
 public class ExecTurnReduceCooldowns : Executable {
 
 
-
-
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
     //        this.GetType().GetMember("subAllPreTrigger", BindingFlags.Public |BindingFlags.Static);
@@ -41,13 +39,13 @@ public class ExecTurnReduceCooldowns : Executable {
 
     public void ReduceCooldowns() {
 
-        for (int i = 0; i < Match.Get().nPlayers; i++) {
-            for (int j = 0; j < Player.MAXCHRS; j++) {
-                if (Match.Get().arChrs[i][j] == null) {
+        for(int i = 0; i < Match.Get().nPlayers; i++) {
+            for(int j = 0; j < Player.MAXCHRS; j++) {
+                if(Match.Get().arChrs[i][j] == null) {
                     continue; // A character isn't actually here (extra space for characters)
                 }
 
-                if (Match.Get().arChrs[i][j].bDead) {
+                if(Match.Get().arChrs[i][j].bDead) {
                     continue; //The character's already dead
                 }
 
@@ -62,10 +60,16 @@ public class ExecTurnReduceCooldowns : Executable {
 
         ReduceCooldowns();
 
-        ContTurns.Get().SetTurnState(ContTurns.STATETURN.GIVEMANA);
-
         sLabel = "Reducing Cooldowns";
         fDelay = ContTurns.fDelayTurnAction;
+
+    }
+
+    public ExecTurnReduceCooldowns(Chr _chrSource) : base(_chrSource) {
+
+    }
+
+    public ExecTurnReduceCooldowns(ExecTurnReduceCooldowns other) : base(other) {
 
     }
 }

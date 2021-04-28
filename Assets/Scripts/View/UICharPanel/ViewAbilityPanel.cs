@@ -68,7 +68,7 @@ public class ViewAbilityPanel : ViewInteractive {
             arViewAction[i].transform.localPosition = arV3AbilityPositions[i];
 
             if (chrSelected != null) {
-                arViewAction[i].SetModel(chrSelected.arActions[i]);
+                arViewAction[i].SetModel(chrSelected.arSkills[i]);
             } else {
                 arViewAction[i].SetModel(null);
             }

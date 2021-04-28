@@ -13,13 +13,13 @@ public class ChrSaiko : BaseChr {
     }
 
     //Defines all of a character's unique actions
-    public override void SetActions() {
+    public override void SetInitialSkills() {
 
-        chrOwner.SetAction(0, new ActionAmbush(chrOwner));
-        chrOwner.SetAction(1, new ActionSmokeCover(chrOwner));
-        chrOwner.SetAction(2, new ActionTranquilize(chrOwner));
-        chrOwner.SetAction(3, new ActionStickyBomb(chrOwner));
-        
+        chrOwner.arSkills[0] = new ActionAmbush(chrOwner);
+        chrOwner.arSkills[1] = new ActionSmokeCover(chrOwner);
+        chrOwner.arSkills[2] = new ActionTranquilize(chrOwner);
+        chrOwner.arSkills[3] = new ActionStickyBomb(chrOwner);
+
     }
 
 }

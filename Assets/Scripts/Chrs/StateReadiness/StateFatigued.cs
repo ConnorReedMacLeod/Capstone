@@ -21,9 +21,8 @@ public class StateFatigued : StateReadiness {
         if (chrOwner.nFatigue == 0) {
             //Then transition to the ready state
 
-            ContAbilityEngine.Get().AddExec(new ExecReadyChar {
-                chrSource = null, //Since no character is actually the source of this effect - it's just the game rules
-                chrTarget = chrOwner,
+            //Leave the source as null since it's just the game rules causing the readying
+            ContAbilityEngine.Get().AddExec(new ExecReadyChar(null, chrOwner){
 
                 fDelay = ContTurns.fDelayStandard,
                 sLabel = chrOwner.sName + " is Readying"

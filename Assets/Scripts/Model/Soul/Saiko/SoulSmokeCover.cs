@@ -4,15 +4,6 @@ using UnityEngine;
 
 public class SoulSmokeCover : Soul {
 
-    public int nBaseDuration;
-
-    public SoulChangePower soulChangePower;
-
-    public void OnDeclareBlocker() {
-        //When we block, dispel this effect
-        soulContainer.RemoveSoul(this);
-    }
-
     public SoulSmokeCover(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
 
         sName = "SmokeCover";
@@ -24,18 +15,7 @@ public class SoulSmokeCover : Soul {
 
         pnMaxDuration = new Property<int>(4);
 
-        lstTriggers = new List<TriggerEffect>() {
-
-            new TriggerEffect() {
-                sub = ExecBecomeBlocker.subAllPostTrigger,
-                cb = (target, args) => {
-                    //Only move on if the buffed character is the one about to become the blocker
-                    if(((ExecBecomeBlocker)args[0]).chrTarget != this.chrTarget) return;
-
-                    OnDeclareBlocker();
-                }
-            }
-        };
+        InitTriggers();
 
         lstReplacements = new List<Replacement>() {
             new Replacement() {
@@ -53,10 +33,40 @@ public class SoulSmokeCover : Soul {
                     },
 
                 //Just replace the executable with a completely new null executable
-                execReplace = (Executable exec) => new ExecNull()
+                execReplace = (Executable exec) => new ExecNull(exec.chrSource)
 
             }
         };
 
+    }
+
+    public override void InitTriggers() {
+        lstTriggers = new List<TriggerEffect>() {
+
+            new TriggerEffect() {
+                sub = ExecBecomeBlocker.subAllPostTrigger,
+                cb = cbOnBecomeBlocker
+            }
+        };
+    }
+
+    public void cbOnBecomeBlocker(Object target, object[] args) {
+        //Only continue if the buffed character is the one about to become the blocker
+        if(((ExecBecomeBlocker)args[0]).chrTarget != this.chrTarget) return;
+
+        //When we become blocker, dispel this soul effect
+        soulContainer.RemoveSoul(this);
+    }
+
+    public SoulSmokeCover(SoulSmokeCover other, Chr _chrTarget = null) : base(other) {
+        if(_chrTarget != null) {
+            //If a Target was provided, then we'll use that
+            chrTarget = _chrTarget;
+        } else {
+            //Otherwise, just copy from the other object
+            chrTarget = other.chrTarget;
+        }
+
+        InitTriggers();
     }
 }

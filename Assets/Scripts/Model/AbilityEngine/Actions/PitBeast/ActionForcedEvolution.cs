@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class ActionForcedEvolution : Action {
 
-    public ActionForcedEvolution(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
-
-        //Note that we don't have any targets for this ability
-        //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner);
+    public ActionForcedEvolution(Chr _chrOwner) : base(_chrOwner, 0) {//Set the dominant clause
 
         sName = "ForcedEvolution";
         sDisplayName = "Forced Evolution";
@@ -19,47 +16,66 @@ public class ActionForcedEvolution : Action {
 
         nCd = 6;
         nFatigue = 1;
-        nActionCost = 1;
 
-        sDescription1 = "Lose 5 health.  Gain 5 POWER.";
-
-        SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this),
+            new Clause2(this)
+        };
     }
 
+    class Clause1 : ClauseChr {
+        
+        public int nLifeLoss = 5;
 
-    override public void Execute(int[] lstTargettingIndices) {
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this), //Base Tag always goes first
+                new ClauseTagChrSelf(this)
+            });
+            
+        }
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
+        public override string GetDescription() {
 
-                    funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
+            return string.Format("Lose {0} life.", nLifeLoss);
+        }
 
-                        return new SoulEvolved(_chrSource, _chrTarget, this);
+        public override void ClauseEffect(Chr chrSelected) {
 
-                    },
+            ContAbilityEngine.PushSingleExecutable(new ExecLoseLife(action.chrSource, chrSelected, nLifeLoss) {
+                sLabel = "It's going berserk"
+            });
 
-                    arSoundEffects = new SoundEffect[] { new SoundEffect("PitBeast/sndForcedEvolution", 4.667f) },
+        }
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = chrSource.sName + " is evolving"
-                });
-            }
-        });
+    };
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                ContAbilityEngine.Get().AddExec(new ExecLoseLife() {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
-                    nLifeLoss = 5,
+    class Clause2 : ClauseChr {
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = this.chrSource.sName + " is going berserk"
-                });
-            }
-        });
-    }
+        public SoulEvolved soulToCopy;
+
+        public Clause2(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this), //Base Tag always goes first
+                new ClauseTagChrSelf(this)
+            });
+
+            soulToCopy = new SoulEvolved(action.chrSource, null, action);
+        }
+
+        public override string GetDescription() {
+
+            return string.Format("Gain {0} POWER.", soulToCopy.nPowerBuff);
+        }
+
+        public override void ClauseEffect(Chr chrSelected) {
+
+            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulEvolved(soulToCopy, chrSelected)) {
+                arSoundEffects = new SoundEffect[] { new SoundEffect("PitBeast/sndForcedEvolution", 4.667f) },
+                sLabel = "It's evolving"
+            });
+
+        }
+
+    };
 }

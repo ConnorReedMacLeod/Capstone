@@ -4,13 +4,7 @@ using UnityEngine;
 
 public class ActionTendrilStab : Action {
 
-    public Damage dmg;
-    public int nBaseDamage;
-
-    public ActionTendrilStab(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
-
-        //Since the base constructor initializes this array, we can start filling it
-        //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); we don't have any targets
+    public ActionTendrilStab(Chr _chrOwner) : base(_chrOwner, 0) {
 
         sName = "TendrilStab";
         sDisplayName = "Tendril Stab";
@@ -22,42 +16,41 @@ public class ActionTendrilStab : Action {
 
         nCd = 6;
         nFatigue = 3;
-        nActionCost = 1;
 
-        nBaseDamage = 25;
-        //Create a base Damage object that this action will apply
-        dmg = new Damage(this.chrSource, null, nBaseDamage, true);
-
-        sDescription1 = "Deal 25 PIERCING damage to the enemy Vanguard.";
-
-        SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
     }
 
-    override public void Execute(int[] lstTargettingIndices) {
 
-        Chr tarChr = chrSource.plyrOwner.GetEnemyPlayer().GetBlocker();
+    class Clause1 : ClauseChr {
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
+        Damage dmg;
+        public int nBaseDamage = 25;
 
-                //Make a copy of the damage object to give to the executable
-                Damage dmgToApply = new Damage(dmg);
-                //Give the damage object its target
-                dmgToApply.SetChrTarget(tarChr);
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrMelee(this), //Base Tag always goes first
+                new ClauseTagChrEnemy(this)
+            });
 
-                ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                    chrSource = this.chrSource,
-                    chrTarget = tarChr,
-                    dmg = dmgToApply,
+            dmg = new Damage(action.chrSource, null, nBaseDamage, true);
+        }
 
-                    arSoundEffects = new SoundEffect[] { new SoundEffect("PitBeast/sndTendrilStab", 3.067f) },
+        public override string GetDescription() {
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = tarChr.sName + " is being stabbed"
-                });
-            }
-        });
+            return string.Format("Deal {0} [PIERCING] damage to the enemy Vanguard.", dmg.Get());
+        }
 
-    }
+        public override void ClauseEffect(Chr chrSelected) {
+
+            ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(action.chrSource, chrSelected, dmg) {
+                arSoundEffects = new SoundEffect[] { new SoundEffect("PitBeast/sndTendrilStab", 3.067f) },
+                sLabel = "Stab, stab, stab"
+            });
+
+        }
+
+    };
 
 }

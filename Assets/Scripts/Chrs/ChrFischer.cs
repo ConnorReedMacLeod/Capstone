@@ -15,13 +15,13 @@ public class ChrFischer : BaseChr {
 
 
     //Defines all of a character's unique actions
-    public override void SetActions() {
-        chrOwner.SetAction(0, new ActionHuntersQuarry(chrOwner));
-        chrOwner.SetAction(1, new ActionImpale(chrOwner));
-        chrOwner.SetAction(2, new ActionHarpoonGun(chrOwner));
-        chrOwner.SetAction(3, new ActionBucklerParry(chrOwner));
+    public override void SetInitialSkills() {
 
-       
+        chrOwner.arSkills[0] = new ActionHuntersQuarry(chrOwner);
+        chrOwner.arSkills[1] = new ActionImpale(chrOwner);
+        chrOwner.arSkills[2] = new ActionHarpoonGun(chrOwner);
+        chrOwner.arSkills[3] = new ActionBucklerParry(chrOwner);
+
     }
 
 }

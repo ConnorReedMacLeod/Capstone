@@ -17,25 +17,36 @@ public class SoulImpaled : Soul {
         bDuration = false;
 
 
-        lstTriggers = new List<TriggerEffect>(); //no triggers needed
 
-        funcOnApplication = () => {
+    }
 
-            //Apply a modifier (and save a reference to the modifier node)) to reduce max health by 10
-            modifierLifeReduction = chrTarget.pnMaxHealth.AddModifier((int nBelow) => (nBelow - 10));
-            
-            //Then do a check to make sure cur health isn't above max health
-            if(chrTarget.nCurHealth > chrTarget.pnMaxHealth.Get()) {
-                //If it is, then change the curhealth by 0 (which should catch oversetting curhealth)
-                chrTarget.ChangeHealth(0);
-            }
+    public int funcHealthReductionModifier(int nCurHealth) { return nCurHealth - nMaxLifeReduction; }
 
-        };
+    public override void ApplicationEffect() {
+        //Apply a modifier (and save a reference to the modifier node)) to reduce max health by nMaxLifeReduction
+        modifierLifeReduction = chrTarget.pnMaxHealth.AddModifier(funcHealthReductionModifier);
 
-        funcOnRemoval = () => {
+        //Then do a check to make sure cur health isn't above max health
+        if(chrTarget.nCurHealth > chrTarget.pnMaxHealth.Get()) {
+            //If it is, then change the curhealth by 0 (which should catch oversetting curhealth)
+            chrTarget.ChangeHealth(0);
+        }
+    }
 
-            chrTarget.pnMaxHealth.RemoveModifier(modifierLifeReduction);
+    public override void RemoveEffect() {
+        chrTarget.pnMaxHealth.RemoveModifier(modifierLifeReduction);
+    }
 
-        };
+    public SoulImpaled(SoulImpaled other, Chr _chrTarget = null) : base(other) {
+        if(_chrTarget != null) {
+            //If a Target was provided, then we'll use that
+            chrTarget = _chrTarget;
+        } else {
+            //Otherwise, just copy from the other object
+            chrTarget = other.chrTarget;
+        }
+
+        nMaxLifeReduction = other.nMaxLifeReduction;
+
     }
 }

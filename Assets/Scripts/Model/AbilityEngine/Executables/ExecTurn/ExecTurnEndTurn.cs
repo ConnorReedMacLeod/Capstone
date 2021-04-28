@@ -38,12 +38,18 @@ public class ExecTurnEndTurn : Executable {
 
     public override void ExecuteEffect() {
 
-        ContTurns.Get().SetTurnState(ContTurns.STATETURN.RECHARGE);
-
         sLabel = "End of Turn";
         fDelay = ContTurns.fDelayTurnAction;
 
         ContTurns.Get().nTurnNumber++;
+
+    }
+
+    public ExecTurnEndTurn(Chr _chrSource) : base(_chrSource) {
+
+    }
+
+    public ExecTurnEndTurn(ExecTurnEndTurn other) : base(other) {
 
     }
 }

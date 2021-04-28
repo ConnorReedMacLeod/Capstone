@@ -5,7 +5,7 @@ using UnityEngine;
 public class ViewSoulContainer : MonoBehaviour {
 
     public SoulContainer mod;
-    
+
     public ViewSoul[] arViewSoul;
 
 
@@ -14,11 +14,11 @@ public class ViewSoulContainer : MonoBehaviour {
     public void cbUpdateVisibleSoul(Object target, params object[] args) {
 
         List<Soul> lstVisibleSoul = mod.GetVisibleSoul();
-       
 
-        for (int i = 0; i < arViewSoul.Length; i++) {
 
-            if (lstVisibleSoul.Count - 1 < i) {
+        for(int i = 0; i < arViewSoul.Length; i++) {
+
+            if(lstVisibleSoul.Count - 1 < i) {
                 //Then there's not actually a Soul in this slot
                 arViewSoul[i].UpdateSoul(null);
 
@@ -37,7 +37,7 @@ public class ViewSoulContainer : MonoBehaviour {
     }
 
 
-    void Start () {
+    void Start() {
 
         SetNumSoulSlots(3);
 
@@ -45,7 +45,7 @@ public class ViewSoulContainer : MonoBehaviour {
 
         cbUpdateVisibleSoul(null);//Initially update the soul to just be blanks
 
-	}
-	
+    }
+
 
 }

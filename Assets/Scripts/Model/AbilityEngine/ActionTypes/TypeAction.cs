@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class TypeAction {
 
     public Action act;
-    public enum TYPE {ACTIVE, CANTRIP, CHANNEL, PASSIVE };
+    public enum TYPE { ACTIVE, CANTRIP, CHANNEL, PASSIVE };
 
     public TypeAction(Action _act) {
         act = _act;
@@ -21,7 +21,7 @@ public abstract class TypeAction {
         return true;
     }
 
-    public void PayActionPoints() {
+    public virtual void PayActionPoints() {
         //Ensure we're in a ready state
         Debug.Assert(act.chrSource.curStateReadiness.Type() == StateReadiness.TYPE.READY);
 
@@ -33,6 +33,27 @@ public abstract class TypeAction {
         stateReady.nCurActionsLeft -= GetActionPointCost();
     }
 
-    public abstract void UseAction(int[] lstTargettingIndices);
+    public virtual void UseAction() {
+        //By default, just execute the ability
+        act.Execute();
+
+    }
+
+    //Fetch the current selection information passed to us from the Master
+    public virtual SelectionSerializer.SelectionInfo GetSelectionInfo() {
+
+        SelectionSerializer.SelectionInfo infoSelection = ContAbilitySelection.Get().infoSelectionFromMaster;
+
+        //You can only get legitimate selection info for this ability if the selection info is referring to
+        //  this ability
+        Debug.Assert(infoSelection != null, "ERROR - Master has passed no selectionInfo at this point");
+
+        Debug.Assert(ContTurns.Get().GetNextActingChr() == act.chrSource, "ERROR - The acting character isn't the owner of this action");
+
+        Debug.Assert(infoSelection.actUsed == act, "ERROR - The selected action from the player does not match this action");
+
+        return infoSelection;
+
+    }
 
 }

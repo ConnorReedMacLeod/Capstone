@@ -20,7 +20,7 @@ public class SoulChangePower : Soul {
 
 
         //Check if a duration was specified
-        if (_nDuration == -1) {
+        if(_nDuration == -1) {
             bDuration = false;
         } else {
             bDuration = true;
@@ -28,14 +28,29 @@ public class SoulChangePower : Soul {
         }
 
 
-        lstTriggers = new List<TriggerEffect>();
+    }
 
-        funcOnApplication = () => {
-            nodePowerModifier = chrTarget.pnPower.AddModifier((nPowerBelow) => this.nPowerChange + nPowerBelow);
-        };
+    public SoulChangePower(SoulChangePower other, Chr _chrTarget = null) : base(other) {
+        if(_chrTarget != null) {
+            //If a Target was provided, then we'll use that
+            chrTarget = _chrTarget;
+        } else {
+            //Otherwise, just copy from the other object
+            chrTarget = other.chrTarget;
+        }
 
-        funcOnRemoval = () => {
-            chrTarget.pnPower.RemoveModifier(nodePowerModifier);
-        };
+        nPowerChange = other.nPowerChange;
+
+    }
+
+    public override void ApplicationEffect() {
+        base.RemoveEffect();
+        nodePowerModifier = chrTarget.pnPower.AddModifier((nPowerBelow) => this.nPowerChange + nPowerBelow);
+    }
+
+    public override void RemoveEffect() {
+        base.RemoveEffect();
+        chrTarget.pnPower.RemoveModifier(nodePowerModifier);
+
     }
 }

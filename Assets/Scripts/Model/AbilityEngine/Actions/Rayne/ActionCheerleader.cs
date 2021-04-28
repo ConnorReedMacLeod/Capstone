@@ -4,12 +4,9 @@ using UnityEngine;
 
 public class ActionCheerleader : Action {
 
-    public Soul soulPassive;
+    public SoulCheerleader soulPassive;
 
-    public ActionCheerleader(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
-
-        //Since the base constructor initializes this array, we can start filling it
-        //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); 
+    public ActionCheerleader(Chr _chrOwner) : base(_chrOwner, 0) {//set the dominant clause 
 
         sName = "Cheerleader";
         sDisplayName = "Cheerleader";
@@ -21,60 +18,81 @@ public class ActionCheerleader : Action {
 
         nCd = 0;
         nFatigue = 0;
-        nActionCost = 0;
 
-        sDescription1 = "At the beginning of each turn that Rayne acts, all other allies gain 5 POWER until the end of turn.";
+        soulPassive = new SoulCheerleader(this.chrSource, this.chrSource, this);
 
-        SetArgOwners();
+        lstClausesOnEquip = new List<Clause>() {
+            new ClauseEquip(this)
+        };
+
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
+
+        lstClausesOnUnequip = new List<Clause>() {
+            new ClauseUnequip(this)
+        };
     }
 
-    override public void Execute(int[] lstTargettingIndices) {
+    class ClauseEquip : ClauseSpecial {
 
-        Debug.LogError("Shouldn't be able to use " + sName + " since it's a passive ability");
-    }
+        public ClauseEquip(Action _act) : base(_act) {
+            // Eventually add superficial tags here
+        }
 
-    public override void OnEquip() {
+        public override string GetDescription() {
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
+            return string.Format("Initially applying Cheerleader on equip");
+        }
 
-                //Save a reference to the buff we're applying
-                soulPassive = new SoulCheerleader(this.chrSource, this.chrSource, this);
+        public override void ClauseEffect() {
 
-                ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
+            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, action.chrSource, ((ActionCheerleader)action).soulPassive) {
+                sLabel = action.chrSource.sName + " is one peppy boi"
+            });
 
-                    funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                        return soulPassive;
-                    },
+        }
 
-                    fDelay = ContTurns.fDelayNone,
-                    sLabel = chrSource.sName + " is one peppy boi"
-                });
-            }
-        });
+    };
 
-        base.OnEquip();
-    }
+    class ClauseUnequip : ClauseSpecial {
 
-    public override void OnUnequip() {
+        public ClauseUnequip(Action _act) : base(_act) {
+            // Eventually add superficial tags here
+        }
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
+        public override string GetDescription() {
 
-                ContAbilityEngine.Get().AddExec(new ExecRemoveSoul() {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
+            return string.Format("Removing Cheerleader on unequip");
+        }
 
-                    soulToRemove = this.soulPassive,
+        public override void ClauseEffect() {
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = chrSource.sName + " is no longer peppy"
-                });
-            }
-        });
+            ContAbilityEngine.PushSingleExecutable(new ExecRemoveSoul(action.chrSource, ((ActionCheerleader)action).soulPassive) {
+                sLabel = action.chrSource.sName + " is no longer peppy"
+            });
 
-        base.OnUnequip();
-    }
+        }
+
+    };
+
+    class Clause1 : ClauseSpecial {
+
+        public Clause1(Action _act) : base(_act) {
+            // Eventually add superficial tags here
+        }
+
+        public override string GetDescription() {
+
+            return string.Format("When {0} readies, all other allies gain {1} POWER until the end of turn.", 
+                action.chrSource.sName, ((ActionCheerleader)action).soulPassive.nPowerGain);
+        }
+
+        public override void ClauseEffect() {
+
+            Debug.LogError("Shouldn't be executing a passive");
+
+        }
+
+    };
 }

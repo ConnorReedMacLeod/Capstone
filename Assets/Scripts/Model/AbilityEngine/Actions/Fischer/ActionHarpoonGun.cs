@@ -4,17 +4,13 @@ using UnityEngine;
 
 public class ActionHarpoonGun : Action {
 
-    public Damage dmg;
-    public int nBaseDamage;
-
-    public ActionHarpoonGun(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
-
-        //Since the base constructor initializes this array, we can start filling it
-        arArgs[0] = new TargetArgChr(Action.IsEnemy); //Choose a target enemy
+    public ActionHarpoonGun(Chr _chrOwner) : base(_chrOwner, 0) {
 
         sName = "HarpoonGun";
         sDisplayName = "Harpoon Gun";
 
+        //We don't have any specific effect to take place while channeling, so just leave the
+        // soulChannel effect null and let it copy our execution's effect for what it does when the channel completes
         type = new TypeChannel(this, 2, null);
 
         //Physical, Mental, Energy, Blood, Effort
@@ -22,54 +18,71 @@ public class ActionHarpoonGun : Action {
 
         nCd = 5;
         nFatigue = 2;
-        nActionCost = 1;
 
-        nBaseDamage = 30;
-        //Create a base Damage object that this action will apply
-        dmg = new Damage(this.chrSource, null, nBaseDamage);
-
-        sDescription1 = "After channeling, deal 30 damage to the chosen enemy.  That enemy becomes the blocker.";
-
-        SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this),
+            new Clause2(this)
+        };
     }
 
-    override public void Execute(int[] lstTargettingIndices) {
 
-        Chr tarChr = Chr.GetTargetByIndex(lstTargettingIndices[0]);
+    class Clause1 : ClauseChr {
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
+        Damage dmg;
+        public int nBaseDamage = 30;
 
-                //Make a copy of the damage object to give to the executable
-                Damage dmgToApply = new Damage(dmg);
-                //Give the damage object its target
-                dmgToApply.SetChrTarget(tarChr);
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this), //Base Tag always goes first
+                new ClauseTagChrEnemy(this)
+            });
 
-                ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                    chrSource = this.chrSource,
-                    chrTarget = tarChr,
 
-                    arSoundEffects = new SoundEffect[] { new SoundEffect("Fischer/sndHarpoonGun", 2.067f) },
+            dmg = new Damage(action.chrSource, null, nBaseDamage);
+        }
 
-                    dmg = dmgToApply,
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = tarChr.sName + " is being Harpooned"
-                });
-            }
-        });
+        public override string GetDescription() {
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                ContAbilityEngine.Get().AddExec(new ExecBecomeBlocker() {
-                    chrSource = this.chrSource,
-                    chrTarget = tarChr,
+            return string.Format("After channeling, deal {0} damage to the chosen enemy.", dmg.Get());
+        }
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = tarChr.sName + " has become the blocker"
-                });
-            }
-        });
+        public override void ClauseEffect(Chr chrSelected) {
 
-    }
+            Debug.Log("Executing damaging clause");
+
+            ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(action.chrSource, chrSelected, dmg) {
+                arSoundEffects = new SoundEffect[] { new SoundEffect("Fischer/sndHarpoonGun", 2.067f) },
+                sLabel = "Behold, the power of my stand, Beach Boy!"
+            });
+
+        }
+
+    };
+
+    class Clause2 : ClauseChr {
+
+        public Clause2(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this), //Base Tag always goes first
+                new ClauseTagChrEnemy(this)
+            });
+        }
+
+        public override string GetDescription() {
+
+            return string.Format("That enemy becomes the blocker.");
+        }
+
+        public override void ClauseEffect(Chr chrSelected) {
+
+            Debug.Log("Executing become blocker clause");
+
+            ContAbilityEngine.PushSingleExecutable(new ExecBecomeBlocker(action.chrSource, chrSelected) {
+                sLabel = "Hey, I caught one!"
+            });
+
+        }
+
+    };
 
 }

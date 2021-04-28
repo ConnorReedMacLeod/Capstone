@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewPriorityList : MonoBehaviour {
+public class ViewPriorityList : Singleton<ViewPriorityList> {
 
     public GameObject[] arHeadshots = new GameObject[6];
 
@@ -23,16 +23,21 @@ public class ViewPriorityList : MonoBehaviour {
 
     public void cbUpdateHeadshots(Object target, params object[] args) {
 
-        for(int i=0; i<6; i++) {
+        for (int i = 0; i < Player.MAXCHRS * Player.MAXPLAYERS; i++) {
             SetHeadshot(i);
         }
     }
 
-	// Use this for initialization
-	void Start () {
+
+    public void InitViewPriorityList() {
         ContTurns.subAllPriorityChange.Subscribe(cbUpdateHeadshots);
 
         //Initially set up the headshots
         cbUpdateHeadshots(null);
+    }
+
+	// Use this for initialization
+	public override void Init () {
+        
 	}
 }

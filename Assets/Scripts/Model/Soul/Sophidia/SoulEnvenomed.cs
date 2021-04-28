@@ -6,6 +6,53 @@ public class SoulEnvenomed : Soul {
 
     public int nLifeLoss;
 
+    public SoulEnvenomed(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
+
+        sName = "Envenomed";
+
+        nLifeLoss = 5;
+
+        bVisible = true;
+        bDuration = true;
+        pnMaxDuration = new Property<int>(3);
+
+        InitTriggers();
+
+    }
+
+    public override void InitTriggers() {
+        lstTriggers = new List<TriggerEffect>() {
+            new TriggerEffect() {
+                sub = ExecTurnEndTurn.subAllPostTrigger,
+                cb = cbOnEndTurn
+            },
+
+            new TriggerEffect() {
+                sub = ExecDealDamage.subAllPostTrigger,
+                cb = cbOnDamaged
+            }
+        };
+    }
+
+    public void cbOnEndTurn(Object target, object[] args) {
+
+        ContAbilityEngine.Get().AddExec(new ExecLoseLife(chrSource, chrTarget, nLifeLoss) {
+            sLabel = "Get me a cleanser booster!"
+        });
+
+    }
+
+    public void cbOnDamaged(Object target, object[] args) {
+        //Check which character just took damage
+        Chr chrDamaged = ((ExecDealDamage)args[0]).chrTarget;
+
+        //If that character is the person who this Soul is applied to
+        if(chrDamaged == this.chrTarget) {
+            //Then increase the duration
+            IncreaseDuration();
+        }
+    }
+
     public void IncreaseDuration() {
 
         nCurDuration++;
@@ -17,49 +64,20 @@ public class SoulEnvenomed : Soul {
         chrTarget.soulContainer.subVisibleSoulUpdate.NotifyObs();
     }
 
-    public SoulEnvenomed(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
+    public SoulEnvenomed(SoulEnvenomed other, Chr _chrTarget = null) : base(other/*TODONOW - add ", _chrTarget" here*/) {
 
-        sName = "Envenomed";
+        if(_chrTarget != null) {
+            //If a Target was provided, then we'll use that
+            chrTarget = _chrTarget;
+        } else {
+            //Otherwise, just copy from the other object
+            chrTarget = other.chrTarget;
+        }
 
-        nLifeLoss = 5;
+        nLifeLoss = other.nLifeLoss;
 
-        bVisible = true;
-        bDuration = true;
-        pnMaxDuration = new Property<int>(3);
+        InitTriggers();
 
-
-        lstTriggers = new List<TriggerEffect>() {
-            new TriggerEffect() {
-                sub = ExecTurnEndTurn.subAllPostTrigger,
-                cb = (target, args) =>
-                {
-                    ContAbilityEngine.Get().AddExec(new ExecLoseLife() {
-                        chrSource = this.chrSource,
-                        chrTarget = this.chrTarget,
-                        nLifeLoss = this.nLifeLoss,
-
-                        fDelay = ContTurns.fDelayStandard,
-                        sLabel = this.chrTarget.sName + " is Poisoned"
-                    });
-
-                 }
-            },
-
-            new TriggerEffect() {
-                sub = ExecDealDamage.subAllPostTrigger,
-                cb = (target, args) => {
-                    //Check which character just took damage
-                    Chr chrDamaged = ((ExecDealDamage)args[0]).chrTarget;
-
-                    //If that character is the person who this Soul is applied to
-                    if(chrDamaged == this.chrTarget) {
-                        //Then increase the duration
-                        IncreaseDuration();
-                    }
-
-                }
-            }
-        };
     }
 
 }

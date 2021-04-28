@@ -9,19 +9,32 @@ using UnityEngine;
 ///  will only take effect if they are present when the clause is evaluated
 /// </summary>
 
-//This class should be set up to have an fExecute method that will
-// add a number of Executables to the executable stack
+public abstract class Clause {
 
-//Can be initialized like ... = new Clause(){ fExecute = (() => ...)};
-public class Clause {
+    public enum TargetType { CHR, PLAYER, ACTION, SPECIAL };
 
-    public delegate void funcExecuteClause();
-    public funcExecuteClause fExecute;
+    public TargetType targetType;
 
-    public void Execute() {
+    public Action action;
 
-        fExecute();
+    //Can this be submitted as a valid selection?
+    public abstract bool IsSelectable(SelectionSerializer.SelectionInfo SelectionInfo);
 
+    //Does the proposed targetting result in a non-null ability effect?
+    public abstract bool HasFinalTarget(SelectionSerializer.SelectionInfo selectionInfo);
+
+    public abstract string GetDescription();
+    public abstract void Execute();
+
+    //TODO - make a generic list of tags for qualitative effects (fire/teamwork/combo/etc.)
+
+    public SelectionSerializer.SelectionInfo GetSelectionInfo() {
+        //Ask the type of the ability to fetch the selection information we should be using to determine our targets
+        return action.type.GetSelectionInfo();
+    }
+
+    public Clause(Action _action) {
+        action = _action;
     }
 
 }
