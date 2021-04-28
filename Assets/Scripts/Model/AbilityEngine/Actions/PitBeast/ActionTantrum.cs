@@ -4,15 +4,7 @@ using UnityEngine;
 
 public class ActionTantrum : Action {
 
-    public int nEnemyDamage;
-    public int nAllyDamage;
-    public Damage dmgEnemy;
-    public Damage dmgAlly;
-
-    public ActionTantrum(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
-
-        //We don't need to target anything, since we always deal damage to everyone
-        // arArgs[0] = new TargetArgTeam((own, tar) => true); 
+    public ActionTantrum(Chr _chrOwner) : base(_chrOwner, 0) {
 
         sName = "Tantrum";
         sDisplayName = "Tantrum";
@@ -24,73 +16,56 @@ public class ActionTantrum : Action {
 
         nCd = 9;
         nFatigue = 5;
-        nActionCost = 1;
 
-        sDescription1 = "Deal 20 damage to all enemies and 5 damage to all other allies";
-
-        nEnemyDamage = 20;
-        nAllyDamage = 5;
-
-        //Create a base Damage object that this action will apply
-        dmgEnemy = new Damage(this.chrSource, null, nEnemyDamage);
-
-        //Create a base Damage object that this action will apply
-        dmgAlly = new Damage(this.chrSource, null, nAllyDamage);
-
-        SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
     }
 
-    override public void Execute(int[] lstTargettingIndices) {
+    class Clause1 : ClauseSpecial {
 
-        Player enemy = chrSource.plyrOwner.GetEnemyPlayer();
+        Damage dmgEnemy;
+        public int nEnemyDamage = 20;
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                //Deal damage to all enemies
-                for (int i = 0; i < enemy.arChr.Length; i++) {
+        Damage dmgAlly;
+        public int nAllyDamage = 5;
 
-                    //Don't target dead characters
-                    if (enemy.arChr[i].bDead) continue;
+        public Clause1(Action _act) : base(_act) {
+            //TODO - add tags as needed
 
-                    //Make a copy of the damage object to give to the executable
-                    Damage dmgToApply = new Damage(dmgEnemy);
-                    //Give the damage object its target
-                    dmgToApply.SetChrTarget(enemy.arChr[i]);
+            dmgEnemy = new Damage(action.chrSource, null, nEnemyDamage);
+            dmgAlly = new Damage(action.chrSource, null, nAllyDamage);
+        }
 
-                    //TODO:: Organize this in the correct order
-                    ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                        chrSource = this.chrSource,
-                        chrTarget = enemy.arChr[i],
-                        dmg = dmgToApply,
+        public override string GetDescription() {
 
-                        fDelay = ContTurns.fDelayNone,
-                        sLabel = enemy.arChr[i].sName + " is caught in the tantrum"
-                    });
-                }
+            return string.Format("Deal {0} damage to all enemies and {1} damage to all other allies", dmgEnemy.Get(), dmgAlly.Get());
+        }
 
-                //Deal damage to all other allies
-                for (int i = 0; i < chrSource.plyrOwner.arChr.Length; i++) {
-                    if (chrSource.plyrOwner.arChr[i] == chrSource) continue; //Don't hurt yourself
+        public override void ClauseEffect() {
 
-                    //Make a copy of the damage object to give to the executable
-                    Damage dmgToApply = new Damage(dmgAlly);
-                    //Give the damage object its target
-                    dmgToApply.SetChrTarget(chrSource.plyrOwner.arChr[i]);
+            //First, deal damage to all enemies
+            List<Chr> lstChrEnemy = action.chrSource.plyrOwner.GetEnemyPlayer().GetActiveChrs();
 
-                    //TODO:: Organize this in the correct order
-                    ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                        chrSource = this.chrSource,
-                        chrTarget = chrSource.plyrOwner.arChr[i],
-                        dmg = dmgToApply,
-
-                        arSoundEffects = new SoundEffect[] { new SoundEffect("PitBeast/sndTantrum", 4.167f) },
-
-                        fDelay = ContTurns.fDelayNone,
-                        sLabel = chrSource.plyrOwner.arChr[i].sName + " is caught in the tantrum"
-                    });
-                }
+            for(int i = 0; i < lstChrEnemy.Count; i++) {
+                //For each enemy, deal our dmgEnemy to them
+                ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(action.chrSource, lstChrEnemy[i], dmgEnemy) {
+                    sLabel = "WAAAAAAAHWAAHWAHHH"
+                });
             }
-        });
-    }
+
+            //Then damage each of our allies
+            List<Chr> lstChrAlly = action.chrSource.plyrOwner.GetActiveChrs();
+
+            for(int i = 0; i < lstChrAlly.Count; i++) {
+                //For each ally, deal our dmgAlly to them
+                ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(action.chrSource, lstChrAlly[i], dmgAlly) {
+                    sLabel = "Really, dude?"
+                });
+            }
+
+        }
+
+    };
 
 }

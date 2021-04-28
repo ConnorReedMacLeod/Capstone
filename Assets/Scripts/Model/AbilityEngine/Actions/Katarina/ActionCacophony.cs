@@ -4,18 +4,7 @@ using UnityEngine;
 
 public class ActionCacophony : Action {
 
-    public Damage dmg;
-
-    public int nBaseDamage;
-    public int nCriticalBaseDamage;
-
-    public int nBaseStun;
-    public int nCriticalStun;
-
-    public ActionCacophony(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
-
-        //Since the base constructor initializes this array, we can start filling it
-        arArgs[0] = new TargetArgChr(Action.IsEnemy); //Any enemy target
+    public ActionCacophony(Chr _chrOwner) : base(_chrOwner, 0) {
 
         sName = "Cacophony";
         sDisplayName = "Cacophony";
@@ -27,70 +16,66 @@ public class ActionCacophony : Action {
 
         nCd = 8;
         nFatigue = 4;
-        nActionCost = 1;
 
-        nBaseDamage = 20;
-        nCriticalBaseDamage = 30;
-        //Create a base Damage object that this action will apply
-        dmg = new Damage(this.chrSource, null, 
-            () =>  IsCritical(dmg.chrTarget)? nCriticalBaseDamage : nBaseDamage);
-
-        nBaseStun = 2;
-        nCriticalStun = 3;
-
-        sDescription1 = "Deal 20 damage and 2 fatigue to the chosen character.";
-		sDescription2 = "If the chosen character is the Vanguard, deal 30 damage and 3 fatigue instead";
-
-
-		SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
     }
 
     //Deal critical damage and stun if the targetted character is a blocker
-    public bool IsCritical(Chr tarChr) {
+    public static bool IsCritical(Chr tarChr) {
         return (tarChr != null && tarChr.bBlocker);
     }
 
-    override public void Execute(int[] lstTargettingIndices) {
 
-        Chr tarChr = Chr.GetTargetByIndex(lstTargettingIndices[0]);
+    class Clause1 : ClauseChr {
 
-        
+        Damage dmg;
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
+        public int nBaseDamage;
+        public int nCriticalBaseDamage;
 
-                //Make a copy of the damage object to give to the executable
-                Damage dmgToApply = new Damage(dmg);
-                //Give the damage object its target
-                dmgToApply.SetChrTarget(tarChr);
-                dmgToApply.SetBase(() => IsCritical(dmgToApply.chrTarget) ? nCriticalBaseDamage : nBaseDamage);
+        public int nBaseStun;
+        public int nCriticalStun;
 
-                ContAbilityEngine.Get().AddExec(new ExecStun() {
-                    chrSource = this.chrSource,
-                    chrTarget = tarChr,
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this) //Base Tag always goes first
+            });
 
-                    GetDuration = () => IsCritical(tarChr) ? nCriticalStun : nBaseStun,
+            nBaseDamage = 20;
+            nCriticalBaseDamage = 30;
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = "Stunning " + tarChr.sName
-                });
-                
+            nBaseStun = 2;
+            nCriticalStun = 3;
 
-                ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                    chrSource = this.chrSource,
-                    chrTarget = tarChr,
+            dmg = new Damage(action.chrSource, null,  (_chrSource, _chrTarget) => IsCritical(_chrTarget) ? nCriticalBaseDamage : nBaseDamage);
+        }
 
-                    dmg = dmgToApply,
+        public override string GetDescription() {
 
-                    arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndCacophony", 3.767f) },
+            //TODO - think about how to make this dynamically update nicely - currently doesn't reflect power
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = "Screeching at " + tarChr.sName
-                });
+            return string.Format("Deal {0} damage and {1} fatigue to the chosen character.\n" +
+                "If the chosen character is the Vanguard, deal {2} damage and {3} fatigue instead", 
+                nBaseDamage, nBaseStun, nCriticalBaseDamage, nCriticalStun);
+        }
 
+        public override void ClauseEffect(Chr chrSelected) {
 
+            //TODO - make this better dynamically react.  Should probably just have a Stun effect object that can
+            //       be modified freely like with damage
+            ContAbilityEngine.PushSingleExecutable(new ExecStun(action.chrSource, chrSelected, nBaseStun) {
+                GetDuration = () => IsCritical(chrSelected) ? nCriticalStun : nBaseStun,
+                sLabel = "Oh, god! My ears!"
+            });
 
-            }
-        });
-    }
+            ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(action.chrSource, chrSelected, dmg) {
+                arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndCacophony", 3.767f) },
+                sLabel = "Anyway, here's Wonderwall"
+            });
+
+        }
+
+    };
 }

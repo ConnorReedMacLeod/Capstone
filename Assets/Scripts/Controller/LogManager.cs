@@ -4,7 +4,7 @@ using System.IO;
 using UnityEngine;
 using System.Linq;
 
-public class LogManager : MonoBehaviour {
+public class LogManager : SingletonPersistent<LogManager> {
 
     System.DateTimeOffset timeStart;
     string sLogfilePath;
@@ -13,7 +13,7 @@ public class LogManager : MonoBehaviour {
     public const string sLOGSPATH = "Logs/";
     public const int nMAXLOGFILES = 5;
 
-    public void Start() {
+    public override void Init() {
 
         CleanOldLogFiles();
 

@@ -7,7 +7,7 @@ using UnityEngine;
 //       then when we are asked to Notify the next observer, we scan through and find the first
 //       observer that hasn't been triggered yet, and Notify them.
 
-public class Subject{
+public class Subject {
 
     public enum SubType { ALL }; //A flag to pass to the constructor when initiallizing 
                                  // static subjects 
@@ -25,6 +25,7 @@ public class Subject{
 
     public Subject(Subject subToCopy) {
 
+        Debug.LogError("Warning - copying Subjects can lead to calling Callback methods for shallow object instances");
         lstCallbacks = new List<FnCallback>(subToCopy.lstCallbacks);
     }
 
@@ -53,34 +54,34 @@ public class Subject{
 
         //Reinitalize all of the static subjects so that they can be reinitialized properly
         // when restarting the game
-        for(int i=0; i<lstAllStaticSubjects.Count; i++) {
+        for(int i = 0; i < lstAllStaticSubjects.Count; i++) {
             lstAllStaticSubjects[i].ResetSubject();
         }
 
     }
 
-	public void Subscribe(FnCallback fnCallback){
+    public void Subscribe(FnCallback fnCallback) {
 
-        lstCallbacks.Add (fnCallback);
-	}
+        lstCallbacks.Add(fnCallback);
+    }
 
-	public void UnSubscribe(FnCallback fnCallback) {
+    public void UnSubscribe(FnCallback fnCallback) {
 
-        lstCallbacks.Remove (fnCallback);
-	}
+        lstCallbacks.Remove(fnCallback);
+    }
 
-	// Used for unspecific updates for views
-	public virtual void NotifyObs(){
-		NotifyObs (null);
-	}
+    // Used for unspecific updates for views
+    public virtual void NotifyObs() {
+        NotifyObs(null);
+    }
 
-	public virtual void NotifyObs (Object target, params object[] args){
+    public virtual void NotifyObs(Object target, params object[] args) {
 
         List<FnCallback> lstCopied = new List<FnCallback>(lstCallbacks);
-		foreach (FnCallback callback in lstCopied) {
+        foreach(FnCallback callback in lstCopied) {
             //if (callback == null)
             //	continue;//in case this object has been removed by the results of previous update iterations
             callback(target, args);
-		}
-	}
+        }
+    }
 }

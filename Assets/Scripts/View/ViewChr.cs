@@ -6,10 +6,14 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Chr))]
 public class ViewChr : ViewInteractive {
 
-	bool bStarted;                          //Confirms the Start() method has executed
-    
+    bool bStarted;                          //Confirms the Start() method has executed
+
     public enum PortraitState {
         IDLE, ACTING, INJURED
+    };
+
+    public enum SelectabilityState {
+        NONE, ACTIVETURN, ALLYSELECTABLE, ENEMYSELECTABLE
     };
 
     public PortraitState statePortrait; //The portrait state the character is currently in
@@ -28,25 +32,25 @@ public class ViewChr : ViewInteractive {
 
     public Chr mod;                   //Character model
 
-	Chr.STATESELECT lastStateSelect;  //Tracks previous character state (SELECTED, TARGETTING, UNSELECTED)
+    Chr.STATESELECT lastStateSelect;  //Tracks previous character state (SELECTED, TARGETTING, UNSELECTED)
 
     public GameObject pfBlockerIndicator; //Reference to the prefab blocker indicator
     public GameObject pfSelectionGlow; //Reference to the prefab glow for selection
 
     public GameObject goCurSelectionGlow; //A reference to the current glow (or null if there is none)
     public GameObject goBlockerIndicator; //Blocker Reference
-	public GameObject goBorder;         //Border Reference
-	public GameObject goPortrait;       //Portrait Reference
-	public GameObject goFatigueDisplay; //Fatigue Display Reference
-	public GameObject goChannelDisplay; //Channel Display Reference
-	public GameObject goPowerDefense;	//Power Defense Display Reference
-	public GameObject goPowerDisplay;   //Power Display Reference
-	public GameObject goDefenseDisplay; //Defense Display Reference
+    public GameObject goBorder;         //Border Reference
+    public GameObject goPortrait;       //Portrait Reference
+    public GameObject goFatigueDisplay; //Fatigue Display Reference
+    public GameObject goChannelDisplay; //Channel Display Reference
+    public GameObject goPowerDefense;   //Power Defense Display Reference
+    public GameObject goPowerDisplay;   //Power Display Reference
+    public GameObject goDefenseDisplay; //Defense Display Reference
 
-	private Vector3 v3FatiguePosition;  //Fatigue Display Position
-	private Vector3 v3ChannelPosition;	//Channel Display Position
-	private Vector3 v3PowerPosition;    //Power Display Position
-	private Vector3 v3DefensePosition;	//Defense Display Position
+    private Vector3 v3FatiguePosition;  //Fatigue Display Position
+    private Vector3 v3ChannelPosition;  //Channel Display Position
+    private Vector3 v3PowerPosition;    //Power Display Position
+    private Vector3 v3DefensePosition;	//Defense Display Position
 
     public Text txtHealth;              //Textfield Reference
     public Text txtArmour;              //Textfield Reference
@@ -62,88 +66,81 @@ public class ViewChr : ViewInteractive {
     public static Subject subAllStopHover = new Subject(Subject.SubType.ALL);
     public static Subject subAllClick = new Subject(Subject.SubType.ALL);
 
-    public void Start()
-    {
-		if (bStarted == false) {
-			bStarted = true;
+    public void Start() {
+        if(bStarted == false) {
+            bStarted = true;
 
-			// Find our model
-			InitModel ();
-			lastStateSelect = Chr.STATESELECT.IDLE;
+            // Find our model
+            InitModel();
+            lastStateSelect = Chr.STATESELECT.IDLE;
 
             v3BasePosition = goPortrait.transform.localPosition;
             v3RecoilDirection = Vector3.left;
 
-            StateTargetChr.subAllStartSelection.Subscribe(cbStartTargettingChr);
-            StateTargetChr.subAllFinishSelection.Subscribe(cbStopTargettingChr);
-
-            StateTargetTeam.subAllStartSelection.Subscribe(cbStartTargettingTeam);
-            StateTargetTeam.subAllFinishSelection.Subscribe(cbStopTargettingTeam);
-
         }
     }
 
-	public void Init(){
-		SetPortrait ();
-		if (mod.plyrOwner.id == 1) {
-			//Find the portrait and flip it for one of the players
-			goPortrait.transform.localScale = new Vector3 (-0.5f, 0.5f, 1.0f);
+    public void Init() {
+        SetPortrait();
+        if(mod.plyrOwner.id == 1) {
+            //Find the portrait and flip it for one of the players
+            goPortrait.transform.localScale = new Vector3(-0.5f, 0.5f, 1.0f);
 
-			//Find the border and flip it for one of the players
-			//goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
+            //Find the border and flip it for one of the players
+            //goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
 
-			//Find the fatigue display, and flip it to the other side of the portrai
-			goFatigueDisplay.transform.localPosition = new Vector3(
-				-goFatigueDisplay.transform.localPosition.x,
-				goFatigueDisplay.transform.localPosition.y,
-				goFatigueDisplay.transform.localPosition.z);
+            //Find the fatigue display, and flip it to the other side of the portrai
+            goFatigueDisplay.transform.localPosition = new Vector3(
+                -goFatigueDisplay.transform.localPosition.x,
+                goFatigueDisplay.transform.localPosition.y,
+                goFatigueDisplay.transform.localPosition.z);
 
-			goChannelDisplay.transform.localPosition = new Vector3(
-				-goChannelDisplay.transform.localPosition.x,
-				goChannelDisplay.transform.localPosition.y,
-				goChannelDisplay.transform.localPosition.z);
+            goChannelDisplay.transform.localPosition = new Vector3(
+                -goChannelDisplay.transform.localPosition.x,
+                goChannelDisplay.transform.localPosition.y,
+                goChannelDisplay.transform.localPosition.z);
 
-			goPowerDefense.transform.localPosition = new Vector3(
-				-goPowerDefense.transform.localPosition.x,
-				goPowerDefense.transform.localPosition.y,
-				goPowerDefense.transform.localPosition.z);
+            goPowerDefense.transform.localPosition = new Vector3(
+                -goPowerDefense.transform.localPosition.x,
+                goPowerDefense.transform.localPosition.y,
+                goPowerDefense.transform.localPosition.z);
 
-			/*goPowerDisplay.transform.localPosition = new Vector3(
+            /*goPowerDisplay.transform.localPosition = new Vector3(
 				-goPowerDisplay.transform.localPosition.x,
 				goPowerDisplay.transform.localPosition.y,
 				goPowerDisplay.transform.localPosition.z);*/
 
-			/*goDefenseDisplay.transform.localPosition = new Vector3(
+            /*goDefenseDisplay.transform.localPosition = new Vector3(
 				-goDefenseDisplay.transform.localPosition.x,
 				goDefenseDisplay.transform.localPosition.y,
 				goDefenseDisplay.transform.localPosition.z);*/
 
-			//Flip the character's soul position as well
-			viewSoulContainer.transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
+            //Flip the character's soul position as well
+            viewSoulContainer.transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
 
-            foreach (ViewSoul viewsoul in viewSoulContainer.arViewSoul) {
+            foreach(ViewSoul viewsoul in viewSoulContainer.arViewSoul) {
                 viewsoul.transform.localScale = new Vector3(-0.666f, 0.666f, 1.0f);
             }
 
         }
-		//Fatigue and Channel positioning
-		v3FatiguePosition = goFatigueDisplay.transform.localPosition;
-		v3ChannelPosition = goChannelDisplay.transform.localPosition;
+        //Fatigue and Channel positioning
+        v3FatiguePosition = goFatigueDisplay.transform.localPosition;
+        v3ChannelPosition = goChannelDisplay.transform.localPosition;
 
-		goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
-		goChannelDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+        goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+        goChannelDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
 
-		//Power and Defense positioning
-		v3PowerPosition = goPowerDisplay.transform.localPosition;
-		v3DefensePosition = goDefenseDisplay.transform.localPosition;
+        //Power and Defense positioning
+        v3PowerPosition = goPowerDisplay.transform.localPosition;
+        v3DefensePosition = goDefenseDisplay.transform.localPosition;
 
-		goPowerDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
-		goDefenseDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
-	}
+        goPowerDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+        goDefenseDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+    }
 
     public override void onMouseClick(params object[] args) {
         //Currently not doing anything - just passing along the notification
-        
+
         subAllClick.NotifyObs(this, args);
 
         base.onMouseClick(args);
@@ -175,24 +172,24 @@ public class ViewChr : ViewInteractive {
 
 
     //Sets the sprite used for the character's full picture portrait
-    void SetPortrait(){
-		string sSprPath = "Images/Chrs/" + mod.sName + "/img" + mod.sName + "Neutral";
+    void SetPortrait() {
+        string sSprPath = "Images/Chrs/" + mod.sName + "/img" + mod.sName + "Neutral";
 
-        switch (statePortrait) {
-            case PortraitState.ACTING:
-                sSprPath = "Images/Chrs/" + mod.sName + "/img" + mod.sName + "Action";
-                break;
+        switch(statePortrait) {
+        case PortraitState.ACTING:
+            sSprPath = "Images/Chrs/" + mod.sName + "/img" + mod.sName + "Action";
+            break;
 
-            case PortraitState.INJURED:
-                sSprPath = "Images/Chrs/" + mod.sName + "/img" + mod.sName + "Hurt";
-                break;
+        case PortraitState.INJURED:
+            sSprPath = "Images/Chrs/" + mod.sName + "/img" + mod.sName + "Hurt";
+            break;
 
-            default:
+        default:
 
-                break;
+            break;
         }
 
-		Sprite sprChr = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
+        Sprite sprChr = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
 
         if(sprChr == null) {
             Debug.LogError("Could not load " + sSprPath);
@@ -204,25 +201,66 @@ public class ViewChr : ViewInteractive {
 
         goPortrait.GetComponent<SpriteRenderer>().sprite = sprChr;
 
-	}
-    
+    }
+
     //Sets the sprite used for the character's border
-	void SetBorder(string _sName){
-		string sSprPath = "Images/Chrs/img" + _sName;
-		Sprite sprBorder = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
+    void SetBorder(string _sName) {
+        string sSprPath = "Images/Chrs/img" + _sName;
+        Sprite sprBorder = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
 
         Debug.Assert(sprBorder != null, "Could not find specificed sprite: " + sSprPath);
 
         goBorder.GetComponent<SpriteRenderer>().sprite = sprBorder;
-	}
+    }
+
+    //Sets the sprite for the glowing effect around a character for their selectability
+    void SetSelectionGlow(SelectabilityState selectState) {
+
+        if(selectState == SelectabilityState.NONE) {
+            //If we want no selection, just delete the glow object (if present) and return
+            if(goCurSelectionGlow != null) {
+                Destroy(goCurSelectionGlow);
+                goCurSelectionGlow = null;
+            }
+            return;
+        }
+
+        //If we need a glow and it doesn't already exist, instantiate it
+        if(goCurSelectionGlow == null) {
+            goCurSelectionGlow = Instantiate(pfSelectionGlow, maskPortrait.transform);
+        }
+
+        string sSprPath = "Images/Chrs/imgGlow";
+
+        switch(selectState) {
+        case SelectabilityState.ACTIVETURN:
+            //No additional suffix needed for the path
+            break;
+        case SelectabilityState.ALLYSELECTABLE:
+            sSprPath += "4";
+            break;
+        case SelectabilityState.ENEMYSELECTABLE:
+            sSprPath += "6";
+            break;
+        default:
+            Debug.Log("Unrecognized SelectabilityState: " + selectState);
+            break;
+        }
+
+        Sprite sprSelectionGlow = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
+
+        Debug.Assert(sprSelectionGlow != null, "Could not find specificed sprite: " + sSprPath);
+
+        goCurSelectionGlow.GetComponent<SpriteRenderer>().sprite = sprSelectionGlow;
+    }
 
     //Find the model, and do any setup to reflect it
-	public void InitModel(){
+    public void InitModel() {
         mod = GetComponent<Chr>();
         mod.Start();
 
         mod.subFatigueChange.Subscribe(cbUpdateFatigue);
-		mod.subLifeChange.Subscribe(cbUpdateLife);
+        mod.subLifeChange.Subscribe(cbUpdateLife);
         mod.pnMaxHealth.subChanged.Subscribe(cbUpdateLife);
         mod.subStatusChange.Subscribe(cbUpdateStatus);
         mod.pnArmour.subChanged.Subscribe(cbUpdateArmour);
@@ -239,18 +277,48 @@ public class ViewChr : ViewInteractive {
         mod.subStunApplied.Subscribe(cbRecoil);
         mod.subLifeChange.Subscribe(cbOnInjured);
 
-        ContTurns.Get().subNextActingChrChange.Subscribe(cbOnNextActingChange);
+        mod.subBecomesActiveForHumans.Subscribe(cbOnBecomesActiveForHumans);
+        mod.subEndsActiveForHumans.Subscribe(cbOnEndsActiveForHumans);
+        mod.subBecomesTargettable.Subscribe(cbOnBecomesTargettable);
+        mod.subEndsTargettable.Subscribe(cbOnEndsTargettable);
     }
 
-    public void cbOnNextActingChange(Object target, params object[] args) {
+    //For when it becomes this character's turn to act
+    public void cbOnBecomesActiveForHumans(Object target, params object[] args) {
+        Debug.Log(mod.sName + " became active");
+        DecideIfHighlighted(SelectabilityState.ACTIVETURN);
+    }
 
-        DecideIfHighlighted(mod);
+    //For when it is no longer this character's turn to act
+    public void cbOnEndsActiveForHumans(Object target, params object[] args) {
+        Debug.Log(mod.sName + " is no longer active");
+        DecideIfHighlighted(SelectabilityState.NONE);
+    }
 
+    //For when the currently targetting ability can target this character
+    public void cbOnBecomesTargettable(Object target, params object[] args) {
+        Action actTargetting = (Action)args[0];
+
+        Debug.Log(mod.sName + " is currently targettable by " + actTargetting.sName);
+
+        //If the source of this ability was an ally
+        if(actTargetting.chrSource.plyrOwner == mod.plyrOwner) {
+            DecideIfHighlighted(SelectabilityState.ALLYSELECTABLE);
+        } else {
+            DecideIfHighlighted(SelectabilityState.ENEMYSELECTABLE);
+        }
+
+    }
+
+    //For when the currently targetting ability has stopped, so this character can clear any targetting display
+    public void cbOnEndsTargettable(Object target, params object[] args) {
+        Debug.Log(mod.sName + " is no longer targettable");
+        DecideIfHighlighted(SelectabilityState.NONE);
     }
 
     public void cbUpdateDeath(Object target, params object[] args) {
 
-        if (mod.bDead) {
+        if(mod.bDead) {
             //If the character is dead, then red-out their portrait
             goPortrait.GetComponent<SpriteRenderer>().color = Color.red;
         } else {
@@ -266,52 +334,52 @@ public class ViewChr : ViewInteractive {
 
     public void cbUpdateFatigue(Object target, params object[] args) {
         //If we're channeling, then we won't display fatigue
-        if (mod.curStateReadiness.Type() == StateReadiness.TYPE.CHANNELING) {
+        if(mod.curStateReadiness.Type() == StateReadiness.TYPE.CHANNELING) {
             /*Debug.Log("We shouldn't show fatigue when channeling");
             txtFatigue.text = "";
 			goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
 			return;*/
         }
 
-        if (mod.curStateReadiness.Type() == StateReadiness.TYPE.DEAD) {
+        if(mod.curStateReadiness.Type() == StateReadiness.TYPE.DEAD) {
             Debug.Log("We shouldn't show fatigue when dead");
             txtFatigue.text = "";
-			goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
-			return;
+            goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+            return;
         }
 
         //Otherwise, then show a non-zero fatigue value
-        if (mod.nFatigue > 0) {
+        if(mod.nFatigue > 0) {
             txtFatigue.text = mod.nFatigue.ToString();
-			goFatigueDisplay.transform.localPosition = v3FatiguePosition;
+            goFatigueDisplay.transform.localPosition = v3FatiguePosition;
         } else {
             txtFatigue.text = "";
-			goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+            goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
         }
     }
 
     public void cbUpdateChannelTime(Object target, params object[] args) {
         //If we're not channeling, then we won't display anything
-        if (mod.curStateReadiness.Type() != StateReadiness.TYPE.CHANNELING) {
+        if(mod.curStateReadiness.Type() != StateReadiness.TYPE.CHANNELING) {
             //Debug.Log("Were notified of UpdateChannelTime, but we're not in a channeling state");
             txtChannelTime.text = "";
-			goChannelDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
-			return;
+            goChannelDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+            return;
 
         }
 
         //Otherwise, then the channeltime value
-        if (((StateChanneling)mod.curStateReadiness).nChannelTime > 0) {
+        if(((StateChanneling)mod.curStateReadiness).nChannelTime > 0) {
             txtChannelTime.text = ((StateChanneling)mod.curStateReadiness).nChannelTime.ToString();
-			goChannelDisplay.transform.localPosition = v3ChannelPosition;
-		} else {
+            goChannelDisplay.transform.localPosition = v3ChannelPosition;
+        } else {
             txtChannelTime.text = "";
-			goChannelDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
-		}
+            goChannelDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+        }
     }
 
     public void cbUpdateArmour(Object target, params object[] args) {
-        if (mod.pnArmour.Get() > 0) {
+        if(mod.pnArmour.Get() > 0) {
             txtArmour.text = "[" + mod.pnArmour.Get().ToString() + "]";
         } else {
             txtArmour.text = "";
@@ -319,38 +387,38 @@ public class ViewChr : ViewInteractive {
     }
 
     public void cbUpdatePower(Object target, params object[] args) {
-        if (mod.pnPower.Get() > 0) {
+        if(mod.pnPower.Get() > 0) {
             txtPower.text = "+" + mod.pnPower.Get().ToString();
-			goPowerDisplay.transform.localPosition = v3PowerPosition;
-		} else if (mod.pnPower.Get() < 0) {
+            goPowerDisplay.transform.localPosition = v3PowerPosition;
+        } else if(mod.pnPower.Get() < 0) {
             txtPower.text = mod.pnPower.Get().ToString();
-			goPowerDisplay.transform.localPosition = v3PowerPosition;
-		} else {
+            goPowerDisplay.transform.localPosition = v3PowerPosition;
+        } else {
             txtPower.text = "";
-			goPowerDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
-		}
+            goPowerDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+        }
     }
 
     public void cbUpdateDefense(Object target, params object[] args) {
-        if (mod.pnDefense.Get() > 0) {
+        if(mod.pnDefense.Get() > 0) {
             txtDefense.text = "+" + mod.pnDefense.Get().ToString();
-			goDefenseDisplay.transform.localPosition = v3DefensePosition;
-		} else if (mod.pnDefense.Get() < 0) {
+            goDefenseDisplay.transform.localPosition = v3DefensePosition;
+        } else if(mod.pnDefense.Get() < 0) {
             txtDefense.text = mod.pnDefense.Get().ToString();
-			goDefenseDisplay.transform.localPosition = v3DefensePosition;
-		} else {
+            goDefenseDisplay.transform.localPosition = v3DefensePosition;
+        } else {
             txtDefense.text = "";
-			goDefenseDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+            goDefenseDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
         }
     }
 
     public void cbUpdateBlocker(Object target, params object[] args) {
-        if (mod.bBlocker == true) {
+        if(mod.bBlocker == true) {
             //If we haven't already, add the blocker indicator
-            if (goBlockerIndicator == null) {
+            if(goBlockerIndicator == null) {
                 goBlockerIndicator = Instantiate(pfBlockerIndicator, this.transform);
 
-                if (mod.plyrOwner.id == 1 || mod.plyrOwner.id == 0) {
+                if(mod.plyrOwner.id == 1 || mod.plyrOwner.id == 0) {
                     goBlockerIndicator.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
                     goBlockerIndicator.transform.localPosition =
                         new Vector3(goBlockerIndicator.transform.localPosition.x,
@@ -373,56 +441,10 @@ public class ViewChr : ViewInteractive {
         }
     }
 
-
-
-    public void cbStartTargettingChr(Object target, params object[] args) {
-
-        TargetArgChr tarArg = (TargetArgChr)args[0];
-
-
-        if (tarArg.WouldBeLegal(mod.globalid)) {
-            bSelectingChrTargettable = true;
-        }
-
-        DecideIfHighlighted(tarArg.chrOwner);
-
-    }
-
-    public void cbStopTargettingChr(Object target, params object[] args) {
-
-        if (bSelectingChrTargettable) {
-            bSelectingChrTargettable = false; 
-        }
-
-        DecideIfHighlighted(null);
-
-    }
-
-    public void cbStartTargettingTeam(Object target, params object[] args) {
-
-        TargetArgTeam tarArg = (TargetArgTeam)args[0];
-
-
-        if (tarArg.WouldBeLegal(mod.plyrOwner.id)) {
-            bSelectingTeamTargettable = true;
-        }
-
-        DecideIfHighlighted(tarArg.chrOwner);
-
-    }
-
-    public void cbStopTargettingTeam(Object target, params object[] args) {
-
-        bSelectingTeamTargettable = false;
-
-        DecideIfHighlighted(null);
-
-    }
-
     public void cbStartUsingAbility(Object target, params object[] args) {
 
 
-        if (((Action)args[0]).bProperActive == true) {
+        if(((Action)args[0]).iSlot != Chr.idResting) {
             statePortrait = PortraitState.ACTING;
 
             SetPortrait();
@@ -440,7 +462,7 @@ public class ViewChr : ViewInteractive {
 
     public void cbOnInjured(Object target, params object[] args) {
         //First, double check that we're actually losing health
-        if ((int)args[0] >= 0) return;
+        if((int)args[0] >= 0) return;
 
         statePortrait = PortraitState.INJURED;
 
@@ -459,7 +481,7 @@ public class ViewChr : ViewInteractive {
 
     public void cbSoulApplied(Object target, params object[] args) {
 
-        if (((Soul)args[0]).bRecoilWhenApplied == false) return;
+        if(((Soul)args[0]).bRecoilWhenApplied == false) return;
 
         //Debug.Log(mod.sName + " is recoiling");
 
@@ -468,55 +490,19 @@ public class ViewChr : ViewInteractive {
 
     }
 
-    public void DecideIfHighlighted(Chr chrActing) {
+    public void DecideIfHighlighted(SelectabilityState selectableState) {
 
-        if (bSelectingChrTargettable || bSelectingTeamTargettable) {
+        //if(selectableState == SelectabilityState.NONE && mod == ContTurns.Get().GetNextActingChr()) {
 
-            if (goCurSelectionGlow == null) {
-                goCurSelectionGlow = Instantiate(pfSelectionGlow, maskPortrait.transform);
-            }
+        //    selectableState = SelectabilityState.ACTIVETURN;
+        //}
 
-            //By default, assume the character is an enemy
-            string sSprPath = "Images/Chrs/imgGlow6";
-
-            //But if they're a friend, then make it a green border
-            if (chrActing.plyrOwner.id == mod.plyrOwner.id) {
-                sSprPath = "Images/Chrs/imgGlow4";
-            }
-
-            Sprite sprGlow = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
-
-            Debug.Assert(sprGlow != null, "Could not find specificed sprite: " + sSprPath);
-
-            goCurSelectionGlow.GetComponent<SpriteRenderer>().sprite = sprGlow;
-            
-        } else if (mod == ContTurns.Get().GetNextActingChr()) {
-            //Debug.Log(mod.sName + " is next to act");
-
-            if (goCurSelectionGlow == null) {
-                goCurSelectionGlow = Instantiate(pfSelectionGlow, maskPortrait.transform);
-            }
-
-            //Set the colour of the glow to add to the character
-            string sSprPath = "Images/Chrs/imgGlow";
-
-            Sprite sprGlow = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
-
-            Debug.Assert(sprGlow != null, "Could not find specificed sprite: " + sSprPath);
-
-            goCurSelectionGlow.GetComponent<SpriteRenderer>().sprite = sprGlow;
-            
-        } else { 
-           if(goCurSelectionGlow != null) {
-                Destroy(goCurSelectionGlow);
-                goCurSelectionGlow = null;
-            }
-        }
-
+        SetSelectionGlow(selectableState);
     }
 
+
     public void UpdateRecoil() {
-        if (bRecoiling == false) return;
+        if(bRecoiling == false) return;
 
         fCurRecoilTime += ContTime.Get().fDeltaTime;
         goPortrait.transform.localPosition += fRecoilSpeed * v3RecoilDirection * ContTime.Get().fDeltaTime;
@@ -524,7 +510,7 @@ public class ViewChr : ViewInteractive {
         //Debug.Log("x coord is " + goPortrait.transform.localPosition.x);
 
         //If we've moved past the left boundary
-        if (v3RecoilDirection.x >= 0 && goPortrait.transform.localPosition.x >= v3BasePosition.x + fMaxRecoilDistance){
+        if(v3RecoilDirection.x >= 0 && goPortrait.transform.localPosition.x >= v3BasePosition.x + fMaxRecoilDistance) {
             //Make sure we don't move too far past the edge
             goPortrait.transform.localPosition = new Vector3
                 (v3BasePosition.x + fMaxRecoilDistance,
@@ -574,42 +560,42 @@ public class ViewChr : ViewInteractive {
     //Updates the character's state (SELECTED, TARGETTING, UNSELECTED)
     void cbUpdateStatus(Object target, params object[] args) {
 
-		//Checks if character status has changed
-		if (lastStateSelect != mod.stateSelect) {
-			switch (mod.stateSelect) {
+        //Checks if character status has changed
+        if(lastStateSelect != mod.stateSelect) {
+            switch(mod.stateSelect) {
 
-			//On switch to selection, highlight the border
-			case Chr.STATESELECT.SELECTED:
-				SetBorder ("ChrBorderSelected");
+            //On switch to selection, highlight the border
+            case Chr.STATESELECT.SELECTED:
+                SetBorder("ChrBorderSelected");
 
                 break;
 
             //On switch to targetting, despawns the ActionWheel
-			case Chr.STATESELECT.TARGGETING:
-				//RemoveActionWheel ();
-				break;
+            case Chr.STATESELECT.TARGGETING:
+                //RemoveActionWheel ();
+                break;
 
             //On switch to unselected, make changes depending on previous state
-			case Chr.STATESELECT.IDLE:
+            case Chr.STATESELECT.IDLE:
 
 
-				if (lastStateSelect == Chr.STATESELECT.TARGGETING) {
-					//Nothing needs to be done (currently, this may change)
+                if(lastStateSelect == Chr.STATESELECT.TARGGETING) {
+                    //Nothing needs to be done (currently, this may change)
 
-				} else if (lastStateSelect == Chr.STATESELECT.SELECTED) {
-                        //Nothing needs to be done (currently, this may change)
+                } else if(lastStateSelect == Chr.STATESELECT.SELECTED) {
+                    //Nothing needs to be done (currently, this may change)
                 }
-                 //Then unhighlight the border
+                //Then unhighlight the border
                 SetBorder("ChrBorder");
-                 break;
-            
+                break;
+
             //Catches unrecognized character states
-			default: 
-				Debug.LogError ("UNRECOGNIZED VIEW CHR SELECT STATE!");
-				return;
-			}
+            default:
+                Debug.LogError("UNRECOGNIZED VIEW CHR SELECT STATE!");
+                return;
+            }
 
             lastStateSelect = mod.stateSelect;
-		}
-	}
+        }
+    }
 }

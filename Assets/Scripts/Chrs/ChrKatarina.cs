@@ -13,12 +13,12 @@ public class ChrKatarina : BaseChr {
     }
 
     //Defines all of a character's unique actions
-    public override void SetActions() {
+    public override void SetInitialSkills() {
 
-        chrOwner.SetAction(0, new ActionFortissimo(chrOwner));
-        chrOwner.SetAction(1, new ActionReverberate(chrOwner));
-        chrOwner.SetAction(2, new ActionSerenade(chrOwner));
-        chrOwner.SetAction(3, new ActionCacophony(chrOwner));
+        chrOwner.arSkills[0] = new ActionFortissimo(chrOwner);
+        chrOwner.arSkills[1] = new ActionLeech(chrOwner);
+        chrOwner.arSkills[2] = new ActionSerenade(chrOwner);
+        chrOwner.arSkills[3] = new ActionCacophony(chrOwner);
     }
 
 }

@@ -4,14 +4,14 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 
-public class StatsManager : MonoBehaviour {
+public class StatsManager : SingletonPersistent<StatsManager> {
 
     //From strings -> T
     public Dictionary<string, int> dictStats;
 
     public const string sSTATSPATH = "Stats/stats.txt";
 
-    public void Start() {
+    public override void Init() {
         dictStats = new Dictionary<string, int>();
         ReadStatsFile();
 

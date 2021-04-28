@@ -5,31 +5,32 @@ using UnityEngine;
 [RequireComponent(typeof(ViewChr))]
 public class Chr : MonoBehaviour {
 
-	bool bStarted;
+    bool bStarted;
 
-	public enum CHARTYPE {          //CHARTYPE's possible values include all characters in the game
-		FISCHER, KATARINA, SKELCOWBOY, SOHPIDIA, PITBEAST, RAYNE, SAIKO
-	};
+    public enum CHARTYPE {          //CHARTYPE's possible values include all characters in the game
+        FISCHER, KATARINA, PITBEAST, RAYNE, SAIKO, SOHPIDIA
+    };
 
-	public enum STATESELECT{
-		SELECTED,                   //Selected a character (to see status effects, actions)
-		TARGGETING,                 //Targetting of character actions
-		IDLE                 		//Default character state
-	};
+    public enum STATESELECT {
+        SELECTED,                   //Selected a character (to see status effects, actions)
+        TARGGETING,                 //Targetting of character actions
+        IDLE                        //Default character state
+    };
 
-	public enum SIZE{
-		SMALL,
-		MEDIUM,
-		LARGE,
-		GIANT
-	};
+    public enum SIZE {
+        SMALL,
+        MEDIUM,
+        LARGE,
+        GIANT
+    };
 
-	Arena arena;                    //The field of play
+    Arena arena;                    //The field of play
 
-	public string sName;			//The name of the character
-	public Player plyrOwner;        //The player who controls the character
+    public string sName;            //The name of the character
+    public Player plyrOwner;        //The player who controls the character
 
-    public static Chr[] arAllChrs;  //A static list of all characters
+    public static List<Chr> lstChrInPlay; //A static list of the characters in play (not on the bench)
+    public static List<Chr> lstAllChrs;  //A static list of all characters
 
     public int globalid;            //The character's unique identifier across all characters
     public int id;                  //The character's unique identifier for this team
@@ -38,8 +39,8 @@ public class Chr : MonoBehaviour {
 
     public int nMaxActionsLeft;     //The total maximum number of actions a character can use in a turn (usually 1, cantrips cost 0)
 
-	public int nCurHealth;          //The character's current health
-	public Property<int> pnMaxHealth;          //The character's max health
+    public int nCurHealth;          //The character's current health
+    public Property<int> pnMaxHealth;          //The character's max health
 
     public bool bDead;                         //If the character is dead or not
 
@@ -49,23 +50,24 @@ public class Chr : MonoBehaviour {
     public Property<int> pnArmour;          //The character's current armour
     public int nAbsorbedArmour;             //The amount of damage currently taken by armour
 
-    public bool bLockedTargetting;  //Whether or not the character can select their action
-    public Action[] arActions;      //The characters actions
-    public static int nActions = 9; //Number of actions the character can perform
-    public static int nCharacterActions = 8; // Number of non-standard actions
-    public const int NUSABLEACTIONS = 4; //The number of actions available at a time for a character to use
+    public Action[] arSkills;      //The character's skills in the loadout for the character - first several are actively selectable
+    public const int nActiveCharacterSkills = 4; //Number of non-generic (rest/block/adapt) currently active on the character
+    public const int nLoadoutSkills = 8; //Number of skills the character has in their pool of skills to adapt to (includes actives)
+    public const int nTotalSkills = nLoadoutSkills + 3; //Number of total skills a character has access to (including benched actions and generics)
 
-    public const int idResting = 7;  //id for the resting action
-    public const int idBlocking = 8; //id for the blocking action
+    public const int idAdapt = 8;    //id for the adapt action (not sure if this will be permanent)
+    public const int idBlocking = 9; //id for the blocking action
+    public const int idResting = 10;  //id for the resting action
+    public const int idSwapSlot = 11; //id for a slot at the end that is purely used to swap with for newly introduced adapting skills
 
     public bool bBlocker;           //Whether or not the character is the assigned blocker
     public Property<bool> pbCanBlock;          //Whether the character is capable or not of blocking
 
     public SoulContainer soulContainer; //A reference to the characters list of soul effects
 
-	public ViewChr view;
+    public ViewChr view;
 
-	public STATESELECT stateSelect; //The character's state
+    public STATESELECT stateSelect; //The character's state
 
     public Subject subStartSelect = new Subject();
     public static Subject subAllStartSelect = new Subject(Subject.SubType.ALL);
@@ -74,6 +76,11 @@ public class Chr : MonoBehaviour {
     public Subject subStartIdle = new Subject();
     public static Subject subAllStartIdle = new Subject(Subject.SubType.ALL);
 
+    public Subject subBecomesActiveForHumans = new Subject(); // When this character's turn for selecting abilities begins
+    public Subject subEndsActiveForHumans = new Subject(); // When this character's turn for selecting abilities ends
+
+    public Subject subBecomesTargettable = new Subject(); // When an ability that is choosing targets can target this character
+    public Subject subEndsTargettable = new Subject(); // When the ability that could target this character stops its targetting process
 
     public Subject subBeforeActivatingAction = new Subject();
     public static Subject subAllBeforeActivatingAction = new Subject(Subject.SubType.ALL);
@@ -102,13 +109,13 @@ public class Chr : MonoBehaviour {
 
     public void SetStateReadiness(StateReadiness newState) {
 
-        if (curStateReadiness != null) {
+        if(curStateReadiness != null) {
             curStateReadiness.OnLeave();
         }
 
         curStateReadiness = newState;
 
-        if (curStateReadiness != null) {
+        if(curStateReadiness != null) {
             curStateReadiness.OnEnter();
         }
     }
@@ -118,16 +125,47 @@ public class Chr : MonoBehaviour {
     }
 
     public static Chr GetTargetByIndex(int ind) {
-        return arAllChrs[ind];
+        return lstAllChrs[ind];
+    }
+
+    public static Chr GetRandomChr() {
+        return lstChrInPlay[Random.Range(0, lstChrInPlay.Count)];
+    }
+
+    public Action GetRandomActiveSkill() {
+        return arSkills[Random.Range(0, nActiveCharacterSkills)];
+    }
+
+    public Action GetRandomSkill() {
+        //Sometimes throw in random selections of resting/blocking with weighted changes
+        int nRand = Random.Range(0, 100);
+
+        if(nRand < 25) {
+            return arSkills[idResting];
+        } else if(nRand < 35) {
+            return arSkills[idBlocking];
+        } else {
+            return GetRandomActiveSkill();
+        }
     }
 
     public static void RegisterChr(Chr chr) {
-        if(arAllChrs == null) {
-            arAllChrs = new Chr[Player.MAXCHRS * Player.MAXCHRS];
+        if(lstAllChrs == null) {
+            lstAllChrs = new List<Chr>(Player.MAXPLAYERS * Player.MAXCHRS);
         }
 
-        arAllChrs[chr.globalid] = chr;
+        lstAllChrs.Insert(chr.globalid, chr);
+
+        //TODO:: do something more sophisticated for this once the bench is added
+        if(lstChrInPlay == null) {
+            lstChrInPlay = new List<Chr>(Player.MAXPLAYERS * Player.MAXCHRS);
+        }
+
+        lstChrInPlay.Add(chr);
+
+
     }
+
 
     public void ChangeChanneltime(int _nChange) {
         //Just let our readiness state deal with this
@@ -138,7 +176,7 @@ public class Chr : MonoBehaviour {
 
 
     public void KillCharacter() {
-        if (bDead) {
+        if(bDead) {
             Debug.Log("Trying to kill a character thast's already dead");
             return;
         }
@@ -155,18 +193,18 @@ public class Chr : MonoBehaviour {
 
 
     // Apply this amount of fatigue to the character
-    public void ChangeFatigue(int _nChange, bool bBeginningTurn = false){
-		if (_nChange + nFatigue < 0) {
-			nFatigue = 0;
-		} else {
-			nFatigue += _nChange;
-		}
+    public void ChangeFatigue(int _nChange, bool bBeginningTurn = false) {
+        if(_nChange + nFatigue < 0) {
+            nFatigue = 0;
+        } else {
+            nFatigue += _nChange;
+        }
 
         subFatigueChange.NotifyObs(this);
         subAllFatigueChange.NotifyObs(this);
 
         //TODO:: Probably delete this bBeginningTurn flag once I get a nice solution for priority handling
-        if (!bBeginningTurn) {
+        if(!bBeginningTurn) {
             //Then this is a stun or an actions used
             ContTurns.Get().FixSortedPriority(this);
             //So make sure we're in the right place in the priority list
@@ -179,26 +217,14 @@ public class Chr : MonoBehaviour {
         return curStateReadiness.GetPriority();
     }
 
-    public void UnlockTargetting() {
-        bLockedTargetting = false;
-    }
-
-    public void LockTargetting() {
-        bLockedTargetting = true;
-    }
-
     public void RechargeActions() {
 
-        for (int i = 0; i < Chr.nActions; i++) {
+        //Only bother recharging the active skills since those will be the only ones that can be on cooldown
+        for(int i = 0; i < Chr.nActiveCharacterSkills; i++) {
 
             //Only reduce the cooldown if it is not currently off cooldown
-            if (arActions[i].nCurCD > 0) { 
-                ContAbilityEngine.Get().AddExec(new ExecChangeCooldown() {
-                    chrSource = null, //No source - just a game action
-                    chrTarget = this,
-
-                    nAmount = -1,
-                    actTarget = arActions[i],
+            if(arSkills[i].nCurCD > 0) {
+                ContAbilityEngine.Get().AddExec(new ExecChangeCooldown(null, arSkills[i], -1) {
 
                     fDelay = ContTurns.fDelayMinorAction
                 });
@@ -211,9 +237,9 @@ public class Chr : MonoBehaviour {
     // having an armour buff expire), then check if we have no armour left
     public void CheckNoArmour() {
 
-        if (pnArmour.Get() < nAbsorbedArmour) {
+        if(pnArmour.Get() < nAbsorbedArmour) {
             //Debug.LogError("ERROR - " + sName + "'s armour is at " + pnArmour.Get() + " but we've absorbed " + nAbsorbedArmour);
-        } else if (pnArmour.Get() == 0) {
+        } else if(pnArmour.Get() == 0) {
             //Then we have used up all of our armour
 
             //Reset the armour absorbed amount to 0
@@ -236,7 +262,7 @@ public class Chr : MonoBehaviour {
         //       by the same amount
 
         pnArmour.AddModifier((nBelow) => nBelow += nChange);
-        
+
     }
 
     public void DamageArmour(int nDamage) {
@@ -257,19 +283,19 @@ public class Chr : MonoBehaviour {
         int nDamageToTake = dmgToTake.Get();
 
         //If the damage isn't piercing, then reduce it by the defense amount
-        if (dmgToTake.bPiercing == false) {
+        if(dmgToTake.bPiercing == false) {
             //Reduce the damage to take by our defense (but ensure it doesn't go below 0)
             nDamageToTake = Mathf.Max(0, nDamageToTake - pnDefense.Get());
         }
 
         int nArmouredDamage = 0;
 
-        if (dmgToTake.bPiercing == false) {
+        if(dmgToTake.bPiercing == false) {
             //Deal as much damage as we can (but not more than how much armour we have)
             nArmouredDamage = Mathf.Min(nDamageToTake, pnArmour.Get());
 
             //If there's actually damage that needs to be dealt to armour
-            if (nArmouredDamage > 0) {
+            if(nArmouredDamage > 0) {
                 DamageArmour(nArmouredDamage);
             }
         }
@@ -278,7 +304,7 @@ public class Chr : MonoBehaviour {
         int nAfterArmourDamage = nDamageToTake - nArmouredDamage;
 
         //If there's damage to be done, then deal it to health
-        if (nAfterArmourDamage > 0) {
+        if(nAfterArmourDamage > 0) {
             ChangeHealth(-nAfterArmourDamage);
         }
 
@@ -291,7 +317,7 @@ public class Chr : MonoBehaviour {
         int nHealingToTake = healToTake.Get();
 
         //If there's healing to be done, then apply it to our health
-        if (nHealingToTake > 0) {
+        if(nHealingToTake > 0) {
             ChangeHealth(nHealingToTake);
         }
 
@@ -299,9 +325,9 @@ public class Chr : MonoBehaviour {
     }
 
     public void ChangeHealth(int nChange) {
-        if (nCurHealth + nChange > pnMaxHealth.Get()) {
+        if(nCurHealth + nChange > pnMaxHealth.Get()) {
             nCurHealth = pnMaxHealth.Get();
-        } else if (nCurHealth + nChange <= 0) {
+        } else if(nCurHealth + nChange <= 0) {
             nCurHealth = 0;
 
             KillCharacter();
@@ -322,10 +348,10 @@ public class Chr : MonoBehaviour {
         return !bBlocker && pbCanBlock.Get();
     }
 
-  //Counts down the character's recharge with the timeline
-	public void TimeTick(){
-		ChangeFatigue (-1, true);
-	}
+    //Counts down the character's recharge with the timeline
+    public void TimeTick() {
+        ChangeFatigue(-1, true);
+    }
 
     public void ChangeState(STATESELECT _stateSelect) {
         stateSelect = _stateSelect;
@@ -335,7 +361,7 @@ public class Chr : MonoBehaviour {
     }
 
     //Sets character state to selected
-	public void Select(){
+    public void Select() {
         ChangeState(STATESELECT.SELECTED);
 
         subStartSelect.NotifyObs(this);
@@ -343,110 +369,121 @@ public class Chr : MonoBehaviour {
     }
 
     //Sets character state to targetting
-	public void Targetting(){
-		ChangeState(STATESELECT.TARGGETING);
+    public void Targetting() {
+        ChangeState(STATESELECT.TARGGETING);
 
         subStartTargetting.NotifyObs(this);
         subAllStartTargetting.NotifyObs(this);
     }
 
     //Set character state to unselected
-	public void Idle (){
-		ChangeState(STATESELECT.IDLE);
+    public void Idle() {
+        ChangeState(STATESELECT.IDLE);
 
         subStartIdle.NotifyObs(this);
         subAllStartIdle.NotifyObs(this);
     }
 
-    //Performs the character's queued action
-	public void ExecuteAction(int nActionIndex, int[] lstTargettingIndices) {
+    //Performs the consumed action 
+    public void ExecuteAction(SelectionSerializer.SelectionInfo infoSelection) {
 
-        if (!ValidAction(nActionIndex, lstTargettingIndices)) {
+        if(infoSelection.CanSelect() == false || infoSelection.actUsed.CanPayMana() == false) {
             Debug.LogError("ERROR! This ability was targetted, but is no longer a valid action");
-            nActionIndex = Chr.idResting; //Recover by setting the used action to a rest
+            infoSelection = SelectionSerializer.MakeRestSelection(this);
         }
-
-        //Make a convenient reference to the action to be used
-        Action actToUse = arActions[nActionIndex];
 
         //Notify everyone that we're about to use this action
-        subBeforeActivatingAction.NotifyObs(this, actToUse);
-        subAllBeforeActivatingAction.NotifyObs(this, actToUse);
+        subBeforeActivatingAction.NotifyObs(this, infoSelection);
+        subAllBeforeActivatingAction.NotifyObs(this, infoSelection);
 
         //Actually use the action
-        actToUse.UseAction (lstTargettingIndices);
-        
-	}
+        infoSelection.actUsed.UseAction(infoSelection);
 
-    //Checks if the proposed action and targetting list would be valid to use (doesn't check mana)
-	public bool ValidAction(int nActionIndex, int[] lstTargettingIndices) {
-		//Debug.Log (bSetAction + " is the setaction");
-		return (arActions [nActionIndex].CanActivate (lstTargettingIndices));
-	}
-
-
-    //By default, set all character actions to resting
-    public virtual void SetDefaultActions() {//TODO:: probably add some parameter for this at some point like an array of ids
-
-        for (int i = 0; i < nActions; i++) {
-            arActions[i] = new ActionRest(this);
-        }
     }
 
     public void SetAction(int i, Action actNew) {
-        //If there is an action already in this slot
-        if (arActions[i] != null) {
-            //Then call it's unequip method since it's leaving
-            arActions[i].OnUnequip();
-        }
 
-        arActions[i] = actNew;
-        actNew.id = i;
+        arSkills[idSwapSlot] = actNew;
 
-        //If we've set this to be a non-null action
-        if(arActions[i] != null) {
-            arActions[i].OnEquip();
-        }
+        SwapSkills(i, idSwapSlot);
+
+        arSkills[idSwapSlot] = null;
+
     }
 
-    public void SetBaseActions() {
-        //Sets the basic generic actions like resting and blocking
+    //Just writing this to get some more intuition for abstraction
+    public void SwapSkills(int i, int j) {
+        Action acti = arSkills[i];
+        Action actj = arSkills[j];
 
-        SetAction(7, new ActionRest(this));
-        SetAction(8, new ActionBlock(this));
+        int njCDNew = acti.nCurCD;
+        int niCDNew = actj.nCurCD;
+
+        //Check if we need to unequip the ith skill
+        if(acti != null && acti.IsActiveSkill() && !actj.IsActiveSkill()) {
+            //If we're swapping an active skill to a non-active skill, then we have to call its unequip method
+            acti.OnUnequip();
+        }
+
+        //Check if we need to unequip the jth skill
+        if(actj != null && actj.IsActiveSkill() && !acti.IsActiveSkill()) {
+            //If we're swapping an active skill to a non-active skill, then we have to call its unequip method
+            actj.OnUnequip();
+        }
+
+        acti.iSlot = j;
+        actj.iSlot = i;
+
+        arSkills[i] = actj;
+        arSkills[j] = acti;
+
+        //Decrease by the current cooldown and increase by the new one
+        Debug.Log("Changing " + acti.sName + "'s cooldown of " + acti.nCurCD + " by " + (niCDNew - njCDNew));
+        acti.ChangeCD(niCDNew - njCDNew);
+        Debug.Log(acti.sName + "'s cooldown is now " + acti.nCurCD);
+
+        Debug.Log("Changing " + actj.sName + "'s cooldown of " + actj.nCurCD + " by " + (njCDNew - niCDNew));
+        actj.ChangeCD(njCDNew - niCDNew);
+        Debug.Log(actj.sName + "'s cooldown is now " + actj.nCurCD);
+
+        //Check if we need to equip the ith skill
+        if(acti != null && acti.IsActiveSkill() && !actj.IsActiveSkill()) {
+            //If this skill is now active while the other swapped one isn't
+            acti.OnEquip();
+        }
+
+        //Check if we need to equip the jth skill
+        if(actj != null && actj.IsActiveSkill() && !acti.IsActiveSkill()) {
+            //If this skill is now active while the other swapped on isn't
+            actj.OnEquip();
+        }
 
     }
 
     // Used to initiallize information fields of the Chr
     // Call this after creating to set information
-    public void InitChr(Player _plyrOwner, int _id, BaseChr baseChr){
-		plyrOwner = _plyrOwner;
-		id = _id;
+    public void InitChr(Player _plyrOwner, int _id, BaseChr baseChr) {
+        plyrOwner = _plyrOwner;
+        id = _id;
         globalid = id + plyrOwner.id * Player.MAXCHRS;
+
         RegisterChr(this);
 
-        SetDefaultActions();
+        baseChr.Init();
 
-        baseChr.SetName();
-        SetBaseActions();
-        baseChr.SetActions();
-        baseChr.SetMaxHealth();
-
-		view.Init ();
-	}
+        view.Init();
+    }
 
     // Sets up fundamental class connections for the Chr
-	public void Start(){
-		if (bStarted == false) {
+    public void Start() {
+        if(bStarted == false) {
             bStarted = true;
 
             nMaxActionsLeft = 1;
 
-            arActions = new Action[nActions];
+            arSkills = new Action[nTotalSkills + 1];//Add in an extra slot for the purposes of swapping in new ones when transforming
 
             stateSelect = STATESELECT.IDLE;
-
-            bLockedTargetting = true;
 
             pbCanBlock = new Property<bool>(true);
 
@@ -459,12 +496,12 @@ public class Chr : MonoBehaviour {
             SetStateReadiness(new StateFatigued(this));
 
             view = GetComponent<ViewChr>();
-            view.Start ();
+            view.Start();
         }
 
-	}
+    }
 }
 
 
-    //Add a max health initializer in each instance of a character - add an 
-    // initializer in the base chr that sets curhealth to max health
+//Add a max health initializer in each instance of a character - add an 
+// initializer in the base chr that sets curhealth to max health

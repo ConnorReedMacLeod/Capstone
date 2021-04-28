@@ -39,12 +39,14 @@ public class Property<T> {
         baseValue = pToCopy.baseValue;
         lstModifiers = new LinkedList<Modifier>(pToCopy.lstModifiers);
 
-        subChanged = new Subject(pToCopy.subChanged);
+        //Rather than directly copying the existing subChanged (which could lead to stale method references to the original's instances),
+        //  we'll rely on the caller of this function to correctly manage the subChanged list on creation 
+        subChanged = new Subject();
     }
 
     public T Get(LinkedListNode<Modifier> nodeCur) {
         //If there's nothing in the linked list, take the base value
-        if (nodeCur == null) {
+        if(nodeCur == null) {
             return baseValue();
         }
 
@@ -75,7 +77,7 @@ public class Property<T> {
 
     //Removes a given modifier
     public void RemoveModifier(LinkedListNode<Modifier> nodeToRemove) {
-        if (lstModifiers.Contains(nodeToRemove.Value) == false) {
+        if(lstModifiers.Contains(nodeToRemove.Value) == false) {
             //Just return if that node isn't actually in the linked list already
             return;
         }

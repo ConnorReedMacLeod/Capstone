@@ -7,10 +7,7 @@ public class ActionStickyBomb : Action {
     public Damage dmg;
     public int nBaseDamage;
 
-    public ActionStickyBomb(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
-
-        //We don't need to target anything, since we always deal damage to everyone
-        arArgs[0] = new TargetArgChr(Action.IsEnemy); 
+    public ActionStickyBomb(Chr _chrOwner) : base(_chrOwner, 0) {//set the dominant clause
 
         sName = "StickyBomb";
         sDisplayName = "Sticky Bomb";
@@ -22,59 +19,46 @@ public class ActionStickyBomb : Action {
 
         nCd = 6;
         nFatigue = 3;
-        nActionCost = 1;
 
-        nBaseDamage = 5;
-        //Create a base Damage object that this action will apply
-        dmg = new Damage(this.chrSource, null, nBaseDamage);
-
-        sDescription1 = "Deal 5 damage to the chosen character and apply STICKIED";
-		sDescription2 = "[STICKIED]\n" + "At the end of turn, deal 30 damage to this character and dispel.";
-
-        
-
-        SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this),
+        };
     }
 
-    override public void Execute(int[] lstTargettingIndices) {
-        //Cast the first target to be a character
-        Chr tar = Chr.GetTargetByIndex(lstTargettingIndices[0]);
+    class Clause1 : ClauseChr {
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
+        Damage dmg;
+        public int nBaseDamage = 5;
+        public SoulStickyBomb soulToCopy;
 
-                //Make a copy of the damage object to give to the executable
-                Damage dmgToApply = new Damage(dmg);
-                //Give the damage object its target
-                dmgToApply.SetChrTarget(tar);
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this), //Base Tag always goes first
+            });
 
-                ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                    chrSource = this.chrSource,
-                    chrTarget = tar,
-                    dmg = dmgToApply,
+            dmg = new Damage(action.chrSource, null, nBaseDamage);
+            soulToCopy = new SoulStickyBomb(action.chrSource, null, action);
+        }
 
-                    arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndStickyBombToss", 2.133f) },
+        public override string GetDescription() {
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = tar.sName + " got a bomb thrown at them"
-                });
+            return string.Format("Deal {0} damage to the chosen character, and another {1} at the end of turn", dmg.Get(), soulToCopy.nDetonationDamage);
+        }
 
-                //Apply the stickybomb Soul effect to the target
-                ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-                    chrSource = this.chrSource,
-                    chrTarget = tar,
+        public override void ClauseEffect(Chr chrSelected) {
 
-                    funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                        return new SoulStickyBomb(_chrSource, _chrTarget, this);
-                    },
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = tar.sName + " is stuck with the bomb"
+            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulStickyBomb(soulToCopy, chrSelected)) {
+                sLabel = "A bomb stuck"
+            });
 
-                });
-            }
-        });
+            ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(action.chrSource, chrSelected, dmg) {
+                arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndStickyBombToss", 2.133f) },
+                sLabel = "Threw a bomb"
+            });
 
-    }
+        }
+
+    };
 
 }

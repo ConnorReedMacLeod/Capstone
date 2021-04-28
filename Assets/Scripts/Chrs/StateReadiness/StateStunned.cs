@@ -28,9 +28,9 @@ public class StateStunned : StateReadiness {
         if (chrOwner.nFatigue == 0) {
             //Then transition to the ready state
 
-            ContAbilityEngine.Get().AddExec(new ExecReadyChar {
-                chrSource = null, //Since no character is actually the source of this effect - it's just the game rules
-                chrTarget = chrOwner,
+
+            //Leave the source as null since it's just the game rules causing the readying
+            ContAbilityEngine.Get().AddExec(new ExecReadyChar (null, chrOwner) { 
 
                 fDelay = ContTurns.fDelayStandard,
                 sLabel = chrOwner.sName + " is Readying"
@@ -43,13 +43,7 @@ public class StateStunned : StateReadiness {
     public override void OnEnter() {
 
         //First, increase the fatigue value of the character
-        ContAbilityEngine.Get().AddExec(new ExecChangeFatigue {
-            chrSource = null,  //No character is the cause of the increase of fatigue - 
-                               //it's just a direct consequence of some character stunning us (which causes fatigue increase)
-            chrTarget = chrOwner,
-
-            nAmount = nStunAmount
-        });
+        ContAbilityEngine.Get().AddExec(new ExecChangeFatigue (null, chrOwner, nStunAmount, false));
 
         //Then, add a replacement effect to cancel out any further stuns that we would take
         repStun = new Replacement() {
@@ -67,7 +61,7 @@ public class StateStunned : StateReadiness {
             },
 
             //Just replace the executable with a completely new null executable
-            execReplace = (Executable exec) => new ExecNull()
+            execReplace = (Executable exec) => new ExecNull(exec.chrSource)
 
         };
 

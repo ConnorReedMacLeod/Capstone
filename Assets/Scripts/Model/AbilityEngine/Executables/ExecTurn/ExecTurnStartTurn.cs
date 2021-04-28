@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class ExecTurnStartTurn : Executable {
 
-
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
     //        this.GetType().GetMember("subAllPreTrigger", BindingFlags.Public |BindingFlags.Static);
@@ -38,10 +37,16 @@ public class ExecTurnStartTurn : Executable {
 
     public override void ExecuteEffect() {
 
-        ContTurns.Get().SetTurnState(ContTurns.STATETURN.CHOOSEACTIONS);
-
         sLabel = "Beginning of Turn";
         fDelay = ContTurns.fDelayStandard;
+
+    }
+
+    public ExecTurnStartTurn(Chr _chrSource) : base(_chrSource) {
+
+    }
+
+    public ExecTurnStartTurn(ExecTurnStartTurn other) : base(other) {
 
     }
 }

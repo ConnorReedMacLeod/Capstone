@@ -4,12 +4,9 @@ using UnityEngine;
 
 public class ActionSadism : Action {
 
-    public Soul soulPassive;
+    public SoulSadism soulPassive;
 
-    public ActionSadism(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
-
-        //Since the base constructor initializes this array, we can start filling it
-        //arArgs[0] = new TargetArgChr((own, tar) => own.plyrOwner != tar.plyrOwner); 
+    public ActionSadism(Chr _chrOwner) : base(_chrOwner, 0) {// set the dominant clause to 0
 
         sName = "Sadism";
         sDisplayName = "Sadism";
@@ -21,60 +18,81 @@ public class ActionSadism : Action {
 
         nCd = 0;
         nFatigue = 0;
-        nActionCost = 0;
 
-        sDescription1 = "When " + _chrOwner.sName + " would deal damage to a character with greater health, heal 5.";
 
-        SetArgOwners();
+        soulPassive = new SoulSadism(this.chrSource, this.chrSource, this);
+
+        lstClausesOnEquip = new List<Clause>() {
+            new ClauseEquip(this)
+        };
+
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
+
+        lstClausesOnUnequip = new List<Clause>() {
+            new ClauseUnequip(this)
+        };
     }
 
-    override public void Execute(int[] lstTargettingIndices) {
+    class ClauseEquip : ClauseSpecial {
 
-        Debug.LogError("Shouldn't be able to use " + sName + " since it's a passive ability");
-    }
+        public ClauseEquip(Action _act) : base(_act) {
+            // Eventually add superficial tags here
+        }
 
-    public override void OnEquip() {
+        public override string GetDescription() {
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
+            return string.Format("Initially applying Sadism on equip");
+        }
 
-                //Save a reference to the buff we're applying
-                soulPassive = new SoulSadism(this.chrSource, this.chrSource, this);
+        public override void ClauseEffect() {
 
-                ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
+            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, action.chrSource, ((ActionSadism)action).soulPassive) {
+                sLabel = "applying sadism"
+            });
 
-                    funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                        return soulPassive;
-                    },
+        }
 
-                    fDelay = ContTurns.fDelayNone,
-                    sLabel = chrSource.sName + " is sadistic"
-                });
-            }
-        });
+    };
 
-        base.OnEquip();
-    }
+    class ClauseUnequip : ClauseSpecial {
 
-    public override void OnUnequip() {
-       
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
+        public ClauseUnequip(Action _act) : base(_act) {
+            // Eventually add superficial tags here
+        }
 
-                ContAbilityEngine.Get().AddExec(new ExecRemoveSoul() {
-                    chrSource = this.chrSource,
-                    chrTarget = this.chrSource,
+        public override string GetDescription() {
 
-                    soulToRemove = this.soulPassive,
+            return string.Format("Removing Sadism on unequip");
+        }
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = chrSource.sName + " is no longer sadistic"
-                });
-            }
-        });
+        public override void ClauseEffect() {
 
-        base.OnUnequip();
-    }
+            ContAbilityEngine.PushSingleExecutable(new ExecRemoveSoul(action.chrSource, ((ActionSadism)action).soulPassive) {
+                sLabel = "removing sadism"
+            });
+
+        }
+
+    };
+
+    class Clause1 : ClauseSpecial {
+
+        public Clause1(Action _act) : base(_act) {
+            // Eventually add superficial tags here
+        }
+
+        public override string GetDescription() {
+
+            return string.Format("When {0} would deal damage to a character with greater health, heal {1}.", action.chrSource.sName, ((ActionSadism)action).soulPassive.heal.Get());
+        }
+
+        public override void ClauseEffect() {
+
+            Debug.LogError("Shouldn't be executing a passive");
+
+        }
+
+    };
 }

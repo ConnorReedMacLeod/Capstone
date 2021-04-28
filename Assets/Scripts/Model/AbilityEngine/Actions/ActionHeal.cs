@@ -7,10 +7,7 @@ public class ActionHeal : Action {
     public Healing heal;
     public int nBaseHealing;
 
-    public ActionHeal(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
-
-        //Since the base constructor initializes this array, we can start filling it
-        arArgs[0] = new TargetArgChr(Action.IsFriendly);
+    public ActionHeal(Chr _chrOwner) : base(_chrOwner, 0) { //Set the dominant clause to be the first clause
 
         sName = "Heal";
         sDisplayName = "Heal";
@@ -22,44 +19,45 @@ public class ActionHeal : Action {
 
         nCd = 3;
         nFatigue = 3;
-        nActionCost = 0;
 
-        nBaseHealing = 5;
-
-        //Create a base Healing object that this action will apply
-        heal = new Healing(this.chrSource, null, nBaseHealing);
-
-        sDescription1 = "Restore 5 health to the chosen ally.";
-
-
-        SetArgOwners();
-    }
-
-    override public void Execute(int[] lstTargettingIndices) {
-
-        Chr tarChr = Chr.GetTargetByIndex(lstTargettingIndices[0]);
-
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-
-                //Make a copy of the heal object to give to the executable
-                Healing healToApply = new Healing(heal);
-                //Give the healing object its target
-                healToApply.SetChrTarget(tarChr);
-
-                Debug.Log("This Heal Clause put an ExecHeal on the stack");
-                ContAbilityEngine.Get().AddExec(new ExecHeal() {
-                    chrSource = this.chrSource,
-                    chrTarget = tarChr,
-
-                    heal = healToApply,
-
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = "Healing"
-                });
-            }
-        });
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
 
     }
 
+    class Clause1 : ClauseChr {
+
+        int nBaseHealing = 5;
+        Healing heal;
+
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this), //Base Tag always goes first
+                new ClauseTagChrAlly(this)
+            });
+
+            //Create and store a copy of the intended healing effect so that any information/effects
+            // can be updated accurately
+            heal = new Healing(action.chrSource, null, nBaseHealing);
+
+        }
+
+        public override string GetDescription() {
+
+            //TODO - eventually figure out how I'm gonna dynamically generate the text targets
+            return string.Format("Heal {0} life to an Ally", heal.Get());
+        }
+
+        public override void ClauseEffect(Chr chrSelected) {
+
+            //Push an executable with this action's owner as the source, the selected character as the target,
+            // and we can copy the stored healing instance to apply
+            ContAbilityEngine.PushSingleExecutable(new ExecHeal(action.chrSource, chrSelected, heal) {
+                sLabel = "Healing"
+            });
+
+        }
+
+    };
 }

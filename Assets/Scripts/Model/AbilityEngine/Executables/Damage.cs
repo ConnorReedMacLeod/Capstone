@@ -10,7 +10,8 @@ public class Damage {
     public int nBase;
     public bool bPiercing;
 
-    public LibFunc.Get<int> GetBase;
+    public delegate int FuncBaseDamage(Chr chrSource, Chr chrTarget);
+    public FuncBaseDamage GetBase;
     public LibFunc.Get<int> GetPower;
 
 
@@ -18,7 +19,7 @@ public class Damage {
     public Damage(Chr _chrSource, Chr _chrTarget, int _nBaseDamage, bool _bPiercing = false) {
 
         //Copy the fields as they've been passed in
-        GetBase = () => _nBaseDamage;
+        GetBase = (Chr __chrSource, Chr __chrTarget) => _nBaseDamage;
 
         bPiercing = _bPiercing;
 
@@ -28,7 +29,7 @@ public class Damage {
     }
 
 
-    public Damage(Chr _chrSource, Chr _chrTarget, LibFunc.Get<int> _GetBase, bool _bPiercing = false) {
+    public Damage(Chr _chrSource, Chr _chrTarget, FuncBaseDamage _GetBase, bool _bPiercing = false) {
 
         //Copy the fields as they've been passed in
         GetBase = _GetBase;
@@ -44,7 +45,7 @@ public class Damage {
 
 
     public int Get() {
-        return GetBase() + GetPower();
+        return GetBase(chrSource, chrTarget) + GetPower();
     }
 
     public void SnapShotPower() {
@@ -69,7 +70,7 @@ public class Damage {
 
     }
 
-    public void SetBase(LibFunc.Get<int> _GetBase) {
+    public void SetBase(FuncBaseDamage _GetBase) {
         GetBase = _GetBase;
     }
 

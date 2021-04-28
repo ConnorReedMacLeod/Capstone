@@ -31,6 +31,7 @@ public class ContTime : Singleton<ContTime> {
 
     public void Invoke(float _fDelay, System.Action _funcToCall) {
         lstBufferToInvoke.Add(new InvokeFunc(_fDelay, _funcToCall));
+
     }
 
 
@@ -45,7 +46,6 @@ public class ContTime : Singleton<ContTime> {
         foreach(InvokeFunc inv in arTemp) {
             lstInvokes.Add(inv);
         }
-        
 
         lstInvokes.ForEach(delegate (InvokeFunc inv) {
             //Tick down the remaining time
@@ -64,12 +64,12 @@ public class ContTime : Singleton<ContTime> {
             return inv.fDelay <= 0f;
         });
 
-        
+
 
     }
 
     private void SetDeltaTime() {
-        if (bPaused) {
+        if(bPaused) {
             fDeltaTime = 0f;
         } else {
             fDeltaTime = Time.deltaTime;
@@ -98,7 +98,16 @@ public class ContTime : Singleton<ContTime> {
 
     }
 
+    public void PrintInvokeList() {
 
+        Debug.Log("lstInvoke (length=" + lstInvokes.Count + ") contents:");
+        lstInvokes.ForEach(delegate (InvokeFunc inv) {
+
+            Debug.Log("key: " + inv.funcToCall + " time: " + inv.fDelay);
+
+        });
+
+    }
 
 
 

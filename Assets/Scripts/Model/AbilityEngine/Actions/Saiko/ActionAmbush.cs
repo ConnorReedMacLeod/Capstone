@@ -4,88 +4,54 @@ using UnityEngine;
 
 public class ActionAmbush : Action {
 
-    public Damage dmg;
-    public int nBaseDamage;
+    public SoulChannelAmbush soulChannelBehaviour;
 
-    public ActionAmbush(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
-
-        //Since the base constructor initializes this array, we can start filling it
-        arArgs[0] = new TargetArgChr(Action.IsEnemy);
+    public ActionAmbush(Chr _chrOwner) : base(_chrOwner, 0) {//Set the dominant clause
 
         sName = "Ambush";
         sDisplayName = "Ambush";
 
-        SoulChannel soulChannelEffect = new SoulChannel(this) {
+        //Create an instance of the soulChannel effect
+        soulChannelBehaviour = new SoulChannelAmbush(this);
 
-            lstTriggers = new List<Soul.TriggerEffect>() {
-                new Soul.TriggerEffect() {
-                    sub = Chr.subAllPostExecuteAbility,
-                    cb = (target, args) => {
-
-                        //If the character who used an ability is the one we targetted, they aren't using block, and they aren't using rest
-                        // Then we can ambush them
-                        if((Chr)target == Chr.GetTargetByIndex(((StateChanneling)(this.chrSource.curStateReadiness)).lstStoredTargettingIndices[0]) &&
-                            ((Action)args[0]).id != Chr.idBlocking && ((Action)args[0]).id != Chr.idResting){
-                            onAbilityUse();
-                        }
-
-                    }
-                }
-            }
-        };
-
-        type = new TypeChannel(this, 4, soulChannelEffect);
+        //Pass a reference into the channel-type so that it can copy our behaviour for channeling
+        type = new TypeChannel(this, 4, soulChannelBehaviour);
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 1 });
 
         nCd = 3;
         nFatigue = 1;
-        nActionCost = 1;
 
-        nBaseDamage = 20;
-        //Create a base Damage object that this action will apply
-        dmg = new Damage(this.chrSource, null, nBaseDamage);
-
-        sDescription1 = "While channeling, after the chosen character uses an ability or blocks, deal 20 damage to them";
-
-        SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
     }
+  
 
-    public void onAbilityUse() {
+    class Clause1 : ClauseChr {
 
-        Chr tar = Chr.GetTargetByIndex(((StateChanneling)(this.chrSource.curStateReadiness)).lstStoredTargettingIndices[0]);
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this), //Base Tag always goes first
+            });
 
+        }
 
-        ContAbilityEngine.Get().AddClause(new Clause() {
-            fExecute = () => {
+        public override string GetDescription() {
 
-                //Make a copy of the damage object to give to the executable
-                Damage dmgToApply = new Damage(dmg);
-                //Give the damage object its target
-                dmgToApply.SetChrTarget(tar);
+            return string.Format("While channeling, after the chosen character uses an ability or blocks, deal {0} damage to them", 
+                ((ActionAmbush)action).soulChannelBehaviour.nBaseDamage);
+        }
 
-                ContAbilityEngine.Get().AddExec(new ExecDealDamage() {
-                    chrSource = this.chrSource,
-                    chrTarget = tar,
+        public override void ClauseEffect(Chr chrSelected) {
 
-                    dmg = dmgToApply,
+            //Since this is a channel, we only have to include effects here that would happen upon
+            // channel completion.  
+            // For this particular ability, there's nothing
 
-                    arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndAmbush", 3.433f) },
+        }
 
-                    fDelay = ContTurns.fDelayStandard,
-                    sLabel = chrSource.sName + " ambushed " + tar.sName + "!"
-                });
-            }
-        });
-
-    }
-
-
-    override public void Execute(int[] lstTargettingIndices) {
-
-        //Don't need to do anything on completion
-
-    }
+    };
 
 }

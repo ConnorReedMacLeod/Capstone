@@ -35,14 +35,21 @@ public class ExecTurnGiveMana : Executable {
         return true;
     }
 
+    public int[] arManaToGive;
+
     public void GiveMana() {
 
-        Mana.MANATYPE manaGen = ContMana.Get().GetTurnStartMana();
-        Debug.Log("Gave out " + manaGen + " mana");
+        Debug.Assert(arManaToGive != null);
+        Debug.Assert(arManaToGive.Length == Match.Get().nPlayers);
 
-        //Give the mana to each player
-        for (int i = 0; i < Match.Get().nPlayers; i++) {
-            Match.Get().arPlayers[i].mana.ChangeMana(manaGen);
+        //Give the mana to each player as stored in arManaToGive
+        for(int i = 0; i < arManaToGive.Length; i++) {
+
+            Player plyrToGive = Match.Get().arPlayers[i];
+
+            ContAbilityEngine.Get().AddExec(new ExecChangeMana(null, plyrToGive, (Mana.MANATYPE)arManaToGive[i]) {
+                chrSource = null
+            });
         }
     }
 
@@ -50,10 +57,18 @@ public class ExecTurnGiveMana : Executable {
 
         GiveMana();
 
-        ContTurns.Get().SetTurnState(ContTurns.STATETURN.TURNSTART);
-
-        sLabel = "Giving Mana";
+        sLabel = "Giving Mana to each player";
         fDelay = ContTurns.fDelayTurnAction;
 
     }
+
+
+    public ExecTurnGiveMana(Chr _chrSource) : base(_chrSource) {
+
+    }
+
+    public ExecTurnGiveMana(ExecTurnGiveMana other) : base(other) {
+
+    }
+
 }

@@ -1,9 +1,10 @@
-﻿public class ActionHuntersQuarry : Action {
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-    public ActionHuntersQuarry(Chr _chrOwner) : base(1, _chrOwner) {//number of target arguments
+public class ActionHuntersQuarry : Action {
 
-        //Since the base constructor initializes this array, we can start filling it
-        arArgs[0] = new TargetArgChr(Action.IsEnemy); //Choose an enemy character
+    public ActionHuntersQuarry(Chr _chrOwner) : base(_chrOwner, 0) {//Set the dominant clause
 
         sName = "HuntersQuarry";
         sDisplayName = "Hunter's Quarry";
@@ -15,34 +16,40 @@
 
         nCd = 8;
         nFatigue = 3;
-        nActionCost = 1;
 
-		sDescription1 = "Apply HUNTED to the chosen character.";
-        sDescription2 = "[HUNTED]\n" + "Before " + _chrOwner.sName + " deals damage to this character, they lose 5 DEFENSE until end of turn.";
-
-        SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
     }
 
-    override public void Execute(int[] lstTargettingIndices) {
+    class Clause1 : ClauseChr {
+        
+        public SoulHunted soulToCopy;
 
-        Chr tarChr = Chr.GetTargetByIndex(lstTargettingIndices[0]);
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrRanged(this), //Base Tag always goes first
+            });
+            
+            soulToCopy = new SoulHunted(action.chrSource, null, action);
+        }
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-                    chrSource = this.chrSource,
-                    chrTarget = tarChr,
+        public override string GetDescription() {
 
-                    arSoundEffects = new SoundEffect[] { new SoundEffect("Fischer/sndHuntersQuarry", 0.867f) },
+            return string.Format("Apply HUNTED to the chosen character." +
+                "[HUNTED]: Before {0} deals damage to this character, they lose {1} DEFENSE until end of turn.", action.chrSource.sName, soulToCopy.nDefenseLoss);
+        }
 
-                    funcCreateSoul = (Chr _chrSource, Chr _chrTarget) => {
-                        return new SoulHunted(_chrSource, _chrTarget, this);
-                    }
+        public override void ClauseEffect(Chr chrSelected) {
 
-                });
-            }
-        });
+            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulHunted(soulToCopy, chrSelected)) {
+                arSoundEffects = new SoundEffect[] { new SoundEffect("Fischer/sndHuntersQuarry", 0.867f) },
+                sLabel = "I'm gonna get ya"
+            });
 
-    }
+
+        }
+
+    };
 
 }

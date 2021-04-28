@@ -10,48 +10,59 @@ using UnityEngine;
 
 public class SoulChannel : Soul {
 
-    public Action act; //Store a reference to the action we represent
-    
+    public bool bDelayedAction; // Is this soulChannel only used for executing a single effect after a delay
+                                //  with no on-going effect
+
+    public bool bChannelCompleted; // If we've successfully reached the end of the channel and should trigger its expiration effect
 
     /// <summary>
-    /// Creates a properly configured SoulChannel based on the given Action's Execute method
+    /// Creates a properly configured SoulChannel that will call the Action's Execute method
     /// </summary>
-	public SoulChannel(Action _act):base(_act.chrSource, _act.chrSource, _act) {
+    public SoulChannel(Action _actSource) : base(_actSource.chrSource, _actSource.chrSource, _actSource) {
         bVisible = false;
         bDuration = false;
 
         bRecoilWhenApplied = false;
 
-        act = _act;
+        sName = "Channel-" + actSource.sName;
 
-        
-
-        sName = "Channel-" + act.sName;
-
-        //By default, we will do the successful completion action
-        funcOnRemoval = onSuccessfulCompletion;
+        bChannelCompleted = false;
     }
 
-    public void onSuccessfulCompletion() {
-        //Use the action's execute method
-        act.Execute(((StateChanneling)chrSource.curStateReadiness).lstStoredTargettingIndices);
+    public override bool ShouldTriggerExpiration() {
 
-        //Then give that action's stack of clauses to the Ability Engine to process
-        ContAbilityEngine.AddClauseStack(ref act.stackClauses);
+        //Check if our Channel Completed flag was been set by an ExecCompleteChannel clause
+        return bChannelCompleted;
 
-        //Then pay for the action (increase cooldown)
-        act.PayCooldown();
     }
 
-    public void OnInterruptedCompletion() {
-        //Then just pay for the action (increase cooldown)
-        act.PayCooldown();
+    public override void ExpirationEffect() {
+
+        //If we are purely a delayed action with no other side effects, then we can just call the
+        //  execute method of our stored action
+        if(bDelayedAction) {
+
+            //If we reach the end of the duration of the effect, then execute the effects of the 
+            // stored action and apply it to the stored target of the channel action
+            actSource.Execute();
+        }
+
+        //If we're a custom SoulChannel effect, then if we want to do anything specific
+        //  when completing our channel, then we should extend this method to do that effect
+        //   baseline - we don't need to do anything
+    }
+
+    public void OnInterrupted() {
+
+        Debug.Log("SoulChannel interrupted");
+
     }
 
     public SoulChannel(SoulChannel soulToCopy, Action _act) : base(soulToCopy) {
 
-        //We'll need to copy these field ourselves, since the base constructor doesn't have it
-        act = _act;
+        Debug.Log("Creating copy of soulchannel");
 
+        bDelayedAction = soulToCopy.bDelayedAction;
+        bChannelCompleted = soulToCopy.bChannelCompleted;
     }
 }

@@ -5,75 +5,88 @@ using UnityEngine;
 //Used for targgeting a specific character
 public class StateTargetChr : StateTarget {
 
-	TargetArgChr tarArg;
-
-
     public static Subject subAllStartSelection = new Subject(Subject.SubType.ALL);
     public static Subject subAllFinishSelection = new Subject(Subject.SubType.ALL);
 
-    public void cbCancelTargetting(object target, params object [] args) {
-        ContLocalInputSelection.Get().CancelTar();
+    public void cbCancelTargetting(object target, params object[] args) {
+        ContLocalUIInteraction.Get().CancelTar();
     }
 
-    public void cbSetTargetChr(object target, params object [] args) {
+    public void cbTargetChr(object target, params object[] args) {
 
-        int idTarget = ((ViewChr)target).mod.GetTargettingId();
+        //We clicked on a character, so let's make a SelectionInfo package for it
+        SelectionSerializer.SelectionChr infoSelectionChr =
+            new SelectionSerializer.SelectionChr(
+                ContLocalUIInteraction.Get().chrSelected,
+                ContLocalUIInteraction.Get().actSelected,
+                ((ViewChr)target).mod);
 
-        if (tarArg.WouldBeLegal(idTarget)) {
+        if(infoSelectionChr.CanSelect()) {
 
-            //move to next target
-            ContLocalInputSelection.Get().StoreTargettingIndex(idTarget);
-
-            //Debug.Log("Target successfully set to " + ((ViewChr)target).mod.sName + " with id " + idTarget + " for player " + inputHuman.plyrOwner.id);
+            ContLocalUIInteraction.Get().FinishTargetting(infoSelectionChr);
 
         } else {
             Debug.Log(((ViewChr)target).mod.sName + ", on team " + ((ViewChr)target).mod.plyrOwner.id + " is not a valid character target");
         }
     }
 
-    public void cbSwitchAction(Object target, params object [] args) {
-        Debug.Log("clicking on an action while asked to target a char");
+    public void cbSwitchAction(Object target, params object[] args) {
 
-        ContLocalInputSelection.Get().ResetTar();
+        Debug.Log("attempting to reselect" + ((ViewAction)target).mod.sDisplayName);
 
-        ContLocalInputSelection.Get().nSelectedAbility = ((ViewAction)target).mod.id;
-
-        Debug.Log("reselected action is now " + ContLocalInputSelection.Get().nSelectedAbility);
-        ContLocalInputSelection.Get().SetTargetArgState(); // Let the parent figure out what exact state we go to
+        ContLocalUIInteraction.Get().StartTargetting(((ViewAction)target).mod);
 
     }
 
-	override public void OnEnter(){
+    public void NotifySelectableTargets() {
 
-		Debug.Assert(ContLocalInputSelection.Get().chrSelected != null);
+        Action actTargetting = ContLocalUIInteraction.Get().actSelected;
 
-        Debug.Log("chrSelected is " + ContLocalInputSelection.Get().chrSelected.sName);
+        foreach(Chr chrPossibleTarget in ((ClauseChr)actTargetting.GetDominantClause()).GetSelectable()) {
+            //Let each targettable character know that they are targettable by this currently selected ability - can highlight them 
+            chrPossibleTarget.subBecomesTargettable.NotifyObs(null, actTargetting);
+        }
+    }
 
-        //Get the appropriate current targetting type for the currently selected action
-        tarArg = (TargetArgChr)ContLocalInputSelection.Get().chrSelected.arActions [ContLocalInputSelection.Get().nSelectedAbility].arArgs[ContLocalInputSelection.Get().indexCurTarget];
+    public void NotifySelectableTargetsEnded() {
+
+        Action actTargetting = ContLocalUIInteraction.Get().actSelected;
+
+        foreach(Chr chrPossibleTarget in ((ClauseChr)actTargetting.GetDominantClause()).GetSelectable()) {
+            //Let each targettable character know that this ability is done targetting, so we can clear anything out that was done when they were targettable
+            chrPossibleTarget.subEndsTargettable.NotifyObs(null, actTargetting);
+        }
+    }
+
+    override public void OnEnter() {
+
+        Debug.Assert(ContLocalUIInteraction.Get().chrSelected != null);
+
+        Debug.Log("chrSelected is " + ContLocalUIInteraction.Get().chrSelected.sName);
 
         Arena.Get().view.subMouseClick.Subscribe(cbCancelTargetting);
         ViewInteractive.subGlobalMouseRightClick.Subscribe(cbCancelTargetting);
 
-        ViewChr.subAllClick.Subscribe(cbSetTargetChr);
+        ViewChr.subAllClick.Subscribe(cbTargetChr);
         ViewAction.subAllClick.Subscribe(cbSwitchAction);
         ViewBlockerButton.subAllClick.Subscribe(cbSwitchAction);
         ViewRestButton.subAllClick.Subscribe(cbSwitchAction);
 
-        subAllStartSelection.NotifyObs(null, tarArg);
+        ContLocalUIInteraction.subAllStartManualTargetting.NotifyObs();
+        NotifySelectableTargets();
     }
 
-	override public void OnLeave(){
+    override public void OnLeave() {
 
         Arena.Get().view.subMouseClick.UnSubscribe(cbCancelTargetting);
         ViewInteractive.subGlobalMouseRightClick.UnSubscribe(cbCancelTargetting);
 
-        ViewChr.subAllClick.UnSubscribe(cbSetTargetChr);
+        ViewChr.subAllClick.UnSubscribe(cbTargetChr);
         ViewAction.subAllClick.UnSubscribe(cbSwitchAction);
         ViewBlockerButton.subAllClick.UnSubscribe(cbSwitchAction);
         ViewRestButton.subAllClick.UnSubscribe(cbSwitchAction);
 
-        subAllFinishSelection.NotifyObs(null, tarArg);
+        NotifySelectableTargetsEnded();
     }
 
 }

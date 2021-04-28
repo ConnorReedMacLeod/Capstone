@@ -5,10 +5,7 @@ using UnityEngine;
 public class ActionHiss : Action {
 
 
-    public ActionHiss(Chr _chrOwner) : base(0, _chrOwner) {//number of target arguments
-
-        //Since the base constructor initializes this array, we can start filling it
-        //arArgs[0] = new TargetArgTeam((own, tar) => true); // No selection necessary
+    public ActionHiss(Chr _chrOwner) : base(_chrOwner, 0) {//Set the dominant clause
 
         sName = "Hiss";
         sDisplayName = "Hiss";
@@ -20,44 +17,41 @@ public class ActionHiss : Action {
 
         nCd = 10;
         nFatigue = 1;
-        nActionCost = 0;
 
-        sDescription1 = "All enemies lose 10 POWER for 3 turns.";
-
-        SetArgOwners();
+        lstClauses = new List<Clause>() {
+            new Clause1(this)
+        };
     }
 
-    override public void Execute(int[] lstTargettingIndices) {
+    class Clause1 : ClauseChr {
 
-        Player tarPlyr = chrSource.plyrOwner.GetEnemyPlayer();
+        public SoulSpooked soulToCopy;
 
-        stackClauses.Push(new Clause() {
-            fExecute = () => {
-                for (int i = 0; i < tarPlyr.arChr.Length; i++) {
+        public Clause1(Action _act) : base(_act) {
+            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
+                new ClauseTagChrSweeping(this), //Base Tag always goes first
+                new ClauseTagChrEnemy(this)
+            });
 
-                    //Don't target dead characters
-                    if (tarPlyr.arChr[i].bDead) continue;
+            soulToCopy = new SoulSpooked(action.chrSource, null, action);
+        }
 
-                    //TODO:: Organize this in the correct order
-                    ContAbilityEngine.Get().AddExec(new ExecApplySoul() {
-                        chrSource = this.chrSource,
-                        chrTarget = tarPlyr.arChr[i],
+        public override string GetDescription() {
 
-                        funcCreateSoul = (_chrSource, _chrTarget) => {
-                            return new SoulSpooked(_chrSource, _chrTarget, this);
-                        },
+            return string.Format("All enemies lose {0} POWER for {1} turns.", soulToCopy.nPowerDebuff, soulToCopy.pnMaxDuration.Get());
+        }
 
-                        arSoundEffects = new SoundEffect[] { new SoundEffect("Sophidia/sndHiss1", 2f),
-                                                             new SoundEffect("Sophidia/sndHiss2", 2f),
-                                                             new SoundEffect("Sophidia/sndHiss3", 2f)},
+        public override void ClauseEffect(Chr chrSelected) {
 
-                        fDelay = ContTurns.fDelayNone,
-                        sLabel = "Applying Hiss "
-                    });
-                }
-            }
-        });
+            ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(action.chrSource, chrSelected, new SoulSpooked(soulToCopy, chrSelected)) {
+                arSoundEffects = new SoundEffect[] { new SoundEffect("Sophidia/sndHiss1", 2f),
+                                                     new SoundEffect("Sophidia/sndHiss2", 2f),
+                                                     new SoundEffect("Sophidia/sndHiss3", 2f)},
+                sLabel = "Ah, so spook!"
+            });
 
-    }
+        }
+
+    };
 
 }

@@ -13,13 +13,13 @@ public class ChrRayne : BaseChr {
     }
 
     //Defines all of a character's unique actions
-    public override void SetActions() {
+    public override void SetInitialSkills() {
 
-        chrOwner.SetAction(0, new ActionCheerleader(chrOwner));
-        chrOwner.SetAction(1, new ActionCloudCushion(chrOwner));
-        chrOwner.SetAction(2, new ActionSpiritSlap(chrOwner));
-        chrOwner.SetAction(3, new ActionThunderStorm(chrOwner));
-        
+        chrOwner.arSkills[0] = new ActionCheerleader(chrOwner);
+        chrOwner.arSkills[1] = new ActionCloudCushion(chrOwner);
+        chrOwner.arSkills[2] = new ActionSpiritSlap(chrOwner);
+        chrOwner.arSkills[3] = new ActionThunderStorm(chrOwner);
+
     }
 
 }
