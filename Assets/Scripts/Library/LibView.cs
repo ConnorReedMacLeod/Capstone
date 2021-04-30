@@ -39,4 +39,14 @@ public static class LibView {
 			return null;
 		}
 	}
+
+    public static void AssignSpritePathToObject(string sSprPath, GameObject go) {
+
+        Sprite sprIcon = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
+
+        Debug.Assert(sprIcon != null, "Could not find specificed sprite: " + sSprPath);
+
+        go.GetComponent<SpriteRenderer>().sprite = sprIcon;
+
+    }
 }

@@ -10,6 +10,7 @@ public class Chr : MonoBehaviour {
     public enum CHARTYPE {          //CHARTYPE's possible values include all characters in the game
         FISCHER, KATARINA, PITBEAST, RAYNE, SAIKO, SOHPIDIA
     };
+    public static readonly string[] ARSCHRNAMES = { "Fischer", "Katarina", "PitBeast", "Rayne", "Saiko", "Sophidia"};
 
     public enum STATESELECT {
         SELECTED,                   //Selected a character (to see status effects, actions)
