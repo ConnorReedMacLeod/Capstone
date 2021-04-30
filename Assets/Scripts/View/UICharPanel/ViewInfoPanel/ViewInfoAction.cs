@@ -45,11 +45,7 @@ public class ViewInfoAction : MonoBehaviour {
             sSprPath += mod.sName;
         }
 
-        Sprite sprIcon = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
-
-        Debug.Assert(sprIcon != null, "Could not find specificed sprite: " + sSprPath);
-
-        goIcon.GetComponent<SpriteRenderer>().sprite = sprIcon;
+        LibView.AssignSpritePathToObject(sSprPath, goIcon);
     }
 
     public void DisplayName() {
