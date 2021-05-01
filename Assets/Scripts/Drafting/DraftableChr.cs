@@ -6,11 +6,16 @@ public class DraftableChr : MonoBehaviour {
 
     public Chr.CHARTYPE chrInSlot;
 
+    public void GreyOut() {
 
-
-
+        gameObject.GetComponent<SpriteRenderer>().color = Color.grey;
+    }
 
     public void SetChrInSlot(Chr.CHARTYPE _chrInSlot) {
+        if(chrInSlot == _chrInSlot) {
+            return;
+        }
+
         chrInSlot = _chrInSlot;
 
         string sChrName = Chr.ARSCHRNAMES[(int)chrInSlot];
