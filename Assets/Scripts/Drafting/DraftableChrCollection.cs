@@ -21,6 +21,12 @@ public class DraftableChrCollection : MonoBehaviour {
 
     }
 
+    public void SetChrAsBanned(int iChrSlot) {
+
+        arDraftableChrPortraits[iChrSlot].RedOut();
+
+    }
+
     // Start is called before the first frame update
     void Start() {
 

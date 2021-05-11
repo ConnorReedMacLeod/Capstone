@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ContTurns : Singleton<ContTurns> {
 
-    public enum STATETURN { RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSEACTIONS, EXECUTEACTIONS, TURNEND, ENDFLAG };
+    public enum STATETURN { DRAFT, BAN, LOADOUTSETUP, RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSEACTIONS, EXECUTEACTIONS, TURNEND, ENDFLAG };
     public STATETURN curStateTurn;
 
     public Chr[] arChrPriority = new Chr[Player.MAXCHRS];
@@ -20,6 +20,9 @@ public class ContTurns : Singleton<ContTurns> {
     public const float fDelayTurnAction = 0.5f;
     public const float fDelayMinorAction = 0.5f;
     public const float fDelayStandard = 1.25f;
+    public const float fDelayBan = 20f;
+    public const float fDelayDraftPick = 20f;
+    public const float fDelayLoadoutSetup = 120f;
 
 
     public void FixSortedPriority(Chr chr) {
@@ -169,11 +172,46 @@ public class ContTurns : Singleton<ContTurns> {
 
     }
 
+    public void OnLeavingState() {
+
+        switch(curStateTurn) {
+        case STATETURN.BAN:
+        case STATETURN.DRAFT:
+
+            DraftController.Get().FinishDraftPhaseStep();
+            break;
+        }
+
+    }
 
     public void SetTurnState(STATETURN _curStateTurn, object oAdditionalInfo = null) {
+
+        OnLeavingState();
+
         curStateTurn = _curStateTurn;
 
         switch(curStateTurn) {
+
+        //Pass along the specific Executable that was passed along in the additional info slot
+        // - it'll be premade with the appropriate player whose turn it is
+        case STATETURN.DRAFT:
+
+            ContAbilityEngine.Get().AddExec((ExecTurnDraft)oAdditionalInfo);
+
+            break;
+
+        case STATETURN.BAN:
+
+            ContAbilityEngine.Get().AddExec((ExecTurnBan)oAdditionalInfo);
+
+            break;
+
+        case STATETURN.LOADOUTSETUP:
+
+            ContAbilityEngine.Get().AddExec(new ExecTurnLoadoutSetup(_chrSource: null));
+
+            break;
+
         case STATETURN.RECHARGE:
 
             ContAbilityEngine.Get().AddExec(new ExecTurnRecharge(_chrSource: null));

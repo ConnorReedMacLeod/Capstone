@@ -6,6 +6,11 @@ public class DraftableChr : MonoBehaviour {
 
     public Chr.CHARTYPE chrInSlot;
 
+    public void RedOut() {
+
+        gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+    }
+
     public void GreyOut() {
 
         gameObject.GetComponent<SpriteRenderer>().color = Color.grey;
