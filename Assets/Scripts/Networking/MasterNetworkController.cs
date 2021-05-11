@@ -25,6 +25,9 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     public const byte evtMSubmitCharacters = TOMASTEREVENTBASE + 2;
     public const byte evtMFinishedTurnPhase = TOMASTEREVENTBASE + 3;
+    public const byte evtMSubmitDraftSelection = TOMASTEREVENTBASE + 4;
+    public const byte evtMSubmitBanSelection = TOMASTEREVENTBASE + 5;
+    public const byte evtMFinishedLoadoutSetup = TOMASTEREVENTBASE + 6;
 
     public Text txtMasterDisplay;
 
@@ -131,6 +134,17 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
             Debug.Log("Recieved signal that client " + nClientID + " has finished phase " + ((ContTurns.STATETURN)nTurnState).ToString());
 
             OnClientFinishedPhase(nClientID, nTurnState, nSerializedInfo);
+
+            break;
+
+        case MasterNetworkController.evtMSubmitDraftSelection:
+
+            int nPlayerDrafting = (int)arContent[0];
+            int nChrDrafted = (int)arContent[1];
+
+            Debug.Assert(DraftController.Get().IsCharAvailable((Chr.CHARTYPE)nChrDrafted), "Submitted an already drafted character to the Master");
+
+            TODONOW
 
             break;
 
@@ -243,6 +257,24 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
         switch(nCurTurnPhase) {
 
+        case (int)ContTurns.STATETURN.BAN:
+            //If we're in the draft phase, consult the DraftController for what phase should come next
+            nNextTurnPhase = (int)DraftController.Get().GetNextDraftPhaseStep().stateTurnNextStep;
+
+            break;
+
+        case (int)ContTurns.STATETURN.DRAFT:
+            //If we're in the draft phase, consult the DraftController for what phase should come next
+            if(DraftController.Get().IsDraftPhaseOver()) {
+                //If we've reached the end of all the drafting steps, let the players set up their loadout
+                nNextTurnPhase = (int)ContTurns.STATETURN.LOADOUTSETUP;
+            } else {
+                //If we still have more drafting steps, peek at the next one and send that out to everyone
+                nNextTurnPhase = (int)DraftController.Get().GetNextDraftPhaseStep().stateTurnNextStep;
+            }
+
+            break;
+
         case (int)ContTurns.STATETURN.CHOOSEACTIONS:
             //If no character is set to act, then we jump directly ahead to TurnEnd
             if(ContTurns.Get().GetNextActingChr() == null) {
@@ -349,16 +381,9 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     }
 
-    //Should only be decided by the master client
-    public void SelectNextReadyCharacter() {
-
-        int nPlayer = Random.Range(1, 3);
-        int nCharacter = Random.Range(1, 4);
-
-        NetworkConnectionManager.SendEventToClients(evtCNewReadiedCharacter, new object[2] { nPlayer, nCharacter });
-    }
 
     public void Update() {
+        //Only respond to master events
         if(bIsMaster == false) return;
 
         int nNewTime = Mathf.FloorToInt(Time.time);
