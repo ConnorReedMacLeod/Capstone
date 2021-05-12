@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ContTurns : Singleton<ContTurns> {
 
-    public enum STATETURN { DRAFT, BAN, LOADOUTSETUP, RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSEACTIONS, EXECUTEACTIONS, TURNEND, ENDFLAG };
+    public enum STATETURN { DRAFT, BAN, LOADOUTSETUP, RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSEACTIONS, EXECUTEACTIONS, TURNEND };
     public STATETURN curStateTurn;
 
     public Chr[] arChrPriority = new Chr[Player.MAXCHRS];
@@ -172,13 +172,27 @@ public class ContTurns : Singleton<ContTurns> {
 
     }
 
-    public void OnLeavingState() {
+    public void OnLeavingState(object oAdditionalInfo) {
 
         switch(curStateTurn) {
         case STATETURN.BAN:
+
+            //Interpret the passed info as a selected character that was banned in the just-finished drafting step
+            DraftController.Get().BanChr((Chr.CHARTYPE)oAdditionalInfo);
+
+            //End this drafting step and move on to the next one
+            DraftController.Get().FinishDraftPhaseStep();
+
+            break;
+
         case STATETURN.DRAFT:
 
+            //Interpret the passed info as a selected character that was drafted in the just-finished drafting step
+            DraftController.Get().DraftChr(DraftController.Get().GetActivePlayerForNextDraftPhaseStep(), (Chr.CHARTYPE)oAdditionalInfo);
+
+            //End this drafting step and move on to the next one
             DraftController.Get().FinishDraftPhaseStep();
+
             break;
         }
 
@@ -186,7 +200,7 @@ public class ContTurns : Singleton<ContTurns> {
 
     public void SetTurnState(STATETURN _curStateTurn, object oAdditionalInfo = null) {
 
-        OnLeavingState();
+        OnLeavingState(oAdditionalInfo);
 
         curStateTurn = _curStateTurn;
 

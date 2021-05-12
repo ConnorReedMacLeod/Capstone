@@ -61,10 +61,16 @@ public class DraftController : SingletonPersistent<DraftController> {
     }
 
     public bool IsCharAvailable(Chr.CHARTYPE chr) {
+        //If the selection is an invalid one (used for no selection)
+        if(chr == Chr.CHARTYPE.LENGTH) return false;
+
         return arbChrsAvailableToDraft[(int)chr];
     }
 
     public void DraftChr(int iPlayer, Chr.CHARTYPE chrDrafted) {
+        //Ensure the character actually exists
+        Debug.Assert(chrDrafted == Chr.CHARTYPE.LENGTH);
+
         //Ensure this character hasn't already been drafted/banned
         Debug.Assert(arbChrsAvailableToDraft[(int)chrDrafted] == true);
 
@@ -78,6 +84,9 @@ public class DraftController : SingletonPersistent<DraftController> {
     }
 
     public void BanChr(Chr.CHARTYPE chrBanned) {
+        //Ensure the character actually exists
+        Debug.Assert(chrBanned == Chr.CHARTYPE.LENGTH);
+
         //Ensure this character hasn't already been drafted/banned
         Debug.Assert(arbChrsAvailableToDraft[(int)chrBanned] == true);
 
@@ -121,6 +130,10 @@ public class DraftController : SingletonPersistent<DraftController> {
 
         return queueDraftOrder.Peek();
 
+    }
+
+    public int GetActivePlayerForNextDraftPhaseStep() {
+        return GetNextDraftPhaseStep().iPlayer;
     }
 
     public void FinishDraftPhaseStep() {
