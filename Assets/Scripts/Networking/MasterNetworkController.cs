@@ -13,16 +13,20 @@ using Photon.Realtime;
 public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     public const byte TOCLIENTEVENTBASE = 0;
-    public const byte evtCNewReadiedCharacter = TOCLIENTEVENTBASE + 0;
+
     public const byte evtCAbilityUsed = TOCLIENTEVENTBASE + 1;
     public const byte evtCTimerTick = TOCLIENTEVENTBASE + 2;
     public const byte evtCOwnershipSelected = TOCLIENTEVENTBASE + 3;
     public const byte evtCInputTypesSelected = TOCLIENTEVENTBASE + 4;
     public const byte evtCCharactersSelected = TOCLIENTEVENTBASE + 5;
     public const byte evtCMoveToNewTurnPhase = TOCLIENTEVENTBASE + 6;
+    public const byte evtCDraftCharacter = TOCLIENTEVENTBASE + 7;
+    public const byte evtCBanCharacter = TOCLIENTEVENTBASE + 8;
 
     public const byte TOMASTEREVENTBASE = 100;
 
+    public const byte evtMDraftCharacterSelected = TOMASTEREVENTBASE + 0;
+    public const byte evtMBanCharacterSelected = TOMASTEREVENTBASE + 1;
     public const byte evtMSubmitCharacters = TOMASTEREVENTBASE + 2;
     public const byte evtMFinishedTurnPhase = TOMASTEREVENTBASE + 3;
 
@@ -34,9 +38,12 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     int nTime;
 
+    //Save a copy of whichever character was drafted/banned so we can pass it along
+    // to all players when everyone's ready to progress
+    int nSavedCharacterSelection;
+
     //Once we're passed this by the active player picking their ability, save the selection so it
     // can be disseminated to all players once the Execute ability phase starts
-    //Can also be used in the banning/drafting phases to store character selections
     int nSavedSerializedInfo;
 
     //We'll keep these as ints since we can't transmit custom types with photon events
@@ -179,21 +186,29 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     }
 
-    public void MoveToPhase(int nClientID, int nNewTurnState) {
 
-        //First set that client's expected turn phase to the passed state
-        dictClientExpectedPhase[nClientID] = nNewTurnState;
-
-        //Then, check if everyone has actually reached this expected phase - if not, we don't need to officially do anything yet
+    //Starts a timeout timer
+    public bool CheckIfAllPlayersFinishedPhase(int nNewTurnState) {
         foreach(int i in dictClientExpectedPhase.Keys) {
             if(dictClientExpectedPhase[i] != nNewTurnState) {
                 //At least one client hasn't reached the expected turn yet
 
                 //Start the timeout timer to ensure the finished players aren't waiting forever on a stalled toaster
                 timeoutcontroller.StartTimeoutTimer((ContTurns.STATETURN)dictClientExpectedPhase[i]);
-                return;
+                return false;
             }
         }
+
+        return true;
+    }
+
+    public void MoveToPhase(int nClientID, int nNewTurnState) {
+
+        //First set that client's expected turn phase to the passed state
+        dictClientExpectedPhase[nClientID] = nNewTurnState;
+
+        //Then, check if everyone has actually reached this expected phase - if not, we don't need to officially do anything yet
+        if(CheckIfAllPlayersFinishedPhase(nNewTurnState) == false) return;
 
         //At this point, everyone agrees on what turnstate we should be moving to, so prep it
         //  and let everyone know they can progress to it
@@ -201,60 +216,62 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         object[] arAdditionalInfo = new object[2] { nNewTurnState, null };//Pass null for default extra info
 
         switch(nNewTurnState) {
+
         case (int)ContTurns.STATETURN.GIVEMANA:
 
             //Ask our MasterManaDistributer component to determine what mana should be given to each player
             arAdditionalInfo[1] = manadistributer.TakeNextMana();
+
             break;
 
         case (int)ContTurns.STATETURN.CHOOSEACTIONS:
 
             //Reset any old stored abilityselection
             ResetSavedAbilitySelection();
+
             break;
 
         case (int)ContTurns.STATETURN.EXECUTEACTIONS:
 
             //Fetch the saved ability selection info and pass it along so each client knows what ability is being used
             arAdditionalInfo[1] = nSavedSerializedInfo;
+
             break;
 
         case (int)ContTurns.STATETURN.TURNEND:
 
             //Reset any old stored ability selection
             ResetSavedAbilitySelection();
+
             break;
 
         case (int)ContTurns.STATETURN.BAN:
 
-            //Fetch the stored character selection and pass it along so each player knows the result of the previous phase
-            arAdditionalInfo[1] = nSavedSerializedInfo;
+            //Send out a signal for which character just got banned
+            NetworkConnectionManager.SendEventToClients(evtCBanCharacter, nSavedCharacterSelection);
 
-            //Reset any old stored character selection
+            //Clear out the stored character selection
             ResetSavedChrSelection();
+
             break;
 
         case (int)ContTurns.STATETURN.DRAFT:
 
+            //Send out a signal for which character just got drafted
+            NetworkConnectionManager.SendEventToClients(evtCDraftCharacter, nSavedCharacterSelection);
 
-            //Fetch the stored character selection and pass it along so each player knows the result of the previous phase
-            arAdditionalInfo[1] = nSavedSerializedInfo;
-
-            //Reset any old stored character selection
+            //Clear out the stored character selection
             ResetSavedChrSelection();
-            break;
 
-        case (int)ContTurns.STATETURN.LOADOUTSETUP:
-
-            //Reset any old stored character selection
-            ResetSavedChrSelection();
             break;
 
         default:
 
 
+
             break;
         }
+
 
         //Let each client know that they can actually progress to that phase
         NetworkConnectionManager.SendEventToClients(evtCMoveToNewTurnPhase, arAdditionalInfo);
@@ -268,24 +285,6 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         int nNextTurnPhase;
 
         switch(nCurTurnPhase) {
-
-        case (int)ContTurns.STATETURN.BAN:
-            //If we're in the draft phase, consult the DraftController for what phase should come next
-            nNextTurnPhase = (int)DraftController.Get().GetNextDraftPhaseStep().stateTurnNextStep;
-
-            break;
-
-        case (int)ContTurns.STATETURN.DRAFT:
-            //If we're in the draft phase, consult the DraftController for what phase should come next
-            if(DraftController.Get().IsDraftPhaseOver()) {
-                //If we've reached the end of all the drafting steps, let the players set up their loadout
-                nNextTurnPhase = (int)ContTurns.STATETURN.LOADOUTSETUP;
-            } else {
-                //If we still have more drafting steps, peek at the next one and send that out to everyone
-                nNextTurnPhase = (int)DraftController.Get().GetNextDraftPhaseStep().stateTurnNextStep;
-            }
-
-            break;
 
         case (int)ContTurns.STATETURN.CHOOSEACTIONS:
             //If no character is set to act, then we jump directly ahead to TurnEnd
@@ -371,55 +370,13 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
                     }
                 }
 
-            }
-
-        } else if(nCurTurnPhase == (int)ContTurns.STATETURN.BAN) {
-
-            //First, check if the player finishing the phase is the one whose turn it is to ban
-            if(nClientID == DraftController.Get().GetNextDraftPhaseStep().iPlayer) {
-
-                //Interpret the serialized passed info as a character selection
-                Chr.CHARTYPE chrSelected = (Chr.CHARTYPE)nSerializedInfo;
-
-                //Check if the submitted selection was an invalid ban
-                if(DraftController.Get().IsCharAvailable(chrSelected) == false) {
-                    //If invalid, reset the selection to be a no-ban
-                    chrSelected = Chr.CHARTYPE.LENGTH;
-                }
-
-                //Save the passed result so that we can broadcast it to all players when the phase is done
-                SaveSerializedSelection((int)chrSelected);
-
-            } else {
-                //Don't need to do anything special if we recieved the signal from the non-active player
-                // since they're not banning anything right now
-            }
-
-        } else if(nCurTurnPhase == (int)ContTurns.STATETURN.DRAFT) {
-
-            //First, check if the player finishing the phase is the one whose turn it is to draft
-            if(nClientID == DraftController.Get().GetNextDraftPhaseStep().iPlayer) {
-
-                //Interpret the serialized passed info as a character selection
-                Chr.CHARTYPE chrSelected = (Chr.CHARTYPE)nSerializedInfo;
-
-
-                //TODO - decide on a proper method for if the selected character is invalid
-
-                //Check if the submitted selection was an invalid draft (for now, picking a random undrafted char)
-                while(DraftController.Get().IsCharAvailable(chrSelected) == false) {
-
-                    //Continually pick a new character until its valid
-                    chrSelected = (Chr.CHARTYPE)Random.Range(0, (int)Chr.CHARTYPE.LENGTH);
-                }
-
-                //Save the passed result so that we can broadcast it to all players when the phase is done
-                SaveSerializedSelection((int)chrSelected);
-
             } else {
                 //Don't need to do anything special if we recieved the signal from the non-active player
                 // since they're not drafting anything right now
             }
+
+        } else if(nCurTurnPhase == (int)ContTurns.STATETURN.BAN) {
+            //
 
         }
 
@@ -472,14 +429,19 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         }
     }
 
-    public void SaveSerializedSelection(int _nSavedSerializedInfo) {
-        nSavedSerializedInfo = _nSavedSerializedInfo;
+
+
+    public void SaveCharacterSelection(int _iChr) {
+        nSavedCharacterSelection = _iChr;
     }
 
     public void ResetSavedChrSelection() {
-        nSavedSerializedInfo = (int)Chr.CHARTYPE.LENGTH;
+        nSavedCharacterSelection = (int)Chr.CHARTYPE.LENGTH;
     }
 
+    public void SaveSerializedSelection(int _nSavedSerializedInfo) {
+        nSavedSerializedInfo = _nSavedSerializedInfo;
+    }
     public void ResetSavedAbilitySelection() {
         nSavedSerializedInfo = SelectionSerializer.SerializeRest();
     }

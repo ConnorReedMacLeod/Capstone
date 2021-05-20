@@ -14,6 +14,9 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
     public Button btnConnectRoom;
     public Slider sliderLevel;
 
+    public Button btnStartDraft;
+    public Button btnDirectToMatch;
+
     public PlayerSelector plyrselector1;
     public PlayerSelector plyrselector2;
 
@@ -33,7 +36,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
     public void Awake() {
 
         if(inst != null) {
-            //If an static instance exists,
+            //If a static instance exists,
             // then panic!  Destroy ourselves
             Debug.LogError("Warning!  This singleton already exists (" + gameObject.name + "), so we shouldn't instantiate a new one");
             Destroy(gameObject);
@@ -72,6 +75,18 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         }
     }
 
+    public void ShowIfAllPlayersConnectedInRoom(MonoBehaviour uiElem) {
+        if(uiElem != null) {
+            uiElem.gameObject.SetActive(PhotonNetwork.IsConnected && PhotonNetwork.InRoom && ArePlayersConnected());
+        }
+    }
+
+    public void ShowIfAllPlayersConnectedInRoomAndMaster(MonoBehaviour uiElem) {
+        if(uiElem != null) {
+            uiElem.gameObject.SetActive(PhotonNetwork.IsConnected && PhotonNetwork.InRoom && ArePlayersConnected() && PhotonNetwork.IsMasterClient);
+        }
+    }
+
     // Update is called once per frame
     void Update() {
 
@@ -82,33 +97,55 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
         ShowIfFindingRoom(btnConnectRoom);
         ShowIfFindingRoom(sliderLevel);
-        ShowIfFindingRoom(plyrselector1);
-        ShowIfFindingRoom(plyrselector2);
+
+        ShowIfAllPlayersConnectedInRoom(plyrselector1);
+        ShowIfAllPlayersConnectedInRoom(plyrselector2);
+
+        ShowIfAllPlayersConnectedInRoomAndMaster(btnStartDraft);
+        ShowIfAllPlayersConnectedInRoomAndMaster(btnDirectToMatch);
 
         if(txtDisplayMessage != null) {
             txtDisplayMessage.gameObject.SetActive(PhotonNetwork.InRoom);
-            if(PhotonNetwork.InRoom) {
+            if(PhotonNetwork.InRoom && ArePlayersConnected() == false) {
                 txtDisplayMessage.text = "Waiting for players: " + PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers
                     + "\n with level " + PhotonNetwork.CurrentRoom.CustomProperties["lvl"] + " in room " + PhotonNetwork.CurrentRoom.Name;
+            } else if(PhotonNetwork.InRoom) {
+                txtDisplayMessage.text = "All players connected: Submit your selections and wait for master to progress to draft/match";
             }
         }
 
+    }
 
-        //We should direct loading the next level if we are the master client
-        if(bInMatch == false &&
-            PhotonNetwork.IsMasterClient &&
-            ArePlayersConnected()) {
-            Debug.Log("We now have enough players to start the match!");
-
-            bInMatch = true;
-
-            if(SceneManager.GetActiveScene().name == "_MATCH") {
-                Debug.Log("We're already in the _MATCH scene, so no need to transfer to it");
-            } else {
-                PhotonNetwork.LoadLevel("_MATCH");
-            }
+    public void OnClickStartDraft() {
+        if(PhotonNetwork.IsMasterClient == false) {
+            Debug.LogError("A non-master tried to move to the draft phase - ignoring");
+            return;
+        } else if(ArePlayersConnected() == false) {
+            Debug.LogError("Tried to move to draft when not all characters are connected");
+            return;
         }
 
+        if(SceneManager.GetActiveScene().name == "_DRAFT") {
+            Debug.Log("We're already in the _DRAFT scene, so no need to transfer to it");
+        } else {
+            PhotonNetwork.LoadLevel("_DRAFT");
+        }
+    }
+
+    public void OnClickDirectToMatch() {
+        if(PhotonNetwork.IsMasterClient == false) {
+            Debug.LogError("A non-master tried to move to the draft phase - ignoring");
+            return;
+        } else if(ArePlayersConnected() == false) {
+            Debug.LogError("Tried to move to draft when not all characters are connected");
+            return;
+        }
+
+        if(SceneManager.GetActiveScene().name == "_MATCH") {
+            Debug.Log("We're already in the _MATCH scene, so no need to transfer to it");
+        } else {
+            PhotonNetwork.LoadLevel("_MATCH");
+        }
     }
 
     public bool ArePlayersConnected() {
@@ -200,11 +237,12 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
             " | Number of Players: " + PhotonNetwork.CurrentRoom.PlayerCount +
             " | Max Number of Players: " + PhotonNetwork.CurrentRoom.MaxPlayers);
 
-        //Now that we've connected to the new room, we can send our character selections
+    }
+
+    public void SendAllLocalSelections() {
         for(int i = 0; i < Player.MAXPLAYERS; i++) {
             CharacterSelection.Get().SubmitSelection(i);
         }
-
     }
 
     public static void SendEventToMaster(byte evtCode, object content) {
