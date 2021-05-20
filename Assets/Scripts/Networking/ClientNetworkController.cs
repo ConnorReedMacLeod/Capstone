@@ -16,8 +16,12 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
     private static ClientNetworkController inst;
 
 
+    public bool IsPlayerLocallyControlled(int iPlyrId) {
+        return nLocalClientID == CharacterSelection.Get().arnPlayerOwners[iPlyrId];
+    }
+
     public bool IsPlayerLocallyControlled(Player plyr) {
-        return nLocalClientID == CharacterSelection.Get().arnPlayerOwners[plyr.id];
+        return IsPlayerLocallyControlled(plyr.id);
     }
 
     public void SetLocalClientID() {
@@ -81,9 +85,6 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
 
         //Players should only react to authoritative commands from the master 
         switch(eventCode) {
-        case MasterNetworkController.evtCNewReadiedCharacter:
-            Debug.Log("Received ReadiedCharacter event with " + arContent[0] + " and " + arContent[1]);
-            break;
 
         case MasterNetworkController.evtCTimerTick:
             //Debug.Log("Recieved timer tick with " + arContent[0]);
@@ -108,9 +109,30 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
             break;
 
         case MasterNetworkController.evtCMoveToNewTurnPhase:
-            //Pass along whatever phase of the turn we're now in to the ContTurns
-            Debug.Log("Master told us to move to " + ((ContTurns.STATETURN)arContent[0]).ToString());
-            ContTurns.Get().SetTurnState((ContTurns.STATETURN)arContent[0], arContent[1]);
+
+            ContTurns.STATETURN newTurnState = (ContTurns.STATETURN)arContent[0];
+
+            Debug.Log("Master told us to move to " + newTurnState.ToString());
+
+            //First, check if we're in the draft phase (no ContTurns interaction needed)
+            if(newTurnState == ContTurns.STATETURN.BAN || newTurnState == ContTurns.STATETURN.DRAFT || newTurnState == ContTurns.STATETURN.LOADOUTSETUP) {
+                //If we're in the draft, just let the controller know that we're good to move on to the next phase of the draft
+                DraftController.Get().FinishDraftPhaseStep();
+            } else {
+                //Pass along whatever phase of the turn we're now in to the ContTurns
+                ContTurns.Get().SetTurnState((ContTurns.STATETURN)arContent[0], arContent[1]);
+            }
+
+            break;
+
+        case MasterNetworkController.evtCBanCharacter:
+            //The master passed along which character should be banned
+            DraftController.Get().BanChr((Chr.CHARTYPE)arContent[0]);
+            break;
+
+        case MasterNetworkController.evtCDraftCharacter:
+            //The master passed along which character should be drafted next (and for which player)
+            DraftController.Get().DraftChr((int)arContent[0], (Chr.CHARTYPE)arContent[1]);
             break;
 
         default:

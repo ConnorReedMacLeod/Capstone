@@ -13,25 +13,6 @@ public class DraftController : SingletonPersistent<DraftController> {
             iPlayer = _iPlayer;
         }
 
-        public Executable ToExecutable() {
-            Executable execToReturn = null;
-
-            switch(stateTurnNextStep) {
-            case ContTurns.STATETURN.BAN:
-                execToReturn = new ExecTurnBan(null, Player.GetTargetByIndex(iPlayer));
-                break;
-
-            case ContTurns.STATETURN.DRAFT:
-                execToReturn = new ExecTurnDraft(null, Player.GetTargetByIndex(iPlayer));
-                break;
-
-            default:
-                Debug.LogError("DraftAction has an invalid stateTurnNextStep: " + stateTurnNextStep.ToString());
-                break;
-            }
-
-            return execToReturn;
-        }
     }
 
 
@@ -140,6 +121,35 @@ public class DraftController : SingletonPersistent<DraftController> {
         Debug.Assert(queueDraftOrder.Count != 0, "Attempted to finish a draft phase step when there are already none left");
 
         queueDraftOrder.Dequeue();
+    }
+
+
+    public void OnDraftableChrClicked(Chr.CHARTYPE chrClicked) {
+
+        //Check if we're still in the draft phase
+        if(IsDraftPhaseOver() == true) {
+            Debug.Log("Can't draft/ban if the draft phase is over");
+            return;
+        }
+
+        //Check if it's even our turn to draft
+        if(ClientNetworkController.Get().IsPlayerLocallyControlled(GetActivePlayerForNextDraftPhaseStep()) == false) {
+            Debug.Log("Can't draft/ban since it's not your turn");
+            return;
+        }
+
+        //Check if this character is available to draft/ban
+        if(IsCharAvailable(chrClicked) == false) {
+            Debug.Log("Can't draft/ban an unavailable character");
+            return;
+        }
+
+        //At this point, it's valid to pick/ban the character so send along the appropriate signal to the Master
+        if(GetNextDraftPhaseStep().stateTurnNextStep == ContTurns.STATETURN.BAN) {
+            NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMBanCharacterSelected, new object[1] { chrClicked });
+        } else if(GetNextDraftPhaseStep().stateTurnNextStep == ContTurns.STATETURN.DRAFT) {
+            NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMDraftCharacterSelected, new object[1] { chrClicked });
+        }
     }
 
 

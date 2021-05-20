@@ -206,26 +206,6 @@ public class ContTurns : Singleton<ContTurns> {
 
         switch(curStateTurn) {
 
-        //Pass along the specific Executable that was passed along in the additional info slot
-        // - it'll be premade with the appropriate player whose turn it is
-        case STATETURN.DRAFT:
-
-            ContAbilityEngine.Get().AddExec((ExecTurnDraft)oAdditionalInfo);
-
-            break;
-
-        case STATETURN.BAN:
-
-            ContAbilityEngine.Get().AddExec((ExecTurnBan)oAdditionalInfo);
-
-            break;
-
-        case STATETURN.LOADOUTSETUP:
-
-            ContAbilityEngine.Get().AddExec(new ExecTurnLoadoutSetup(_chrSource: null));
-
-            break;
-
         case STATETURN.RECHARGE:
 
             ContAbilityEngine.Get().AddExec(new ExecTurnRecharge(_chrSource: null));
