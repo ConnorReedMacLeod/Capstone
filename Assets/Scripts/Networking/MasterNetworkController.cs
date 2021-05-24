@@ -10,7 +10,7 @@ using Photon.Realtime;
 // the master client - it can be in charge of dictating the flow of the game by receiving
 // events from clients, processing them (mostly verifying that they're legal), then broadcasting the results to players
 
-public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
+public class MasterNetworkController : SingletonPersistent<MasterNetworkController>, IOnEventCallback {
 
     public const byte TOCLIENTEVENTBASE = 0;
 
@@ -47,7 +47,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     int nSavedSerializedInfo;
 
     //We'll keep these as ints since we can't transmit custom types with photon events
-    public int[][] arnCharacterSelectsReceived = new int[Player.MAXPLAYERS][];
+    public int[][] arnCustomCharacterSelections = new int[Player.MAXPLAYERS][];
 
     //Whenever we recieve character selections, record which client sent it,
     //  and claim ownership of that player for that client
@@ -60,6 +60,21 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     public MasterManaDistributer manadistributer;
     public MasterTimeoutController timeoutcontroller;
 
+
+    public override void Init() {
+
+        //Just hardcoding in some default values for character selections to work with
+        arnCustomCharacterSelections[0] = new int[Player.MAXCHRS] { 0, 1, 2 };
+        arnCustomCharacterSelections[1] = new int[Player.MAXCHRS] { 3, 4, 5 };
+
+        //By default, have the master own both
+        arnPlayerOwners[0] = 1;
+        arnPlayerOwners[1] = 1;
+
+        //By default, have a human and a computer
+        arnPlayerInputTypes[0] = 1;
+        arnPlayerInputTypes[1] = 2;
+    }
 
     public void OnEnable() {
 
@@ -117,19 +132,11 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
             arnPlayerInputTypes[nPlayer] = nInputType;
 
             //Save the results in the appropriate selection
-            arnCharacterSelectsReceived[nPlayer] = new int[Player.MAXCHRS];
-            ((int[])arContent[1]).CopyTo(arnCharacterSelectsReceived[nPlayer], 0);
+            arnCustomCharacterSelections[nPlayer] = new int[Player.MAXCHRS];
+            ((int[])arContent[1]).CopyTo(arnCustomCharacterSelections[nPlayer], 0);
 
-            //Debug.LogError("Master recieved selections for player " + nPlayer + " of " + arnCharacterSelectsReceived[nPlayer][0] + ", " + arnCharacterSelectsReceived[nPlayer][1] + ", " + arnCharacterSelectsReceived[nPlayer][2]);
+            Debug.LogError("Master recieved selections for player " + nPlayer + " of " + arnCustomCharacterSelections[nPlayer][0] + ", " + arnCustomCharacterSelections[nPlayer][1] + ", " + arnCustomCharacterSelections[nPlayer][2]);
 
-            //Now check if we've received selections for all players
-            if(HasReceivedAllCharacterSelections()) {
-
-                Debug.Log("Sending out player selections since all player selections have been received");
-                OnReceivedAllCharacterSelections();
-
-                Debug.Log("NOTE - once everything's correct with character selection, can move ahead with automatic turn processing by adding more code here");
-            }
 
             break;
 
@@ -150,39 +157,24 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     }
 
 
-    public bool HasReceivedAllCharacterSelections() {
-
-        //Check through all received selections and ensure none are missing
-        for(int i = 0; i < Player.MAXPLAYERS; i++) {
-            if(arnCharacterSelectsReceived[i] == null) {
-
-                Debug.Log("arnCharacterSelectsReceived[" + i + "] is still null, so we haven't receieved everything yet");
-                return false;
-
-            }
-        }
-
-        return true;
-    }
-
-    public void OnReceivedAllCharacterSelections() {
-
-        Debug.Log("Master received all character selections");
+    public void BroadcastCustomCharacterSelections() {
 
         //Let everyone know which characters should be populated for each team
-        NetworkConnectionManager.SendEventToClients(evtCCharactersSelected, (object[])arnCharacterSelectsReceived);
+        NetworkConnectionManager.SendEventToClients(evtCCharactersSelected, (object[])arnCustomCharacterSelections);
 
-        Debug.Log("Master sent out evtCCharactersSelected");
+        Debug.Log("Master sent out evtCCharactersSelected ");
+        Debug.Log("First team: " + arnCustomCharacterSelections[0][0] + " " + arnCustomCharacterSelections[0][1] + " " + arnCustomCharacterSelections[0][2]);
+        Debug.Log("Second team: " + arnCustomCharacterSelections[1][0] + " " + arnCustomCharacterSelections[1][1] + " " + arnCustomCharacterSelections[1][2]);
 
         //Let all clients know who is controlling which player
         NetworkConnectionManager.SendEventToClients(evtCOwnershipSelected, LibConversions.ArIntToArObj(arnPlayerOwners));
 
-        Debug.Log("Master sent out evtCOwnershipSelected");
+        Debug.Log("Master sent out evtCOwnershipSelected of " + arnPlayerOwners[0] + " and " + arnPlayerOwners[1]);
 
         //Let all clients know what type of input each player is using (human/ai)
         NetworkConnectionManager.SendEventToClients(evtCInputTypesSelected, LibConversions.ArIntToArObj(arnPlayerInputTypes));
 
-        Debug.Log("Master sent out evtCInputTypesSelected");
+        Debug.Log("Master sent out evtCInputTypesSelected of " + arnPlayerInputTypes[0] + " and " + arnPlayerInputTypes[1]);
 
     }
 

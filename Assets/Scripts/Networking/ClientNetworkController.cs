@@ -62,16 +62,14 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
 
     }
 
-    public void OnButtonClick(int nPlayerID, int _nAbility) {
-        Debug.Log("Locally registered a button click");
 
-        int nCharacter = 1 + (_nAbility / 2);
-        int nAbility = 1 + (_nAbility % 2);
-        object[] arnContent = new object[3] { nPlayerID, nCharacter, nAbility };
-
-        //NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMSubmitAbility, arnContent);
-
+    //Unused for now
+    public void SendAllLocalSelections() {
+        for(int i = 0; i < Player.MAXPLAYERS; i++) {
+            CharacterSelection.Get().SubmitSelection(i);
+        }
     }
+
 
     public void OnEvent(ExitGames.Client.Photon.EventData photonEvent) {
 
