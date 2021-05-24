@@ -11,12 +11,15 @@ public class DropDownInputSelect : MonoBehaviour {
 
     public void Start() {
         //Ensure any pre-given value for the dropdown is accurately reflected
-        OnInputSelectChange(dropdown.value);
+        CharacterSelection.Get().arInputTypes[plyrselectorParent.idPlayer] = (Player.InputType)dropdown.value;
 
     }
+
     public void OnInputSelectChange(int nInputSelect) {
 
         CharacterSelection.Get().arInputTypes[plyrselectorParent.idPlayer] = (Player.InputType)nInputSelect;
+        Debug.Log("Sending updated selections to the master for player " + plyrselectorParent.idPlayer);
+        CharacterSelection.Get().SubmitSelection(plyrselectorParent.idPlayer);
 
     }
 }

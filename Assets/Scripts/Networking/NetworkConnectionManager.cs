@@ -144,7 +144,10 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         if(SceneManager.GetActiveScene().name == "_MATCH") {
             Debug.Log("We're already in the _MATCH scene, so no need to transfer to it");
         } else {
+            Debug.Log("Transferring to the match scene");
             PhotonNetwork.LoadLevel("_MATCH");
+            Debug.Log("Asking the master to broadcast its stored character and input selections");
+            MasterNetworkController.Get().BroadcastCustomCharacterSelections();
         }
     }
 
@@ -226,6 +229,18 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         }
     }
 
+    public void SpawnNetworkController() {
+
+        Debug.Log("Spawning networkcontroller");
+
+        //Spawn the client networking manager for the local player (and let the opponent spawn their own controller)
+        GameObject goNetworkController = PhotonNetwork.Instantiate("pfNetworkController", Vector3.zero, Quaternion.identity);
+
+        if(goNetworkController = null) {
+            Debug.LogError("No prefab found for network controller");
+        }
+    }
+
     public override void OnJoinedRoom() {
         base.OnJoinedRoom();
 
@@ -237,12 +252,8 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
             " | Number of Players: " + PhotonNetwork.CurrentRoom.PlayerCount +
             " | Max Number of Players: " + PhotonNetwork.CurrentRoom.MaxPlayers);
 
-    }
+        SpawnNetworkController();
 
-    public void SendAllLocalSelections() {
-        for(int i = 0; i < Player.MAXPLAYERS; i++) {
-            CharacterSelection.Get().SubmitSelection(i);
-        }
     }
 
     public static void SendEventToMaster(byte evtCode, object content) {
