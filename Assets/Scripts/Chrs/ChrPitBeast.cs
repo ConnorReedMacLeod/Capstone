@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Discipline.DISCIPLINE;
 
 public class ChrPitBeast : BaseChr {
 
@@ -10,6 +11,10 @@ public class ChrPitBeast : BaseChr {
 
     public override void SetName() {
         chrOwner.sName = "PitBeast";
+    }
+
+    public override void SetDisciplines() {
+        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { GIANT, TRAPPER };
     }
 
     //Defines all of a character's unique actions

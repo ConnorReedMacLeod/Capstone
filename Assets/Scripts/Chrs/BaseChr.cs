@@ -22,6 +22,8 @@ public abstract class BaseChr {
 
     public abstract void SetInitialSkills();
 
+    public abstract void SetDisciplines();
+
     public void SetGenericActiveSkills() {
         //Sets the basic generic actions like resting and blocking
 
@@ -49,6 +51,8 @@ public abstract class BaseChr {
 
         SetName();
         SetMaxHealth();
+
+        SetDisciplines();
 
         SetInitialSkills();
         FillBenchWithFireballs();

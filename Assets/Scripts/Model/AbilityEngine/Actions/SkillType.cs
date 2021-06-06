@@ -1,0 +1,52 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using static SkillType.SKILLTYPE;
+using static Discipline.DISCIPLINE;
+
+public static class SkillType {
+
+    public enum SKILLTYPE { RECON, FLUSHOUT, SNAPTRAP, PLANTSUNFLOWER, SURVEYTHELAND, MULCH };
+
+    public struct SkillTypeInfo {
+        public SKILLTYPE type;
+        public string sName;
+        public List<Discipline.DISCIPLINE> lstRequiredDisciplines;
+
+        public SkillTypeInfo(SKILLTYPE _type, string _sName, List<Discipline.DISCIPLINE> _lstRequiredDisciplines) {
+            type = _type;
+            sName = _sName;
+            lstRequiredDisciplines = _lstRequiredDisciplines;
+        }
+    }
+
+    static Dictionary<SKILLTYPE, SkillTypeInfo> dictSkillTypeInfos = new Dictionary<SKILLTYPE, SkillTypeInfo>()
+    {   { RECON, new SkillTypeInfo ( RECON, "Recon", new List<Discipline.DISCIPLINE> { SCOUT } ) },
+        { FLUSHOUT, new SkillTypeInfo ( FLUSHOUT, "Flush Out", new List<Discipline.DISCIPLINE> { TRAPPER } ) },
+        { SNAPTRAP, new SkillTypeInfo ( SNAPTRAP, "Snap Trap", new List<Discipline.DISCIPLINE> { TRAPPER } ) },
+        { PLANTSUNFLOWER, new SkillTypeInfo ( PLANTSUNFLOWER, "Plant Sunflowers", new List<Discipline.DISCIPLINE> { GARDENER } ) },
+        { SURVEYTHELAND, new SkillTypeInfo ( SURVEYTHELAND, "Survey the Land", new List<Discipline.DISCIPLINE> { GARDENER } ) },
+        { MULCH, new SkillTypeInfo ( MULCH, "Mulch", new List<Discipline.DISCIPLINE> { GARDENER, GIANT } ) }
+
+    };
+
+
+    public static SkillTypeInfo GetSkillTypeInfo(SKILLTYPE skilltype) {
+        return dictSkillTypeInfos[skilltype];
+    }
+
+    public static List<SkillTypeInfo> GetsSkillsUnderDisciplines(List<Discipline.DISCIPLINE> lstDisciplines) {
+
+        //For each kvp, check if there are any required disciplines that aren't given in the passed lstDisciplines.  Ensure there are not any of these kvp in the
+        //  kvps we keep, then only select the keys from those kvps.
+        List<SkillTypeInfo> lstUsableSkills = dictSkillTypeInfos.Where(kvp => kvp.Value.lstRequiredDisciplines.Except(lstDisciplines).Any() == false).Select(kvp => kvp.Value).ToList();
+
+        return lstUsableSkills;
+    }
+
+
+
+
+
+}

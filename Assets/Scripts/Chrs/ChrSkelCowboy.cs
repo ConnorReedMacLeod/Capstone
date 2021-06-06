@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Discipline.DISCIPLINE;
 
 public class ChrSkelCowboy : BaseChr {
 
@@ -10,6 +11,10 @@ public class ChrSkelCowboy : BaseChr {
 
     public override void SetName() {
         chrOwner.sName = "SkelCowboy";
+    }
+
+    public override void SetDisciplines() {
+        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { SCOUT, TRAPPER, GARDENER, GIANT };
     }
 
     //Defines all of a character's unique actions

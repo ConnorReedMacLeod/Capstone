@@ -43,6 +43,8 @@ public class Chr : MonoBehaviour {
     public int nCurHealth;          //The character's current health
     public Property<int> pnMaxHealth;          //The character's max health
 
+    public List<Discipline.DISCIPLINE> lstDisciplines; //The disciplines the character has access to
+
     public bool bDead;                         //If the character is dead or not
 
     public Property<int> pnPower;              //The character's current power
