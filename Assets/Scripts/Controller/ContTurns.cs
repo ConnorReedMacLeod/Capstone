@@ -283,8 +283,13 @@ public class ContTurns : Singleton<ContTurns> {
         ViewPriorityList.Get().InitViewPriorityList();
     }
 
+    public void InitStartingTurnPhase() {
+        curStateTurn = STATETURN.TURNEND;
+    }
+
     public override void Init() {
 
+        InitStartingTurnPhase();
 
     }
 
