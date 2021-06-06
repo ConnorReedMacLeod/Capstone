@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Discipline.DISCIPLINE;
 
 public class ChrSophidia : BaseChr {
 
@@ -10,6 +11,10 @@ public class ChrSophidia : BaseChr {
 
     public override void SetName() {
         chrOwner.sName = "Sophidia";
+    }
+
+    public override void SetDisciplines() {
+        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { GIANT, TRAPPER, FALCONER, GARDENER };
     }
 
     //Defines all of a character's unique actions

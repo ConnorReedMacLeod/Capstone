@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Discipline.DISCIPLINE;
 
 public class ChrSaiko : BaseChr {
 
@@ -10,6 +11,10 @@ public class ChrSaiko : BaseChr {
 
     public override void SetName() {
         chrOwner.sName = "Saiko";
+    }
+
+    public override void SetDisciplines() {
+        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { FALCONER, SCOUT };
     }
 
     //Defines all of a character's unique actions

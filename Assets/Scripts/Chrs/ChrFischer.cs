@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Discipline.DISCIPLINE;
 
 public class ChrFischer : BaseChr {
 
@@ -12,7 +13,9 @@ public class ChrFischer : BaseChr {
         chrOwner.sName = "Fischer";
     }
 
-
+    public override void SetDisciplines() {
+        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { TRAPPER, SCOUT };
+    }
 
     //Defines all of a character's unique actions
     public override void SetInitialSkills() {
