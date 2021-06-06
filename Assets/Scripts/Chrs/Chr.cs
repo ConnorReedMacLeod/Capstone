@@ -8,8 +8,9 @@ public class Chr : MonoBehaviour {
     bool bStarted;
 
     public enum CHARTYPE {          //CHARTYPE's possible values include all characters in the game
-        FISCHER, KATARINA, PITBEAST, RAYNE, SAIKO, SOHPIDIA
+        FISCHER, KATARINA, PITBEAST, RAYNE, SAIKO, SOHPIDIA, LENGTH
     };
+    public static readonly string[] ARSCHRNAMES = { "Fischer", "Katarina", "PitBeast", "Rayne", "Saiko", "Sophidia", "None" };
 
     public enum STATESELECT {
         SELECTED,                   //Selected a character (to see status effects, actions)
@@ -438,13 +439,13 @@ public class Chr : MonoBehaviour {
         arSkills[j] = acti;
 
         //Decrease by the current cooldown and increase by the new one
-        Debug.Log("Changing " + acti.sName + "'s cooldown of " + acti.nCurCD + " by " + (niCDNew - njCDNew));
+        //Debug.Log("Changing " + acti.sName + "'s cooldown of " + acti.nCurCD + " by " + (niCDNew - njCDNew));
         acti.ChangeCD(niCDNew - njCDNew);
-        Debug.Log(acti.sName + "'s cooldown is now " + acti.nCurCD);
+        //Debug.Log(acti.sName + "'s cooldown is now " + acti.nCurCD);
 
-        Debug.Log("Changing " + actj.sName + "'s cooldown of " + actj.nCurCD + " by " + (njCDNew - niCDNew));
+        //Debug.Log("Changing " + actj.sName + "'s cooldown of " + actj.nCurCD + " by " + (njCDNew - niCDNew));
         actj.ChangeCD(njCDNew - niCDNew);
-        Debug.Log(actj.sName + "'s cooldown is now " + actj.nCurCD);
+        //Debug.Log(actj.sName + "'s cooldown is now " + actj.nCurCD);
 
         //Check if we need to equip the ith skill
         if(acti != null && acti.IsActiveSkill() && !actj.IsActiveSkill()) {

@@ -40,8 +40,8 @@ public class CharacterSelection : SingletonPersistent<CharacterSelection> {
         Debug.Assert(0 <= nPlayer && nPlayer < Player.MAXCHRS);
 
         int[] arnTeamSelection = LibConversions.ArChrTypeToArInt(arChrSelections[nPlayer]);
-        //Debug.LogError("Sending selections for player " + nPlayer + " of " + arnTeamSelection[0] + ", " + arnTeamSelection[1] + ", " + arnTeamSelection[2] +
-        //    "\nAnd input type: " + arInputTypes[nPlayer]);
+        Debug.LogError("Sending selections for player " + nPlayer + " of " + arnTeamSelection[0] + ", " + arnTeamSelection[1] + ", " + arnTeamSelection[2] +
+            "\nAnd input type: " + arInputTypes[nPlayer]);
         NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMSubmitCharacters, new object[3] { nPlayer, arnTeamSelection, arInputTypes[nPlayer] });
 
     }
