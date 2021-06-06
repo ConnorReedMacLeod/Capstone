@@ -10,19 +10,23 @@ using Photon.Realtime;
 // the master client - it can be in charge of dictating the flow of the game by receiving
 // events from clients, processing them (mostly verifying that they're legal), then broadcasting the results to players
 
-public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
+public class MasterNetworkController : SingletonPersistent<MasterNetworkController>, IOnEventCallback {
 
     public const byte TOCLIENTEVENTBASE = 0;
-    public const byte evtCNewReadiedCharacter = TOCLIENTEVENTBASE + 0;
+
     public const byte evtCAbilityUsed = TOCLIENTEVENTBASE + 1;
     public const byte evtCTimerTick = TOCLIENTEVENTBASE + 2;
     public const byte evtCOwnershipSelected = TOCLIENTEVENTBASE + 3;
     public const byte evtCInputTypesSelected = TOCLIENTEVENTBASE + 4;
     public const byte evtCCharactersSelected = TOCLIENTEVENTBASE + 5;
     public const byte evtCMoveToNewTurnPhase = TOCLIENTEVENTBASE + 6;
+    public const byte evtCDraftCharacter = TOCLIENTEVENTBASE + 7;
+    public const byte evtCBanCharacter = TOCLIENTEVENTBASE + 8;
 
     public const byte TOMASTEREVENTBASE = 100;
 
+    public const byte evtMDraftCharacterSelected = TOMASTEREVENTBASE + 0;
+    public const byte evtMBanCharacterSelected = TOMASTEREVENTBASE + 1;
     public const byte evtMSubmitCharacters = TOMASTEREVENTBASE + 2;
     public const byte evtMFinishedTurnPhase = TOMASTEREVENTBASE + 3;
 
@@ -34,12 +38,16 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     int nTime;
 
+    //Save a copy of whichever character was drafted/banned so we can pass it along
+    // to all players when everyone's ready to progress
+    int nSavedCharacterSelection;
+
     //Once we're passed this by the active player picking their ability, save the selection so it
     // can be disseminated to all players once the Execute ability phase starts
-    int nSavedSerializedTargetSelection;
+    int nSavedSerializedInfo;
 
     //We'll keep these as ints since we can't transmit custom types with photon events
-    public int[][] arnCharacterSelectsReceived = new int[Player.MAXPLAYERS][];
+    public int[][] arnCustomCharacterSelections = new int[Player.MAXPLAYERS][];
 
     //Whenever we recieve character selections, record which client sent it,
     //  and claim ownership of that player for that client
@@ -52,6 +60,21 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     public MasterManaDistributer manadistributer;
     public MasterTimeoutController timeoutcontroller;
 
+
+    public override void Init() {
+
+        //Just hardcoding in some default values for character selections to work with
+        arnCustomCharacterSelections[0] = new int[Player.MAXCHRS] { 0, 1, 2 };
+        arnCustomCharacterSelections[1] = new int[Player.MAXCHRS] { 3, 4, 5 };
+
+        //By default, have the master own both
+        arnPlayerOwners[0] = 1;
+        arnPlayerOwners[1] = 1;
+
+        //By default, have a human and a computer
+        arnPlayerInputTypes[0] = 1;
+        arnPlayerInputTypes[1] = 2;
+    }
 
     public void OnEnable() {
 
@@ -109,19 +132,11 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
             arnPlayerInputTypes[nPlayer] = nInputType;
 
             //Save the results in the appropriate selection
-            arnCharacterSelectsReceived[nPlayer] = new int[Player.MAXCHRS];
-            ((int[])arContent[1]).CopyTo(arnCharacterSelectsReceived[nPlayer], 0);
+            arnCustomCharacterSelections[nPlayer] = new int[Player.MAXCHRS];
+            ((int[])arContent[1]).CopyTo(arnCustomCharacterSelections[nPlayer], 0);
 
-            //Debug.LogError("Master recieved selections for player " + nPlayer + " of " + arnCharacterSelectsReceived[nPlayer][0] + ", " + arnCharacterSelectsReceived[nPlayer][1] + ", " + arnCharacterSelectsReceived[nPlayer][2]);
+            Debug.LogError("Master recieved selections for player " + nPlayer + " of " + arnCustomCharacterSelections[nPlayer][0] + ", " + arnCustomCharacterSelections[nPlayer][1] + ", " + arnCustomCharacterSelections[nPlayer][2]);
 
-            //Now check if we've received selections for all players
-            if(HasReceivedAllCharacterSelections()) {
-
-                Debug.Log("Sending out player selections since all player selections have been received");
-                OnReceivedAllCharacterSelections();
-
-                Debug.Log("NOTE - once everything's correct with character selection, can move ahead with automatic turn processing by adding more code here");
-            }
 
             break;
 
@@ -142,40 +157,41 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
     }
 
 
-    public bool HasReceivedAllCharacterSelections() {
-
-        //Check through all received selections and ensure none are missing
-        for(int i = 0; i < Player.MAXPLAYERS; i++) {
-            if(arnCharacterSelectsReceived[i] == null) {
-
-                Debug.Log("arnCharacterSelectsReceived[" + i + "] is still null, so we haven't receieved everything yet");
-                return false;
-
-            }
-        }
-
-        return true;
-    }
-
-    public void OnReceivedAllCharacterSelections() {
-
-        Debug.Log("Master received all character selections");
+    public void BroadcastCustomCharacterSelections() {
 
         //Let everyone know which characters should be populated for each team
-        NetworkConnectionManager.SendEventToClients(evtCCharactersSelected, (object[])arnCharacterSelectsReceived);
+        NetworkConnectionManager.SendEventToClients(evtCCharactersSelected, (object[])arnCustomCharacterSelections);
 
-        Debug.Log("Master sent out evtCCharactersSelected");
+        Debug.Log("Master sent out evtCCharactersSelected ");
+        Debug.Log("First team: " + arnCustomCharacterSelections[0][0] + " " + arnCustomCharacterSelections[0][1] + " " + arnCustomCharacterSelections[0][2]);
+        Debug.Log("Second team: " + arnCustomCharacterSelections[1][0] + " " + arnCustomCharacterSelections[1][1] + " " + arnCustomCharacterSelections[1][2]);
 
         //Let all clients know who is controlling which player
         NetworkConnectionManager.SendEventToClients(evtCOwnershipSelected, LibConversions.ArIntToArObj(arnPlayerOwners));
 
-        Debug.Log("Master sent out evtCOwnershipSelected");
+        Debug.Log("Master sent out evtCOwnershipSelected of " + arnPlayerOwners[0] + " and " + arnPlayerOwners[1]);
 
         //Let all clients know what type of input each player is using (human/ai)
         NetworkConnectionManager.SendEventToClients(evtCInputTypesSelected, LibConversions.ArIntToArObj(arnPlayerInputTypes));
 
-        Debug.Log("Master sent out evtCInputTypesSelected");
+        Debug.Log("Master sent out evtCInputTypesSelected of " + arnPlayerInputTypes[0] + " and " + arnPlayerInputTypes[1]);
 
+    }
+
+
+    //Starts a timeout timer
+    public bool CheckIfAllPlayersFinishedPhase(int nNewTurnState) {
+        foreach(int i in dictClientExpectedPhase.Keys) {
+            if(dictClientExpectedPhase[i] != nNewTurnState) {
+                //At least one client hasn't reached the expected turn yet
+
+                //Start the timeout timer to ensure the finished players aren't waiting forever on a stalled toaster
+                timeoutcontroller.StartTimeoutTimer((ContTurns.STATETURN)dictClientExpectedPhase[i]);
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public void MoveToPhase(int nClientID, int nNewTurnState) {
@@ -184,15 +200,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         dictClientExpectedPhase[nClientID] = nNewTurnState;
 
         //Then, check if everyone has actually reached this expected phase - if not, we don't need to officially do anything yet
-        foreach(int i in dictClientExpectedPhase.Keys) {
-            if(dictClientExpectedPhase[i] != nNewTurnState) {
-                //At least one client hasn't reached the expected turn yet
-
-                //Start the timeout timer to ensure the finished players aren't waiting forever on a stalled toaster
-                timeoutcontroller.StartTimeoutTimer((ContTurns.STATETURN)dictClientExpectedPhase[i]);
-                return;
-            }
-        }
+        if(CheckIfAllPlayersFinishedPhase(nNewTurnState) == false) return;
 
         //At this point, everyone agrees on what turnstate we should be moving to, so prep it
         //  and let everyone know they can progress to it
@@ -200,35 +208,62 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         object[] arAdditionalInfo = new object[2] { nNewTurnState, null };//Pass null for default extra info
 
         switch(nNewTurnState) {
+
         case (int)ContTurns.STATETURN.GIVEMANA:
 
             //Ask our MasterManaDistributer component to determine what mana should be given to each player
             arAdditionalInfo[1] = manadistributer.TakeNextMana();
+
             break;
 
         case (int)ContTurns.STATETURN.CHOOSEACTIONS:
 
             //Reset any old stored abilityselection
             ResetSavedAbilitySelection();
+
             break;
 
         case (int)ContTurns.STATETURN.EXECUTEACTIONS:
 
             //Fetch the saved ability selection info and pass it along so each client knows what ability is being used
-            arAdditionalInfo[1] = nSavedSerializedTargetSelection;
+            arAdditionalInfo[1] = nSavedSerializedInfo;
+
             break;
 
         case (int)ContTurns.STATETURN.TURNEND:
 
             //Reset any old stored ability selection
             ResetSavedAbilitySelection();
+
+            break;
+
+        case (int)ContTurns.STATETURN.BAN:
+
+            //Send out a signal for which character just got banned
+            NetworkConnectionManager.SendEventToClients(evtCBanCharacter, nSavedCharacterSelection);
+
+            //Clear out the stored character selection
+            ResetSavedChrSelection();
+
+            break;
+
+        case (int)ContTurns.STATETURN.DRAFT:
+
+            //Send out a signal for which character just got drafted
+            NetworkConnectionManager.SendEventToClients(evtCDraftCharacter, nSavedCharacterSelection);
+
+            //Clear out the stored character selection
+            ResetSavedChrSelection();
+
             break;
 
         default:
 
 
+
             break;
         }
+
 
         //Let each client know that they can actually progress to that phase
         NetworkConnectionManager.SendEventToClients(evtCMoveToNewTurnPhase, arAdditionalInfo);
@@ -260,9 +295,16 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
             break;
 
+        case (int)ContTurns.STATETURN.TURNEND:
+            //If we're at the end of turn, reset to the beginning
+            nNextTurnPhase = (int)ContTurns.STATETURN.RECHARGE;
+
+            break;
+
         default:
-            //By default, just advance to the next sequential phase (wrapping around if reaching the end)
-            nNextTurnPhase = (nCurTurnPhase + 1) % ((int)ContTurns.STATETURN.ENDFLAG);
+
+            //By default, just advance to the next sequential phase
+            nNextTurnPhase = nCurTurnPhase + 1;
 
             break;
         }
@@ -278,6 +320,8 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
             (ContTurns.STATETURN)dictClientExpectedPhase[nClientID] + " but received the signal that they finished " + (ContTurns.STATETURN)nCurTurnPhase);
 
         //Check if we're in any weird phases that need us to do something special
+
+        //If we're expecting an action selection
         if(nCurTurnPhase == (int)ContTurns.STATETURN.CHOOSEACTIONS) {
 
             //We only need to do something special if we received this end-phase signal from a client
@@ -302,7 +346,7 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
                         Debug.Log("MASTER: Received valid selection for " + nSerializedInfo + " - " + infoReceived.ToString());
 
-                        SaveAbilitySelection(nSerializedInfo);
+                        SaveSerializedSelection(nSerializedInfo);
 
                     } else {
                         //Otherwise, if we were passed an invalid ability selection 
@@ -318,7 +362,14 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
                     }
                 }
 
+            } else {
+                //Don't need to do anything special if we recieved the signal from the non-active player
+                // since they're not drafting anything right now
             }
+
+        } else if(nCurTurnPhase == (int)ContTurns.STATETURN.BAN) {
+            //
+
         }
 
         //If we're done any special actions for this phase, then we can just progress this player to the next phase
@@ -337,6 +388,14 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
                     OnClientFinishedPhase(i, (int)stateTurn, ContAbilitySelection.nNOABILITYSELECTION);
 
+                } else if(stateTurn == ContTurns.STATETURN.BAN) {
+
+                    //Simulate as though the player submitted a non-ban
+                    OnClientFinishedPhase(i, (int)stateTurn, (int)Chr.CHARTYPE.LENGTH);
+                } else if(stateTurn == ContTurns.STATETURN.DRAFT) {
+
+                    //Simulate as though the player submitted a non-draft
+                    OnClientFinishedPhase(i, (int)stateTurn, (int)Chr.CHARTYPE.LENGTH);
                 } else {
 
                     OnClientFinishedPhase(i, (int)stateTurn);
@@ -349,16 +408,9 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
 
     }
 
-    //Should only be decided by the master client
-    public void SelectNextReadyCharacter() {
-
-        int nPlayer = Random.Range(1, 3);
-        int nCharacter = Random.Range(1, 4);
-
-        NetworkConnectionManager.SendEventToClients(evtCNewReadiedCharacter, new object[2] { nPlayer, nCharacter });
-    }
 
     public void Update() {
+        //Only respond to master events
         if(bIsMaster == false) return;
 
         int nNewTime = Mathf.FloorToInt(Time.time);
@@ -369,25 +421,21 @@ public class MasterNetworkController : MonoBehaviour, IOnEventCallback {
         }
     }
 
-    public void SaveAbilitySelection(int _nSavedSerializedTargetSelection) {
-        nSavedSerializedTargetSelection = _nSavedSerializedTargetSelection;
+
+
+    public void SaveCharacterSelection(int _iChr) {
+        nSavedCharacterSelection = _iChr;
     }
 
+    public void ResetSavedChrSelection() {
+        nSavedCharacterSelection = (int)Chr.CHARTYPE.LENGTH;
+    }
+
+    public void SaveSerializedSelection(int _nSavedSerializedInfo) {
+        nSavedSerializedInfo = _nSavedSerializedInfo;
+    }
     public void ResetSavedAbilitySelection() {
-        nSavedSerializedTargetSelection = SelectionSerializer.SerializeRest();
-    }
-
-    public bool CanUseAbility(int nSerializedSelectionInfo) {
-        //Just piggyback off of the local player to determine if we can use the ability
-
-        SelectionSerializer.SelectionInfo infoDeserialized = SelectionSerializer.Deserialize(ContTurns.Get().chrNextReady, nSerializedSelectionInfo);
-
-
-        //Ensure the serialized selection is indeed for this 
-        Debug.Assert(infoDeserialized.chrOwner == ContTurns.Get().GetNextActingChr());
-
-        return (infoDeserialized.actUsed.CanPayMana() && infoDeserialized.CanSelect());
-
+        nSavedSerializedInfo = SelectionSerializer.SerializeRest();
     }
 
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ContTurns : Singleton<ContTurns> {
 
-    public enum STATETURN { RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSEACTIONS, EXECUTEACTIONS, TURNEND, ENDFLAG };
+    public enum STATETURN { DRAFT, BAN, LOADOUTSETUP, RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSEACTIONS, EXECUTEACTIONS, TURNEND };
     public STATETURN curStateTurn;
 
     public Chr[] arChrPriority = new Chr[Player.MAXCHRS];
@@ -20,6 +20,9 @@ public class ContTurns : Singleton<ContTurns> {
     public const float fDelayTurnAction = 0.5f;
     public const float fDelayMinorAction = 0.5f;
     public const float fDelayStandard = 1.25f;
+    public const float fDelayBan = 20f;
+    public const float fDelayDraftPick = 20f;
+    public const float fDelayLoadoutSetup = 120f;
 
 
     public void FixSortedPriority(Chr chr) {
@@ -169,11 +172,40 @@ public class ContTurns : Singleton<ContTurns> {
 
     }
 
+    public void OnLeavingState(object oAdditionalInfo) {
+
+        switch(curStateTurn) {
+        case STATETURN.BAN:
+
+            //Interpret the passed info as a selected character that was banned in the just-finished drafting step
+            DraftController.Get().BanChr((Chr.CHARTYPE)oAdditionalInfo);
+
+            //End this drafting step and move on to the next one
+            DraftController.Get().FinishDraftPhaseStep();
+
+            break;
+
+        case STATETURN.DRAFT:
+
+            //Interpret the passed info as a selected character that was drafted in the just-finished drafting step
+            DraftController.Get().DraftChr(DraftController.Get().GetActivePlayerForNextDraftPhaseStep(), (Chr.CHARTYPE)oAdditionalInfo);
+
+            //End this drafting step and move on to the next one
+            DraftController.Get().FinishDraftPhaseStep();
+
+            break;
+        }
+
+    }
 
     public void SetTurnState(STATETURN _curStateTurn, object oAdditionalInfo = null) {
+
+        OnLeavingState(oAdditionalInfo);
+
         curStateTurn = _curStateTurn;
 
         switch(curStateTurn) {
+
         case STATETURN.RECHARGE:
 
             ContAbilityEngine.Get().AddExec(new ExecTurnRecharge(_chrSource: null));
@@ -251,8 +283,13 @@ public class ContTurns : Singleton<ContTurns> {
         ViewPriorityList.Get().InitViewPriorityList();
     }
 
+    public void InitStartingTurnPhase() {
+        curStateTurn = STATETURN.TURNEND;
+    }
+
     public override void Init() {
 
+        InitStartingTurnPhase();
 
     }
 
