@@ -14,6 +14,7 @@ public static class SkillType {
         public string sName;
         public List<Discipline.DISCIPLINE> lstRequiredDisciplines;
 
+
         public SkillTypeInfo(SKILLTYPE _type, string _sName, List<Discipline.DISCIPLINE> _lstRequiredDisciplines) {
             type = _type;
             sName = _sName;
@@ -48,5 +49,38 @@ public static class SkillType {
 
 
 
+
+    //Whenever a new skill is added, have to include a skillType -> Constructor mapping for it
+    //  so that it can be added in the loadout setup phase
+    public static Action InstantiateNewSkill(SKILLTYPE skillType, Chr chr) {
+
+        Action skillNew = null;
+
+        switch(skillType) {
+        case SKILLTYPE.FLUSHOUT:
+            skillNew = new ActionAmbush(chr);
+            break;
+        case SKILLTYPE.MULCH:
+            skillNew = new ActionHydrasRegen(chr);
+            break;
+        case SKILLTYPE.PLANTSUNFLOWER:
+            skillNew = new ActionCheerleader(chr);
+            break;
+        case SKILLTYPE.RECON:
+            skillNew = new ActionImpale(chr);
+            break;
+        case SKILLTYPE.SNAPTRAP:
+            skillNew = new ActionHydrasRegen(chr);
+            break;
+        case SKILLTYPE.SURVEYTHELAND:
+            skillNew = new ActionHydrasRegen(chr);
+            break;
+        default:
+            Debug.LogError("ERROR! No constructor for " + skillType + " exists!");
+            break;
+        }
+
+        return skillNew;
+    }
 
 }
