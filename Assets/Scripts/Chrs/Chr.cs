@@ -58,10 +58,7 @@ public class Chr : MonoBehaviour {
     public const int nLoadoutSkills = 8; //Number of skills the character has in their pool of skills to adapt to (includes actives)
     public const int nTotalSkills = nLoadoutSkills + 3; //Number of total skills a character has access to (including benched actions and generics)
 
-    public const int idAdapt = 8;    //id for the adapt action (not sure if this will be permanent)
-    public const int idBlocking = 9; //id for the blocking action
     public const int idResting = 10;  //id for the resting action
-    public const int idSwapSlot = 11; //id for a slot at the end that is purely used to swap with for newly introduced adapting skills
 
     public bool bBlocker;           //Whether or not the character is the assigned blocker
     public Property<bool> pbCanBlock;          //Whether the character is capable or not of blocking
