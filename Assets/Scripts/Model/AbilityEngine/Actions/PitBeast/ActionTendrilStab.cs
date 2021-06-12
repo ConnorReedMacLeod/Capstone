@@ -14,7 +14,7 @@ public class ActionTendrilStab : Action {
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 1, 0, 0, 0, 0 });
 
-        nCd = 6;
+        nCooldownInduced = 6;
         nFatigue = 3;
 
         lstClauses = new List<Clause>() {

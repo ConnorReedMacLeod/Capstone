@@ -16,7 +16,7 @@ public class ActionHarpoonGun : Action {
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 2 });
 
-        nCd = 5;
+        nCooldownInduced = 5;
         nFatigue = 2;
 
         lstClauses = new List<Clause>() {

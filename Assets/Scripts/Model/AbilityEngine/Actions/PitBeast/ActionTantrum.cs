@@ -14,7 +14,7 @@ public class ActionTantrum : Action {
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 1, 0, 0, 1, 0 });
 
-        nCd = 9;
+        nCooldownInduced = 9;
         nFatigue = 5;
 
         lstClauses = new List<Clause>() {

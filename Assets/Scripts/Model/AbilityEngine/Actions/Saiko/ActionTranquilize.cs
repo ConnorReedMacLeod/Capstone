@@ -14,7 +14,7 @@ public class ActionTranquilize : Action {
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 1, 0, 0, 0 });
 
-        nCd = 11;
+        nCooldownInduced = 11;
         nFatigue = 3;
 
         lstClauses = new List<Clause>() {

@@ -105,7 +105,7 @@ public class ViewInfoAction : MonoBehaviour {
         if(mod == null) {
             txtCooldown.text = "";
         } else {
-            txtCooldown.text = "CD: " + mod.nCd.ToString();
+            txtCooldown.text = "CD: " + mod.nCooldownInduced.ToString();
         }
     }
 

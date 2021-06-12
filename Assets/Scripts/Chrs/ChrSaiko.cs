@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Discipline.DISCIPLINE;
 
 public class ChrSaiko : BaseChr {
 
@@ -12,13 +13,17 @@ public class ChrSaiko : BaseChr {
         chrOwner.sName = "Saiko";
     }
 
-    //Defines all of a character's unique actions
-    public override void SetInitialSkills() {
+    public override void SetDisciplines() {
+        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { FALCONER, SCOUT };
+    }
 
-        chrOwner.arSkills[0] = new ActionAmbush(chrOwner);
-        chrOwner.arSkills[1] = new ActionSmokeCover(chrOwner);
-        chrOwner.arSkills[2] = new ActionTranquilize(chrOwner);
-        chrOwner.arSkills[3] = new ActionStickyBomb(chrOwner);
+    //Defines all of a character's unique actions
+    public override void SetLoadoutSkills() {
+
+        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.RECON;
+        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.RECON;
+        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.RECON;
+        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.RECON;
 
     }
 
