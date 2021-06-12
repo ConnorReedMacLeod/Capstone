@@ -14,7 +14,7 @@ public class ActionCacophony : Action {
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 1, 0, 1});
 
-        nCd = 8;
+        nCooldownInduced = 8;
         nFatigue = 4;
 
         lstClauses = new List<Clause>() {

@@ -7,8 +7,6 @@ public class ViewBlockerButton : ViewInteractive {
 
     bool bStarted;                          //Confirms the Start() method has executed
 
-    public const int id = Chr.idBlocking;                              //The standard id for the block action
-
     public static Subject subAllClick = new Subject(Subject.SubType.ALL);
     public static Subject subAllStartHover = new Subject(Subject.SubType.ALL);
     public static Subject subAllStopHover = new Subject(Subject.SubType.ALL);
@@ -22,7 +20,7 @@ public class ViewBlockerButton : ViewInteractive {
 
         //If we can't actually use this button, then don't react to clicks
         //(No character selected or the selected character can't block anyway)
-        if (!ButtonVisible() || !ContTurns.Get().GetNextActingChr().CanBlock()) return;
+        if(!ButtonVisible() || !ContTurns.Get().GetNextActingChr().CanBlock()) return;
 
         subAllClick.NotifyObs(this, args);
 
@@ -32,7 +30,7 @@ public class ViewBlockerButton : ViewInteractive {
     public override void onMouseStartHover(params object[] args) {
 
         //Only do something if there's actually a character that's gonna go 
-        if (!ButtonVisible()) return;
+        if(!ButtonVisible()) return;
         subAllStartHover.NotifyObs(this, args);
 
         base.onMouseStartHover(args);
@@ -40,7 +38,7 @@ public class ViewBlockerButton : ViewInteractive {
 
     public override void onMouseStopHover(params object[] args) {
 
-        if (!ButtonVisible()) return;
+        if(!ButtonVisible()) return;
         subAllStopHover.NotifyObs(this, args);
 
         base.onMouseStopHover(args);
@@ -48,7 +46,7 @@ public class ViewBlockerButton : ViewInteractive {
 
 
     public void Start() {
-        if (bStarted == false) {
+        if(bStarted == false) {
             bStarted = true;
 
 
@@ -64,12 +62,12 @@ public class ViewBlockerButton : ViewInteractive {
         string sImgPath;
 
 
-        if (!ButtonVisible()) {
+        if(!ButtonVisible()) {
             //Then hide the button entirely for now if either no character is selected
             // or if the selected character isn't the next to act
             sImgPath = "null";
 
-        } else if (ContTurns.Get().GetNextActingChr().CanBlock()){
+        } else if(ContTurns.Get().GetNextActingChr().CanBlock()) {
             //Then we want the button to be visible and usable
             sImgPath = "Images/MiscUI/imgBlockerToken";
 

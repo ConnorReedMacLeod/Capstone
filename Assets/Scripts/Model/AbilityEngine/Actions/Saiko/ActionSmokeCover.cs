@@ -14,7 +14,7 @@ public class ActionSmokeCover : Action {
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 1, 0, 0, 0 });
 
-        nCd = 10;
+        nCooldownInduced = 10;
         nFatigue = 2;
 
         lstClauses = new List<Clause>() {

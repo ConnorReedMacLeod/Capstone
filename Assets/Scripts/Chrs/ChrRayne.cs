@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Discipline.DISCIPLINE;
 
 public class ChrRayne : BaseChr {
 
@@ -12,14 +13,17 @@ public class ChrRayne : BaseChr {
         chrOwner.sName = "Rayne";
     }
 
+    public override void SetDisciplines() {
+        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { GARDENER, GIANT };
+    }
+
     //Defines all of a character's unique actions
-    public override void SetInitialSkills() {
+    public override void SetLoadoutSkills() {
 
-        chrOwner.arSkills[0] = new ActionCheerleader(chrOwner);
-        chrOwner.arSkills[1] = new ActionCloudCushion(chrOwner);
-        chrOwner.arSkills[2] = new ActionSpiritSlap(chrOwner);
-        chrOwner.arSkills[3] = new ActionThunderStorm(chrOwner);
-
+        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.MULCH;
+        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.PLANTSUNFLOWER;
+        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.SURVEYTHELAND;
+        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.PLANTSUNFLOWER;
     }
 
 }

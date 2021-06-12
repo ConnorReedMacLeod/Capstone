@@ -16,7 +16,7 @@ public class ActionLeech : Action {
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 1, 0 });
 
-        nCd = 1;
+        nCooldownInduced = 1;
         nFatigue = 1;
 
         lstClauses = new List<Clause>() {
@@ -71,7 +71,7 @@ public class ActionLeech : Action {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContAbilityEngine.PushSingleExecutable(new ExecTransformSkill(action.chrSource, this.action, new ActionTransfuse(chrSelected)));
+            ContAbilityEngine.PushSingleExecutable(new ExecAdaptSkill(action.chrSource, this.action, SkillType.SKILLTYPE.TRANSFUSE));
 
         }
 
@@ -95,7 +95,7 @@ public class ActionTransfuse : Action {
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 1, 0 });
 
-        nCd = 2;
+        nCooldownInduced = 2;
         nFatigue = 2;
 
         lstClauses = new List<Clause>() {
@@ -150,7 +150,7 @@ public class ActionTransfuse : Action {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContAbilityEngine.PushSingleExecutable(new ExecTransformSkill(action.chrSource, this.action, new ActionLeech(chrSelected)));
+            ContAbilityEngine.PushSingleExecutable(new ExecAdaptSkill(action.chrSource, this.action, SkillType.SKILLTYPE.LEECH));
 
         }
 
