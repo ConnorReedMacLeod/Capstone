@@ -16,7 +16,7 @@ public class ActionSadism : Action {
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 0 });
 
-        nCd = 0;
+        nCooldownInduced = 0;
         nFatigue = 0;
 
 

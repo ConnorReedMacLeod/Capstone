@@ -15,7 +15,7 @@ public class ActionHiss : Action {
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 1 });
 
-        nCd = 10;
+        nCooldownInduced = 10;
         nFatigue = 1;
 
         lstClauses = new List<Clause>() {

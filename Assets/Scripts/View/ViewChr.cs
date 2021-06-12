@@ -443,8 +443,8 @@ public class ViewChr : ViewInteractive {
 
     public void cbStartUsingAbility(Object target, params object[] args) {
 
-
-        if(((Action)args[0]).iSlot != Chr.idResting) {
+        //If this is a proper action, then update the chracter portrait to an acting one
+        if(((Action)args[0]).skillslot != null) {
             statePortrait = PortraitState.ACTING;
 
             SetPortrait();

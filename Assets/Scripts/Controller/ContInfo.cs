@@ -45,11 +45,11 @@ public class ContInfo : MonoBehaviour {
     }
 
     public void cbBlockerButtonStartHover(Object target, params object[] args) {
-        DisplayAction(ContTurns.Get().GetNextActingChr().arSkills[Chr.idBlocking]);
+        DisplayAction(ContTurns.Get().GetNextActingChr().skillBlock);
     }
 
     public void cbRestButtonStartHover(Object target, params object[] args) {
-        DisplayAction(ContTurns.Get().GetNextActingChr().arSkills[Chr.idResting]);
+        DisplayAction(ContTurns.Get().GetNextActingChr().skillRest);
     }
 
     public void StopDisplayAction(Action act) {
@@ -75,11 +75,11 @@ public class ContInfo : MonoBehaviour {
     }
 
     public void cbBlockerButtonStopHover(Object target, params object[] args) {
-        StopDisplayAction(ContTurns.Get().GetNextActingChr().arSkills[Chr.idBlocking]);
+        StopDisplayAction(ContTurns.Get().GetNextActingChr().skillBlock);
     }
 
     public void cbRestButtonStopHover(Object target, params object[] args) {
-        StopDisplayAction(ContTurns.Get().GetNextActingChr().arSkills[Chr.idResting]);
+        StopDisplayAction(ContTurns.Get().GetNextActingChr().skillRest);
     }
 
     public void SetActionFocus(Action _actFocus) {

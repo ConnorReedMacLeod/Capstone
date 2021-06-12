@@ -7,7 +7,7 @@ public class ViewAction : ViewInteractive {
 
     bool bStarted;                          //Confirms the Start() method has executed
 
-	public Action mod;                      		//The action's model
+    public Action mod;                      		//The action's model
 
     public GameObject goIcon;
 
@@ -52,7 +52,7 @@ public class ViewAction : ViewInteractive {
     //Let the Action button know which action it's representing
     public void SetModel(Action _mod) {
 
-        if (mod != null) {
+        if(mod != null) {
             //If we we're previously showing an ability, then unsubscribe from it
             mod.subAbilityChange.UnSubscribe(cbAbilityChanged);
         }
@@ -60,22 +60,21 @@ public class ViewAction : ViewInteractive {
         mod = _mod;
         DisplayAll();
 
-        if (mod != null) {
+        if(mod != null) {
             //If we're now subscribed to an actual ability, then subscribe to it
             mod.subAbilityChange.Subscribe(cbAbilityChanged);
         }
     }
 
-	public void Start(){
-        if (bStarted == false)
-        {
+    public void Start() {
+        if(bStarted == false) {
             bStarted = true;
         }
-	}
+    }
 
 
     public void DisplayIcon() {
-        if (mod == null) return;
+        if(mod == null) return;
 
         string sSprPath = "Images/Chrs/" + mod.chrSource.sName + "/img" + mod.sName;
 
@@ -86,8 +85,8 @@ public class ViewAction : ViewInteractive {
         goIcon.GetComponent<SpriteRenderer>().sprite = sprIcon;
     }
 
-    public void DisplayName(){
-        if (mod == null){
+    public void DisplayName() {
+        if(mod == null) {
             txtName.text = "";
         } else {
             txtName.text = mod.sDisplayName;
@@ -95,7 +94,7 @@ public class ViewAction : ViewInteractive {
     }
 
     public void DisplayCost() {
-        if (mod == null) {
+        if(mod == null) {
             txtType.text = "";
         } else {
             int[] arCost = mod.parCost.Get();
@@ -110,7 +109,7 @@ public class ViewAction : ViewInteractive {
     }
 
     public void DisplayType() {
-        if (mod == null) {
+        if(mod == null) {
             txtType.text = "";
         } else {
             txtType.text = "[" + mod.type.getName() + "]";
@@ -118,15 +117,15 @@ public class ViewAction : ViewInteractive {
     }
 
     public void DisplayCurCooldown() {
-        if (mod == null || mod.nCurCD == 0) {
+        if(mod == null || mod.skillslot.nCooldown == 0) {
             txtCurCooldown.text = "";
         } else {
-            txtCurCooldown.text = mod.nCurCD.ToString();
+            txtCurCooldown.text = mod.skillslot.nCooldown.ToString();
         }
     }
 
     public void DisplayFatigue() {
-        if (mod == null) {
+        if(mod == null) {
             txtFatigue.text = "";
         } else {
             txtFatigue.text = mod.nFatigue.ToString();
@@ -135,10 +134,10 @@ public class ViewAction : ViewInteractive {
 
 
     public void DisplayCooldown() {
-        if (mod == null) {
+        if(mod == null) {
             txtCooldown.text = "";
         } else {
-            txtCooldown.text = mod.nCd.ToString();
+            txtCooldown.text = mod.nCooldownInduced.ToString();
         }
     }
 

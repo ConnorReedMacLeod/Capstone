@@ -4,14 +4,13 @@ using UnityEngine;
 
 public class Action { //This should probably be made abstract
 
-    public int iSlot; //TODO: Consider if you could make a ID<T> class that could dynamically generate new IDS as needed for the type T
-
     public string sName;
     public string sDisplayName;
     public TypeAction type;
 
-    public int nCd;
-    public int nCurCD;
+    public SkillSlot skillslot;
+
+    public int nCooldownInduced;
     public int nFatigue;
 
     public Chr chrSource;
@@ -36,35 +35,12 @@ public class Action { //This should probably be made abstract
 
     }
 
-    public void ChangeCD(int _nChange) {
-        if(_nChange + nCurCD < 0) {
-            // Don't let reductions go negative
-            nCurCD = 0;
-        } else {
-            nCurCD += _nChange;
-            subAbilityChange.NotifyObs();
-
-        }
-    }
-
     public Clause.TargetType GetTargetType() {
         return GetDominantClause().targetType;
     }
 
     public Clause GetDominantClause() {
         return lstClauses[iDominantClause];
-    }
-
-    public bool IsActiveSkill() {
-        return iSlot < Chr.nActiveCharacterSkills;
-    }
-
-    public bool IsLoadoutSkill() {
-        return iSlot < Chr.nLoadoutSkills;
-    }
-
-    public bool IsBenchSkill() {
-        return IsLoadoutSkill() && !IsActiveSkill();
     }
 
     //Changes the cost of this action, and returns the node that is modifying that cost (so you can remove it later)
@@ -198,7 +174,7 @@ public class Action { //This should probably be made abstract
         }
 
         //Check that the ability isn't on cooldown
-        if(nCurCD != 0) {
+        if(skillslot.IsOffCooldown() == false) {
             //Debug.Log ("Ability on cd");
             return false;
         }
@@ -271,6 +247,14 @@ public class Action { //This should probably be made abstract
         return true;
     }
 
+    public bool IsStandardSkill() {
+        return skillslot.iSlot < Chr.nStandardCharacterSkills;
+    }
+
+    public bool IsGenericSkill() {
+        return skillslot.iSlot >= Chr.nStandardCharacterSkills;
+    }
+
     class ClausePayMana : ClauseSpecial {
 
         public ClausePayMana(Action _act) : base(_act) {
@@ -299,7 +283,7 @@ public class Action { //This should probably be made abstract
 
         public override void ClauseEffect() {
 
-            ContAbilityEngine.PushSingleExecutable(new ExecChangeCooldown(action.chrSource, action, action.nCd));
+            ContAbilityEngine.PushSingleExecutable(new ExecChangeCooldown(action.chrSource, action, action.nCooldownInduced));
 
         }
 

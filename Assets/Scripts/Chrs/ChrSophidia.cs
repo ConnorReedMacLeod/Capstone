@@ -18,12 +18,12 @@ public class ChrSophidia : BaseChr {
     }
 
     //Defines all of a character's unique actions
-    public override void SetInitialSkills() {
+    public override void SetLoadoutSkills() {
 
-        chrOwner.arSkills[0] = new ActionHiss(chrOwner);
-        chrOwner.arSkills[1] = new ActionVenomousBite(chrOwner);
-        chrOwner.arSkills[2] = new ActionTwinSnakes(chrOwner);
-        chrOwner.arSkills[3] = new ActionHydrasRegen(chrOwner);
+        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.RECON;
+        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.FLUSHOUT;
+        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.SNAPTRAP;
+        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.MULCH;
 
     }
 

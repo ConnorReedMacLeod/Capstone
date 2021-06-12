@@ -26,10 +26,10 @@ public static class SelectionSerializer {
     }
 
     public static byte SerializeByte(Action act) {
-        return (byte)act.iSlot;
+        return (byte)act.skillslot.iSlot;
     }
     public static Action DeserializeAction(Chr chrOwner, byte b) {
-        return chrOwner.arSkills[b];
+        return chrOwner.arSkillSlots[b].skill;
     }
 
     public static byte SerializeByte(Player plyr) {
@@ -271,11 +271,11 @@ public static class SelectionSerializer {
     }
 
     public static SelectionInfo MakeRestSelection(Chr chrOwner) {
-        return new SelectionSpecial(chrOwner, (byte)Chr.idResting);
+        return new SelectionSpecial(chrOwner, (byte)Chr.nRestSlotId);
     }
 
     public static int SerializeRest() {
-        return Serialize(Chr.idResting, 0, 0, 0);
+        return Serialize(Chr.nRestSlotId, 0, 0, 0);
     }
 
     //Remember to cast the result to the type that you expect

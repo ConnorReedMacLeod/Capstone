@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SkillSlot {
 
+    public int iSlot;
     public Chr chrOwner;
     public Action skill;
     public int nCooldown;
@@ -14,7 +15,22 @@ public class SkillSlot {
     }
 
     public void SetSkill(Action _skill) {
+
+        if(skill != null) {
+            skill.OnUnequip();
+            skill.skillslot = null;
+        }
+
         skill = _skill;
+        skill.skillslot = this;
+
+        if(skill != null) {
+            skill.OnEquip();
+        }
+
+        Debug.Log("Skill in slot " + iSlot + " has been set to " + skill.sDisplayName);
+        skill.subAbilityChange.NotifyObs();
+        //TODO - if a skill transforms while you're hovering over it, the tooltip doesn't instantly update to match the new skill description
     }
 
 
@@ -26,10 +42,18 @@ public class SkillSlot {
         nCooldown = _nCooldown;
 
         if(nCooldown < 0) nCooldown = 0;
+
+        skill.subAbilityChange.NotifyObs();
     }
 
     public bool IsOffCooldown() {
         return nCooldown == 0;
     }
 
+    public SkillSlot(Chr _chrOwner, int _iSlot) {
+        chrOwner = _chrOwner;
+        iSlot = _iSlot;
+
+        nCooldown = 0;
+    }
 }

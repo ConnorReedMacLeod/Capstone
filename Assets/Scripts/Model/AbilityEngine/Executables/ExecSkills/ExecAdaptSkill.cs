@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class ExecAdaptSkill : ExecSkill {
 
-    public Action skSwapTo;
+    public SkillType.SKILLTYPE skilltypeToAdaptTo;
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -39,20 +39,22 @@ public class ExecAdaptSkill : ExecSkill {
 
     public override void ExecuteEffect() {
 
-        Debug.Assert(skTarget.chrSource.id == skSwapTo.chrSource.id);
+        string sOldSkillName = skTarget.sDisplayName;
 
-        skTarget.chrSource.SwapSkills(skTarget.iSlot, skSwapTo.iSlot);
+        Debug.Log("About to set skill to " + skilltypeToAdaptTo);
+        skTarget.skillslot.SetSkill(skilltypeToAdaptTo);
+        Debug.Log("after setskill");
 
         fDelay = ContTurns.fDelayMinorAction;
-        sLabel = skTarget.chrSource.sName + " is adapting " + skTarget.sName + " to " + skSwapTo.sName;
+        sLabel = skTarget.chrSource.sName + " adapted " + sOldSkillName + " to " + skTarget.sName;
 
     }
 
-    public ExecAdaptSkill(Chr _chrSource, Action _skTarget, Action _skSwapTo) : base(_chrSource, _skTarget) {
-        skSwapTo = _skSwapTo;
+    public ExecAdaptSkill(Chr _chrSource, Action _skTarget, SkillType.SKILLTYPE _skilltypeToAdaptTo) : base(_chrSource, _skTarget) {
+        skilltypeToAdaptTo = _skilltypeToAdaptTo;
     }
 
     public ExecAdaptSkill(ExecAdaptSkill other) : base(other) {
-        skSwapTo = other.skSwapTo;
+        skilltypeToAdaptTo = other.skilltypeToAdaptTo;
     }
 }

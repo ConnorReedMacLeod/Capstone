@@ -18,12 +18,12 @@ public class ChrSkelCowboy : BaseChr {
     }
 
     //Defines all of a character's unique actions
-    public override void SetInitialSkills() {
+    public override void SetLoadoutSkills() {
 
-        chrOwner.arSkills[0] = new ActionFireball(chrOwner);
-        chrOwner.arSkills[1] = new ActionHeal(chrOwner);
-        chrOwner.arSkills[2] = new ActionExplosion(chrOwner);
-        chrOwner.arSkills[3] = new ActionExplosion(chrOwner);
+        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.MULCH;
+        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.SURVEYTHELAND;
+        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.FLUSHOUT;
+        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.SNAPTRAP;
 
     }
 

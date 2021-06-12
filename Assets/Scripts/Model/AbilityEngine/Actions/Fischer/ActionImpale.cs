@@ -17,7 +17,7 @@ public class ActionImpale : Action {
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 1, 0, 0, 0, 0 });
 
-        nCd = 6;
+        nCooldownInduced = 6;
         nFatigue = 2;
 
         nBaseDamage = 20;

@@ -18,12 +18,12 @@ public class ChrFischer : BaseChr {
     }
 
     //Defines all of a character's unique actions
-    public override void SetInitialSkills() {
+    public override void SetLoadoutSkills() {
 
-        chrOwner.arSkills[0] = new ActionHuntersQuarry(chrOwner);
-        chrOwner.arSkills[1] = new ActionImpale(chrOwner);
-        chrOwner.arSkills[2] = new ActionHarpoonGun(chrOwner);
-        chrOwner.arSkills[3] = new ActionBucklerParry(chrOwner);
+        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.FLUSHOUT;
+        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.LEECH;
+        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.SNAPTRAP;
+        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.RECON;
 
     }
 

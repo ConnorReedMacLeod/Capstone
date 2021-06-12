@@ -18,12 +18,12 @@ public class ChrPitBeast : BaseChr {
     }
 
     //Defines all of a character's unique actions
-    public override void SetInitialSkills() {
+    public override void SetLoadoutSkills() {
 
-        chrOwner.arSkills[0] = new ActionSadism(chrOwner);
-        chrOwner.arSkills[1] = new ActionTendrilStab(chrOwner);
-        chrOwner.arSkills[2] = new ActionForcedEvolution(chrOwner);
-        chrOwner.arSkills[3] = new ActionTantrum(chrOwner);
+        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.FLUSHOUT;
+        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.SNAPTRAP;
+        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.SNAPTRAP;
+        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.FLUSHOUT;
     }
 
 }

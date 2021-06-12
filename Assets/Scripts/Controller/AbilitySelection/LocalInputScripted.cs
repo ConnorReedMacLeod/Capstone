@@ -170,6 +170,7 @@ public class LocalInputScripted : LocalInputType {
         case Clause.TargetType.SPECIAL:
             return new SelectionSerializer.SelectionSpecial(chrSource, actUsed, 0, 0, 0); // Yea, this doesn't really make much sense unless you do something bigger
 
+
         }
 
         Debug.LogError("Unrecognized targetting type of " + actUsed);
@@ -189,14 +190,16 @@ public class LocalInputScripted : LocalInputType {
 
             for(int j = 0; j < nScriptLength; j++) {
 
-                //Select a random action to be used
-                Action actRandom = chr.GetRandomSkill();
+                //Select a random skill to be used
+                Action skillRandom = chr.GetRandomSkill();
 
                 //Need to create an InfoSelection of the appropriate type
                 //Then need to randomly fill this InfoSelection with targetting information
-                int nRandomSerialization = MakeRandomSelection(chr, actRandom).Serialize();
+                int nRandomSerialization = MakeRandomSelection(chr, skillRandom).Serialize();
 
-                arListRandomSelections[i, j] = new KeyValuePair<int, int>(actRandom.iSlot, nRandomSerialization);
+                //TODO:: Update this to be able to select random skills for skill-based targetting (adapt is a particularly complex form of this
+
+                arListRandomSelections[i, j] = new KeyValuePair<int, int>(skillRandom.skillslot.iSlot, nRandomSerialization);
             }
         }
 

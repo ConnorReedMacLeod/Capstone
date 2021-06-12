@@ -7,8 +7,6 @@ public class ViewRestButton : ViewInteractive {
 
     bool bStarted;                          //Confirms the Start() method has executed
 
-    public const int id = Chr.idResting ;                              //The standard id for the rest action
-
     public static Subject subAllClick = new Subject(Subject.SubType.ALL);
     public static Subject subAllStartHover = new Subject(Subject.SubType.ALL);
     public static Subject subAllStopHover = new Subject(Subject.SubType.ALL);
@@ -21,7 +19,7 @@ public class ViewRestButton : ViewInteractive {
     public override void onMouseClick(params object[] args) {
 
         //If we can't actually use this button, then don't react to clicks
-        if (!ButtonVisible()) return;
+        if(!ButtonVisible()) return;
 
         subAllClick.NotifyObs(this, args);
 
@@ -31,7 +29,7 @@ public class ViewRestButton : ViewInteractive {
     public override void onMouseStartHover(params object[] args) {
 
         //Only do something if there's actually a character that's gonna go 
-        if (!ButtonVisible()) return;
+        if(!ButtonVisible()) return;
         subAllStartHover.NotifyObs(this, args);
 
         base.onMouseStartHover(args);
@@ -39,7 +37,7 @@ public class ViewRestButton : ViewInteractive {
 
     public override void onMouseStopHover(params object[] args) {
 
-        if (!ButtonVisible()) return;
+        if(!ButtonVisible()) return;
         subAllStopHover.NotifyObs(this, args);
 
         base.onMouseStopHover(args);
@@ -47,7 +45,7 @@ public class ViewRestButton : ViewInteractive {
 
 
     public void Start() {
-        if (bStarted == false) {
+        if(bStarted == false) {
             bStarted = true;
 
 
@@ -63,7 +61,7 @@ public class ViewRestButton : ViewInteractive {
         string sImgPath;
 
 
-        if (!ButtonVisible()) {
+        if(!ButtonVisible()) {
             //Then hide the button entirely for now if either no character is selected
             // or if the selected character isn't the next to act
             sImgPath = "null";
@@ -74,7 +72,7 @@ public class ViewRestButton : ViewInteractive {
         }
 
         Sprite sprRestButton = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
-        
+
         this.GetComponent<SpriteRenderer>().sprite = sprRestButton;
     }
 
