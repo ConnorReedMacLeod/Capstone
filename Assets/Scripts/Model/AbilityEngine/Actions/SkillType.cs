@@ -5,9 +5,12 @@ using UnityEngine;
 using static SkillType.SKILLTYPE;
 using static Discipline.DISCIPLINE;
 
-public static class SkillType {
 
-    public enum SKILLTYPE { RECON, FLUSHOUT, SNAPTRAP, PLANTSUNFLOWER, SURVEYTHELAND, MULCH };
+//When making a new skill, add an entry for its enum, update the dictSkillTypeInfos to include an entry for which disciplines it uses,
+//  and finally add an entry for how to construct its action in the InstantiateNewSkill function
+public static class SkillType {
+    //TODO - eventually look at transferring this long list to a text file - possible?  worth it?
+    public enum SKILLTYPE { RECON, FLUSHOUT, SNAPTRAP, PLANTSUNFLOWER, SURVEYTHELAND, MULCH, LEECH, TRANSFUSE };
 
     public struct SkillTypeInfo {
         public SKILLTYPE type;
@@ -28,8 +31,9 @@ public static class SkillType {
         { SNAPTRAP, new SkillTypeInfo ( SNAPTRAP, "Snap Trap", new List<Discipline.DISCIPLINE> { TRAPPER } ) },
         { PLANTSUNFLOWER, new SkillTypeInfo ( PLANTSUNFLOWER, "Plant Sunflowers", new List<Discipline.DISCIPLINE> { GARDENER } ) },
         { SURVEYTHELAND, new SkillTypeInfo ( SURVEYTHELAND, "Survey the Land", new List<Discipline.DISCIPLINE> { GARDENER } ) },
-        { MULCH, new SkillTypeInfo ( MULCH, "Mulch", new List<Discipline.DISCIPLINE> { GARDENER, GIANT } ) }
-
+        { MULCH, new SkillTypeInfo ( MULCH, "Mulch", new List<Discipline.DISCIPLINE> { GARDENER, GIANT } ) },
+        { LEECH, new SkillTypeInfo ( LEECH, "Leech", new List<Discipline.DISCIPLINE> { GARDENER, GIANT } ) },
+        { TRANSFUSE, new SkillTypeInfo ( TRANSFUSE, "Transfuse", new List<Discipline.DISCIPLINE> { GARDENER, GIANT } ) }
     };
 
 
@@ -70,11 +74,18 @@ public static class SkillType {
             skillNew = new ActionImpale(chr);
             break;
         case SKILLTYPE.SNAPTRAP:
-            skillNew = new ActionHydrasRegen(chr);
+            skillNew = new ActionLeech(chr);
             break;
         case SKILLTYPE.SURVEYTHELAND:
-            skillNew = new ActionHydrasRegen(chr);
+            skillNew = new ActionHiss(chr);
             break;
+        case SKILLTYPE.LEECH:
+            skillNew = new ActionLeech(chr);
+            break;
+        case SKILLTYPE.TRANSFUSE:
+            skillNew = new ActionTransfuse(chr);
+            break;
+
         default:
             Debug.LogError("ERROR! No constructor for " + skillType + " exists!");
             break;

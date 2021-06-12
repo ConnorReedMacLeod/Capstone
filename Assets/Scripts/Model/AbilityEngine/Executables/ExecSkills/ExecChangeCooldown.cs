@@ -39,7 +39,7 @@ public class ExecChangeCooldown : ExecSkill {
 
     public override void ExecuteEffect() {
 
-        skTarget.ChangeCD(nAmount);
+        skTarget.skillslot.ChangeCooldown(nAmount);
 
         fDelay = ContTurns.fDelayMinorAction;
         sLabel = "Reducing " + skTarget.chrSource.sName + "'s " + skTarget.sDisplayName + " cooldown";
@@ -50,7 +50,7 @@ public class ExecChangeCooldown : ExecSkill {
         nAmount = _nAmount;
     }
 
-    public ExecChangeCooldown(ExecChangeCooldown other): base(other) {
+    public ExecChangeCooldown(ExecChangeCooldown other) : base(other) {
         nAmount = other.nAmount;
     }
 }

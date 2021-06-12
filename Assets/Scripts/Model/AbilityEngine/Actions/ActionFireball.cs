@@ -14,7 +14,7 @@ public class ActionFireball : Action {
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 1, 0, 0 });
 
-        nCd = 6;
+        nCooldownInduced = 6;
         nFatigue = 4;
 
 

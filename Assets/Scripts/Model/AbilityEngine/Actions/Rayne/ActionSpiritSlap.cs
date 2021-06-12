@@ -17,7 +17,7 @@ public class ActionSpiritSlap : Action {
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 1, 0, 0, 0 });
 
-        nCd = 0;
+        nCooldownInduced = 0;
         nFatigue = 2;
         
         lstClauses = new List<Clause>() {

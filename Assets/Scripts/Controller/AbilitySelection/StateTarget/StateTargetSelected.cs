@@ -24,14 +24,14 @@ public class StateTargetSelected : StateTarget {
 
     public void cbClickBlockerButton(Object target, params object[] args) {
 
-        Action actBlocking = ContLocalUIInteraction.Get().chrSelected.arSkills[Chr.idBlocking];
+        Action actBlocking = ContLocalUIInteraction.Get().chrSelected.skillBlock;
         ContLocalUIInteraction.Get().StartTargetting(actBlocking);
 
     }
 
     public void cbClickRestButton(Object target, params object[] args) {
 
-        Action actRest = ContLocalUIInteraction.Get().chrSelected.arSkills[Chr.idResting];
+        Action actRest = ContLocalUIInteraction.Get().chrSelected.skillRest;
         ContLocalUIInteraction.Get().StartTargetting(actRest);
 
     }

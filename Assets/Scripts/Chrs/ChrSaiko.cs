@@ -18,12 +18,12 @@ public class ChrSaiko : BaseChr {
     }
 
     //Defines all of a character's unique actions
-    public override void SetInitialSkills() {
+    public override void SetLoadoutSkills() {
 
-        chrOwner.arSkills[0] = new ActionAmbush(chrOwner);
-        chrOwner.arSkills[1] = new ActionSmokeCover(chrOwner);
-        chrOwner.arSkills[2] = new ActionTranquilize(chrOwner);
-        chrOwner.arSkills[3] = new ActionStickyBomb(chrOwner);
+        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.RECON;
+        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.RECON;
+        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.RECON;
+        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.RECON;
 
     }
 

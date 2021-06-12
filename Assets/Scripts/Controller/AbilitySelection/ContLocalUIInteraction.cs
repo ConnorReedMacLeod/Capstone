@@ -77,7 +77,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         }
 
         // Check if it's on cooldown
-        if(_actSelected.nCurCD > 0) {
+        if(_actSelected.skillslot.IsOffCooldown() == false) {
             Debug.Log("We can't use an ability that's on cooldown");
             return;
         }

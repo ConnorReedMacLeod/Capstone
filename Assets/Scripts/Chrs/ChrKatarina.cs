@@ -18,12 +18,12 @@ public class ChrKatarina : BaseChr {
     }
 
     //Defines all of a character's unique actions
-    public override void SetInitialSkills() {
+    public override void SetLoadoutSkills() {
 
-        chrOwner.arSkills[0] = new ActionFortissimo(chrOwner);
-        chrOwner.arSkills[1] = new ActionLeech(chrOwner);
-        chrOwner.arSkills[2] = new ActionSerenade(chrOwner);
-        chrOwner.arSkills[3] = new ActionCacophony(chrOwner);
+        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.RECON;
+        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.PLANTSUNFLOWER;
+        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.SURVEYTHELAND;
+        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.RECON;
     }
 
 }

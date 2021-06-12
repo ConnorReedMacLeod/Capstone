@@ -14,7 +14,7 @@ public class ActionReverberate : Action {
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 0 });
 
-        nCd = 8;
+        nCooldownInduced = 8;
         nFatigue = 4;
         
 

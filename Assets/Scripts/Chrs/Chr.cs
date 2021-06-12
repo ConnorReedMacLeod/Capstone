@@ -53,12 +53,14 @@ public class Chr : MonoBehaviour {
     public Property<int> pnArmour;          //The character's current armour
     public int nAbsorbedArmour;             //The amount of damage currently taken by armour
 
-    public Action[] arSkills;      //The character's skills in the loadout for the character - first several are actively selectable
-    public const int nActiveCharacterSkills = 4; //Number of non-generic (rest/block/adapt) currently active on the character
-    public const int nLoadoutSkills = 8; //Number of skills the character has in their pool of skills to adapt to (includes actives)
-    public const int nTotalSkills = nLoadoutSkills + 3; //Number of total skills a character has access to (including benched actions and generics)
-
-    public const int idResting = 10;  //id for the resting action
+    public SkillSlot[] arSkillSlots;      //The slots for the character's currently usable skills - these keep track of the cooldowns of those abilities
+    public const int nStandardCharacterSkills = 4; //Number of non-generic (non-rest) skills currently active on the character
+    public const int nTotalSkills = nStandardCharacterSkills + 2; //Number of all skills (including generics)
+    public ActionRest skillRest;  //The standard reference to the rest action the character can use
+    public ActionBlock skillBlock; //TODO - Remove this when implementing positions
+    public const int nRestSlotId = nStandardCharacterSkills; //Id of the skillslot containing the rest skill
+    public const int nBlockSlotId = nStandardCharacterSkills + 1; //Id of the skillslot containing the block skill
+    public SkillType.SKILLTYPE[] arSkillTypesOpeningLoadout;  //Holds the initially selected loadout of skills for the character - may shift this to some loadout manager
 
     public bool bBlocker;           //Whether or not the character is the assigned blocker
     public Property<bool> pbCanBlock;          //Whether the character is capable or not of blocking
@@ -133,7 +135,7 @@ public class Chr : MonoBehaviour {
     }
 
     public Action GetRandomActiveSkill() {
-        return arSkills[Random.Range(0, nActiveCharacterSkills)];
+        return arSkillSlots[Random.Range(0, nStandardCharacterSkills)].skill;
     }
 
     public Action GetRandomSkill() {
@@ -141,9 +143,9 @@ public class Chr : MonoBehaviour {
         int nRand = Random.Range(0, 100);
 
         if(nRand < 25) {
-            return arSkills[idResting];
+            return skillRest;
         } else if(nRand < 35) {
-            return arSkills[idBlocking];
+            return skillBlock;
         } else {
             return GetRandomActiveSkill();
         }
@@ -220,11 +222,11 @@ public class Chr : MonoBehaviour {
     public void RechargeActions() {
 
         //Only bother recharging the active skills since those will be the only ones that can be on cooldown
-        for(int i = 0; i < Chr.nActiveCharacterSkills; i++) {
+        for(int i = 0; i < Chr.nStandardCharacterSkills; i++) {
 
             //Only reduce the cooldown if it is not currently off cooldown
-            if(arSkills[i].nCurCD > 0) {
-                ContAbilityEngine.Get().AddExec(new ExecChangeCooldown(null, arSkills[i], -1) {
+            if(arSkillSlots[i].nCooldown > 0) {
+                ContAbilityEngine.Get().AddExec(new ExecChangeCooldown(null, arSkillSlots[i].skill, -1) {
 
                     fDelay = ContTurns.fDelayMinorAction
                 });
@@ -401,64 +403,6 @@ public class Chr : MonoBehaviour {
 
     }
 
-    public void SetAction(int i, Action actNew) {
-
-        arSkills[idSwapSlot] = actNew;
-
-        SwapSkills(i, idSwapSlot);
-
-        arSkills[idSwapSlot] = null;
-
-    }
-
-    //Just writing this to get some more intuition for abstraction
-    public void SwapSkills(int i, int j) {
-        Action acti = arSkills[i];
-        Action actj = arSkills[j];
-
-        int njCDNew = acti.nCurCD;
-        int niCDNew = actj.nCurCD;
-
-        //Check if we need to unequip the ith skill
-        if(acti != null && acti.IsActiveSkill() && !actj.IsActiveSkill()) {
-            //If we're swapping an active skill to a non-active skill, then we have to call its unequip method
-            acti.OnUnequip();
-        }
-
-        //Check if we need to unequip the jth skill
-        if(actj != null && actj.IsActiveSkill() && !acti.IsActiveSkill()) {
-            //If we're swapping an active skill to a non-active skill, then we have to call its unequip method
-            actj.OnUnequip();
-        }
-
-        acti.iSlot = j;
-        actj.iSlot = i;
-
-        arSkills[i] = actj;
-        arSkills[j] = acti;
-
-        //Decrease by the current cooldown and increase by the new one
-        //Debug.Log("Changing " + acti.sName + "'s cooldown of " + acti.nCurCD + " by " + (niCDNew - njCDNew));
-        acti.ChangeCD(niCDNew - njCDNew);
-        //Debug.Log(acti.sName + "'s cooldown is now " + acti.nCurCD);
-
-        //Debug.Log("Changing " + actj.sName + "'s cooldown of " + actj.nCurCD + " by " + (njCDNew - niCDNew));
-        actj.ChangeCD(njCDNew - niCDNew);
-        //Debug.Log(actj.sName + "'s cooldown is now " + actj.nCurCD);
-
-        //Check if we need to equip the ith skill
-        if(acti != null && acti.IsActiveSkill() && !actj.IsActiveSkill()) {
-            //If this skill is now active while the other swapped one isn't
-            acti.OnEquip();
-        }
-
-        //Check if we need to equip the jth skill
-        if(actj != null && actj.IsActiveSkill() && !acti.IsActiveSkill()) {
-            //If this skill is now active while the other swapped on isn't
-            actj.OnEquip();
-        }
-
-    }
 
     // Used to initiallize information fields of the Chr
     // Call this after creating to set information
@@ -474,6 +418,26 @@ public class Chr : MonoBehaviour {
         view.Init();
     }
 
+    public void InitGenericSkills() {
+
+    }
+
+    public void InitSkillSlots() {
+
+        arSkillSlots = new SkillSlot[nTotalSkills];
+
+        for(int i = 0; i < nTotalSkills; i++) {
+            arSkillSlots[i] = new SkillSlot(this, i);
+        }
+
+
+        skillRest = new ActionRest(this);
+        skillBlock = new ActionBlock(this);
+
+        arSkillSlots[nRestSlotId].SetSkill(skillRest);
+        arSkillSlots[nBlockSlotId].SetSkill(skillBlock);
+    }
+
     // Sets up fundamental class connections for the Chr
     public void Start() {
         if(bStarted == false) {
@@ -481,7 +445,7 @@ public class Chr : MonoBehaviour {
 
             nMaxActionsLeft = 1;
 
-            arSkills = new Action[nTotalSkills + 1];//Add in an extra slot for the purposes of swapping in new ones when transforming
+            InitSkillSlots();
 
             stateSelect = STATESELECT.IDLE;
 
