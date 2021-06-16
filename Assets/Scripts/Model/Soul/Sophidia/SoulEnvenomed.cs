@@ -6,7 +6,7 @@ public class SoulEnvenomed : Soul {
 
     public int nLifeLoss;
 
-    public SoulEnvenomed(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
+    public SoulEnvenomed(Chr _chrSource, Chr _chrTarget, Skill _skillSource) : base(_chrSource, _chrTarget, _skillSource) {
 
         sName = "Envenomed";
 
@@ -36,7 +36,7 @@ public class SoulEnvenomed : Soul {
 
     public void cbOnEndTurn(Object target, object[] args) {
 
-        ContAbilityEngine.Get().AddExec(new ExecLoseLife(chrSource, chrTarget, nLifeLoss) {
+        ContSkillEngine.Get().AddExec(new ExecLoseLife(chrSource, chrTarget, nLifeLoss) {
             sLabel = "Get me a cleanser booster!"
         });
 

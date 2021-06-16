@@ -17,7 +17,7 @@ public class ChrPitBeast : BaseChr {
         chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { GIANT, TRAPPER };
     }
 
-    //Defines all of a character's unique actions
+    //Defines all of a character's unique skills
     public override void SetLoadoutSkills() {
 
         chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.FLUSHOUT;

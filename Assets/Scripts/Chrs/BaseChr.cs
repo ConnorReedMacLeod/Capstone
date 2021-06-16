@@ -26,7 +26,7 @@ public abstract class BaseChr {
     public abstract void SetDisciplines();
 
 
-    //Once the actions have been selected, equip them all onto the character
+    //Once the skills have been selected, equip them all onto the character
     public void EquipAllLoadoutSkills() {
         for(int i = 0; i < Chr.nStandardCharacterSkills; i++) {
             chrOwner.arSkillSlots[i].SetSkill(chrOwner.arSkillTypesOpeningLoadout[i]);

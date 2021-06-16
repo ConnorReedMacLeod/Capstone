@@ -30,7 +30,7 @@ public class StateStunned : StateReadiness {
 
 
             //Leave the source as null since it's just the game rules causing the readying
-            ContAbilityEngine.Get().AddExec(new ExecReadyChar (null, chrOwner) { 
+            ContSkillEngine.Get().AddExec(new ExecReadyChar (null, chrOwner) { 
 
                 fDelay = ContTurns.fDelayStandard,
                 sLabel = chrOwner.sName + " is Readying"
@@ -43,7 +43,7 @@ public class StateStunned : StateReadiness {
     public override void OnEnter() {
 
         //First, increase the fatigue value of the character
-        ContAbilityEngine.Get().AddExec(new ExecChangeFatigue (null, chrOwner, nStunAmount, false));
+        ContSkillEngine.Get().AddExec(new ExecChangeFatigue (null, chrOwner, nStunAmount, false));
 
         //Then, add a replacement effect to cancel out any further stuns that we would take
         repStun = new Replacement() {

@@ -18,7 +18,7 @@ public class ViewChr : ViewInteractive {
 
     public PortraitState statePortrait; //The portrait state the character is currently in
 
-    public bool bRecoiling;             //Targetted by an ability recently
+    public bool bRecoiling;             //Targetted by a skill recently
     public float fCurRecoilTime;
     public const float fMaxRecoilTime = 0.4f;
     public Vector3 v3BasePosition;
@@ -177,7 +177,7 @@ public class ViewChr : ViewInteractive {
 
         switch(statePortrait) {
         case PortraitState.ACTING:
-            sSprPath = "Images/Chrs/" + mod.sName + "/img" + mod.sName + "Action";
+            sSprPath = "Images/Chrs/" + mod.sName + "/img" + mod.sName + "Skill";
             break;
 
         case PortraitState.INJURED:
@@ -269,8 +269,8 @@ public class ViewChr : ViewInteractive {
         mod.subBlockerChanged.Subscribe(cbUpdateBlocker);
         mod.subChannelTimeChange.Subscribe(cbUpdateChannelTime);
         mod.subDeath.Subscribe(cbUpdateDeath);
-        mod.subPreExecuteAbility.Subscribe(cbStartUsingAbility);
-        mod.subPostExecuteAbility.Subscribe(cbStopUsingAbility);
+        mod.subPreExecuteSkill.Subscribe(cbStartUsingSkill);
+        mod.subPostExecuteSkill.Subscribe(cbStopUsingSkill);
 
         mod.subLifeChange.Subscribe(cbRecoil);
         mod.subSoulApplied.Subscribe(cbSoulApplied);
@@ -295,14 +295,14 @@ public class ViewChr : ViewInteractive {
         DecideIfHighlighted(SelectabilityState.NONE);
     }
 
-    //For when the currently targetting ability can target this character
+    //For when the currently targetting skill can target this character
     public void cbOnBecomesTargettable(Object target, params object[] args) {
-        Action actTargetting = (Action)args[0];
+        Skill skillTargetting = (Skill)args[0];
 
-        Debug.Log(mod.sName + " is currently targettable by " + actTargetting.sName);
+        Debug.Log(mod.sName + " is currently targettable by " + skillTargetting.sName);
 
-        //If the source of this ability was an ally
-        if(actTargetting.chrSource.plyrOwner == mod.plyrOwner) {
+        //If the source of this skill was an ally
+        if(skillTargetting.chrSource.plyrOwner == mod.plyrOwner) {
             DecideIfHighlighted(SelectabilityState.ALLYSELECTABLE);
         } else {
             DecideIfHighlighted(SelectabilityState.ENEMYSELECTABLE);
@@ -310,7 +310,7 @@ public class ViewChr : ViewInteractive {
 
     }
 
-    //For when the currently targetting ability has stopped, so this character can clear any targetting display
+    //For when the currently targetting skill has stopped, so this character can clear any targetting display
     public void cbOnEndsTargettable(Object target, params object[] args) {
         Debug.Log(mod.sName + " is no longer targettable");
         DecideIfHighlighted(SelectabilityState.NONE);
@@ -441,10 +441,10 @@ public class ViewChr : ViewInteractive {
         }
     }
 
-    public void cbStartUsingAbility(Object target, params object[] args) {
+    public void cbStartUsingSkill(Object target, params object[] args) {
 
-        //If this is a proper action, then update the chracter portrait to an acting one
-        if(((Action)args[0]).skillslot != null) {
+        //If this is a proper skill, then update the character portrait to an acting one
+        if(((Skill)args[0]).skillslot != null) {
             statePortrait = PortraitState.ACTING;
 
             SetPortrait();
@@ -452,7 +452,7 @@ public class ViewChr : ViewInteractive {
 
     }
 
-    public void cbStopUsingAbility(Object target, params object[] args) {
+    public void cbStopUsingSkill(Object target, params object[] args) {
 
         statePortrait = PortraitState.IDLE;
 
@@ -570,9 +570,8 @@ public class ViewChr : ViewInteractive {
 
                 break;
 
-            //On switch to targetting, despawns the ActionWheel
             case Chr.STATESELECT.TARGGETING:
-                //RemoveActionWheel ();
+                //If we need to despawn anything from the targetting process, we could do it here
                 break;
 
             //On switch to unselected, make changes depending on previous state

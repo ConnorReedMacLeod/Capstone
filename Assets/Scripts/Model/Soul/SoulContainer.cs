@@ -80,7 +80,7 @@ public class SoulContainer : MonoBehaviour {
 
         //Debug.Log("After removing " + toRemove.sName);
 
-        if(ContAbilityEngine.bDEBUGENGINE) PrintAllSoul();
+        if(ContSkillEngine.bDEBUGENGINE) PrintAllSoul();
 
     }
 
@@ -104,14 +104,14 @@ public class SoulContainer : MonoBehaviour {
 
         lstSoul.Add(newSoul);
 
-        //Perform any action that needs to be done on application
+        //Perform any effect that needs to be done on application
         newSoul.OnApply(this);
 
         //Let others know that the visible soul MAY have changed (not necessarily)
         subVisibleSoulUpdate.NotifyObs(this);
         chrOwner.subSoulApplied.NotifyObs(this, newSoul);
 
-        if(ContAbilityEngine.bDEBUGENGINE) PrintAllSoul();
+        if(ContSkillEngine.bDEBUGENGINE) PrintAllSoul();
 
     }
 

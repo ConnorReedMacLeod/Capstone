@@ -17,7 +17,7 @@ public class ViewOptionsButton : ViewInteractive {
         bSelected = true;
         Display();
 
-        //Rely on our owner to properly subscribe actions to our Subject
+        //Rely on our owner to properly subscribe skills to our Subject
 
         subClick.NotifyObs(this, args);
 
@@ -25,7 +25,7 @@ public class ViewOptionsButton : ViewInteractive {
     }
 
     public void Start() {
-        if (bStarted == false) {
+        if(bStarted == false) {
             bStarted = true;
 
             Display();
@@ -36,7 +36,7 @@ public class ViewOptionsButton : ViewInteractive {
 
         string sMatPath;
 
-        if (bSelected) {
+        if(bSelected) {
             //Then we want the button to use the selected material
             sMatPath = "Materials/matButtonSelected";
 
@@ -54,7 +54,7 @@ public class ViewOptionsButton : ViewInteractive {
     // the other options has been clicked
     public void cbSelectedOptionInGroup(Object target, params object[] args) {
 
-        if ((ViewOptionsButton)target == this) {
+        if((ViewOptionsButton)target == this) {
             //If we were the one selected, then we don't need to do anything (should already be selected)
             Debug.Assert(bSelected = true);
         } else {

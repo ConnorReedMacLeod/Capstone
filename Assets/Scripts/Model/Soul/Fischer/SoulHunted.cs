@@ -6,7 +6,7 @@ public class SoulHunted : Soul {
 
     public int nDefenseLoss;
 
-    public SoulHunted(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
+    public SoulHunted(Chr _chrSource, Chr _chrTarget, Skill _skillSource) : base(_chrSource, _chrTarget, _skillSource) {
 
         sName = "Hunted";
 
@@ -48,8 +48,8 @@ public class SoulHunted : Soul {
 
     public void ApplyDefenseDebuff() {
 
-        ContAbilityEngine.PushSingleExecutable(new ExecApplySoul(chrSource, chrTarget,
-            new SoulChangeDefense(chrTarget, chrTarget, this.actSource, nDefenseLoss, 1)));
+        ContSkillEngine.PushSingleExecutable(new ExecApplySoul(chrSource, chrTarget,
+            new SoulChangeDefense(chrTarget, chrTarget, this.skillSource, nDefenseLoss, 1)));
 
     }
 
