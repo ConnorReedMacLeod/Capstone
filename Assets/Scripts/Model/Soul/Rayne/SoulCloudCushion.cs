@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SoulCloudCushion : Soul {
-   
+
     public int nDefenseBuff;
-    
+
     public SoulChangeDefense soulChangeDefense;
 
-    public SoulCloudCushion(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
+    public SoulCloudCushion(Chr _chrSource, Chr _chrTarget, Skill _skillSource) : base(_chrSource, _chrTarget, _skillSource) {
 
         sName = "CloudCushion";
 
@@ -22,7 +22,7 @@ public class SoulCloudCushion : Soul {
 
     public override void ApplicationEffect() {
         //Make a Permanent SoulChangeDefense, and save a reference to it, so it can be removed later
-        soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, actSource, nDefenseBuff);
+        soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, skillSource, nDefenseBuff);
         chrTarget.soulContainer.ApplySoul(soulChangeDefense);
     }
 
@@ -31,7 +31,7 @@ public class SoulCloudCushion : Soul {
     }
 
     public SoulCloudCushion(SoulCloudCushion other, Chr _chrTarget = null) : base(other) {
-        if (_chrTarget != null) {
+        if(_chrTarget != null) {
             //If a Target was provided, then we'll use that
             chrTarget = _chrTarget;
         } else {

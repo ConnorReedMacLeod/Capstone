@@ -22,7 +22,7 @@ public class StateFatigued : StateReadiness {
             //Then transition to the ready state
 
             //Leave the source as null since it's just the game rules causing the readying
-            ContAbilityEngine.Get().AddExec(new ExecReadyChar(null, chrOwner){
+            ContSkillEngine.Get().AddExec(new ExecReadyChar(null, chrOwner){
 
                 fDelay = ContTurns.fDelayStandard,
                 sLabel = chrOwner.sName + " is Readying"

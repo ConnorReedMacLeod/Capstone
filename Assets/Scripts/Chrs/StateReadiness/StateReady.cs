@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class StateReady : StateReadiness {
 
-    public int nCurActionsLeft;     //The number of actions left in a turn that the character can use (cantrips cost 0)
+    public int nCurSkillsLeft;     //The number of skills left in a turn that the character can use (cantrips cost 0)
     public int nQueuedFatigue;      //The amount of fatigue that will be added to the characters fatigue when they're done acting for the turn
 
 
     public StateReady(Chr _chrOwner, int _nCurActionsLeft) : base(_chrOwner) {
 
-        nCurActionsLeft = _nCurActionsLeft;
-        
+        nCurSkillsLeft = _nCurActionsLeft;
+
     }
 
     public override TYPE Type() {
@@ -19,7 +19,7 @@ public class StateReady : StateReadiness {
     }
 
     public override void Recharge() {
-        if (chrOwner.bDead) {
+        if(chrOwner.bDead) {
             Debug.Log("Tried to recharge, but " + chrOwner.sName + " is dead");
             return;
         }
@@ -27,17 +27,17 @@ public class StateReady : StateReadiness {
         Debug.Log("We shouldn't be able to recharge while in the ready state");
     }
 
-    public override bool CanSelectAction(Action act) {
-        //We actually can select another action if we're in the Ready state
+    public override bool CanSelectSkill(Skill skill) {
+        //We actually can select another skill if we're in the Ready state
 
-        if (!act.type.Usable()) {
-            //Then this type of action cannot be activated
+        if(!skill.type.Usable()) {
+            //Then this type of skill cannot be activated
 
             return false;
         }
-        
-        if(act.type.GetActionPointCost() > nCurActionsLeft) {
-            //Then we don't have enough ability activations left for this character to use the action
+
+        if(skill.type.GetSkillPointCost() > nCurSkillsLeft) {
+            //Then we don't have enough skill activations left for this character to use the skill
 
             return false;
         }
@@ -52,7 +52,7 @@ public class StateReady : StateReadiness {
 
     public override void OnLeave() {
 
-       
+
 
     }
 }

@@ -10,11 +10,11 @@ public class SoulFortissimo : Soul {
     public SoulChangePower soulChangePower;
     public SoulChangeDefense soulChangeDefense;
 
-    public SoulFortissimo(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
+    public SoulFortissimo(Chr _chrSource, Chr _chrTarget, Skill _skillSource) : base(_chrSource, _chrTarget, _skillSource) {
 
         sName = "Fortissimo";
 
-        actSource = _actSource;
+        skillSource = _skillSource;
 
         nPowerBuff = 10;
         nDefenseBuff = 10;
@@ -29,11 +29,11 @@ public class SoulFortissimo : Soul {
 
     public override void ApplicationEffect() {
         //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
-        soulChangePower = new SoulChangePower(chrSource, chrTarget, actSource, nPowerBuff);
+        soulChangePower = new SoulChangePower(chrSource, chrTarget, skillSource, nPowerBuff);
         chrTarget.soulContainer.ApplySoul(soulChangePower);
 
         //Make a Permanent SoulChangeDefense, and save a reference to it, so it can be removed later
-        soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, actSource, nDefenseBuff);
+        soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, skillSource, nDefenseBuff);
         chrTarget.soulContainer.ApplySoul(soulChangeDefense);
     }
 

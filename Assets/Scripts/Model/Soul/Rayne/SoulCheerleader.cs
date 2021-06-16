@@ -19,8 +19,8 @@ public class SoulCheerleader : Soul {
 
         //So we're sure we're buffing a valid character at this point
 
-        ContAbilityEngine.Get().AddExec(new ExecApplySoul(chrSource, chrAlly,
-            new SoulChangePower(chrSource, chrAlly, actSource, nPowerGain, 1) {
+        ContSkillEngine.Get().AddExec(new ExecApplySoul(chrSource, chrAlly,
+            new SoulChangePower(chrSource, chrAlly, skillSource, nPowerGain, 1) {
                 //Set up the hidden soul effect that's buffing the ally's power
                 bRemoveOnChrSourceDeath = true
             }) {
@@ -29,7 +29,7 @@ public class SoulCheerleader : Soul {
 
         });
     }
-    public SoulCheerleader(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
+    public SoulCheerleader(Chr _chrSource, Chr _chrTarget, Skill _skillSource) : base(_chrSource, _chrTarget, _skillSource) {
 
         sName = "Cheerleader";
 

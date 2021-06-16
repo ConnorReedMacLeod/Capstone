@@ -7,7 +7,7 @@ public class SoulChannelHydrasRegen : SoulChannel {
     public int nBaseHealing;
     public Healing heal;
 
-    public SoulChannelHydrasRegen(Action _act) : base(_act) {
+    public SoulChannelHydrasRegen(Skill _skill) : base(_skill) {
 
         nBaseHealing = 10;
         heal = new Healing(chrSource, null, nBaseHealing);
@@ -19,7 +19,7 @@ public class SoulChannelHydrasRegen : SoulChannel {
                  cb = (target, args) => {
 
                      //At the end of the turn, restore health to ourselves
-                     ContAbilityEngine.PushSingleExecutable(new ExecHeal(chrSource, chrTarget, new Healing(heal)){
+                     ContSkillEngine.PushSingleExecutable(new ExecHeal(chrSource, chrTarget, new Healing(heal)){
                          arSoundEffects = new SoundEffect[] { new SoundEffect("Sophidia/sndHydrasRegen", 3f) },
                          sLabel = "Growing another head"
                       });

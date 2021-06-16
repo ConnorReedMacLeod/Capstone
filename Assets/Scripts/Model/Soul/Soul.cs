@@ -9,7 +9,7 @@ public class Soul {
     public Chr chrSource;     //A reference to the character that applied this soul effect
     public Chr chrTarget;     //A reference to the character this soul effect is applied to
 
-    public Action actSource;  //A reference to the Action that applied this source
+    public Skill skillSource;  //A reference to the Skill that applied this source
 
     public SoulContainer soulContainer; //A reference to the soulcontainer containing this soul
 
@@ -22,8 +22,8 @@ public class Soul {
     public int nMaxStacks;
     public int nCurStacks;
 
-    public bool bRemoveOnChrDeath; //Should the ability be removed when the character its on dies?
-    public bool bRemoveOnChrSourceDeath; //Should the ability be removed when the character who applied it dies?
+    public bool bRemoveOnChrDeath; //Should the effect be removed when the character its on dies?
+    public bool bRemoveOnChrSourceDeath; //Should the effect be removed when the character who applied it dies?
 
     public bool bDuration;
     public Property<int> pnMaxDuration;
@@ -39,11 +39,11 @@ public class Soul {
 
     public List<TriggerEffect> lstTriggers;
 
-    public Soul(Chr _chrSource, Chr _chrTarget, Action _actSource) {
+    public Soul(Chr _chrSource, Chr _chrTarget, Skill _skillSource) {
 
         chrSource = _chrSource;
         chrTarget = _chrTarget;
-        actSource = _actSource;
+        skillSource = _skillSource;
 
         bRemoveOnChrSourceDeath = false;
         bRemoveOnChrDeath = true;
@@ -62,7 +62,7 @@ public class Soul {
     }
 
     public virtual void InitTriggers() {
-        //By default, we don't need to do anything, but if we have triggers for this ability, then we
+        //By default, we don't need to do anything, but if we have triggers for this skill, then we
         // can initialize them here so that they get properly set up regardless of what constructor we use
 
     }
@@ -101,7 +101,7 @@ public class Soul {
 
         ApplicationEffect();
 
-        if(ContAbilityEngine.bDEBUGENGINE) Debug.Log(sName + " has been applied");
+        if(ContSkillEngine.bDEBUGENGINE) Debug.Log(sName + " has been applied");
     }
 
     public void OnRemoval() {
@@ -123,11 +123,11 @@ public class Soul {
         }
 
         RemoveEffect();
-        if(ContAbilityEngine.bDEBUGENGINE) Debug.Log(sName + " has been removed");
+        if(ContSkillEngine.bDEBUGENGINE) Debug.Log(sName + " has been removed");
 
         if(ShouldTriggerExpiration()) {
             ExpirationEffect();
-            if(ContAbilityEngine.bDEBUGENGINE) Debug.Log(sName + " has expired");
+            if(ContSkillEngine.bDEBUGENGINE) Debug.Log(sName + " has expired");
         }
 
     }
@@ -156,7 +156,7 @@ public class Soul {
     public Soul(Soul soulToCopy, Chr _chrTarget = null) {
 
         chrSource = soulToCopy.chrSource;
-        actSource = soulToCopy.actSource;
+        skillSource = soulToCopy.skillSource;
 
         if(_chrTarget != null) {
             //If a Target was provided, then we'll use that

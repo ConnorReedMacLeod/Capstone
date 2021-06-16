@@ -19,7 +19,7 @@ public class SoulParry : Soul {
         soulContainer.RemoveSoul(this);
 
         //Then retaliate with damage
-        ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(chrSource, chrDamager, dmgCounterAttack) {
+        ContSkillEngine.PushSingleExecutable(new ExecDealDamage(chrSource, chrDamager, dmgCounterAttack) {
             arSoundEffects = new SoundEffect[] { new SoundEffect("Fischer/sndBucklerParry", 1.5f) },
 
             sLabel = "Counterattacking"
@@ -27,7 +27,7 @@ public class SoulParry : Soul {
 
     }
 
-    public SoulParry(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
+    public SoulParry(Chr _chrSource, Chr _chrTarget, Skill _skillSource) : base(_chrSource, _chrTarget, _skillSource) {
 
         sName = "Parry";
 
@@ -39,7 +39,7 @@ public class SoulParry : Soul {
 
         nDamage = 15;
         nDefense = 15;
-        //Create a base Damage object that this action will apply
+        //Create a base Damage object that this skill will apply
         dmgCounterAttack = new Damage(this.chrSource, null, nDamage);
 
 
@@ -66,14 +66,14 @@ public class SoulParry : Soul {
         // If the source of the damage is owned by a different player
         // AND if the target of the damage is the target of this soul
         if(chrSource.plyrOwner.id != this.chrSource.plyrOwner.id && chrTarget == this.chrTarget) {
-            //Then perform a parry action
+            //Then perform a parry effect
             OnDamaged(chrSource);
         }
     }
 
     public override void ApplicationEffect() {
         //Make a Permanent SoulChangeDefense, and save a reference to it, so it can be removed later
-        soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, actSource, nDefense);
+        soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, skillSource, nDefense);
         chrTarget.soulContainer.ApplySoul(soulChangeDefense);
 
         /*We were having this apply armour, but this has been changed to defense (temporarily?)
@@ -111,7 +111,7 @@ public class SoulParry : Soul {
     }
 
 
-    //**** CURRENTLY NOT NEEDED FOR THIS VERSION OF THE ABILITY *****
+    //**** CURRENTLY NOT NEEDED FOR THIS VERSION OF THE SKILL *****
 
     //Called when the character's armour has reached 0
     public void cbOnArmourClear(Object target, params object[] args) {

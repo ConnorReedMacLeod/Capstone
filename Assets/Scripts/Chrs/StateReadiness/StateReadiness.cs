@@ -6,7 +6,7 @@ using UnityEngine;
 //        implements is actually a good practice
 public abstract class StateReadiness {
 
-    public enum TYPE { READY, FATIGUED, STUNNED, CHANNELING, DEAD};
+    public enum TYPE { READY, FATIGUED, STUNNED, CHANNELING, DEAD };
 
     public Chr chrOwner;
 
@@ -23,8 +23,8 @@ public abstract class StateReadiness {
         return chrOwner.nFatigue;
     }
 
-    public virtual bool CanSelectAction(Action act) {
-        //By default, you can't select any action
+    public virtual bool CanSelectSkill(Skill skill) {
+        //By default, you can't select any skill
 
         return false;
     }
@@ -37,10 +37,10 @@ public abstract class StateReadiness {
     }
 
     //Called at the beginning of turn to reduce fatigue
-	public virtual void Recharge() {
+    public virtual void Recharge() {
 
         //By default, we just reduce fatigue by 1 (with the beginning of turn flag)
-        ContAbilityEngine.Get().AddExec(new ExecChangeFatigue(null, chrOwner, -1, true));
+        ContSkillEngine.Get().AddExec(new ExecChangeFatigue(null, chrOwner, -1, true));
 
     }
 

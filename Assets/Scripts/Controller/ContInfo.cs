@@ -6,57 +6,57 @@ public class ContInfo : MonoBehaviour {
 
     bool bStarted;
 
-    public enum StateInfo { Action };
+    public enum StateInfo { SKILL };
 
     public StateInfo stateInfo; //TODO:: Alternate which subscriptions you are using depending on
                                 //       which state you're currently in
     public bool bLocked; //TODO:: Flush out a target locking system more
 
     public ViewInfoPanel viewInfoPanel;
-    public Action actFocus;
+    public Skill skillFocus;
 
     public void cbStartTargetting(Object target, params object[] args) {
-        SetActionFocus(ContLocalUIInteraction.Get().actSelected);
+        SetSkillFocus(ContLocalUIInteraction.Get().skillSelected);
         bLocked = true;
     }
 
     public void cbFinishTargetting(Object target, params object[] args) {
-        ClearActionFocus();
+        ClearSkillFocus();
         bLocked = false;
     }
 
-    public void DisplayAction(Action act) {
+    public void DisplaySkill(Skill sk) {
         if(bLocked == false) {
-            viewInfoPanel.ShowInfoAction(act);
+            viewInfoPanel.ShowInfoSkill(sk);
         }
     }
 
     public void cbSoulStartHover(Object target, params object[] args) {
-        if(((ViewSoul)target).mod == null || ((ViewSoul)target).mod.actSource == null) {
-            //Debug.Log("No action source to display");
+        if(((ViewSoul)target).mod == null || ((ViewSoul)target).mod.skillSource == null) {
+            //Debug.Log("No skill source to display");
         } else {
-            //Debug.Log("Displaying " + ((ViewSoul)target).mod.actSource.sName);
-            DisplayAction(((ViewSoul)target).mod.actSource);
+            //Debug.Log("Displaying " + ((ViewSoul)target).mod.skSource.sName);
+            DisplaySkill(((ViewSoul)target).mod.skillSource);
         }
     }
 
-    public void cbActStartHover(Object target, params object[] args) {
-        DisplayAction(((ViewAction)target).mod);
+    public void cbSkillStartHover(Object target, params object[] args) {
+        DisplaySkill(((ViewSkill)target).mod);
     }
 
     public void cbBlockerButtonStartHover(Object target, params object[] args) {
-        DisplayAction(ContTurns.Get().GetNextActingChr().skillBlock);
+        DisplaySkill(ContTurns.Get().GetNextActingChr().skillBlock);
     }
 
     public void cbRestButtonStartHover(Object target, params object[] args) {
-        DisplayAction(ContTurns.Get().GetNextActingChr().skillRest);
+        DisplaySkill(ContTurns.Get().GetNextActingChr().skillRest);
     }
 
-    public void StopDisplayAction(Action act) {
+    public void StopDisplaySkill(Skill sk) {
         if(bLocked == false &&
-            ((viewInfoPanel.viewInfoAction == null) || //If nothing is currently being shown
-            act == viewInfoPanel.viewInfoAction.mod)) {
-            // First ensure that what we're leaving is the current displayed ability
+            ((viewInfoPanel.viewInfoSkill == null) || //If nothing is currently being shown
+            sk == viewInfoPanel.viewInfoSkill.mod)) {
+            // First ensure that what we're leaving is the current displayed skill
             //When we stop hovering over the thing we're displaying, stop displaying it
             viewInfoPanel.ClearPanel();
         }
@@ -64,32 +64,32 @@ public class ContInfo : MonoBehaviour {
 
     public void cbSoulStopHover(Object target, params object[] args) {
         if(((ViewSoul)target).mod == null) {
-            StopDisplayAction(null);
+            StopDisplaySkill(null);
         } else {
-            StopDisplayAction(((ViewSoul)target).mod.actSource);
+            StopDisplaySkill(((ViewSoul)target).mod.skillSource);
         }
     }
 
-    public void cbActStopHover(Object target, params object[] args) {
-        StopDisplayAction(((ViewAction)target).mod);
+    public void cbSkillStopHover(Object target, params object[] args) {
+        StopDisplaySkill(((ViewSkill)target).mod);
     }
 
     public void cbBlockerButtonStopHover(Object target, params object[] args) {
-        StopDisplayAction(ContTurns.Get().GetNextActingChr().skillBlock);
+        StopDisplaySkill(ContTurns.Get().GetNextActingChr().skillBlock);
     }
 
     public void cbRestButtonStopHover(Object target, params object[] args) {
-        StopDisplayAction(ContTurns.Get().GetNextActingChr().skillRest);
+        StopDisplaySkill(ContTurns.Get().GetNextActingChr().skillRest);
     }
 
-    public void SetActionFocus(Action _actFocus) {
+    public void SetSkillFocus(Skill _skillFocus) {
         viewInfoPanel.ClearPanel();
-        actFocus = _actFocus;
-        viewInfoPanel.ShowInfoAction(actFocus);
+        skillFocus = _skillFocus;
+        viewInfoPanel.ShowInfoSkill(skillFocus);
     }
 
-    public void ClearActionFocus() {
-        actFocus = null;
+    public void ClearSkillFocus() {
+        skillFocus = null;
         viewInfoPanel.ClearPanel();//TODO:: This feels like it could maybe bug
     }
 
@@ -108,8 +108,8 @@ public class ContInfo : MonoBehaviour {
             ContLocalUIInteraction.subAllStartManualTargetting.Subscribe(cbStartTargetting);
             ContLocalUIInteraction.subAllFinishManualTargetting.Subscribe(cbFinishTargetting);
 
-            ViewAction.subAllStartHover.Subscribe(cbActStartHover);
-            ViewAction.subAllStopHover.Subscribe(cbActStopHover);
+            ViewSkill.subAllStartHover.Subscribe(cbSkillStartHover);
+            ViewSkill.subAllStopHover.Subscribe(cbSkillStopHover);
 
             ViewSoul.subAllStartHover.Subscribe(cbSoulStartHover);
             ViewSoul.subAllStopHover.Subscribe(cbSoulStopHover);

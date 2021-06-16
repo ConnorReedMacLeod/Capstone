@@ -14,7 +14,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
     public const byte TOCLIENTEVENTBASE = 0;
 
-    public const byte evtCAbilityUsed = TOCLIENTEVENTBASE + 1;
+    public const byte evtCSkillUsed = TOCLIENTEVENTBASE + 1;
     public const byte evtCTimerTick = TOCLIENTEVENTBASE + 2;
     public const byte evtCOwnershipSelected = TOCLIENTEVENTBASE + 3;
     public const byte evtCInputTypesSelected = TOCLIENTEVENTBASE + 4;
@@ -42,8 +42,8 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
     // to all players when everyone's ready to progress
     int nSavedCharacterSelection;
 
-    //Once we're passed this by the active player picking their ability, save the selection so it
-    // can be disseminated to all players once the Execute ability phase starts
+    //Once we're passed this by the active player picking their skill, save the selection so it
+    // can be disseminated to all players once the Execute skill phase starts
     int nSavedSerializedInfo;
 
     //We'll keep these as ints since we can't transmit custom types with photon events
@@ -216,24 +216,24 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
             break;
 
-        case (int)ContTurns.STATETURN.CHOOSEACTIONS:
+        case (int)ContTurns.STATETURN.CHOOSESKILL:
 
-            //Reset any old stored abilityselection
-            ResetSavedAbilitySelection();
+            //Reset any old stored skillselection
+            ResetSavedSkillSelection();
 
             break;
 
-        case (int)ContTurns.STATETURN.EXECUTEACTIONS:
+        case (int)ContTurns.STATETURN.EXECUTESKILL:
 
-            //Fetch the saved ability selection info and pass it along so each client knows what ability is being used
+            //Fetch the saved skill selection info and pass it along so each client knows what skill is being used
             arAdditionalInfo[1] = nSavedSerializedInfo;
 
             break;
 
         case (int)ContTurns.STATETURN.TURNEND:
 
-            //Reset any old stored ability selection
-            ResetSavedAbilitySelection();
+            //Reset any old stored skill selection
+            ResetSavedSkillSelection();
 
             break;
 
@@ -278,20 +278,20 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
         switch(nCurTurnPhase) {
 
-        case (int)ContTurns.STATETURN.CHOOSEACTIONS:
+        case (int)ContTurns.STATETURN.CHOOSESKILL:
             //If no character is set to act, then we jump directly ahead to TurnEnd
             if(ContTurns.Get().GetNextActingChr() == null) {
                 nNextTurnPhase = (int)ContTurns.STATETURN.TURNEND;
             } else {
-                //Otherwise, execute whatever action the active player has chosen
-                nNextTurnPhase = (int)ContTurns.STATETURN.EXECUTEACTIONS;
+                //Otherwise, execute whatever skill the active player has chosen
+                nNextTurnPhase = (int)ContTurns.STATETURN.EXECUTESKILL;
             }
             break;
 
-        case (int)ContTurns.STATETURN.EXECUTEACTIONS:
-            //If we've finished executing an action, then we can move back to
-            //  selecting an action for the character that is next set to act this turn
-            nNextTurnPhase = (int)ContTurns.STATETURN.CHOOSEACTIONS;
+        case (int)ContTurns.STATETURN.EXECUTESKILL:
+            //If we've finished executing an skill, then we can move back to
+            //  selecting a skill for the character that is next set to act this turn
+            nNextTurnPhase = (int)ContTurns.STATETURN.CHOOSESKILL;
 
             break;
 
@@ -321,44 +321,44 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
         //Check if we're in any weird phases that need us to do something special
 
-        //If we're expecting an action selection
-        if(nCurTurnPhase == (int)ContTurns.STATETURN.CHOOSEACTIONS) {
+        //If we're expecting an skill selection
+        if(nCurTurnPhase == (int)ContTurns.STATETURN.CHOOSESKILL) {
 
             //We only need to do something special if we received this end-phase signal from a client
-            //  who has actually submitted an ability selection for his active character
+            //  who has actually submitted a skill selection for his active character
             if(ContTurns.Get().GetNextActingChr() != null &&
                 arnPlayerOwners[ContTurns.Get().GetNextActingChr().plyrOwner.id] == nClientID) {
 
-                //We need to move ahead with finalizing an ability selection.  Check if their selection was valid, and store it.
+                //We need to move ahead with finalizing a skill selection.  Check if their selection was valid, and store it.
                 // If it's not valid, then reset it to a rest which will always be fine
-                if(nSerializedInfo == ContAbilitySelection.nNOABILITYSELECTION) {
+                if(nSerializedInfo == ContSkillSelection.nNOSKILLSELECTION) {
 
-                    Debug.Log("MASTER: Received no selection from the client - issuing a Rest action");
+                    Debug.Log("MASTER: Received no selection from the client - issuing a Rest skill");
 
-                    //If no additional info was passed, then interpret this as a rest action
-                    ResetSavedAbilitySelection();
+                    //If no additional info was passed, then interpret this as a rest skill
+                    ResetSavedSkillSelection();
 
                 } else {
                     SelectionSerializer.SelectionInfo infoReceived = SelectionSerializer.Deserialize(ContTurns.Get().GetNextActingChr(), nSerializedInfo);
                     if(infoReceived.CanSelect()) {
 
-                        //If the ability selection and targetting passed can be used, then save that selection and try to move to the next phase
+                        //If the skill selection and targetting passed can be used, then save that selection and try to move to the next phase
 
                         Debug.Log("MASTER: Received valid selection for " + nSerializedInfo + " - " + infoReceived.ToString());
 
                         SaveSerializedSelection(nSerializedInfo);
 
                     } else {
-                        //Otherwise, if we were passed an invalid ability selection 
+                        //Otherwise, if we were passed an invalid skill selection 
 
-                        Debug.LogError("MASTER: Received invalid ability selection of " + infoReceived.ToString());
+                        Debug.LogError("MASTER: Received invalid skill selection of " + infoReceived.ToString());
 
-                        //Then we'll override that ability selection and just assign them a rest (they can locally fail to select a correct ability as many times as they 
+                        //Then we'll override that skill selection and just assign them a rest (they can locally fail to select a correct skill as many times as they 
                         // want, but they should only ever submit to the master if they're sure they have a finallized good selection)
 
-                        ResetSavedAbilitySelection();
+                        ResetSavedSkillSelection();
 
-                        //TODO - put a signal in here to let the current player know that they somehow submitted an invalid ability
+                        //TODO - put a signal in here to let the current player know that they somehow submitted an invalid skill
                     }
                 }
 
@@ -384,9 +384,9 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
                 //Then this is one of the clients we have to manually nudge to end their phase
 
 
-                if(stateTurn == ContTurns.STATETURN.CHOOSEACTIONS) {
+                if(stateTurn == ContTurns.STATETURN.CHOOSESKILL) {
 
-                    OnClientFinishedPhase(i, (int)stateTurn, ContAbilitySelection.nNOABILITYSELECTION);
+                    OnClientFinishedPhase(i, (int)stateTurn, ContSkillSelection.nNOSKILLSELECTION);
 
                 } else if(stateTurn == ContTurns.STATETURN.BAN) {
 
@@ -434,7 +434,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
     public void SaveSerializedSelection(int _nSavedSerializedInfo) {
         nSavedSerializedInfo = _nSavedSerializedInfo;
     }
-    public void ResetSavedAbilitySelection() {
+    public void ResetSavedSkillSelection() {
         nSavedSerializedInfo = SelectionSerializer.SerializeRest();
     }
 

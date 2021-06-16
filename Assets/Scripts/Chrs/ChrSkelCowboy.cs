@@ -17,7 +17,7 @@ public class ChrSkelCowboy : BaseChr {
         chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { SCOUT, TRAPPER, GARDENER, GIANT };
     }
 
-    //Defines all of a character's unique actions
+    //Defines all of a character's unique skills
     public override void SetLoadoutSkills() {
 
         chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.MULCH;
