@@ -16,8 +16,8 @@ public class StateDead : StateReadiness {
         //Can't ready when dead
     }
 
-    public override bool CanSelectAction(Action act) {
-        //Can't select an action while dead
+    public override bool CanSelectSkill(Skill skill) {
+        //Can't select a skill while dead
         return false;
     }
 
@@ -28,7 +28,7 @@ public class StateDead : StateReadiness {
 
     public override void Recharge() {
         //Nothing should be recharged when dead
-        
+
     }
 
     public override void OnEnter() {
@@ -49,7 +49,7 @@ public class StateDead : StateReadiness {
         //If the character is the blocker, then change the blocker to the next character to act
         Chr chrNextToBlock = ContTurns.Get().GetNextToActOwnedBy(chrOwner.plyrOwner);
 
-        if (chrNextToBlock == null) {
+        if(chrNextToBlock == null) {
             Debug.Log("Game should end");
             Player.subAllPlayerLost.NotifyObs(chrOwner.plyrOwner);
             ContTime.Get().Pause();

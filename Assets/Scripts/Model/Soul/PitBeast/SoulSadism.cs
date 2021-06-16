@@ -9,14 +9,14 @@ public class SoulSadism : Soul {
 
     public void GainLife() {
 
-        ContAbilityEngine.Get().AddExec(new ExecHeal(chrTarget, chrTarget, heal) {
+        ContSkillEngine.Get().AddExec(new ExecHeal(chrTarget, chrTarget, heal) {
 
             arSoundEffects = new SoundEffect[] { new SoundEffect("PitBeast/sndSadism", 1.067f) },
             sLabel = "ooh it hurts so good"
         });
     }
 
-    public SoulSadism(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
+    public SoulSadism(Chr _chrSource, Chr _chrTarget, Skill _skillSource) : base(_chrSource, _chrTarget, _skillSource) {
 
         sName = "Sadism";
 
@@ -26,7 +26,7 @@ public class SoulSadism : Soul {
 
         nBaseHealing = 5;
 
-        //Create a base Healing object that this action will apply 
+        //Create a base Healing object that this skill will apply 
         heal = new Healing(this.chrSource, this.chrSource, nBaseHealing);
 
         InitTriggers();

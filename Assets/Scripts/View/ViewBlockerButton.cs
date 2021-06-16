@@ -12,7 +12,7 @@ public class ViewBlockerButton : ViewInteractive {
     public static Subject subAllStopHover = new Subject(Subject.SubType.ALL);
 
     public bool ButtonVisible() {
-        //Needs to have a character that's acting next this turn, and is selected (and maybe should be in the ability selection phase)
+        //Needs to have a character that's acting next this turn, and is selected (and maybe should be in the skill selection phase)
         return ContTurns.Get().GetNextActingChr() != null && ContTurns.Get().GetNextActingChr().stateSelect == Chr.STATESELECT.SELECTED;
     }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ContTurns : Singleton<ContTurns> {
 
-    public enum STATETURN { DRAFT, BAN, LOADOUTSETUP, RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSEACTIONS, EXECUTEACTIONS, TURNEND };
+    public enum STATETURN { DRAFT, BAN, LOADOUTSETUP, RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSESKILL, EXECUTESKILL, TURNEND };
     public STATETURN curStateTurn;
 
     public Chr[] arChrPriority = new Chr[Player.MAXCHRS];
@@ -17,8 +17,8 @@ public class ContTurns : Singleton<ContTurns> {
     public static Subject subAllPriorityChange = new Subject(Subject.SubType.ALL);
 
     public const float fDelayGameEffects = 0.5f;
-    public const float fDelayTurnAction = 0.5f;
-    public const float fDelayMinorAction = 0.5f;
+    public const float fDelayTurnSkill = 0.5f;
+    public const float fDelayMinorSkill = 0.5f;
     public const float fDelayStandard = 1.25f;
     public const float fDelayBan = 20f;
     public const float fDelayDraftPick = 20f;
@@ -144,27 +144,27 @@ public class ContTurns : Singleton<ContTurns> {
     // phase of the turn.
     public void FinishedTurnPhase() {
 
-        if(ContAbilityEngine.Get().AreStacksEmpty() == false) {
+        if(ContSkillEngine.Get().AreStacksEmpty() == false) {
             Debug.LogError("There's still more to evaluate on the stacks, so we can't finish the turn yet");
             return;
         }
 
-        if(curStateTurn == STATETURN.CHOOSEACTIONS) {
-            //If the current phase of the turn is for choosing actions, then just let
+        if(curStateTurn == STATETURN.CHOOSESKILL) {
+            //If the current phase of the turn is for choosing skills, then just let
             // the selection controller send its result for when the phase should end
             // (since this may require waiting for AI calculation or human input)
             //They might send it immediately if it's not their turn or if there's no
             // character acting this turn.
 
             return;
-        } else if(curStateTurn == STATETURN.EXECUTEACTIONS) {
-            //After we're done executing the action (and processing all associated effects) that was passed to us,
+        } else if(curStateTurn == STATETURN.EXECUTESKILL) {
+            //After we're done executing the skill (and processing all associated effects) that was passed to us,
             //  then we can clear out the selection info that the master passed to us since we're done with it
-            ContAbilitySelection.Get().ResetStoredSelection();
+            ContSkillSelection.Get().ResetStoredSelection();
         }
 
 
-        if(ContAbilityEngine.bDEBUGENGINE) Debug.Log("Finished the turn phase: " + curStateTurn);
+        if(ContSkillEngine.bDEBUGENGINE) Debug.Log("Finished the turn phase: " + curStateTurn);
 
         ClientNetworkController.Get().SendTurnPhaseFinished();
 
@@ -208,19 +208,19 @@ public class ContTurns : Singleton<ContTurns> {
 
         case STATETURN.RECHARGE:
 
-            ContAbilityEngine.Get().AddExec(new ExecTurnRecharge(_chrSource: null));
+            ContSkillEngine.Get().AddExec(new ExecTurnRecharge(_chrSource: null));
 
             break;
 
         case STATETURN.READY:
 
-            ContAbilityEngine.Get().AddExec(new ExecTurnReady(_chrSource: null));
+            ContSkillEngine.Get().AddExec(new ExecTurnReady(_chrSource: null));
 
             break;
 
         case STATETURN.REDUCECOOLDOWNS:
 
-            ContAbilityEngine.Get().AddExec(new ExecTurnReduceCooldowns(_chrSource: null));
+            ContSkillEngine.Get().AddExec(new ExecTurnReduceCooldowns(_chrSource: null));
 
             break;
 
@@ -230,43 +230,43 @@ public class ContTurns : Singleton<ContTurns> {
             // and pass this along to the ExecTurnGiveMana that's put on the stack
             Debug.Assert(oAdditionalInfo != null);
 
-            ContAbilityEngine.Get().AddExec(new ExecTurnGiveMana(_chrSource: null) { arManaToGive = (int[])oAdditionalInfo });
+            ContSkillEngine.Get().AddExec(new ExecTurnGiveMana(_chrSource: null) { arManaToGive = (int[])oAdditionalInfo });
 
             break;
 
 
         case STATETURN.TURNSTART:
 
-            ContAbilityEngine.Get().AddExec(new ExecTurnStartTurn(_chrSource: null));
+            ContSkillEngine.Get().AddExec(new ExecTurnStartTurn(_chrSource: null));
 
             break;
 
-        case STATETURN.CHOOSEACTIONS:
+        case STATETURN.CHOOSESKILL:
 
-            ContAbilityEngine.Get().AddExec(new ExecTurnChooseActions(_chrSource: null));
+            ContSkillEngine.Get().AddExec(new ExecTurnChooseSkills(_chrSource: null));
 
             break;
 
-        case STATETURN.EXECUTEACTIONS:
+        case STATETURN.EXECUTESKILL:
 
-            //Interpret the additional info passed from Master as ability selection info from the active player
+            //Interpret the additional info passed from Master as skill selection info from the active player
             int nSerializedSelectionInfo = (int)oAdditionalInfo;
-            ContAbilitySelection.Get().ReceiveSelectionFromMaster(nSerializedSelectionInfo);
+            ContSkillSelection.Get().ReceiveSelectionFromMaster(nSerializedSelectionInfo);
 
-            ContAbilityEngine.Get().AddExec(new ExecTurnExecuteAction(_chrSource: null));
+            ContSkillEngine.Get().AddExec(new ExecTurnExecuteSkill(_chrSource: null));
 
             break;
 
         case STATETURN.TURNEND:
 
-            ContAbilityEngine.Get().AddExec(new ExecTurnEndTurn(_chrSource: null));
+            ContSkillEngine.Get().AddExec(new ExecTurnEndTurn(_chrSource: null));
 
             break;
         }
 
-        if(ContAbilityEngine.Get().bAutoTurns) {
+        if(ContSkillEngine.Get().bAutoTurns) {
             //Now that the appropriate ExecTurn as been added, we can resume processing the stack
-            ContAbilityEngine.Get().ProcessStacks();
+            ContSkillEngine.Get().ProcessStacks();
         }
     }
 

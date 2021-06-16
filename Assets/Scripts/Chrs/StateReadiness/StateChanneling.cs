@@ -18,7 +18,7 @@ public class StateChanneling : StateReadiness {
 
         //Set the channel time to be equal to whatever the soul's duration is
 
-        Debug.Log("soulBehaviour's action is initially " + soulBehaviour.actSource.sName + " with duration " + nChannelTime);
+        Debug.Log("soulBehaviour's skill is initially " + soulBehaviour.skillSource.sName + " with duration " + nChannelTime);
     }
 
     public override TYPE Type() {
@@ -36,10 +36,10 @@ public class StateChanneling : StateReadiness {
     // this should be subcribed to each potentially invalidating subject
     public void cbInterruptifInvalid(Object target, params object[] args) {
 
-        Debug.Assert(soulBehaviour.actSource.type.Type() == TypeAction.TYPE.CHANNEL);
+        Debug.Assert(soulBehaviour.skillSource.type.Type() == TypeSkill.TYPE.CHANNEL);
 
-        //Get the SelectionInfo stored for the channeled action and check if it is still completable
-        if(soulBehaviour.actSource.CanCompleteAsChannel(soulBehaviour.actSource.type.GetSelectionInfo()) == false) {
+        //Get the SelectionInfo stored for the channeled skill and check if it is still completable
+        if(soulBehaviour.skillSource.CanCompleteAsChannel(soulBehaviour.skillSource.type.GetSelectionInfo()) == false) {
             //If targetting has become invalid (maybe because someone has died)
             InterruptChannel();
 
@@ -55,7 +55,7 @@ public class StateChanneling : StateReadiness {
     //To be called as part of a stun, before transitioning to the stunned state
     public override void InterruptChannel() {
 
-        Debug.Log("Interuptting an ability with " + soulBehaviour.actSource.sName);
+        Debug.Log("Interupting a skill with " + soulBehaviour.skillSource.sName);
 
         //Activate any Interruption trigger on the soul effect
         soulBehaviour.OnInterrupted();
@@ -81,7 +81,7 @@ public class StateChanneling : StateReadiness {
         if(nChannelTime == 0) {
 
             Debug.Log("Naturally completed the channel, so pushing ExecCompleteChannel");
-            ContAbilityEngine.Get().AddExec(new ExecCompleteChannel(null, chrOwner));
+            ContSkillEngine.Get().AddExec(new ExecCompleteChannel(null, chrOwner));
         }
 
     }
@@ -94,7 +94,7 @@ public class StateChanneling : StateReadiness {
         }
 
         //If we're channeling, instead of reducing fatigue, we only reduce the channel time
-        ContAbilityEngine.Get().AddExec(new ExecChangeChannel(null, chrOwner, -1));
+        ContSkillEngine.Get().AddExec(new ExecChangeChannel(null, chrOwner, -1));
 
     }
 
@@ -117,7 +117,7 @@ public class StateChanneling : StateReadiness {
         //  - don't want that stale selection info floating around after it's relevant
         //  - need to do it before removing the soulBehaviour so that the clause gets evaluated after all the
         //    effects of the soulBehaviour have been resolved
-        ContAbilityEngine.PushSingleClause(new ClauseClearStoredSelection(soulBehaviour.actSource));
+        ContSkillEngine.PushSingleClause(new ClauseClearStoredSelection(soulBehaviour.skillSource));
 
         //TODO:: unsubscribe from all of these cancelling triggers
         Chr.subAllDeath.UnSubscribe(cbInterruptifInvalid);
@@ -128,17 +128,17 @@ public class StateChanneling : StateReadiness {
 
     class ClauseClearStoredSelection : ClauseSpecial {
 
-        public ClauseClearStoredSelection(Action _action) : base(_action) {
+        public ClauseClearStoredSelection(Skill _skill) : base(_skill) {
         }
 
         public override string GetDescription() {
-            return string.Format("Clear out stored selection info for " + action.sName);
+            return string.Format("Clear out stored selection info for " + skill.sName);
         }
 
         public override void ClauseEffect() {
 
-            Debug.Log("Pushing ClearStoredSelection for " + action.sName);
-            ContAbilityEngine.PushSingleExecutable(new ExecClearStoredSelection(action.chrSource, action));
+            Debug.Log("Pushing ClearStoredSelection for " + skill.sName);
+            ContSkillEngine.PushSingleExecutable(new ExecClearStoredSelection(skill.chrSource, skill));
 
         }
 

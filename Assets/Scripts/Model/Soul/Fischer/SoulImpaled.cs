@@ -7,7 +7,7 @@ public class SoulImpaled : Soul {
     public int nMaxLifeReduction;
     public LinkedListNode<Property<int>.Modifier> modifierLifeReduction;
 
-    public SoulImpaled(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
+    public SoulImpaled(Chr _chrSource, Chr _chrTarget, Skill _skillSource) : base(_chrSource, _chrTarget, _skillSource) {
 
         sName = "Impaled";
 

@@ -7,7 +7,7 @@ public class SoulStickyBomb : Soul {
     public int nDetonationDamage;
     public Damage dmg;
 
-    public SoulStickyBomb(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
+    public SoulStickyBomb(Chr _chrSource, Chr _chrTarget, Skill _skillSource) : base(_chrSource, _chrTarget, _skillSource) {
 
         sName = "StickyBomb";
 
@@ -17,7 +17,7 @@ public class SoulStickyBomb : Soul {
 
         nDetonationDamage = 30;
 
-        //Create a base Damage object that this action will apply
+        //Create a base Damage object that this skill will apply
         dmg = new Damage(this.chrSource, null, nDetonationDamage);
 
     }
@@ -31,7 +31,7 @@ public class SoulStickyBomb : Soul {
     //Only want the damage to go off if the soul effect expires naturally 
     public override void ExpirationEffect() {
 
-        ContAbilityEngine.Get().AddExec(new ExecDealDamage(chrSource, chrTarget, dmg) {
+        ContSkillEngine.Get().AddExec(new ExecDealDamage(chrSource, chrTarget, dmg) {
             arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndStickyBombDetonate", 3.1f) },
             sLabel = "Ai-same-CRIER, aibu-save-LIAR"
         });

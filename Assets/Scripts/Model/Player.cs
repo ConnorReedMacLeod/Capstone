@@ -73,7 +73,7 @@ public class Player : MonoBehaviour {
             //Let the controller know which player its representing
             inputController.SetOwner(this);
 
-            LocalInputScripted.SetRandomAbilities((LocalInputScripted)inputController);
+            LocalInputScripted.SetRandomSkills((LocalInputScripted)inputController);
 
             break;
 

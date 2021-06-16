@@ -8,7 +8,7 @@ public class SoulSpooked : Soul {
 
     public SoulChangePower soulChangePower;
 
-    public SoulSpooked(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
+    public SoulSpooked(Chr _chrSource, Chr _chrTarget, Skill _skillSource) : base(_chrSource, _chrTarget, _skillSource) {
 
         sName = "Spooked";
 
@@ -22,7 +22,7 @@ public class SoulSpooked : Soul {
 
     public override void ApplicationEffect() {
         //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
-        soulChangePower = new SoulChangePower(chrSource, chrTarget, actSource, nPowerDebuff);
+        soulChangePower = new SoulChangePower(chrSource, chrTarget, skillSource, nPowerDebuff);
         chrTarget.soulContainer.ApplySoul(soulChangePower);
     }
 
@@ -31,7 +31,7 @@ public class SoulSpooked : Soul {
     }
 
     public SoulSpooked(SoulSpooked other, Chr _chrTarget = null) : base(other) {
-        if (_chrTarget != null) {
+        if(_chrTarget != null) {
             //If a Target was provided, then we'll use that
             chrTarget = _chrTarget;
         } else {
