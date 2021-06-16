@@ -7,7 +7,7 @@ public class SoulChannelAmbush : SoulChannel {
     public int nBaseDamage;
     public Damage dmg;
 
-    public SoulChannelAmbush(Action _act) : base(_act) {
+    public SoulChannelAmbush(Skill _skill) : base(_skill) {
 
         nBaseDamage = 20;
         dmg = new Damage(chrSource, null, nBaseDamage);
@@ -19,16 +19,16 @@ public class SoulChannelAmbush : SoulChannel {
 
         lstTriggers = new List<Soul.TriggerEffect>() {
             new Soul.TriggerEffect() {
-                sub = Chr.subAllPostExecuteAbility,
+                sub = Chr.subAllPostExecuteSkill,
                 cb = (target, args) => {
 
-                    Chr chrStoredSelection = ((SelectionSerializer.SelectionChr)actSource.type.GetSelectionInfo()).chrSelected;
+                    Chr chrStoredSelection = ((SelectionSerializer.SelectionChr)skillSource.type.GetSelectionInfo()).chrSelected;
 
-                    //If the character who used an ability is the one we targetted, and they are using a proper action (not a rest with no proper skillslot)
+                    //If the character who used a skill is the one we targetted, and they are using a proper skill (not a rest with no proper skillslot)
                     // Then we can ambush them
-                    if((Chr)target == chrStoredSelection && ((Action)args[0]).skillslot != null){
+                    if((Chr)target == chrStoredSelection && ((Skill)args[0]).skillslot != null){
 
-                         ContAbilityEngine.PushSingleExecutable(new ExecDealDamage(chrSource, chrTarget, new Damage(dmg)){
+                         ContSkillEngine.PushSingleExecutable(new ExecDealDamage(chrSource, chrTarget, new Damage(dmg)){
                              arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndAmbush", 3.433f) },
                              sLabel = "Surprise!"
                          });

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SoulSmokeCover : Soul {
 
-    public SoulSmokeCover(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
+    public SoulSmokeCover(Chr _chrSource, Chr _chrTarget, Skill _skillSource) : base(_chrSource, _chrTarget, _skillSource) {
 
         sName = "SmokeCover";
 

@@ -13,8 +13,8 @@ public class Chr : MonoBehaviour {
     public static readonly string[] ARSCHRNAMES = { "Fischer", "Katarina", "PitBeast", "Rayne", "Saiko", "Sophidia", "None" };
 
     public enum STATESELECT {
-        SELECTED,                   //Selected a character (to see status effects, actions)
-        TARGGETING,                 //Targetting of character actions
+        SELECTED,                   //Selected a character (to see status effects, skills)
+        TARGGETING,                 //Targetting of character skills
         IDLE                        //Default character state
     };
 
@@ -35,10 +35,10 @@ public class Chr : MonoBehaviour {
 
     public int globalid;            //The character's unique identifier across all characters
     public int id;                  //The character's unique identifier for this team
-    public int nFatigue;            //Number of turns a character must wait before their next action
+    public int nFatigue;            //Number of turns a character must wait before their next skill
     public StateReadiness curStateReadiness; //A reference to the current state of readiness
 
-    public int nMaxActionsLeft;     //The total maximum number of actions a character can use in a turn (usually 1, cantrips cost 0)
+    public int nMaxSkillsLeft;     //The total maximum number of skills a character can use in a turn (usually 1, cantrips cost 0)
 
     public int nCurHealth;          //The character's current health
     public Property<int> pnMaxHealth;          //The character's max health
@@ -53,11 +53,11 @@ public class Chr : MonoBehaviour {
     public Property<int> pnArmour;          //The character's current armour
     public int nAbsorbedArmour;             //The amount of damage currently taken by armour
 
-    public SkillSlot[] arSkillSlots;      //The slots for the character's currently usable skills - these keep track of the cooldowns of those abilities
+    public SkillSlot[] arSkillSlots;      //The slots for the character's currently usable skills - these keep track of the cooldowns of those skills
     public const int nStandardCharacterSkills = 4; //Number of non-generic (non-rest) skills currently active on the character
     public const int nTotalSkills = nStandardCharacterSkills + 2; //Number of all skills (including generics)
-    public ActionRest skillRest;  //The standard reference to the rest action the character can use
-    public ActionBlock skillBlock; //TODO - Remove this when implementing positions
+    public SkillRest skillRest;  //The standard reference to the rest skill the character can use
+    public SkillBlock skillBlock; //TODO - Remove this when implementing positions
     public const int nRestSlotId = nStandardCharacterSkills; //Id of the skillslot containing the rest skill
     public const int nBlockSlotId = nStandardCharacterSkills + 1; //Id of the skillslot containing the block skill
     public SkillType.SKILLTYPE[] arSkillTypesOpeningLoadout;  //Holds the initially selected loadout of skills for the character - may shift this to some loadout manager
@@ -65,7 +65,7 @@ public class Chr : MonoBehaviour {
     public bool bBlocker;           //Whether or not the character is the assigned blocker
     public Property<bool> pbCanBlock;          //Whether the character is capable or not of blocking
 
-    public SoulContainer soulContainer; //A reference to the characters list of soul effects
+    public SoulContainer soulContainer; //A reference to the character's list of soul effects
 
     public ViewChr view;
 
@@ -78,18 +78,18 @@ public class Chr : MonoBehaviour {
     public Subject subStartIdle = new Subject();
     public static Subject subAllStartIdle = new Subject(Subject.SubType.ALL);
 
-    public Subject subBecomesActiveForHumans = new Subject(); // When this character's turn for selecting abilities begins
-    public Subject subEndsActiveForHumans = new Subject(); // When this character's turn for selecting abilities ends
+    public Subject subBecomesActiveForHumans = new Subject(); // When this character's turn for selecting skills begins
+    public Subject subEndsActiveForHumans = new Subject(); // When this character's turn for selecting skills ends
 
-    public Subject subBecomesTargettable = new Subject(); // When an ability that is choosing targets can target this character
-    public Subject subEndsTargettable = new Subject(); // When the ability that could target this character stops its targetting process
+    public Subject subBecomesTargettable = new Subject(); // When a skill that is choosing targets can target this character
+    public Subject subEndsTargettable = new Subject(); // When the skill that could target this character stops its targetting process
 
-    public Subject subBeforeActivatingAction = new Subject();
-    public static Subject subAllBeforeActivatingAction = new Subject(Subject.SubType.ALL);
-    public Subject subPreExecuteAbility = new Subject();
-    public static Subject subAllPreExecuteAbility = new Subject(Subject.SubType.ALL);
-    public Subject subPostExecuteAbility = new Subject();
-    public static Subject subAllPostExecuteAbility = new Subject(Subject.SubType.ALL);
+    public Subject subBeforeActivatingSkill = new Subject();
+    public static Subject subAllBeforeActivatingSkill = new Subject(Subject.SubType.ALL);
+    public Subject subPreExecuteSkill = new Subject();
+    public static Subject subAllPreExecuteSkill = new Subject(Subject.SubType.ALL);
+    public Subject subPostExecuteSkill = new Subject();
+    public static Subject subAllPostExecuteSkill = new Subject(Subject.SubType.ALL);
 
     public Subject subLifeChange = new Subject();
     public Subject subArmourCleared = new Subject();
@@ -134,11 +134,11 @@ public class Chr : MonoBehaviour {
         return lstChrInPlay[Random.Range(0, lstChrInPlay.Count)];
     }
 
-    public Action GetRandomActiveSkill() {
+    public Skill GetRandomActiveSkill() {
         return arSkillSlots[Random.Range(0, nStandardCharacterSkills)].skill;
     }
 
-    public Action GetRandomSkill() {
+    public Skill GetRandomSkill() {
         //Sometimes throw in random selections of resting/blocking with weighted changes
         int nRand = Random.Range(0, 100);
 
@@ -207,7 +207,7 @@ public class Chr : MonoBehaviour {
 
         //TODO:: Probably delete this bBeginningTurn flag once I get a nice solution for priority handling
         if(!bBeginningTurn) {
-            //Then this is a stun or an actions used
+            //Then this is a stun or an skills used
             ContTurns.Get().FixSortedPriority(this);
             //So make sure we're in the right place in the priority list
         }
@@ -219,16 +219,16 @@ public class Chr : MonoBehaviour {
         return curStateReadiness.GetPriority();
     }
 
-    public void RechargeActions() {
+    public void RechargeSkills() {
 
         //Only bother recharging the active skills since those will be the only ones that can be on cooldown
         for(int i = 0; i < Chr.nStandardCharacterSkills; i++) {
 
             //Only reduce the cooldown if it is not currently off cooldown
             if(arSkillSlots[i].nCooldown > 0) {
-                ContAbilityEngine.Get().AddExec(new ExecChangeCooldown(null, arSkillSlots[i].skill, -1) {
+                ContSkillEngine.Get().AddExec(new ExecChangeCooldown(null, arSkillSlots[i].skill, -1) {
 
-                    fDelay = ContTurns.fDelayMinorAction
+                    fDelay = ContTurns.fDelayMinorSkill
                 });
             }
         }
@@ -386,20 +386,20 @@ public class Chr : MonoBehaviour {
         subAllStartIdle.NotifyObs(this);
     }
 
-    //Performs the consumed action 
-    public void ExecuteAction(SelectionSerializer.SelectionInfo infoSelection) {
+    //Performs the consumed skill 
+    public void ExecuteSkill(SelectionSerializer.SelectionInfo infoSelection) {
 
-        if(infoSelection.CanSelect() == false || infoSelection.actUsed.CanPayMana() == false) {
-            Debug.LogError("ERROR! This ability was targetted, but is no longer a valid action");
+        if(infoSelection.CanSelect() == false || infoSelection.skillUsed.CanPayMana() == false) {
+            Debug.LogError("ERROR! This skill was targetted, but is no longer valid to be executed");
             infoSelection = SelectionSerializer.MakeRestSelection(this);
         }
 
-        //Notify everyone that we're about to use this action
-        subBeforeActivatingAction.NotifyObs(this, infoSelection);
-        subAllBeforeActivatingAction.NotifyObs(this, infoSelection);
+        //Notify everyone that we're about to use this skill
+        subBeforeActivatingSkill.NotifyObs(this, infoSelection);
+        subAllBeforeActivatingSkill.NotifyObs(this, infoSelection);
 
-        //Actually use the action
-        infoSelection.actUsed.UseAction(infoSelection);
+        //Actually use the skill
+        infoSelection.skillUsed.UseSkill(infoSelection);
 
     }
 
@@ -431,8 +431,8 @@ public class Chr : MonoBehaviour {
         }
 
 
-        skillRest = new ActionRest(this);
-        skillBlock = new ActionBlock(this);
+        skillRest = new SkillRest(this);
+        skillBlock = new SkillBlock(this);
 
         arSkillSlots[nRestSlotId].SetSkill(skillRest);
         arSkillSlots[nBlockSlotId].SetSkill(skillBlock);
@@ -443,7 +443,7 @@ public class Chr : MonoBehaviour {
         if(bStarted == false) {
             bStarted = true;
 
-            nMaxActionsLeft = 1;
+            nMaxSkillsLeft = 1;
 
             InitSkillSlots();
 

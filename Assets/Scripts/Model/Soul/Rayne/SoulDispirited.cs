@@ -10,7 +10,7 @@ public class SoulDispirited : Soul {
     public LinkedListNode<Property<int[]>.Modifier>[] arnodeCostModifier;
 
 
-    public SoulDispirited(Chr _chrSource, Chr _chrTarget, Action _actSource) : base(_chrSource, _chrTarget, _actSource) {
+    public SoulDispirited(Chr _chrSource, Chr _chrTarget, Skill _skillSource) : base(_chrSource, _chrTarget, _skillSource) {
 
         sName = "Dispirited";
 
@@ -27,7 +27,7 @@ public class SoulDispirited : Soul {
 
     public override void ApplicationEffect() {
 
-        //Loop through each ability on the targetted character
+        //Loop through each skill on the targetted character
         for(int i = 0; i < Chr.nStandardCharacterSkills; i++) {
 
             ApplyCostIncreaseToSkill(i);
@@ -37,21 +37,21 @@ public class SoulDispirited : Soul {
     }
 
     public void ApplyCostIncreaseToSkill(int iSkill) {
-        //TODO BUG (FUTURE) - eventually when you can adapt/switch abilities, this will only affect the 
-        //                    abilities at the time this soul effect was applied.  So if you switch to an ability
-        //                    then that ability (even if a cantrip) won't have its cost increased.  Will have to 
-        //                    a trigger listener for an ability switch event that will remove swap the applied cost
-        //                    modifier for the old ability and apply it to the newly swapped in ability
+        //TODO BUG (FUTURE) - eventually when you can adapt/switch skills, this will only affect the 
+        //                    skills at the time this soul effect was applied.  So if you switch to a skill
+        //                    then that skill (even if a cantrip) won't have its cost increased.  Will have to 
+        //                    a trigger listener for a skill switch event that will remove swap the applied cost
+        //                    modifier for the old skill and apply it to the newly swapped in skill
 
-        //No need to try to reduce the cost of an ability that is null - likely won't come up once characters get the full amount of abilities
+        //No need to try to reduce the cost of an skill that is null - likely won't come up once characters get the full amount of skills
         if(chrTarget.arSkillSlots[iSkill].skill == null) {
             return;
         }
 
         Property<int[]>.Modifier costIncrease =
                 (arCost) => {
-                    if(chrTarget.arSkillSlots[iSkill].skill.type.Type() == TypeAction.TYPE.CANTRIP) {
-                        //Increase the cost if the ability is a cantrip
+                    if(chrTarget.arSkillSlots[iSkill].skill.type.Type() == TypeSkill.TYPE.CANTRIP) {
+                        //Increase the cost if the skill is a cantrip
                         return LibFunc.AddArray<int>(arCost, arnCostDebuff, (x, y) => (x + y));
                     } else {
                         //Otherwise, keep the cost the same
@@ -63,8 +63,8 @@ public class SoulDispirited : Soul {
 
         arnodeCostModifier.SetValue(costChange, iSkill);
 
-        //UNNEEDED CURRENTLY - ONLY FOR AFFECTING THE FIRST USED ABILITY
-        //chrTarget.subPostExecuteAbility.Subscribe(OnAbilityUsage);
+        //UNNEEDED CURRENTLY - ONLY FOR AFFECTING THE FIRST USED SKILL
+        //chrTarget.subPostExecuteSkill.Subscribe(OnSkillUsage);
     }
 
     public SoulDispirited(SoulDispirited other, Chr _chrTarget = null) : base(other) {
@@ -89,20 +89,20 @@ public class SoulDispirited : Soul {
             chrTarget.arSkillSlots[i].skill.parCost.RemoveModifier(arnodeCostModifier[i]);
         }
 
-        //chrTarget.subPostExecuteAbility.UnSubscribe(OnAbilityUsage);
+        //chrTarget.subPostExecuteSkill.UnSubscribe(OnSkillUsage);
     }
 
-    // **** CURRENTLY UNUSED EFFECT TO MAKE NEXT ABILITY COST 1 MORE ******
+    // **** CURRENTLY UNUSED EFFECT TO MAKE NEXT SKILL COST 1 MORE ******
 
-    public void OnAbilityUsage(Object target, params object[] args) {
+    public void OnSkillUsage(Object target, params object[] args) {
 
-        //Ignore if the action used wasn't used by the character who has this soul effect
-        if(((Action)args[0]).chrSource != this.chrTarget) return;
+        //Ignore if the skill used wasn't used by the character who has this soul effect
+        if(((Skill)args[0]).chrSource != this.chrTarget) return;
 
-        //Check if the action that was just used is a character skill - not a generic (block/rest)
-        if(((Action)args[0]).IsStandardSkill()) {
+        //Check if the skill that was just used is a character skill - not a generic (block/rest)
+        if(((Skill)args[0]).IsStandardSkill()) {
 
-            //if the used action was a character action, then we can dispell this effect
+            //if the used skill was a character skill, then we can dispell this effect
             // sicne we only want to make the first used skill cost more
             soulContainer.RemoveSoul(this);
         }

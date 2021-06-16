@@ -19,46 +19,46 @@ using UnityEngine;
 // happend anywhere (say across all character selections), they 
 // can subscribe to this mega-subject class
 
-[RequireComponent (typeof(ContAbilitySelection))]
-[RequireComponent (typeof(ContMana))]
-[RequireComponent (typeof(ContInfo))]
-[RequireComponent (typeof(ContArena))]
-public class Controller : MonoBehaviour{
+[RequireComponent(typeof(ContSkillSelection))]
+[RequireComponent(typeof(ContMana))]
+[RequireComponent(typeof(ContInfo))]
+[RequireComponent(typeof(ContArena))]
+public class Controller : MonoBehaviour {
 
     //TODO:: Make all of these controllers static instances, so a controller object isn't needed
-    
-    public ContAbilitySelection contAbilitySelection;
+
+    public ContSkillSelection contSkillSelection;
     public ContMana contMana;
     public ContInfo contInfo;
     public ContArena contArena;
 
-	public static Controller Get (){
-		GameObject go = GameObject.FindGameObjectWithTag ("Controller");
-		if (go == null) {
-			Debug.LogError ("ERROR! NO OBJECT HAS A CONTROLLER TAG!");
-		}
-		Controller instance = go.GetComponent<Controller> ();
-		if (instance == null) {
-			Debug.LogError ("ERROR! CONTROLLER TAGGED OBJECT DOES NOT HAVE A CONTROLLER COMPONENT!");
-		}
-		return instance;
-	}
+    public static Controller Get() {
+        GameObject go = GameObject.FindGameObjectWithTag("Controller");
+        if(go == null) {
+            Debug.LogError("ERROR! NO OBJECT HAS A CONTROLLER TAG!");
+        }
+        Controller instance = go.GetComponent<Controller>();
+        if(instance == null) {
+            Debug.LogError("ERROR! CONTROLLER TAGGED OBJECT DOES NOT HAVE A CONTROLLER COMPONENT!");
+        }
+        return instance;
+    }
 
-	public void Start () {
-		gameObject.tag = "Controller";
+    public void Start() {
+        gameObject.tag = "Controller";
 
         // Find all necessary controllers and register them as our observers
-        contAbilitySelection = GetComponent<ContAbilitySelection> ();
-		//Subscribe (contTarget);
+        contSkillSelection = GetComponent<ContSkillSelection>();
+        //Subscribe (contTarget);
 
-		contMana = GetComponent<ContMana> ();
-		//Subscribe (contMana);
+        contMana = GetComponent<ContMana>();
+        //Subscribe (contMana);
 
-		contInfo = GetComponent<ContInfo> ();
-		//Subscribe (contInfo);
+        contInfo = GetComponent<ContInfo>();
+        //Subscribe (contInfo);
 
-        contArena = GetComponent<ContArena> ();
-		//Subscribe (contArena);
-	}
+        contArena = GetComponent<ContArena>();
+        //Subscribe (contArena);
+    }
 
 }

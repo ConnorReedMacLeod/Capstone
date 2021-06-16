@@ -23,11 +23,11 @@ public class MasterTimeoutController : MonoBehaviour {
         //Save the current turnstate we're processing
         stateTurnWaitingOn = stateTurn;
 
-        if(stateTurn == ContTurns.STATETURN.CHOOSEACTIONS) {
+        if(stateTurn == ContTurns.STATETURN.CHOOSESKILL) {
             //TODO - only enforce the full time if we're waiting on the active player
             //just piggy-back off the local player's selection
             // TODO - sync this variable up among all players
-            fTimeoutTimer = ContAbilitySelection.Get().fMaxSelectionTime;
+            fTimeoutTimer = ContSkillSelection.Get().fMaxSelectionTime;
         } else {
             fTimeoutTimer = fTimeoutStandard;
         }
