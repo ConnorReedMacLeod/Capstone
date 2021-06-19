@@ -65,6 +65,8 @@ public class Chr : MonoBehaviour {
     public bool bBlocker;           //Whether or not the character is the assigned blocker
     public Property<bool> pbCanBlock;          //Whether the character is capable or not of blocking
 
+    public Position position;       //A reference to the position the character is on
+
     public SoulContainer soulContainer; //A reference to the character's list of soul effects
 
     public ViewChr view;
@@ -97,6 +99,7 @@ public class Chr : MonoBehaviour {
     public static Subject subAllFatigueChange = new Subject(Subject.SubType.ALL);
     public Subject subChannelTimeChange = new Subject();
     public Subject subBlockerChanged = new Subject();
+    public Subject subPositionChanged = new Subject();
 
     public Subject subStatusChange = new Subject();
     public static Subject subAllStatusChange = new Subject(Subject.SubType.ALL);
@@ -348,6 +351,12 @@ public class Chr : MonoBehaviour {
 
     public bool CanBlock() {
         return !bBlocker && pbCanBlock.Get();
+    }
+
+    public void UpdatePosition(Position _position) {
+        if(position == _position) return;
+
+        position = _position;
     }
 
     //Counts down the character's recharge with the timeline
