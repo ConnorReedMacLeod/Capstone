@@ -38,6 +38,13 @@ public class Position {
 
     }
 
+    public bool IsAllyOwned(Player plyr) {
+        return ContPositions.Get().GetPlayerOwnerOfPosition(this) == plyr;
+    }
+
+    public bool IsEnemyOwned(Player plyr) {
+        return !IsAllyOwned(plyr);
+    }
 
     public Position(int _iColumn, int _jRow) {
 

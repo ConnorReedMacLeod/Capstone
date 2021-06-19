@@ -93,6 +93,93 @@ public class ContPositions : Singleton<ContPositions> {
 
 
     //Common Enemy Queries
+    public List<Position> GetEnemyBenchPositions(Player plyr) {
+        return GetPositionsOfTypeForPlayer(Position.POSITIONTYPE.BENCH, plyr.GetEnemyPlayer());
+    }
+    public List<Chr> GetEnemyBenchChrs(Player plyr) {
+        return GetChrsInPositions(GetEnemyBenchPositions(plyr.GetEnemyPlayer()));
+    }
+
+    public List<Position> GetEnemyBacklinePositions(Player plyr) {
+        return GetPositionsOfTypeForPlayer(Position.POSITIONTYPE.BACKLINE, plyr.GetEnemyPlayer());
+    }
+    public List<Chr> GetEnemyBacklineChrs(Player plyr) {
+        return GetChrsInPositions(GetEnemyBacklinePositions(plyr.GetEnemyPlayer()));
+    }
+
+    public List<Position> GetEnemyFrontlinePositions(Player plyr) {
+        return GetPositionsOfTypeForPlayer(Position.POSITIONTYPE.FRONTLINE, plyr.GetEnemyPlayer());
+    }
+    public List<Chr> GetEnemyFrontlineChrs(Player plyr) {
+        return GetChrsInPositions(GetEnemyFrontlinePositions(plyr.GetEnemyPlayer()));
+    }
+
+    public List<Position> GetInPlayEnemyPositions(Player plyr) {
+        return GetEnemyFrontlinePositions(plyr).Concat(GetEnemyBacklinePositions(plyr.GetEnemyPlayer())).ToList();
+    }
+    public List<Chr> GetInPlayEnemyChrs(Player plyr) {
+        return GetChrsInPositions(GetInPlayEnemyPositions(plyr.GetEnemyPlayer()));
+    }
+
+
+    //Relative Positional Queries
+
+    public List<Position> GetBesidePositions(Position pos) {
+        List<Position> lstBesidePositions = new List<Position>();
+
+        if(pos.jRow > 0) {
+            lstBesidePositions.Add(lstAllPositions[pos.iColumn][pos.jRow - 1]);
+        }
+        if(pos.jRow < nROWS - 1) {
+            lstBesidePositions.Add(lstAllPositions[pos.iColumn][pos.jRow + 1]);
+        }
+
+        return lstBesidePositions;
+    }
+
+    public List<Position> GetBehindPosition(Position pos) {
+        List<Position> lstBehindPosition = new List<Position>();
+
+        //Can only get positions behind the frontline
+        if(pos.positiontype == Position.POSITIONTYPE.FRONTLINE) {
+
+            //For the 0th Player (on the left), reduce the index by 1
+            if(GetPlayerOwnerOfPosition(pos).id == 0) {
+                lstBehindPosition.Add(lstAllPositions[pos.iColumn - 1][pos.jRow]);
+            } else {
+                //The other player (on the right), increases the index by 1 to move further right
+                lstBehindPosition.Add(lstAllPositions[pos.iColumn + 1][pos.jRow]);
+            }
+        }
+
+        return lstBehindPosition;
+    }
+
+    public List<Position> GetInFrontPosition(Position pos) {
+        List<Position> lstInFrontPosition = new List<Position>();
+
+        //Can only get positions if not on the bench
+        if(pos.positiontype != Position.POSITIONTYPE.BENCH) {
+
+            //For the 0th Player (on the left), increase the index by 1
+            if(GetPlayerOwnerOfPosition(pos).id == 0) {
+                lstInFrontPosition.Add(lstAllPositions[pos.iColumn + 1][pos.jRow]);
+            } else {
+                //The other player (on the right), decreases the index by 1 to move back to the left
+                lstInFrontPosition.Add(lstAllPositions[pos.iColumn - 1][pos.jRow]);
+            }
+        }
+
+        return lstInFrontPosition;
+    }
+
+    public List<Position> GetAdjacentPositions(Position pos) {
+        List<Position> lstAdjacentPosition = GetBesidePositions(pos).Concat(GetBehindPosition(pos).Concat(GetInFrontPosition(pos))).ToList();
+
+        lstAdjacentPosition.Add(pos);
+
+        return lstAdjacentPosition;
+    }
 
 
 
