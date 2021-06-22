@@ -8,6 +8,8 @@ public class Position {
 
     public POSITIONTYPE positiontype;
 
+    public delegate Position FuncGetPosition(Chr chr);
+
     public int iColumn;
     public int jRow;
 
@@ -54,4 +56,5 @@ public class Position {
         InitPositionType();
 
     }
+
 }

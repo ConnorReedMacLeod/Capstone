@@ -13,8 +13,6 @@ public class Player : MonoBehaviour {
     public Chr[] arChr;
     public int nChrs;
 
-    public int iBlocker; // the index of the currently selected blocker
-
     public static List<Player> lstAllPlayers;
     public GameObject pfManaPanel;
 
@@ -97,40 +95,6 @@ public class Player : MonoBehaviour {
         subAllInputTypeChanged.NotifyObs(this, curInputType);
     }
 
-    public void SetDefaultBlocker() {
-
-        SetBlocker(ContTurns.Get().GetNextToActOwnedBy(this));
-
-    }
-
-    //Add an alternate signature for the function
-    public void SetBlocker(Chr _chrBlocker) {
-        SetBlocker(_chrBlocker.id);
-    }
-
-    public void SetBlocker(int _iBlocker) {
-
-        Debug.Assert(arChr[_iBlocker] != null, "Assigned a blocker as a character that doesn't exist: " + _iBlocker);
-        if(iBlocker == _iBlocker) {
-            Debug.Log("Then this character is already the blocker");
-            return;
-        }
-
-        //TODO:: Make this more sophisticated
-        if(iBlocker != -1) {
-            arChr[iBlocker].ChangeBlocker(false);
-        }
-
-        iBlocker = _iBlocker;
-
-        arChr[iBlocker].ChangeBlocker(true);
-
-    }
-
-    public Chr GetBlocker() {
-        Debug.Assert(arChr[iBlocker] != null, "No blocker assigned to player " + id);
-        return arChr[iBlocker];
-    }
 
     //Get a refernce to the enemy player
     public Player GetEnemyPlayer() {

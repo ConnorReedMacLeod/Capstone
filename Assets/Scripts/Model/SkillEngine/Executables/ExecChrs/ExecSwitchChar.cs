@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecBecomeBlocker : ExecChr {
+//Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
+
+public class ExecSwitchChar : ExecChr {
+
+    public Position.FuncGetPosition funcGetTargetPosition;
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -31,18 +35,33 @@ public class ExecBecomeBlocker : ExecChr {
 
     public override void ExecuteEffect() {
 
-        chrTarget.plyrOwner.SetBlocker(chrTarget.id);
+        //Figure out what the target position should be at the time of execution (relative to the character that's moving)
+        Position posDestination = funcGetTargetPosition(chrTarget);
+
+        Debug.Assert(posDestination.positiontype != Position.POSITIONTYPE.BENCH);
+
+        //Call the Switch method in the position controller
+        ContPositions.Get().SwitchChrToPosition(chrTarget, posDestination);
+
+        sLabel = chrSource.sName + " is moving to " + posDestination.ToString();
 
         fDelay = ContTurns.fDelayMinorSkill;
-        sLabel = chrTarget.sName + " has become the blocker";
+    }
+
+
+    //Can construct an ExecSwitchChar with just a static Position if it'll always be the same (i.e., not dependent on being relative to where the character is moving)
+    public ExecSwitchChar(Chr _chrSource, Chr _chrTarget, Position posDestination) : this(_chrSource, _chrTarget, (chrTarget) => posDestination) {
 
     }
 
-    public ExecBecomeBlocker(Chr _chrSource, Chr _chrTarget): base(_chrSource, _chrTarget) {
+    public ExecSwitchChar(Chr _chrSource, Chr _chrTarget, Position.FuncGetPosition _funcGetPosition) : base(_chrSource, _chrTarget) {
+
+        funcGetTargetPosition = _funcGetPosition;
 
     }
 
-    public ExecBecomeBlocker(ExecBecomeBlocker other) : base(other) {
-
+    public ExecSwitchChar(ExecMoveChar other) : base(other) {
+        funcGetTargetPosition = other.funcGetTargetPosition;
     }
+
 }

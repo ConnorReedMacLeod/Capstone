@@ -137,44 +137,46 @@ public class ContPositions : Singleton<ContPositions> {
         return lstBesidePositions;
     }
 
-    public List<Position> GetBehindPosition(Position pos) {
-        List<Position> lstBehindPosition = new List<Position>();
+    public Position GetBehindPosition(Position pos) {
 
         //Can only get positions behind the frontline
         if(pos.positiontype == Position.POSITIONTYPE.FRONTLINE) {
 
             //For the 0th Player (on the left), reduce the index by 1
             if(GetPlayerOwnerOfPosition(pos).id == 0) {
-                lstBehindPosition.Add(lstAllPositions[pos.iColumn - 1][pos.jRow]);
+                return lstAllPositions[pos.iColumn - 1][pos.jRow];
             } else {
                 //The other player (on the right), increases the index by 1 to move further right
-                lstBehindPosition.Add(lstAllPositions[pos.iColumn + 1][pos.jRow]);
+                return lstAllPositions[pos.iColumn + 1][pos.jRow];
             }
+        } else {
+            return null;
         }
-
-        return lstBehindPosition;
     }
 
-    public List<Position> GetInFrontPosition(Position pos) {
-        List<Position> lstInFrontPosition = new List<Position>();
+    public Position GetInFrontPosition(Position pos) {
 
-        //Can only get positions if not on the bench
+        //Can only get positions in front if not on the bench
         if(pos.positiontype != Position.POSITIONTYPE.BENCH) {
 
             //For the 0th Player (on the left), increase the index by 1
             if(GetPlayerOwnerOfPosition(pos).id == 0) {
-                lstInFrontPosition.Add(lstAllPositions[pos.iColumn + 1][pos.jRow]);
+                return lstAllPositions[pos.iColumn + 1][pos.jRow];
             } else {
                 //The other player (on the right), decreases the index by 1 to move back to the left
-                lstInFrontPosition.Add(lstAllPositions[pos.iColumn - 1][pos.jRow]);
+                return lstAllPositions[pos.iColumn - 1][pos.jRow];
             }
+        } else {
+            return null;
         }
-
-        return lstInFrontPosition;
     }
 
     public List<Position> GetAdjacentPositions(Position pos) {
-        List<Position> lstAdjacentPosition = GetBesidePositions(pos).Concat(GetBehindPosition(pos).Concat(GetInFrontPosition(pos))).ToList();
+        List<Position> lstAdjacentPosition = GetBesidePositions(pos).ToList();
+
+        lstAdjacentPosition.Add(GetBehindPosition(pos));
+
+        lstAdjacentPosition.Add(GetInFrontPosition(pos));
 
         lstAdjacentPosition.Add(pos);
 
@@ -187,7 +189,9 @@ public class ContPositions : Singleton<ContPositions> {
 
     public void MoveChrToPosition(Chr chr, Position pos) {
 
-        if(IsDiffOwnerOfPosition(chr.position, pos)) {
+        Position posStarting = chr.position;
+
+        if(posStarting != null && IsDiffOwnerOfPosition(posStarting, pos)) {
             Debug.LogError("Can't move to an opponent's position");
             return;
         }
@@ -202,10 +206,8 @@ public class ContPositions : Singleton<ContPositions> {
             return;
         }
 
-        Position posStarting = chr.position;
-
         //Vacate the current space
-        posStarting.SetChrOnPosition(null);
+        if(posStarting != null) posStarting.SetChrOnPosition(null);
 
         //Place this character on the target position
         pos.SetChrOnPosition(chr);
@@ -216,7 +218,7 @@ public class ContPositions : Singleton<ContPositions> {
         chr.subPositionChanged.NotifyObs();
         pos.subCharacterOnPositionChanged.NotifyObs();
 
-        posStarting.subCharacterOnPositionChanged.NotifyObs();
+        if(posStarting != null) posStarting.subCharacterOnPositionChanged.NotifyObs();
 
     }
 
@@ -297,13 +299,28 @@ public class ContPositions : Singleton<ContPositions> {
         //  Will probably have to put in similar sub notifications as in the SwitchChr function
     }
 
+
+    public void PrintAllPositions() {
+        Debug.Log("Contents of Positions:");
+        for(int i = 0; i < nCOLUMNS; i++) {
+            for(int j = 0; j < nROWS; j++) {
+                string sCharName = "Empty";
+
+                if(lstAllPositions[i][j].chrOnPosition != null) sCharName = lstAllPositions[i][j].chrOnPosition.sName;
+
+                Debug.Log(lstAllPositions[i][j].ToString() + ": " + sCharName);
+            }
+        }
+
+    }
+
     public override void Init() {
 
         lstAllPositions = new List<List<Position>>();
         for(int i = 0; i < nCOLUMNS; i++) {
-            lstAllPositions[i] = new List<Position>();
+            lstAllPositions.Add(new List<Position>());
             for(int j = 0; j < nROWS; j++) {
-                lstAllPositions[i][j] = new Position(i, j);
+                lstAllPositions[i].Add(new Position(i, j));
             }
         }
 

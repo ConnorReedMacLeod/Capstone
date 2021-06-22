@@ -44,10 +44,6 @@ public class ContInfo : MonoBehaviour {
         DisplaySkill(((ViewSkill)target).mod);
     }
 
-    public void cbBlockerButtonStartHover(Object target, params object[] args) {
-        DisplaySkill(ContTurns.Get().GetNextActingChr().skillBlock);
-    }
-
     public void cbRestButtonStartHover(Object target, params object[] args) {
         DisplaySkill(ContTurns.Get().GetNextActingChr().skillRest);
     }
@@ -72,10 +68,6 @@ public class ContInfo : MonoBehaviour {
 
     public void cbSkillStopHover(Object target, params object[] args) {
         StopDisplaySkill(((ViewSkill)target).mod);
-    }
-
-    public void cbBlockerButtonStopHover(Object target, params object[] args) {
-        StopDisplaySkill(ContTurns.Get().GetNextActingChr().skillBlock);
     }
 
     public void cbRestButtonStopHover(Object target, params object[] args) {
@@ -113,10 +105,6 @@ public class ContInfo : MonoBehaviour {
 
             ViewSoul.subAllStartHover.Subscribe(cbSoulStartHover);
             ViewSoul.subAllStopHover.Subscribe(cbSoulStopHover);
-
-            ViewBlockerButton.subAllStartHover.Subscribe(cbBlockerButtonStartHover);
-            ViewBlockerButton.subAllStopHover.Subscribe(cbBlockerButtonStopHover);
-
             ViewRestButton.subAllStartHover.Subscribe(cbRestButtonStartHover);
             ViewRestButton.subAllStopHover.Subscribe(cbRestButtonStopHover);
         }
