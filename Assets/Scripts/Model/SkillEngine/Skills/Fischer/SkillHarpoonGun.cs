@@ -70,14 +70,14 @@ public class SkillHarpoonGun : Skill {
 
         public override string GetDescription() {
 
-            return string.Format("That enemy becomes the blocker.");
+            return string.Format("That enemy Switches to the position in front of them");
         }
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            Debug.Log("Executing become blocker clause");
+            Debug.Log("Executing Switch forward");
 
-            ContSkillEngine.PushSingleExecutable(new ExecBecomeBlocker(skill.chrSource, chrSelected) {
+            ContSkillEngine.PushSingleExecutable(new ExecSwitchChar(skill.chrSource, chrSelected, (chrTarget) => ContPositions.Get().GetInFrontPosition(chrTarget.position)) {
                 sLabel = "Hey, I caught one!"
             });
 

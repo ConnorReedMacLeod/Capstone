@@ -6,14 +6,13 @@ using UnityEngine;
 public class ClauseTagChrMelee : ClauseTagChr {
 
     public override List<Chr> ApplySelectionFiltering(List<Chr> lstTargets) {
-        return lstTargets.Where(c => c.bBlocker).ToList<Chr>();
+        return lstTargets.Where(c => c.position.positiontype == Position.POSITIONTYPE.FRONTLINE).ToList<Chr>();
     }
 
     public override List<Chr> DisambiguateFinalTargetting(List<Chr> lstTargets, SelectionSerializer.SelectionInfo selectionInfo) {
-        //Scan through the potential blockers (only blockers should remain at this point) and choose only the blocker 
-        // on the same team as was originally selected
+        //For ranged, only accept the character that we specifically initially selected
 
-        return lstTargets.Where(c => c.plyrOwner.id == ((SelectionSerializer.SelectionChr)selectionInfo).chrSelected.plyrOwner.id).ToList<Chr>();
+        return lstTargets.Where(c => c.globalid == ((SelectionSerializer.SelectionChr)selectionInfo).chrSelected.globalid).ToList<Chr>();
     }
 
     public ClauseTagChrMelee(Clause _clause) : base(_clause) {

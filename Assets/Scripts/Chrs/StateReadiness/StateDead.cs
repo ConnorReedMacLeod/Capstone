@@ -46,16 +46,18 @@ public class StateDead : StateReadiness {
         //Debug.Log("nLive Characters is now " + ContTurns.Get().nLiveCharacters + " since " + chrOwner.sName + " just died");
 
         //After fixing priority ordering (pushing this character to the back)
-        //If the character is the blocker, then change the blocker to the next character to act
-        Chr chrNextToBlock = ContTurns.Get().GetNextToActOwnedBy(chrOwner.plyrOwner);
 
-        if(chrNextToBlock == null) {
+        //TODO do a check for if the game should be over
+        /*
+          if(chrNextToBlock == null) {
             Debug.Log("Game should end");
             Player.subAllPlayerLost.NotifyObs(chrOwner.plyrOwner);
             ContTime.Get().Pause();
         } else {
             chrOwner.plyrOwner.SetDefaultBlocker();
         }
+
+        */
 
         chrOwner.subDeath.NotifyObs(chrOwner);
         Chr.subAllDeath.NotifyObs(chrOwner);

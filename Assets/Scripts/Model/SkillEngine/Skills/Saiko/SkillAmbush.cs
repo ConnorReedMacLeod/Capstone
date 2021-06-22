@@ -40,7 +40,7 @@ public class SkillAmbush : Skill {
 
         public override string GetDescription() {
 
-            return string.Format("While channeling, after the chosen character uses a skill or blocks, deal {0} damage to them",
+            return string.Format("While channeling, after the chosen character uses a skill, deal {0} damage to them",
                 ((SkillAmbush)skill).soulChannelBehaviour.nBaseDamage);
         }
 
