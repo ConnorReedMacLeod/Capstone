@@ -25,8 +25,6 @@ public class Chr : MonoBehaviour {
         GIANT
     };
 
-    Arena arena;                    //The field of play
-
     public string sName;            //The name of the character
     public Player plyrOwner;        //The player who controls the character
 

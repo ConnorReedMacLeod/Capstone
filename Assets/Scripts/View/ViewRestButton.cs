@@ -44,7 +44,7 @@ public class ViewRestButton : ViewInteractive {
     }
 
 
-    public void Start() {
+    public override void Start() {
         if(bStarted == false) {
             bStarted = true;
 
@@ -53,6 +53,8 @@ public class ViewRestButton : ViewInteractive {
             ContTurns.subAllPriorityChange.Subscribe(cbChrPriorityOrderChange);
 
             Display();
+
+            base.Start();
         }
     }
 

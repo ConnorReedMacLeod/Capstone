@@ -16,9 +16,13 @@ public class ContPositions : Singleton<ContPositions> {
     public const int nCOLUMNS = 6;
     public const int nBENCHCOLUMNSPERTEAM = 1;
 
-    public List<List<Position>> lstAllPositions;
+    public List<Position> lstAllPositions;
 
 
+
+    public Position GetPosition(int iColumn, int jRow) {
+        return lstAllPositions[iColumn * nROWS + jRow];
+    }
 
     public Player GetPlayerOwnerOfPosition(Position pos) {
         if(pos.iColumn < nCOLUMNS / 2) return Player.GetTargetByIndex(0);
@@ -45,7 +49,14 @@ public class ContPositions : Singleton<ContPositions> {
             iColumn = nCOLUMNS - (int)postype - 1;
         }
 
-        return lstAllPositions[iColumn];
+        List<Position> lstColumn = new List<Position>();
+
+        //Add each entry of the desired row
+        for(int jRow = 0; jRow < nROWS; jRow++) {
+            lstColumn.Add(GetPosition(iColumn, jRow));
+        }
+
+        return lstColumn;
 
     }
 
@@ -128,10 +139,10 @@ public class ContPositions : Singleton<ContPositions> {
         List<Position> lstBesidePositions = new List<Position>();
 
         if(pos.jRow > 0) {
-            lstBesidePositions.Add(lstAllPositions[pos.iColumn][pos.jRow - 1]);
+            lstBesidePositions.Add(GetPosition(pos.iColumn, pos.jRow - 1));
         }
         if(pos.jRow < nROWS - 1) {
-            lstBesidePositions.Add(lstAllPositions[pos.iColumn][pos.jRow + 1]);
+            lstBesidePositions.Add(GetPosition(pos.iColumn, pos.jRow + 1));
         }
 
         return lstBesidePositions;
@@ -144,10 +155,10 @@ public class ContPositions : Singleton<ContPositions> {
 
             //For the 0th Player (on the left), reduce the index by 1
             if(GetPlayerOwnerOfPosition(pos).id == 0) {
-                return lstAllPositions[pos.iColumn - 1][pos.jRow];
+                return GetPosition(pos.iColumn - 1, pos.jRow);
             } else {
                 //The other player (on the right), increases the index by 1 to move further right
-                return lstAllPositions[pos.iColumn + 1][pos.jRow];
+                return GetPosition(pos.iColumn + 1, pos.jRow);
             }
         } else {
             return null;
@@ -161,10 +172,10 @@ public class ContPositions : Singleton<ContPositions> {
 
             //For the 0th Player (on the left), increase the index by 1
             if(GetPlayerOwnerOfPosition(pos).id == 0) {
-                return lstAllPositions[pos.iColumn + 1][pos.jRow];
+                return GetPosition(pos.iColumn + 1, pos.jRow);
             } else {
                 //The other player (on the right), decreases the index by 1 to move back to the left
-                return lstAllPositions[pos.iColumn - 1][pos.jRow];
+                return GetPosition(pos.iColumn - 1, pos.jRow);
             }
         } else {
             return null;
@@ -306,9 +317,26 @@ public class ContPositions : Singleton<ContPositions> {
             for(int j = 0; j < nROWS; j++) {
                 string sCharName = "Empty";
 
-                if(lstAllPositions[i][j].chrOnPosition != null) sCharName = lstAllPositions[i][j].chrOnPosition.sName;
+                if(GetPosition(i, j).chrOnPosition != null) sCharName = GetPosition(i, j).chrOnPosition.sName;
 
-                Debug.Log(lstAllPositions[i][j].ToString() + ": " + sCharName);
+                Debug.Log(GetPosition(i, j).ToString() + ": " + sCharName);
+            }
+        }
+
+    }
+
+    public void ConfirmValidPositionSetup() {
+
+        for(int iColumn = 0; iColumn < nCOLUMNS; iColumn++) {
+            for(int jRow = 0; jRow < nROWS; jRow++) {
+                Position pos = GetPosition(iColumn, jRow);
+                Debug.Assert(pos.jRow == jRow);
+                Debug.Assert(pos.iColumn == iColumn);
+
+                Position.POSITIONTYPE posTypeSetup = pos.positiontype;
+                pos.InitPositionType();
+
+                Debug.Assert(posTypeSetup == pos.positiontype);
             }
         }
 
@@ -316,14 +344,7 @@ public class ContPositions : Singleton<ContPositions> {
 
     public override void Init() {
 
-        lstAllPositions = new List<List<Position>>();
-        for(int i = 0; i < nCOLUMNS; i++) {
-            lstAllPositions.Add(new List<Position>());
-            for(int j = 0; j < nROWS; j++) {
-                lstAllPositions[i].Add(new Position(i, j));
-            }
-        }
-
+        ConfirmValidPositionSetup();
     }
 
 

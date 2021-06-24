@@ -66,9 +66,11 @@ public class ViewSkill : ViewInteractive {
         }
     }
 
-    public void Start() {
+    public override void Start() {
         if(bStarted == false) {
             bStarted = true;
+
+            base.Start();
         }
     }
 
