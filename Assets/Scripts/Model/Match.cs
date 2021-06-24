@@ -11,8 +11,6 @@ public class Match : MonoBehaviour {
 
     bool bStarted;                          //Confirms the Start() method has executed
 
-    public Arena arena;
-
     public int nPlayers = 2;
     public Player[] arPlayers;
 
@@ -113,9 +111,6 @@ public class Match : MonoBehaviour {
         player.arChr[id] = newChr;
 
 
-        //newChr.SetPosition(Random.Range(-10.0f, 10.0f), arena.arfStartingPosY[id]);
-        arena.InitPlaceUnit(newChr);
-
     }
 
     IEnumerator InitAllChrs() {
@@ -188,10 +183,7 @@ public class Match : MonoBehaviour {
 
         gameObject.tag = "Match"; // So that anything can find this very quickly
 
-        arena = GetComponentInChildren<Arena>();
         controller = GetComponentInChildren<Controller>();
-
-        arena.Start();
 
         InitPlayers(nPlayers);
 
@@ -215,7 +207,7 @@ public class Match : MonoBehaviour {
 
         Debug.Log("After initializing positions");
 
-        ContPositions.Get().PrintAllPositions();
+        //ContPositions.Get().PrintAllPositions();
 
         ContTurns.Get().InitializePriorities();
 

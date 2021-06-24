@@ -92,7 +92,7 @@ public class ViewSkillPanel : ViewInteractive {
         }
     }
 
-    public void Start() {
+    public override void Start() {
         if(bStarted == false) {
             bStarted = true;
 
@@ -107,6 +107,8 @@ public class ViewSkillPanel : ViewInteractive {
 
             Chr.subAllStartSelect.Subscribe(cbChrSelected);
             Chr.subAllStartIdle.Subscribe(cbChrUnselected);
+
+            base.Start();
         }
     }
 }

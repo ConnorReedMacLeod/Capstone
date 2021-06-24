@@ -33,7 +33,7 @@ public class StateTargetSelected : StateTarget {
     override public void OnEnter() {
         Debug.Assert(ContLocalUIInteraction.Get().chrSelected != null);
 
-        Arena.Get().view.subMouseClick.Subscribe(cbDeselect);
+        ViewBackground.subAllBackgroundClick.Subscribe(cbDeselect);
         ViewChr.subAllClick.Subscribe(cbReselectChar);
         ViewSkill.subAllClick.Subscribe(cbClickSkill);
         ViewRestButton.subAllClick.Subscribe(cbClickRestButton);
@@ -45,7 +45,7 @@ public class StateTargetSelected : StateTarget {
 
     override public void OnLeave() {
 
-        Arena.Get().view.subMouseClick.UnSubscribe(cbDeselect);
+        ViewBackground.subAllBackgroundClick.UnSubscribe(cbDeselect);
         ViewChr.subAllClick.UnSubscribe(cbReselectChar);
         ViewSkill.subAllClick.UnSubscribe(cbClickSkill);
         ViewRestButton.subAllClick.UnSubscribe(cbClickRestButton);

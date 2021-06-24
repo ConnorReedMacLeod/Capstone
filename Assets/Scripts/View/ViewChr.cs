@@ -64,7 +64,7 @@ public class ViewChr : ViewInteractive {
     public static Subject subAllStopHover = new Subject(Subject.SubType.ALL);
     public static Subject subAllClick = new Subject(Subject.SubType.ALL);
 
-    public void Start() {
+    public override void Start() {
         if(bStarted == false) {
             bStarted = true;
 
@@ -517,10 +517,11 @@ public class ViewChr : ViewInteractive {
 
     }
 
-    public void Update() {
+    public override void Update() {
 
         UpdateRecoil();
 
+        base.Update();
     }
 
 

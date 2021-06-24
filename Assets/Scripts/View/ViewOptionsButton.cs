@@ -24,11 +24,13 @@ public class ViewOptionsButton : ViewInteractive {
         base.onMouseClick(args);
     }
 
-    public void Start() {
+    public override void Start() {
         if(bStarted == false) {
             bStarted = true;
 
             Display();
+
+            base.Start();
         }
     }
 

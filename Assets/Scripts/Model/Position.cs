@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Position {
+public class Position : MonoBehaviour {
 
     public enum POSITIONTYPE { BENCH, BACKLINE, FRONTLINE };
 
     public POSITIONTYPE positiontype;
 
     public delegate Position FuncGetPosition(Chr chr);
+
+    public bool bStarted;
 
     public int iColumn;
     public int jRow;
@@ -18,7 +20,7 @@ public class Position {
     public Subject subCharacterOnPositionChanged = new Subject();
 
     public override string ToString() {
-        return string.Format("({0},{1}", iColumn, jRow);
+        return string.Format("({0},{1})", iColumn, jRow);
     }
 
     public void SetChrOnPosition(Chr _chrOnPosition) {
@@ -26,6 +28,8 @@ public class Position {
         if(chrOnPosition == _chrOnPosition) return;
 
         chrOnPosition = _chrOnPosition;
+
+        subCharacterOnPositionChanged.NotifyObs(chrOnPosition);
     }
 
     public void InitPositionType() {
@@ -53,8 +57,15 @@ public class Position {
         iColumn = _iColumn;
         jRow = _jRow;
 
-        InitPositionType();
+    }
 
+
+    public void Start() {
+
+        if(bStarted == true) return;
+        bStarted = true;
+
+        subCharacterOnPositionChanged = new Subject();
     }
 
 }
