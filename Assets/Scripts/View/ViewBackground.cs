@@ -9,8 +9,6 @@ public class ViewBackground : ViewInteractive {
 
     public override void onMouseClick(params object[] args) {
 
-        Debug.LogError("CLICKED ON BACKGROUND");
-
         subAllBackgroundClick.NotifyObs();
 
         base.onMouseClick(args);

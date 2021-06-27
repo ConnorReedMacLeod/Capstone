@@ -13,7 +13,7 @@ public class Player : MonoBehaviour {
     public Chr[] arChr;
     public int nChrs;
 
-    public static List<Player> lstAllPlayers;
+    public static Player[] arAllPlayers;
     public GameObject pfManaPanel;
 
     public LocalInputType inputController;
@@ -38,15 +38,19 @@ public class Player : MonoBehaviour {
     }
 
     public static Player GetTargetByIndex(int ind) {
-        return lstAllPlayers[ind];
+        Debug.Log(arAllPlayers);
+        Debug.Log("Asked for index " + ind + " with a arAllPlayers length of " + arAllPlayers.Length);
+        return arAllPlayers[ind];
     }
 
     public static void RegisterPlayer(Player plyr) {
-        if(lstAllPlayers == null) {
-            lstAllPlayers = new List<Player>(Player.MAXCHRS);
+        if(arAllPlayers == null) {
+            arAllPlayers = new Player[MAXPLAYERS];
         }
 
-        lstAllPlayers[plyr.id] = plyr;
+        Debug.Assert(plyr.id < MAXPLAYERS, "Can't ask for id " + plyr.id + " when MAXPLAYERS = " + MAXPLAYERS);
+
+        arAllPlayers[plyr.id] = plyr;
     }
 
     public void SetID(int _id) {
@@ -110,6 +114,8 @@ public class Player : MonoBehaviour {
 
         if(bStarted == false) {
             bStarted = true;
+
+            RegisterPlayer(this);
 
             arChr = new Chr[MAXCHRS];
 

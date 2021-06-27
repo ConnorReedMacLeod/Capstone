@@ -38,6 +38,11 @@ public class ExecMoveChar : ExecChr {
         //Figure out what the target position should be at the time of execution (relative to the character that's moving)
         Position posDestination = funcGetTargetPosition(chrTarget);
 
+        if(posDestination == null) {
+            Debug.LogError("Got a null Position to move to - just returning early");
+            return;
+        }
+
         Debug.Assert(posDestination.positiontype != Position.POSITIONTYPE.BENCH);
 
         //Call the Move method in the position controller
