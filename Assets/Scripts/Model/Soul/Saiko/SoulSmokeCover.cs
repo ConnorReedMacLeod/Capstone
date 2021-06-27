@@ -40,24 +40,6 @@ public class SoulSmokeCover : Soul {
 
     }
 
-    public override void InitTriggers() {
-        lstTriggers = new List<TriggerEffect>() {
-
-            new TriggerEffect() {
-                sub = ExecBecomeBlocker.subAllPostTrigger,
-                cb = cbOnBecomeBlocker
-            }
-        };
-    }
-
-    public void cbOnBecomeBlocker(Object target, object[] args) {
-        //Only continue if the buffed character is the one about to become the blocker
-        if(((ExecBecomeBlocker)args[0]).chrTarget != this.chrTarget) return;
-
-        //When we become blocker, dispel this soul effect
-        soulContainer.RemoveSoul(this);
-    }
-
     public SoulSmokeCover(SoulSmokeCover other, Chr _chrTarget = null) : base(other) {
         if(_chrTarget != null) {
             //If a Target was provided, then we'll use that

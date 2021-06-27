@@ -43,7 +43,7 @@ public class SkillSpiritSlap : Skill {
 
         public override string GetDescription() {
 
-            return string.Format("Deal {0} damage to the enemy blocker and  apply DISPIRITED (4).\n" +
+            return string.Format("Deal {0} damage to an Enemy Frontliner and  apply DISPIRITED (4).\n" +
                 "[DISPIRITED]: This character's cantrips cost [O] more.", dmg.Get());
         }
 

@@ -11,17 +11,17 @@ using UnityEngine;
 //        should wait to see if it's a double click before sending the event
 public class ViewInteractive : MonoBehaviour {
 
-	public enum STATELEFT {IDLE, PRESS, CLICK, DOUBLEPRESS, DOUBLECLICK, HELD, DRAG};
-	public STATELEFT stateLeft;
+    public enum STATELEFT { IDLE, PRESS, CLICK, DOUBLEPRESS, DOUBLECLICK, HELD, DRAG };
+    public STATELEFT stateLeft;
 
-	public bool bDown; // If the mouse is currently down
-	public bool bHeld; // If the mouse has been held down for a while
-	public Vector3 v3Down; // Where the mouse was originally pressed down
-	public float fTimeDown; // How long the mouse has been pressed down
-	public float fTimeUp; // How long the mouse has not been pressed
-	public static float fTimeDownDelay; // Delay until pressing down counts as holding the mouse
-	public static float fTimeDoubleDelay; // Window to make a double click
-	public static float fMinDistDrag; // Distance you have to move the mouse before it counts as dragging
+    public bool bDown; // If the mouse is currently down
+    public bool bHeld; // If the mouse has been held down for a while
+    public Vector3 v3Down; // Where the mouse was originally pressed down
+    public float fTimeDown; // How long the mouse has been pressed down
+    public float fTimeUp; // How long the mouse has not been pressed
+    public static float fTimeDownDelay; // Delay until pressing down counts as holding the mouse
+    public static float fTimeDoubleDelay; // Window to make a double click
+    public static float fMinDistDrag; // Distance you have to move the mouse before it counts as dragging
 
     public Subject subMouseClick = new Subject();
     public virtual void onMouseClick(params object[] args) {
@@ -76,151 +76,151 @@ public class ViewInteractive : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Start () {
-		stateLeft = STATELEFT.IDLE;
-		fTimeDownDelay = 0.2f;
-		fTimeDoubleDelay = 0.3f;
-		fMinDistDrag = 1.0f;
+    public virtual void Start() {
+        stateLeft = STATELEFT.IDLE;
+        fTimeDownDelay = 0.2f;
+        fTimeDoubleDelay = 0.3f;
+        fMinDistDrag = 1.0f;
         Physics.queriesHitTriggers = true;
-	}
+    }
 
 
-	void Update () {
-		if (bDown) {
+    public virtual void Update() {
+        if(bDown) {
             //Note that this uses the real Time.deltaTime as opposed to the ContTime.fDeltaTime
             fTimeDown += Time.deltaTime;
         } else {
-			fTimeUp += Time.deltaTime;
+            fTimeUp += Time.deltaTime;
         }
 
-		// Handle time related checks
-		switch (stateLeft) {
-		case STATELEFT.PRESS:
-		case STATELEFT.DOUBLEPRESS:
-			// Check if it's been pressed long enough to count as holding the mouse
-			if (fTimeDown >= fTimeDownDelay) {
-				bHeld = true;
-				stateLeft = STATELEFT.HELD;
+        // Handle time related checks
+        switch(stateLeft) {
+        case STATELEFT.PRESS:
+        case STATELEFT.DOUBLEPRESS:
+            // Check if it's been pressed long enough to count as holding the mouse
+            if(fTimeDown >= fTimeDownDelay) {
+                bHeld = true;
+                stateLeft = STATELEFT.HELD;
 
-				onMouseStartHold();
-			}
+                onMouseStartHold();
+            }
 
-			break;
+            break;
 
-		case STATELEFT.CLICK:
-		case STATELEFT.DOUBLECLICK:
-			if (fTimeUp >= fTimeDoubleDelay) {
-				stateLeft = STATELEFT.IDLE;
-			}
+        case STATELEFT.CLICK:
+        case STATELEFT.DOUBLECLICK:
+            if(fTimeUp >= fTimeDoubleDelay) {
+                stateLeft = STATELEFT.IDLE;
+            }
 
-			break;
-		}
-			
-		// Handle movement related checks
-		switch (stateLeft) {
-		case STATELEFT.PRESS:
-		case STATELEFT.DOUBLEPRESS:
-		case STATELEFT.HELD:
-			// Check if the mouse has moved far enough to count as dragging
-			if (Vector3.Distance (v3Down, LibView.GetMouseLocation ()) >= fMinDistDrag) {
-				stateLeft = STATELEFT.DRAG;
+            break;
+        }
 
-				if (stateLeft != STATELEFT.HELD) {
-					onMouseStartHold();
-				}
-				onMouseStartDrag();
-			}
+        // Handle movement related checks
+        switch(stateLeft) {
+        case STATELEFT.PRESS:
+        case STATELEFT.DOUBLEPRESS:
+        case STATELEFT.HELD:
+            // Check if the mouse has moved far enough to count as dragging
+            if(Vector3.Distance(v3Down, LibView.GetMouseLocation()) >= fMinDistDrag) {
+                stateLeft = STATELEFT.DRAG;
 
-			break;
-		}
+                if(stateLeft != STATELEFT.HELD) {
+                    onMouseStartHold();
+                }
+                onMouseStartDrag();
+            }
 
-		if (stateLeft == STATELEFT.DRAG) {
+            break;
+        }
 
-			// Check if we've dragged off of our object then released on another object
-			if (Input.GetMouseButtonUp (0)) {
+        if(stateLeft == STATELEFT.DRAG) {
 
-				GameObject goReleasedOver = LibView.GetObjectUnderMouse ();
-				if (this.gameObject != goReleasedOver) {
-					// Then we've released the mouse over a new object after dragging
+            // Check if we've dragged off of our object then released on another object
+            if(Input.GetMouseButtonUp(0)) {
+
+                GameObject goReleasedOver = LibView.GetObjectUnderMouse();
+                if(this.gameObject != goReleasedOver) {
+                    // Then we've released the mouse over a new object after dragging
                     onMouseReleaseOther(goReleasedOver);
 
-					OnLeftUp ();
-				}
-				//Otherwise we've released the mouse over ourselves, so we'll catch this with StopDrag
-			}
-		}
-	}
+                    OnLeftUp();
+                }
+                //Otherwise we've released the mouse over ourselves, so we'll catch this with StopDrag
+            }
+        }
+    }
 
-	public void OnLeftDown(){
+    public void OnLeftDown() {
 
-		bDown = true;
-		fTimeDown = 0.0f;
-		v3Down = LibView.GetMouseLocation ();
+        bDown = true;
+        fTimeDown = 0.0f;
+        v3Down = LibView.GetMouseLocation();
 
-		switch (stateLeft) {
-		case STATELEFT.IDLE:
-			stateLeft = STATELEFT.PRESS;
-			break;
+        switch(stateLeft) {
+        case STATELEFT.IDLE:
+            stateLeft = STATELEFT.PRESS;
+            break;
 
-		case STATELEFT.CLICK:
-		case STATELEFT.DOUBLECLICK:
-			stateLeft = STATELEFT.DOUBLEPRESS;
-			break;
-		}
-	}
+        case STATELEFT.CLICK:
+        case STATELEFT.DOUBLECLICK:
+            stateLeft = STATELEFT.DOUBLEPRESS;
+            break;
+        }
+    }
 
-	public void OnLeftUp(){
+    public void OnLeftUp() {
 
-		bDown = false;
-		bHeld = false;
-		v3Down = Vector3.zero;
-		fTimeUp = 0.0f;
+        bDown = false;
+        bHeld = false;
+        v3Down = Vector3.zero;
+        fTimeUp = 0.0f;
 
-		switch (stateLeft) {
-		case STATELEFT.PRESS:
-			stateLeft = STATELEFT.CLICK;
+        switch(stateLeft) {
+        case STATELEFT.PRESS:
+            stateLeft = STATELEFT.CLICK;
 
-			onMouseClick();
-			break;
+            onMouseClick();
+            break;
 
-		case STATELEFT.DOUBLEPRESS:
-			stateLeft = STATELEFT.DOUBLECLICK;
+        case STATELEFT.DOUBLEPRESS:
+            stateLeft = STATELEFT.DOUBLECLICK;
 
-			onMouseDoubleClick();
-			break;
+            onMouseDoubleClick();
+            break;
 
-		case STATELEFT.HELD:
-			stateLeft = STATELEFT.IDLE;
+        case STATELEFT.HELD:
+            stateLeft = STATELEFT.IDLE;
 
-			onMouseStopHold();
-			break;
+            onMouseStopHold();
+            break;
 
-		case STATELEFT.DRAG:
-			stateLeft = STATELEFT.IDLE;
+        case STATELEFT.DRAG:
+            stateLeft = STATELEFT.IDLE;
 
-			// For dragging, send a notification that dragging and holding has stopped
-			onMouseStopHold();
-			onMouseStopDrag();
-			break;
-		}
+            // For dragging, send a notification that dragging and holding has stopped
+            onMouseStopHold();
+            onMouseStopDrag();
+            break;
+        }
 
-	}
+    }
 
-	public void OnMouseOver(){
+    public void OnMouseOver() {
 
-		if (Input.GetMouseButtonDown (0)) {
-			OnLeftDown ();
-		} else if (Input.GetMouseButtonUp (0)) {
-			OnLeftUp ();
-		}
-		// TODO:: Add in right-mouse event checks here
-	}
+        if(Input.GetMouseButtonDown(0)) {
+            OnLeftDown();
+        } else if(Input.GetMouseButtonUp(0)) {
+            OnLeftUp();
+        }
+        // TODO:: Add in right-mouse event checks here
+    }
 
-	public void OnMouseEnter(){
-		onMouseStartHover();
-	}
+    public void OnMouseEnter() {
+        onMouseStartHover();
+    }
 
-	public void OnMouseExit(){
-		onMouseStopHover();
-	}
+    public void OnMouseExit() {
+        onMouseStopHover();
+    }
 }

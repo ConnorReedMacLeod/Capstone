@@ -2,22 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SkillHarpoonGun : Skill {
+public class SkillKnockback : Skill {
 
-    public SkillHarpoonGun(Chr _chrOwner) : base(_chrOwner, 0) {
+    public SkillKnockback(Chr _chrOwner) : base(_chrOwner, 0) {
 
-        sName = "HarpoonGun";
-        sDisplayName = "Harpoon Gun";
+        sName = "Knockback";
+        sDisplayName = "Knockback";
 
-        //We don't have any specific effect to take place while channeling, so just leave the
-        // soulChannel effect null and let it copy our execution's effect for what it does when the channel completes
-        type = new TypeChannel(this, 2, null);
+        type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 2 });
+        parCost = new Property<int[]>(new int[] { 1, 0, 0, 0, 0 });
 
-        nCooldownInduced = 5;
-        nFatigue = 2;
+        nCooldownInduced = 6;
+        nFatigue = 4;
+
+
 
         lstClauses = new List<Clause>() {
             new Clause1(this),
@@ -25,11 +25,10 @@ public class SkillHarpoonGun : Skill {
         };
     }
 
-
     class Clause1 : ClauseChr {
 
         Damage dmg;
-        public int nBaseDamage = 30;
+        public int nBaseDamage = 5;
 
         public Clause1(Skill _skill) : base(_skill) {
             plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
@@ -43,16 +42,13 @@ public class SkillHarpoonGun : Skill {
 
         public override string GetDescription() {
 
-            return string.Format("After channeling, deal {0} damage to the chosen enemy.", dmg.Get());
+            return string.Format("Deal {0} damage to an Enemy", dmg.Get());
         }
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            Debug.Log("Executing damaging clause");
-
             ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
-                arSoundEffects = new SoundEffect[] { new SoundEffect("Fischer/sndHarpoonGun", 2.067f) },
-                sLabel = "Behold, the power of my stand, Beach Boy!"
+                sLabel = "Booping ya back"
             });
 
         }
@@ -61,25 +57,29 @@ public class SkillHarpoonGun : Skill {
 
     class Clause2 : ClauseChr {
 
+        Damage dmg;
+        public int nBaseDamage = 5;
+
         public Clause2(Skill _skill) : base(_skill) {
             plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
                 new ClauseTagChrRanged(this), //Base Tag always goes first
                 new ClauseTagChrEnemy(this)
             });
+
+            dmg = new Damage(skill.chrSource, null, nBaseDamage);
         }
 
         public override string GetDescription() {
 
-            return string.Format("That enemy Switches to the position in front of them");
+            return string.Format("Move that Enemy to the Position behind them.");
         }
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            Debug.Log("Executing Switch forward");
-
-            ContSkillEngine.PushSingleExecutable(new ExecSwitchChar(skill.chrSource, chrSelected, (chrTarget) => ContPositions.Get().GetInFrontPosition(chrTarget.position)) {
-                sLabel = "Hey, I caught one!"
-            });
+            //TODO - maybe add some sort of additional function that can be called exactly when the executable resolves to trigger additional effects
+            //    e.g., here it could be a structure called Tracking where you call Tracking.BeforeEffect() to track the gamestate before the executable
+            //          evaluates (this can store information, and then you call Tracking.AfterEffect() to
+            ContSkillEngine.PushSingleExecutable(new ExecMoveChar(skill.chrSource, chrSelected, (chrTarget) => ContPositions.Get().GetBehindPosition(chrTarget.position)));
 
         }
 

@@ -37,7 +37,7 @@ public static class SelectionSerializer {
     }
 
     public static Player DeserializePlayer(byte b) {
-        return Player.lstAllPlayers[b];
+        return Player.arAllPlayers[b];
     }
 
     //TODO:: add Soul and WorldSoul serializers

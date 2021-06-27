@@ -42,7 +42,7 @@ public class StateTargetTeam : StateTarget {
         //TODO:: ADD AN OVERLAY FOR SELECTING A PLAYER
 
 
-        Arena.Get().view.subMouseClick.Subscribe(cbCancelTargetting);
+        ViewBackground.subAllBackgroundClick.Subscribe(cbCancelTargetting);
         ViewInteractive.subGlobalMouseRightClick.Subscribe(cbCancelTargetting);
 
         ViewChr.subAllClick.Subscribe(cbClickChr);
@@ -56,7 +56,7 @@ public class StateTargetTeam : StateTarget {
         //TODO:: REMOVE THE OVERLAY FOR SELECTING A PLAYER
 
 
-        Arena.Get().view.subMouseClick.UnSubscribe(cbCancelTargetting);
+        ViewBackground.subAllBackgroundClick.UnSubscribe(cbCancelTargetting);
         ViewInteractive.subGlobalMouseRightClick.UnSubscribe(cbCancelTargetting);
 
         ViewChr.subAllClick.UnSubscribe(cbClickChr);

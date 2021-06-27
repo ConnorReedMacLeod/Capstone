@@ -99,7 +99,7 @@ public class SoulDispirited : Soul {
         //Ignore if the skill used wasn't used by the character who has this soul effect
         if(((Skill)args[0]).chrSource != this.chrTarget) return;
 
-        //Check if the skill that was just used is a character skill - not a generic (block/rest)
+        //Check if the skill that was just used is a character skill - not a generic (rest)
         if(((Skill)args[0]).IsStandardSkill()) {
 
             //if the used skill was a character skill, then we can dispell this effect
