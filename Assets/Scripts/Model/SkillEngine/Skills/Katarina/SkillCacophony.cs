@@ -22,9 +22,9 @@ public class SkillCacophony : Skill {
         };
     }
 
-    //Deal critical damage and stun if the targetted character is a blocker
+    //Deal critical damage and stun if the targetted character is a frontliner
     public static bool IsCritical(Chr tarChr) {
-        return (tarChr != null && tarChr.bBlocker);
+        return (tarChr != null && tarChr.position.positiontype == Position.POSITIONTYPE.FRONTLINE);
     }
 
 
@@ -57,7 +57,7 @@ public class SkillCacophony : Skill {
             //TODO - think about how to make this dynamically update nicely - currently doesn't reflect power
 
             return string.Format("Deal {0} damage and {1} fatigue to the chosen character.\n" +
-                "If the chosen character is the Vanguard, deal {2} damage and {3} fatigue instead",
+                "If the chosen character is a Frontliner, deal {2} damage and {3} fatigue instead",
                 nBaseDamage, nBaseStun, nCriticalBaseDamage, nCriticalStun);
         }
 

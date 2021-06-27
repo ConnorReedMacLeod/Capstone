@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public abstract class ClausePlyr : Clause {
 
@@ -13,7 +14,7 @@ public abstract class ClausePlyr : Clause {
 
     public List<Player> GetSelectableUniverse() {
         //Returns all possible entities of our type (Player)
-        return Player.lstAllPlayers;
+        return Player.arAllPlayers.ToList<Player>();
     }
 
     public List<Player> GetSelectable() {

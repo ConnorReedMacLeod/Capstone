@@ -32,6 +32,8 @@ public class StateTargetChr : StateTarget {
 
     public void cbSwitchSkill(Object target, params object[] args) {
 
+        Debug.Log("Currently trying to use " + ContLocalUIInteraction.Get().skillSelected + " and are trying to reselect");
+
         Debug.Log("attempting to reselect" + ((ViewSkill)target).mod.sDisplayName);
 
         ContLocalUIInteraction.Get().StartTargetting(((ViewSkill)target).mod);
@@ -64,12 +66,11 @@ public class StateTargetChr : StateTarget {
 
         Debug.Log("chrSelected is " + ContLocalUIInteraction.Get().chrSelected.sName);
 
-        Arena.Get().view.subMouseClick.Subscribe(cbCancelTargetting);
+        ViewBackground.subAllBackgroundClick.Subscribe(cbCancelTargetting);
         ViewInteractive.subGlobalMouseRightClick.Subscribe(cbCancelTargetting);
 
         ViewChr.subAllClick.Subscribe(cbTargetChr);
         ViewSkill.subAllClick.Subscribe(cbSwitchSkill);
-        ViewBlockerButton.subAllClick.Subscribe(cbSwitchSkill);
         ViewRestButton.subAllClick.Subscribe(cbSwitchSkill);
 
         ContLocalUIInteraction.subAllStartManualTargetting.NotifyObs();
@@ -78,12 +79,11 @@ public class StateTargetChr : StateTarget {
 
     override public void OnLeave() {
 
-        Arena.Get().view.subMouseClick.UnSubscribe(cbCancelTargetting);
+        ViewBackground.subAllBackgroundClick.UnSubscribe(cbCancelTargetting);
         ViewInteractive.subGlobalMouseRightClick.UnSubscribe(cbCancelTargetting);
 
         ViewChr.subAllClick.UnSubscribe(cbTargetChr);
         ViewSkill.subAllClick.UnSubscribe(cbSwitchSkill);
-        ViewBlockerButton.subAllClick.UnSubscribe(cbSwitchSkill);
         ViewRestButton.subAllClick.UnSubscribe(cbSwitchSkill);
 
         NotifySelectableTargetsEnded();

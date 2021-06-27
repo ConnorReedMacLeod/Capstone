@@ -25,8 +25,6 @@ public class Chr : MonoBehaviour {
         GIANT
     };
 
-    Arena arena;                    //The field of play
-
     public string sName;            //The name of the character
     public Player plyrOwner;        //The player who controls the character
 
@@ -57,13 +55,10 @@ public class Chr : MonoBehaviour {
     public const int nStandardCharacterSkills = 4; //Number of non-generic (non-rest) skills currently active on the character
     public const int nTotalSkills = nStandardCharacterSkills + 2; //Number of all skills (including generics)
     public SkillRest skillRest;  //The standard reference to the rest skill the character can use
-    public SkillBlock skillBlock; //TODO - Remove this when implementing positions
     public const int nRestSlotId = nStandardCharacterSkills; //Id of the skillslot containing the rest skill
-    public const int nBlockSlotId = nStandardCharacterSkills + 1; //Id of the skillslot containing the block skill
     public SkillType.SKILLTYPE[] arSkillTypesOpeningLoadout;  //Holds the initially selected loadout of skills for the character - may shift this to some loadout manager
 
-    public bool bBlocker;           //Whether or not the character is the assigned blocker
-    public Property<bool> pbCanBlock;          //Whether the character is capable or not of blocking
+    public Position position;       //A reference to the position the character is on
 
     public SoulContainer soulContainer; //A reference to the character's list of soul effects
 
@@ -96,7 +91,7 @@ public class Chr : MonoBehaviour {
     public Subject subFatigueChange = new Subject();
     public static Subject subAllFatigueChange = new Subject(Subject.SubType.ALL);
     public Subject subChannelTimeChange = new Subject();
-    public Subject subBlockerChanged = new Subject();
+    public Subject subPositionChanged = new Subject();
 
     public Subject subStatusChange = new Subject();
     public static Subject subAllStatusChange = new Subject(Subject.SubType.ALL);
@@ -139,13 +134,11 @@ public class Chr : MonoBehaviour {
     }
 
     public Skill GetRandomSkill() {
-        //Sometimes throw in random selections of resting/blocking with weighted changes
+        //Sometimes throw in random selections of resting with weighted changes
         int nRand = Random.Range(0, 100);
 
         if(nRand < 25) {
             return skillRest;
-        } else if(nRand < 35) {
-            return skillBlock;
         } else {
             return GetRandomActiveSkill();
         }
@@ -340,14 +333,10 @@ public class Chr : MonoBehaviour {
         subLifeChange.NotifyObs(this, nChange);
     }
 
-    public void ChangeBlocker(bool _bBlocker) {
-        bBlocker = _bBlocker;
+    public void UpdatePosition(Position _position) {
+        if(position == _position) return;
 
-        subBlockerChanged.NotifyObs();
-    }
-
-    public bool CanBlock() {
-        return !bBlocker && pbCanBlock.Get();
+        position = _position;
     }
 
     //Counts down the character's recharge with the timeline
@@ -432,10 +421,8 @@ public class Chr : MonoBehaviour {
 
 
         skillRest = new SkillRest(this);
-        skillBlock = new SkillBlock(this);
 
         arSkillSlots[nRestSlotId].SetSkill(skillRest);
-        arSkillSlots[nBlockSlotId].SetSkill(skillBlock);
     }
 
     // Sets up fundamental class connections for the Chr
@@ -448,8 +435,6 @@ public class Chr : MonoBehaviour {
             InitSkillSlots();
 
             stateSelect = STATESELECT.IDLE;
-
-            pbCanBlock = new Property<bool>(true);
 
             pnMaxHealth = new Property<int>(100);
             pnArmour = new Property<int>(0);

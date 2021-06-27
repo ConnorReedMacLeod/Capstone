@@ -34,11 +34,9 @@ public class ViewChr : ViewInteractive {
 
     Chr.STATESELECT lastStateSelect;  //Tracks previous character state (SELECTED, TARGETTING, UNSELECTED)
 
-    public GameObject pfBlockerIndicator; //Reference to the prefab blocker indicator
     public GameObject pfSelectionGlow; //Reference to the prefab glow for selection
 
     public GameObject goCurSelectionGlow; //A reference to the current glow (or null if there is none)
-    public GameObject goBlockerIndicator; //Blocker Reference
     public GameObject goBorder;         //Border Reference
     public GameObject goPortrait;       //Portrait Reference
     public GameObject goFatigueDisplay; //Fatigue Display Reference
@@ -66,7 +64,7 @@ public class ViewChr : ViewInteractive {
     public static Subject subAllStopHover = new Subject(Subject.SubType.ALL);
     public static Subject subAllClick = new Subject(Subject.SubType.ALL);
 
-    public void Start() {
+    public override void Start() {
         if(bStarted == false) {
             bStarted = true;
 
@@ -266,7 +264,6 @@ public class ViewChr : ViewInteractive {
         mod.pnArmour.subChanged.Subscribe(cbUpdateArmour);
         mod.pnPower.subChanged.Subscribe(cbUpdatePower);
         mod.pnDefense.subChanged.Subscribe(cbUpdateDefense);
-        mod.subBlockerChanged.Subscribe(cbUpdateBlocker);
         mod.subChannelTimeChange.Subscribe(cbUpdateChannelTime);
         mod.subDeath.Subscribe(cbUpdateDeath);
         mod.subPreExecuteSkill.Subscribe(cbStartUsingSkill);
@@ -412,35 +409,6 @@ public class ViewChr : ViewInteractive {
         }
     }
 
-    public void cbUpdateBlocker(Object target, params object[] args) {
-        if(mod.bBlocker == true) {
-            //If we haven't already, add the blocker indicator
-            if(goBlockerIndicator == null) {
-                goBlockerIndicator = Instantiate(pfBlockerIndicator, this.transform);
-
-                if(mod.plyrOwner.id == 1 || mod.plyrOwner.id == 0) {
-                    goBlockerIndicator.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-                    goBlockerIndicator.transform.localPosition =
-                        new Vector3(goBlockerIndicator.transform.localPosition.x,
-                                    goBlockerIndicator.transform.localPosition.y - 3.06f,
-                                    goBlockerIndicator.transform.localPosition.z);
-                }
-
-            } else {
-                Debug.Log("Don't need to add a blocker indicator for " + mod.sName + " since they already have it shown");
-            }
-        } else {
-            //If we haven't already, then remove the blocker indicator
-            if(goBlockerIndicator != null) {
-                GameObject.Destroy(goBlockerIndicator);
-                goBlockerIndicator = null;
-                Debug.Assert(goBlockerIndicator == null);
-            } else {
-                Debug.Log("Don't need to remove a blocker indicator for " + mod.sName + " since nothing is yet shown");
-            }
-        }
-    }
-
     public void cbStartUsingSkill(Object target, params object[] args) {
 
         //If this is a proper skill, then update the character portrait to an acting one
@@ -549,10 +517,11 @@ public class ViewChr : ViewInteractive {
 
     }
 
-    public void Update() {
+    public override void Update() {
 
         UpdateRecoil();
 
+        base.Update();
     }
 
 

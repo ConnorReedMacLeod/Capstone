@@ -11,8 +11,6 @@ public class Match : MonoBehaviour {
 
     bool bStarted;                          //Confirms the Start() method has executed
 
-    public Arena arena;
-
     public int nPlayers = 2;
     public Player[] arPlayers;
 
@@ -113,9 +111,6 @@ public class Match : MonoBehaviour {
         player.arChr[id] = newChr;
 
 
-        //newChr.SetPosition(Random.Range(-10.0f, 10.0f), arena.arfStartingPosY[id]);
-        arena.InitPlaceUnit(newChr);
-
     }
 
     IEnumerator InitAllChrs() {
@@ -138,12 +133,23 @@ public class Match : MonoBehaviour {
         Debug.Log("Ending Character Initializations");
     }
 
-    void InitAllBlockers() {
-        for(int i = 0; i < nPlayers; i++) {
-            arPlayers[i].iBlocker = -1;//temporarily set the blocker to -1, so that we meaningfully change the blocker on the next line
-            arPlayers[i].SetBlocker(1);//Initially set the blocker as the second character to go
-            arPlayers[i].SetBlocker(0);//Initially set the blocker as the first character to go
+    IEnumerator InitAllChrPositions() {
+
+        //TODO - have this set up with the character loadout phase - for now, just give default positions
+        while(false) {
+            //Wait for position input from the character loadout phase
+            yield return null;
         }
+
+        //Set up each team in a 'triangle' - two sides in the back, center in the front
+        ContPositions.Get().MoveChrToPosition(arChrs[0][0], ContPositions.Get().GetAlliedBacklinePositions(arPlayers[0])[0]);
+        ContPositions.Get().MoveChrToPosition(arChrs[0][1], ContPositions.Get().GetAlliedFrontlinePositions(arPlayers[0])[1]);
+        ContPositions.Get().MoveChrToPosition(arChrs[0][2], ContPositions.Get().GetAlliedBacklinePositions(arPlayers[0])[2]);
+
+        ContPositions.Get().MoveChrToPosition(arChrs[1][0], ContPositions.Get().GetAlliedBacklinePositions(arPlayers[1])[0]);
+        ContPositions.Get().MoveChrToPosition(arChrs[1][1], ContPositions.Get().GetAlliedFrontlinePositions(arPlayers[1])[1]);
+        ContPositions.Get().MoveChrToPosition(arChrs[1][2], ContPositions.Get().GetAlliedBacklinePositions(arPlayers[1])[2]);
+
     }
 
     public Controller GetController() {
@@ -177,10 +183,7 @@ public class Match : MonoBehaviour {
 
         gameObject.tag = "Match"; // So that anything can find this very quickly
 
-        arena = GetComponentInChildren<Arena>();
         controller = GetComponentInChildren<Controller>();
-
-        arena.Start();
 
         InitPlayers(nPlayers);
 
@@ -198,11 +201,17 @@ public class Match : MonoBehaviour {
         //Assign local input controllers for each player
         yield return StartCoroutine(CharacterSelection.Get().AssignAllLocalInputControllers());
 
+        Debug.Log("After assigning local input controllers");
+
+        yield return StartCoroutine(InitAllChrPositions());
+
+        Debug.Log("After initializing positions");
+
+        //ContPositions.Get().PrintAllPositions();
+
         ContTurns.Get().InitializePriorities();
 
         Debug.Log("After InitializePriorities");
-
-        InitAllBlockers();
 
         Cursor.SetCursor(txCursor, v2HotSpot, cursorMode);
 
