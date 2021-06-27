@@ -22,8 +22,8 @@ public class ChrFischer : BaseChr {
 
         chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.FLUSHOUT;
         chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.LEECH;
-        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.SNAPTRAP;
-        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.RECON;
+        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.KNOCKBACK;
+        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.ADVANCE;
 
     }
 

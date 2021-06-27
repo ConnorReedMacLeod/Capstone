@@ -10,7 +10,10 @@ using static Discipline.DISCIPLINE;
 //  and finally add an entry for how to construct its skill in the InstantiateNewSkill function
 public static class SkillType {
     //TODO - eventually look at transferring this long list to a text file - possible?  worth it?
-    public enum SKILLTYPE { RECON, FLUSHOUT, SNAPTRAP, PLANTSUNFLOWER, SURVEYTHELAND, MULCH, LEECH, TRANSFUSE };
+    public enum SKILLTYPE {
+        RECON, FLUSHOUT, SNAPTRAP, PLANTSUNFLOWER, SURVEYTHELAND, MULCH, LEECH, TRANSFUSE,
+        KNOCKBACK, ADVANCE
+    };
 
     public struct SkillTypeInfo {
         public SKILLTYPE type;
@@ -33,7 +36,9 @@ public static class SkillType {
         { SURVEYTHELAND, new SkillTypeInfo ( SURVEYTHELAND, "Survey the Land", new List<Discipline.DISCIPLINE> { GARDENER } ) },
         { MULCH, new SkillTypeInfo ( MULCH, "Mulch", new List<Discipline.DISCIPLINE> { GARDENER, GIANT } ) },
         { LEECH, new SkillTypeInfo ( LEECH, "Leech", new List<Discipline.DISCIPLINE> { GARDENER, GIANT } ) },
-        { TRANSFUSE, new SkillTypeInfo ( TRANSFUSE, "Transfuse", new List<Discipline.DISCIPLINE> { GARDENER, GIANT } ) }
+        { TRANSFUSE, new SkillTypeInfo ( TRANSFUSE, "Transfuse", new List<Discipline.DISCIPLINE> { GARDENER, GIANT } ) },
+        { KNOCKBACK, new SkillTypeInfo ( KNOCKBACK, "Knockback", new List<Discipline.DISCIPLINE> { TRAPPER} ) },
+        { ADVANCE, new SkillTypeInfo ( ADVANCE, "Advance", new List<Discipline.DISCIPLINE> { TRAPPER} ) }
     };
 
 
@@ -84,6 +89,12 @@ public static class SkillType {
             break;
         case SKILLTYPE.TRANSFUSE:
             skillNew = new SkillTransfuse(chr);
+            break;
+        case SKILLTYPE.KNOCKBACK:
+            skillNew = new SkillKnockback(chr);
+            break;
+        case SKILLTYPE.ADVANCE:
+            skillNew = new SkillAdvance(chr);
             break;
 
         default:

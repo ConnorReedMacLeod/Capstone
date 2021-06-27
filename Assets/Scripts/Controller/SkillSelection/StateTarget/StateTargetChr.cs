@@ -32,6 +32,8 @@ public class StateTargetChr : StateTarget {
 
     public void cbSwitchSkill(Object target, params object[] args) {
 
+        Debug.Log("Currently trying to use " + ContLocalUIInteraction.Get().skillSelected + " and are trying to reselect");
+
         Debug.Log("attempting to reselect" + ((ViewSkill)target).mod.sDisplayName);
 
         ContLocalUIInteraction.Get().StartTargetting(((ViewSkill)target).mod);
