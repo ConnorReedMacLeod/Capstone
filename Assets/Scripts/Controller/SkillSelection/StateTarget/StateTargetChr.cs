@@ -84,6 +84,7 @@ public class StateTargetChr : StateTarget {
 
         ViewChr.subAllClick.UnSubscribe(cbTargetChr);
         ViewSkill.subAllClick.UnSubscribe(cbSwitchSkill);
+        ViewRestButton.subAllClick.UnSubscribe(cbSwitchSkill);
 
         NotifySelectableTargetsEnded();
     }
