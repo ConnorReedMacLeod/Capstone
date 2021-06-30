@@ -31,15 +31,7 @@ public class ViewSoulContainer : MonoBehaviour {
 
     }
 
-    public void SetNumSoulSlots(int _nNumSoulSlots) {
-        //TODO:: Account for having a variable number of soul slots
-
-    }
-
-
     void Start() {
-
-        SetNumSoulSlots(3);
 
         mod.subVisibleSoulUpdate.Subscribe(cbUpdateVisibleSoul);
 

@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulContainer : MonoBehaviour {
-
+public abstract class SoulContainer : MonoBehaviour {
     public List<Soul> lstSoul;//TODO:: Lists have pretty bad runtime as we're using them  - worth changing?
-
-    public Chr chrOwner;
 
     public int nMaxVisibleSoul;
 
@@ -30,11 +27,10 @@ public class SoulContainer : MonoBehaviour {
 
     public void cbReduceDurations(Object target, params object[] args) {
 
-        //MAJOR TODO:: Should probably not even have this method
-        //Instead, have each soul subscribe to the ExecTurnEnd.SubAllEndTurn trigger
-        //So that each can trigger one by one
-
-        //TODO:: Fix this so that we don't potentially get errors when elements get removed mid-list-traversal
+        //TODO:: Consider if there are any weird corner cases with removing soul effects that trigger placement of new soul effects
+        //   - don't want an effect to be queue'd up to be removed via duration, then being also removed by a 4th soul effect pushing
+        //     the oldest soul effect off (could maybe just add a check to ensure we only call the RemoveSoul method on soul effects in
+        //     lstExpiredSoul that are still present in lstSoul?
 
         List<Soul> lstExpiredSoul = new List<Soul>();
 
@@ -54,6 +50,8 @@ public class SoulContainer : MonoBehaviour {
 
         //Remove each effect that was noted as having no duration left
         foreach(Soul SoulToRemove in lstExpiredSoul) {
+            //If this soul effect somehow isn't in the list of active soul effects, don't try to remove it again
+            if(lstSoul.Contains(SoulToRemove) == false) continue;
             RemoveSoul(SoulToRemove);
         }
 
@@ -61,6 +59,8 @@ public class SoulContainer : MonoBehaviour {
         subVisibleSoulUpdate.NotifyObs(this);
 
     }
+
+    public abstract void LetOwnerNotifySoulRemoved(Soul soulRemoved);
 
     public void RemoveSoul(Soul toRemove) {
 
@@ -76,13 +76,15 @@ public class SoulContainer : MonoBehaviour {
         //Let others know that the visible soul MAY have changed (not necessarily)
         subVisibleSoulUpdate.NotifyObs(this);
 
-        chrOwner.subSoulRemoved.NotifyObs(this, toRemove);
+        LetOwnerNotifySoulRemoved(toRemove);
 
         //Debug.Log("After removing " + toRemove.sName);
 
         if(ContSkillEngine.bDEBUGENGINE) PrintAllSoul();
 
     }
+
+    public abstract void LetOwnerNotifySoulApplied(Soul soulApplied);
 
     public void ApplySoul(Soul newSoul) {
 
@@ -109,14 +111,17 @@ public class SoulContainer : MonoBehaviour {
 
         //Let others know that the visible soul MAY have changed (not necessarily)
         subVisibleSoulUpdate.NotifyObs(this);
-        chrOwner.subSoulApplied.NotifyObs(this, newSoul);
+
+        LetOwnerNotifySoulApplied(newSoul);
 
         if(ContSkillEngine.bDEBUGENGINE) PrintAllSoul();
 
     }
 
+    public abstract string GetOwnerName();
+
     public void PrintAllSoul() {
-        Debug.Log("********** Printing all Soul for " + chrOwner.sName + "*****************");
+        Debug.Log("********** Printing all Soul for " + GetOwnerName() + "*****************");
         for(int i = 0; i < lstSoul.Count; i++) {
             string sVisible = "";
             string sDuration = "";
@@ -132,23 +137,17 @@ public class SoulContainer : MonoBehaviour {
     }
 
 
-
+    public abstract void InitMaxVisibleSoul();
 
     // Use this for initialization
     void Start() {
-
-        nMaxVisibleSoul = 3;
-
-        ExecTurnEndTurn.subAllPostTrigger.Subscribe(cbReduceDurations);
-        //TODO::  At somepoint, fix the order of the notifications to be sent out to next-character-to-act first
-
-
-    }
-
-    public SoulContainer() {
         lstSoul = new List<Soul>();
 
         subVisibleSoulUpdate = new Subject();
+        InitMaxVisibleSoul();
+
+        ExecTurnEndTurn.subAllPostTrigger.Subscribe(cbReduceDurations);
+        //TODO::  At somepoint, define a fixed order of notifications (e.g., based on original acting character order)
 
     }
 }

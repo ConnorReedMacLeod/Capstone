@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulChangePower : Soul {
+public class SoulChangePower : SoulChr {
 
     int nPowerChange;
 
@@ -16,7 +16,6 @@ public class SoulChangePower : Soul {
 
         bVisible = false;
         bRecoilWhenApplied = false;
-        bRemoveOnChrDeath = true;
 
 
         //Check if a duration was specified

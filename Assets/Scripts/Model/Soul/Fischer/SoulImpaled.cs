@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulImpaled : Soul {
+public class SoulImpaled : SoulChr {
 
     public int nMaxLifeReduction;
     public LinkedListNode<Property<int>.Modifier> modifierLifeReduction;

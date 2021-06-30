@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulCheerleader : Soul {
+public class SoulCheerleader : SoulChr {
 
     public int nPowerGain;
 
@@ -42,8 +42,6 @@ public class SoulCheerleader : Soul {
 
         nPowerGain = 5;
 
-
-        InitTriggers();
     }
 
     public override void InitTriggers() {
@@ -82,7 +80,6 @@ public class SoulCheerleader : Soul {
 
         nPowerGain = other.nPowerGain;
 
-        InitTriggers();
     }
 
 }

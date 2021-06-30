@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulEnvenomed : Soul {
+public class SoulEnvenomed : SoulChr {
 
     public int nLifeLoss;
 
@@ -16,7 +16,6 @@ public class SoulEnvenomed : Soul {
         bDuration = true;
         pnMaxDuration = new Property<int>(3);
 
-        InitTriggers();
 
     }
 
@@ -76,7 +75,6 @@ public class SoulEnvenomed : Soul {
 
         nLifeLoss = other.nLifeLoss;
 
-        InitTriggers();
 
     }
 

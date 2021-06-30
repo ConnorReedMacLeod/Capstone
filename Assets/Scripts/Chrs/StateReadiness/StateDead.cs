@@ -59,6 +59,8 @@ public class StateDead : StateReadiness {
 
         */
 
+        Debug.Log("Remember to dispell soul effects on dying characters");
+
         chrOwner.subDeath.NotifyObs(chrOwner);
         Chr.subAllDeath.NotifyObs(chrOwner);
     }

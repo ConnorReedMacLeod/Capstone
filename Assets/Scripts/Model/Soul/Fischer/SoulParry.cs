@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulParry : Soul {
+public class SoulParry : SoulChr {
 
     public int nDamage;
     public int nDefense;
@@ -42,8 +42,6 @@ public class SoulParry : Soul {
         //Create a base Damage object that this skill will apply
         dmgCounterAttack = new Damage(this.chrSource, null, nDamage);
 
-
-        InitTriggers();
     }
 
     public override void InitTriggers() {
@@ -107,7 +105,6 @@ public class SoulParry : Soul {
         nDefense = other.nDefense;
         dmgCounterAttack = new Damage(other.dmgCounterAttack);
 
-        InitTriggers();
     }
 
 

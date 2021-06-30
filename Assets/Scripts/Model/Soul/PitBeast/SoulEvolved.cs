@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulEvolved : Soul {
+public class SoulEvolved : SoulChr {
 
     public int nPowerBuff;
 

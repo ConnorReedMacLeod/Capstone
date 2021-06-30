@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulSpooked : Soul {
+public class SoulSpooked : SoulChr {
 
     public int nPowerDebuff;
 

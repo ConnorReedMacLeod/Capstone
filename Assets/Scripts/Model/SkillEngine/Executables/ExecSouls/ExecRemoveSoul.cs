@@ -41,11 +41,11 @@ public class ExecRemoveSoul : ExecSoul {
 
     }
 
-    public ExecRemoveSoul(Chr _chrSource, Soul _soulTarget) : base(_chrSource, _soulTarget) {
+    public ExecRemoveSoul(Chr _chrSource, SoulChr _soulTarget) : base(_chrSource, _soulTarget) {
 
     }
 
-    public ExecRemoveSoul(ExecRemoveSoul other): base(other) {
+    public ExecRemoveSoul(ExecRemoveSoul other) : base(other) {
         soulTarget = other.soulTarget;
     }
 

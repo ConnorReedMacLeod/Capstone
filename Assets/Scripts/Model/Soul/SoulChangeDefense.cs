@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulChangeDefense : Soul {
+public class SoulChangeDefense : SoulChr {
 
     int nDefenseChange;
 
@@ -17,8 +17,6 @@ public class SoulChangeDefense : Soul {
 
         bVisible = false;
         bRecoilWhenApplied = false;
-
-        bRemoveOnChrDeath = true;
 
         //Check if a duration was specified
         if(_nDuration == -1) {

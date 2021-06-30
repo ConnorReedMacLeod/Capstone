@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulSadism : Soul {
+public class SoulSadism : SoulChr {
 
     public Healing heal;
     public int nBaseHealing;
@@ -29,7 +29,6 @@ public class SoulSadism : Soul {
         //Create a base Healing object that this skill will apply 
         heal = new Healing(this.chrSource, this.chrSource, nBaseHealing);
 
-        InitTriggers();
     }
 
     public override void InitTriggers() {

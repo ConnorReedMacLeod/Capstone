@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulDispirited : Soul {
+public class SoulDispirited : SoulChr {
 
     public int[] arnCostDebuff;
 

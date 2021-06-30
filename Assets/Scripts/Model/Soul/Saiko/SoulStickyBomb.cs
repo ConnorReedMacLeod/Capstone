@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulStickyBomb : Soul {
+public class SoulStickyBomb : SoulChr {
 
     public int nDetonationDamage;
     public Damage dmg;
