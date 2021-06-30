@@ -13,8 +13,8 @@ public class SoulChannelHydrasRegen : SoulChannel {
         heal = new Healing(chrSource, null, nBaseHealing);
 
 
-        lstTriggers = new List<Soul.TriggerEffect>() {
-            new Soul.TriggerEffect() {
+        lstTriggers = new List<SoulChr.TriggerEffect>() {
+            new SoulChr.TriggerEffect() {
                  sub = ExecTurnEndTurn.subAllPostTrigger,
                  cb = (target, args) => {
 

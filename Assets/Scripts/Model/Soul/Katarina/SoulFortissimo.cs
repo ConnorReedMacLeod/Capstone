@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulFortissimo : Soul {
+public class SoulFortissimo : SoulChr {
 
     public int nPowerBuff;
     public int nDefenseBuff;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulHunted : Soul {
+public class SoulHunted : SoulChr {
 
     public int nDefenseLoss;
 
@@ -17,7 +17,6 @@ public class SoulHunted : Soul {
 
         nDefenseLoss = -5;
 
-        InitTriggers();
     }
 
     public override void InitTriggers() {
@@ -64,7 +63,6 @@ public class SoulHunted : Soul {
 
         nDefenseLoss = other.nDefenseLoss;
 
-        InitTriggers();
     }
 
 }

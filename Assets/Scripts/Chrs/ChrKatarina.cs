@@ -14,16 +14,16 @@ public class ChrKatarina : BaseChr {
     }
 
     public override void SetDisciplines() {
-        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { GARDENER, SCOUT };
+        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { TESTING, KATARINA };
     }
 
     //Defines all of a character's unique skills
     public override void SetLoadoutSkills() {
 
-        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.RECON;
-        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.PLANTSUNFLOWER;
-        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.SURVEYTHELAND;
-        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.RECON;
+        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.CACOPHONY;
+        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.FORTISSIMO;
+        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.REVERBERATE;
+        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.SERENADE;
     }
 
 }

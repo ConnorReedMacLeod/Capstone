@@ -11,8 +11,27 @@ using static Discipline.DISCIPLINE;
 public static class SkillType {
     //TODO - eventually look at transferring this long list to a text file - possible?  worth it?
     public enum SKILLTYPE {
-        RECON, FLUSHOUT, SNAPTRAP, PLANTSUNFLOWER, SURVEYTHELAND, MULCH, LEECH, TRANSFUSE,
-        KNOCKBACK, ADVANCE
+        //TESTING
+        LEECH, TRANSFUSE, KNOCKBACK, ADVANCE,
+
+        //Fischer
+        BUCKLERPARRY, HARPOONGUN, HUNTERSQUARRY, IMPALE,
+
+        //Katarina
+        CACOPHONY, FORTISSIMO, REVERBERATE, SERENADE,
+
+        //Pit Beast
+        FORCEDEVOLUTION, SADISM, TANTRUM, TENDRILSTAB,
+
+        //Rayne
+        CHEERLEADER, CLOUDCUSHION, SPIRITSLAP, THUNDERSTORM,
+
+        //Saiko
+        AMBUSH, SMOKECOVER, STICKYBOMB, TRANQUILIZE,
+
+        //Sophidia
+        HISS, HYDRASREGEN, TWINSNAKES, VENEMOUSBITE
+
     };
 
     public struct SkillTypeInfo {
@@ -29,16 +48,49 @@ public static class SkillType {
     }
 
     static Dictionary<SKILLTYPE, SkillTypeInfo> dictSkillTypeInfos = new Dictionary<SKILLTYPE, SkillTypeInfo>()
-    {   { RECON, new SkillTypeInfo ( RECON, "Recon", new List<Discipline.DISCIPLINE> { SCOUT } ) },
-        { FLUSHOUT, new SkillTypeInfo ( FLUSHOUT, "Flush Out", new List<Discipline.DISCIPLINE> { TRAPPER } ) },
-        { SNAPTRAP, new SkillTypeInfo ( SNAPTRAP, "Snap Trap", new List<Discipline.DISCIPLINE> { TRAPPER } ) },
-        { PLANTSUNFLOWER, new SkillTypeInfo ( PLANTSUNFLOWER, "Plant Sunflowers", new List<Discipline.DISCIPLINE> { GARDENER } ) },
-        { SURVEYTHELAND, new SkillTypeInfo ( SURVEYTHELAND, "Survey the Land", new List<Discipline.DISCIPLINE> { GARDENER } ) },
-        { MULCH, new SkillTypeInfo ( MULCH, "Mulch", new List<Discipline.DISCIPLINE> { GARDENER, GIANT } ) },
-        { LEECH, new SkillTypeInfo ( LEECH, "Leech", new List<Discipline.DISCIPLINE> { GARDENER, GIANT } ) },
-        { TRANSFUSE, new SkillTypeInfo ( TRANSFUSE, "Transfuse", new List<Discipline.DISCIPLINE> { GARDENER, GIANT } ) },
-        { KNOCKBACK, new SkillTypeInfo ( KNOCKBACK, "Knockback", new List<Discipline.DISCIPLINE> { TRAPPER} ) },
-        { ADVANCE, new SkillTypeInfo ( ADVANCE, "Advance", new List<Discipline.DISCIPLINE> { TRAPPER} ) }
+    {   //TESTING
+        { LEECH, new SkillTypeInfo ( LEECH, "Leech", new List<Discipline.DISCIPLINE> { TESTING } ) },
+        { TRANSFUSE, new SkillTypeInfo ( TRANSFUSE, "Transfuse", new List<Discipline.DISCIPLINE> { TESTING } ) },
+        { KNOCKBACK, new SkillTypeInfo ( KNOCKBACK, "Knockback", new List<Discipline.DISCIPLINE> { TESTING } ) },
+        { ADVANCE, new SkillTypeInfo ( ADVANCE, "Advance", new List<Discipline.DISCIPLINE> { TESTING } ) },
+
+        //FISHER
+        { BUCKLERPARRY, new SkillTypeInfo ( BUCKLERPARRY, "Buckler Parry", new List<Discipline.DISCIPLINE> { FISCHER } ) },
+        { HARPOONGUN, new SkillTypeInfo ( HARPOONGUN, "Harpoon Gun", new List<Discipline.DISCIPLINE> { FISCHER } ) },
+        { HUNTERSQUARRY, new SkillTypeInfo ( HUNTERSQUARRY, "Hunter's Quarry", new List<Discipline.DISCIPLINE> { FISCHER } ) },
+        { IMPALE, new SkillTypeInfo ( IMPALE, "Impale", new List<Discipline.DISCIPLINE> { FISCHER } ) },
+
+        //KATARINA
+        { CACOPHONY, new SkillTypeInfo ( CACOPHONY, "Cacophony", new List<Discipline.DISCIPLINE> { KATARINA } ) },
+        { FORTISSIMO, new SkillTypeInfo ( FORTISSIMO, "Fortissimo", new List<Discipline.DISCIPLINE> { KATARINA } ) },
+        { REVERBERATE, new SkillTypeInfo ( REVERBERATE, "Reverberate", new List<Discipline.DISCIPLINE> { KATARINA } ) },
+        { SERENADE, new SkillTypeInfo ( SERENADE, "Serenade", new List<Discipline.DISCIPLINE> { KATARINA } ) },
+
+        //PITBEAST
+        { FORCEDEVOLUTION, new SkillTypeInfo ( FORCEDEVOLUTION, "Forced Evolution", new List<Discipline.DISCIPLINE> { PITBEAST } ) },
+        { SADISM, new SkillTypeInfo ( SADISM, "Sadism", new List<Discipline.DISCIPLINE> { PITBEAST } ) },
+        { TANTRUM, new SkillTypeInfo ( TANTRUM, "Tantrum", new List<Discipline.DISCIPLINE> { PITBEAST } ) },
+        { TENDRILSTAB, new SkillTypeInfo ( TENDRILSTAB, "Tendril Stab", new List<Discipline.DISCIPLINE> { PITBEAST } ) },
+
+        //RAYNE
+        { CHEERLEADER, new SkillTypeInfo ( CHEERLEADER, "Cheerleader", new List<Discipline.DISCIPLINE> { RAYNE } ) },
+        { CLOUDCUSHION, new SkillTypeInfo ( CLOUDCUSHION, "Cloud Cushion", new List<Discipline.DISCIPLINE> { RAYNE } ) },
+        { SPIRITSLAP, new SkillTypeInfo ( SPIRITSLAP, "Spirit Slap", new List<Discipline.DISCIPLINE> { RAYNE } ) },
+        { THUNDERSTORM, new SkillTypeInfo ( THUNDERSTORM, "Thunderstorm", new List<Discipline.DISCIPLINE> { RAYNE } ) },
+
+        //SAIKO
+        { AMBUSH, new SkillTypeInfo ( AMBUSH, "Ambush", new List<Discipline.DISCIPLINE> { SAIKO } ) },
+        { SMOKECOVER, new SkillTypeInfo ( SMOKECOVER, "Smoke Cover", new List<Discipline.DISCIPLINE> { SAIKO } ) },
+        { STICKYBOMB, new SkillTypeInfo ( STICKYBOMB, "Stickybomb", new List<Discipline.DISCIPLINE> { SAIKO } ) },
+        { TRANQUILIZE, new SkillTypeInfo ( TRANQUILIZE, "Tranquilize", new List<Discipline.DISCIPLINE> { SAIKO } ) },
+
+        //SOPHIDIA
+        { HISS, new SkillTypeInfo ( HISS, "Hiss", new List<Discipline.DISCIPLINE> { SOPHIDIA } ) },
+        { HYDRASREGEN, new SkillTypeInfo ( HYDRASREGEN, "Hydra's Regeneration", new List<Discipline.DISCIPLINE> { SOPHIDIA } ) },
+        { TWINSNAKES, new SkillTypeInfo ( TWINSNAKES, "Twinsnakes", new List<Discipline.DISCIPLINE> { SOPHIDIA } ) },
+        { VENEMOUSBITE, new SkillTypeInfo ( VENEMOUSBITE, "Venemous Bite", new List<Discipline.DISCIPLINE> { SOPHIDIA } ) },
+
+
     };
 
 
@@ -56,9 +108,6 @@ public static class SkillType {
     }
 
 
-
-
-
     //Whenever a new skill is added, have to include a skillType -> Constructor mapping for it
     //  so that it can be added in the loadout setup phase
     public static Skill InstantiateNewSkill(SKILLTYPE skillType, Chr chr) {
@@ -66,24 +115,8 @@ public static class SkillType {
         Skill skillNew = null;
 
         switch(skillType) {
-        case SKILLTYPE.FLUSHOUT:
-            skillNew = new SkillAmbush(chr);
-            break;
-        case SKILLTYPE.MULCH:
-            skillNew = new SkillHydrasRegen(chr);
-            break;
-        case SKILLTYPE.PLANTSUNFLOWER:
-            skillNew = new SkillCheerleader(chr);
-            break;
-        case SKILLTYPE.RECON:
-            skillNew = new SkillImpale(chr);
-            break;
-        case SKILLTYPE.SNAPTRAP:
-            skillNew = new SkillLeech(chr);
-            break;
-        case SKILLTYPE.SURVEYTHELAND:
-            skillNew = new SkillHiss(chr);
-            break;
+
+        //TESTING
         case SKILLTYPE.LEECH:
             skillNew = new SkillLeech(chr);
             break;
@@ -96,6 +129,92 @@ public static class SkillType {
         case SKILLTYPE.ADVANCE:
             skillNew = new SkillAdvance(chr);
             break;
+
+        //Fischer
+        case SKILLTYPE.BUCKLERPARRY:
+            skillNew = new SkillBucklerParry(chr);
+            break;
+        case SKILLTYPE.HARPOONGUN:
+            skillNew = new SkillHarpoonGun(chr);
+            break;
+        case SKILLTYPE.HUNTERSQUARRY:
+            skillNew = new SkillHuntersQuarry(chr);
+            break;
+        case SKILLTYPE.IMPALE:
+            skillNew = new SkillImpale(chr);
+            break;
+
+        //Katarina
+        case SKILLTYPE.CACOPHONY:
+            skillNew = new SkillCacophony(chr);
+            break;
+        case SKILLTYPE.FORTISSIMO:
+            skillNew = new SkillFortissimo(chr);
+            break;
+        case SKILLTYPE.REVERBERATE:
+            skillNew = new SkillReverberate(chr);
+            break;
+        case SKILLTYPE.SERENADE:
+            skillNew = new SkillSerenade(chr);
+            break;
+
+        //Pit Beast
+        case SKILLTYPE.FORCEDEVOLUTION:
+            skillNew = new SkillForcedEvolution(chr);
+            break;
+        case SKILLTYPE.SADISM:
+            skillNew = new SkillSadism(chr);
+            break;
+        case SKILLTYPE.TANTRUM:
+            skillNew = new SkillTantrum(chr);
+            break;
+        case SKILLTYPE.TENDRILSTAB:
+            skillNew = new SkillTendrilStab(chr);
+            break;
+
+        //Rayne
+        case SKILLTYPE.CHEERLEADER:
+            skillNew = new SkillCheerleader(chr);
+            break;
+        case SKILLTYPE.CLOUDCUSHION:
+            skillNew = new SkillCloudCushion(chr);
+            break;
+        case SKILLTYPE.SPIRITSLAP:
+            skillNew = new SkillSpiritSlap(chr);
+            break;
+        case SKILLTYPE.THUNDERSTORM:
+            skillNew = new SkillThunderStorm(chr);
+            break;
+
+        //Saiko
+        case SKILLTYPE.AMBUSH:
+            skillNew = new SkillAmbush(chr);
+            break;
+        case SKILLTYPE.SMOKECOVER:
+            skillNew = new SkillSmokeCover(chr);
+            break;
+        case SKILLTYPE.STICKYBOMB:
+            skillNew = new SkillStickyBomb(chr);
+            break;
+        case SKILLTYPE.TRANQUILIZE:
+            skillNew = new SkillTranquilize(chr);
+            break;
+
+        //Sophidia
+        case SKILLTYPE.HISS:
+            skillNew = new SkillHiss(chr);
+            break;
+        case SKILLTYPE.HYDRASREGEN:
+            skillNew = new SkillHydrasRegen(chr);
+            break;
+        case SKILLTYPE.TWINSNAKES:
+            skillNew = new SkillTwinSnakes(chr);
+            break;
+        case SKILLTYPE.VENEMOUSBITE:
+            skillNew = new SkillVenomousBite(chr);
+            break;
+
+
 
         default:
             Debug.LogError("ERROR! No constructor for " + skillType + " exists!");

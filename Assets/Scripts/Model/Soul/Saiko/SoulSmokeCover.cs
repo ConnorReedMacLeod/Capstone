@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulSmokeCover : Soul {
+public class SoulSmokeCover : SoulChr {
 
     public SoulSmokeCover(Chr _chrSource, Chr _chrTarget, Skill _skillSource) : base(_chrSource, _chrTarget, _skillSource) {
 
@@ -14,8 +14,6 @@ public class SoulSmokeCover : Soul {
         bRecoilWhenApplied = false;
 
         pnMaxDuration = new Property<int>(4);
-
-        InitTriggers();
 
         lstReplacements = new List<Replacement>() {
             new Replacement() {
@@ -48,7 +46,5 @@ public class SoulSmokeCover : Soul {
             //Otherwise, just copy from the other object
             chrTarget = other.chrTarget;
         }
-
-        InitTriggers();
     }
 }

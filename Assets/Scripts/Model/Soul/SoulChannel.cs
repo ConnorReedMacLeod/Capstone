@@ -8,7 +8,7 @@ using UnityEngine;
 
 
 
-public class SoulChannel : Soul {
+public class SoulChannel : SoulChr {
 
     public bool bDelayedSkill; // Is this soulChannel only used for executing a single effect after a delay
                                //  with no on-going effect

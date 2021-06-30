@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class ExecApplySoul : ExecChr {
 
-    public delegate Soul FuncCreateSoul(Chr _chrSource, Chr _chrTarget);
+    public delegate SoulChr FuncCreateSoul(Chr _chrSource, Chr _chrTarget);
 
-    public Soul soulToApply;
+    public SoulChr soulToApply;
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -45,7 +45,7 @@ public class ExecApplySoul : ExecChr {
 
     }
 
-    public ExecApplySoul(Chr _chrSource, Chr _chrTarget, Soul _soulToApply) : base(_chrSource, _chrTarget) {
+    public ExecApplySoul(Chr _chrSource, Chr _chrTarget, SoulChr _soulToApply) : base(_chrSource, _chrTarget) {
         soulToApply = _soulToApply;
 
     }

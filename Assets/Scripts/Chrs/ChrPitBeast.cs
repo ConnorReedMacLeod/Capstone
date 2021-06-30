@@ -14,16 +14,16 @@ public class ChrPitBeast : BaseChr {
     }
 
     public override void SetDisciplines() {
-        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { GIANT, TRAPPER };
+        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { TESTING, PITBEAST };
     }
 
     //Defines all of a character's unique skills
     public override void SetLoadoutSkills() {
 
-        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.FLUSHOUT;
-        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.SNAPTRAP;
-        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.SNAPTRAP;
-        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.FLUSHOUT;
+        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.FORCEDEVOLUTION;
+        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.SADISM;
+        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.TANTRUM;
+        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.TENDRILSTAB;
     }
 
 }

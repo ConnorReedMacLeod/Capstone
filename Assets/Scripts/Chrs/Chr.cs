@@ -60,7 +60,7 @@ public class Chr : MonoBehaviour {
 
     public Position position;       //A reference to the position the character is on
 
-    public SoulContainer soulContainer; //A reference to the character's list of soul effects
+    public SoulContainerChr soulContainer; //A reference to the character's list of soul effects
 
     public ViewChr view;
 

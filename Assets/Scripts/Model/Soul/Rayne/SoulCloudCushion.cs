@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulCloudCushion : Soul {
+public class SoulCloudCushion : SoulChr {
 
     public int nDefenseBuff;
 

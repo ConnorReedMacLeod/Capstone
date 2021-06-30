@@ -14,16 +14,16 @@ public class ChrSophidia : BaseChr {
     }
 
     public override void SetDisciplines() {
-        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { GIANT, TRAPPER, FALCONER, GARDENER };
+        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { TESTING, SOPHIDIA };
     }
 
     //Defines all of a character's unique skills
     public override void SetLoadoutSkills() {
 
-        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.RECON;
-        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.FLUSHOUT;
-        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.SNAPTRAP;
-        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.MULCH;
+        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.HISS;
+        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.HYDRASREGEN;
+        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.TWINSNAKES;
+        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.VENEMOUSBITE;
 
     }
 

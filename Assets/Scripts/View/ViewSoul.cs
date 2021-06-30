@@ -33,7 +33,7 @@ public class ViewSoul : ViewInteractive {
 
         string sSprPath = "Images/Soul/imgSoulEmpty2";
 
-        if (mod != null) {
+        if(mod != null) {
 
             sSprPath = "Images/Soul/imgSoul" + mod.sName;
 
@@ -46,7 +46,7 @@ public class ViewSoul : ViewInteractive {
 
     public void UpdateTxtDuration() {
 
-        if (mod == null || mod.bDuration == false) {
+        if(mod == null || mod.bDuration == false) {
             //Then we don't have any duration to display
             txtDuration.text = "";
         } else {
