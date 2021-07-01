@@ -18,6 +18,8 @@ public class Position : MonoBehaviour {
     public Chr chrOnPosition;
 
     public Subject subCharacterOnPositionChanged = new Subject();
+    public Subject subSoulApplied = new Subject();
+    public Subject subSoulRemoved = new Subject();
 
     public override string ToString() {
         return string.Format("({0},{1})", iColumn, jRow);
@@ -66,6 +68,8 @@ public class Position : MonoBehaviour {
         bStarted = true;
 
         subCharacterOnPositionChanged = new Subject();
+        subSoulApplied = new Subject();
+        subSoulRemoved = new Subject();
     }
 
 }
