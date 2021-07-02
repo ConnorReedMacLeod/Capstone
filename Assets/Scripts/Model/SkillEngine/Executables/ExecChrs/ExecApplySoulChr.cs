@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Can create executables like ...= new Exec(){chrSource = ..., chrTarget = ..., funcApplySoul = ...};
+//Can create executables like ...= new Exec(){chrSource = ..., chrTarget = ..., soulToCopy = ...};
 
-public class ExecApplySoul : ExecChr {
-
-    public delegate SoulChr FuncCreateSoul(Chr _chrSource, Chr _chrTarget);
+public class ExecApplySoulChr : ExecChr {
 
     public SoulChr soulToApply;
 
@@ -45,12 +43,12 @@ public class ExecApplySoul : ExecChr {
 
     }
 
-    public ExecApplySoul(Chr _chrSource, Chr _chrTarget, SoulChr _soulToApply) : base(_chrSource, _chrTarget) {
+    public ExecApplySoulChr(Chr _chrSource, Chr _chrTarget, SoulChr _soulToApply) : base(_chrSource, _chrTarget) {
         soulToApply = _soulToApply;
 
     }
 
-    public ExecApplySoul(ExecApplySoul other) : base(other) {
+    public ExecApplySoulChr(ExecApplySoulChr other) : base(other) {
         soulToApply = other.soulToApply;
 
     }

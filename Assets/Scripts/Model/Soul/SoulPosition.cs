@@ -7,6 +7,12 @@ public class SoulPosition : Soul {
 
     public Position posTarget;     //A reference to the Position this soul effect is applied to
 
+    public Chr chrOnPosition {
+        get {
+            return posTarget.chrOnPosition;
+        }
+    }
+
     public SoulPosition(Chr _chrSource, Position _posTarget, Skill _skillSource) : base(_chrSource, _skillSource) {
 
         posTarget = _posTarget;

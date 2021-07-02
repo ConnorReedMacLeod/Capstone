@@ -63,15 +63,7 @@ public class SoulEnvenomed : SoulChr {
         chrTarget.soulContainer.subVisibleSoulUpdate.NotifyObs();
     }
 
-    public SoulEnvenomed(SoulEnvenomed other, Chr _chrTarget = null) : base(other/*TODONOW - add ", _chrTarget" here*/) {
-
-        if(_chrTarget != null) {
-            //If a Target was provided, then we'll use that
-            chrTarget = _chrTarget;
-        } else {
-            //Otherwise, just copy from the other object
-            chrTarget = other.chrTarget;
-        }
+    public SoulEnvenomed(SoulEnvenomed other, Chr _chrTarget = null) : base(other, _chrTarget) {
 
         nLifeLoss = other.nLifeLoss;
 

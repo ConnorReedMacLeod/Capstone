@@ -217,7 +217,6 @@ public class ViewInteractive : MonoBehaviour {
     }
 
     public void OnMouseEnter() {
-        Debug.Log("Hovering over " + gameObject.name);
         onMouseStartHover();
     }
 

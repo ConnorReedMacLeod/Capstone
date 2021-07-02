@@ -42,7 +42,7 @@ public class SkillCloudCushion : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoul(skill.chrSource, chrSelected, new SoulCloudCushion(soulToCopy, chrSelected)) {
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulCloudCushion(soulToCopy, chrSelected)) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Rayne/sndCloudCushion", 3.467f) },
                 sLabel = "Ooh, so soft"
             });

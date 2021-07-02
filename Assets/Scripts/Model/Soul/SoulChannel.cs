@@ -58,7 +58,7 @@ public class SoulChannel : SoulChr {
 
     }
 
-    public SoulChannel(SoulChannel soulToCopy, Skill _skill) : base(soulToCopy) {
+    public SoulChannel(SoulChannel soulToCopy, Skill _skill) : base(soulToCopy, soulToCopy.chrSource) {
 
         Debug.Log("Creating copy of soulchannel");
 
