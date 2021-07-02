@@ -20,7 +20,7 @@ public class ChrFischer : BaseChr {
     //Defines all of a character's unique skills
     public override void SetLoadoutSkills() {
 
-        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.BUCKLERPARRY;
+        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.BUNKER;
         chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.HARPOONGUN;
         chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.HUNTERSQUARRY;
         chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.IMPALE;

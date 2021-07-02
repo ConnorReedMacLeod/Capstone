@@ -17,6 +17,8 @@ public class Position : MonoBehaviour {
 
     public Chr chrOnPosition;
 
+    public SoulContainerPosition soulContainer;
+
     public Subject subCharacterOnPositionChanged = new Subject();
     public Subject subSoulApplied = new Subject();
     public Subject subSoulRemoved = new Subject();

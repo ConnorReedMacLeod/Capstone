@@ -48,7 +48,7 @@ public class SkillStickyBomb : Skill {
         public override void ClauseEffect(Chr chrSelected) {
 
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoul(skill.chrSource, chrSelected, new SoulStickyBomb(soulToCopy, chrSelected)) {
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulStickyBomb(soulToCopy, chrSelected)) {
                 sLabel = "A bomb stuck"
             });
 

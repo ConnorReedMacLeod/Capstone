@@ -38,13 +38,8 @@ public class SoulSmokeCover : SoulChr {
 
     }
 
-    public SoulSmokeCover(SoulSmokeCover other, Chr _chrTarget = null) : base(other) {
-        if(_chrTarget != null) {
-            //If a Target was provided, then we'll use that
-            chrTarget = _chrTarget;
-        } else {
-            //Otherwise, just copy from the other object
-            chrTarget = other.chrTarget;
-        }
+    public SoulSmokeCover(SoulSmokeCover other, Chr _chrTarget = null) : base(other, _chrTarget) {
+
+
     }
 }

@@ -19,7 +19,7 @@ public class SoulCheerleader : SoulChr {
 
         //So we're sure we're buffing a valid character at this point
 
-        ContSkillEngine.Get().AddExec(new ExecApplySoul(chrSource, chrAlly,
+        ContSkillEngine.Get().AddExec(new ExecApplySoulChr(chrSource, chrAlly,
             new SoulChangePower(chrSource, chrAlly, skillSource, nPowerGain, 1) {
                 //Set up the hidden soul effect that's buffing the ally's power
                 bRemoveOnChrSourceDeath = true
@@ -69,14 +69,7 @@ public class SoulCheerleader : SoulChr {
     }
 
 
-    public SoulCheerleader(SoulCheerleader other, Chr _chrTarget = null) : base(other) {
-        if(_chrTarget != null) {
-            //If a Target was provided, then we'll use that
-            chrTarget = _chrTarget;
-        } else {
-            //Otherwise, just copy from the other object
-            chrTarget = other.chrTarget;
-        }
+    public SoulCheerleader(SoulCheerleader other, Chr _chrTarget = null) : base(other, _chrTarget) {
 
         nPowerGain = other.nPowerGain;
 
