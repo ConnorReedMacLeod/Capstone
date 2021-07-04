@@ -15,7 +15,6 @@ public class ViewSoulContainer : MonoBehaviour {
 
         List<Soul> lstVisibleSoul = mod.GetVisibleSoul();
 
-
         for(int i = 0; i < arViewSoul.Length; i++) {
 
             if(lstVisibleSoul.Count - 1 < i) {
@@ -32,6 +31,8 @@ public class ViewSoulContainer : MonoBehaviour {
     }
 
     void Start() {
+
+        mod.Start();
 
         mod.subVisibleSoulUpdate.Subscribe(cbUpdateVisibleSoul);
 

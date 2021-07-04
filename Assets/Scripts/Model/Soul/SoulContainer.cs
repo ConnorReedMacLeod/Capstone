@@ -9,6 +9,8 @@ public abstract class SoulContainer : MonoBehaviour {
 
     public Subject subVisibleSoulUpdate;
 
+    bool bStarted;
+
     //returns a list of the visible events in the soul (oldest elements first)
     public List<Soul> GetVisibleSoul() {
         //TODO:: Just make this consistently maintained so we don't have to recalculate it each time
@@ -140,7 +142,10 @@ public abstract class SoulContainer : MonoBehaviour {
     public abstract void InitMaxVisibleSoul();
 
     // Use this for initialization
-    void Start() {
+    public void Start() {
+        if(bStarted) return;
+        bStarted = true;
+
         lstSoul = new List<Soul>();
 
         subVisibleSoulUpdate = new Subject();
