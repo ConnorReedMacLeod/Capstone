@@ -68,7 +68,7 @@ public class SkillCheerleader : Skill {
 
         public override void ClauseEffect() {
 
-            ContSkillEngine.PushSingleExecutable(new ExecRemoveSoul(skill.chrSource, ((SkillCheerleader)skill).soulPassive) {
+            ContSkillEngine.PushSingleExecutable(new ExecRemoveSoulChr(skill.chrSource, ((SkillCheerleader)skill).soulPassive) {
                 sLabel = skill.chrSource.sName + " is no longer peppy"
             });
 

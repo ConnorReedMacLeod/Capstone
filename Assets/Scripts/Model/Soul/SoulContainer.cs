@@ -69,7 +69,7 @@ public abstract class SoulContainer : MonoBehaviour {
         bool bRemoveSuccessfully = lstSoul.Remove(toRemove);
 
         if(bRemoveSuccessfully == false) {
-            Debug.Log("Couldn't remove " + toRemove.sName + " since it's already removed");
+            Debug.Log("Couldn't remove " + toRemove.sName + " from " + toRemove.GetNameOfAppliedTo() + " since it's already removed");
             return;
         }
 

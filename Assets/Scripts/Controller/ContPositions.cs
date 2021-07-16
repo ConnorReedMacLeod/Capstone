@@ -222,14 +222,15 @@ public class ContPositions : Singleton<ContPositions> {
 
         //Place this character on the target position
         pos.SetChrOnPosition(chr);
-        chr.UpdatePosition(pos);
+        chr.SetPosition(pos);
 
 
         //Send updates out for all affected character/positions (in reverse order so they take effect in chronological order)
-        chr.subPositionChanged.NotifyObs();
-        pos.subCharacterOnPositionChanged.NotifyObs();
+        pos.subChrEnteredPosition.NotifyObs(chr);
+        chr.subEnteredPosition.NotifyObs(pos);
 
-        if(posStarting != null) posStarting.subCharacterOnPositionChanged.NotifyObs();
+        if(posStarting != null) posStarting.subChrLeftPosition.NotifyObs(chr);
+        chr.subLeftPosition.NotifyObs(posStarting);
 
     }
 
@@ -249,8 +250,8 @@ public class ContPositions : Singleton<ContPositions> {
 
 
         //Update both characters
-        chr1.UpdatePosition(pos2);
-        chr2.UpdatePosition(pos1);
+        chr1.SetPosition(pos2);
+        chr2.SetPosition(pos1);
 
     }
 
@@ -277,11 +278,19 @@ public class ContPositions : Singleton<ContPositions> {
         SwapPositions(pos, posStarting);
 
         //Send all notifications out for affected characters and positions
-        chr.subPositionChanged.NotifyObs();
-        pos.subCharacterOnPositionChanged.NotifyObs();
+        // Sending in reverse order of intended execution so that events placed on the stack
+        //  will execute as expected
+        pos.subChrEnteredPosition.NotifyObs(chr);
+        posStarting.subChrEnteredPosition.NotifyObs(chrSwappingWith);
 
-        chrSwappingWith.subPositionChanged.NotifyObs();
-        posStarting.subCharacterOnPositionChanged.NotifyObs();
+        chrSwappingWith.subEnteredPosition.NotifyObs(posStarting);
+        chr.subEnteredPosition.NotifyObs(pos);
+
+        pos.subChrLeftPosition.NotifyObs(chrSwappingWith);
+        posStarting.subChrLeftPosition.NotifyObs(chr);
+
+        chrSwappingWith.subLeftPosition.NotifyObs(pos);
+        chr.subLeftPosition.NotifyObs(posStarting);
 
     }
 

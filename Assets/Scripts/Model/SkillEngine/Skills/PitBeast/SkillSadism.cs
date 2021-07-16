@@ -69,7 +69,7 @@ public class SkillSadism : Skill {
 
         public override void ClauseEffect() {
 
-            ContSkillEngine.PushSingleExecutable(new ExecRemoveSoul(skill.chrSource, ((SkillSadism)skill).soulPassive) {
+            ContSkillEngine.PushSingleExecutable(new ExecRemoveSoulChr(skill.chrSource, ((SkillSadism)skill).soulPassive) {
                 sLabel = "removing sadism"
             });
 
