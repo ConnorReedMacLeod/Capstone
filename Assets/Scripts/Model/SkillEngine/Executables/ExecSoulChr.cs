@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class ExecSoul : Executable {
+public abstract class ExecSoulChr : Executable {
 
     public SoulChr soulTarget;
 
@@ -15,11 +15,11 @@ public abstract class ExecSoul : Executable {
         return base.isLegal();
     }
 
-    public ExecSoul(Chr _chrSource, SoulChr _soulTarget) : base(_chrSource) {
+    public ExecSoulChr(Chr _chrSource, SoulChr _soulTarget) : base(_chrSource) {
         soulTarget = _soulTarget;
     }
 
-    public ExecSoul(ExecSoul other) : base(other) {
+    public ExecSoulChr(ExecSoulChr other) : base(other) {
         soulTarget = other.soulTarget;
     }
 

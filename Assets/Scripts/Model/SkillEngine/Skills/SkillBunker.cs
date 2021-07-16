@@ -9,7 +9,7 @@ public class SkillBunker : Skill {
         sName = "Bunker";
         sDisplayName = "Bunker";
 
-        type = new TypeActive(this);
+        type = new TypeCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
         parCost = new Property<int[]>(new int[] { 0, 0, 1, 0, 0 });

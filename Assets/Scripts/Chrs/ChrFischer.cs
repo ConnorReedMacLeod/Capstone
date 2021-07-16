@@ -21,8 +21,8 @@ public class ChrFischer : BaseChr {
     public override void SetLoadoutSkills() {
 
         chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.BUNKER;
-        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.HARPOONGUN;
-        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.HUNTERSQUARRY;
+        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.ADVANCE;
+        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.KNOCKBACK;
         chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.IMPALE;
 
     }

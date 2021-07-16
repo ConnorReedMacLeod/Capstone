@@ -21,6 +21,8 @@ public abstract class Soul {
     public int nMaxStacks;
     public int nCurStacks;
 
+    public bool bRemoved;   //Has the effect been removed already from the character it was applied to
+
     public bool bRemoveOnChrSourceDeath; //Should the effect be removed when the character who applied it dies?
 
     public bool bDuration;
@@ -66,6 +68,8 @@ public abstract class Soul {
 
     }
 
+    public abstract string GetNameOfAppliedTo();
+
     //These are functions that we can override if we want certain effects to happen on application/removal/expiration
     //  By default, these just do nothing though
     public virtual void ApplicationEffect() { }
@@ -103,7 +107,7 @@ public abstract class Soul {
     }
 
     public void OnRemoval() {
-        Debug.Log("Removing soul effect " + sName);
+        Debug.Log("Removing soul effect " + sName + " from " + GetNameOfAppliedTo());
 
         chrSource.subDeath.UnSubscribe(cbOnChrSourceDeath);
 
@@ -120,6 +124,9 @@ public abstract class Soul {
         }
 
         RemoveEffect();
+
+        bRemoved = true;
+
         if(ContSkillEngine.bDEBUGENGINE) Debug.Log(sName + " has been removed");
 
         if(ShouldTriggerExpiration()) {

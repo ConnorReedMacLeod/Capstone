@@ -4,7 +4,7 @@ using UnityEngine;
 
 //Can create executables like ...= new Exec(){chrSource = ..., chrTarget = ..., soulToRemove = ...};
 
-public class ExecRemoveSoul : ExecSoul {
+public class ExecRemoveSoulPosition : ExecSoulPosition {
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -35,17 +35,17 @@ public class ExecRemoveSoul : ExecSoul {
 
     public override void ExecuteEffect() {
 
-        Debug.Log("In ExecRemoveSoul's execute method");
+        Debug.Log("In ExecRemoveSoulPositions's execute method");
 
-        soulTarget.chrTarget.soulContainer.RemoveSoul(soulTarget);
-
-    }
-
-    public ExecRemoveSoul(Chr _chrSource, SoulChr _soulTarget) : base(_chrSource, _soulTarget) {
+        soulTarget.posTarget.soulContainer.RemoveSoul(soulTarget);
 
     }
 
-    public ExecRemoveSoul(ExecRemoveSoul other) : base(other) {
+    public ExecRemoveSoulPosition(Chr _chrSource, SoulPosition _soulTarget) : base(_chrSource, _soulTarget) {
+
+    }
+
+    public ExecRemoveSoulPosition(ExecRemoveSoulPosition other) : base(other) {
         soulTarget = other.soulTarget;
     }
 

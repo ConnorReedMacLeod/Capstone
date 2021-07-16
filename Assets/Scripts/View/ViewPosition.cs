@@ -22,7 +22,7 @@ public class ViewPosition : ViewInteractive {
 
         mod.Start();
 
-        mod.subCharacterOnPositionChanged.Subscribe(UpdateChrOnPositionToHere);
+        mod.subChrEnteredPosition.Subscribe(UpdateChrOnPositionToHere);
 
         base.Start();
     }
