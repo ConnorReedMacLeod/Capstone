@@ -250,8 +250,8 @@ public class ContPositions : Singleton<ContPositions> {
 
 
         //Update both characters
-        chr1.SetPosition(pos2);
-        chr2.SetPosition(pos1);
+        if(chr1 != null) chr1.SetPosition(pos2);
+        if(chr2 != null) chr2.SetPosition(pos1);
 
     }
 
@@ -283,13 +283,13 @@ public class ContPositions : Singleton<ContPositions> {
         pos.subChrEnteredPosition.NotifyObs(chr);
         posStarting.subChrEnteredPosition.NotifyObs(chrSwappingWith);
 
-        chrSwappingWith.subEnteredPosition.NotifyObs(posStarting);
+        if(chrSwappingWith != null) chrSwappingWith.subEnteredPosition.NotifyObs(posStarting);
         chr.subEnteredPosition.NotifyObs(pos);
 
         pos.subChrLeftPosition.NotifyObs(chrSwappingWith);
         posStarting.subChrLeftPosition.NotifyObs(chr);
 
-        chrSwappingWith.subLeftPosition.NotifyObs(pos);
+        if(chrSwappingWith != null) chrSwappingWith.subLeftPosition.NotifyObs(pos);
         chr.subLeftPosition.NotifyObs(posStarting);
 
     }
