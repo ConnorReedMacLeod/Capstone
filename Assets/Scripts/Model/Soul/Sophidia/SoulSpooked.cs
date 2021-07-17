@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulSpooked : Soul {
+public class SoulSpooked : SoulChr {
 
     public int nPowerDebuff;
 
@@ -30,14 +30,7 @@ public class SoulSpooked : Soul {
         chrTarget.soulContainer.RemoveSoul(soulChangePower);
     }
 
-    public SoulSpooked(SoulSpooked other, Chr _chrTarget = null) : base(other) {
-        if(_chrTarget != null) {
-            //If a Target was provided, then we'll use that
-            chrTarget = _chrTarget;
-        } else {
-            //Otherwise, just copy from the other object
-            chrTarget = other.chrTarget;
-        }
+    public SoulSpooked(SoulSpooked other, Chr _chrTarget = null) : base(other, _chrTarget) {
 
         nPowerDebuff = other.nPowerDebuff;
 

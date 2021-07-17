@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulChangeDefense : Soul {
+public class SoulChangeDefense : SoulChr {
 
     int nDefenseChange;
 
@@ -18,8 +18,6 @@ public class SoulChangeDefense : Soul {
         bVisible = false;
         bRecoilWhenApplied = false;
 
-        bRemoveOnChrDeath = true;
-
         //Check if a duration was specified
         if(_nDuration == -1) {
             bDuration = false;
@@ -30,14 +28,7 @@ public class SoulChangeDefense : Soul {
 
     }
 
-    public SoulChangeDefense(SoulChangeDefense other, Chr _chrTarget = null) : base(other) {
-        if(_chrTarget != null) {
-            //If a Target was provided, then we'll use that
-            chrTarget = _chrTarget;
-        } else {
-            //Otherwise, just copy from the other object
-            chrTarget = other.chrTarget;
-        }
+    public SoulChangeDefense(SoulChangeDefense other, Chr _chrTarget = null) : base(other, _chrTarget) {
 
         nDefenseChange = other.nDefenseChange;
 

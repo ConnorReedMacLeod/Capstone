@@ -17,7 +17,12 @@ public class Position : MonoBehaviour {
 
     public Chr chrOnPosition;
 
-    public Subject subCharacterOnPositionChanged = new Subject();
+    public SoulContainerPosition soulContainer;
+
+    public Subject subChrLeftPosition = new Subject();
+    public Subject subChrEnteredPosition = new Subject();
+    public Subject subSoulApplied = new Subject();
+    public Subject subSoulRemoved = new Subject();
 
     public override string ToString() {
         return string.Format("({0},{1})", iColumn, jRow);
@@ -29,7 +34,6 @@ public class Position : MonoBehaviour {
 
         chrOnPosition = _chrOnPosition;
 
-        subCharacterOnPositionChanged.NotifyObs(chrOnPosition);
     }
 
     public void InitPositionType() {
@@ -65,7 +69,22 @@ public class Position : MonoBehaviour {
         if(bStarted == true) return;
         bStarted = true;
 
-        subCharacterOnPositionChanged = new Subject();
+        subChrEnteredPosition = new Subject();
+        subChrLeftPosition = new Subject();
+        subSoulApplied = new Subject();
+        subSoulRemoved = new Subject();
+
+        subChrLeftPosition.Subscribe(cbOnChrLeft);
+        subChrEnteredPosition.Subscribe(cbOnChrEntered);
+    }
+
+
+    public void cbOnChrLeft(Object target, params object[] args) {
+        Debug.Log(ToString() + " has been notified that " + (Chr)target + " has left the position");
+    }
+
+    public void cbOnChrEntered(Object target, params object[] args) {
+        Debug.Log(ToString() + " has been notified that " + (Chr)target + " has entered the position");
     }
 
 }

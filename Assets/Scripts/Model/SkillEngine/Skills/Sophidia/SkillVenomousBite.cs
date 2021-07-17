@@ -47,7 +47,7 @@ public class SkillVenomousBite : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoul(skill.chrSource, chrSelected, new SoulEnvenomed(soulToCopy, chrSelected)) {
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulEnvenomed(soulToCopy, chrSelected)) {
                 sLabel = "Applying poison"
             });
 

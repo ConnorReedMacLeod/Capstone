@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulParry : Soul {
+public class SoulParry : SoulChr {
 
     public int nDamage;
     public int nDefense;
@@ -42,8 +42,6 @@ public class SoulParry : Soul {
         //Create a base Damage object that this skill will apply
         dmgCounterAttack = new Damage(this.chrSource, null, nDamage);
 
-
-        InitTriggers();
     }
 
     public override void InitTriggers() {
@@ -94,20 +92,12 @@ public class SoulParry : Soul {
         */
     }
 
-    public SoulParry(SoulParry other, Chr _chrTarget = null) : base(other) {
-        if(_chrTarget != null) {
-            //If a Target was provided, then we'll use that
-            chrTarget = _chrTarget;
-        } else {
-            //Otherwise, just copy from the other object
-            chrTarget = other.chrTarget;
-        }
+    public SoulParry(SoulParry other, Chr _chrTarget = null) : base(other, _chrTarget) {
 
         nDamage = other.nDamage;
         nDefense = other.nDefense;
         dmgCounterAttack = new Damage(other.dmgCounterAttack);
 
-        InitTriggers();
     }
 
 

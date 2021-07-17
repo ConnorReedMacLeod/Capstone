@@ -4,14 +4,13 @@ using UnityEngine;
 
 
 //TODO probably extend this class for visible/locked/duration interactions rather than using bool flags
-public class Soul {
+public abstract class Soul {
 
     public Chr chrSource;     //A reference to the character that applied this soul effect
-    public Chr chrTarget;     //A reference to the character this soul effect is applied to
 
     public Skill skillSource;  //A reference to the Skill that applied this source
 
-    public SoulContainer soulContainer; //A reference to the soulcontainer containing this soul
+    public SoulContainer soulContainer;
 
     public string sName;
 
@@ -22,7 +21,8 @@ public class Soul {
     public int nMaxStacks;
     public int nCurStacks;
 
-    public bool bRemoveOnChrDeath; //Should the effect be removed when the character its on dies?
+    public bool bRemoved;   //Has the effect been removed already from the character it was applied to
+
     public bool bRemoveOnChrSourceDeath; //Should the effect be removed when the character who applied it dies?
 
     public bool bDuration;
@@ -39,20 +39,21 @@ public class Soul {
 
     public List<TriggerEffect> lstTriggers;
 
-    public Soul(Chr _chrSource, Chr _chrTarget, Skill _skillSource) {
+    public Soul(Chr _chrSource, Skill _skillSource) {
 
         chrSource = _chrSource;
-        chrTarget = _chrTarget;
         skillSource = _skillSource;
 
         bRemoveOnChrSourceDeath = false;
-        bRemoveOnChrDeath = true;
 
         bRecoilWhenApplied = true;
 
         nMaxStacks = 1; //by Default
 
         InitSubMaxDuration();
+
+        //Intiialize triggers (whether or not there are any depends on the extending class)
+        InitTriggers();
 
     }
 
@@ -66,6 +67,8 @@ public class Soul {
         // can initialize them here so that they get properly set up regardless of what constructor we use
 
     }
+
+    public abstract string GetNameOfAppliedTo();
 
     //These are functions that we can override if we want certain effects to happen on application/removal/expiration
     //  By default, these just do nothing though
@@ -96,7 +99,6 @@ public class Soul {
             Replacement.Register(rep);
         }
 
-        chrTarget.subDeath.Subscribe(cbOnChrTargetDeath);
         chrSource.subDeath.Subscribe(cbOnChrSourceDeath);
 
         ApplicationEffect();
@@ -105,9 +107,8 @@ public class Soul {
     }
 
     public void OnRemoval() {
-        Debug.Log("Removing soul effect " + sName);
+        Debug.Log("Removing soul effect " + sName + " from " + GetNameOfAppliedTo());
 
-        chrTarget.subDeath.UnSubscribe(cbOnChrTargetDeath);
         chrSource.subDeath.UnSubscribe(cbOnChrSourceDeath);
 
         if(lstTriggers != null) { //Then we have some triggers to unsubscribe
@@ -123,6 +124,9 @@ public class Soul {
         }
 
         RemoveEffect();
+
+        bRemoved = true;
+
         if(ContSkillEngine.bDEBUGENGINE) Debug.Log(sName + " has been removed");
 
         if(ShouldTriggerExpiration()) {
@@ -130,13 +134,6 @@ public class Soul {
             if(ContSkillEngine.bDEBUGENGINE) Debug.Log(sName + " has expired");
         }
 
-    }
-
-    public void cbOnChrTargetDeath(Object target, params object[] args) {
-        if(bRemoveOnChrDeath) {
-            //When the character this is on dies, then we can dispel this soul effect
-            soulContainer.RemoveSoul(this);
-        }
     }
 
     public void cbOnChrSourceDeath(Object target, params object[] args) {
@@ -153,24 +150,15 @@ public class Soul {
         return bDuration == true && nCurDuration == 0;
     }
 
-    public Soul(Soul soulToCopy, Chr _chrTarget = null) {
+    public Soul(Soul soulToCopy) {
 
         chrSource = soulToCopy.chrSource;
         skillSource = soulToCopy.skillSource;
-
-        if(_chrTarget != null) {
-            //If a Target was provided, then we'll use that
-            chrTarget = _chrTarget;
-        } else {
-            //Otherwise, just copy from the other object
-            chrTarget = soulToCopy.chrTarget;
-        }
 
         soulContainer = soulToCopy.soulContainer;
         sName = string.Copy(soulToCopy.sName);
         bVisible = soulToCopy.bVisible;
         bLocked = soulToCopy.bLocked;
-        bRemoveOnChrDeath = soulToCopy.bRemoveOnChrDeath;
         bRemoveOnChrSourceDeath = soulToCopy.bRemoveOnChrSourceDeath;
 
         nMaxStacks = soulToCopy.nMaxStacks;
@@ -190,9 +178,6 @@ public class Soul {
             lstReplacements = new List<Replacement>(soulToCopy.lstReplacements);
         }
 
-        //If an extension of this class needs to copy triggers, then it'll be
-        //  respondible for doing that properly
-
-
+        InitTriggers();
     }
 }

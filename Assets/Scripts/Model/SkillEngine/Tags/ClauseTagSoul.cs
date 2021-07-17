@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class ClauseTagSoul : ClauseTag<Soul> {
+public abstract class ClauseTagSoul : ClauseTag<SoulChr> {
 
     public enum TYPE { SELF, MELEE, RANGED, SWEEPING, ALLY, ENEMY, NONSELF };
 

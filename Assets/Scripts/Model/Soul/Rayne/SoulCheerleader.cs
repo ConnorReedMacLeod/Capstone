@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulCheerleader : Soul {
+public class SoulCheerleader : SoulChr {
 
     public int nPowerGain;
 
@@ -19,7 +19,7 @@ public class SoulCheerleader : Soul {
 
         //So we're sure we're buffing a valid character at this point
 
-        ContSkillEngine.Get().AddExec(new ExecApplySoul(chrSource, chrAlly,
+        ContSkillEngine.Get().AddExec(new ExecApplySoulChr(chrSource, chrAlly,
             new SoulChangePower(chrSource, chrAlly, skillSource, nPowerGain, 1) {
                 //Set up the hidden soul effect that's buffing the ally's power
                 bRemoveOnChrSourceDeath = true
@@ -42,8 +42,6 @@ public class SoulCheerleader : Soul {
 
         nPowerGain = 5;
 
-
-        InitTriggers();
     }
 
     public override void InitTriggers() {
@@ -71,18 +69,10 @@ public class SoulCheerleader : Soul {
     }
 
 
-    public SoulCheerleader(SoulCheerleader other, Chr _chrTarget = null) : base(other) {
-        if(_chrTarget != null) {
-            //If a Target was provided, then we'll use that
-            chrTarget = _chrTarget;
-        } else {
-            //Otherwise, just copy from the other object
-            chrTarget = other.chrTarget;
-        }
+    public SoulCheerleader(SoulCheerleader other, Chr _chrTarget = null) : base(other, _chrTarget) {
 
         nPowerGain = other.nPowerGain;
 
-        InitTriggers();
     }
 
 }

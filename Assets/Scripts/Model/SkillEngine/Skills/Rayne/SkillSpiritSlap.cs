@@ -49,7 +49,7 @@ public class SkillSpiritSlap : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoul(skill.chrSource, chrSelected, new SoulDispirited(soulToCopy, chrSelected)) {
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulDispirited(soulToCopy, chrSelected)) {
                 sLabel = "The pain is momentary, but the shame lasts..."
             });
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulDispirited : Soul {
+public class SoulDispirited : SoulChr {
 
     public int[] arnCostDebuff;
 
@@ -67,14 +67,7 @@ public class SoulDispirited : Soul {
         //chrTarget.subPostExecuteSkill.Subscribe(OnSkillUsage);
     }
 
-    public SoulDispirited(SoulDispirited other, Chr _chrTarget = null) : base(other) {
-        if(_chrTarget != null) {
-            //If a Target was provided, then we'll use that
-            chrTarget = _chrTarget;
-        } else {
-            //Otherwise, just copy from the other object
-            chrTarget = other.chrTarget;
-        }
+    public SoulDispirited(SoulDispirited other, Chr _chrTarget = null) : base(other, _chrTarget) {
 
         arnCostDebuff = new int[Mana.nManaTypes];
         System.Array.Copy(other.arnCostDebuff, arnCostDebuff, other.arnCostDebuff.Length);

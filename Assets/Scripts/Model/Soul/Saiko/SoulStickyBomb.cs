@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulStickyBomb : Soul {
+public class SoulStickyBomb : SoulChr {
 
     public int nDetonationDamage;
     public Damage dmg;
@@ -38,14 +38,9 @@ public class SoulStickyBomb : Soul {
 
     }
 
-    public SoulStickyBomb(SoulStickyBomb other, Chr _chrTarget = null) : base(other) {
-        if(_chrTarget != null) {
-            //If a Target was provided, then we'll use that
-            chrTarget = _chrTarget;
-        } else {
-            //Otherwise, just copy from the other object
-            chrTarget = other.chrTarget;
-        }
+    public SoulStickyBomb(SoulStickyBomb other, Chr _chrTarget = null) : base(other, _chrTarget) {
+
+
         nDetonationDamage = other.nDetonationDamage;
         dmg = new Damage(other.dmg);
 

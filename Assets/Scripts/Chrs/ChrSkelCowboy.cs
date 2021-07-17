@@ -14,16 +14,16 @@ public class ChrSkelCowboy : BaseChr {
     }
 
     public override void SetDisciplines() {
-        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { SCOUT, TRAPPER, GARDENER, GIANT };
+        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { TESTING };
     }
 
     //Defines all of a character's unique skills
     public override void SetLoadoutSkills() {
 
-        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.MULCH;
-        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.SURVEYTHELAND;
-        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.FLUSHOUT;
-        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.SNAPTRAP;
+        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.LEECH;
+        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.ADVANCE;
+        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.KNOCKBACK;
+        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.TRANSFUSE;
 
     }
 

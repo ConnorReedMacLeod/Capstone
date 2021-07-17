@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulChangePower : Soul {
+public class SoulChangePower : SoulChr {
 
     int nPowerChange;
 
@@ -16,7 +16,6 @@ public class SoulChangePower : Soul {
 
         bVisible = false;
         bRecoilWhenApplied = false;
-        bRemoveOnChrDeath = true;
 
 
         //Check if a duration was specified
@@ -30,14 +29,7 @@ public class SoulChangePower : Soul {
 
     }
 
-    public SoulChangePower(SoulChangePower other, Chr _chrTarget = null) : base(other) {
-        if(_chrTarget != null) {
-            //If a Target was provided, then we'll use that
-            chrTarget = _chrTarget;
-        } else {
-            //Otherwise, just copy from the other object
-            chrTarget = other.chrTarget;
-        }
+    public SoulChangePower(SoulChangePower other, Chr _chrTarget = null) : base(other, _chrTarget) {
 
         nPowerChange = other.nPowerChange;
 
