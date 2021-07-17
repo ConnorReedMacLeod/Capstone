@@ -14,16 +14,16 @@ public class ChrFischer : BaseChr {
     }
 
     public override void SetDisciplines() {
-        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { TRAPPER, SCOUT };
+        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { TESTING, FISCHER };
     }
 
     //Defines all of a character's unique skills
     public override void SetLoadoutSkills() {
 
-        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.FLUSHOUT;
-        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.LEECH;
+        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.BUNKER;
+        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.ADVANCE;
         chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.KNOCKBACK;
-        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.ADVANCE;
+        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.IMPALE;
 
     }
 

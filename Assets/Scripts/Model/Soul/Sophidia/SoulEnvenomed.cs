@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulEnvenomed : Soul {
+public class SoulEnvenomed : SoulChr {
 
     public int nLifeLoss;
 
@@ -16,7 +16,6 @@ public class SoulEnvenomed : Soul {
         bDuration = true;
         pnMaxDuration = new Property<int>(3);
 
-        InitTriggers();
 
     }
 
@@ -64,19 +63,10 @@ public class SoulEnvenomed : Soul {
         chrTarget.soulContainer.subVisibleSoulUpdate.NotifyObs();
     }
 
-    public SoulEnvenomed(SoulEnvenomed other, Chr _chrTarget = null) : base(other/*TODONOW - add ", _chrTarget" here*/) {
-
-        if(_chrTarget != null) {
-            //If a Target was provided, then we'll use that
-            chrTarget = _chrTarget;
-        } else {
-            //Otherwise, just copy from the other object
-            chrTarget = other.chrTarget;
-        }
+    public SoulEnvenomed(SoulEnvenomed other, Chr _chrTarget = null) : base(other, _chrTarget) {
 
         nLifeLoss = other.nLifeLoss;
 
-        InitTriggers();
 
     }
 

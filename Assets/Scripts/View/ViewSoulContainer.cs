@@ -15,7 +15,6 @@ public class ViewSoulContainer : MonoBehaviour {
 
         List<Soul> lstVisibleSoul = mod.GetVisibleSoul();
 
-
         for(int i = 0; i < arViewSoul.Length; i++) {
 
             if(lstVisibleSoul.Count - 1 < i) {
@@ -31,15 +30,9 @@ public class ViewSoulContainer : MonoBehaviour {
 
     }
 
-    public void SetNumSoulSlots(int _nNumSoulSlots) {
-        //TODO:: Account for having a variable number of soul slots
-
-    }
-
-
     void Start() {
 
-        SetNumSoulSlots(3);
+        mod.Start();
 
         mod.subVisibleSoulUpdate.Subscribe(cbUpdateVisibleSoul);
 

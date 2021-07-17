@@ -449,7 +449,7 @@ public class ViewChr : ViewInteractive {
 
     public void cbSoulApplied(Object target, params object[] args) {
 
-        if(((Soul)args[0]).bRecoilWhenApplied == false) return;
+        if(((SoulChr)args[0]).bRecoilWhenApplied == false) return;
 
         //Debug.Log(mod.sName + " is recoiling");
 

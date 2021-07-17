@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulHunted : Soul {
+public class SoulHunted : SoulChr {
 
     public int nDefenseLoss;
 
@@ -17,7 +17,6 @@ public class SoulHunted : Soul {
 
         nDefenseLoss = -5;
 
-        InitTriggers();
     }
 
     public override void InitTriggers() {
@@ -48,23 +47,15 @@ public class SoulHunted : Soul {
 
     public void ApplyDefenseDebuff() {
 
-        ContSkillEngine.PushSingleExecutable(new ExecApplySoul(chrSource, chrTarget,
+        ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(chrSource, chrTarget,
             new SoulChangeDefense(chrTarget, chrTarget, this.skillSource, nDefenseLoss, 1)));
 
     }
 
-    public SoulHunted(SoulHunted other, Chr _chrTarget = null) : base(other) {
-        if(_chrTarget != null) {
-            //If a Target was provided, then we'll use that
-            chrTarget = _chrTarget;
-        } else {
-            //Otherwise, just copy from the other object
-            chrTarget = other.chrTarget;
-        }
+    public SoulHunted(SoulHunted other, Chr _chrTarget = null) : base(other, _chrTarget) {
 
         nDefenseLoss = other.nDefenseLoss;
 
-        InitTriggers();
     }
 
 }

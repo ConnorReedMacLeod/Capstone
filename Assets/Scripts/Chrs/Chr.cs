@@ -60,7 +60,7 @@ public class Chr : MonoBehaviour {
 
     public Position position;       //A reference to the position the character is on
 
-    public SoulContainer soulContainer; //A reference to the character's list of soul effects
+    public SoulContainerChr soulContainer; //A reference to the character's list of soul effects
 
     public ViewChr view;
 
@@ -91,7 +91,9 @@ public class Chr : MonoBehaviour {
     public Subject subFatigueChange = new Subject();
     public static Subject subAllFatigueChange = new Subject(Subject.SubType.ALL);
     public Subject subChannelTimeChange = new Subject();
-    public Subject subPositionChanged = new Subject();
+
+    public Subject subLeftPosition = new Subject();
+    public Subject subEnteredPosition = new Subject();
 
     public Subject subStatusChange = new Subject();
     public static Subject subAllStatusChange = new Subject(Subject.SubType.ALL);
@@ -115,6 +117,10 @@ public class Chr : MonoBehaviour {
         if(curStateReadiness != null) {
             curStateReadiness.OnEnter();
         }
+    }
+
+    public override string ToString() {
+        return "Chr(" + sName + ")";
     }
 
     public int GetTargettingId() {
@@ -333,7 +339,7 @@ public class Chr : MonoBehaviour {
         subLifeChange.NotifyObs(this, nChange);
     }
 
-    public void UpdatePosition(Position _position) {
+    public void SetPosition(Position _position) {
         if(position == _position) return;
 
         position = _position;
@@ -446,10 +452,23 @@ public class Chr : MonoBehaviour {
 
             view = GetComponent<ViewChr>();
             view.Start();
+
+            subLeftPosition.Subscribe(cbOnLeftPosition);
+            subEnteredPosition.Subscribe(cbOnEnteredPosition);
         }
 
     }
+
+    public void cbOnLeftPosition(Object target, params object[] args) {
+        Debug.Log(this + " was notified that they left position " + (Position)target);
+    }
+
+    public void cbOnEnteredPosition(Object target, params object[] args) {
+        Debug.Log(this + " was notified that they entered position " + (Position)target);
+    }
+
 }
+
 
 
 //Add a max health initializer in each instance of a character - add an 

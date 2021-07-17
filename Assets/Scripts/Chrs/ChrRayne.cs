@@ -14,16 +14,16 @@ public class ChrRayne : BaseChr {
     }
 
     public override void SetDisciplines() {
-        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { GARDENER, GIANT };
+        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { TESTING, RAYNE };
     }
 
     //Defines all of a character's unique skills
     public override void SetLoadoutSkills() {
 
-        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.MULCH;
-        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.PLANTSUNFLOWER;
-        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.SURVEYTHELAND;
-        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.PLANTSUNFLOWER;
+        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.CHEERLEADER;
+        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.CLOUDCUSHION;
+        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.SPIRITSLAP;
+        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.THUNDERSTORM;
     }
 
 }

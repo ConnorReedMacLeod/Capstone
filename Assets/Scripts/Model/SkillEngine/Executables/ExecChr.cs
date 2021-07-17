@@ -24,7 +24,6 @@ public abstract class ExecChr : Executable {
     public ExecChr(ExecChr other) : base(other) {
         chrTarget = other.chrTarget;
 
-        Debug.Log("ExecChr copyconstructor setting chrTarget to " + chrTarget);
     }
 
 }

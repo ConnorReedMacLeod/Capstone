@@ -8,7 +8,7 @@ using UnityEngine;
 
 
 
-public class SoulChannel : Soul {
+public class SoulChannel : SoulChr {
 
     public bool bDelayedSkill; // Is this soulChannel only used for executing a single effect after a delay
                                //  with no on-going effect
@@ -58,7 +58,7 @@ public class SoulChannel : Soul {
 
     }
 
-    public SoulChannel(SoulChannel soulToCopy, Skill _skill) : base(soulToCopy) {
+    public SoulChannel(SoulChannel soulToCopy, Skill _skill) : base(soulToCopy, soulToCopy.chrSource) {
 
         Debug.Log("Creating copy of soulchannel");
 

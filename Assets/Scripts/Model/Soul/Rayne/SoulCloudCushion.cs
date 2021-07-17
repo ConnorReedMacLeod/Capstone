@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulCloudCushion : Soul {
+public class SoulCloudCushion : SoulChr {
 
     public int nDefenseBuff;
 
@@ -30,14 +30,7 @@ public class SoulCloudCushion : Soul {
         chrTarget.soulContainer.RemoveSoul(soulChangeDefense);
     }
 
-    public SoulCloudCushion(SoulCloudCushion other, Chr _chrTarget = null) : base(other) {
-        if(_chrTarget != null) {
-            //If a Target was provided, then we'll use that
-            chrTarget = _chrTarget;
-        } else {
-            //Otherwise, just copy from the other object
-            chrTarget = other.chrTarget;
-        }
+    public SoulCloudCushion(SoulCloudCushion other, Chr _chrTarget = null) : base(other, _chrTarget) {
 
         nDefenseBuff = other.nDefenseBuff;
 

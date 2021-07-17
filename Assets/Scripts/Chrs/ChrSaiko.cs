@@ -14,16 +14,16 @@ public class ChrSaiko : BaseChr {
     }
 
     public override void SetDisciplines() {
-        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { FALCONER, SCOUT };
+        chrOwner.lstDisciplines = new List<Discipline.DISCIPLINE>() { TESTING, SAIKO };
     }
 
     //Defines all of a character's unique skills
     public override void SetLoadoutSkills() {
 
-        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.RECON;
-        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.RECON;
-        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.RECON;
-        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.RECON;
+        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.AMBUSH;
+        chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.SMOKECOVER;
+        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.STICKYBOMB;
+        chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.TRANQUILIZE;
 
     }
 

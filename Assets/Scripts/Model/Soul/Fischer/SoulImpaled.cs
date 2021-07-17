@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoulImpaled : Soul {
+public class SoulImpaled : SoulChr {
 
     public int nMaxLifeReduction;
     public LinkedListNode<Property<int>.Modifier> modifierLifeReduction;
@@ -37,14 +37,7 @@ public class SoulImpaled : Soul {
         chrTarget.pnMaxHealth.RemoveModifier(modifierLifeReduction);
     }
 
-    public SoulImpaled(SoulImpaled other, Chr _chrTarget = null) : base(other) {
-        if(_chrTarget != null) {
-            //If a Target was provided, then we'll use that
-            chrTarget = _chrTarget;
-        } else {
-            //Otherwise, just copy from the other object
-            chrTarget = other.chrTarget;
-        }
+    public SoulImpaled(SoulImpaled other, Chr _chrTarget = null) : base(other, _chrTarget) {
 
         nMaxLifeReduction = other.nMaxLifeReduction;
 
