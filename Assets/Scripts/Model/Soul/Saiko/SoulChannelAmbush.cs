@@ -27,7 +27,7 @@ public class SoulChannelAmbush : SoulChannel {
                     // Then we can ambush them
                     if((Chr)target == chrStoredSelection && ((Skill)args[0]).skillslot != null){
 
-                         ContSkillEngine.PushSingleExecutable(new ExecDealDamage(chrSource, chrTarget, new Damage(dmg)){
+                         ContSkillEngine.PushSingleExecutable(new ExecDealDamage(chrSource, chrStoredSelection, new Damage(dmg)){
                              arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndAmbush", 3.433f) },
                              sLabel = "Surprise!"
                          });
@@ -36,5 +36,16 @@ public class SoulChannelAmbush : SoulChannel {
                 }
             }
         };
+
+    }
+
+
+    public SoulChannelAmbush(SoulChannelAmbush other, Skill _skill) : base(other, _skill) {
+        nBaseDamage = other.nBaseDamage;
+        dmg = new Damage(other.dmg);
+    }
+
+    public override SoulChannel GetCopy(Skill _skill) {
+        return new SoulChannelAmbush(this, _skill);
     }
 }

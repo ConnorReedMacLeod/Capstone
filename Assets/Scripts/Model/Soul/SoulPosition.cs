@@ -42,7 +42,7 @@ public class SoulPosition : Soul {
     public override void ApplicationEffect() {
 
         //Ensure that we're monitoring when the character on our position changes so we can update the soul affect we apply to the active character
-        posTarget.subChrEnteredPosition.Subscribe(cbChrEnteredPosition);
+        observer.Observe(posTarget.subChrEnteredPosition, cbChrEnteredPosition);
 
         //Immediately simulate an 'ChrEnteredPosition" trigger to initially apply our SoulChr effects
         cbChrEnteredPosition(null);
@@ -64,8 +64,8 @@ public class SoulPosition : Soul {
 
         }
 
-        //Unsubscribe from monitoring our position's subChrEnteredPosition trigger
-        posTarget.subChrEnteredPosition.UnSubscribe(cbChrEnteredPosition);
+        //Unsubscribe from any triggers we may have subscribed to since the Soul is cleansed
+        observer.EndAllObservations();
     }
 
 
@@ -79,7 +79,7 @@ public class SoulPosition : Soul {
 
             for(int i = 0; i < lstSoulAppliedToChrOnPosition.Count; i++) {
                 Debug.Log("Adding OnChrLeftPosition trigger to remove the " + i + "th SoulChr effect for " + this.sName);
-                chrOnPosition.subLeftPosition.Subscribe(lstSoulAppliedToChrOnPosition[i].cbRemoveIfPositionChanged);
+                lstSoulAppliedToChrOnPosition[i].observer.Observe(chrOnPosition.subLeftPosition, lstSoulAppliedToChrOnPosition[i].cbRemoveIfPositionChanged);
 
                 Debug.Log("Pushing Executable for adding " + lstSoulAppliedToChrOnPosition[i].sName + " to " + chrOnPosition.sName + " on " + posTarget.ToString());
                 ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(chrSource, chrOnPosition, lstSoulAppliedToChrOnPosition[i]));
