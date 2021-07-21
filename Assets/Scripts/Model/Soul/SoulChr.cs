@@ -8,6 +8,7 @@ public class SoulChr : Soul {
     public Chr chrTarget;     //A reference to the character this soul effect is applied to
     public Position posOriginallyAppliedOn; //A saved reference to the position the character was on when it was originally applied
 
+
     public SoulChr(Chr _chrSource, Chr _chrTarget, Skill _skillSource) : base(_chrSource, _skillSource) {
 
         chrTarget = _chrTarget;

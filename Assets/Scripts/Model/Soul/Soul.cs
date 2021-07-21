@@ -31,6 +31,8 @@ public abstract class Soul {
 
     public List<Replacement> lstReplacements = new List<Replacement>(); //A (potentially empty) list of replacement effects for this effect
 
+    public Observer observer = new Observer();
+
     //A structure to hold information about a single trigger needed by a Soul effect
     public struct TriggerEffect {
         public Subject sub;
@@ -65,7 +67,6 @@ public abstract class Soul {
     public virtual void InitTriggers() {
         //By default, we don't need to do anything, but if we have triggers for this skill, then we
         // can initialize them here so that they get properly set up regardless of what constructor we use
-
     }
 
     public abstract string GetNameOfAppliedTo();
@@ -89,8 +90,9 @@ public abstract class Soul {
         if(lstTriggers != null) { //Then we have some triggers to subscribe
             //Each triggeredeffect we have should subscribe to the trigger it needs
             foreach(TriggerEffect trig in lstTriggers) {
-                //Debug.Log("*** ADDING TRIGGER SUBSCRIPTION ***");
-                trig.sub.Subscribe(trig.cb);
+                Debug.Log("*** ADDING TRIGGER SUBSCRIPTION ***");
+                //Let our observer manage our subscription to the trigger
+                observer.Observe(trig.sub, trig.cb);
             }
         }
 
@@ -99,7 +101,7 @@ public abstract class Soul {
             Replacement.Register(rep);
         }
 
-        chrSource.subDeath.Subscribe(cbOnChrSourceDeath);
+        observer.Observe(chrSource.subDeath, cbOnChrSourceDeath);
 
         ApplicationEffect();
 
@@ -107,16 +109,9 @@ public abstract class Soul {
     }
 
     public void OnRemoval() {
-        Debug.Log("Removing soul effect " + sName + " from " + GetNameOfAppliedTo());
 
-        chrSource.subDeath.UnSubscribe(cbOnChrSourceDeath);
-
-        if(lstTriggers != null) { //Then we have some triggers to unsubscribe
-                                  //Each triggeredeffect should unsubscribe from each of its triggers its observing
-            foreach(TriggerEffect trig in lstTriggers) {
-                trig.sub.UnSubscribe(trig.cb);
-            }
-        }
+        //Have our observer clear out any active subscriptions we're still holding onto
+        observer.EndAllObservations();
 
         foreach(Replacement rep in lstReplacements) {
             //For each replacement effect this soul effect has, unregister it so it'll stop taking effect

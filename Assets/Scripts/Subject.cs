@@ -10,7 +10,9 @@ using UnityEngine;
 public class Subject {
 
     public enum SubType { ALL }; //A flag to pass to the constructor when initiallizing 
-                                 // static subjects 
+                                 // static subjects
+
+    public string sName;
 
     //Keep a static list of all static subjects (so that we can reset them as needed)
     public static List<Subject> lstAllStaticSubjects;
@@ -21,16 +23,18 @@ public class Subject {
 
     public Subject() {
         lstCallbacks = new List<FnCallback>();
+        sName = "none";
     }
 
     public Subject(Subject subToCopy) {
 
         Debug.LogError("Warning - copying Subjects can lead to calling Callback methods for shallow object instances");
         lstCallbacks = new List<FnCallback>(subToCopy.lstCallbacks);
+        sName = subToCopy.sName + " - copy";
     }
 
     //To be called only when creating static instances of Subjects
-    public Subject(SubType subType) {
+    public Subject(SubType subType, string _sName = "") {
 
         if(lstAllStaticSubjects == null) {
             lstAllStaticSubjects = new List<Subject>();
@@ -39,7 +43,9 @@ public class Subject {
         //Note - in principle, since these are static, they should never be destroyed
         //       and thus should never need to be removed from this list
         lstAllStaticSubjects.Add(this);
-        //Debug.Log("added to lstAllStaticSubjects " + this.ToString());
+
+        sName = _sName;
+        //if(sName != "") Debug.Log("Creating " + sName);
 
     }
 

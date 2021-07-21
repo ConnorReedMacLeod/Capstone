@@ -39,7 +39,8 @@ public class ExecBeginChannel : ExecChr {
 
         TypeChannel typeChannel = (TypeChannel)skillChannel.type;
 
-        StateChanneling newState = new StateChanneling(chrTarget, typeChannel.nStartChannelTime, new SoulChannel(typeChannel.soulBehaviour, skillChannel));
+        //Ask the soulbehaviour to make a copy of itself with the skill it represents
+        StateChanneling newState = new StateChanneling(chrTarget, typeChannel.nStartChannelTime, typeChannel.soulBehaviour.GetCopy(skillChannel));
 
         Debug.Log("Before SetStateReadiness");
 
