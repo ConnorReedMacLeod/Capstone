@@ -74,17 +74,6 @@ public class Position : MonoBehaviour {
         subSoulApplied = new Subject();
         subSoulRemoved = new Subject();
 
-        subChrLeftPosition.Subscribe(cbOnChrLeft);
-        subChrEnteredPosition.Subscribe(cbOnChrEntered);
-    }
-
-
-    public void cbOnChrLeft(Object target, params object[] args) {
-        Debug.Log(ToString() + " has been notified that " + (Chr)target + " has left the position");
-    }
-
-    public void cbOnChrEntered(Object target, params object[] args) {
-        Debug.Log(ToString() + " has been notified that " + (Chr)target + " has entered the position");
     }
 
 }

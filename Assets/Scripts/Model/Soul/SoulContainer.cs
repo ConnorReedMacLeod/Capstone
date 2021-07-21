@@ -8,6 +8,7 @@ public abstract class SoulContainer : MonoBehaviour {
     public int nMaxVisibleSoul;
 
     public Subject subVisibleSoulUpdate;
+    public Observer observer;
 
     bool bStarted;
 
@@ -149,9 +150,10 @@ public abstract class SoulContainer : MonoBehaviour {
         lstSoul = new List<Soul>();
 
         subVisibleSoulUpdate = new Subject();
+        observer = new Observer();
         InitMaxVisibleSoul();
 
-        ExecTurnEndTurn.subAllPostTrigger.Subscribe(cbReduceDurations);
+        observer.Observe(ExecTurnEndTurn.subAllPostTrigger, cbReduceDurations);
         //TODO::  At somepoint, define a fixed order of notifications (e.g., based on original acting character order)
 
     }

@@ -257,6 +257,9 @@ public class ViewChr : ViewInteractive {
         mod = GetComponent<Chr>();
         mod.Start();
 
+        //TODO:: Consider if we want to set up an observer for this
+        //        May not need to since a Chr likely won't exist without some sort of View.  
+
         mod.subFatigueChange.Subscribe(cbUpdateFatigue);
         mod.subLifeChange.Subscribe(cbUpdateLife);
         mod.pnMaxHealth.subChanged.Subscribe(cbUpdateLife);
