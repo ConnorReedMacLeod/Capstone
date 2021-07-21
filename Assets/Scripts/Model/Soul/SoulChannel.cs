@@ -54,15 +54,21 @@ public class SoulChannel : SoulChr {
 
     public void OnInterrupted() {
 
-        Debug.Log("SoulChannel interrupted");
+        Debug.Log("SoulChannel " + sName + " interrupted");
 
     }
 
     public SoulChannel(SoulChannel soulToCopy, Skill _skill) : base(soulToCopy, soulToCopy.chrSource) {
 
-        Debug.Log("Creating copy of soulchannel");
-
         bDelayedSkill = soulToCopy.bDelayedSkill;
         bChannelCompleted = soulToCopy.bChannelCompleted;
+
+    }
+
+
+    //This is a nice way to have a SoulChannel reference be able to get its proper derived-type's copy constructor while
+    // still returning as a base SoulChannel type.  Just override derived type's implementation of GetCopy to 
+    public virtual SoulChannel GetCopy(Skill _skill) {
+        return new SoulChannel(_skill);
     }
 }

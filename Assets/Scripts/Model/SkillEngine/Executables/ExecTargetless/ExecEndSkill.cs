@@ -41,7 +41,6 @@ public class ExecEndSkill : Executable {
     }
 
     public override void ExecuteEffect() {
-        //Debug.Log("Notifying that a skill has ended");
 
         //Notify everyone that we've just completed the effects of a skill
         chrSource.subPostExecuteSkill.NotifyObs(chrSource, skill);

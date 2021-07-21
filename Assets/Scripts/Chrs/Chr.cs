@@ -453,18 +453,8 @@ public class Chr : MonoBehaviour {
             view = GetComponent<ViewChr>();
             view.Start();
 
-            subLeftPosition.Subscribe(cbOnLeftPosition);
-            subEnteredPosition.Subscribe(cbOnEnteredPosition);
         }
 
-    }
-
-    public void cbOnLeftPosition(Object target, params object[] args) {
-        Debug.Log(this + " was notified that they left position " + (Position)target);
-    }
-
-    public void cbOnEnteredPosition(Object target, params object[] args) {
-        Debug.Log(this + " was notified that they entered position " + (Position)target);
     }
 
 }
