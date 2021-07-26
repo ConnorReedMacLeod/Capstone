@@ -35,7 +35,7 @@ public class SkillTwinSnakes : Skill {
             });
 
 
-            dmg = new Damage(skill.chrSource, null, nBaseDamage);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
         }
 
         public override string GetDescription() {
@@ -45,11 +45,11 @@ public class SkillTwinSnakes : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecLoseLife(skill.chrSource, skill.chrSource, nLifeloss) {
+            ContSkillEngine.PushSingleExecutable(new ExecLoseLife(skill.chrOwner, skill.chrOwner, nLifeloss) {
                 sLabel = "Owie"
             });
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Sophidia/sndTwinSnakes", 2f) },
                 sLabel = "Snakey, no!"
             });

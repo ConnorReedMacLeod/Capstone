@@ -37,7 +37,7 @@ public class SkillKnockback : Skill {
             });
 
 
-            dmg = new Damage(skill.chrSource, null, nBaseDamage);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
         }
 
         public override string GetDescription() {
@@ -47,7 +47,7 @@ public class SkillKnockback : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 sLabel = "Booping ya back"
             });
 
@@ -66,7 +66,7 @@ public class SkillKnockback : Skill {
                 new ClauseTagChrEnemy(this)
             });
 
-            dmg = new Damage(skill.chrSource, null, nBaseDamage);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
         }
 
         public override string GetDescription() {
@@ -79,7 +79,7 @@ public class SkillKnockback : Skill {
             //TODO - maybe add some sort of additional function that can be called exactly when the executable resolves to trigger additional effects
             //    e.g., here it could be a structure called Tracking where you call Tracking.BeforeEffect() to track the gamestate before the executable
             //          evaluates (this can store information, and then you call Tracking.AfterEffect() to
-            ContSkillEngine.PushSingleExecutable(new ExecMoveChar(skill.chrSource, chrSelected, (chrTarget) => ContPositions.Get().GetBehindPosition(chrTarget.position)));
+            ContSkillEngine.PushSingleExecutable(new ExecMoveChar(skill.chrOwner, chrSelected, (chrTarget) => ContPositions.Get().GetBehindPosition(chrTarget.position)));
 
         }
 

@@ -34,7 +34,7 @@ public class SkillThunderStorm : Skill {
             });
 
 
-            dmg = new Damage(skill.chrSource, null, nBaseDamage);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
         }
 
         public override string GetDescription() {
@@ -44,11 +44,11 @@ public class SkillThunderStorm : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecStun(skill.chrSource, chrSelected, nBaseStun) {
+            ContSkillEngine.PushSingleExecutable(new ExecStun(skill.chrOwner, chrSelected, nBaseStun) {
                 sLabel = "Crackle Crackle"
             });
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 sLabel = "Caught in the storm"
             });
 

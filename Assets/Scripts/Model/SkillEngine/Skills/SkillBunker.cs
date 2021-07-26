@@ -31,7 +31,7 @@ public class SkillBunker : Skill {
                 new ClauseTagChrSelf(this), //Base Tag always goes first
             });
 
-            soulToCopy = new SoulPositionBunker(skill.chrSource, null, skill);
+            soulToCopy = new SoulPositionBunker(skill.chrOwner, null, skill);
         }
 
         public override string GetDescription() {
@@ -41,7 +41,7 @@ public class SkillBunker : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulPosition(skill.chrSource, skill.chrSource.position, new SoulPositionBunker(soulToCopy, skill.chrSource.position)) {
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulPosition(skill.chrOwner, skill.chrOwner.position, new SoulPositionBunker(soulToCopy, skill.chrOwner.position)) {
 
                 sLabel = "Hunker down"
             });

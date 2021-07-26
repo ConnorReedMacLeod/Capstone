@@ -33,7 +33,7 @@ public class SkillHiss : Skill {
                 new ClauseTagChrEnemy(this)
             });
 
-            soulToCopy = new SoulSpooked(skill.chrSource, null, skill);
+            soulToCopy = new SoulSpooked(skill.chrOwner, null, skill);
         }
 
         public override string GetDescription() {
@@ -43,7 +43,7 @@ public class SkillHiss : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulSpooked(soulToCopy, chrSelected)) {
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulSpooked(soulToCopy, chrSelected)) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Sophidia/sndHiss1", 2f),
                                                      new SoundEffect("Sophidia/sndHiss2", 2f),
                                                      new SoundEffect("Sophidia/sndHiss3", 2f)},

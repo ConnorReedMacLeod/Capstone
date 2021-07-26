@@ -302,7 +302,7 @@ public class ViewChr : ViewInteractive {
         Debug.Log(mod.sName + " is currently targettable by " + skillTargetting.sName);
 
         //If the source of this skill was an ally
-        if(skillTargetting.chrSource.plyrOwner == mod.plyrOwner) {
+        if(skillTargetting.chrOwner.plyrOwner == mod.plyrOwner) {
             DecideIfHighlighted(SelectabilityState.ALLYSELECTABLE);
         } else {
             DecideIfHighlighted(SelectabilityState.ENEMYSELECTABLE);

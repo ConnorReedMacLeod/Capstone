@@ -42,7 +42,7 @@ public class SkillTranquilize : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecStun(skill.chrSource, chrSelected, nStunAmount) {
+            ContSkillEngine.PushSingleExecutable(new ExecStun(skill.chrOwner, chrSelected, nStunAmount) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndTranquilize", 1.4f) },
                 sLabel = "Shhh... Look at my daughter."
             });

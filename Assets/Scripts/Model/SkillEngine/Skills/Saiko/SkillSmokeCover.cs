@@ -32,7 +32,7 @@ public class SkillSmokeCover : Skill {
                 new ClauseTagChrSelf(this)
             });
 
-            soulToCopy = new SoulSmokeCover(skill.chrSource, null, skill);
+            soulToCopy = new SoulSmokeCover(skill.chrOwner, null, skill);
         }
 
         public override string GetDescription() {
@@ -43,7 +43,7 @@ public class SkillSmokeCover : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulSmokeCover(soulToCopy, chrSelected)) {
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulSmokeCover(soulToCopy, chrSelected)) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndSmokeCover", 4.3f) },
                 sLabel = "Disappearing into the shadows..."
             });

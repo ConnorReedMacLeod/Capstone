@@ -78,7 +78,7 @@ public class ViewSkill : ViewInteractive {
     public void DisplayIcon() {
         if(mod == null) return;
 
-        string sSprPath = "Images/Chrs/" + mod.chrSource.sName + "/img" + mod.sName;
+        string sSprPath = "Images/Chrs/" + mod.chrOwner.sName + "/img" + mod.sName;
 
         Sprite sprIcon = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
 

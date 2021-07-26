@@ -304,4 +304,92 @@ public static class SelectionSerializer {
         return null;
 
     }
+
+
+    //TODO - clear out anything up here that doesn't need to be here anymore
+
+
+}
+
+
+
+public class Selections {
+
+    public Skill skillSelected;
+    public List<object> lstSelections;
+
+    //For creating a new Selections collection to be filled out in the selection process
+    public Selections(Skill _skSelected) {
+        skillSelected = _skSelected;
+        lstSelections = new List<object>();
+    }
+
+    //For deserializing a master-provided set of serialized selections into their corresponding objects
+    public Selections(int nSerializedSkill, int[] arSerializedSelections) {
+        skillSelected = DeserializeSkill(nSerializedSkill);
+
+        lstSelections = new List<object>();
+
+        //For each required target, have it decode the master-provided serialization
+        for(int i = 0; i < skillSelected.lstTargets.Count; i++) {
+            lstSelections.Add(skillSelected.lstTargets[i].Unserialize(arSerializedSelections[i]));
+        }
+    }
+
+    public Selections(Selections other) {
+        skillSelected = other.skillSelected;
+        lstSelections = other.lstSelections;
+    }
+
+    public Selections GetCopy() {
+        return new Selections(this);
+    }
+
+    public static int SerializeSkill(Skill skill) {
+        return SelectionSerializer.Serialize((byte)skill.chrOwner.globalid, (byte)skill.skillslot.iSlot, 0, 0);
+    }
+
+    public static Skill DeserializeSkill(int nSerializedSkill) {
+        Chr chrUsing = SelectionSerializer.DeserializeChr(SelectionSerializer.GetByte(0, nSerializedSkill));
+        int iSkillSlot = SelectionSerializer.GetByte(1, nSerializedSkill);
+
+        return chrUsing.arSkillSlots[iSkillSlot].skill;
+    }
+
+    public int GetSerializedSkill() {
+        return SerializeSkill(skillSelected);
+    }
+
+    public int[] GetSerializedSelections() {
+
+        int[] arSerializedSelections = new int[skillSelected.lstTargets.Count];
+
+        for(int i = 0; i < skillSelected.lstTargets.Count; i++) {
+            //For each Target, ask it how we should serialize the selected object we have stored
+            arSerializedSelections[i] = skillSelected.lstTargets[i].Serialize(lstSelections[i]);
+        }
+
+        return arSerializedSelections;
+    }
+
+    public bool IsValidSelection() {
+
+        for(int i = 0; i < skillSelected.lstTargets.Count; i++) {
+            if(skillSelected.lstTargets[i].IsValidSelection(lstSelections[i], this) == false) {
+                //If any of the stored selections are invalid, then this isn't an initially-viable selection
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public bool IsGoodEnoughToExecute() {
+        //TODO - consider what should constitute a valid-enough selection so as to still
+        // be worth executing even if not all selections may still be valid
+        // for now - just passing off to IsValidSelection to check if everything is still valid
+        return IsValidSelection();
+    }
+
+
 }

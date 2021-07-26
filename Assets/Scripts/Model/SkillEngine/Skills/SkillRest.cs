@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class SkillRest : Skill {
 
-    public SkillRest(Chr _chrOwner) : base(_chrOwner, 0) {
+    public SkillRest(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "Rest";
         sDisplayName = "Rest";
 
         type = new TypeCantrip(this);
 
-        chrSource = _chrOwner;
+        chrOwner = _chrOwner;
 
         parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 0 });
 
@@ -25,12 +25,11 @@ public class SkillRest : Skill {
         };
     }
 
-    class Clause1 : ClauseSpecial {
+    class Clause1 : Clause {
 
         public int nRestFatigue;
 
         public Clause1(Skill _skill) : base(_skill) {
-            //TODO add in tags for base skills, and rest
 
             nRestFatigue = 3;
         }
@@ -40,17 +39,17 @@ public class SkillRest : Skill {
             return string.Format("Finish this character's turn");
         }
 
-        public override void ClauseEffect() {
+        public override void ClauseEffect(Selections selections) {
 
             //Check if the character has any fatigue already
-            if(skill.chrSource.nFatigue == 0) {
+            if(skill.chrOwner.nFatigue == 0) {
                 //If not, then give them the rest fatigue
-                ContSkillEngine.Get().AddExec(new ExecChangeFatigue(skill.chrSource, skill.chrSource, nRestFatigue, false) {
+                ContSkillEngine.Get().AddExec(new ExecChangeFatigue(skill.chrOwner, skill.chrOwner, nRestFatigue, false) {
                     sLabel = "Resting"
                 });
             }
 
-            skill.chrSource.SetStateReadiness(new StateFatigued(skill.chrSource));
+            skill.chrOwner.SetStateReadiness(new StateFatigued(skill.chrOwner));
 
         }
 

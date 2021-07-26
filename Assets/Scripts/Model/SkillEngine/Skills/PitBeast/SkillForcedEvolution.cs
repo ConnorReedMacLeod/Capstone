@@ -42,7 +42,7 @@ public class SkillForcedEvolution : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecLoseLife(skill.chrSource, chrSelected, nLifeLoss) {
+            ContSkillEngine.PushSingleExecutable(new ExecLoseLife(skill.chrOwner, chrSelected, nLifeLoss) {
                 sLabel = "It's going berserk"
             });
 
@@ -60,7 +60,7 @@ public class SkillForcedEvolution : Skill {
                 new ClauseTagChrSelf(this)
             });
 
-            soulToCopy = new SoulEvolved(skill.chrSource, null, skill);
+            soulToCopy = new SoulEvolved(skill.chrOwner, null, skill);
         }
 
         public override string GetDescription() {
@@ -70,7 +70,7 @@ public class SkillForcedEvolution : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulEvolved(soulToCopy, chrSelected)) {
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulEvolved(soulToCopy, chrSelected)) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("PitBeast/sndForcedEvolution", 4.667f) },
                 sLabel = "It's evolving"
             });

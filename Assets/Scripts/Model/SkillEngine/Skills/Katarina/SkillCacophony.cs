@@ -49,7 +49,7 @@ public class SkillCacophony : Skill {
             nBaseStun = 2;
             nCriticalStun = 3;
 
-            dmg = new Damage(skill.chrSource, null, (_chrSource, _chrTarget) => IsCritical(_chrTarget) ? nCriticalBaseDamage : nBaseDamage);
+            dmg = new Damage(skill.chrOwner, null, (_chrSource, _chrTarget) => IsCritical(_chrTarget) ? nCriticalBaseDamage : nBaseDamage);
         }
 
         public override string GetDescription() {
@@ -65,12 +65,12 @@ public class SkillCacophony : Skill {
 
             //TODO - make this better dynamically react.  Should probably just have a Stun effect object that can
             //       be modified freely like with damage
-            ContSkillEngine.PushSingleExecutable(new ExecStun(skill.chrSource, chrSelected, nBaseStun) {
+            ContSkillEngine.PushSingleExecutable(new ExecStun(skill.chrOwner, chrSelected, nBaseStun) {
                 GetDuration = () => IsCritical(chrSelected) ? nCriticalStun : nBaseStun,
                 sLabel = "Oh, god! My ears!"
             });
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndCacophony", 3.767f) },
                 sLabel = "Anyway, here's Wonderwall"
             });

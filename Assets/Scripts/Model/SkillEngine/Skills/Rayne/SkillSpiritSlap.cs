@@ -37,8 +37,8 @@ public class SkillSpiritSlap : Skill {
                 new ClauseTagChrEnemy(this)
             });
 
-            dmg = new Damage(skill.chrSource, null, nBaseDamage);
-            soulToCopy = new SoulDispirited(skill.chrSource, null, skill);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
+            soulToCopy = new SoulDispirited(skill.chrOwner, null, skill);
         }
 
         public override string GetDescription() {
@@ -49,11 +49,11 @@ public class SkillSpiritSlap : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulDispirited(soulToCopy, chrSelected)) {
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulDispirited(soulToCopy, chrSelected)) {
                 sLabel = "The pain is momentary, but the shame lasts..."
             });
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Rayne/sndSpiritSlap", 3f) },
                 sLabel = "Got slapped"
             });

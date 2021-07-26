@@ -6,7 +6,7 @@ using UnityEngine;
 public class ClauseTagChrSelf : ClauseTagChr {
 
     public override List<Chr> ApplySelectionFiltering(List<Chr> lstTargets) {
-        return lstTargets.Where(c => c.globalid == clause.skill.chrSource.globalid).ToList<Chr>();
+        return lstTargets.Where(c => c.globalid == clause.skill.chrOwner.globalid).ToList<Chr>();
     }
 
     public override List<Chr> DisambiguateFinalTargetting(List<Chr> lstTargets, SelectionSerializer.SelectionInfo selectionInfo) {

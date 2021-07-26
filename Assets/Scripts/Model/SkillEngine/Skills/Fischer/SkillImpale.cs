@@ -22,7 +22,7 @@ public class SkillImpale : Skill {
 
         nBaseDamage = 20;
         //Create a base Damage object that this skill will apply
-        dmg = new Damage(this.chrSource, null, nBaseDamage);
+        dmg = new Damage(this.chrOwner, null, nBaseDamage);
 
         lstClauses = new List<Clause>() {
             new Clause1(this)
@@ -42,8 +42,8 @@ public class SkillImpale : Skill {
             });
 
 
-            dmg = new Damage(skill.chrSource, null, nBaseDamage);
-            soulToCopy = new SoulImpaled(skill.chrSource, null, skill);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
+            soulToCopy = new SoulImpaled(skill.chrOwner, null, skill);
         }
 
         public override string GetDescription() {
@@ -53,9 +53,9 @@ public class SkillImpale : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulImpaled(soulToCopy, chrSelected)));
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulImpaled(soulToCopy, chrSelected)));
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Fischer/sndImpale", 1.833f) },
                 sLabel = "Get Kakyoin'd"
             });

@@ -34,7 +34,7 @@ public class SkillReverberate : Skill {
             });
 
 
-            dmg = new Damage(skill.chrSource, null, nBaseDamage);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
         }
 
         public override string GetDescription() {
@@ -44,7 +44,7 @@ public class SkillReverberate : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndReverberate", 1.633f) },
                 sLabel = "And how would your hair fair in a blizzard?"
             });

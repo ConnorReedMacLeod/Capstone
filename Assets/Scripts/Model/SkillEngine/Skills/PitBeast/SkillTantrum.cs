@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillTantrum : Skill {
 
-    public SkillTantrum(Chr _chrOwner) : base(_chrOwner, 0) {
+    public SkillTantrum(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "Tantrum";
         sDisplayName = "Tantrum";
@@ -17,12 +17,16 @@ public class SkillTantrum : Skill {
         nCooldownInduced = 9;
         nFatigue = 5;
 
+        lstTargets = new List<Target>() {
+
+        };
+
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
     }
 
-    class Clause1 : ClauseSpecial {
+    class Clause1 : Clause {
 
         Damage dmgEnemy;
         public int nEnemyDamage = 20;
@@ -31,10 +35,9 @@ public class SkillTantrum : Skill {
         public int nAllyDamage = 5;
 
         public Clause1(Skill _skill) : base(_skill) {
-            //TODO - add tags as needed
 
-            dmgEnemy = new Damage(skill.chrSource, null, nEnemyDamage);
-            dmgAlly = new Damage(skill.chrSource, null, nAllyDamage);
+            dmgEnemy = new Damage(skill.chrOwner, null, nEnemyDamage);
+            dmgAlly = new Damage(skill.chrOwner, null, nAllyDamage);
         }
 
         public override string GetDescription() {
@@ -42,24 +45,24 @@ public class SkillTantrum : Skill {
             return string.Format("Deal {0} damage to all enemies and {1} damage to all other allies", dmgEnemy.Get(), dmgAlly.Get());
         }
 
-        public override void ClauseEffect() {
+        public override void ClauseEffect(Selections selections) {
 
             //First, deal damage to all enemies
-            List<Chr> lstChrEnemy = skill.chrSource.plyrOwner.GetEnemyPlayer().GetActiveChrs();
+            List<Chr> lstChrEnemy = skill.chrOwner.plyrOwner.GetEnemyPlayer().GetActiveChrs();
 
             for(int i = 0; i < lstChrEnemy.Count; i++) {
                 //For each enemy, deal our dmgEnemy to them
-                ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, lstChrEnemy[i], dmgEnemy) {
+                ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, lstChrEnemy[i], dmgEnemy) {
                     sLabel = "WAAAAAAAHWAAHWAHHH"
                 });
             }
 
             //Then damage each of our allies
-            List<Chr> lstChrAlly = skill.chrSource.plyrOwner.GetActiveChrs();
+            List<Chr> lstChrAlly = skill.chrOwner.plyrOwner.GetActiveChrs();
 
             for(int i = 0; i < lstChrAlly.Count; i++) {
                 //For each ally, deal our dmgAlly to them
-                ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, lstChrAlly[i], dmgAlly) {
+                ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, lstChrAlly[i], dmgAlly) {
                     sLabel = "Really, dude?"
                 });
             }

@@ -23,9 +23,9 @@ public abstract class TypeSkill {
 
     public virtual void PaySkillPoints() {
         //Ensure we're in a ready state
-        Debug.Assert(skill.chrSource.curStateReadiness.Type() == StateReadiness.TYPE.READY);
+        Debug.Assert(skill.chrOwner.curStateReadiness.Type() == StateReadiness.TYPE.READY);
 
-        StateReady stateReady = (StateReady)(skill.chrSource.curStateReadiness);
+        StateReady stateReady = (StateReady)(skill.chrOwner.curStateReadiness);
 
         //Ensure we have enough Skill Points left to use this skill
         Debug.Assert(stateReady.nCurSkillsLeft >= GetSkillPointCost());
@@ -40,19 +40,19 @@ public abstract class TypeSkill {
     }
 
     //Fetch the current selection information passed to us from the Master
-    public virtual SelectionSerializer.SelectionInfo GetSelectionInfo() {
+    public virtual Selections GetUsedSelections() {
 
-        SelectionSerializer.SelectionInfo infoSelection = ContSkillSelection.Get().infoSelectionFromMaster;
+        Selections selections = ContSkillSelection.Get().selectionsFromMaster;
 
-        //You can only get legitimate selection info for this skill if the selection info is referring to
+        //You can only get legitimate selections for this skill if the selection passed is referring to
         //  this skill
-        Debug.Assert(infoSelection != null, "ERROR - Master has passed no selectionInfo at this point");
+        Debug.Assert(selections != null, "ERROR - Master has passed no selectionsFromMaster at this point");
 
-        Debug.Assert(ContTurns.Get().GetNextActingChr() == skill.chrSource, "ERROR - The acting character isn't the owner of this skill");
+        Debug.Assert(ContTurns.Get().GetNextActingChr() == skill.chrOwner, "ERROR - The acting character isn't the owner of this skill");
 
-        Debug.Assert(infoSelection.skillUsed == skill, "ERROR - The selected skill from the player does not match this skill");
+        Debug.Assert(selections.skillSelected == skill, "ERROR - The selected skill from the player does not match this skill");
 
-        return infoSelection;
+        return selections;
 
     }
 

@@ -20,7 +20,7 @@ public class SkillSadism : Skill {
         nFatigue = 0;
 
 
-        soulPassive = new SoulSadism(this.chrSource, this.chrSource, this);
+        soulPassive = new SoulSadism(this.chrOwner, this.chrOwner, this);
 
         lstClausesOnEquip = new List<Clause>() {
             new ClauseEquip(this)
@@ -48,7 +48,7 @@ public class SkillSadism : Skill {
 
         public override void ClauseEffect() {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, skill.chrSource, ((SkillSadism)skill).soulPassive) {
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, skill.chrOwner, ((SkillSadism)skill).soulPassive) {
                 sLabel = "applying sadism"
             });
 
@@ -69,7 +69,7 @@ public class SkillSadism : Skill {
 
         public override void ClauseEffect() {
 
-            ContSkillEngine.PushSingleExecutable(new ExecRemoveSoulChr(skill.chrSource, ((SkillSadism)skill).soulPassive) {
+            ContSkillEngine.PushSingleExecutable(new ExecRemoveSoulChr(skill.chrOwner, ((SkillSadism)skill).soulPassive) {
                 sLabel = "removing sadism"
             });
 
@@ -85,7 +85,7 @@ public class SkillSadism : Skill {
 
         public override string GetDescription() {
 
-            return string.Format("When {0} would deal damage to a character with greater health, heal {1}.", skill.chrSource.sName, ((SkillSadism)skill).soulPassive.heal.Get());
+            return string.Format("When {0} would deal damage to a character with greater health, heal {1}.", skill.chrOwner.sName, ((SkillSadism)skill).soulPassive.heal.Get());
         }
 
         public override void ClauseEffect() {

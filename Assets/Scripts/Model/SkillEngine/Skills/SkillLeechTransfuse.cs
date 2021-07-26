@@ -37,7 +37,7 @@ public class SkillLeech : Skill {
             });
 
 
-            dmg = new Damage(skill.chrSource, null, nBaseDamage);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
         }
 
         public override string GetDescription() {
@@ -47,7 +47,7 @@ public class SkillLeech : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 sLabel = "Gimme yer life-juice"
             });
 
@@ -71,7 +71,7 @@ public class SkillLeech : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecAdaptSkill(skill.chrSource, this.skill, SkillType.SKILLTYPE.TRANSFUSE));
+            ContSkillEngine.PushSingleExecutable(new ExecAdaptSkill(skill.chrOwner, this.skill, SkillType.SKILLTYPE.TRANSFUSE));
 
         }
 
@@ -116,7 +116,7 @@ public class SkillTransfuse : Skill {
             });
 
 
-            healing = new Healing(skill.chrSource, null, nHealAmount);
+            healing = new Healing(skill.chrOwner, null, nHealAmount);
         }
 
         public override string GetDescription() {
@@ -126,7 +126,7 @@ public class SkillTransfuse : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecHeal(skill.chrSource, chrSelected, healing) {
+            ContSkillEngine.PushSingleExecutable(new ExecHeal(skill.chrOwner, chrSelected, healing) {
                 sLabel = "Drink my life-juice"
             });
 
@@ -150,7 +150,7 @@ public class SkillTransfuse : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecAdaptSkill(skill.chrSource, this.skill, SkillType.SKILLTYPE.LEECH));
+            ContSkillEngine.PushSingleExecutable(new ExecAdaptSkill(skill.chrOwner, this.skill, SkillType.SKILLTYPE.LEECH));
 
         }
 

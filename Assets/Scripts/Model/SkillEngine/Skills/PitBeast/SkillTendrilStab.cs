@@ -34,7 +34,7 @@ public class SkillTendrilStab : Skill {
                 new ClauseTagChrEnemy(this)
             });
 
-            dmg = new Damage(skill.chrSource, null, nBaseDamage, true);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage, true);
         }
 
         public override string GetDescription() {
@@ -44,7 +44,7 @@ public class SkillTendrilStab : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("PitBeast/sndTendrilStab", 3.067f) },
                 sLabel = "Stab, stab, stab"
             });

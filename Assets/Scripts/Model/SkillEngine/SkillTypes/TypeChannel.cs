@@ -8,7 +8,7 @@ public class TypeChannel : TypeSkill {
 
     public SoulChannel soulBehaviour;
     public int nStartChannelTime;
-    public SelectionSerializer.SelectionInfo infoStoredSelection;
+    public Selections selectionsStored;
 
     public TypeChannel(Skill skill, int _nStartChannelTime, SoulChannel _soulBehaviour) : base(skill) {
 
@@ -44,22 +44,21 @@ public class TypeChannel : TypeSkill {
 
     public override void UseSkill() {
 
-        //Store a copy of the current SelectionInfo so that we can use it later when the channel finishes (or triggers in some way)
-        infoStoredSelection = base.GetSelectionInfo().GetCopy();
+        //Store a copy of the current selections so that we can use it later when the channel finishes (or triggers in some way)
+        selectionsStored = base.GetUsedSelections().GetCopy();
 
         ContSkillEngine.PushSingleClause(new ClauseBeginChannel(skill));
     }
 
-    public override SelectionSerializer.SelectionInfo GetSelectionInfo() {
-        //Return the selection info that's been stored
-        return infoStoredSelection;
+    public override Selections GetUsedSelections() {
+        return selectionsStored;
     }
 
     public void ClearStoredSelectionInfo() {
-        infoStoredSelection = null;
+        selectionsStored = null;
     }
 
-    class ClauseBeginChannel : ClauseSpecial {
+    class ClauseBeginChannel : Clause {
 
         public ClauseBeginChannel(Skill _skill) : base(_skill) {
         }
@@ -68,9 +67,9 @@ public class TypeChannel : TypeSkill {
             return string.Format("Transition to a channeling state");
         }
 
-        public override void ClauseEffect() {
+        public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecBeginChannel(skill.chrSource, skill.chrSource, skill));
+            ContSkillEngine.PushSingleExecutable(new ExecBeginChannel(skill.chrOwner, skill.chrOwner, skill));
 
         }
 
