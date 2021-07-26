@@ -18,7 +18,7 @@ public class SoulChannel : SoulChr {
     /// <summary>
     /// Creates a properly configured SoulChannel that will call the Skill's Execute method
     /// </summary>
-    public SoulChannel(Skill _skillSource) : base(_skillSource.chrSource, _skillSource.chrSource, _skillSource) {
+    public SoulChannel(Skill _skillSource) : base(_skillSource.chrOwner, _skillSource.chrOwner, _skillSource) {
         bVisible = false;
         bDuration = false;
 

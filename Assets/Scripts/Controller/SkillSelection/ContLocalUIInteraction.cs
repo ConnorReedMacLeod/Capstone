@@ -63,14 +63,14 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         // There's a bunch of checks we have to do for this though first to ensure we should be selecting this skill
 
         // If this skill isn't owned by a locally-controlled client, then reject this selection
-        if(_skillSelected.chrSource.plyrOwner.inputController == null) {
+        if(_skillSelected.chrOwner.plyrOwner.inputController == null) {
 
             Debug.Log("We can't select skills for a character we don't locally control");
             return;
         }
 
         // Check if it's actually got a LocalInputType that will allow us to select a skill
-        if(_skillSelected.chrSource.plyrOwner.inputController.CanProceedWithSkillSelection() == false) {
+        if(_skillSelected.chrOwner.plyrOwner.inputController.CanProceedWithSkillSelection() == false) {
 
             Debug.Log("This character is owner by a local player, but selection of skills is not available currently");
             return;
@@ -82,7 +82,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
             return;
         }
 
-        if(!_skillSelected.chrSource.curStateReadiness.CanSelectSkill(_skillSelected)) {
+        if(!_skillSelected.chrOwner.curStateReadiness.CanSelectSkill(_skillSelected)) {
             Debug.Log("We can't use a skill right now cause our state doesn't allow it");
             return;
         }
@@ -111,7 +111,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
             //Make a SelectionInfo package for this skill
             SelectionSerializer.SelectionSpecial infoSelectionSpec =
                 new SelectionSerializer.SelectionSpecial(
-                    skillSelected.chrSource,
+                    skillSelected.chrOwner,
                     skillSelected);
 
             if(infoSelectionSpec.CanSelect() == false) {

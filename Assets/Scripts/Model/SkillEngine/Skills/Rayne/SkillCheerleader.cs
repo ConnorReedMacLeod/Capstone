@@ -19,7 +19,7 @@ public class SkillCheerleader : Skill {
         nCooldownInduced = 0;
         nFatigue = 0;
 
-        soulPassive = new SoulCheerleader(this.chrSource, this.chrSource, this);
+        soulPassive = new SoulCheerleader(this.chrOwner, this.chrOwner, this);
 
         lstClausesOnEquip = new List<Clause>() {
             new ClauseEquip(this)
@@ -47,8 +47,8 @@ public class SkillCheerleader : Skill {
 
         public override void ClauseEffect() {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, skill.chrSource, ((SkillCheerleader)skill).soulPassive) {
-                sLabel = skill.chrSource.sName + " is one peppy boi"
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, skill.chrOwner, ((SkillCheerleader)skill).soulPassive) {
+                sLabel = skill.chrOwner.sName + " is one peppy boi"
             });
 
         }
@@ -68,8 +68,8 @@ public class SkillCheerleader : Skill {
 
         public override void ClauseEffect() {
 
-            ContSkillEngine.PushSingleExecutable(new ExecRemoveSoulChr(skill.chrSource, ((SkillCheerleader)skill).soulPassive) {
-                sLabel = skill.chrSource.sName + " is no longer peppy"
+            ContSkillEngine.PushSingleExecutable(new ExecRemoveSoulChr(skill.chrOwner, ((SkillCheerleader)skill).soulPassive) {
+                sLabel = skill.chrOwner.sName + " is no longer peppy"
             });
 
         }
@@ -85,7 +85,7 @@ public class SkillCheerleader : Skill {
         public override string GetDescription() {
 
             return string.Format("When {0} readies, all other allies gain {1} POWER until the end of turn.",
-                skill.chrSource.sName, ((SkillCheerleader)skill).soulPassive.nPowerGain);
+                skill.chrOwner.sName, ((SkillCheerleader)skill).soulPassive.nPowerGain);
         }
 
         public override void ClauseEffect() {

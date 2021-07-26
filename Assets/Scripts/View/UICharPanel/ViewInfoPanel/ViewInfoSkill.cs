@@ -39,7 +39,7 @@ public class ViewInfoSkill : MonoBehaviour {
     }
 
     public void DisplayIcon() {
-        string sSprPath = "Images/Chrs/" + mod.chrSource.sName + "/img";
+        string sSprPath = "Images/Chrs/" + mod.chrOwner.sName + "/img";
 
         if(mod != null) {
             sSprPath += mod.sName;

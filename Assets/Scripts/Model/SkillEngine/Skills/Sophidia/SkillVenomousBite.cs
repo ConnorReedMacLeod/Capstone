@@ -34,8 +34,8 @@ public class SkillVenomousBite : Skill {
                 new ClauseTagChrEnemy(this)
             });
 
-            dmg = new Damage(skill.chrSource, null, nBaseDamage);
-            soulToCopy = new SoulEnvenomed(skill.chrSource, null, skill);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
+            soulToCopy = new SoulEnvenomed(skill.chrOwner, null, skill);
         }
 
         public override string GetDescription() {
@@ -47,11 +47,11 @@ public class SkillVenomousBite : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulEnvenomed(soulToCopy, chrSelected)) {
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulEnvenomed(soulToCopy, chrSelected)) {
                 sLabel = "Applying poison"
             });
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Sophidia/sndVenomousBite1", 2f),
                                                      new SoundEffect("Sophidia/sndVenomousBite2", 2f)},
                 sLabel = "Nomnomnom"

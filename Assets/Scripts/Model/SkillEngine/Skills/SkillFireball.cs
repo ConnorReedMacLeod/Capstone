@@ -37,7 +37,7 @@ public class SkillFireball : Skill {
             });
 
 
-            dmg = new Damage(skill.chrSource, null, nBaseDamage);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
         }
 
         public override string GetDescription() {
@@ -47,7 +47,7 @@ public class SkillFireball : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 sLabel = "Hurling a fireball"
             });
 
@@ -65,7 +65,7 @@ public class SkillFireball : Skill {
                 new ClauseTagChrEnemy(this)
             });
 
-            soulToCopy = new SoulBurning(skill.chrSource, null, skill);
+            soulToCopy = new SoulBurning(skill.chrOwner, null, skill);
         }
 
         public override string GetDescription() {
@@ -75,7 +75,7 @@ public class SkillFireball : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulBurning(soulToCopy, chrSelected)));
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulBurning(soulToCopy, chrSelected)));
 
         }
 

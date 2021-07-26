@@ -32,18 +32,18 @@ public class SkillBucklerParry : Skill {
                 new ClauseTagChrSelf(this)
             });
 
-            soulToCopy = new SoulParry(skill.chrSource, null, skill);
+            soulToCopy = new SoulParry(skill.chrOwner, null, skill);
         }
 
         public override string GetDescription() {
 
             return string.Format("Gain 15 DEFENSE and PARRY (4).\n" +
-                "[PARRY]: When an enemy would deal damage to {0}, deal {1} damage to them and dispel.", skill.chrSource.sName, soulToCopy.dmgCounterAttack.Get());
+                "[PARRY]: When an enemy would deal damage to {0}, deal {1} damage to them and dispel.", skill.chrOwner.sName, soulToCopy.dmgCounterAttack.Get());
         }
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulParry(soulToCopy, chrSelected)));
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulParry(soulToCopy, chrSelected)));
 
         }
 

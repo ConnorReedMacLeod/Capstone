@@ -32,7 +32,7 @@ public class SkillCloudCushion : Skill {
                 new ClauseTagChrAlly(this)
             });
 
-            soulToCopy = new SoulCloudCushion(skill.chrSource, null, skill);
+            soulToCopy = new SoulCloudCushion(skill.chrOwner, null, skill);
         }
 
         public override string GetDescription() {
@@ -42,7 +42,7 @@ public class SkillCloudCushion : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulCloudCushion(soulToCopy, chrSelected)) {
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulCloudCushion(soulToCopy, chrSelected)) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Rayne/sndCloudCushion", 3.467f) },
                 sLabel = "Ooh, so soft"
             });

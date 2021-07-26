@@ -36,8 +36,8 @@ public class SkillStickyBomb : Skill {
                 new ClauseTagChrRanged(this), //Base Tag always goes first
             });
 
-            dmg = new Damage(skill.chrSource, null, nBaseDamage);
-            soulToCopy = new SoulStickyBomb(skill.chrSource, null, skill);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
+            soulToCopy = new SoulStickyBomb(skill.chrOwner, null, skill);
         }
 
         public override string GetDescription() {
@@ -48,11 +48,11 @@ public class SkillStickyBomb : Skill {
         public override void ClauseEffect(Chr chrSelected) {
 
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulStickyBomb(soulToCopy, chrSelected)) {
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulStickyBomb(soulToCopy, chrSelected)) {
                 sLabel = "A bomb stuck"
             });
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndStickyBombToss", 2.133f) },
                 sLabel = "Threw a bomb"
             });

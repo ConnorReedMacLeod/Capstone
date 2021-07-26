@@ -44,6 +44,8 @@ public class ContSkillSelection : Singleton<ContSkillSelection> {
     // (regardless of it's our local player's turn to move or not) - This should only be read from (the master
     //  network will be the one writing to this field)
     public SelectionSerializer.SelectionInfo infoSelectionFromMaster;
+    //TODO - swap the above with the below once all the networking stuff it set up
+    public Selections selectionsFromMaster;
 
     public override void Init() {
 

@@ -90,7 +90,7 @@ public class SoulDispirited : SoulChr {
     public void OnSkillUsage(Object target, params object[] args) {
 
         //Ignore if the skill used wasn't used by the character who has this soul effect
-        if(((Skill)args[0]).chrSource != this.chrTarget) return;
+        if(((Skill)args[0]).chrOwner != this.chrTarget) return;
 
         //Check if the skill that was just used is a character skill - not a generic (rest)
         if(((Skill)args[0]).IsStandardSkill()) {

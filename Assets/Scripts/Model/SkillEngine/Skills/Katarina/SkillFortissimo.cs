@@ -33,7 +33,7 @@ public class SkillFortissimo : Skill {
                 new ClauseTagChrSelf(this)
             });
 
-            soulToCopy = new SoulFortissimo(skill.chrSource, null, skill);
+            soulToCopy = new SoulFortissimo(skill.chrOwner, null, skill);
         }
 
         public override string GetDescription() {
@@ -43,7 +43,7 @@ public class SkillFortissimo : Skill {
 
         public override void ClauseEffect(Chr chrSelected) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulFortissimo(soulToCopy, chrSelected)) {
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulFortissimo(soulToCopy, chrSelected)) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndFortissimo", 6.2f) },
                 sLabel = "Let's do it louder this time"
             });

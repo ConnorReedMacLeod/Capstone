@@ -39,7 +39,7 @@ public class StateChanneling : StateReadiness {
         Debug.Assert(soulBehaviour.skillSource.type.Type() == TypeSkill.TYPE.CHANNEL);
 
         //Get the SelectionInfo stored for the channeled skill and check if it is still completable
-        if(soulBehaviour.skillSource.CanCompleteAsChannel(soulBehaviour.skillSource.type.GetSelectionInfo()) == false) {
+        if(soulBehaviour.skillSource.CanCompleteAsChannel() == false) {
             //If targetting has become invalid (maybe because someone has died)
             InterruptChannel();
 
@@ -126,7 +126,7 @@ public class StateChanneling : StateReadiness {
 
     }
 
-    class ClauseClearStoredSelection : ClauseSpecial {
+    class ClauseClearStoredSelection : Clause {
 
         public ClauseClearStoredSelection(Skill _skill) : base(_skill) {
         }
@@ -135,10 +135,10 @@ public class StateChanneling : StateReadiness {
             return string.Format("Clear out stored selection info for " + skill.sName);
         }
 
-        public override void ClauseEffect() {
+        public override void ClauseEffect(Selections selections) {
 
             Debug.Log("Pushing ClearStoredSelection for " + skill.sName);
-            ContSkillEngine.PushSingleExecutable(new ExecClearStoredSelection(skill.chrSource, skill));
+            ContSkillEngine.PushSingleExecutable(new ExecClearStoredSelection(skill.chrOwner, skill));
 
         }
 

@@ -38,7 +38,7 @@ public class SkillHarpoonGun : Skill {
             });
 
 
-            dmg = new Damage(skill.chrSource, null, nBaseDamage);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
         }
 
         public override string GetDescription() {
@@ -50,7 +50,7 @@ public class SkillHarpoonGun : Skill {
 
             Debug.Log("Executing damaging clause");
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Fischer/sndHarpoonGun", 2.067f) },
                 sLabel = "Behold, the power of my stand, Beach Boy!"
             });
@@ -77,7 +77,7 @@ public class SkillHarpoonGun : Skill {
 
             Debug.Log("Executing Switch forward");
 
-            ContSkillEngine.PushSingleExecutable(new ExecSwitchChar(skill.chrSource, chrSelected, (chrTarget) => ContPositions.Get().GetInFrontPosition(chrTarget.position)) {
+            ContSkillEngine.PushSingleExecutable(new ExecSwitchChar(skill.chrOwner, chrSelected, (chrTarget) => ContPositions.Get().GetInFrontPosition(chrTarget.position)) {
                 sLabel = "Hey, I caught one!"
             });
 
