@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillCacophony : Skill {
 
-    public SkillCacophony(Chr _chrOwner) : base(_chrOwner, 0) {
+    public SkillCacophony(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "Cacophony";
         sDisplayName = "Cacophony";
@@ -17,8 +17,12 @@ public class SkillCacophony : Skill {
         nCooldownInduced = 8;
         nFatigue = 4;
 
+        lstTargets = new List<Target>() {
+            new TarChr(TarChr.IsFrontliner())
+        };
+
         lstClauses = new List<Clause>() {
-            new Clause1(this)
+            new Clause1(this),
         };
     }
 
@@ -28,7 +32,7 @@ public class SkillCacophony : Skill {
     }
 
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         Damage dmg;
 
@@ -39,9 +43,6 @@ public class SkillCacophony : Skill {
         public int nCriticalStun;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrRanged(this) //Base Tag always goes first
-            });
 
             nBaseDamage = 20;
             nCriticalBaseDamage = 30;
@@ -61,7 +62,9 @@ public class SkillCacophony : Skill {
                 nBaseDamage, nBaseStun, nCriticalBaseDamage, nCriticalStun);
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
+
+            Chr chrSelected = (Chr)selections.lstSelections[0];
 
             //TODO - make this better dynamically react.  Should probably just have a Stun effect object that can
             //       be modified freely like with damage

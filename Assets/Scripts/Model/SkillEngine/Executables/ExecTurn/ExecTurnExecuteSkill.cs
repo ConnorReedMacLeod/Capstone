@@ -45,7 +45,7 @@ public class ExecTurnExecuteSkill : Executable {
 
         Debug.Log("ExecTurnExecuteSkill: " + sLabel);
 
-        chrNextToAct.ExecuteSkill(ContSkillSelection.Get().infoSelectionFromMaster);
+        chrNextToAct.ExecuteSkill(ContSkillSelection.Get().selectionsFromMaster);
 
         fDelay = ContTurns.fDelayStandard;
 

@@ -345,6 +345,11 @@ public class Selections {
         return new Selections(this);
     }
 
+    public void ResetToRestSelection() {
+        skillSelected = skillSelected.chrOwner.skillRest;
+        lstSelections = new List<object>();
+    }
+
     public static int SerializeSkill(Skill skill) {
         return SelectionSerializer.Serialize((byte)skill.chrOwner.globalid, (byte)skill.skillslot.iSlot, 0, 0);
     }

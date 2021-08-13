@@ -6,7 +6,7 @@ public class SkillHydrasRegen : Skill {
 
     public SoulChannelHydrasRegen soulChannelBehaviour;
 
-    public SkillHydrasRegen(Chr _chrOwner) : base(_chrOwner, 0) {//Set the dominant clause
+    public SkillHydrasRegen(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "HydrasRegen";
         sDisplayName = "Hydra's Regeneration";
@@ -23,18 +23,19 @@ public class SkillHydrasRegen : Skill {
         nCooldownInduced = 6;
         nFatigue = 1;
 
+
+        lstTargets = new List<Target>() {
+
+        };
+
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
     }
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrRanged(this), //Base Tag always goes first
-                new ClauseTagChrSelf(this)
-            });
 
         }
 
@@ -45,7 +46,7 @@ public class SkillHydrasRegen : Skill {
                 ((SkillHydrasRegen)skill).soulChannelBehaviour.nBaseHealing);
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
 
             //Since this is a channel, we only have to include effects here that would happen upon
             // channel completion.  

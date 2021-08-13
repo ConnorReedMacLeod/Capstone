@@ -6,7 +6,7 @@ public class SkillAmbush : Skill {
 
     public SoulChannelAmbush soulChannelBehaviour;
 
-    public SkillAmbush(Chr _chrOwner) : base(_chrOwner, 0) {//Set the dominant clause
+    public SkillAmbush(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "Ambush";
         sDisplayName = "Ambush";
@@ -23,18 +23,19 @@ public class SkillAmbush : Skill {
         nCooldownInduced = 3;
         nFatigue = 1;
 
+        lstTargets = new List<Target>() {
+            new TarChr(TarChr.IsDiffTeam(chrOwner))
+        };
+
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
     }
 
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrRanged(this), //Base Tag always goes first
-            });
 
         }
 
@@ -44,7 +45,7 @@ public class SkillAmbush : Skill {
                 ((SkillAmbush)skill).soulChannelBehaviour.nBaseDamage);
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
 
             //Since this is a channel, we only have to include effects here that would happen upon
             // channel completion.  

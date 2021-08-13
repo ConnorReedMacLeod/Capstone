@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillVenomousBite : Skill {
 
-    public SkillVenomousBite(Chr _chrOwner) : base(_chrOwner, 0) {// Set the dominant clause
+    public SkillVenomousBite(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "VenomousBite";
         sDisplayName = "Venomous Bite";
@@ -17,22 +17,22 @@ public class SkillVenomousBite : Skill {
         nCooldownInduced = 8;
         nFatigue = 3;
 
+        lstTargets = new List<Target>() {
+            new TarChr(Target.AND(TarChr.IsDiffTeam(chrOwner), TarChr.IsFrontliner()))
+        };
+
         lstClauses = new List<Clause>() {
-            new Clause1(this)
+            new Clause1(this),
         };
     }
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         Damage dmg;
         public int nBaseDamage = 5;
         public SoulEnvenomed soulToCopy;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrMelee(this), //Base Tag always goes first
-                new ClauseTagChrEnemy(this)
-            });
 
             dmg = new Damage(skill.chrOwner, null, nBaseDamage);
             soulToCopy = new SoulEnvenomed(skill.chrOwner, null, skill);
@@ -45,7 +45,9 @@ public class SkillVenomousBite : Skill {
                 soulToCopy.nLifeLoss);
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
+
+            Chr chrSelected = (Chr)selections.lstSelections[0];
 
             ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulEnvenomed(soulToCopy, chrSelected)) {
                 sLabel = "Applying poison"

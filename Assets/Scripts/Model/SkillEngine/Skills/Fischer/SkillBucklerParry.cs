@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillBucklerParry : Skill {
 
-    public SkillBucklerParry(Chr _chrOwner) : base(_chrOwner, 0) {// 0 is the dominant clause
+    public SkillBucklerParry(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "BucklerParry";
         sDisplayName = "Buckler Parry";
@@ -17,21 +17,20 @@ public class SkillBucklerParry : Skill {
         nCooldownInduced = 8;
         nFatigue = 2;
 
+        lstTargets = new List<Target>() {
+
+        };
+
         lstClauses = new List<Clause>() {
-            new Clause1(this)
+            new Clause1(this),
         };
     }
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         public SoulParry soulToCopy;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrRanged(this), //Base Tag always goes first
-                new ClauseTagChrSelf(this)
-            });
-
             soulToCopy = new SoulParry(skill.chrOwner, null, skill);
         }
 
@@ -41,7 +40,9 @@ public class SkillBucklerParry : Skill {
                 "[PARRY]: When an enemy would deal damage to {0}, deal {1} damage to them and dispel.", skill.chrOwner.sName, soulToCopy.dmgCounterAttack.Get());
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
+
+            Chr chrSelected = (Chr)selections.lstSelections[0];
 
             ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulParry(soulToCopy, chrSelected)));
 

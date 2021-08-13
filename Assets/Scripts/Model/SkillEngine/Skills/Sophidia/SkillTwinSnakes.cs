@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillTwinSnakes : Skill {
 
-    public SkillTwinSnakes(Chr _chrOwner) : base(_chrOwner, 0) {
+    public SkillTwinSnakes(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "TwinSnakes";
         sDisplayName = "Twin Snakes";
@@ -17,23 +17,24 @@ public class SkillTwinSnakes : Skill {
         nCooldownInduced = 8;
         nFatigue = 4;
 
+
+        lstTargets = new List<Target>() {
+            new TarChr(TarChr.IsDiffTeam(chrOwner))
+        };
+
         lstClauses = new List<Clause>() {
             new Clause1(this),
             new Clause1(this)
         };
     }
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         Damage dmg;
         public int nBaseDamage = 20;
         public int nLifeloss = 5;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrRanged(this) //Base Tag always goes first
-            });
-
 
             dmg = new Damage(skill.chrOwner, null, nBaseDamage);
         }
@@ -43,7 +44,9 @@ public class SkillTwinSnakes : Skill {
             return string.Format("Deal {0} damage to the chosen character.  Lose {1} health", dmg.Get(), nLifeloss);
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
+
+            Chr chrSelected = (Chr)selections.lstSelections[0];
 
             ContSkillEngine.PushSingleExecutable(new ExecLoseLife(skill.chrOwner, skill.chrOwner, nLifeloss) {
                 sLabel = "Owie"

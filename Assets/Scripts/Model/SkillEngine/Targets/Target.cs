@@ -25,4 +25,10 @@ public abstract class Target {
     public Target(FnValidSelection _IsValidSelection) {
         IsValidSelection = _IsValidSelection;
     }
+
+    public static FnValidSelection AND(FnValidSelection fn1, FnValidSelection fn2) {
+        return (object o, Selections selections) => fn1(o, selections) && fn2(o, selections);
+    }
+
+    public static bool TRUE(object obj, Selections selections) { return true; }
 }

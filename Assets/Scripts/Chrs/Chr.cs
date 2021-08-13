@@ -382,19 +382,19 @@ public class Chr : MonoBehaviour {
     }
 
     //Performs the consumed skill 
-    public void ExecuteSkill(SelectionSerializer.SelectionInfo infoSelection) {
+    public void ExecuteSkill(Selections selections) {
 
-        if(infoSelection.CanSelect() == false || infoSelection.skillUsed.CanPayMana() == false) {
+        if(selections.IsGoodEnoughToExecute() == false) {
             Debug.LogError("ERROR! This skill was targetted, but is no longer valid to be executed");
-            infoSelection = SelectionSerializer.MakeRestSelection(this);
+            selections.ResetToRestSelection();
         }
 
         //Notify everyone that we're about to use this skill
-        subBeforeActivatingSkill.NotifyObs(this, infoSelection);
-        subAllBeforeActivatingSkill.NotifyObs(this, infoSelection);
+        subBeforeActivatingSkill.NotifyObs(this, selections);
+        subAllBeforeActivatingSkill.NotifyObs(this, selections);
 
         //Actually use the skill
-        infoSelection.skillUsed.UseSkill(infoSelection);
+        selections.skillSelected.UseSkill(selections);
 
     }
 
