@@ -21,7 +21,7 @@ public class SoulChannelAmbush : SoulChannel {
                 sub = Chr.subAllPostExecuteSkill,
                 cb = (target, args) => {
 
-                    Chr chrStoredSelection = ((SelectionSerializer.SelectionChr)skillSource.type.GetUsedSelections()).chrSelected;
+                    Chr chrStoredSelection = (Chr)(skillSource.type.GetUsedSelections()).lstSelections[0];
 
                     //If the character who used a skill is the one we targetted, and they are using a proper skill (not a rest with no proper skillslot)
                     // Then we can ambush them

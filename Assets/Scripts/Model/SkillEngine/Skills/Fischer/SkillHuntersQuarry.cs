@@ -17,7 +17,9 @@ public class SkillHuntersQuarry : Skill {
         nCooldownInduced = 8;
         nFatigue = 3;
 
-        lstTargets.Add(new TarChr((c, lstArgs) => (Chr)c != chrOwner));
+        lstTargets = new List<Target>(){
+            new TarChr(TarChr.IsOtherChr(chrOwner))
+        };
 
         lstClauses = new List<Clause>() {
             new Clause1(this)

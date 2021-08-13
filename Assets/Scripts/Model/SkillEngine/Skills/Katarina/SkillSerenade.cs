@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillSerenade : Skill {
 
-    public SkillSerenade(Chr _chrOwner) : base(_chrOwner, 0) {
+    public SkillSerenade(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "Serenade";
         sDisplayName = "Serenade";
@@ -17,22 +17,22 @@ public class SkillSerenade : Skill {
         nCooldownInduced = 8;
         nFatigue = 4;
 
+        lstTargets = new List<Target>() {
+            new TarChr(TarChr.IsSameTeam(chrOwner))
+        };
+
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
 
     }
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         Healing heal;
         int nBaseHealing = 25;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrRanged(this), //Base Tag always goes first
-                new ClauseTagChrAlly(this)
-            });
 
             //Create and store a copy of the intended healing effect so that any information/effects
             // can be updated accurately
@@ -46,7 +46,9 @@ public class SkillSerenade : Skill {
             return string.Format("Heal {0} life to the chosen Ally", heal.Get());
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
+
+            Chr chrSelected = (Chr)selections.lstSelections[0];
 
             //Push an executable with this skill's owner as the source, the selected character as the target,
             // and we can copy the stored healing instance to apply

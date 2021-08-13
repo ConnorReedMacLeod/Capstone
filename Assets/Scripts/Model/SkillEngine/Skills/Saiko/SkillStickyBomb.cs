@@ -7,7 +7,7 @@ public class SkillStickyBomb : Skill {
     public Damage dmg;
     public int nBaseDamage;
 
-    public SkillStickyBomb(Chr _chrOwner) : base(_chrOwner, 0) {//set the dominant clause
+    public SkillStickyBomb(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "StickyBomb";
         sDisplayName = "Sticky Bomb";
@@ -20,21 +20,22 @@ public class SkillStickyBomb : Skill {
         nCooldownInduced = 6;
         nFatigue = 3;
 
+        lstTargets = new List<Target>() {
+            new TarChr(Target.TRUE)
+        };
+
         lstClauses = new List<Clause>() {
             new Clause1(this),
         };
     }
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         Damage dmg;
         public int nBaseDamage = 5;
         public SoulStickyBomb soulToCopy;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrRanged(this), //Base Tag always goes first
-            });
 
             dmg = new Damage(skill.chrOwner, null, nBaseDamage);
             soulToCopy = new SoulStickyBomb(skill.chrOwner, null, skill);
@@ -45,8 +46,9 @@ public class SkillStickyBomb : Skill {
             return string.Format("Deal {0} damage to the chosen character, and another {1} at the end of turn", dmg.Get(), soulToCopy.nDetonationDamage);
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
 
+            Chr chrSelected = (Chr)selections.lstSelections[0];
 
             ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulStickyBomb(soulToCopy, chrSelected)) {
                 sLabel = "A bomb stuck"

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillKnockback : Skill {
 
-    public SkillKnockback(Chr _chrOwner) : base(_chrOwner, 0) {
+    public SkillKnockback(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "Knockback";
         sDisplayName = "Knockback";
@@ -17,7 +17,9 @@ public class SkillKnockback : Skill {
         nCooldownInduced = 6;
         nFatigue = 4;
 
-
+        lstTargets = new List<Target>() {
+            new TarChr(TarChr.IsDiffTeam(chrOwner))
+        };
 
         lstClauses = new List<Clause>() {
             new Clause1(this),
@@ -25,17 +27,12 @@ public class SkillKnockback : Skill {
         };
     }
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         Damage dmg;
         public int nBaseDamage = 5;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrRanged(this), //Base Tag always goes first
-                new ClauseTagChrEnemy(this)
-            });
-
 
             dmg = new Damage(skill.chrOwner, null, nBaseDamage);
         }
@@ -45,7 +42,9 @@ public class SkillKnockback : Skill {
             return string.Format("Deal {0} damage to an Enemy", dmg.Get());
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
+
+            Chr chrSelected = (Chr)selections.lstSelections[0];
 
             ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 sLabel = "Booping ya back"
@@ -55,16 +54,12 @@ public class SkillKnockback : Skill {
 
     };
 
-    class Clause2 : ClauseChr {
+    class Clause2 : Clause {
 
         Damage dmg;
         public int nBaseDamage = 5;
 
         public Clause2(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrRanged(this), //Base Tag always goes first
-                new ClauseTagChrEnemy(this)
-            });
 
             dmg = new Damage(skill.chrOwner, null, nBaseDamage);
         }
@@ -74,7 +69,9 @@ public class SkillKnockback : Skill {
             return string.Format("Move that Enemy to the Position behind them.");
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
+
+            Chr chrSelected = (Chr)selections.lstSelections[0];
 
             //TODO - maybe add some sort of additional function that can be called exactly when the executable resolves to trigger additional effects
             //    e.g., here it could be a structure called Tracking where you call Tracking.BeforeEffect() to track the gamestate before the executable

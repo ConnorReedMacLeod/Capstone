@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillThunderStorm : Skill {
 
-    public SkillThunderStorm(Chr _chrOwner) : base(_chrOwner, 0) {
+    public SkillThunderStorm(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "ThunderStorm";
         sDisplayName = "Thunder Storm";
@@ -17,23 +17,22 @@ public class SkillThunderStorm : Skill {
         nCooldownInduced = 10;
         nFatigue = 5;
 
+        lstTargets = new List<Target>() {
+
+        };
+
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
     }
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         Damage dmg;
         public int nBaseDamage = 15;
         public int nBaseStun = 2;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrSweeping(this) //Base Tag always goes first
-            });
-
-
             dmg = new Damage(skill.chrOwner, null, nBaseDamage);
         }
 
@@ -42,7 +41,9 @@ public class SkillThunderStorm : Skill {
             return string.Format("Deal {0} damage and {1} fatigue to all characters on the target character's team", dmg.Get(), nBaseStun);
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
+
+            Chr chrSelected = (Chr)selections.lstSelections[0];
 
             ContSkillEngine.PushSingleExecutable(new ExecStun(skill.chrOwner, chrSelected, nBaseStun) {
                 sLabel = "Crackle Crackle"

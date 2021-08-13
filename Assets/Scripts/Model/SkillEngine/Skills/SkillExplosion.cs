@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillExplosion : Skill {
 
-    public SkillExplosion(Chr _chrOwner) : base(_chrOwner, 0) {//number of target arguments
+    public SkillExplosion(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "Explosion";
         sDisplayName = "Explosion";
@@ -17,21 +17,21 @@ public class SkillExplosion : Skill {
         nCooldownInduced = 10;
         nFatigue = 6;
 
+        lstTargets = new List<Target>() {
+            new TarChr(Target.TRUE)
+        };
+
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
     }
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         Damage dmg;
         public int nBaseDamage = 5;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrSweeping(this) //Base Tag always goes first
-            });
-
 
             dmg = new Damage(skill.chrOwner, null, nBaseDamage);
         }
@@ -41,11 +41,17 @@ public class SkillExplosion : Skill {
             return string.Format("Deal {0} damage to all characters on the target character's team", dmg.Get());
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
-                sLabel = "Explodin'"
-            });
+            Chr chrSelected = (Chr)selections.lstSelections[0];
+
+            List<Chr> lstChrsOnTeam = chrSelected.plyrOwner.GetActiveChrs();
+
+            for(int i = 0; i < lstChrsOnTeam.Count; i++) {
+                ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, lstChrsOnTeam[i], dmg) {
+                    sLabel = "Explodin'"
+                });
+            }
 
         }
 

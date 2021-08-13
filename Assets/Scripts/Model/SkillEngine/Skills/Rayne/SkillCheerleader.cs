@@ -6,7 +6,7 @@ public class SkillCheerleader : Skill {
 
     public SoulCheerleader soulPassive;
 
-    public SkillCheerleader(Chr _chrOwner) : base(_chrOwner, 0) {//set the dominant clause 
+    public SkillCheerleader(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "Cheerleader";
         sDisplayName = "Cheerleader";
@@ -34,10 +34,10 @@ public class SkillCheerleader : Skill {
         };
     }
 
-    class ClauseEquip : ClauseSpecial {
+    class ClauseEquip : Clause {
 
         public ClauseEquip(Skill _skill) : base(_skill) {
-            // Eventually add superficial tags here
+
         }
 
         public override string GetDescription() {
@@ -45,7 +45,7 @@ public class SkillCheerleader : Skill {
             return string.Format("Initially applying Cheerleader on equip");
         }
 
-        public override void ClauseEffect() {
+        public override void ClauseEffect(Selections selections) {
 
             ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, skill.chrOwner, ((SkillCheerleader)skill).soulPassive) {
                 sLabel = skill.chrOwner.sName + " is one peppy boi"
@@ -55,10 +55,10 @@ public class SkillCheerleader : Skill {
 
     };
 
-    class ClauseUnequip : ClauseSpecial {
+    class ClauseUnequip : Clause {
 
         public ClauseUnequip(Skill _skill) : base(_skill) {
-            // Eventually add superficial tags here
+
         }
 
         public override string GetDescription() {
@@ -66,7 +66,7 @@ public class SkillCheerleader : Skill {
             return string.Format("Removing Cheerleader on unequip");
         }
 
-        public override void ClauseEffect() {
+        public override void ClauseEffect(Selections selections) {
 
             ContSkillEngine.PushSingleExecutable(new ExecRemoveSoulChr(skill.chrOwner, ((SkillCheerleader)skill).soulPassive) {
                 sLabel = skill.chrOwner.sName + " is no longer peppy"
@@ -76,10 +76,10 @@ public class SkillCheerleader : Skill {
 
     };
 
-    class Clause1 : ClauseSpecial {
+    class Clause1 : Clause {
 
         public Clause1(Skill _skill) : base(_skill) {
-            // Eventually add superficial tags here
+
         }
 
         public override string GetDescription() {
@@ -88,7 +88,7 @@ public class SkillCheerleader : Skill {
                 skill.chrOwner.sName, ((SkillCheerleader)skill).soulPassive.nPowerGain);
         }
 
-        public override void ClauseEffect() {
+        public override void ClauseEffect(Selections selections) {
 
             Debug.LogError("Shouldn't be executing a passive");
 
