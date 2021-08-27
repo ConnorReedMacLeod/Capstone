@@ -6,7 +6,7 @@ public class LocalInputScripted : LocalInputType {
 
 
     public int[] arScriptedTargettingIndices;                         //Holds the current index of the script we're using for each character's next skill
-    public KeyValuePair<int, int>[,] arTargettingScript;
+    public KeyValuePair<int, Selections>[,] arTargettingScript;
     public const int MAXTARGETATTEMPTS = 5;
 
     public override void StartSelection() {
@@ -18,7 +18,7 @@ public class LocalInputScripted : LocalInputType {
 
     }
 
-    public void SetTargettingScript(KeyValuePair<int, int>[,] _arTargettingScript) {
+    public void SetTargettingScript(KeyValuePair<int, Selections>[,] _arTargettingScript) {
 
         arTargettingScript = _arTargettingScript;
 
@@ -34,10 +34,10 @@ public class LocalInputScripted : LocalInputType {
         Debug.Assert(chrToAct != null, "Scripted input was asked to submit an skill for a character, but no character is acting");
         Debug.Assert(chrToAct.plyrOwner.id == plyrOwner.id, "Scripted input was asked to submit an skill for a character is doesn't own");
 
-        KeyValuePair<int, int> nextSelection;
+        KeyValuePair<int, Selections> nextSelection;
         int nTargetsTried = 0;
 
-        SelectionSerializer.SelectionInfo infoSelection;
+        Selections selections;
 
         //Keep looking until we find a valid skill selection
         while(true) {
@@ -53,21 +53,19 @@ public class LocalInputScripted : LocalInputType {
             arScriptedTargettingIndices[chrToAct.id]++;
             nTargetsTried++;
 
-            infoSelection = SelectionSerializer.Deserialize(chrToAct, nextSelection.Value);
+            selections = nextSelection.Value;
 
-            Debug.Log(chrToAct.sName + " wants chosen to use " + infoSelection.ToString());
+            Debug.Log(chrToAct.sName + " wants chosen to use " + selections.ToString());
 
             //Test to see if this skill would be valid
-            if(infoSelection.CanSelect() == false ||
-                infoSelection.skillUsed.CanPayMana() == false) {
+            if(selections.IsValidSelection() == false) {
                 Debug.Log("The skill selection would not be legal");
 
                 if(nTargetsTried >= MAXTARGETATTEMPTS) {
                     //If we've tried too many skills with no success, just end our selections
                     // by setting our skill as a rest
 
-
-                    infoSelection = SelectionSerializer.MakeRestSelection(chrToAct);
+                    selections.ResetToRestSelection();
 
                     break;
 
@@ -88,101 +86,19 @@ public class LocalInputScripted : LocalInputType {
         }
 
         //At this point, we will have selected a skill/targetting and saved the information in infoSelection
-        Debug.Log(chrToAct.sName + " has automatically chosen to use " + infoSelection.ToString());
+        Debug.Log(chrToAct.sName + " has automatically chosen to use " + selections.ToString());
 
-
-        //We now need to ready enough effort mana to pay for the skill
-        AutoPayCost(infoSelection.skillUsed.parCost.Get());
-
-        ContSkillSelection.Get().SubmitSkill(infoSelection, this);
+        ContSkillSelection.Get().SubmitSkill(selections, this);
 
 
     }
 
-    //Figures out and allocates non-effort mana to convert to cover the mana costs
-    public void AutoPayCost(int[] arCost) {
-
-        int nEffortToPay = arCost[(int)Mana.MANATYPE.EFFORT] - plyrOwner.mana.nManaPool;
-        int nCurMana = 0;
-
-        //Initially, try to pay with mana that isn't in the cost we need to pay for
-        while(nCurMana < (int)Mana.MANATYPE.EFFORT) {
-
-            //Check if we've allocated enough effort
-            if(nEffortToPay <= 0) return;
-
-            if(arCost[nCurMana] > 0) {
-                //Then this type of mana is in the cost, so skip to the next type
-                nCurMana++;
-            } else {
-
-                if(plyrOwner.mana.HasMana(nCurMana)) {
-                    //If we can pay this type, then pay it
-                    plyrOwner.mana.AddToPool(nCurMana);
-                    Debug.Log("Automatically allocated a " + (Mana.MANATYPE)nCurMana + " to pay for effort");
-                    nEffortToPay--;
-                    //and don't change the nCurMana, so we can keep paying this type
-                } else {
-                    nCurMana++;
-                }
-            }
-
-        }
-
-
-        //If needed, we'll allocate mana types that we are paying, but that we have excess of
-        while(nCurMana < (int)Mana.MANATYPE.EFFORT) {
-
-            //Check if we've allocated enough effort
-            if(nEffortToPay <= 0) return;
-
-            //Check if we would have at least 1 mana left over after paying for the skill
-            if(plyrOwner.mana.HasMana(nCurMana, 1 + arCost[nCurMana])) {
-                //If we can pay this type, then pay it
-                plyrOwner.mana.AddToPool(nCurMana);
-                Debug.Log("Automatically allocated a " + (Mana.MANATYPE)nCurMana + " to pay for effort");
-                nEffortToPay--;
-                //and don't change the nCurMana, so we can keep paying this type
-            } else {
-                nCurMana++;
-            }
-
-        }
-
-        //If we reach here, then we don't have enough mana (though we've allocated some effort - not ideal)
-        Debug.Log("Not enough mana in the pool to allocate");
-    }
-
-
-    public static SelectionSerializer.SelectionInfo MakeRandomSelection(Chr chrSource, Skill skillUsed) {
-
-        switch(skillUsed.GetTargetType()) {
-
-        case Clause.TargetType.CHR:
-            return new SelectionSerializer.SelectionChr(chrSource, skillUsed, Chr.GetRandomChr(), 0, 0);//Just setting the extra bytes to 0
-
-        case Clause.TargetType.SKILL:
-            return new SelectionSerializer.SelectionSkill(chrSource, skillUsed, Chr.GetRandomChr(), chrSource.GetRandomActiveSkill(), 0);
-
-        case Clause.TargetType.PLAYER:
-            return new SelectionSerializer.SelectionPlayer(chrSource, skillUsed, Player.GetTargetByIndex(Random.Range(0, Player.MAXPLAYERS)), 0, 0);
-
-        case Clause.TargetType.SPECIAL:
-            return new SelectionSerializer.SelectionSpecial(chrSource, skillUsed, 0, 0, 0); // Yea, this doesn't really make much sense unless you do something bigger
-
-
-        }
-
-        Debug.LogError("Unrecognized targetting type of " + skillUsed);
-
-        return null;
-    }
 
 
     public static void SetRandomSkills(LocalInputScripted input) {
 
         int nScriptLength = 100;
-        KeyValuePair<int, int>[,] arListRandomSelections = new KeyValuePair<int, int>[Player.MAXCHRS, nScriptLength];
+        KeyValuePair<int, Selections>[,] arListRandomSelections = new KeyValuePair<int, Selections>[Player.MAXCHRS, nScriptLength];
 
         for(int i = 0; i < Player.MAXCHRS; i++) {
 
@@ -193,13 +109,11 @@ public class LocalInputScripted : LocalInputType {
                 //Select a random skill to be used
                 Skill skillRandom = chr.GetRandomSkill();
 
-                //Need to create an InfoSelection of the appropriate type
-                //Then need to randomly fill this InfoSelection with targetting information
-                int nRandomSerialization = MakeRandomSelection(chr, skillRandom).Serialize();
+                //Generate random selections for the skill
+                Selections selectionsRandom = new Selections(skillRandom);
+                selectionsRandom.FillWithRandomSelections();
 
-                //TODO:: Update this to be able to select random skills for skill-based targetting (adapt is a particularly complex form of this
-
-                arListRandomSelections[i, j] = new KeyValuePair<int, int>(skillRandom.skillslot.iSlot, nRandomSerialization);
+                arListRandomSelections[i, j] = new KeyValuePair<int, Selections>(skillRandom.skillslot.iSlot, selectionsRandom);
             }
         }
 

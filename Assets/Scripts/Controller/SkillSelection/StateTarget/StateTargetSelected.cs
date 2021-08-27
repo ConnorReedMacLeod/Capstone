@@ -18,14 +18,14 @@ public class StateTargetSelected : StateTarget {
 
     public void cbClickSkill(Object target, params object[] args) {
 
-        ContLocalUIInteraction.Get().StartTargetting(((ViewSkill)target).mod);
+        ContLocalUIInteraction.Get().StartSelections(((ViewSkill)target).mod);
 
     }
 
     public void cbClickRestButton(Object target, params object[] args) {
-
+        Debug.Log("Should make the rest button into a standard action button");
         Skill skillRest = ContLocalUIInteraction.Get().chrSelected.skillRest;
-        ContLocalUIInteraction.Get().StartTargetting(skillRest);
+        ContLocalUIInteraction.Get().StartSelections(skillRest);
 
     }
 
