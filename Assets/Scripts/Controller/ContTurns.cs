@@ -250,8 +250,8 @@ public class ContTurns : Singleton<ContTurns> {
         case STATETURN.EXECUTESKILL:
 
             //Interpret the additional info passed from Master as skill selection info from the active player
-            int nSerializedSelectionInfo = (int)oAdditionalInfo;
-            ContSkillSelection.Get().ReceiveSelectionFromMaster(nSerializedSelectionInfo);
+            int[] arnSerializedSelectionInfo = (int[])oAdditionalInfo;
+            ContSkillSelection.Get().ReceiveSelectionFromMaster(arnSerializedSelectionInfo);
 
             ContSkillEngine.Get().AddExec(new ExecTurnExecuteSkill(_chrSource: null));
 

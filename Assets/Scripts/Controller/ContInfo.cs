@@ -10,13 +10,13 @@ public class ContInfo : MonoBehaviour {
 
     public StateInfo stateInfo; //TODO:: Alternate which subscriptions you are using depending on
                                 //       which state you're currently in
-    public bool bLocked; //TODO:: Flush out a target locking system more
+    public bool bLocked; //TODO:: Flesh out a target locking system more
 
     public ViewInfoPanel viewInfoPanel;
     public Skill skillFocus;
 
     public void cbStartTargetting(Object target, params object[] args) {
-        SetSkillFocus(ContLocalUIInteraction.Get().skillSelected);
+        SetSkillFocus(ContLocalUIInteraction.Get().selectionsInProgress.skillSelected);
         bLocked = true;
     }
 
@@ -25,9 +25,9 @@ public class ContInfo : MonoBehaviour {
         bLocked = false;
     }
 
-    public void DisplaySkill(Skill sk) {
+    public void DisplaySkill(Skill skill) {
         if(bLocked == false) {
-            viewInfoPanel.ShowInfoSkill(sk);
+            viewInfoPanel.ShowInfoSkill(skill);
         }
     }
 
@@ -97,8 +97,8 @@ public class ContInfo : MonoBehaviour {
                 Debug.LogError("ERROR! NO VIEWINFOPANEL ON INFO-TAGGED OBJECT!");
             }
 
-            ContLocalUIInteraction.subAllStartManualTargetting.Subscribe(cbStartTargetting);
-            ContLocalUIInteraction.subAllFinishManualTargetting.Subscribe(cbFinishTargetting);
+            ContLocalUIInteraction.subAllStartManualSelections.Subscribe(cbStartTargetting);
+            ContLocalUIInteraction.subAllFinishManualSelections.Subscribe(cbFinishTargetting);
 
             ViewSkill.subAllStartHover.Subscribe(cbSkillStartHover);
             ViewSkill.subAllStopHover.Subscribe(cbSkillStopHover);

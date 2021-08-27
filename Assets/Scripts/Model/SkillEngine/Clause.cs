@@ -16,7 +16,7 @@ public abstract class Clause {
     public abstract string GetDescription();
 
     public void Execute() {
-        //Grab the stored serialized selections, and pass it to the overrideable ClauseEffect where
+        //Grab the stored selections, and pass it to the overrideable ClauseEffect where
         // the abilities can customize what they will do
 
         ClauseEffect(ContSkillSelection.Get().selectionsFromMaster);

@@ -375,28 +375,13 @@ public class Chr : MonoBehaviour {
 
     //Set character state to unselected
     public void Idle() {
+        Debug.Log("Remember to get rid of this Idle() system");
         ChangeState(STATESELECT.IDLE);
 
         subStartIdle.NotifyObs(this);
         subAllStartIdle.NotifyObs(this);
     }
 
-    //Performs the consumed skill 
-    public void ExecuteSkill(Selections selections) {
-
-        if(selections.IsGoodEnoughToExecute() == false) {
-            Debug.LogError("ERROR! This skill was targetted, but is no longer valid to be executed");
-            selections.ResetToRestSelection();
-        }
-
-        //Notify everyone that we're about to use this skill
-        subBeforeActivatingSkill.NotifyObs(this, selections);
-        subAllBeforeActivatingSkill.NotifyObs(this, selections);
-
-        //Actually use the skill
-        selections.skillSelected.UseSkill(selections);
-
-    }
 
 
     // Used to initiallize information fields of the Chr

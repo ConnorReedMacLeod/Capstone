@@ -106,14 +106,10 @@ public class Skill { //This should probably be made abstract
     }
 
     //Use the selected skill with the supplied targets
-    public void UseSkill(Selections selections) {
+    public void UseSkill() {
 
-        if(CanPayMana() == false) {
-            Debug.LogError("Tried to use skill, but didn't have enough mana");
-        }
-
-        if(CanSelect(selections) == false) {
-            Debug.LogError("Tried to use skill, but it's not a valid selection");
+        if(CanSelect(ContSkillSelection.Get().selectionsFromMaster) == false) {
+            Debug.LogError("Tried to use skill, but the master-provided selections were invalid! : " + ContSkillSelection.Get().selectionsFromMaster.ToString());
         }
 
         // IMPORTANT - since we're pushing these effects onto the stack, we'll want to 

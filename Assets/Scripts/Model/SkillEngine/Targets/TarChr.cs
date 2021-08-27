@@ -40,4 +40,30 @@ public class TarChr : Target {
     public static FnValidSelection IsBackliner() {
         return (object chr, Selections selections) => ((Chr)chr).position.positiontype == Position.POSITIONTYPE.BACKLINE;
     }
+
+
+    public override void InitTargetDescription() {
+        sTargetDescription = "Select a Character";
+    }
+
+    public override void OnLocalStartSelection() {
+        //Highlight all the targettable characters
+        foreach(Chr c in GetValidSelectable(ContLocalUIInteraction.Get().selectionsInProgress)) {
+            //Pass along the skill we're trying to select targets for
+            c.subBecomesTargettable.NotifyObs(null, ContLocalUIInteraction.Get().selectionsInProgress.skillSelected);
+        }
+
+        //Set up the character-click triggers
+        ViewChr.subAllClick.Subscribe(cbAttemptedSelection);
+    }
+
+    public override void OnLocalEndSelection() {
+        //Remove highlighting from ALL characters (just in case somehow the list of targettable characters may have changed)
+        foreach(Chr c in GetSelactableUniverse()) {
+            c.subEndsTargettable.NotifyObs();
+        }
+
+        //Remove the character-click triggers
+        ViewChr.subAllClick.UnSubscribe(cbAttemptedSelection);
+    }
 }

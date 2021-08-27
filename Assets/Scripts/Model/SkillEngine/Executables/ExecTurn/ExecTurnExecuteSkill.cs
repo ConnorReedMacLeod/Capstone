@@ -41,11 +41,22 @@ public class ExecTurnExecuteSkill : Executable {
         //We assume that we have recieved our selection info from the Master already
         Chr chrNextToAct = ContTurns.Get().GetNextActingChr();
 
-        sLabel = chrNextToAct.sName + " is using " + ContSkillSelection.Get().infoSelectionFromMaster.skillUsed.sDisplayName;
+        if(ContSkillSelection.Get().selectionsFromMaster.IsGoodEnoughToExecute() == false) {
+            Debug.LogError("ERROR! This skill was targetted and sent to use by Master, but is no longer valid to be executed");
+            ContSkillSelection.Get().selectionsFromMaster.ResetToRestSelection();
+        }
+
+        sLabel = chrNextToAct.sName + " is using " + ContSkillSelection.Get().selectionsFromMaster.skillSelected.sDisplayName;
 
         Debug.Log("ExecTurnExecuteSkill: " + sLabel);
 
-        chrNextToAct.ExecuteSkill(ContSkillSelection.Get().selectionsFromMaster);
+        //Notify everyone that we're about to use this skill
+        chrNextToAct.subBeforeActivatingSkill.NotifyObs(chrNextToAct);
+        Chr.subAllBeforeActivatingSkill.NotifyObs(chrNextToAct);
+
+        //Actually use the skill
+        ContSkillSelection.Get().selectionsFromMaster.skillSelected.UseSkill();
+
 
         fDelay = ContTurns.fDelayStandard;
 
