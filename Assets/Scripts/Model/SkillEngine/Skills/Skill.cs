@@ -166,7 +166,7 @@ public class Skill { //This should probably be made abstract
             return false;
         }
 
-        if(selections.IsValidSelection() == false) {
+        if(selections.HasLegallyFilledTargets() == false) {
             Debug.Log("This selection has an invalid choice");
             return false;
         }

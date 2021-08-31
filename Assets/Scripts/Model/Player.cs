@@ -38,8 +38,6 @@ public class Player : MonoBehaviour {
     }
 
     public static Player GetTargetByIndex(int ind) {
-        Debug.Log(arAllPlayers);
-        Debug.Log("Asked for index " + ind + " with a arAllPlayers length of " + arAllPlayers.Length);
         return arAllPlayers[ind];
     }
 

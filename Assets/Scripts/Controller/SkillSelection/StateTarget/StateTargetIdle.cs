@@ -10,7 +10,7 @@ public class StateTargetIdle : StateTarget {
 
     public void cbClickChar(Object target, params object[] args) {
 
-        Debug.Log("Clicked a Char");
+        Debug.Log("Clicked a Char with bCanSelectCharacters = " + ContLocalUIInteraction.Get().bCanSelectCharacters);
 
         //Only procede if we're allowed to select characters currently
         if(ContLocalUIInteraction.Get().bCanSelectCharacters == false) return;
@@ -26,7 +26,6 @@ public class StateTargetIdle : StateTarget {
         }
         ContLocalUIInteraction.Get().chrSelected = null;
 
-        ContLocalUIInteraction.Get().ResetStoredSelections();
 
         ViewChr.subAllClick.Subscribe(cbClickChar);
     }

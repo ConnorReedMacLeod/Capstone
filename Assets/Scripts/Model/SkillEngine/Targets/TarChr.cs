@@ -46,6 +46,11 @@ public class TarChr : Target {
         sTargetDescription = "Select a Character";
     }
 
+    public override void cbClickSelectable(Object target, params object[] args) {
+        //Grab the model represented by the view and pass it off to AttemptSelection
+        AttemptSelection(((ViewChr)target).mod);
+    }
+
     public override void OnLocalStartSelection() {
         //Highlight all the targettable characters
         foreach(Chr c in GetValidSelectable(ContLocalUIInteraction.Get().selectionsInProgress)) {
@@ -54,7 +59,7 @@ public class TarChr : Target {
         }
 
         //Set up the character-click triggers
-        ViewChr.subAllClick.Subscribe(cbAttemptedSelection);
+        ViewChr.subAllClick.Subscribe(cbClickSelectable);
     }
 
     public override void OnLocalEndSelection() {
@@ -64,6 +69,6 @@ public class TarChr : Target {
         }
 
         //Remove the character-click triggers
-        ViewChr.subAllClick.UnSubscribe(cbAttemptedSelection);
+        ViewChr.subAllClick.UnSubscribe(cbClickSelectable);
     }
 }
