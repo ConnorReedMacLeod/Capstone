@@ -54,14 +54,19 @@ public abstract class Target {
 
     public string sTargetDescription;
 
-    public void cbAttemptedSelection(Object target, params object[] args) {
-        if(IsValidSelection(target, ContLocalUIInteraction.Get().selectionsInProgress) == false) {
+    //Each derived target type should subscribe/unsubscribe this to UI events for selecting their targets,
+    //  then they can extract the model represented by the selected UI View component and pass it to AttemptSelection
+    public abstract void cbClickSelectable(Object target, params object[] args);
+
+    public void AttemptSelection(object objSelected) {
+        Debug.Log("Attempted to select " + objSelected);
+        if(IsValidSelection(objSelected, ContLocalUIInteraction.Get().selectionsInProgress) == false) {
             Debug.Log("Invalid selection attempted!");
             return;
         }
 
         //The selection is valid at this point so we can submit it to the LocalUIInteraction's built-up list
-        ContLocalUIInteraction.Get().ReceiveNextSelection(target);
+        ContLocalUIInteraction.Get().ReceiveNextSelection(objSelected);
     }
 
     public Target(FnValidSelection _IsValidSelection) {

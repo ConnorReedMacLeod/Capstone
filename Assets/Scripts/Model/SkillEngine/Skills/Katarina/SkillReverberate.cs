@@ -49,7 +49,7 @@ public class SkillReverberate : Skill {
             List<Chr> lstChrsOnTeam = chrSelected.plyrOwner.GetActiveChrs();
 
             for(int i = 0; i < lstChrsOnTeam.Count; i++) {
-                ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, lstChrsOnTeam[0], dmg) {
+                ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, lstChrsOnTeam[i], dmg) {
                     arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndReverberate", 1.633f) },
                     sLabel = "And how would your hair fair in a blizzard?"
                 });

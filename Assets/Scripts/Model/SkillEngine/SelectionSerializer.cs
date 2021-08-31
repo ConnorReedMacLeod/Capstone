@@ -162,8 +162,7 @@ public class Selections {
         return GetIndexOfNextRequiredTarget() == skillSelected.lstTargets.Count;
     }
 
-    public bool IsValidSelection() {
-
+    public bool HasLegallyFilledTargets() {
         for(int i = 0; i < skillSelected.lstTargets.Count; i++) {
             if(skillSelected.lstTargets[i].IsValidSelection(lstSelections[i], this) == false) {
                 //If any of the stored selections are invalid, then this isn't an initially-viable selection
@@ -172,6 +171,11 @@ public class Selections {
         }
 
         return true;
+    }
+
+    public bool IsValidSelection() {
+
+        return skillSelected.CanSelect(this);
     }
 
     public bool IsGoodEnoughToExecute() {

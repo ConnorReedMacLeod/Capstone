@@ -87,6 +87,9 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         //Lock character selections (can unlock as needed depending on which targetting type we need to do)
         bCanSelectCharacters = false;
 
+        //Set our character-highlighting state to just be idle
+        SetState(new StateTargetIdle());
+
         //Transition to the appropriate state for gettings the selections for the first required target (likely mana cost payment)
 
         EnterNextSelectionState();
@@ -103,9 +106,11 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
             return;
         }
 
+        Debug.Log("Saving selection");
         //Save the selection
         selectionsInProgress.AddSelection(objSelection);
 
+        Debug.Log("Entering Next Selection State after receiving a valid selection");
         //Move on to the next phase of selection
         EnterNextSelectionState();
 
@@ -140,13 +145,16 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         Debug.Assert(Match.Get().GetLocalPlayer().curInputType == Player.InputType.HUMAN,
             "Error - can only submit skills for locally-owned >human<'s characters");
 
-        Debug.Assert(ClientNetworkController.Get().IsPlayerLocallyControlled(chrSelected.plyrOwner),
+        Debug.Assert(ClientNetworkController.Get().IsPlayerLocallyControlled(ContTurns.Get().GetNextActingChr().plyrOwner),
             "Error - can only submit skills for >locally-owned< human's characters");
 
-        ContSkillSelection.Get().SubmitSkill(selectionsInProgress, chrSelected.plyrOwner.inputController);
+        ContSkillSelection.Get().SubmitSkill(selectionsInProgress, ContTurns.Get().GetNextActingChr().plyrOwner.inputController);
 
-        // Can now go back idle and wait for the next targetting (with a defaulted non-locked Idle state)
-        SetState(new StateTargetIdle());
+        //Ensure we can select characters again after leaving our selection process
+        bCanSelectCharacters = true;
+
+        //Reset our stored selections now that we have submitted our selection
+        ResetStoredSelections();
 
         //Let everything know that targetting has ended
         subAllFinishManualSelections.NotifyObs(this);

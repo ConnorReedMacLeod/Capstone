@@ -18,7 +18,7 @@ public class SkillThunderStorm : Skill {
         nFatigue = 5;
 
         lstTargets = new List<Target>() {
-
+            new TarChr(Target.TRUE)
         };
 
         lstClauses = new List<Clause>() {
@@ -45,18 +45,23 @@ public class SkillThunderStorm : Skill {
 
             Chr chrSelected = (Chr)selections.lstSelections[0];
 
-            ContSkillEngine.PushSingleExecutable(new ExecStun(skill.chrOwner, chrSelected, nBaseStun) {
-                sLabel = "Crackle Crackle"
-            });
+            List<Chr> lstChrsOnTeam = chrSelected.plyrOwner.GetActiveChrs();
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
-                sLabel = "Caught in the storm"
-            });
+            for(int i = 0; i < lstChrsOnTeam.Count; i++) {
+
+                ContSkillEngine.PushSingleExecutable(new ExecStun(skill.chrOwner, lstChrsOnTeam[i], nBaseStun) {
+                    sLabel = "Crackle Crackle"
+                });
+
+                ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, lstChrsOnTeam[i], dmg) {
+                    sLabel = "Caught in the storm"
+                });
 
 
+
+            }
 
         }
 
-    };
-
+    }
 }
