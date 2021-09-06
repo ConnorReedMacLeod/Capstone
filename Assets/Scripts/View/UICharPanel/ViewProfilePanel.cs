@@ -25,7 +25,7 @@ public class ViewProfilePanel : MonoBehaviour {
     }
 
     public void DisplayName() {
-        if (chrFocus == null) {
+        if(chrFocus == null) {
             txtName.text = "";
         } else {
             txtName.text = chrFocus.sName;
@@ -33,18 +33,18 @@ public class ViewProfilePanel : MonoBehaviour {
     }
 
     public void DisplayPower() {
-        if (chrFocus == null) {
+        if(chrFocus == null) {
             txtPower.text = "";
         } else {
-            txtPower.text = "0";//TODO:: UPDATE WHEN READY
+            txtPower.text = chrFocus.pnPower.Get().ToString();
         }
     }
 
     public void DisplayDefense() {
-        if (chrFocus == null) {
+        if(chrFocus == null) {
             txtDefense.text = "";
         } else {
-            txtDefense.text = "0";//TODO:: UPDATE WHEN READY
+            txtDefense.text = chrFocus.pnDefense.Get().ToString();
         }
     }
 
@@ -52,7 +52,7 @@ public class ViewProfilePanel : MonoBehaviour {
         //Load the blank image if no character is selected
         string sImgPath = "Images/UICharPanel/imgBlankHeadshot";
 
-        if (chr != null) {
+        if(chr != null) {
             //If a character is selected, then grab their headshot
             sImgPath = "Images/Chrs/" + chr.sName + "/img" + chr.sName + "Headshot";
         }
@@ -74,8 +74,8 @@ public class ViewProfilePanel : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Start () {
-        if (bStarted == false) {
+    void Start() {
+        if(bStarted == false) {
             bStarted = true;
 
             SetFocus(null);

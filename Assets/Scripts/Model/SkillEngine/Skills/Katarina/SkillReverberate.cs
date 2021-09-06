@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillReverberate : Skill {
 
-    public SkillReverberate(Chr _chrOwner) : base(_chrOwner, 0) {
+    public SkillReverberate(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "Reverberate";
         sDisplayName = "Reverberate";
@@ -18,23 +18,23 @@ public class SkillReverberate : Skill {
         nFatigue = 4;
 
 
+        lstTargets = new List<Target>() {
+            new TarChr(TarChr.TRUE)
+        };
+
         lstClauses = new List<Clause>() {
-            new Clause1(this)
+            new Clause1(this),
         };
     }
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         Damage dmg;
         public int nBaseDamage = 5;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrSweeping(this) //Base Tag always goes first
-            });
 
-
-            dmg = new Damage(skill.chrSource, null, nBaseDamage);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
         }
 
         public override string GetDescription() {
@@ -42,12 +42,18 @@ public class SkillReverberate : Skill {
             return string.Format("Deal {0} damage to all characters on the target character's team", dmg.Get());
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
-                arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndReverberate", 1.633f) },
-                sLabel = "And how would your hair fair in a blizzard?"
-            });
+            Chr chrSelected = (Chr)selections.lstSelections[0];
+
+            List<Chr> lstChrsOnTeam = chrSelected.plyrOwner.GetActiveChrs();
+
+            for(int i = 0; i < lstChrsOnTeam.Count; i++) {
+                ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, lstChrsOnTeam[i], dmg) {
+                    arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndReverberate", 1.633f) },
+                    sLabel = "And how would your hair fair in a blizzard?"
+                });
+            }
 
         }
 

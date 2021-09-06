@@ -7,7 +7,7 @@ public class SkillHeal : Skill {
     public Healing heal;
     public int nBaseHealing;
 
-    public SkillHeal(Chr _chrOwner) : base(_chrOwner, 0) { //Set the dominant clause to be the first clause
+    public SkillHeal(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "Heal";
         sDisplayName = "Heal";
@@ -20,26 +20,26 @@ public class SkillHeal : Skill {
         nCooldownInduced = 3;
         nFatigue = 3;
 
+
+        lstTargets = new List<Target>() {
+            new TarChr(TarChr.IsSameTeam(chrOwner))
+        };
+
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
-
     }
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         int nBaseHealing = 5;
         Healing heal;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrRanged(this), //Base Tag always goes first
-                new ClauseTagChrAlly(this)
-            });
 
             //Create and store a copy of the intended healing effect so that any information/effects
             // can be updated accurately
-            heal = new Healing(skill.chrSource, null, nBaseHealing);
+            heal = new Healing(skill.chrOwner, null, nBaseHealing);
 
         }
 
@@ -49,11 +49,13 @@ public class SkillHeal : Skill {
             return string.Format("Heal {0} life to an Ally", heal.Get());
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
+
+            Chr chrSelected = (Chr)selections.lstSelections[0];
 
             //Push an executable with this skill's owner as the source, the selected character as the target,
             // and we can copy the stored healing instance to apply
-            ContSkillEngine.PushSingleExecutable(new ExecHeal(skill.chrSource, chrSelected, heal) {
+            ContSkillEngine.PushSingleExecutable(new ExecHeal(skill.chrOwner, chrSelected, heal) {
                 sLabel = "Healing"
             });
 

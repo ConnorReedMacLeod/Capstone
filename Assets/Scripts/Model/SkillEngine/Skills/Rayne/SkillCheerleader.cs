@@ -6,7 +6,7 @@ public class SkillCheerleader : Skill {
 
     public SoulCheerleader soulPassive;
 
-    public SkillCheerleader(Chr _chrOwner) : base(_chrOwner, 0) {//set the dominant clause 
+    public SkillCheerleader(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "Cheerleader";
         sDisplayName = "Cheerleader";
@@ -19,7 +19,7 @@ public class SkillCheerleader : Skill {
         nCooldownInduced = 0;
         nFatigue = 0;
 
-        soulPassive = new SoulCheerleader(this.chrSource, this.chrSource, this);
+        soulPassive = new SoulCheerleader(this.chrOwner, this.chrOwner, this);
 
         lstClausesOnEquip = new List<Clause>() {
             new ClauseEquip(this)
@@ -34,10 +34,10 @@ public class SkillCheerleader : Skill {
         };
     }
 
-    class ClauseEquip : ClauseSpecial {
+    class ClauseEquip : Clause {
 
         public ClauseEquip(Skill _skill) : base(_skill) {
-            // Eventually add superficial tags here
+
         }
 
         public override string GetDescription() {
@@ -45,20 +45,20 @@ public class SkillCheerleader : Skill {
             return string.Format("Initially applying Cheerleader on equip");
         }
 
-        public override void ClauseEffect() {
+        public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, skill.chrSource, ((SkillCheerleader)skill).soulPassive) {
-                sLabel = skill.chrSource.sName + " is one peppy boi"
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, skill.chrOwner, ((SkillCheerleader)skill).soulPassive) {
+                sLabel = skill.chrOwner.sName + " is one peppy boi"
             });
 
         }
 
     };
 
-    class ClauseUnequip : ClauseSpecial {
+    class ClauseUnequip : Clause {
 
         public ClauseUnequip(Skill _skill) : base(_skill) {
-            // Eventually add superficial tags here
+
         }
 
         public override string GetDescription() {
@@ -66,29 +66,29 @@ public class SkillCheerleader : Skill {
             return string.Format("Removing Cheerleader on unequip");
         }
 
-        public override void ClauseEffect() {
+        public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecRemoveSoulChr(skill.chrSource, ((SkillCheerleader)skill).soulPassive) {
-                sLabel = skill.chrSource.sName + " is no longer peppy"
+            ContSkillEngine.PushSingleExecutable(new ExecRemoveSoulChr(skill.chrOwner, ((SkillCheerleader)skill).soulPassive) {
+                sLabel = skill.chrOwner.sName + " is no longer peppy"
             });
 
         }
 
     };
 
-    class Clause1 : ClauseSpecial {
+    class Clause1 : Clause {
 
         public Clause1(Skill _skill) : base(_skill) {
-            // Eventually add superficial tags here
+
         }
 
         public override string GetDescription() {
 
             return string.Format("When {0} readies, all other allies gain {1} POWER until the end of turn.",
-                skill.chrSource.sName, ((SkillCheerleader)skill).soulPassive.nPowerGain);
+                skill.chrOwner.sName, ((SkillCheerleader)skill).soulPassive.nPowerGain);
         }
 
-        public override void ClauseEffect() {
+        public override void ClauseEffect(Selections selections) {
 
             Debug.LogError("Shouldn't be executing a passive");
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillCloudCushion : Skill {
 
-    public SkillCloudCushion(Chr _chrOwner) : base(_chrOwner, 0) {//set the dominant clause
+    public SkillCloudCushion(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "CloudCushion";
         sDisplayName = "Cloud Cushion";
@@ -17,22 +17,22 @@ public class SkillCloudCushion : Skill {
         nCooldownInduced = 7;
         nFatigue = 1;
 
+        lstTargets = new List<Target>() {
+            new TarChr(TarChr.IsSameTeam(chrOwner))
+        };
+
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
     }
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         public SoulCloudCushion soulToCopy;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrRanged(this), //Base Tag always goes first
-                new ClauseTagChrAlly(this)
-            });
 
-            soulToCopy = new SoulCloudCushion(skill.chrSource, null, skill);
+            soulToCopy = new SoulCloudCushion(skill.chrOwner, null, skill);
         }
 
         public override string GetDescription() {
@@ -40,9 +40,11 @@ public class SkillCloudCushion : Skill {
             return string.Format("Target ally gains {0} DEFENSE for {1} turns.", soulToCopy.nDefenseBuff, soulToCopy.pnMaxDuration.Get());
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulCloudCushion(soulToCopy, chrSelected)) {
+            Chr chrSelected = (Chr)selections.lstSelections[0];
+
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulCloudCushion(soulToCopy, chrSelected)) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Rayne/sndCloudCushion", 3.467f) },
                 sLabel = "Ooh, so soft"
             });

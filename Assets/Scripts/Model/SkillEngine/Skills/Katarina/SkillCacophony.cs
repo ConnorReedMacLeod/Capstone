@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillCacophony : Skill {
 
-    public SkillCacophony(Chr _chrOwner) : base(_chrOwner, 0) {
+    public SkillCacophony(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "Cacophony";
         sDisplayName = "Cacophony";
@@ -17,8 +17,12 @@ public class SkillCacophony : Skill {
         nCooldownInduced = 8;
         nFatigue = 4;
 
+        lstTargets = new List<Target>() {
+            new TarChr(TarChr.IsFrontliner())
+        };
+
         lstClauses = new List<Clause>() {
-            new Clause1(this)
+            new Clause1(this),
         };
     }
 
@@ -28,7 +32,7 @@ public class SkillCacophony : Skill {
     }
 
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         Damage dmg;
 
@@ -39,9 +43,6 @@ public class SkillCacophony : Skill {
         public int nCriticalStun;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrRanged(this) //Base Tag always goes first
-            });
 
             nBaseDamage = 20;
             nCriticalBaseDamage = 30;
@@ -49,7 +50,7 @@ public class SkillCacophony : Skill {
             nBaseStun = 2;
             nCriticalStun = 3;
 
-            dmg = new Damage(skill.chrSource, null, (_chrSource, _chrTarget) => IsCritical(_chrTarget) ? nCriticalBaseDamage : nBaseDamage);
+            dmg = new Damage(skill.chrOwner, null, (_chrSource, _chrTarget) => IsCritical(_chrTarget) ? nCriticalBaseDamage : nBaseDamage);
         }
 
         public override string GetDescription() {
@@ -61,16 +62,18 @@ public class SkillCacophony : Skill {
                 nBaseDamage, nBaseStun, nCriticalBaseDamage, nCriticalStun);
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
+
+            Chr chrSelected = (Chr)selections.lstSelections[0];
 
             //TODO - make this better dynamically react.  Should probably just have a Stun effect object that can
             //       be modified freely like with damage
-            ContSkillEngine.PushSingleExecutable(new ExecStun(skill.chrSource, chrSelected, nBaseStun) {
+            ContSkillEngine.PushSingleExecutable(new ExecStun(skill.chrOwner, chrSelected, nBaseStun) {
                 GetDuration = () => IsCritical(chrSelected) ? nCriticalStun : nBaseStun,
                 sLabel = "Oh, god! My ears!"
             });
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndCacophony", 3.767f) },
                 sLabel = "Anyway, here's Wonderwall"
             });

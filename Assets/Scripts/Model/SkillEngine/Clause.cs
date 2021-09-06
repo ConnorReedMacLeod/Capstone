@@ -11,27 +11,20 @@ using UnityEngine;
 
 public abstract class Clause {
 
-    public enum TargetType { CHR, PLAYER, SKILL, SPECIAL };
-
-    public TargetType targetType;
-
     public Skill skill;
 
-    //Can this be submitted as a valid selection?
-    public abstract bool IsSelectable(SelectionSerializer.SelectionInfo SelectionInfo);
-
-    //Does the proposed targetting result in a non-null skill effect?
-    public abstract bool HasFinalTarget(SelectionSerializer.SelectionInfo selectionInfo);
-
     public abstract string GetDescription();
-    public abstract void Execute();
 
-    //TODO - make a generic list of tags for qualitative effects (fire/teamwork/combo/etc.)
+    public void Execute() {
+        //Grab the stored selections, and pass it to the overrideable ClauseEffect where
+        // the abilities can customize what they will do
 
-    public SelectionSerializer.SelectionInfo GetSelectionInfo() {
-        //Ask the targetting type of the skill to fetch the selection information we should be using to determine our targets
-        return skill.type.GetSelectionInfo();
+        ClauseEffect(ContSkillSelection.Get().selectionsFromMaster);
+
     }
+
+    //Let any extending clause instance decide what they want to do for their clause effect
+    public abstract void ClauseEffect(Selections selections);
 
     public Clause(Skill _skill) {
         skill = _skill;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillTendrilStab : Skill {
 
-    public SkillTendrilStab(Chr _chrOwner) : base(_chrOwner, 0) {
+    public SkillTendrilStab(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "TendrilStab";
         sDisplayName = "Tendril Stab";
@@ -17,34 +17,36 @@ public class SkillTendrilStab : Skill {
         nCooldownInduced = 6;
         nFatigue = 3;
 
+        lstTargets = new List<Target>() {
+            new TarChr(Target.AND(TarChr.IsDiffTeam(chrOwner), TarChr.IsFrontliner()))
+        };
+
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
     }
 
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         Damage dmg;
         public int nBaseDamage = 25;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrMelee(this), //Base Tag always goes first
-                new ClauseTagChrEnemy(this)
-            });
 
-            dmg = new Damage(skill.chrSource, null, nBaseDamage, true);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage, true);
         }
 
         public override string GetDescription() {
 
-            return string.Format("Deal {0} [PIERCING] damage to the enemy Vanguard.", dmg.Get());
+            return string.Format("Deal {0} [PIERCING] damage to an enemy frontliner.", dmg.Get());
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            Chr chrSelected = (Chr)selections.lstSelections[0];
+
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("PitBeast/sndTendrilStab", 3.067f) },
                 sLabel = "Stab, stab, stab"
             });

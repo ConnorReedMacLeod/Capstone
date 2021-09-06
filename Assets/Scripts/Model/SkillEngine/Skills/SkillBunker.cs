@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillBunker : Skill {
 
-    public SkillBunker(Chr _chrOwner) : base(_chrOwner, 0) {//set the dominant clause
+    public SkillBunker(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "Bunker";
         sDisplayName = "Bunker";
@@ -17,21 +17,22 @@ public class SkillBunker : Skill {
         nCooldownInduced = 4;
         nFatigue = 6;
 
+        lstTargets = new List<Target>() {
+
+        };
+
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
     }
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         public SoulPositionBunker soulToCopy;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrSelf(this), //Base Tag always goes first
-            });
 
-            soulToCopy = new SoulPositionBunker(skill.chrSource, null, skill);
+            soulToCopy = new SoulPositionBunker(skill.chrOwner, null, skill);
         }
 
         public override string GetDescription() {
@@ -39,9 +40,9 @@ public class SkillBunker : Skill {
             return string.Format("The Position under this character gives +{0} DEFENSE to the character on it for {1} turns.", soulToCopy.nDefenseBuff, soulToCopy.pnMaxDuration.Get());
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulPosition(skill.chrSource, skill.chrSource.position, new SoulPositionBunker(soulToCopy, skill.chrSource.position)) {
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulPosition(skill.chrOwner, skill.chrOwner.position, new SoulPositionBunker(soulToCopy, skill.chrOwner.position)) {
 
                 sLabel = "Hunker down"
             });

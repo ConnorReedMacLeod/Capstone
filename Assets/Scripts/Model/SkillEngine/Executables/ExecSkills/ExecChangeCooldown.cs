@@ -42,7 +42,7 @@ public class ExecChangeCooldown : ExecSkill {
         skTarget.skillslot.ChangeCooldown(nAmount);
 
         fDelay = ContTurns.fDelayMinorSkill;
-        sLabel = "Reducing " + skTarget.chrSource.sName + "'s " + skTarget.sDisplayName + " cooldown";
+        sLabel = "Reducing " + skTarget.chrOwner.sName + "'s " + skTarget.sDisplayName + " cooldown";
 
     }
 

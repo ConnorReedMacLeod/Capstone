@@ -14,8 +14,6 @@ public class ContSkillSelection : Singleton<ContSkillSelection> {
         FAST, MEDIUM, INF
     };
 
-    public const int nNOSKILLSELECTION = 1;
-
     public const float fDelayChooseSkillFast = 5.0f;
     public const float fDelayChooseSkillMedium = 30.0f;
     public const float fDelayChooseSkillInf = 9999999.0f;
@@ -43,29 +41,28 @@ public class ContSkillSelection : Singleton<ContSkillSelection> {
     //Stores the broadcasted selection information for what skill should be used by the next acting character
     // (regardless of it's our local player's turn to move or not) - This should only be read from (the master
     //  network will be the one writing to this field)
-    public SelectionSerializer.SelectionInfo infoSelectionFromMaster;
+    public Selections selectionsFromMaster;
 
     public override void Init() {
 
     }
 
     //Check what input has been stored in the provided SelectionInfo for the next acting character
-    public void SubmitSkill(SelectionSerializer.SelectionInfo infoSelectionSubmitted, LocalInputType inputSentFrom) {
+    public void SubmitSkill(Selections selections, LocalInputType inputSentFrom) {
 
         Chr chrActing = ContTurns.Get().GetNextActingChr();
 
-        if(infoSelectionSubmitted.chrOwner.plyrOwner.id != chrActing.plyrOwner.id) {
-            Debug.LogError("Error! Recieved skill selection for player " + infoSelectionSubmitted.chrOwner.plyrOwner.id + " even though it's character " +
+        if(selections.skillSelected.chrOwner.plyrOwner.id != chrActing.plyrOwner.id) {
+            Debug.LogError("Error! Recieved skill selection for player " + selections.skillSelected.chrOwner.plyrOwner.id + " even though it's character " +
                 chrActing.sName + "'s turn to select a skill");
-        } else if(infoSelectionSubmitted.chrOwner.globalid != chrActing.globalid) {
-            Debug.LogError("Error! Recieved skill selection for character " + infoSelectionSubmitted.chrOwner.globalid + " even though it's character " +
+        } else if(selections.skillSelected.chrOwner.globalid != chrActing.globalid) {
+            Debug.LogError("Error! Recieved skill selection for character " + selections.skillSelected.chrOwner.globalid + " even though it's character " +
                 chrActing.sName + "'s turn to select a skill");
         }
 
 
         // confirm that the target is valid
-        //(checks skillpoint usage, cd, mana, targetting)
-        if(infoSelectionSubmitted.CanSelect() == false || infoSelectionSubmitted.skillUsed.CanPayMana() == false) {
+        if(selections.IsValidSelection() == false) {
 
             //If the selection was invalid for some reason, either send it back to the selector to choose again,
             // or just reset them to a rest skill
@@ -77,7 +74,7 @@ public class ContSkillSelection : Singleton<ContSkillSelection> {
                 Debug.LogError("Too many bad selections given - assigning a rest skill");
 
                 //Override the submitted selection to just be the current character choosing a rest skill
-                infoSelectionSubmitted = SelectionSerializer.MakeRestSelection(ContTurns.Get().GetNextActingChr());
+                selections.ResetToRestSelection();
 
             } else {
 
@@ -96,25 +93,26 @@ public class ContSkillSelection : Singleton<ContSkillSelection> {
         // selection process was completed
         inputSentFrom.CompletedSelection();
 
-        Debug.Log("Client is about to send " + infoSelectionSubmitted.Serialize() + " - " + infoSelectionSubmitted.ToString());
+        Debug.Log("Client is about to send " + selections.ToString());
 
         //Submit the skill selection to the master
-        ClientNetworkController.Get().SendTurnPhaseFinished(infoSelectionSubmitted.Serialize());
+        ClientNetworkController.Get().SendTurnPhaseFinished(selections.GetSerialization());
 
     }
 
-    public void ReceiveSelectionFromMaster(int nSerializedSelection) {
+    public void ReceiveSelectionFromMaster(int[] arnSerializedSelections) {
         Debug.Assert(ContTurns.Get().curStateTurn == ContTurns.STATETURN.EXECUTESKILL);
 
-        Chr chrActing = ContTurns.Get().GetNextActingChr();
-
         //Save the result that the master broadcasted out
-        infoSelectionFromMaster = SelectionSerializer.Deserialize(chrActing, nSerializedSelection);
+        selectionsFromMaster = new Selections(arnSerializedSelections);
 
-        Debug.Log("Client received selection of " + infoSelectionFromMaster.ToString());
+        Debug.Log("Client received selection of " + selectionsFromMaster.ToString());
 
         //Ensure the passed skill is valid
-        Debug.Assert(infoSelectionFromMaster.CanSelect());
+        if(selectionsFromMaster.IsValidSelection() == false) {
+            Debug.LogError("Received invalid selection from master! : " + selectionsFromMaster);
+            selectionsFromMaster.ResetToRestSelection();
+        }
 
         //Stop the selection process (if it's still ongoing) since the decision has already been finalized by the master
         Match.Get().GetLocalPlayer().inputController.EndSelection();
@@ -122,8 +120,8 @@ public class ContSkillSelection : Singleton<ContSkillSelection> {
     }
 
     public void ResetStoredSelection() {
-        //Debug.Log("Resetting stored selection from master");
-        infoSelectionFromMaster = null;
+        Debug.Log("Resetting stored selection from master");
+        selectionsFromMaster = null;
     }
 
     public void StartSelection() {
