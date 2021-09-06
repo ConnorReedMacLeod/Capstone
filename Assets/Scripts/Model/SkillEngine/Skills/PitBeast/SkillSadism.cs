@@ -6,7 +6,7 @@ public class SkillSadism : Skill {
 
     public SoulSadism soulPassive;
 
-    public SkillSadism(Chr _chrOwner) : base(_chrOwner, 0) {// set the dominant clause to 0
+    public SkillSadism(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "Sadism";
         sDisplayName = "Sadism";
@@ -20,7 +20,11 @@ public class SkillSadism : Skill {
         nFatigue = 0;
 
 
-        soulPassive = new SoulSadism(this.chrSource, this.chrSource, this);
+        soulPassive = new SoulSadism(this.chrOwner, this.chrOwner, this);
+
+        lstTargets = new List<Target>() {
+
+        };
 
         lstClausesOnEquip = new List<Clause>() {
             new ClauseEquip(this)
@@ -35,10 +39,9 @@ public class SkillSadism : Skill {
         };
     }
 
-    class ClauseEquip : ClauseSpecial {
+    class ClauseEquip : Clause {
 
         public ClauseEquip(Skill _skill) : base(_skill) {
-            // Eventually add superficial tags here
         }
 
         public override string GetDescription() {
@@ -46,9 +49,9 @@ public class SkillSadism : Skill {
             return string.Format("Initially applying Sadism on equip");
         }
 
-        public override void ClauseEffect() {
+        public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, skill.chrSource, ((SkillSadism)skill).soulPassive) {
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, skill.chrOwner, ((SkillSadism)skill).soulPassive) {
                 sLabel = "applying sadism"
             });
 
@@ -56,10 +59,9 @@ public class SkillSadism : Skill {
 
     };
 
-    class ClauseUnequip : ClauseSpecial {
+    class ClauseUnequip : Clause {
 
         public ClauseUnequip(Skill _skill) : base(_skill) {
-            // Eventually add superficial tags here
         }
 
         public override string GetDescription() {
@@ -67,9 +69,9 @@ public class SkillSadism : Skill {
             return string.Format("Removing Sadism on unequip");
         }
 
-        public override void ClauseEffect() {
+        public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecRemoveSoulChr(skill.chrSource, ((SkillSadism)skill).soulPassive) {
+            ContSkillEngine.PushSingleExecutable(new ExecRemoveSoulChr(skill.chrOwner, ((SkillSadism)skill).soulPassive) {
                 sLabel = "removing sadism"
             });
 
@@ -77,18 +79,16 @@ public class SkillSadism : Skill {
 
     };
 
-    class Clause1 : ClauseSpecial {
+    class Clause1 : Clause {
 
-        public Clause1(Skill _skill) : base(_skill) {
-            // Eventually add superficial tags here
-        }
+        public Clause1(Skill _skill) : base(_skill) { }
 
         public override string GetDescription() {
 
-            return string.Format("When {0} would deal damage to a character with greater health, heal {1}.", skill.chrSource.sName, ((SkillSadism)skill).soulPassive.heal.Get());
+            return string.Format("When {0} would deal damage to a character with greater health, heal {1}.", skill.chrOwner.sName, ((SkillSadism)skill).soulPassive.heal.Get());
         }
 
-        public override void ClauseEffect() {
+        public override void ClauseEffect(Selections selections) {
 
             Debug.LogError("Shouldn't be executing a passive");
 

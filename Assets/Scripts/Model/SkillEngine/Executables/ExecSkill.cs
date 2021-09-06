@@ -12,8 +12,8 @@ public abstract class ExecSkill : Executable {
             Debug.Log("Executable of type  " + this.GetType().ToString() + " not legal since skTarget is null");
             return false;
         }
-        if(skTarget.chrSource.bDead) {
-            Debug.Log("Executable of type  " + this.GetType().ToString() + " not legal since " + skTarget.chrSource.sName + "(target) is dead");
+        if(skTarget.chrOwner.bDead) {
+            Debug.Log("Executable of type  " + this.GetType().ToString() + " not legal since " + skTarget.chrOwner.sName + "(target) is dead");
             return false;
         }
         return base.isLegal();

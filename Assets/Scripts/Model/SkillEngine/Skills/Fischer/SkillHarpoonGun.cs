@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillHarpoonGun : Skill {
 
-    public SkillHarpoonGun(Chr _chrOwner) : base(_chrOwner, 0) {
+    public SkillHarpoonGun(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "HarpoonGun";
         sDisplayName = "Harpoon Gun";
@@ -19,6 +19,10 @@ public class SkillHarpoonGun : Skill {
         nCooldownInduced = 5;
         nFatigue = 2;
 
+        lstTargets = new List<Target>() {
+            new TarChr(TarChr.IsDiffTeam(chrOwner))
+        };
+
         lstClauses = new List<Clause>() {
             new Clause1(this),
             new Clause2(this)
@@ -26,19 +30,13 @@ public class SkillHarpoonGun : Skill {
     }
 
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         Damage dmg;
         public int nBaseDamage = 30;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrRanged(this), //Base Tag always goes first
-                new ClauseTagChrEnemy(this)
-            });
-
-
-            dmg = new Damage(skill.chrSource, null, nBaseDamage);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
         }
 
         public override string GetDescription() {
@@ -46,11 +44,11 @@ public class SkillHarpoonGun : Skill {
             return string.Format("After channeling, deal {0} damage to the chosen enemy.", dmg.Get());
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
 
-            Debug.Log("Executing damaging clause");
+            Chr chrSelected = (Chr)selections.lstSelections[0];
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Fischer/sndHarpoonGun", 2.067f) },
                 sLabel = "Behold, the power of my stand, Beach Boy!"
             });
@@ -59,13 +57,10 @@ public class SkillHarpoonGun : Skill {
 
     };
 
-    class Clause2 : ClauseChr {
+    class Clause2 : Clause {
 
         public Clause2(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrRanged(this), //Base Tag always goes first
-                new ClauseTagChrEnemy(this)
-            });
+
         }
 
         public override string GetDescription() {
@@ -73,11 +68,11 @@ public class SkillHarpoonGun : Skill {
             return string.Format("That enemy Switches to the position in front of them");
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
 
-            Debug.Log("Executing Switch forward");
+            Chr chrSelected = (Chr)selections.lstSelections[0];
 
-            ContSkillEngine.PushSingleExecutable(new ExecSwitchChar(skill.chrSource, chrSelected, (chrTarget) => ContPositions.Get().GetInFrontPosition(chrTarget.position)) {
+            ContSkillEngine.PushSingleExecutable(new ExecSwitchChar(skill.chrOwner, chrSelected, (chrTarget) => ContPositions.Get().GetInFrontPosition(chrTarget.position)) {
                 sLabel = "Hey, I caught one!"
             });
 

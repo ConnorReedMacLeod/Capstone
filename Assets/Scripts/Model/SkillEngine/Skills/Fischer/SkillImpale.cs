@@ -7,7 +7,7 @@ public class SkillImpale : Skill {
     public Damage dmg;
     public int nBaseDamage;
 
-    public SkillImpale(Chr _chrOwner) : base(_chrOwner, 0) {//set the dominant clause to 0
+    public SkillImpale(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "Impale";
         sDisplayName = "Impale";
@@ -22,28 +22,27 @@ public class SkillImpale : Skill {
 
         nBaseDamage = 20;
         //Create a base Damage object that this skill will apply
-        dmg = new Damage(this.chrSource, null, nBaseDamage);
+        dmg = new Damage(this.chrOwner, null, nBaseDamage);
+
+        lstTargets = new List<Target>() {
+            new TarChr(Target.AND(TarChr.IsDiffTeam(chrOwner), TarChr.IsFrontliner()))
+        };
 
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
     }
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         Damage dmg;
         public int nBaseDamage = 20;
         public SoulImpaled soulToCopy;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrMelee(this), //Base Tag always goes first
-                new ClauseTagChrEnemy(this)
-            });
 
-
-            dmg = new Damage(skill.chrSource, null, nBaseDamage);
-            soulToCopy = new SoulImpaled(skill.chrSource, null, skill);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
+            soulToCopy = new SoulImpaled(skill.chrOwner, null, skill);
         }
 
         public override string GetDescription() {
@@ -51,11 +50,13 @@ public class SkillImpale : Skill {
             return string.Format("Deal {0} damage to the enemy Vanguard and reduce their max health by {1}.", dmg.Get(), soulToCopy.nMaxLifeReduction);
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulImpaled(soulToCopy, chrSelected)));
+            Chr chrSelected = (Chr)selections.lstSelections[0];
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulImpaled(soulToCopy, chrSelected)));
+
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Fischer/sndImpale", 1.833f) },
                 sLabel = "Get Kakyoin'd"
             });

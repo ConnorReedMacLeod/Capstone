@@ -51,25 +51,21 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
     }
 
 
+    //By default, no extra information is needed, can pass extra info via the overloaded method if needed
+    public void SendTurnPhaseFinished() {
+        SendTurnPhaseFinished(new int[0]);
+    }
+
 
     //Can optionally pass in any extra serialized fields to communicate player choices to the master
-    public void SendTurnPhaseFinished(int nSerializedInfo = 0) {
+    public void SendTurnPhaseFinished(int[] arnSerializedInfo) {
 
         NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMFinishedTurnPhase, new object[2] {
             (int)ContTurns.Get().curStateTurn,
-            nSerializedInfo
+            arnSerializedInfo
         });
 
     }
-
-
-    //Unused for now
-    public void SendAllLocalSelections() {
-        for(int i = 0; i < Player.MAXPLAYERS; i++) {
-            CharacterSelection.Get().SubmitSelection(i);
-        }
-    }
-
 
     public void OnEvent(ExitGames.Client.Photon.EventData photonEvent) {
 

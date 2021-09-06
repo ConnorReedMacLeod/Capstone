@@ -46,7 +46,7 @@ public class ExecAdaptSkill : ExecSkill {
         Debug.Log("after setskill");
 
         fDelay = ContTurns.fDelayMinorSkill;
-        sLabel = skTarget.chrSource.sName + " adapted " + sOldSkillName + " to " + skTarget.sName;
+        sLabel = skTarget.chrOwner.sName + " adapted " + sOldSkillName + " to " + skTarget.sName;
 
     }
 

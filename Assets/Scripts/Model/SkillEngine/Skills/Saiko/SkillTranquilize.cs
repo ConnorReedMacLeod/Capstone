@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillTranquilize : Skill {
 
-    public SkillTranquilize(Chr _chrOwner) : base(_chrOwner, 0) {//Set the dominant clause
+    public SkillTranquilize(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "Tranquilize";
         sDisplayName = "Tranquilize";
@@ -17,32 +17,34 @@ public class SkillTranquilize : Skill {
         nCooldownInduced = 11;
         nFatigue = 3;
 
+        lstTargets = new List<Target>() {
+            new TarChr(Target.AND(TarChr.IsDiffTeam(chrOwner), TarChr.IsFrontliner()))
+        };
+
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
     }
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         public int nStunAmount;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrMelee(this), //Base Tag always goes first
-                new ClauseTagChrEnemy(this)
-            });
 
             nStunAmount = 4;
         }
 
         public override string GetDescription() {
 
-            return string.Format("Deal {0} fatigue to the enemy Vanguard.", nStunAmount);
+            return string.Format("Deal {0} fatigue to an enemy frontliner.", nStunAmount);
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecStun(skill.chrSource, chrSelected, nStunAmount) {
+            Chr chrSelected = (Chr)selections.lstSelections[0];
+
+            ContSkillEngine.PushSingleExecutable(new ExecStun(skill.chrOwner, chrSelected, nStunAmount) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndTranquilize", 1.4f) },
                 sLabel = "Shhh... Look at my daughter."
             });

@@ -49,7 +49,7 @@ public class ExecEndSkill : Executable {
 
     public ExecEndSkill(Chr _chrSource, Skill _skill) : base(_chrSource) {
         skill = _skill;
-        chrSource = skill.chrSource;
+        chrSource = skill.chrOwner;
     }
 
     public ExecEndSkill(ExecEndSkill other) : base(other) {

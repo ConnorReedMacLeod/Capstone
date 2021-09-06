@@ -42,7 +42,7 @@ public class ExecStartSkill : Executable {
 
     public ExecStartSkill(Chr _chrSource, Skill _skill) : base(_chrSource) {
         skill = _skill;
-        chrSource = skill.chrSource;
+        chrSource = skill.chrOwner;
     }
 
     public override void ExecuteEffect() {

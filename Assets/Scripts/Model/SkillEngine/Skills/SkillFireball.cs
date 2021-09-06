@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillFireball : Skill {
 
-    public SkillFireball(Chr _chrOwner) : base(_chrOwner, 0) {
+    public SkillFireball(Chr _chrOwner) : base(_chrOwner) {
 
         sName = "Fireball";
         sDisplayName = "Fireball";
@@ -18,26 +18,23 @@ public class SkillFireball : Skill {
         nFatigue = 4;
 
 
+        lstTargets = new List<Target>() {
+            new TarChr(TarChr.IsDiffTeam(chrOwner))
+        };
 
         lstClauses = new List<Clause>() {
-            new Clause1(this),
-            new Clause2(this)
+            new Clause1(this)
         };
     }
 
-    class Clause1 : ClauseChr {
+    class Clause1 : Clause {
 
         Damage dmg;
         public int nBaseDamage = 5;
 
         public Clause1(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrRanged(this), //Base Tag always goes first
-                new ClauseTagChrEnemy(this)
-            });
 
-
-            dmg = new Damage(skill.chrSource, null, nBaseDamage);
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
         }
 
         public override string GetDescription() {
@@ -45,9 +42,11 @@ public class SkillFireball : Skill {
             return string.Format("Deal {0} damage to an Enemy", dmg.Get());
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrSource, chrSelected, dmg) {
+            Chr chrSelected = (Chr)selections.lstSelections[0];
+
+            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 sLabel = "Hurling a fireball"
             });
 
@@ -55,17 +54,13 @@ public class SkillFireball : Skill {
 
     };
 
-    class Clause2 : ClauseChr {
+    class Clause2 : Clause {
 
         public SoulBurning soulToCopy;
 
         public Clause2(Skill _skill) : base(_skill) {
-            plstTags = new Property<List<ClauseTagChr>>(new List<ClauseTagChr>() {
-                new ClauseTagChrRanged(this), //Base Tag always goes first
-                new ClauseTagChrEnemy(this)
-            });
 
-            soulToCopy = new SoulBurning(skill.chrSource, null, skill);
+            soulToCopy = new SoulBurning(skill.chrOwner, null, skill);
         }
 
         public override string GetDescription() {
@@ -73,9 +68,11 @@ public class SkillFireball : Skill {
             return string.Format("Apply Burning(4) to that enemy");
         }
 
-        public override void ClauseEffect(Chr chrSelected) {
+        public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrSource, chrSelected, new SoulBurning(soulToCopy, chrSelected)));
+            Chr chrSelected = (Chr)selections.lstSelections[0];
+
+            ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulBurning(soulToCopy, chrSelected)));
 
         }
 
