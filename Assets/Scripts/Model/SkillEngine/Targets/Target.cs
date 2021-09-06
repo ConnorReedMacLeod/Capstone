@@ -46,8 +46,28 @@ public abstract class Target {
     //  is filling out the required selections for their chosen skill.
     // Can set up any needed UI elements/highlighting to facilitate selections, and can set up
     //  any custom subscriptions to those UI elements
-    public abstract void OnLocalStartSelection();
-    public abstract void OnLocalEndSelection();
+    // By default, they will always
+
+    protected virtual void OnStartLocalSelection() {
+        //Don't need to do anything by default
+    }
+    public void StartLocalSelection() {
+        ContGlobalInteractions.subGlobalRightClick.Subscribe(cbCancelSelectionProcess);
+        OnStartLocalSelection();
+    }
+    protected virtual void OnEndLocalSelection() {
+        //Don't need to do anything by default
+    }
+    public void EndLocalSelection() {
+        OnEndLocalSelection();
+        ContGlobalInteractions.subGlobalRightClick.UnSubscribe(cbCancelSelectionProcess);
+    }
+
+    public void cbCancelSelectionProcess(Object target, params object[] args) {
+        Debug.Log("in cbCancelSelectionProcess");
+        OnEndLocalSelection();
+        ContLocalUIInteraction.Get().ExitSelectionsProcess();
+    }
 
     //Sets the TargetDescription message (derived types can set it to a default description for the type)
     public abstract void InitTargetDescription();
