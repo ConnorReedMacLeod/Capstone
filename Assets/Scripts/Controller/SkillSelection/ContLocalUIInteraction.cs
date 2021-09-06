@@ -35,14 +35,16 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
     }
 
-    // Ends targetting
-    public void CancelTar() {
+    // Ends the selections phase
+    public void ExitSelectionsProcess() {
 
         //Potentially don't fully reset to the idle state if we're just selecting
         // a character, but not selecting targets for a skill of theirs
 
         //Re-enable general selections
         bCanSelectCharacters = true;
+
+        ResetStoredSelections();
 
         SetState(new StateTargetIdle());
 
@@ -121,7 +123,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         //First, leave our current selection state (if this isn't the first target)
         if(selectionsInProgress.GetIndexOfNextRequiredTarget() != 0) {
             //Trigger our 'OnLeave' method for our current targetting state
-            selectionsInProgress.GetMostRecentCompletedTarget().OnLocalEndSelection();
+            selectionsInProgress.GetMostRecentCompletedTarget().EndLocalSelection();
         }
 
         //Then, check if there are any targets we still need to fill in with selections
@@ -134,7 +136,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
         //If we still have selections to fill in, then call the 'OnEnter' method for the
         // next selection state
-        selectionsInProgress.GetNextRequiredTarget().OnLocalStartSelection();
+        selectionsInProgress.GetNextRequiredTarget().StartLocalSelection();
 
     }
 
@@ -150,14 +152,8 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
         ContSkillSelection.Get().SubmitSkill(selectionsInProgress, ContTurns.Get().GetNextActingChr().plyrOwner.inputController);
 
-        //Ensure we can select characters again after leaving our selection process
-        bCanSelectCharacters = true;
-
-        //Reset our stored selections now that we have submitted our selection
-        ResetStoredSelections();
-
-        //Let everything know that targetting has ended
-        subAllFinishManualSelections.NotifyObs(this);
+        //Clean up the selection process (clears out the stored selections structure, sends notifications, etc.)
+        ExitSelectionsProcess();
     }
 
     public void SetState(StateTarget newState) {

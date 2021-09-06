@@ -51,7 +51,8 @@ public class TarChr : Target {
         AttemptSelection(((ViewChr)target).mod);
     }
 
-    public override void OnLocalStartSelection() {
+    protected override void OnStartLocalSelection() {
+
         //Highlight all the targettable characters
         foreach(Chr c in GetValidSelectable(ContLocalUIInteraction.Get().selectionsInProgress)) {
             //Pass along the skill we're trying to select targets for
@@ -62,7 +63,7 @@ public class TarChr : Target {
         ViewChr.subAllClick.Subscribe(cbClickSelectable);
     }
 
-    public override void OnLocalEndSelection() {
+    protected override void OnEndLocalSelection() {
         //Remove highlighting from ALL characters (just in case somehow the list of targettable characters may have changed)
         foreach(Chr c in GetSelactableUniverse()) {
             c.subEndsTargettable.NotifyObs();
