@@ -18,7 +18,7 @@ public class SkillHydrasRegen : Skill {
         type = new TypeChannel(this, 4, soulChannelBehaviour);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 0, 1, 0 });
+        manaCost = new ManaCost(new Mana(0, 0, 0, 1, 0));
 
         nCooldownInduced = 6;
         nFatigue = 1;

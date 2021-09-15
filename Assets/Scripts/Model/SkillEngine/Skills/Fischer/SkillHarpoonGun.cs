@@ -14,7 +14,7 @@ public class SkillHarpoonGun : Skill {
         type = new TypeChannel(this, 2, null);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 2 });
+        manaCost = new ManaCost(new Mana(0, 0, 0, 0, 2));
 
         nCooldownInduced = 5;
         nFatigue = 2;

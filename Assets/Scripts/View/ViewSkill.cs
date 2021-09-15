@@ -95,18 +95,29 @@ public class ViewSkill : ViewInteractive {
         }
     }
 
+    public static string GetEncodedManaCostText(ManaCost manaCost) {
+
+        Mana manaCostFinal = manaCost.pManaCost.Get();
+        string sPhys = new string('1', manaCostFinal[Mana.MANATYPE.PHYSICAL]);
+        string sMent = new string('2', manaCostFinal[Mana.MANATYPE.MENTAL]);
+        string sEnrg = new string('3', manaCostFinal[Mana.MANATYPE.ENERGY]);
+        string sBld = new string('4', manaCostFinal[Mana.MANATYPE.BLOOD]);
+        string sEfrt = new string('5', manaCostFinal[Mana.MANATYPE.EFFORT]);
+
+        string sEncodedManaCost = sPhys + sMent + sEnrg + sBld + sEfrt;
+
+        if(manaCost.bXCost) {
+            sEncodedManaCost += "X";
+        }
+
+        return sEncodedManaCost;
+    }
+
     public void DisplayCost() {
         if(mod == null) {
             txtType.text = "";
         } else {
-            int[] arCost = mod.parCost.Get();
-            string sPhys = new string('1', arCost[(int)Mana.MANATYPE.PHYSICAL]);
-            string sMent = new string('2', arCost[(int)Mana.MANATYPE.MENTAL]);
-            string sEnrg = new string('3', arCost[(int)Mana.MANATYPE.ENERGY]);
-            string sBld = new string('4', arCost[(int)Mana.MANATYPE.BLOOD]);
-            string sEfrt = new string('5', arCost[(int)Mana.MANATYPE.EFFORT]);
-
-            txtCost.text = sPhys + sMent + sEnrg + sBld + sEfrt;
+            txtCost.text = GetEncodedManaCostText(mod.manaCost);
         }
     }
 

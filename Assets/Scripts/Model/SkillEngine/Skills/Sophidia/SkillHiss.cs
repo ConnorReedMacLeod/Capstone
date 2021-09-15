@@ -13,7 +13,7 @@ public class SkillHiss : Skill {
         type = new TypeCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 1 });
+        manaCost = new ManaCost(new Mana(0, 0, 0, 0, 1));
 
         nCooldownInduced = 10;
         nFatigue = 1;

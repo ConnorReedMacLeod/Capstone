@@ -9,7 +9,7 @@ using UnityEngine;
 public class ExecChangeMana : ExecPlayer {
 
     //One of the following can be set - whichever is nicer for the situation
-    public int[] arnAmount;
+    public Mana manaChange;
 
     public Mana.MANATYPE manaType;
     public int nAmount;
@@ -39,9 +39,9 @@ public class ExecChangeMana : ExecPlayer {
     }
     // This is the end of the section that should be copied and pasted
 
-    public ExecChangeMana(Chr _chrSource, Player _plyrTarget, int[] _arnAmount) : base(_chrSource, _plyrTarget) {
+    public ExecChangeMana(Chr _chrSource, Player _plyrTarget, Mana _manaChange) : base(_chrSource, _plyrTarget) {
         plyrTarget = _plyrTarget;
-        arnAmount = _arnAmount;
+        manaChange = _manaChange;
     }
 
     public ExecChangeMana(Chr _chrSource, Player _plyrTarget, Mana.MANATYPE _manaType, int _nAmount = 1) : base(_chrSource, _plyrTarget) {
@@ -52,8 +52,7 @@ public class ExecChangeMana : ExecPlayer {
     }
 
     public ExecChangeMana(ExecChangeMana other) : base(other) {
-        arnAmount = new int[other.arnAmount.Length];
-        Array.Copy(other.arnAmount, arnAmount, other.arnAmount.Length);
+        manaChange = new Mana(other.manaChange);
 
         manaType = other.manaType;
         nAmount = other.nAmount;
@@ -66,12 +65,12 @@ public class ExecChangeMana : ExecPlayer {
 
     public override void ExecuteEffect() {
 
-        if(arnAmount == null) {
-            //If no array of mana was added, then change the single amount of mana passed
+        if(manaChange == null) {
+            //If no instance of mana was added, then change the single amount of mana passed
             plyrTarget.mana.ChangeMana(manaType, nAmount);
         } else {
-            //But if an array of mana was specified, then use that to change mana
-            plyrTarget.mana.ChangeMana(arnAmount);
+            //But if an instance of mana was specified, then use that to change mana
+            plyrTarget.mana.ChangeMana(manaChange);
         }
 
         fDelay = ContTurns.fDelayMinorSkill;

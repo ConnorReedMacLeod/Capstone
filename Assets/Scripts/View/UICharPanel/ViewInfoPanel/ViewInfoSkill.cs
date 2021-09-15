@@ -75,13 +75,7 @@ public class ViewInfoSkill : MonoBehaviour {
         if(mod == null) {
             txtType.text = "";
         } else {
-            string sPhys = new string('1', mod.parCost.Get()[(int)Mana.MANATYPE.PHYSICAL]);
-            string sMent = new string('2', mod.parCost.Get()[(int)Mana.MANATYPE.MENTAL]);
-            string sEnrg = new string('3', mod.parCost.Get()[(int)Mana.MANATYPE.ENERGY]);
-            string sBld = new string('4', mod.parCost.Get()[(int)Mana.MANATYPE.BLOOD]);
-            string sEfrt = new string('5', mod.parCost.Get()[(int)Mana.MANATYPE.EFFORT]);
-
-            txtCost.text = sPhys + sMent + sEnrg + sBld + sEfrt;
+            txtCost.text = ViewSkill.GetEncodedManaCostText(mod.manaCost);
         }
     }
 

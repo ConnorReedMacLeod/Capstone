@@ -15,7 +15,7 @@ public class SkillStickyBomb : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 1, 0, 0, 1 });
+        manaCost = new ManaCost(new Mana(0, 1, 0, 0, 1));
 
         nCooldownInduced = 6;
         nFatigue = 3;
