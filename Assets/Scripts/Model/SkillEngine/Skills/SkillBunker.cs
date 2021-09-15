@@ -12,7 +12,7 @@ public class SkillBunker : Skill {
         type = new TypeCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 1, 0, 0 });
+        manaCost = new ManaCost(new Mana(0, 0, 1, 0, 0));
 
         nCooldownInduced = 4;
         nFatigue = 6;

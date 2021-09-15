@@ -14,7 +14,7 @@ public class SkillSadism : Skill {
         type = new TypePassive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 0 });
+        manaCost = new ManaCost(new Mana(0, 0, 0, 0, 0));
 
         nCooldownInduced = 0;
         nFatigue = 0;

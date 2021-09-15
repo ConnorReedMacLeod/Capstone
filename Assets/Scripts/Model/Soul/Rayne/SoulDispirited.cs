@@ -7,7 +7,7 @@ public class SoulDispirited : SoulChr {
     public int[] arnCostDebuff;
 
     //Maintain a list of all of the cost modifiers we've applied
-    public LinkedListNode<Property<int[]>.Modifier>[] arnodeCostModifier;
+    public LinkedListNode<Property<Mana>.Modifier>[] arnodeCostModifier;
 
 
     public SoulDispirited(Chr _chrSource, Chr _chrTarget, Skill _skillSource) : base(_chrSource, _chrTarget, _skillSource) {
@@ -21,7 +21,7 @@ public class SoulDispirited : SoulChr {
         //Increase the cost by one effort
         arnCostDebuff = new int[] { 0, 0, 0, 0, 1 };
 
-        arnodeCostModifier = new LinkedListNode<Property<int[]>.Modifier>[Chr.nStandardCharacterSkills];
+        arnodeCostModifier = new LinkedListNode<Property<Mana>.Modifier>[Chr.nStandardCharacterSkills];
 
     }
 
@@ -48,18 +48,18 @@ public class SoulDispirited : SoulChr {
             return;
         }
 
-        Property<int[]>.Modifier costIncrease =
-                (arCost) => {
+        Property<Mana>.Modifier costIncrease =
+                (mana) => {
                     if(chrTarget.arSkillSlots[iSkill].skill.type.Type() == TypeSkill.TYPE.CANTRIP) {
                         //Increase the cost if the skill is a cantrip
-                        return LibFunc.AddArray<int>(arCost, arnCostDebuff, (x, y) => (x + y));
+                        return new Mana(LibFunc.AddArray<int>(mana.arMana, arnCostDebuff, (x, y) => (x + y)));
                     } else {
                         //Otherwise, keep the cost the same
-                        return arCost;
+                        return mana;
                     }
                 };
 
-        LinkedListNode<Property<int[]>.Modifier> costChange = chrTarget.arSkillSlots[iSkill].skill.ChangeCost(costIncrease);
+        LinkedListNode<Property<Mana>.Modifier> costChange = chrTarget.arSkillSlots[iSkill].skill.ChangeCost(costIncrease);
 
         arnodeCostModifier.SetValue(costChange, iSkill);
 
@@ -71,7 +71,7 @@ public class SoulDispirited : SoulChr {
 
         arnCostDebuff = new int[Mana.nManaTypes];
         System.Array.Copy(other.arnCostDebuff, arnCostDebuff, other.arnCostDebuff.Length);
-        arnodeCostModifier = new LinkedListNode<Property<int[]>.Modifier>[Chr.nStandardCharacterSkills];
+        arnodeCostModifier = new LinkedListNode<Property<Mana>.Modifier>[Chr.nStandardCharacterSkills];
         System.Array.Copy(other.arnodeCostModifier, arnodeCostModifier, other.arnodeCostModifier.Length);
 
     }
@@ -79,7 +79,7 @@ public class SoulDispirited : SoulChr {
     public override void RemoveEffect() {
         //When removed we'll clear all the cost modifiers we've applied
         for(int i = 0; i < Chr.nStandardCharacterSkills; i++) {
-            chrTarget.arSkillSlots[i].skill.parCost.RemoveModifier(arnodeCostModifier[i]);
+            chrTarget.arSkillSlots[i].skill.manaCost.pManaCost.RemoveModifier(arnodeCostModifier[i]);
         }
 
         //chrTarget.subPostExecuteSkill.UnSubscribe(OnSkillUsage);

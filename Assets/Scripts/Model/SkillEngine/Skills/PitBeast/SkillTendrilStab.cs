@@ -12,7 +12,7 @@ public class SkillTendrilStab : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 1, 0, 0, 0, 0 });
+        manaCost = new ManaCost(new Mana(1, 0, 0, 0, 0));
 
         nCooldownInduced = 6;
         nFatigue = 3;

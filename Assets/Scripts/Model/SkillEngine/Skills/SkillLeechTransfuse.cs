@@ -14,7 +14,7 @@ public class SkillLeech : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 0, 1, 0 });
+        manaCost = new ManaCost(new Mana(0, 0, 0, 1, 0));
 
         nCooldownInduced = 1;
         nFatigue = 1;
@@ -91,7 +91,7 @@ public class SkillTransfuse : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 0, 1, 0 });
+        manaCost = new ManaCost(new Mana(0, 0, 0, 1, 0));
 
         nCooldownInduced = 2;
         nFatigue = 2;

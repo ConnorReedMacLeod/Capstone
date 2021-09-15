@@ -19,7 +19,7 @@ public class Skill { //This should probably be made abstract
     public int nCharges;
     public int nCurCharges;
 
-    public Property<int[]> parCost;
+    public ManaCost manaCost;
 
     public List<Target> lstTargets;
 
@@ -35,9 +35,9 @@ public class Skill { //This should probably be made abstract
     }
 
     //Changes the cost of this skill, and returns the node that is modifying that cost (so you can remove it later)
-    public LinkedListNode<Property<int[]>.Modifier> ChangeCost(Property<int[]>.Modifier modifier) {
+    public LinkedListNode<Property<Mana>.Modifier> ChangeCost(Property<Mana>.Modifier modifier) {
 
-        LinkedListNode<Property<int[]>.Modifier> nodeModifier = parCost.AddModifier(modifier);
+        LinkedListNode<Property<Mana>.Modifier> nodeModifier = manaCost.pManaCost.AddModifier(modifier);
 
         //Let others know that the cost has changed
         subSkillChange.NotifyObs();
@@ -98,7 +98,7 @@ public class Skill { //This should probably be made abstract
 
     public bool CanPayMana() {
         //Check if you have enough mana
-        if(chrOwner.plyrOwner.mana.HasMana(parCost.Get()) == false) {
+        if(chrOwner.plyrOwner.mana.CanPayManaCost(this.manaCost) == false) {
             Debug.Log("Not enough mana");
             return false;
         }
@@ -246,7 +246,7 @@ public class Skill { //This should probably be made abstract
 
         public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecChangeMana(skill.chrOwner, skill.chrOwner.plyrOwner, Mana.ConvertToCost(skill.parCost.Get())));
+            ContSkillEngine.PushSingleExecutable(new ExecChangeMana(skill.chrOwner, skill.chrOwner.plyrOwner, Mana.GetNegatedMana(skill.manaCost.pManaCost.Get())));
 
         }
 

@@ -18,7 +18,7 @@ public class Player : MonoBehaviour {
 
     public LocalInputType inputController;
 
-    public Mana mana;
+    public ManaPool mana;
 
     public static Subject subAllInputTypeChanged = new Subject(Subject.SubType.ALL);
     public static Subject subAllPlayerLost = new Subject(Subject.SubType.ALL);
@@ -118,7 +118,7 @@ public class Player : MonoBehaviour {
             arChr = new Chr[MAXCHRS];
 
             GameObject manaPanel = Instantiate(pfManaPanel, Match.Get().transform);
-            mana = manaPanel.GetComponent<Mana>();
+            mana = manaPanel.GetComponent<ManaPool>();
 
             mana.SetPlayer(this);
 
