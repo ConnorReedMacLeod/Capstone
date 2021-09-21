@@ -18,7 +18,7 @@ public class SkillThunderStorm : Skill {
         nFatigue = 5;
 
         lstTargets = new List<Target>() {
-            new TarChr(Target.TRUE)
+            new TarChr(this, Target.TRUE)
         };
 
         lstClauses = new List<Clause>() {

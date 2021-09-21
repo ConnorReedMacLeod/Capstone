@@ -81,4 +81,16 @@ public class Mana {
         }
     }
 
+    public static List<MANATYPE> ManaToListOfTypes(Mana mana) {
+        List<MANATYPE> lstManaTypes = new List<MANATYPE>();
+
+        for(int manaType = (int)MANATYPE.PHYSICAL; manaType <= (int)MANATYPE.EFFORT; manaType++) {
+            for (int i = 0; i < mana[manaType]; i++) {
+                lstManaTypes.Add((MANATYPE)manaType);
+            }
+        }
+
+        return lstManaTypes;
+    }
+
 }

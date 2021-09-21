@@ -19,7 +19,7 @@ public class SkillReverberate : Skill {
 
 
         lstTargets = new List<Target>() {
-            new TarChr(TarChr.TRUE)
+            new TarChr(this, TarChr.TRUE)
         };
 
         lstClauses = new List<Clause>() {

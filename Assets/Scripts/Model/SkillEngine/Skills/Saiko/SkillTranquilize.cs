@@ -18,7 +18,7 @@ public class SkillTranquilize : Skill {
         nFatigue = 3;
 
         lstTargets = new List<Target>() {
-            new TarChr(Target.AND(TarChr.IsDiffTeam(chrOwner), TarChr.IsFrontliner()))
+            new TarChr(this, Target.AND(TarChr.IsDiffTeam(chrOwner), TarChr.IsFrontliner()))
         };
 
         lstClauses = new List<Clause>() {

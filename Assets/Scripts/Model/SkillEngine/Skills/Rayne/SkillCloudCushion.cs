@@ -18,7 +18,7 @@ public class SkillCloudCushion : Skill {
         nFatigue = 1;
 
         lstTargets = new List<Target>() {
-            new TarChr(TarChr.IsSameTeam(chrOwner))
+            new TarChr(this, TarChr.IsSameTeam(chrOwner))
         };
 
         lstClauses = new List<Clause>() {
