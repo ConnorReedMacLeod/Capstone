@@ -20,7 +20,7 @@ public class SkillLeech : Skill {
         nFatigue = 1;
 
         lstTargets = new List<Target>() {
-            new TarChr(TarChr.IsDiffTeam(chrOwner))
+            new TarChr(this, TarChr.IsDiffTeam(chrOwner))
         };
 
         lstClauses = new List<Clause>() {
@@ -97,7 +97,7 @@ public class SkillTransfuse : Skill {
         nFatigue = 2;
 
         lstTargets = new List<Target>() {
-            new TarChr(TarChr.IsSameTeam(chrOwner))
+            new TarChr(this, TarChr.IsSameTeam(chrOwner))
         };
 
         lstClauses = new List<Clause>() {

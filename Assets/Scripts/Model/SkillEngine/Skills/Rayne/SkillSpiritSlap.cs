@@ -21,7 +21,7 @@ public class SkillSpiritSlap : Skill {
         nFatigue = 2;
 
         lstTargets = new List<Target>() {
-            new TarChr(Target.AND(TarChr.IsFrontliner(), TarChr.IsDiffTeam(chrOwner)))
+            new TarChr(this, Target.AND(TarChr.IsFrontliner(), TarChr.IsDiffTeam(chrOwner)))
         };
 
         lstClauses = new List<Clause>() {
