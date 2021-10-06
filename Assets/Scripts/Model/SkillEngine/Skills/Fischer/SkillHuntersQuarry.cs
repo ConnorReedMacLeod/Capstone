@@ -18,7 +18,7 @@ public class SkillHuntersQuarry : Skill {
         nFatigue = 3;
 
         lstTargets = new List<Target>(){
-            new TarChr(TarChr.IsOtherChr(chrOwner))
+            new TarChr(this, TarChr.IsOtherChr(chrOwner))
         };
 
         lstClauses = new List<Clause>() {
