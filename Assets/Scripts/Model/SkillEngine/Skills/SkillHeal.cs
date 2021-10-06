@@ -22,7 +22,7 @@ public class SkillHeal : Skill {
 
 
         lstTargets = new List<Target>() {
-            new TarChr(TarChr.IsSameTeam(chrOwner))
+            new TarChr(this, TarChr.IsSameTeam(chrOwner))
         };
 
         lstClauses = new List<Clause>() {

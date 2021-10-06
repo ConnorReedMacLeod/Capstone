@@ -18,7 +18,7 @@ public class SkillCacophony : Skill {
         nFatigue = 4;
 
         lstTargets = new List<Target>() {
-            new TarChr(TarChr.IsFrontliner())
+            new TarChr(this, TarChr.IsFrontliner())
         };
 
         lstClauses = new List<Clause>() {

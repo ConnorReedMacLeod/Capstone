@@ -36,7 +36,13 @@ public class TarMana : Target {
         return (object manaPaid, Selections selections) => (manaCostRequired.CanBePaidWith((Mana)manaPaid));
     }
 
-    public TarMana(Skill _skill, FnValidSelection _IsValidSelection, ManaCost _manaCostRequired) : base(_skill, _IsValidSelection) {
+    //If no additional requirements are present, just enforce that the proposed mana amount covers the required cost
+    public TarMana(Skill _skill, ManaCost _manaCostRequired) : base(_skill, COVERSCOST(_manaCostRequired)) {
+        manaCostRequired = _manaCostRequired;
+    }
+
+    //If we have any extra requirements, we can AND those together with the basic "Can it cover the cost" check on the proposed mana
+    public TarMana(Skill _skill, ManaCost _manaCostRequired, FnValidSelection _IsValidSelection) : base(_skill, Target.AND(_IsValidSelection, COVERSCOST(_manaCostRequired))) {
         manaCostRequired = _manaCostRequired;
     }
 
