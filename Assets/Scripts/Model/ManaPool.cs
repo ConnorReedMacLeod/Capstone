@@ -8,6 +8,12 @@ public class ManaPool : MonoBehaviour {
 
     public Player plyr;
     public Mana manaOwned;
+    public Mana manaReservedToPay; //Keep track of any mana that is planned to be used to pay for a cost, but hasn't yet been spent
+    public Mana manaUsableToPay { //Get the amount of mana that we have free to pay for new costs (that hasn't been reserved yet)
+        get {
+            return Mana.SubMana(manaOwned, manaReservedToPay);
+        }
+    }
 
     public Subject subManaChange = new Subject();
 
@@ -22,6 +28,13 @@ public class ManaPool : MonoBehaviour {
         return manaCost.CanBePaidWith(manaOwned);
     }
 
+    //Quickly check if we've got enough un-reserved mana to pay for another cost
+    public bool HaveEnoughUsableMana(ManaCost manaCost) {
+
+        //Pass along all our un-committed mana to the mana cost to see if it would be enough
+        return manaCost.CanBePaidWith(manaUsableToPay);
+    }
+
 
     public void ChangeMana(Mana.MANATYPE manaType, int nAmount = 1) {
         Mana manaToAdd = new Mana(0, 0, 0, 0, 0);
@@ -33,6 +46,16 @@ public class ManaPool : MonoBehaviour {
         manaOwned.ChangeMana(manaToAdd);
     }
 
+
+    public void ReserveMana(ManaCost manaCost) {
+        manaReservedToPay.ChangeMana(manaCost.pManaCost.Get());
+    }
+
+    public void ResetReservedMana() {
+        manaReservedToPay = new Mana(0, 0, 0, 0);
+    }
+
+
     public void PayManaPaymentForCost(Mana manaPaid, ManaCost manaCost) {
         Debug.Assert(manaCost.CanBePaidWith(manaPaid));
 
@@ -42,7 +65,7 @@ public class ManaPool : MonoBehaviour {
 
     //Auto-generate a possible payment we can use to pay for the provided cost
     public Mana GetPaymentForManaCost(ManaCost manaCost) {
-        Debug.Assert(CanPayManaCost(manaCost));
+        Debug.Assert(HaveEnoughUsableMana(manaCost));
 
         Mana manaFinalCost = manaCost.pManaCost.Get();
 
@@ -50,22 +73,18 @@ public class ManaPool : MonoBehaviour {
         Mana manaPayment = new Mana(manaFinalCost[0], manaFinalCost[1], manaFinalCost[2], manaFinalCost[3]);
 
         //Now we just have to cover the effort portion
-        if(manaOwned[Mana.MANATYPE.EFFORT] >= manaFinalCost[Mana.MANATYPE.EFFORT]) {
+        if(manaUsableToPay[Mana.MANATYPE.EFFORT] >= manaFinalCost[Mana.MANATYPE.EFFORT]) {
             //If we have enough raw effort mana, just use that directly and return
             manaPayment[Mana.MANATYPE.EFFORT] = manaFinalCost[Mana.MANATYPE.EFFORT];
             return manaPayment;
         }
 
-        //Dump all the raw effort mana we have into the payment
-        manaPayment[Mana.MANATYPE.EFFORT] = manaOwned[Mana.MANATYPE.EFFORT];
+        //Dump all the raw effort mana we have into the payment (up to the amount of the full cost)
+        manaPayment[Mana.MANATYPE.EFFORT] = Mathf.Min(manaUsableToPay[Mana.MANATYPE.EFFORT], manaFinalCost[Mana.MANATYPE.EFFORT]);
 
         int nEffortLeftToPay = manaFinalCost[Mana.MANATYPE.EFFORT] - manaPayment[Mana.MANATYPE.EFFORT];
         //Now generate a Mana struct representing the mana we have that we haven't yet used in our payment
-        Mana manaUsableForEffort =
-            new Mana(manaOwned[0] - manaPayment[0],
-            manaOwned[1] - manaPayment[1],
-            manaOwned[2] - manaPayment[2],
-            manaOwned[3] - manaPayment[3]);
+        Mana manaUsableForEffort = Mana.SubMana(manaUsableToPay, manaPayment);
 
         //Repeatedly select a random owned mana and add it to the payment
         for(; nEffortLeftToPay > 0; nEffortLeftToPay--) {
@@ -93,6 +112,7 @@ public class ManaPool : MonoBehaviour {
     public void Start() {
 
         ChangeMana(new Mana(4, 4, 4, 4));
+        ResetReservedMana();
 
     }
 }
