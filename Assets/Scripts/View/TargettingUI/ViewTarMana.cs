@@ -13,9 +13,6 @@ public class ViewTarMana : MonoBehaviour {
 
     
 
-    //TODONOW - find a good way to track the current amount of mana that's been filled in for the effort portion of the mana cost,
-    //            and maintain how much mana is still available after being used to pay for required coloured mana
-
 
 
 
@@ -26,7 +23,7 @@ public class ViewTarMana : MonoBehaviour {
         for (int i = 0; i <= (int)Mana.MANATYPE.EFFORT; i++) {
 
             int nManaToPay = manaToPay[i];
-            int nManaCanPay = Mathf.Min(nManaToPay, plyrPaying.mana.manaOwned[i]);
+            int nManaCanPay = Mathf.Min(nManaToPay, plyrPaying.mana.manaUsableToPay[i]);
             int nManaUnpayable = nManaToPay - nManaCanPay;
 
             //For each mana pip we can afford, spawn a paid icon for it

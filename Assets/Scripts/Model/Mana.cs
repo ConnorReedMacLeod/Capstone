@@ -33,6 +33,18 @@ public class Mana {
 
     }
 
+
+    public static Mana AddMana(Mana mana1, Mana mana2) {
+        Mana manaSum = new Mana(mana1);
+        manaSum.ChangeMana(mana2);
+
+        return manaSum;
+    }
+
+    public static Mana SubMana(Mana mana1, Mana mana2) {
+        return AddMana(mana1, GetNegatedMana(mana2));
+    }
+
     public static Mana GetNegatedMana(Mana mana) {
         int[] arNegatedMana = new int[5];
         for(int i = 0; i < nManaTypes; i++) {
