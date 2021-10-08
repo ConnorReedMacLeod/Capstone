@@ -63,25 +63,20 @@ public class TarMana : Target {
     //Hooked up to the 'submit' button/trigger for after the mana payments have been selected
     public override void cbClickSelectable(Object target, params object[] args) {
         //Pass along the built-up mana selection 
-        AttemptSelection();
+        AttemptSelection(target);
     }
 
     protected override void OnStartLocalSelection() {
 
-        //Spawn a mana-input UI panel
-
-
-        //Have the panel set up for this TarMana's mana cost and pass along a reference to ourselves so it
-        // knows where to pass submissions through
+        //Bring out the ViewTarMana and initialize it to be requesting payment for this cost
+        ViewTarMana.Get().StartPayment(this);
 
     }
 
     protected override void OnEndLocalSelection() {
 
-        //Have the mana-input UI panel clean itself up
-
-        //Despawn the UI panel
-
+        //Now that we're done paying, have the ViewTarMana clean itself up
+        ViewTarMana.Get().CleanUp();
 
     }
 }

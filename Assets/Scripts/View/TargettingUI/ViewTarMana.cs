@@ -2,21 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewTarMana : MonoBehaviour {
+public class ViewTarMana : Singleton<ViewTarMana> {
 
+    public TarMana modTarMana;
+    public Mana manaToPay; //Save a reference to the mana that needs to be paid
+    public Player plyrPaying; //Save a reference to the player paying the cost
 
     public List<GameObject> lstgoManaIcons;
 
     public const int nManaSymbolSpacing = 20;
 
     public GameObject goRequiredManaPosition; //The game object that will contain the mana icons that are being requested
-
     
+    public Mana manaCurSelectedToSpendOnEffort; //The stored amoutn we're building up to pay for the given tarMana's effort portion
+
+    public bool bCanPayCost; //Remember if we can or cannot pay the full cost we're being asked to pay
 
 
 
+    public void InitializeManaIcons() {
 
-    public void SpawnStartingManaIcons(Mana manaToPay, Player plyrPaying) {
         //For each mana type, fill in as many of the mana pips as we can cover with our mana pool,
         //  and X out the rest (can just leave un-covered effort mana empty for now until covered by coloured mana)
 
@@ -32,14 +37,34 @@ public class ViewTarMana : MonoBehaviour {
             }
             //For each mana pip we can't afford, spawn an unpaid icon for it
             for (int j = 0; j < nManaUnpayable; j++) {
+                
                 AddManaIcon((Mana.MANATYPE)i, false);
             }
-        }
 
+            
+        }
     }
 
-    public void ReplaceManaIcon(int indexToReplace, Mana.MANATYPE manaType, bool bPaidFor, Mana.MANATYPE manaPaidWith) {
+    public void ReplaceManaIcon(int indexToReplace, Mana.MANATYPE manaType, bool bPaidFor, Mana.MANATYPE manaPaidWith = Mana.MANATYPE.EFFORT) {
         LibView.AssignSpritePathToObject(GetManaIconSpritePath(manaType, bPaidFor, manaPaidWith), lstgoManaIcons[indexToReplace]);
+    }
+
+    public void UpdateEffortManaIcons() {
+        List<Mana.MANATYPE> lstManaAllocated = Mana.ManaToListOfTypes(manaCurSelectedToSpendOnEffort);
+
+        //Go through each Effort Mana Icon and update it's payment icon to be paid with the appropriate amount of (coloured) allocated mana
+        for(int i=manaToPay.GetTotalColouredMana(), j=0; i<manaToPay.GetTotalMana(); i++, j++) {
+            //Note:  Will have to eventually update the upper loop bounds to deal with X mana costs
+
+            //If we've gone through all the allocated mana we've prepared so far, then the remaining mana icons can all be set as unpaid
+            if(j >= manaToPay.GetTotalMana()) {
+                ReplaceManaIcon(i, Mana.MANATYPE.EFFORT, false);
+            } else {
+                //If we've paid this mana, then fill in the icon with the colour of mana at this index in the list of allocated mana
+                ReplaceManaIcon(i, Mana.MANATYPE.EFFORT, true, lstManaAllocated[j]);
+            }
+
+        }
     }
 
     public void AddManaIcon(Mana.MANATYPE manaType, bool bPaidFor, Mana.MANATYPE manaPaidWith = Mana.MANATYPE.EFFORT) {
@@ -60,7 +85,8 @@ public class ViewTarMana : MonoBehaviour {
         Debug.Assert(lstgoManaIcons.Count != 0);
 
         Destroy(lstgoManaIcons[lstgoManaIcons.Count - 1]);
-        lstgoManaIcons[lstgoManaIcons.Count - 1] = null;
+
+        lstgoManaIcons.RemoveAt(lstgoManaIcons.Count - 1);
     }
 
 
@@ -79,14 +105,118 @@ public class ViewTarMana : MonoBehaviour {
 
 
 
-    // Start is called before the first frame update
-    void Start() {
+    //Set the TarMana model that we're going to be facilitating payment for
+    public void StartPayment(TarMana _modTarMana) {
+        //Enable our game object
+        gameObject.SetActive(true);
+
+        modTarMana = _modTarMana;
+        manaToPay = modTarMana.manaCostRequired.pManaCost.Get();
+        plyrPaying = modTarMana.skill.chrOwner.plyrOwner;
+
+        //Check (and save the result) if the player can even possibly afford the cost 
+        bCanPayCost =plyrPaying.mana.CanPayManaCost(modTarMana.manaCostRequired);
+
+        //Initialize the mana icons we're displaying the mana cost with
+        InitializeManaIcons();
+
+    }
+
+    //CLear out anything from the current payment process
+    public void CleanUp() {
 
 
+        //Clear out the model we were paying for
+        modTarMana = null;
+        manaToPay = null;
+        plyrPaying = null;
+        bCanPayCost = false;
+
+        //Destroy all the mana cost icons we had
+        for(int i=0; i<lstgoManaIcons.Count; i++) {
+            DestroyManaIcon();
+        }
+
+        //Set our gameobject's enabled state to false (until we get reactivated at another time)
+        gameObject.SetActive(false); 
+    }
+
+    public override void Init() {
+
+        //Set up all the keybindings we need for allocating/deallocating mana
+        KeyBindings.SetBinding(AddPhysical, KeyCode.Q);
+        KeyBindings.SetBinding(AddMental, KeyCode.W);
+        KeyBindings.SetBinding(AddEnergy, KeyCode.E);
+        KeyBindings.SetBinding(AddBlood, KeyCode.R);
+
+        KeyBindings.SetBinding(RemovePhysical, KeyCode.A);
+        KeyBindings.SetBinding(RemoveMental, KeyCode.S);
+        KeyBindings.SetBinding(RemoveEnergy, KeyCode.D);
+        KeyBindings.SetBinding(RemoveBlood, KeyCode.F);
     }
 
     // Update is called once per frame
     void Update() {
 
     }
+
+
+    public void AddMana(Mana.MANATYPE manaType) {
+        if (plyrPaying == null) {
+            Debug.Log("Cannot allocate mana since no player is paying a mana cost");
+            return;
+        }
+        if (bCanPayCost == false) {
+            Debug.Log("Cannot allocate mana since this cost cannot be played with the player's mana resources");
+            return;
+        }
+
+        if(manaCurSelectedToSpendOnEffort.GetTotalMana() == manaToPay.GetTotalMana()) {
+            Debug.Log("Cannot allocate mana since we've already allocated enough for the full cost");
+            return;
+        }
+
+        if(manaCurSelectedToSpendOnEffort[manaType] >= plyrPaying.mana.manaUsableToPay[manaType]) {
+            Debug.Log("Cannot allocate mana since we have already promised all our mana for this mana type");
+            return;
+        }
+
+        //Increment the requested type of mana
+        manaCurSelectedToSpendOnEffort[manaType]++;
+
+        //Re-display the promised mana
+        UpdateEffortManaIcons();
+    }
+
+    public void RemoveMana(Mana.MANATYPE manaType) {
+        if (plyrPaying == null) {
+            Debug.Log("Cannot deallocate mana since no player is paying a mana cost");
+            return;
+        }
+        if (bCanPayCost == false) {
+            Debug.Log("Cannot deallocate mana since this cost cannot be played with the player's mana resources");
+            return;
+        }
+        if(manaCurSelectedToSpendOnEffort[manaType] == 0) {
+            Debug.Log("Cannot deallocate mana since we haven't allocated any mana of this colour for effort payments");
+        }
+
+        //Decrement the requested type of mana
+        manaCurSelectedToSpendOnEffort[manaType]--;
+
+        //Re-display the promised mana
+        UpdateEffortManaIcons();
+
+    }
+
+    public void AddPhysical(Object target, params object[] args) { AddMana(Mana.MANATYPE.PHYSICAL); }
+    public void AddMental(Object target, params object[] args) { AddMana(Mana.MANATYPE.MENTAL); }
+    public void AddEnergy(Object target, params object[] args) { AddMana(Mana.MANATYPE.ENERGY); }
+    public void AddBlood(Object target, params object[] args) { AddMana(Mana.MANATYPE.BLOOD); }
+
+    public void RemovePhysical(Object target, params object[] args) { RemoveMana(Mana.MANATYPE.PHYSICAL); }
+    public void RemoveMental(Object target, params object[] args) { RemoveMana(Mana.MANATYPE.MENTAL); }
+    public void RemoveEnergy(Object target, params object[] args) { RemoveMana(Mana.MANATYPE.ENERGY); }
+    public void RemoveBlood(Object target, params object[] args) { RemoveMana(Mana.MANATYPE.BLOOD); }
+
 }
