@@ -28,7 +28,7 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         for(int i = 0; i <= (int)Mana.MANATYPE.EFFORT; i++) {
 
             int nManaToPay = manaToPay[i];
-            int nManaCanPay = Mathf.Min(nManaToPay, plyrPaying.mana.manaUsableToPay[i]);
+            int nManaCanPay = Mathf.Min(nManaToPay, plyrPaying.manapool.manaUsableToPay[i]);
             int nManaUnpayable = nManaToPay - nManaCanPay;
 
             //For each mana pip we can afford, spawn a paid icon for it
@@ -115,14 +115,14 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         plyrPaying = modTarMana.skill.chrOwner.plyrOwner;
 
         //Check (and save the result) if the player can even possibly afford the cost 
-        bCanPayCost = plyrPaying.mana.CanPayManaCost(modTarMana.manaCostRequired);
+        bCanPayCost = plyrPaying.manapool.CanPayManaCost(modTarMana.manaCostRequired);
 
         //Initialize the mana icons we're displaying the mana cost with
         InitializeManaIcons();
 
         if(bCanPayCost) {
             //Initialize the currently allocated mana to auto-spend all effort mana (that we can)
-            manaCurSelectedToSpendOnEffort = new Mana(0, 0, 0, 0, Mathf.Min(manaToPay[Mana.MANATYPE.EFFORT], plyrPaying.mana.manaUsableToPay[Mana.MANATYPE.EFFORT]));
+            manaCurSelectedToSpendOnEffort = new Mana(0, 0, 0, 0, Mathf.Min(manaToPay[Mana.MANATYPE.EFFORT], plyrPaying.manapool.manaUsableToPay[Mana.MANATYPE.EFFORT]));
         }
 
     }
@@ -160,6 +160,8 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         KeyBindings.SetBinding(RemoveMental, KeyCode.S);
         KeyBindings.SetBinding(RemoveEnergy, KeyCode.D);
         KeyBindings.SetBinding(RemoveBlood, KeyCode.F);
+
+        KeyBindings.SetBinding(SubmitAllocatedMana, KeyCode.T);
     }
 
 
@@ -186,7 +188,7 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         manaPayment[Mana.MANATYPE.EFFORT] = 0;//Copy the coloured mana payment except for the effort cost, then add in the allocated effort payment
         manaPayment.ChangeMana(manaCurSelectedToSpendOnEffort);
 
-        modTarMana.cbClickSelectable(manaPayment);
+        modTarMana.AttemptSelection(manaPayment);
     }
 
     public void AddMana(Mana.MANATYPE manaType) {
@@ -204,13 +206,16 @@ public class ViewTarMana : Singleton<ViewTarMana> {
             return;
         }
 
-        if(manaCurSelectedToSpendOnEffort[manaType] >= plyrPaying.mana.manaUsableToPay[manaType]) {
+        if(plyrPaying.manapool.manaUsableToPay[manaType] == 0) {
             Debug.Log("Cannot allocate mana since we have already promised all our mana for this mana type");
             return;
         }
 
         //Increment the requested type of mana
         manaCurSelectedToSpendOnEffort[manaType]++;
+
+        //Reserve one mana from our mana pool to be ready to pay for this payment
+        plyrPaying.manapool.ReserveMana(manaType);
 
         //Re-display the promised mana
         UpdateEffortManaIcons();
@@ -231,6 +236,9 @@ public class ViewTarMana : Singleton<ViewTarMana> {
 
         //Decrement the requested type of mana
         manaCurSelectedToSpendOnEffort[manaType]--;
+
+        //Unreserve one mana that we had set aside in our mana pool to now be usable again
+        plyrPaying.manapool.UnreserveMana(manaType);
 
         //Re-display the promised mana
         UpdateEffortManaIcons();

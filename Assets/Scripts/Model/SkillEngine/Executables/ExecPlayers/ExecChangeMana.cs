@@ -67,10 +67,10 @@ public class ExecChangeMana : ExecPlayer {
 
         if(manaChange == null) {
             //If no instance of mana was added, then change the single amount of mana passed
-            plyrTarget.mana.ChangeMana(manaType, nAmount);
+            plyrTarget.manapool.ChangeMana(manaType, nAmount);
         } else {
             //But if an instance of mana was specified, then use that to change mana
-            plyrTarget.mana.ChangeMana(manaChange);
+            plyrTarget.manapool.ChangeMana(manaChange);
         }
 
         fDelay = ContTurns.fDelayMinorSkill;

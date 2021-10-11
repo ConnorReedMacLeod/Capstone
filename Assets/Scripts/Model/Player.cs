@@ -18,7 +18,7 @@ public class Player : MonoBehaviour {
 
     public LocalInputType inputController;
 
-    public ManaPool mana;
+    public ManaPool manapool;
 
     public static Subject subAllInputTypeChanged = new Subject(Subject.SubType.ALL);
     public static Subject subAllPlayerLost = new Subject(Subject.SubType.ALL);
@@ -118,9 +118,9 @@ public class Player : MonoBehaviour {
             arChr = new Chr[MAXCHRS];
 
             GameObject manaPanel = Instantiate(pfManaPanel, Match.Get().transform);
-            mana = manaPanel.GetComponent<ManaPool>();
+            manapool = manaPanel.GetComponent<ManaPool>();
 
-            mana.SetPlayer(this);
+            manapool.SetPlayer(this);
 
             //TODO: Change this, all this, to work with networking
             if(id == 0) {
