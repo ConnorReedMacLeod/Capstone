@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Mana))]
-public class ViewMana : MonoBehaviour {
+[RequireComponent(typeof(ManaPool))]
+public class ViewManaPool : MonoBehaviour {
 
     bool bStarted;                          //Confirms the Start() method has executed
 
-    public Text txtManaPhysical;
-    public Text txtManaMental;
-    public Text txtManaEnergy;
-    public Text txtManaBlood;
+    public Text txtManaPhysicalUsable;
+    public Text txtManaMentalUsable;
+    public Text txtManaEnergyUsable;
+    public Text txtManaBloodUsable;
+    public Text txtManaEffortUsable;
 
-    public Text txtManaEffort;
-
-    public Text txtManaEffortPhysical;
-    public Text txtManaEffortMental;
-    public Text txtManaEffortEnergy;
-    public Text txtManaEffortBlood;
+    public Text txtManaPhysicalReserved;
+    public Text txtManaMentalReserved;
+    public Text txtManaEnergyReserved;
+    public Text txtManaBloodReserved;
+    public Text txtManaEffortReserved;
 
     public ManaPool mod;                   //reference to the player's mana model
 
@@ -75,35 +75,44 @@ public class ViewMana : MonoBehaviour {
 
     }
 
-    public void DisplayMana(Text _txtMana, int _nMana) {
+    public void UpdateManaText(Text _txtMana, int _nMana) {
         if(_nMana == 0) {
             _txtMana.text = "";
         } else {
             _txtMana.text = _nMana.ToString();
         }
     }
+    
 
     public void DisplayAllMana() {
-        DisplayMana(txtManaPhysical, mod.manaOwned[Mana.MANATYPE.PHYSICAL]);
-        DisplayMana(txtManaMental, mod.manaOwned[Mana.MANATYPE.MENTAL]);
-        DisplayMana(txtManaEnergy, mod.manaOwned[Mana.MANATYPE.ENERGY]);
-        DisplayMana(txtManaBlood, mod.manaOwned[Mana.MANATYPE.BLOOD]);
-        DisplayMana(txtManaEffort, mod.manaOwned[Mana.MANATYPE.EFFORT]);
+        UpdateManaText(txtManaPhysicalUsable, mod.manaOwned[Mana.MANATYPE.PHYSICAL]);
+        UpdateManaText(txtManaMentalUsable, mod.manaOwned[Mana.MANATYPE.MENTAL]);
+        UpdateManaText(txtManaEnergyUsable, mod.manaOwned[Mana.MANATYPE.ENERGY]);
+        UpdateManaText(txtManaBloodUsable, mod.manaOwned[Mana.MANATYPE.BLOOD]);
+        UpdateManaText(txtManaEffortUsable, mod.manaOwned[Mana.MANATYPE.EFFORT]);
     }
 
     public void cbManaChange(Object target, params object[] args) {
         switch((Mana.MANATYPE)args[0]) {
         case Mana.MANATYPE.PHYSICAL:
-            DisplayMana(txtManaPhysical, mod.manaOwned[Mana.MANATYPE.PHYSICAL]);
+            UpdateManaText(txtManaPhysicalUsable, mod.manaUsableToPay[Mana.MANATYPE.PHYSICAL]);
+            UpdateManaText(txtManaPhysicalReserved, mod.manaReservedToPay[Mana.MANATYPE.PHYSICAL]);
             break;
         case Mana.MANATYPE.MENTAL:
-            DisplayMana(txtManaMental, mod.manaOwned[Mana.MANATYPE.MENTAL]);
+            UpdateManaText(txtManaMentalUsable, mod.manaUsableToPay[Mana.MANATYPE.MENTAL]);
+            UpdateManaText(txtManaMentalReserved, mod.manaReservedToPay[Mana.MANATYPE.MENTAL]);
             break;
         case Mana.MANATYPE.ENERGY:
-            DisplayMana(txtManaEnergy, mod.manaOwned[Mana.MANATYPE.ENERGY]);
+            UpdateManaText(txtManaEnergyUsable, mod.manaUsableToPay[Mana.MANATYPE.ENERGY]);
+            UpdateManaText(txtManaMentalReserved, mod.manaReservedToPay[Mana.MANATYPE.ENERGY]);
             break;
         case Mana.MANATYPE.BLOOD:
-            DisplayMana(txtManaBlood, mod.manaOwned[Mana.MANATYPE.BLOOD]);
+            UpdateManaText(txtManaBloodUsable, mod.manaUsableToPay[Mana.MANATYPE.BLOOD]);
+            UpdateManaText(txtManaMentalReserved, mod.manaReservedToPay[Mana.MANATYPE.BLOOD]);
+            break;
+        case Mana.MANATYPE.EFFORT:
+            UpdateManaText(txtManaEffortUsable, mod.manaUsableToPay[Mana.MANATYPE.EFFORT]);
+            UpdateManaText(txtManaMentalReserved, mod.manaReservedToPay[Mana.MANATYPE.EFFORT]);
             break;
         }
 

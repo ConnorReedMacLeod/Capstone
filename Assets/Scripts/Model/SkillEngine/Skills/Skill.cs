@@ -98,7 +98,7 @@ public class Skill { //This should probably be made abstract
 
     public bool CanPayMana() {
         //Check if you have enough mana
-        if(chrOwner.plyrOwner.mana.CanPayManaCost(this.manaCost) == false) {
+        if(chrOwner.plyrOwner.manapool.CanPayManaCost(this.manaCost) == false) {
             Debug.Log("Not enough mana");
             return false;
         }

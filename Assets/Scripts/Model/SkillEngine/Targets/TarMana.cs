@@ -52,7 +52,7 @@ public class TarMana : Target {
     }
 
     public override object GetRandomSelectable() {
-        return skill.chrOwner.plyrOwner.mana.GetPaymentForManaCost(manaCostRequired);
+        return skill.chrOwner.plyrOwner.manapool.GetPaymentForManaCost(manaCostRequired);
     }
 
     public override void InitTargetDescription() {

@@ -82,7 +82,12 @@ public class Mana {
         return GetTotalColouredMana() + arMana[(int)MANATYPE.EFFORT];
     }
 
-
+    public void ChangeMana(Mana.MANATYPE manaType, int nAmount = 1) {
+        if (this[manaType] + nAmount < 0) {
+            Debug.LogError("This would yield a negative mana amount for type " + manaType);
+        }
+        this[manaType] += nAmount;
+    }
 
     public void ChangeMana(Mana manaDelta) {
         for(int i = 0; i < nManaTypes; i++) {

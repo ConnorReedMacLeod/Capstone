@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //For the mana pool owned by a player
-[RequireComponent(typeof(ViewMana))]
+[RequireComponent(typeof(ViewManaPool))]
 public class ManaPool : MonoBehaviour {
 
     public Player plyr;
@@ -37,22 +37,32 @@ public class ManaPool : MonoBehaviour {
 
 
     public void ChangeMana(Mana.MANATYPE manaType, int nAmount = 1) {
-        Mana manaToAdd = new Mana(0, 0, 0, 0, 0);
-        manaToAdd[manaType] = nAmount;
-        ChangeMana(manaToAdd);
+        manaOwned.ChangeMana(manaType, nAmount);
+        subManaChange.NotifyObs(this, manaType);
     }
 
     public void ChangeMana(Mana manaToAdd) {
-        manaOwned.ChangeMana(manaToAdd);
+        for(int i=0; i<=(int)Mana.MANATYPE.EFFORT; i++) {
+            if (manaToAdd[i] == 0) continue;
+            ChangeMana((Mana.MANATYPE)i, manaToAdd[i]);
+        }
     }
 
+    public void ReserveMana(Mana.MANATYPE manaType) {
+        manaReservedToPay.ChangeMana(manaType);
+        subManaChange.NotifyObs(this, manaType);
+    }
 
-    public void ReserveMana(ManaCost manaCost) {
-        manaReservedToPay.ChangeMana(manaCost.pManaCost.Get());
+    public void UnreserveMana(Mana.MANATYPE manaType) {
+        manaReservedToPay.ChangeMana(manaType, -1);
+        subManaChange.NotifyObs(this, manaType);
     }
 
     public void ResetReservedMana() {
-        manaReservedToPay = new Mana(0, 0, 0, 0);
+        for (int i = 0; i <= (int)Mana.MANATYPE.EFFORT; i++) {
+            manaReservedToPay[i] = 0;
+            subManaChange.NotifyObs(this, (Mana.MANATYPE)i);
+        }
     }
 
 
