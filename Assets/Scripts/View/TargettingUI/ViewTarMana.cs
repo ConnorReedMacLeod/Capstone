@@ -93,13 +93,13 @@ public class ViewTarMana : Singleton<ViewTarMana> {
 
     public string GetManaIconSpritePath(Mana.MANATYPE manatype, bool bPaidFor, Mana.MANATYPE manaPaidWith = Mana.MANATYPE.EFFORT) {
         if(bPaidFor == false) {
-            return string.Format("Images/Mana/{0}Unpaid.png", Mana.arsManaTypes[(int)manatype]);
+            return string.Format("Images/Mana/CostUI/{0}Unpaid.png", Mana.arsManaTypes[(int)manatype]);
         } else if(manatype != Mana.MANATYPE.EFFORT) {
             //For paid coloured mana
-            return string.Format("Images/Mana/{0}Paid.png", Mana.arsManaTypes[(int)manatype]);
+            return string.Format("Images/Mana/CostUI/{0}Paid.png", Mana.arsManaTypes[(int)manatype]);
         } else {
             //For paid effort mana 
-            return string.Format("Images/Mana/EffortPaidWith{0}.png", Mana.arsManaTypes[(int)manaPaidWith]);
+            return string.Format("Images/Mana/CostUI/EffortPaidWith{0}.png", Mana.arsManaTypes[(int)manaPaidWith]);
         }
     }
 
