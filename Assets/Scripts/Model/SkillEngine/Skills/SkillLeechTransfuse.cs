@@ -20,6 +20,7 @@ public class SkillLeech : Skill {
         nFatigue = 1;
 
         lstTargets = new List<Target>() {
+            new TarMana(this, manaCost),
             new TarChr(this, TarChr.IsDiffTeam(chrOwner))
         };
 
@@ -97,6 +98,7 @@ public class SkillTransfuse : Skill {
         nFatigue = 2;
 
         lstTargets = new List<Target>() {
+            new TarMana(this, manaCost),
             new TarChr(this, TarChr.IsSameTeam(chrOwner))
         };
 

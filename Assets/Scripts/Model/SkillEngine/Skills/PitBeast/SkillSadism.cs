@@ -22,10 +22,6 @@ public class SkillSadism : Skill {
 
         soulPassive = new SoulSadism(this.chrOwner, this.chrOwner, this);
 
-        lstTargets = new List<Target>() {
-
-        };
-
         lstClausesOnEquip = new List<Clause>() {
             new ClauseEquip(this)
         };

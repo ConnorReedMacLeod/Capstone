@@ -18,6 +18,7 @@ public class SkillHuntersQuarry : Skill {
         nFatigue = 3;
 
         lstTargets = new List<Target>(){
+            new TarMana(this, manaCost),
             new TarChr(this, TarChr.IsOtherChr(chrOwner))
         };
 

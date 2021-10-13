@@ -21,6 +21,7 @@ public class SkillSpiritSlap : Skill {
         nFatigue = 2;
 
         lstTargets = new List<Target>() {
+            new TarMana(this, manaCost),
             new TarChr(this, Target.AND(TarChr.IsFrontliner(), TarChr.IsDiffTeam(chrOwner)))
         };
 

@@ -19,7 +19,7 @@ public class SkillFortissimo : Skill {
 
 
         lstTargets = new List<Target>() {
-
+            new TarMana(this, manaCost),
         };
 
         lstClauses = new List<Clause>() {

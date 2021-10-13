@@ -10,7 +10,8 @@ public class ViewTarMana : Singleton<ViewTarMana> {
 
     public List<GameObject> lstgoManaIcons;
 
-    public const int nManaSymbolSpacing = 20;
+    public const float fManaSymbolSize = 0.2f;
+    public const float fManaSymbolSpacing = 0.5f;
 
     public GameObject goRequiredManaPosition; //The game object that will contain the mana icons that are being requested
 
@@ -18,7 +19,8 @@ public class ViewTarMana : Singleton<ViewTarMana> {
 
     public bool bCanPayCost; //Remember if we can or cannot pay the full cost we're being asked to pay
 
-
+    public Vector3 v3OnScreen = new Vector3(0, 0, -2.5f);
+    public Vector3 v3OffScreen = new Vector3(-100, -100, -2.5f);
 
     public void InitializeManaIcons() {
 
@@ -69,13 +71,23 @@ public class ViewTarMana : Singleton<ViewTarMana> {
 
     public void AddManaIcon(Mana.MANATYPE manaType, bool bPaidFor, Mana.MANATYPE manaPaidWith = Mana.MANATYPE.EFFORT) {
 
-        GameObject goManaIcon = Instantiate(new GameObject(string.Format("sprManaIcon{0}", lstgoManaIcons.Count)), goRequiredManaPosition.transform);
+        GameObject goManaIcon = new GameObject(string.Format("sprManaIcon{0}", lstgoManaIcons.Count));
+
+        goManaIcon.transform.parent = goRequiredManaPosition.transform;
+
+        SpriteRenderer sprRen = goManaIcon.AddComponent<SpriteRenderer>();
 
         //Assign the appropriate sprite
         LibView.AssignSpritePathToObject(GetManaIconSpritePath(manaType, bPaidFor, manaPaidWith), goManaIcon);
 
+        //Sacle the icon apropriately
+        goManaIcon.transform.localScale = new Vector3(fManaSymbolSize, fManaSymbolSize, 1);
+
         //Place the icon at the appropriate spot
-        goManaIcon.transform.localPosition = new Vector3(nManaSymbolSpacing * (0.5f + 1.5f * lstgoManaIcons.Count), 0f, 0f);
+        goManaIcon.transform.localPosition = new Vector3(fManaSymbolSpacing * (0.5f + 1.5f * lstgoManaIcons.Count), 0f, 0f);
+
+        //Ensure the symbol appears ahead of the mana panel
+        sprRen.sortingOrder = 1;
 
         lstgoManaIcons.Add(goManaIcon);
     }
@@ -93,13 +105,13 @@ public class ViewTarMana : Singleton<ViewTarMana> {
 
     public string GetManaIconSpritePath(Mana.MANATYPE manatype, bool bPaidFor, Mana.MANATYPE manaPaidWith = Mana.MANATYPE.EFFORT) {
         if(bPaidFor == false) {
-            return string.Format("Images/Mana/CostUI/{0}Unpaid.png", Mana.arsManaTypes[(int)manatype]);
+            return string.Format("Images/Mana/CostUI/img{0}Unpaid", Mana.arsManaTypes[(int)manatype]);
         } else if(manatype != Mana.MANATYPE.EFFORT) {
             //For paid coloured mana
-            return string.Format("Images/Mana/CostUI/{0}Paid.png", Mana.arsManaTypes[(int)manatype]);
+            return string.Format("Images/Mana/CostUI/img{0}Paid", Mana.arsManaTypes[(int)manatype]);
         } else {
             //For paid effort mana 
-            return string.Format("Images/Mana/CostUI/EffortPaidWith{0}.png", Mana.arsManaTypes[(int)manaPaidWith]);
+            return string.Format("Images/Mana/CostUI/imgEffortPaidWith{0}", Mana.arsManaTypes[(int)manaPaidWith]);
         }
     }
 
@@ -107,8 +119,9 @@ public class ViewTarMana : Singleton<ViewTarMana> {
 
     //Set the TarMana model that we're going to be facilitating payment for
     public void StartPayment(TarMana _modTarMana) {
-        //Enable our game object
-        gameObject.SetActive(true);
+
+        //Move the panel onscreen
+        MoveOnScreen();
 
         modTarMana = _modTarMana;
         manaToPay = modTarMana.manaCostRequired.pManaCost.Get();
@@ -144,8 +157,16 @@ public class ViewTarMana : Singleton<ViewTarMana> {
             DestroyManaIcon();
         }
 
-        //Set our gameobject's enabled state to false (until we get reactivated at another time)
-        gameObject.SetActive(false);
+        //Hide the panel offscreen until it's needed again
+        MoveOffscreen();
+    }
+
+    public void MoveOnScreen() {
+        transform.position = v3OnScreen;
+    }
+
+    public void MoveOffscreen() {
+        transform.position = v3OffScreen;
     }
 
     public override void Init() {
@@ -162,6 +183,7 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         KeyBindings.SetBinding(RemoveBlood, KeyCode.F);
 
         KeyBindings.SetBinding(SubmitAllocatedMana, KeyCode.T);
+        
     }
 
 

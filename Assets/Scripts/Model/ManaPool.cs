@@ -120,8 +120,9 @@ public class ManaPool : MonoBehaviour {
     }
 
     public void Start() {
+        manaOwned = new Mana(4, 4, 4, 4, 4);
+        manaReservedToPay = new Mana(0, 0, 0, 0, 0);
 
-        ChangeMana(new Mana(4, 4, 4, 4));
         ResetReservedMana();
 
     }

@@ -18,6 +18,7 @@ public class SkillExplosion : Skill {
         nFatigue = 6;
 
         lstTargets = new List<Target>() {
+            new TarMana(this, manaCost),
             new TarChr(this, Target.TRUE)
         };
 

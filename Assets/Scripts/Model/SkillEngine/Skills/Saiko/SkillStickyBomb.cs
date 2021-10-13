@@ -21,6 +21,7 @@ public class SkillStickyBomb : Skill {
         nFatigue = 3;
 
         lstTargets = new List<Target>() {
+            new TarMana(this, manaCost),
             new TarChr(this, Target.TRUE)
         };
 

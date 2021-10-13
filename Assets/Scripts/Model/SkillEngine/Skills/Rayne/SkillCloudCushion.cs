@@ -18,6 +18,7 @@ public class SkillCloudCushion : Skill {
         nFatigue = 1;
 
         lstTargets = new List<Target>() {
+            new TarMana(this, manaCost),
             new TarChr(this, TarChr.IsSameTeam(chrOwner))
         };
 

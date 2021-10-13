@@ -18,7 +18,7 @@ public class SkillForcedEvolution : Skill {
         nFatigue = 1;
 
         lstTargets = new List<Target>() {
-
+            new TarMana(this, manaCost),
         };
 
         lstClauses = new List<Clause>() {

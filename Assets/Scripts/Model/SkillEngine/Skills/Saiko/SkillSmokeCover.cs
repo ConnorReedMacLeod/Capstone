@@ -18,7 +18,7 @@ public class SkillSmokeCover : Skill {
         nFatigue = 2;
 
         lstTargets = new List<Target>() {
-
+            new TarMana(this, manaCost),
         };
 
         lstClauses = new List<Clause>() {

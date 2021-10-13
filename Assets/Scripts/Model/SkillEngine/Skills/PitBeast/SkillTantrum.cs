@@ -18,7 +18,7 @@ public class SkillTantrum : Skill {
         nFatigue = 5;
 
         lstTargets = new List<Target>() {
-
+            new TarMana(this, manaCost),
         };
 
         lstClauses = new List<Clause>() {

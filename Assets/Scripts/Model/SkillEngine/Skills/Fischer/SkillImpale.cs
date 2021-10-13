@@ -25,6 +25,7 @@ public class SkillImpale : Skill {
         dmg = new Damage(this.chrOwner, null, nBaseDamage);
 
         lstTargets = new List<Target>() {
+            new TarMana(this, manaCost),
             new TarChr(this, Target.AND(TarChr.IsDiffTeam(chrOwner), TarChr.IsFrontliner()))
         };
 
