@@ -53,9 +53,25 @@ public class ManaPool : MonoBehaviour {
         subManaChange.NotifyObs(this, manaType);
     }
 
+    public void ReserveMana(Mana manaToReserve) {
+        for (int i = 0; i <= (int)Mana.MANATYPE.EFFORT; i++) {
+            if (manaToReserve[i] == 0) continue;
+            manaReservedToPay.ChangeMana((Mana.MANATYPE)i, manaToReserve[i]);
+            subManaChange.NotifyObs(this, (Mana.MANATYPE)i);
+        }
+    }
+
     public void UnreserveMana(Mana.MANATYPE manaType) {
         manaReservedToPay.ChangeMana(manaType, -1);
         subManaChange.NotifyObs(this, manaType);
+    }
+
+    public void UnreserveMana(Mana manaToUnreserve) {
+        for (int i = 0; i <= (int)Mana.MANATYPE.EFFORT; i++) {
+            if (manaToUnreserve[i] == 0) continue;
+            manaReservedToPay.ChangeMana((Mana.MANATYPE)i, -manaToUnreserve[i]);
+            subManaChange.NotifyObs(this, (Mana.MANATYPE)i);
+        }
     }
 
     public void ResetReservedMana() {

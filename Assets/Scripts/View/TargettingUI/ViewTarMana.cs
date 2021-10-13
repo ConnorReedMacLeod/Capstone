@@ -15,7 +15,8 @@ public class ViewTarMana : Singleton<ViewTarMana> {
 
     public GameObject goRequiredManaPosition; //The game object that will contain the mana icons that are being requested
 
-    public Mana manaCurSelectedToSpendOnEffort; //The stored amount we're building up to pay for the given tarMana's effort portion
+    public Mana manaToSpend;//The amount of mana we have allocated for paying the manacost
+    public Mana manaToSpendOnEffort; //Specifically the amount of mana allocated to cover the effort portion of the manacost
 
     public bool bCanPayCost; //Remember if we can or cannot pay the full cost we're being asked to pay
 
@@ -36,6 +37,8 @@ public class ViewTarMana : Singleton<ViewTarMana> {
             //For each mana pip we can afford, spawn a paid icon for it
             for(int j = 0; j < nManaCanPay; j++) {
                 AddManaIcon((Mana.MANATYPE)i, true, (Mana.MANATYPE)i);
+                manaToSpend[j]++;
+                if (i == (int)Mana.MANATYPE.EFFORT) manaToSpendOnEffort[j]++;
             }
             //For each mana pip we can't afford, spawn an unpaid icon for it
             for(int j = 0; j < nManaUnpayable; j++) {
@@ -52,7 +55,7 @@ public class ViewTarMana : Singleton<ViewTarMana> {
     }
 
     public void UpdateEffortManaIcons() {
-        List<Mana.MANATYPE> lstManaAllocated = Mana.ManaToListOfTypes(manaCurSelectedToSpendOnEffort);
+        List<Mana.MANATYPE> lstManaAllocated = Mana.ManaToListOfTypes(manaToSpendOnEffort);
 
         //Go through each Effort Mana Icon and update it's payment icon to be paid with the appropriate amount of (coloured) allocated mana
         for(int i = manaToPay.GetTotalColouredMana(), j = 0; i < manaToPay.GetTotalMana(); i++, j++) {
@@ -130,12 +133,18 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         //Check (and save the result) if the player can even possibly afford the cost 
         bCanPayCost = plyrPaying.manapool.CanPayManaCost(modTarMana.manaCostRequired);
 
-        //Initialize the mana icons we're displaying the mana cost with
+        manaToSpend = new Mana(0, 0, 0, 0, 0);
+
+        //Initialize the mana icons we're displaying the mana cost with (and determine what amounts of mana we're
+        //  paying for non-effort costs
         InitializeManaIcons();
 
         if(bCanPayCost) {
             //Initialize the currently allocated mana to auto-spend all effort mana (that we can)
-            manaCurSelectedToSpendOnEffort = new Mana(0, 0, 0, 0, Mathf.Min(manaToPay[Mana.MANATYPE.EFFORT], plyrPaying.manapool.manaUsableToPay[Mana.MANATYPE.EFFORT]));
+            manaToSpendOnEffort = new Mana(0, 0, 0, 0, manaToSpend[Mana.MANATYPE.EFFORT]);
+
+            //Have the paying player reserve the starting amount of mana
+            plyrPaying.manapool.ReserveMana(manaToSpend);
         }
 
     }
@@ -150,7 +159,8 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         plyrPaying = null;
         bCanPayCost = false;
 
-        manaCurSelectedToSpendOnEffort = null;
+        manaToSpend = null;
+        manaToSpendOnEffort = null;
 
         //Destroy all the mana cost icons we had
         for(int i = 0; i < lstgoManaIcons.Count; i++) {
@@ -199,18 +209,19 @@ public class ViewTarMana : Singleton<ViewTarMana> {
             return;
         }
 
-        if(manaCurSelectedToSpendOnEffort.GetTotalMana() < manaToPay[Mana.MANATYPE.EFFORT]) {
+        if(manaToSpendOnEffort.GetTotalMana() < manaToPay[Mana.MANATYPE.EFFORT]) {
             Debug.Log("Cannot submit this mana payment since not enough mana has been allocated to pay for the effort portion");
+            return;
+        }
+
+        if (modTarMana.manaCostRequired.CanBePaidWith(manaToSpend) == false) {
+            Debug.Log("Cannot submit this mana payment since the apportioned mana is somehow insufficient for paying the cost");
             return;
         }
 
         //At this point, they should be able to pay, and should have allocated some amount of their mana to pay for the effort portion
         //  We can pass along the total mana amount to the TarMana model to submit as its payment
-        Mana manaPayment = new Mana(manaToPay);
-        manaPayment[Mana.MANATYPE.EFFORT] = 0;//Copy the coloured mana payment except for the effort cost, then add in the allocated effort payment
-        manaPayment.ChangeMana(manaCurSelectedToSpendOnEffort);
-
-        modTarMana.AttemptSelection(manaPayment);
+        modTarMana.AttemptSelection(manaToSpend);
     }
 
     public void AddMana(Mana.MANATYPE manaType) {
@@ -223,7 +234,7 @@ public class ViewTarMana : Singleton<ViewTarMana> {
             return;
         }
 
-        if(manaCurSelectedToSpendOnEffort.GetTotalMana() == manaToPay[Mana.MANATYPE.EFFORT]) {
+        if(manaToSpendOnEffort.GetTotalMana() == manaToPay[Mana.MANATYPE.EFFORT]) {
             Debug.Log("Cannot allocate mana since we've already allocated enough for the full effort cost");
             return;
         }
@@ -234,7 +245,8 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         }
 
         //Increment the requested type of mana
-        manaCurSelectedToSpendOnEffort[manaType]++;
+        manaToSpend[manaType]++;
+        manaToSpendOnEffort[manaType]++;
 
         //Reserve one mana from our mana pool to be ready to pay for this payment
         plyrPaying.manapool.ReserveMana(manaType);
@@ -252,12 +264,13 @@ public class ViewTarMana : Singleton<ViewTarMana> {
             Debug.Log("Cannot deallocate mana since this cost cannot be played with the player's mana resources");
             return;
         }
-        if(manaCurSelectedToSpendOnEffort[manaType] == 0) {
+        if(manaToSpendOnEffort[manaType] == 0) {
             Debug.Log("Cannot deallocate mana since we haven't allocated any mana of this colour for effort payments");
         }
 
         //Decrement the requested type of mana
-        manaCurSelectedToSpendOnEffort[manaType]--;
+        manaToSpend[manaType]--;
+        manaToSpendOnEffort[manaType]--;
 
         //Unreserve one mana that we had set aside in our mana pool to now be usable again
         plyrPaying.manapool.UnreserveMana(manaType);

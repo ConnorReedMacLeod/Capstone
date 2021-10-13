@@ -45,7 +45,7 @@ public class SkillReverberate : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             List<Chr> lstChrsOnTeam = chrSelected.plyrOwner.GetActiveChrs();
 
