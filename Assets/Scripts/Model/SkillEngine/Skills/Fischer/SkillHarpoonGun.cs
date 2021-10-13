@@ -20,6 +20,7 @@ public class SkillHarpoonGun : Skill {
         nFatigue = 2;
 
         lstTargets = new List<Target>() {
+            new TarMana(this, manaCost),
             new TarChr(this, TarChr.IsDiffTeam(chrOwner))
         };
 

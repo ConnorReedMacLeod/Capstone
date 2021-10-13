@@ -18,7 +18,7 @@ public class SkillBunker : Skill {
         nFatigue = 6;
 
         lstTargets = new List<Target>() {
-
+            new TarMana(this, manaCost),
         };
 
         lstClauses = new List<Clause>() {

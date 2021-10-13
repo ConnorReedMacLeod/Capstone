@@ -13,7 +13,7 @@ public class TarMana : Target {
             Debug.LogError("Can't get the cost for mana type: " + nManaTypeIndex);
         }
 
-        return (byte)((nSerialized & (63 << (6 * (5 - nManaTypeIndex)))) >> (6 * (5 - nManaTypeIndex)));
+        return (byte)((nSerialized & (63 << (6 * (4 - nManaTypeIndex)))) >> (6 * (4 - nManaTypeIndex)));
     }
 
     public override int Serialize(object objToSerialize) {

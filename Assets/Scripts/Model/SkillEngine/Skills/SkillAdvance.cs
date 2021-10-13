@@ -18,7 +18,7 @@ public class SkillAdvance : Skill {
         nFatigue = 4;
 
         lstTargets = new List<Target>() {
-
+            new TarMana(this, manaCost),
         };
 
         lstClauses = new List<Clause>() {

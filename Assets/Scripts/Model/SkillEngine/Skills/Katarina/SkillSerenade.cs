@@ -18,6 +18,7 @@ public class SkillSerenade : Skill {
         nFatigue = 4;
 
         lstTargets = new List<Target>() {
+            new TarMana(this, manaCost),
             new TarChr(this, TarChr.IsSameTeam(chrOwner))
         };
 

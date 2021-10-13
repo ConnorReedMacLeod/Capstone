@@ -19,6 +19,7 @@ public class SkillReverberate : Skill {
 
 
         lstTargets = new List<Target>() {
+            new TarMana(this, manaCost),
             new TarChr(this, TarChr.TRUE)
         };
 

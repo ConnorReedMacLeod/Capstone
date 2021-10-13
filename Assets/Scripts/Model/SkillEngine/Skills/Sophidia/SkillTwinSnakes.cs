@@ -19,6 +19,7 @@ public class SkillTwinSnakes : Skill {
 
 
         lstTargets = new List<Target>() {
+            new TarMana(this, manaCost),
             new TarChr(this, TarChr.IsDiffTeam(chrOwner))
         };
 
