@@ -52,7 +52,7 @@ public class SkillHeal : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             //Push an executable with this skill's owner as the source, the selected character as the target,
             // and we can copy the stored healing instance to apply

@@ -47,7 +47,7 @@ public class SkillLeech : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 sLabel = "Gimme yer life-juice"
@@ -125,7 +125,7 @@ public class SkillTransfuse : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             ContSkillEngine.PushSingleExecutable(new ExecHeal(skill.chrOwner, chrSelected, healing) {
                 sLabel = "Drink my life-juice"
@@ -147,8 +147,6 @@ public class SkillTransfuse : Skill {
         }
 
         public override void ClauseEffect(Selections selections) {
-
-            Chr chrSelected = (Chr)selections.lstSelections[0];
 
             ContSkillEngine.PushSingleExecutable(new ExecAdaptSkill(skill.chrOwner, this.skill, SkillType.SKILLTYPE.LEECH));
 

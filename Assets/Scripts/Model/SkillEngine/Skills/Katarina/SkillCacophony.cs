@@ -65,7 +65,7 @@ public class SkillCacophony : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             //TODO - make this better dynamically react.  Should probably just have a Stun effect object that can
             //       be modified freely like with damage

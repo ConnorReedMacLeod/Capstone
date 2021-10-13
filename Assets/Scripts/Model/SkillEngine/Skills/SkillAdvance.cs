@@ -39,7 +39,7 @@ public class SkillAdvance : Skill {
         }
 
         public override void ClauseEffect(Selections selections) {
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             ContSkillEngine.PushSingleExecutable(new ExecSwitchChar(skill.chrOwner, chrSelected, ContPositions.Get().GetAlliedFrontlinePositions(chrSelected.plyrOwner)[1]) {
                 sLabel = "Booping ya back"
