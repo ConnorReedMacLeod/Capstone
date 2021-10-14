@@ -136,7 +136,7 @@ public class ManaPool : MonoBehaviour {
     }
 
     public void Start() {
-        manaOwned = new Mana(4, 4, 4, 4, 4);
+        manaOwned = new Mana(4, 4, 4, 4, 2);
         manaReservedToPay = new Mana(0, 0, 0, 0, 0);
 
         ResetReservedMana();

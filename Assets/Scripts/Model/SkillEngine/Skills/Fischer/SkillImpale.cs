@@ -15,7 +15,7 @@ public class SkillImpale : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        manaCost = new ManaCost(new Mana(1, 0, 0, 0, 0));
+        manaCost = new ManaCost(new Mana(2, 0, 0, 1, 5));
 
         nCooldownInduced = 6;
         nFatigue = 2;
