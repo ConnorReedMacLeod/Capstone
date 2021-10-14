@@ -36,4 +36,8 @@ public class ManaCost {
 
         return true;
     }
+
+    public override string ToString() {
+        return pManaCost.Get().ToString();
+    }
 }

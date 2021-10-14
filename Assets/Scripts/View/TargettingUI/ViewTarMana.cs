@@ -11,7 +11,7 @@ public class ViewTarMana : Singleton<ViewTarMana> {
     public List<GameObject> lstgoManaIcons;
 
     public const float fManaSymbolSize = 0.2f;
-    public const float fManaSymbolSpacing = 0.5f;
+    public const float fManaSymbolSpacing = 0.12f;
 
     public GameObject goRequiredManaPosition; //The game object that will contain the mana icons that are being requested
 
@@ -34,15 +34,18 @@ public class ViewTarMana : Singleton<ViewTarMana> {
             int nManaCanPay = Mathf.Min(nManaToPay, plyrPaying.manapool.manaUsableToPay[i]);
             int nManaUnpayable = nManaToPay - nManaCanPay;
 
+            Debug.Log("For " + (Mana.MANATYPE)i + ": nManaToPay = " + nManaToPay + " nManaCanPay = " + nManaCanPay +
+                " nManaUnpayable = " + nManaUnpayable);
+
             //For each mana pip we can afford, spawn a paid icon for it
             for(int j = 0; j < nManaCanPay; j++) {
                 AddManaIcon((Mana.MANATYPE)i, true, (Mana.MANATYPE)i);
-                manaToSpend[j]++;
-                if (i == (int)Mana.MANATYPE.EFFORT) manaToSpendOnEffort[j]++;
+                manaToSpend[(Mana.MANATYPE)i]++;
+                if (i == (int)Mana.MANATYPE.EFFORT) manaToSpendOnEffort[(Mana.MANATYPE)i]++;
             }
             //For each mana pip we can't afford, spawn an unpaid icon for it
             for(int j = 0; j < nManaUnpayable; j++) {
-
+                Debug.Log("Spawning icon for unpayable " + (Mana.MANATYPE)j);
                 AddManaIcon((Mana.MANATYPE)i, false);
             }
 
@@ -55,21 +58,22 @@ public class ViewTarMana : Singleton<ViewTarMana> {
     }
 
     public void UpdateEffortManaIcons() {
-        List<Mana.MANATYPE> lstManaAllocated = Mana.ManaToListOfTypes(manaToSpendOnEffort);
+        List<Mana.MANATYPE> lstManaAllocatedForEffort = Mana.ManaToListOfTypes(manaToSpendOnEffort);
 
         //Go through each Effort Mana Icon and update it's payment icon to be paid with the appropriate amount of (coloured) allocated mana
         for(int i = manaToPay.GetTotalColouredMana(), j = 0; i < manaToPay.GetTotalMana(); i++, j++) {
             //Note:  Will have to eventually update the upper loop bounds to deal with X mana costs
 
             //If we've gone through all the allocated mana we've prepared so far, then the remaining mana icons can all be set as unpaid
-            if(j >= manaToPay.GetTotalMana()) {
+            if(j >= lstManaAllocatedForEffort.Count) {
                 ReplaceManaIcon(i, Mana.MANATYPE.EFFORT, false);
             } else {
                 //If we've paid this mana, then fill in the icon with the colour of mana at this index in the list of allocated mana
-                ReplaceManaIcon(i, Mana.MANATYPE.EFFORT, true, lstManaAllocated[j]);
+                ReplaceManaIcon(i, Mana.MANATYPE.EFFORT, true, lstManaAllocatedForEffort[j]);
             }
 
         }
+
     }
 
     public void AddManaIcon(Mana.MANATYPE manaType, bool bPaidFor, Mana.MANATYPE manaPaidWith = Mana.MANATYPE.EFFORT) {
@@ -134,14 +138,15 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         bCanPayCost = plyrPaying.manapool.CanPayManaCost(modTarMana.manaCostRequired);
 
         manaToSpend = new Mana(0, 0, 0, 0, 0);
+        manaToSpendOnEffort = new Mana(0, 0, 0, 0, 0);
 
         //Initialize the mana icons we're displaying the mana cost with (and determine what amounts of mana we're
         //  paying for non-effort costs
         InitializeManaIcons();
 
         if(bCanPayCost) {
-            //Initialize the currently allocated mana to auto-spend all effort mana (that we can)
-            manaToSpendOnEffort = new Mana(0, 0, 0, 0, manaToSpend[Mana.MANATYPE.EFFORT]);
+            //Have the currently allocated mana for the effort cost auto-spend all effort mana (that we can)
+            manaToSpendOnEffort[Mana.MANATYPE.EFFORT] = manaToSpend[Mana.MANATYPE.EFFORT];
 
             //Have the paying player reserve the starting amount of mana
             plyrPaying.manapool.ReserveMana(manaToSpend);
@@ -215,7 +220,7 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         }
 
         if (modTarMana.manaCostRequired.CanBePaidWith(manaToSpend) == false) {
-            Debug.Log("Cannot submit this mana payment since the apportioned mana is somehow insufficient for paying the cost");
+            Debug.Log("Cannot submit this mana payment: " + manaToSpend + " for cost: " + modTarMana.manaCostRequired);
             return;
         }
 
