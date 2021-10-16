@@ -35,6 +35,16 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
     }
 
+    // Cancel the selections phase early (without fully selecting all targets for the skil)
+    public void CancelSelectionsProcess() {
+
+        //In case we've reserved any mana for mana costs, let's un-reserve that amount
+        selectionsInProgress.skillSelected.chrOwner.plyrOwner.manapool.ResetReservedMana();
+
+        //Now end the selections process normally
+        ExitSelectionsProcess();
+    } 
+
     // Ends the selections phase
     public void ExitSelectionsProcess() {
 

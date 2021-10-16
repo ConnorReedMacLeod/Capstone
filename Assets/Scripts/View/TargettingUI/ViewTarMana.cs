@@ -103,9 +103,20 @@ public class ViewTarMana : Singleton<ViewTarMana> {
     public void DestroyManaIcon() {
         Debug.Assert(lstgoManaIcons.Count != 0);
 
+        Debug.Log("destroying mana icon " + (lstgoManaIcons.Count - 1));
+
         Destroy(lstgoManaIcons[lstgoManaIcons.Count - 1]);
 
         lstgoManaIcons.RemoveAt(lstgoManaIcons.Count - 1);
+    }
+
+    public void DestroyAllManaIcons() {
+        //Save the amount that we have to destroy (the count will get modified as we go)
+        int nIconsToDestroy = lstgoManaIcons.Count; 
+
+        for (int i = 0; i < nIconsToDestroy; i++) {
+            DestroyManaIcon();
+        }
     }
 
 
@@ -164,13 +175,11 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         plyrPaying = null;
         bCanPayCost = false;
 
+        //Destroy all the mana cost icons we had
+        DestroyAllManaIcons();
+
         manaToSpend = null;
         manaToSpendOnEffort = null;
-
-        //Destroy all the mana cost icons we had
-        for(int i = 0; i < lstgoManaIcons.Count; i++) {
-            DestroyManaIcon();
-        }
 
         //Hide the panel offscreen until it's needed again
         MoveOffscreen();
@@ -271,6 +280,7 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         }
         if(manaToSpendOnEffort[manaType] == 0) {
             Debug.Log("Cannot deallocate mana since we haven't allocated any mana of this colour for effort payments");
+            return;
         }
 
         //Decrement the requested type of mana
