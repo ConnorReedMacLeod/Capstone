@@ -61,14 +61,17 @@ public abstract class Target {
         //Don't need to do anything by default
     }
     public void EndLocalSelection() {
+
+        //Clean up any local-setup for chosing this target (like spawned UI)
         OnEndLocalSelection();
         ContGlobalInteractions.subGlobalRightClick.UnSubscribe(cbCancelSelectionProcess);
     }
 
     public void cbCancelSelectionProcess(Object target, params object[] args) {
-        Debug.Log("in cbCancelSelectionProcess");
+        
+        //Clean up any local-setup for chosing this target (like spawned UI)
         OnEndLocalSelection();
-        ContLocalUIInteraction.Get().ExitSelectionsProcess();
+        ContLocalUIInteraction.Get().CancelSelectionsProcess();
     }
 
     //Sets the TargetDescription message (derived types can set it to a default description for the type)

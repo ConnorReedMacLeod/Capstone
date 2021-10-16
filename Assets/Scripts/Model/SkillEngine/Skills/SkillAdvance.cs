@@ -39,10 +39,10 @@ public class SkillAdvance : Skill {
         }
 
         public override void ClauseEffect(Selections selections) {
-            Chr chrSelected = (Chr)selections.lstSelections[1];
+            Chr chrSelected = skill.chrOwner;
 
             ContSkillEngine.PushSingleExecutable(new ExecSwitchChar(skill.chrOwner, chrSelected, ContPositions.Get().GetAlliedFrontlinePositions(chrSelected.plyrOwner)[1]) {
-                sLabel = "Booping ya back"
+                sLabel = "I'll lead the way"
             });
 
         }
