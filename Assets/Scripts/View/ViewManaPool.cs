@@ -104,15 +104,15 @@ public class ViewManaPool : MonoBehaviour {
             break;
         case Mana.MANATYPE.ENERGY:
             UpdateManaText(txtManaEnergyUsable, mod.manaUsableToPay[Mana.MANATYPE.ENERGY]);
-            UpdateManaText(txtManaMentalReserved, mod.manaReservedToPay[Mana.MANATYPE.ENERGY]);
+            UpdateManaText(txtManaEnergyReserved, mod.manaReservedToPay[Mana.MANATYPE.ENERGY]);
             break;
         case Mana.MANATYPE.BLOOD:
             UpdateManaText(txtManaBloodUsable, mod.manaUsableToPay[Mana.MANATYPE.BLOOD]);
-            UpdateManaText(txtManaMentalReserved, mod.manaReservedToPay[Mana.MANATYPE.BLOOD]);
+            UpdateManaText(txtManaBloodReserved, mod.manaReservedToPay[Mana.MANATYPE.BLOOD]);
             break;
         case Mana.MANATYPE.EFFORT:
             UpdateManaText(txtManaEffortUsable, mod.manaUsableToPay[Mana.MANATYPE.EFFORT]);
-            UpdateManaText(txtManaMentalReserved, mod.manaReservedToPay[Mana.MANATYPE.EFFORT]);
+            UpdateManaText(txtManaEffortReserved, mod.manaReservedToPay[Mana.MANATYPE.EFFORT]);
             break;
         }
 

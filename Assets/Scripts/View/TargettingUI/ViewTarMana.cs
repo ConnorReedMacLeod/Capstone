@@ -23,6 +23,8 @@ public class ViewTarMana : Singleton<ViewTarMana> {
     public Vector3 v3OnScreen = new Vector3(0, 0, -2.5f);
     public Vector3 v3OffScreen = new Vector3(-100, -100, -2.5f);
 
+    public Color colXManaIcon;
+
     public void InitializeManaIcons() {
 
         //For each mana type, fill in as many of the mana pips as we can cover with our mana pool,
@@ -48,9 +50,11 @@ public class ViewTarMana : Singleton<ViewTarMana> {
                 Debug.Log("Spawning icon for unpayable " + (Mana.MANATYPE)j);
                 AddManaIcon((Mana.MANATYPE)i, false);
             }
-
-
+            
         }
+
+        //If the mana cost has an X in its cost, then we can spawn an icon for it
+        SpawnXIconIfNeeded();
     }
 
     public void ReplaceManaIcon(int indexToReplace, Mana.MANATYPE manaType, bool bPaidFor, Mana.MANATYPE manaPaidWith = Mana.MANATYPE.EFFORT) {
@@ -59,24 +63,45 @@ public class ViewTarMana : Singleton<ViewTarMana> {
 
     public void UpdateEffortManaIcons() {
         List<Mana.MANATYPE> lstManaAllocatedForEffort = Mana.ManaToListOfTypes(manaToSpendOnEffort);
+        
+        int iManaIcon = manaToPay.GetTotalColouredMana();
+        int jEffortPaidWith = 0;
+        int nManaToSpend = manaToSpend.GetTotalMana();
+        int nManaToPay = manaToPay.GetTotalMana();
 
-        //Go through each Effort Mana Icon and update it's payment icon to be paid with the appropriate amount of (coloured) allocated mana
-        for(int i = manaToPay.GetTotalColouredMana(), j = 0; i < manaToPay.GetTotalMana(); i++, j++) {
-            //Note:  Will have to eventually update the upper loop bounds to deal with X mana costs
 
-            //If we've gone through all the allocated mana we've prepared so far, then the remaining mana icons can all be set as unpaid
-            if(j >= lstManaAllocatedForEffort.Count) {
-                ReplaceManaIcon(i, Mana.MANATYPE.EFFORT, false);
+        //First, add icons for all paid-for effort
+        for(; iManaIcon < nManaToSpend; iManaIcon++, jEffortPaidWith++) {
+            Debug.Log("Should we add a new icon? " + iManaIcon + " == " + lstgoManaIcons.Count);
+            if (iManaIcon == lstgoManaIcons.Count) {
+                Debug.Log("Adding a new icon");
+                //If we're trying to update an icon we haven't spawned yet, then spawn it instead
+                AddManaIcon(Mana.MANATYPE.EFFORT, true, lstManaAllocatedForEffort[jEffortPaidWith]);
             } else {
-                //If we've paid this mana, then fill in the icon with the colour of mana at this index in the list of allocated mana
-                ReplaceManaIcon(i, Mana.MANATYPE.EFFORT, true, lstManaAllocatedForEffort[j]);
+                //If we've already spawned an icon for this position, just update that icon
+                ReplaceManaIcon(iManaIcon, Mana.MANATYPE.EFFORT, true, lstManaAllocatedForEffort[jEffortPaidWith]);
             }
-
         }
 
+        //Then, add any icons for unpaid effort
+        for(; iManaIcon < nManaToPay; iManaIcon++, jEffortPaidWith++) {
+            //Note that we'll only ever reach here if nManaToSpend <= iManaIcon < nManaToPay so there must be some amount
+            // of the cost that has not been paid.  
+            ReplaceManaIcon(iManaIcon, Mana.MANATYPE.EFFORT, false);
+        }
+
+        //Next, remove any icons that aren't needed
+        int nGoManaIcons = lstgoManaIcons.Count;
+
+        for(; iManaIcon < nGoManaIcons; iManaIcon++) {
+            DestroyManaIcon();
+        }
+
+        // Finally, potentially add a special icon for prompting the player to pay more for X if they want to
+        SpawnXIconIfNeeded();
     }
 
-    public void AddManaIcon(Mana.MANATYPE manaType, bool bPaidFor, Mana.MANATYPE manaPaidWith = Mana.MANATYPE.EFFORT) {
+    public GameObject AddManaIcon(Mana.MANATYPE manaType, bool bPaidFor, Mana.MANATYPE manaPaidWith = Mana.MANATYPE.EFFORT) {
 
         GameObject goManaIcon = new GameObject(string.Format("sprManaIcon{0}", lstgoManaIcons.Count));
 
@@ -97,6 +122,8 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         sprRen.sortingOrder = 1;
 
         lstgoManaIcons.Add(goManaIcon);
+
+        return goManaIcon;
     }
 
     //Destroy the last-most mana icon
@@ -119,6 +146,17 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         }
     }
 
+    public void SpawnXIconIfNeeded() {
+        if (modTarMana.manaCostRequired.bXCost == false) return;
+            
+        //Add a new icon to represent that another icon can still be paid;
+        GameObject goXManaIcon = AddManaIcon(Mana.MANATYPE.EFFORT, false);
+
+        //Apply a colour modification to make it clear that this icon is part of an X payment, and is
+        //  therefore not completely required
+        goXManaIcon.GetComponent<SpriteRenderer>().color = colXManaIcon;
+        
+    }
 
 
     public string GetManaIconSpritePath(Mana.MANATYPE manatype, bool bPaidFor, Mana.MANATYPE manaPaidWith = Mana.MANATYPE.EFFORT) {
@@ -248,8 +286,8 @@ public class ViewTarMana : Singleton<ViewTarMana> {
             return;
         }
 
-        if(manaToSpendOnEffort.GetTotalMana() == manaToPay[Mana.MANATYPE.EFFORT]) {
-            Debug.Log("Cannot allocate mana since we've already allocated enough for the full effort cost");
+        if(manaToSpendOnEffort.GetTotalMana() == manaToPay[Mana.MANATYPE.EFFORT] && modTarMana.manaCostRequired.bXCost == false) {
+            Debug.Log("Cannot allocate mana since we've already allocated enough for the full effort cost (and it's not an X cost)");
             return;
         }
 
