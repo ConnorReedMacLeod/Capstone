@@ -9,12 +9,13 @@ public class ManaCost {
 
     public bool bXCost; //Whether this cost has an X component (can pay any amount of mana)
 
-    public ManaCost(Mana manaCost) : this(manaCost[0], manaCost[1], manaCost[2], manaCost[3], manaCost[4]) {
+    public ManaCost(Mana manaCost, bool _bXCost = false) : this(manaCost[0], manaCost[1], manaCost[2], manaCost[3], manaCost[4], _bXCost) {
 
     }
 
-    public ManaCost(int nPhys, int nMental, int nEnergy, int nBlood, int nEffort = 0) {
+    public ManaCost(int nPhys, int nMental, int nEnergy, int nBlood, int nEffort = 0, bool _bXCost = false) {
         pManaCost = new Property<Mana>(new Mana(nPhys, nMental, nEnergy, nBlood, nEffort));
+        bXCost = _bXCost;
     }
 
 
