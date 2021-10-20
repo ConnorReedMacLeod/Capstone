@@ -41,4 +41,10 @@ public class ManaCost {
     public override string ToString() {
         return pManaCost.Get().ToString();
     }
+
+    public int GetXPaid(Mana manaPaid) {
+        if (bXCost == false) return 0;
+        //return the total amount of mana spent minus the total amount needed for the cost (before the X)
+        return manaPaid.GetTotalMana() - pManaCost.Get().GetTotalMana();
+    }
 }

@@ -22,7 +22,7 @@ public class ChrFischer : BaseChr {
 
         chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.BUNKER;
         chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.ADVANCE;
-        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.KNOCKBACK;
+        chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.FIREBALL;
         chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.IMPALE;
 
     }

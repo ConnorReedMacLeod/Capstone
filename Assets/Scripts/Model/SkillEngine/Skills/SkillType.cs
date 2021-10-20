@@ -12,7 +12,7 @@ public static class SkillType {
     //TODO - eventually look at transferring this long list to a text file - possible?  worth it?
     public enum SKILLTYPE {
         //TESTING
-        LEECH, TRANSFUSE, KNOCKBACK, ADVANCE, BUNKER,
+        LEECH, TRANSFUSE, KNOCKBACK, ADVANCE, BUNKER, FIREBALL,
 
         //Fischer
         BUCKLERPARRY, HARPOONGUN, HUNTERSQUARRY, IMPALE,
@@ -54,6 +54,7 @@ public static class SkillType {
         { KNOCKBACK, new SkillTypeInfo ( KNOCKBACK, "Knockback", new List<Discipline.DISCIPLINE> { TESTING } ) },
         { ADVANCE, new SkillTypeInfo ( ADVANCE, "Advance", new List<Discipline.DISCIPLINE> { TESTING } ) },
         { BUNKER, new SkillTypeInfo ( BUNKER, "Bunker", new List<Discipline.DISCIPLINE> { TESTING } ) },
+        { FIREBALL, new SkillTypeInfo (FIREBALL, "Fireball", new List<Discipline.DISCIPLINE> { TESTING } ) },
 
         //FISHER
         { BUCKLERPARRY, new SkillTypeInfo ( BUCKLERPARRY, "Buckler Parry", new List<Discipline.DISCIPLINE> { FISCHER } ) },
@@ -133,6 +134,10 @@ public static class SkillType {
         case SKILLTYPE.BUNKER:
             skillNew = new SkillBunker(chr);
             break;
+        case SKILLTYPE.FIREBALL:
+                skillNew = new SkillFireball(chr);
+            break;
+
 
         //Fischer
         case SKILLTYPE.BUCKLERPARRY:
