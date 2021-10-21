@@ -18,13 +18,14 @@ public class SkillAmbush : Skill {
         type = new TypeChannel(this, 4, soulChannelBehaviour);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 1 });
+        manaCost = new ManaCost(new Mana(0, 0, 0, 0, 1));
 
         nCooldownInduced = 3;
         nFatigue = 1;
 
         lstTargets = new List<Target>() {
-            new TarChr(TarChr.IsDiffTeam(chrOwner))
+            new TarMana(this, manaCost),
+            new TarChr(this, TarChr.IsDiffTeam(chrOwner))
         };
 
         lstClauses = new List<Clause>() {

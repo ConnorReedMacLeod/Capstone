@@ -14,13 +14,14 @@ public class SkillHarpoonGun : Skill {
         type = new TypeChannel(this, 2, null);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 2 });
+        manaCost = new ManaCost(new Mana(0, 0, 0, 0, 2));
 
         nCooldownInduced = 5;
         nFatigue = 2;
 
         lstTargets = new List<Target>() {
-            new TarChr(TarChr.IsDiffTeam(chrOwner))
+            new TarMana(this, manaCost),
+            new TarChr(this, TarChr.IsDiffTeam(chrOwner))
         };
 
         lstClauses = new List<Clause>() {
@@ -70,7 +71,7 @@ public class SkillHarpoonGun : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             ContSkillEngine.PushSingleExecutable(new ExecSwitchChar(skill.chrOwner, chrSelected, (chrTarget) => ContPositions.Get().GetInFrontPosition(chrTarget.position)) {
                 sLabel = "Hey, I caught one!"

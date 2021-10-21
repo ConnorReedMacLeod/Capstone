@@ -16,8 +16,6 @@ public class Match : MonoBehaviour {
 
     public Chr[][] arChrs;
 
-    public Controller controller;
-
     public GameObject pfPlayer;
     public GameObject pfChr;
 
@@ -152,16 +150,6 @@ public class Match : MonoBehaviour {
 
     }
 
-    public Controller GetController() {
-        if(controller == null) {
-            controller = GetComponentInChildren<Controller>();
-            if(controller == null) {
-                Debug.LogError("ERROR! NO CONTROLLER FOUND IN CHILDREN OF MAIN MATCH OBJECT");
-            }
-        }
-        return controller;
-    }
-
     public void InitNetworking() {
 
         Debug.Log("Spawning networkcontroller");
@@ -182,8 +170,6 @@ public class Match : MonoBehaviour {
         bStarted = true;
 
         gameObject.tag = "Match"; // So that anything can find this very quickly
-
-        controller = GetComponentInChildren<Controller>();
 
         InitPlayers(nPlayers);
 

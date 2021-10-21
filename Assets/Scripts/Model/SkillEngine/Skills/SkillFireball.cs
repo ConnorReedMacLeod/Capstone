@@ -12,14 +12,15 @@ public class SkillFireball : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 1, 0, 0 });
+        manaCost = new ManaCost(new Mana(0, 0, 1, 0, 0), true);
 
         nCooldownInduced = 6;
         nFatigue = 4;
 
 
         lstTargets = new List<Target>() {
-            new TarChr(TarChr.IsDiffTeam(chrOwner))
+            new TarMana(this, manaCost),
+            new TarChr(this, TarChr.IsDiffTeam(chrOwner))
         };
 
         lstClauses = new List<Clause>() {
@@ -30,21 +31,26 @@ public class SkillFireball : Skill {
     class Clause1 : Clause {
 
         Damage dmg;
-        public int nBaseDamage = 5;
+        public int nBaseDamage = 10;
 
         public Clause1(Skill _skill) : base(_skill) {
 
-            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
         }
 
         public override string GetDescription() {
 
-            return string.Format("Deal {0} damage to an Enemy", dmg.Get());
+            return string.Format("Deal {0}*X damage to an Enemy", nBaseDamage);
         }
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            //Ask our manacost target how much excess mana was spent on it
+            int nX = ((TarMana)skill.lstTargets[0]).manaCostRequired.GetXPaid((Mana)selections.lstSelections[0]);
+            Chr chrSelected = (Chr)selections.lstSelections[1];
+
+            Debug.Log("nX was " + nX);
+
+            dmg = new Damage(skill.chrOwner, null, nBaseDamage * nX);
 
             ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 sLabel = "Hurling a fireball"
@@ -70,7 +76,7 @@ public class SkillFireball : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulBurning(soulToCopy, chrSelected)));
 

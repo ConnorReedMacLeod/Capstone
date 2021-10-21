@@ -41,6 +41,10 @@ public static class LibView {
     }
 
     public static void AssignSpritePathToObject(string sSprPath, GameObject go) {
+        AssignSpritePathToObject(sSprPath, go.GetComponent<SpriteRenderer>());
+    }
+
+    public static void AssignSpritePathToObject(string sSprPath, SpriteRenderer sprRen) {
 
         Sprite sprIcon = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
 
@@ -48,7 +52,7 @@ public static class LibView {
             Debug.LogError("Could not find specificed sprite: " + sSprPath);
         }
 
-        go.GetComponent<SpriteRenderer>().sprite = sprIcon;
+        sprRen.sprite = sprIcon;
 
     }
 }

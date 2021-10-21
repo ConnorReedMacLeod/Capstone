@@ -12,13 +12,14 @@ public class SkillCloudCushion : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 1, 0, 0 });
+        manaCost = new ManaCost(new Mana(0, 0, 1, 0, 0));
 
         nCooldownInduced = 7;
         nFatigue = 1;
 
         lstTargets = new List<Target>() {
-            new TarChr(TarChr.IsSameTeam(chrOwner))
+            new TarMana(this, manaCost),
+            new TarChr(this, TarChr.IsSameTeam(chrOwner))
         };
 
         lstClauses = new List<Clause>() {
@@ -42,7 +43,7 @@ public class SkillCloudCushion : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulCloudCushion(soulToCopy, chrSelected)) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Rayne/sndCloudCushion", 3.467f) },

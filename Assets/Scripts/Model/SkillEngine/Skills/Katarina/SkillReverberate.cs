@@ -12,14 +12,15 @@ public class SkillReverberate : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 0 });
+        manaCost = new ManaCost(new Mana(0, 0, 0, 0, 0));
 
         nCooldownInduced = 8;
         nFatigue = 4;
 
 
         lstTargets = new List<Target>() {
-            new TarChr(TarChr.TRUE)
+            new TarMana(this, manaCost),
+            new TarChr(this, TarChr.TRUE)
         };
 
         lstClauses = new List<Clause>() {
@@ -44,7 +45,7 @@ public class SkillReverberate : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             List<Chr> lstChrsOnTeam = chrSelected.plyrOwner.GetActiveChrs();
 

@@ -15,7 +15,7 @@ public class SkillImpale : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 1, 0, 0, 0, 0 });
+        manaCost = new ManaCost(new Mana(2, 0, 0, 1, 5), true);
 
         nCooldownInduced = 6;
         nFatigue = 2;
@@ -25,7 +25,8 @@ public class SkillImpale : Skill {
         dmg = new Damage(this.chrOwner, null, nBaseDamage);
 
         lstTargets = new List<Target>() {
-            new TarChr(Target.AND(TarChr.IsDiffTeam(chrOwner), TarChr.IsFrontliner()))
+            new TarMana(this, manaCost),
+            new TarChr(this, Target.AND(TarChr.IsDiffTeam(chrOwner), TarChr.IsFrontliner()))
         };
 
         lstClauses = new List<Clause>() {
@@ -52,7 +53,7 @@ public class SkillImpale : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulImpaled(soulToCopy, chrSelected)));
 

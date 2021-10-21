@@ -12,13 +12,14 @@ public class SkillExplosion : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 2, 0, 0 });
+        manaCost = new ManaCost(new Mana(0, 0, 2, 0, 0));
 
         nCooldownInduced = 10;
         nFatigue = 6;
 
         lstTargets = new List<Target>() {
-            new TarChr(Target.TRUE)
+            new TarMana(this, manaCost),
+            new TarChr(this, Target.TRUE)
         };
 
         lstClauses = new List<Clause>() {
@@ -43,7 +44,7 @@ public class SkillExplosion : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             List<Chr> lstChrsOnTeam = chrSelected.plyrOwner.GetActiveChrs();
 
