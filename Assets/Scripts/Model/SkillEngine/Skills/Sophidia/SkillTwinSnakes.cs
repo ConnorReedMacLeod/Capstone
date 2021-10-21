@@ -12,14 +12,15 @@ public class SkillTwinSnakes : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 0, 1, 1 });
+        manaCost = new ManaCost(new Mana(0, 0, 0, 1, 1));
 
         nCooldownInduced = 8;
         nFatigue = 4;
 
 
         lstTargets = new List<Target>() {
-            new TarChr(TarChr.IsDiffTeam(chrOwner))
+            new TarMana(this, manaCost),
+            new TarChr(this, TarChr.IsDiffTeam(chrOwner))
         };
 
         lstClauses = new List<Clause>() {
@@ -46,7 +47,7 @@ public class SkillTwinSnakes : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             ContSkillEngine.PushSingleExecutable(new ExecLoseLife(skill.chrOwner, skill.chrOwner, nLifeloss) {
                 sLabel = "Owie"

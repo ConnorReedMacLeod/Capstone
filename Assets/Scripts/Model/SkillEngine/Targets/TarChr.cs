@@ -13,7 +13,7 @@ public class TarChr : Target {
     }
 
 
-    public TarChr(FnValidSelection _IsValidSelection) : base(_IsValidSelection) {
+    public TarChr(Skill _skill, FnValidSelection _IsValidSelection) : base(_skill, _IsValidSelection) {
 
     }
 

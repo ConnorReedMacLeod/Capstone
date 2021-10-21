@@ -12,13 +12,14 @@ public class SkillVenomousBite : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 0, 1, 0 });
+        manaCost = new ManaCost(new Mana(0, 0, 0, 1, 0));
 
         nCooldownInduced = 8;
         nFatigue = 3;
 
         lstTargets = new List<Target>() {
-            new TarChr(Target.AND(TarChr.IsDiffTeam(chrOwner), TarChr.IsFrontliner()))
+            new TarMana(this, manaCost),
+            new TarChr(this, Target.AND(TarChr.IsDiffTeam(chrOwner), TarChr.IsFrontliner()))
         };
 
         lstClauses = new List<Clause>() {
@@ -47,7 +48,7 @@ public class SkillVenomousBite : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulEnvenomed(soulToCopy, chrSelected)) {
                 sLabel = "Applying poison"

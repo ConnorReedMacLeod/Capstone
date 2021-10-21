@@ -12,13 +12,13 @@ public class SkillAdvance : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 1, 0, 0, 0, 0 });
+        manaCost = new ManaCost(new Mana(1, 0, 0, 0, 0));
 
         nCooldownInduced = 6;
         nFatigue = 4;
 
         lstTargets = new List<Target>() {
-
+            new TarMana(this, manaCost),
         };
 
         lstClauses = new List<Clause>() {
@@ -39,10 +39,10 @@ public class SkillAdvance : Skill {
         }
 
         public override void ClauseEffect(Selections selections) {
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = skill.chrOwner;
 
             ContSkillEngine.PushSingleExecutable(new ExecSwitchChar(skill.chrOwner, chrSelected, ContPositions.Get().GetAlliedFrontlinePositions(chrSelected.plyrOwner)[1]) {
-                sLabel = "Booping ya back"
+                sLabel = "I'll lead the way"
             });
 
         }

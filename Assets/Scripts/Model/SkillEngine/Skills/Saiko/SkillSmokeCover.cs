@@ -12,13 +12,13 @@ public class SkillSmokeCover : Skill {
         type = new TypeCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 1, 0, 0, 0 });
+        manaCost = new ManaCost(new Mana(0, 1, 0, 0, 0));
 
         nCooldownInduced = 10;
         nFatigue = 2;
 
         lstTargets = new List<Target>() {
-
+            new TarMana(this, manaCost),
         };
 
         lstClauses = new List<Clause>() {
@@ -43,7 +43,7 @@ public class SkillSmokeCover : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = skill.chrOwner;
 
             ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulSmokeCover(soulToCopy, chrSelected)) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndSmokeCover", 4.3f) },

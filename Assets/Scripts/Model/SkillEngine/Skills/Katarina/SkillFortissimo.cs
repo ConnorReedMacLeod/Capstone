@@ -12,14 +12,14 @@ public class SkillFortissimo : Skill {
         type = new TypeCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 0, 0, 0 });
+        manaCost = new ManaCost(new Mana(0, 0, 0, 0, 0));
 
         nCooldownInduced = 8;
         nFatigue = 0;
 
 
         lstTargets = new List<Target>() {
-
+            new TarMana(this, manaCost),
         };
 
         lstClauses = new List<Clause>() {

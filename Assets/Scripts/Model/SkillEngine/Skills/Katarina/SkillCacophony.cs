@@ -12,13 +12,14 @@ public class SkillCacophony : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 1, 0, 1 });
+        manaCost = new ManaCost(new Mana(0, 0, 1, 0, 1));
 
         nCooldownInduced = 8;
         nFatigue = 4;
 
         lstTargets = new List<Target>() {
-            new TarChr(TarChr.IsFrontliner())
+            new TarMana(this, manaCost),
+            new TarChr(this, TarChr.IsFrontliner())
         };
 
         lstClauses = new List<Clause>() {
@@ -64,7 +65,7 @@ public class SkillCacophony : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             //TODO - make this better dynamically react.  Should probably just have a Stun effect object that can
             //       be modified freely like with damage

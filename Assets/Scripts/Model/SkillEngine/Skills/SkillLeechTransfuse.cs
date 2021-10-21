@@ -14,13 +14,14 @@ public class SkillLeech : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 0, 1, 0 });
+        manaCost = new ManaCost(new Mana(0, 0, 0, 1, 0));
 
         nCooldownInduced = 1;
         nFatigue = 1;
 
         lstTargets = new List<Target>() {
-            new TarChr(TarChr.IsDiffTeam(chrOwner))
+            new TarMana(this, manaCost),
+            new TarChr(this, TarChr.IsDiffTeam(chrOwner))
         };
 
         lstClauses = new List<Clause>() {
@@ -46,7 +47,7 @@ public class SkillLeech : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 sLabel = "Gimme yer life-juice"
@@ -91,13 +92,14 @@ public class SkillTransfuse : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 0, 0, 1, 0 });
+        manaCost = new ManaCost(new Mana(0, 0, 0, 1, 0));
 
         nCooldownInduced = 2;
         nFatigue = 2;
 
         lstTargets = new List<Target>() {
-            new TarChr(TarChr.IsSameTeam(chrOwner))
+            new TarMana(this, manaCost),
+            new TarChr(this, TarChr.IsSameTeam(chrOwner))
         };
 
         lstClauses = new List<Clause>() {
@@ -123,7 +125,7 @@ public class SkillTransfuse : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             ContSkillEngine.PushSingleExecutable(new ExecHeal(skill.chrOwner, chrSelected, healing) {
                 sLabel = "Drink my life-juice"
@@ -145,8 +147,6 @@ public class SkillTransfuse : Skill {
         }
 
         public override void ClauseEffect(Selections selections) {
-
-            Chr chrSelected = (Chr)selections.lstSelections[0];
 
             ContSkillEngine.PushSingleExecutable(new ExecAdaptSkill(skill.chrOwner, this.skill, SkillType.SKILLTYPE.LEECH));
 

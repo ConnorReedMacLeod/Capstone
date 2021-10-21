@@ -12,13 +12,13 @@ public class SkillTantrum : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 1, 0, 0, 1, 0 });
+        manaCost = new ManaCost(new Mana(1, 0, 0, 1, 0));
 
         nCooldownInduced = 9;
         nFatigue = 5;
 
         lstTargets = new List<Target>() {
-
+            new TarMana(this, manaCost),
         };
 
         lstClauses = new List<Clause>() {

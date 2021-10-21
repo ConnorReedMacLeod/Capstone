@@ -12,13 +12,14 @@ public class SkillTendrilStab : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 1, 0, 0, 0, 0 });
+        manaCost = new ManaCost(new Mana(1, 0, 0, 0, 0));
 
         nCooldownInduced = 6;
         nFatigue = 3;
 
         lstTargets = new List<Target>() {
-            new TarChr(Target.AND(TarChr.IsDiffTeam(chrOwner), TarChr.IsFrontliner()))
+            new TarMana(this, manaCost),
+            new TarChr(this, Target.AND(TarChr.IsDiffTeam(chrOwner), TarChr.IsFrontliner()))
         };
 
         lstClauses = new List<Clause>() {
@@ -44,7 +45,7 @@ public class SkillTendrilStab : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
                 arSoundEffects = new SoundEffect[] { new SoundEffect("PitBeast/sndTendrilStab", 3.067f) },

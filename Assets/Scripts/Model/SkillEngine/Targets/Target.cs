@@ -5,6 +5,8 @@ using UnityEngine;
 
 public abstract class Target {
 
+    public Skill skill;
+
     public delegate bool FnValidSelection(object objSelected, Selections selectionsSoFar);
 
     public FnValidSelection IsValidSelection;
@@ -31,7 +33,7 @@ public abstract class Target {
     }
 
     //Get a random **possibly invalid** selection for this type of target (currently used for a simple AI with a randomized script of selections)
-    public object GetRandomSelectable() {
+    public virtual object GetRandomSelectable() {
         List<object> lstPossibleSelections = GetSelactableUniverse().ToList();
 
         int nRandomIndex = Random.Range(0, lstPossibleSelections.Count);
@@ -59,14 +61,17 @@ public abstract class Target {
         //Don't need to do anything by default
     }
     public void EndLocalSelection() {
+
+        //Clean up any local-setup for chosing this target (like spawned UI)
         OnEndLocalSelection();
         ContGlobalInteractions.subGlobalRightClick.UnSubscribe(cbCancelSelectionProcess);
     }
 
     public void cbCancelSelectionProcess(Object target, params object[] args) {
-        Debug.Log("in cbCancelSelectionProcess");
+        
+        //Clean up any local-setup for chosing this target (like spawned UI)
         OnEndLocalSelection();
-        ContLocalUIInteraction.Get().ExitSelectionsProcess();
+        ContLocalUIInteraction.Get().CancelSelectionsProcess();
     }
 
     //Sets the TargetDescription message (derived types can set it to a default description for the type)
@@ -89,7 +94,8 @@ public abstract class Target {
         ContLocalUIInteraction.Get().ReceiveNextSelection(objSelected);
     }
 
-    public Target(FnValidSelection _IsValidSelection) {
+    public Target(Skill _skill, FnValidSelection _IsValidSelection) {
+        skill = _skill;
         IsValidSelection = _IsValidSelection;
     }
 

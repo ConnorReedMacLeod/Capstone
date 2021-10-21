@@ -15,13 +15,14 @@ public class SkillStickyBomb : Skill {
         type = new TypeActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 0, 1, 0, 0, 1 });
+        manaCost = new ManaCost(new Mana(0, 1, 0, 0, 1));
 
         nCooldownInduced = 6;
         nFatigue = 3;
 
         lstTargets = new List<Target>() {
-            new TarChr(Target.TRUE)
+            new TarMana(this, manaCost),
+            new TarChr(this, Target.TRUE)
         };
 
         lstClauses = new List<Clause>() {
@@ -48,7 +49,7 @@ public class SkillStickyBomb : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
             ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulStickyBomb(soulToCopy, chrSelected)) {
                 sLabel = "A bomb stuck"

@@ -12,13 +12,13 @@ public class SkillBucklerParry : Skill {
         type = new TypeCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
-        parCost = new Property<int[]>(new int[] { 1, 0, 0, 0, 0 });
+        manaCost = new ManaCost(new Mana(1, 0, 0, 0, 0));
 
         nCooldownInduced = 8;
         nFatigue = 2;
 
         lstTargets = new List<Target>() {
-
+            new TarMana(this, manaCost),
         };
 
         lstClauses = new List<Clause>() {
@@ -42,7 +42,7 @@ public class SkillBucklerParry : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = skill.chrOwner;
 
             ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, chrSelected, new SoulParry(soulToCopy, chrSelected)));
 
