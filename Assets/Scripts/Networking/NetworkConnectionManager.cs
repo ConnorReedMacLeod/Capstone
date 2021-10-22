@@ -11,7 +11,10 @@ using ExitGames.Client.Photon;
 public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
     public Button btnConnectMaster;
-    public Button btnConnectRoom;
+
+    public Button btnConnectSoloRoom;
+    public Button btnConnectPVPRoom;
+
     public Slider sliderLevel;
 
     public Button btnStartDraft;
@@ -30,6 +33,8 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
     public bool bInMatch;
 
     public static int nMyLevel = 1;
+
+    public int nMostRecentMaxPlayersInRoom; //Set to whatever max-players amount we've mostly recently queue'd up with
 
     public static NetworkConnectionManager inst;
 
@@ -95,7 +100,8 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
             btnConnectMaster.gameObject.SetActive(PhotonNetwork.IsConnected == false && bTriesToConnectToMaster == false);
         }
 
-        ShowIfFindingRoom(btnConnectRoom);
+        ShowIfFindingRoom(btnConnectSoloRoom);
+        ShowIfFindingRoom(btnConnectPVPRoom);
         ShowIfFindingRoom(sliderLevel);
 
         ShowIfAllPlayersConnectedInRoom(plyrselector1);
@@ -169,11 +175,21 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         PhotonNetwork.ConnectUsingSettings();
     }
 
-    public void OnClickConnectToRoom() {
+
+    public void OnClickJoinSoloRoom() {
+        OnClickConnectToRoom(1);
+    }
+
+    public void OnClickJoinPVPRoom() {
+        OnClickConnectToRoom(2);
+    }
+
+
+    public void OnClickConnectToRoom(int nMaxPlayersInRoom) {
         //If we're not connected to the network service, then we can't possibly join a room
         if(PhotonNetwork.IsConnected == false) return;
 
-        Debug.Log("Trying to connect to level " + nMyLevel);
+        Debug.Log("Trying to connect to level " + nMyLevel + " with " + nMaxPlayersInRoom + " max players");
 
         bTriesToConnectToRoom = true;
         //PhotonNetwork.CreateRoom("Custom Name"); // Create a specific room - Error: OnCreateRoomFailed
@@ -181,32 +197,13 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         //PhotonNetwork.JoinRandomRoom(); //Join a random room - Error: OnJoinRandomRoomFailed
 
         ExitGames.Client.Photon.Hashtable expectedRoomProperties;
-        byte nMaxPlayers;
 
+        nMostRecentMaxPlayersInRoom = nMaxPlayersInRoom;
 
         expectedRoomProperties = new ExitGames.Client.Photon.Hashtable() { { "lvl", nMyLevel } };
-        nMaxPlayers = (byte)CalcMaxPlayersInRoom();
 
-        Debug.Log(nMaxPlayers);
-
-        PhotonNetwork.JoinRandomRoom(expectedRoomProperties, nMaxPlayers);
+        PhotonNetwork.JoinRandomRoom(expectedRoomProperties, (byte)nMaxPlayersInRoom);
     }
-
-    //This currently will calculate the number of input types set to None, and expect one unique
-    // client per needed player.  Will eventually need to expand to allow other clients to control
-    // multiple players and to allow for spectators
-    public int CalcMaxPlayersInRoom() {
-
-        int nNeededPlayers = 1;
-        for(int i = 0; i < Player.MAXPLAYERS; i++) {
-            if(CharacterSelection.Get().arInputTypes[i] == Player.InputType.NONE) {
-                nNeededPlayers++;
-            }
-        }
-
-        return nNeededPlayers;
-    }
-
 
     public override void OnDisconnected(DisconnectCause cause) {
         base.OnDisconnected(cause);
@@ -225,7 +222,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
         if(bOfflineMode) {
             //Pretend like we clicked a button to join a room
-            OnClickConnectToRoom();
+            OnClickJoinSoloRoom();
         }
     }
 
@@ -285,7 +282,8 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable() { { "lvl", nMyLevel }, { "trn", 0 } };
         roomOptions.CustomRoomPropertiesForLobby = new string[] { "type", "lvl" };
 
-        roomOptions.MaxPlayers = (byte)CalcMaxPlayersInRoom();
+        //Set the max players to be the amount we most recently queue'd up for
+        roomOptions.MaxPlayers = (byte)nMostRecentMaxPlayersInRoom;
 
         //Debug.Log("Creating a room with properties " + roomOptions.CustomRoomProperties["lvl"]);
 
@@ -296,6 +294,17 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         base.OnCreateRoomFailed(returnCode, message);
         Debug.Log(message);
         bTriesToConnectToRoom = false;
+    }
+
+    public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer) {
+        base.OnPlayerEnteredRoom(newPlayer);
+
+        //Pass along the call to the master 
+        MasterNetworkController.Get().OnPlayerEnteredRoom(newPlayer);
+    }
+
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) {
+        base.OnPlayerLeftRoom(otherPlayer);
     }
 
     //Don't need to extend OnCreateRoom since it will automatically call

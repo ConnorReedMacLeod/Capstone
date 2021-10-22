@@ -32,7 +32,9 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
     public Text txtMasterDisplay;
 
-    public bool bIsMaster {
+    public const int nStartingPhase = 0;
+
+    public static bool bIsMaster {
         get { return PhotonNetwork.IsMasterClient; }
     }
 
@@ -78,6 +80,8 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
     public void OnEnable() {
 
+        Debug.Log("When MasterNetworkController is enabled, we have " + PhotonNetwork.CurrentRoom.PlayerCount + " players in the room");
+
         manadistributer = GetComponent<MasterManaDistributer>();
         timeoutcontroller = GetComponent<MasterTimeoutController>();
 
@@ -91,9 +95,16 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
         dictClientExpectedPhase = new Dictionary<int, int>();
         //Initialize the starting phase of the game
         foreach(Photon.Realtime.Player player in PhotonNetwork.PlayerList) {
-            dictClientExpectedPhase[player.ActorNumber] = 0;
+            Debug.Log("Adding client with ActorNumber " + player.ActorNumber + " to dictClientExpectedPhase");
+            dictClientExpectedPhase[player.ActorNumber] = nStartingPhase;
         }
 
+    }
+
+    public void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer) {
+        //Add that player to our tracked list of expected phases for each player
+        Debug.Log("Adding new player " + newPlayer.ActorNumber + " to our starting expected phase");
+        dictClientExpectedPhase[newPlayer.ActorNumber] = nStartingPhase;
     }
 
     public void OnDisable() {
@@ -420,7 +431,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
 
     public void Update() {
-        //Only respond to master events
+        //Remaain inactive if we're not the master
         if(bIsMaster == false) return;
 
         int nNewTime = Mathf.FloorToInt(Time.time);
