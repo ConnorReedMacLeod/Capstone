@@ -109,13 +109,18 @@ public class ContSkillSelection : Singleton<ContSkillSelection> {
         Debug.Log("Client received selection of " + selectionsFromMaster.ToString());
 
         //Ensure the passed skill is valid
-        if(selectionsFromMaster.IsValidSelection() == false) {
+        if (selectionsFromMaster.IsValidSelection() == false) {
             Debug.LogError("Received invalid selection from master! : " + selectionsFromMaster);
             selectionsFromMaster.ResetToRestSelection();
         }
 
-        //Stop the selection process (if it's still ongoing) since the decision has already been finalized by the master
-        Match.Get().GetLocalPlayer().inputController.EndSelection();
+        
+        if(ClientNetworkController.Get().IsPlayerLocallyControlled(ContTurns.Get().GetNextActingChr().plyrOwner)){
+                //If we were responsible for selecting a skill for the currently active character,
+                // then stop the selection process (if it's still ongoing) since the decision has already been finalized by the master
+                ContTurns.Get().GetNextActingChr().plyrOwner.inputController.EndSelection();
+
+         }
 
     }
 
