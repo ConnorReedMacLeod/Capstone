@@ -11,6 +11,9 @@ public class DropDownCharacterSelect : MonoBehaviour {
     public int idChr;
 
     public void Start() {
+        //Double check that our CharacterSelection instance has already Start'd itself
+        CharacterSelection.Get().Start();
+
         //Ensure any pre-given value for the dropdown is accurately reflected
         CharacterSelection.Get().arChrSelections[plyrselectorParent.idPlayer][idChr] = (Chr.CHARTYPE)dropdown.value;
 

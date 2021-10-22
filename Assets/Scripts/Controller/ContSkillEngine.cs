@@ -14,14 +14,14 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     public const bool bDEBUGENGINE = false;
 
-    public void cbAutoProcessStacks(Object target, params object[] args) {
-        if(bAutoTurns == true) return; //If the button is already pressed
+    public void StartAutoProcessingStacks() {
+        if(bAutoTurns == true) return; //If we were already started, no need to start again
         bAutoTurns = true;
 
         if(bAutoTurns) {
-            Debug.Log("Going to next event in " + 2.0f);
+            Debug.Log("Going to next event in " + 1.0f);
 
-            ContTime.Get().Invoke(2.0f, AutoProcessStacks);
+            ContTime.Get().Invoke(1.0f, AutoProcessStacks);
         }
     }
     public void AutoProcessStacks() {
@@ -314,9 +314,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
     }
 
     public override void Init() {
-
-        ViewAutoTurnsButton.subAllAutoExecuteEvent.Subscribe(cbAutoProcessStacks);
-        ViewManualTurnsButton.subAllManualExecuteEvent.Subscribe(cbManualExecuteEvent);
+        
     }
 
 }
