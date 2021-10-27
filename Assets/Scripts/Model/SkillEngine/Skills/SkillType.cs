@@ -100,7 +100,11 @@ public static class SkillType {
         return dictSkillTypeInfos[skilltype];
     }
 
-    public static List<SkillTypeInfo> GetsSkillsUnderDisciplines(List<Discipline.DISCIPLINE> lstDisciplines) {
+    public static List<SkillTypeInfo> GetSkillInfosUnderDisciplines(Chr chr) {
+        return GetSkillInfosUnderDisciplines(chr.lstDisciplines);
+    }
+
+    public static List<SkillTypeInfo> GetSkillInfosUnderDisciplines(List<Discipline.DISCIPLINE> lstDisciplines) {
 
         //For each kvp, check if there are any required disciplines that aren't given in the passed lstDisciplines.  Ensure there are not any of these kvp in the
         //  kvps we keep, then only select the keys from those kvps.

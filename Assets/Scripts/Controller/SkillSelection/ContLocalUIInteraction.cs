@@ -146,7 +146,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
         //If we still have selections to fill in, then call the 'OnEnter' method for the
         // next selection state
-        selectionsInProgress.GetNextRequiredTarget().StartLocalSelection();
+        selectionsInProgress.GetNextRequiredTarget().StartLocalSelection(selectionsInProgress);
 
     }
 
