@@ -10,14 +10,13 @@ public class ViewSkillSelection : Singleton<ViewSkillSelection> {
 
 
 
-    public void SetDropDownOptions(Chr chrSelectingSkill) {
+    public void SetDropDownOptions(List<SkillType.SkillTypeInfo> lstSkillTypeInfo) {
         //Clear out the current list of options
         dropdownSkillSelection.ClearOptions();
 
         List<Dropdown.OptionData> lstNewOptions;
 
-        //Query which skills are selectable with the character's disciplines and convert the names of those skills to dropdowndata items
-        lstNewOptions = SkillType.GetsSkillsUnderDisciplines(chrSelectingSkill.lstDisciplines).Select(info => new Dropdown.OptionData(info.sName)).ToList();
+        lstNewOptions = lstSkillTypeInfo.Select(info => new Dropdown.OptionData(info.sName)).ToList();
 
         dropdownSkillSelection.AddOptions(lstNewOptions);
 
@@ -25,7 +24,7 @@ public class ViewSkillSelection : Singleton<ViewSkillSelection> {
 
     public void ShowSkillSelectionForChr(Chr chrSelectingSkill) {
         this.gameObject.SetActive(true);
-        SetDropDownOptions(chrSelectingSkill);
+        SetDropDownOptions(SkillType.GetSkillInfosUnderDisciplines(chrSelectingSkill));
     }
 
     public void HideSkillSelection() {

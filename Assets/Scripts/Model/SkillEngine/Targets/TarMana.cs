@@ -16,20 +16,26 @@ public class TarMana : Target {
         return (byte)((nSerialized & (63 << (6 * (4 - nManaTypeIndex)))) >> (6 * (4 - nManaTypeIndex)));
     }
 
-    public override int Serialize(object objToSerialize) {
-        Mana mana = (Mana)objToSerialize;
-
-
+    public static int SerializeMana(Mana mana) {
         return (mana[0] << 24) + (mana[1] << 18) + (mana[2] << 12) + (mana[3] << 6) + mana[4];
     }
 
-    public override object Unserialize(int nSerialized) {
-
+    public static Mana UnserializeMana(int nSerialized) {
         return new Mana(GetIndividualCost(0, nSerialized),
             GetIndividualCost(1, nSerialized),
             GetIndividualCost(2, nSerialized),
             GetIndividualCost(3, nSerialized),
             GetIndividualCost(4, nSerialized));
+    }
+
+
+
+    public override int Serialize(object objToSerialize) {
+        return SerializeMana((Mana)objToSerialize);
+    }
+
+    public override object Unserialize(int nSerialized, List<object> lstSelectionsSoFar) {
+        return UnserializeMana(nSerialized);
     }
 
     public static FnValidSelection COVERSCOST(ManaCost manaCostRequired) {
@@ -47,7 +53,7 @@ public class TarMana : Target {
     }
 
     //This doesn't really make sense for this targetting type, so just return an empty list
-    public override IEnumerable<object> GetSelactableUniverse() {
+    public override IEnumerable<object> GetSelectableUniverse() {
         return null;
     }
 

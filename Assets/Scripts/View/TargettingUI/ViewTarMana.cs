@@ -201,11 +201,16 @@ public class ViewTarMana : Singleton<ViewTarMana> {
             plyrPaying.manapool.ReserveMana(manaToSpend);
         }
 
+
+        KeyBindings.SetBinding(SubmitAllocatedMana, KeyCode.T);
+
     }
 
-    //CLear out anything from the current payment process
+    //Clear out anything from the current payment process
     public void CleanUp() {
 
+        //Unbind the selection hotkey
+        KeyBindings.Unbind(KeyCode.T);
 
         //Clear out the model we were paying for
         modTarMana = null;
@@ -244,7 +249,6 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         KeyBindings.SetBinding(RemoveEnergy, KeyCode.D);
         KeyBindings.SetBinding(RemoveBlood, KeyCode.F);
 
-        KeyBindings.SetBinding(SubmitAllocatedMana, KeyCode.T);
         
     }
 

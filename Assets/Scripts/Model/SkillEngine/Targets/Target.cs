@@ -11,13 +11,15 @@ public abstract class Target {
 
     public FnValidSelection IsValidSelection;
 
+    public Selections selectionsSoFar;
+
     //Return a list of all entities of the corresponding type for this target
-    public abstract IEnumerable<object> GetSelactableUniverse();
+    public abstract IEnumerable<object> GetSelectableUniverse();
 
     //Return a list of all valid entities that could be selected our of the universe of the corresponding type
     public List<object> GetValidSelectable(Selections selectionsSoFar) {
 
-        return GetSelactableUniverse().Where(obj => IsValidSelection(obj, selectionsSoFar)).ToList();
+        return GetSelectableUniverse().Where(obj => IsValidSelection(obj, selectionsSoFar)).ToList();
 
     }
 
@@ -34,7 +36,7 @@ public abstract class Target {
 
     //Get a random **possibly invalid** selection for this type of target (currently used for a simple AI with a randomized script of selections)
     public virtual object GetRandomSelectable() {
-        List<object> lstPossibleSelections = GetSelactableUniverse().ToList();
+        List<object> lstPossibleSelections = GetSelectableUniverse().ToList();
 
         int nRandomIndex = Random.Range(0, lstPossibleSelections.Count);
 
@@ -42,7 +44,7 @@ public abstract class Target {
     }
 
     public abstract int Serialize(object objToSerialize);
-    public abstract object Unserialize(int nSerialized);
+    public abstract object Unserialize(int nSerialized, List<object> lstSelectionsSoFar);
 
     // Essentially these are State's OnEnter and OnLeave triggers for when the local player
     //  is filling out the required selections for their chosen skill.
@@ -53,7 +55,10 @@ public abstract class Target {
     protected virtual void OnStartLocalSelection() {
         //Don't need to do anything by default
     }
-    public void StartLocalSelection() {
+    public void StartLocalSelection(Selections _selectionsSoFar) {
+        //Temporarily store the currently made selections so far in case we need to retrieve them to assist in our targetting
+        selectionsSoFar = _selectionsSoFar;
+
         ContGlobalInteractions.subGlobalRightClick.Subscribe(cbCancelSelectionProcess);
         OnStartLocalSelection();
     }
@@ -65,6 +70,9 @@ public abstract class Target {
         //Clean up any local-setup for chosing this target (like spawned UI)
         OnEndLocalSelection();
         ContGlobalInteractions.subGlobalRightClick.UnSubscribe(cbCancelSelectionProcess);
+
+        //Clear out the temporary storage of the ongoing selections
+        selectionsSoFar = null;
     }
 
     public void cbCancelSelectionProcess(Object target, params object[] args) {
