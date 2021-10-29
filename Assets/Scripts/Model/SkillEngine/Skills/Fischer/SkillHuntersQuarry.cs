@@ -9,7 +9,7 @@ public class SkillHuntersQuarry : Skill {
         sName = "HuntersQuarry";
         sDisplayName = "Hunter's Quarry";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 0, 0, 0));
@@ -55,5 +55,9 @@ public class SkillHuntersQuarry : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.HUNTERSQUARRY;
+    }
 
 }

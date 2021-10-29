@@ -53,7 +53,7 @@ public class Chr : MonoBehaviour {
 
     public SkillSlot[] arSkillSlots;      //The slots for the character's currently usable skills - these keep track of the cooldowns of those skills
     public const int nStandardCharacterSkills = 4; //Number of non-generic (non-rest) skills currently active on the character
-    public const int nTotalSkills = nStandardCharacterSkills + 2; //Number of all skills (including generics)
+    public const int nTotalSkills = nStandardCharacterSkills + 1; //Number of all skills (including generics)
     public SkillRest skillRest;  //The standard reference to the rest skill the character can use
     public const int nRestSlotId = nStandardCharacterSkills; //Id of the skillslot containing the rest skill
     public SkillType.SKILLTYPE[] arSkillTypesOpeningLoadout;  //Holds the initially selected loadout of skills for the character - may shift this to some loadout manager
@@ -415,6 +415,18 @@ public class Chr : MonoBehaviour {
 
         arSkillSlots[nRestSlotId].SetSkill(skillRest);
     }
+
+    public bool HasSkillEquipped(SkillType.SKILLTYPE skilltype) {
+        //Loop through our skill slots and check if one of them has the desired skilltype
+        for(int i=0; i<nStandardCharacterSkills; i++) {
+            if(arSkillSlots[i].skill.GetSkillType() == skilltype) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
     // Sets up fundamental class connections for the Chr
     public void Start() {

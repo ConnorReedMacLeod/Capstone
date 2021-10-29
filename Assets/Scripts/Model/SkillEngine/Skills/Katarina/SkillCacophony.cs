@@ -9,7 +9,7 @@ public class SkillCacophony : Skill {
         sName = "Cacophony";
         sDisplayName = "Cacophony";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 1, 0, 1));
@@ -82,4 +82,8 @@ public class SkillCacophony : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.CACOPHONY;
+    }
 }

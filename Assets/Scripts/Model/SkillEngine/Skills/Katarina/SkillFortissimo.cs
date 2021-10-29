@@ -9,7 +9,7 @@ public class SkillFortissimo : Skill {
         sName = "Fortissimo";
         sDisplayName = "Fortissimo";
 
-        type = new TypeCantrip(this);
+        typeUsage = new TypeUsageCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 0, 0, 0));
@@ -54,4 +54,8 @@ public class SkillFortissimo : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.FORTISSIMO;
+    }
 }

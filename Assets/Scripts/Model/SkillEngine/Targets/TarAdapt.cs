@@ -38,9 +38,16 @@ public class TarAdapt : Target {
         List<SkillType.SkillTypeInfo> lstSkillTypeInfosInDisciplines = SkillType.GetSkillInfosUnderDisciplines(chrAdapting).ToList();
 
         //Filter out any non-viable ones (e.g., ones we already have equipped in that characters slots
-        //todonow
+        FilterUnadaptableSkills(chrAdapting, ref lstSkillTypeInfosInDisciplines);
+
         //return the filtered list
         return lstSkillTypeInfosInDisciplines;
+    }
+
+    public void FilterUnadaptableSkills(Chr chrAdapting, ref List<SkillType.SkillTypeInfo> lstPossiblyAdaptableSkills) {
+
+        //For each skill that we can adapt into, remove it if it's already equipped by the character
+        lstPossiblyAdaptableSkills.RemoveAll((skilltypeinfo) => chrAdapting.HasSkillEquipped(skilltypeinfo.type));
     }
 
     public override object GetRandomSelectable() {

@@ -9,7 +9,7 @@ public class SkillAdvance : Skill {
         sName = "Advance";
         sDisplayName = "Advance";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(1, 0, 0, 0, 0));
@@ -48,6 +48,10 @@ public class SkillAdvance : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.ADVANCE;
+    }
 
 
 }

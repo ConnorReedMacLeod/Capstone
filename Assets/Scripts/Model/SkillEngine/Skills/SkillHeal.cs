@@ -12,7 +12,7 @@ public class SkillHeal : Skill {
         sName = "Heal";
         sDisplayName = "Heal";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 0, 1, 0));
@@ -63,4 +63,8 @@ public class SkillHeal : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.HEAL;
+    }
 }

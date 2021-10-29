@@ -15,7 +15,7 @@ public class SkillHydrasRegen : Skill {
         soulChannelBehaviour = new SoulChannelHydrasRegen(this);
 
         //Pass a reference into the channel-type so that it can copy our behaviour for channeling
-        type = new TypeChannel(this, 4, soulChannelBehaviour);
+        typeUsage = new TypeUsageChannel(this, 4, soulChannelBehaviour);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 0, 1, 0));
@@ -42,7 +42,7 @@ public class SkillHydrasRegen : Skill {
         public override string GetDescription() {
 
             return string.Format("Channel ({0}).\n" +
-                "While channeling, at the end of turn heal {1}.", ((TypeChannel)((SkillHydrasRegen)skill).type).nStartChannelTime,
+                "While channeling, at the end of turn heal {1}.", ((TypeUsageChannel)((SkillHydrasRegen)skill).typeUsage).nStartChannelTime,
                 ((SkillHydrasRegen)skill).soulChannelBehaviour.nBaseHealing);
         }
 
@@ -55,5 +55,9 @@ public class SkillHydrasRegen : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.HYDRASREGEN;
+    }
 
 }

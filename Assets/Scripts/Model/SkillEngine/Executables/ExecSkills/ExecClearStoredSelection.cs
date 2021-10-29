@@ -44,7 +44,7 @@ public class ExecClearStoredSelection : ExecSkill {
 
     public override void ExecuteEffect() {
 
-        ((TypeChannel)skTarget.type).ClearStoredSelectionInfo();
+        ((TypeUsageChannel)skTarget.typeUsage).ClearStoredSelectionInfo();
 
         fDelay = ContTurns.fDelayGameEffects;
         sLabel = "Clearing stored " + skTarget.sDisplayName + "'s selections";

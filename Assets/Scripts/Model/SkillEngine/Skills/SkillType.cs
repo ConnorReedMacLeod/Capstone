@@ -12,7 +12,7 @@ public static class SkillType {
     //TODO - eventually look at transferring this long list to a text file - possible?  worth it?
     public enum SKILLTYPE {
         //TESTING
-        LEECH, TRANSFUSE, KNOCKBACK, ADVANCE, BUNKER, FIREBALL,
+        LEECH, TRANSFUSE, KNOCKBACK, ADVANCE, BUNKER, FIREBALL, EXPLOSION, HEAL,
 
         //Fischer
         BUCKLERPARRY, HARPOONGUN, HUNTERSQUARRY, IMPALE,
@@ -30,7 +30,10 @@ public static class SkillType {
         AMBUSH, SMOKECOVER, STICKYBOMB, TRANQUILIZE,
 
         //Sophidia
-        HISS, HYDRASREGEN, TWINSNAKES, VENEMOUSBITE
+        HISS, HYDRASREGEN, TWINSNAKES, VENEMOUSBITE,
+
+        //Utility
+        REST
 
     };
 
@@ -55,6 +58,8 @@ public static class SkillType {
         { ADVANCE, new SkillTypeInfo ( ADVANCE, "Advance", new List<Discipline.DISCIPLINE> { TESTING } ) },
         { BUNKER, new SkillTypeInfo ( BUNKER, "Bunker", new List<Discipline.DISCIPLINE> { TESTING } ) },
         { FIREBALL, new SkillTypeInfo (FIREBALL, "Fireball", new List<Discipline.DISCIPLINE> { TESTING } ) },
+        { EXPLOSION, new SkillTypeInfo (EXPLOSION, "Explosion", new List<Discipline.DISCIPLINE> { TESTING } ) },
+        { HEAL, new SkillTypeInfo (HEAL, "Heal", new List<Discipline.DISCIPLINE> { TESTING } ) },
 
         //FISHER
         { BUCKLERPARRY, new SkillTypeInfo ( BUCKLERPARRY, "Buckler Parry", new List<Discipline.DISCIPLINE> { FISCHER } ) },
@@ -91,7 +96,6 @@ public static class SkillType {
         { HYDRASREGEN, new SkillTypeInfo ( HYDRASREGEN, "Hydra's Regeneration", new List<Discipline.DISCIPLINE> { SOPHIDIA } ) },
         { TWINSNAKES, new SkillTypeInfo ( TWINSNAKES, "Twinsnakes", new List<Discipline.DISCIPLINE> { SOPHIDIA } ) },
         { VENEMOUSBITE, new SkillTypeInfo ( VENEMOUSBITE, "Venemous Bite", new List<Discipline.DISCIPLINE> { SOPHIDIA } ) },
-
 
     };
 
@@ -140,6 +144,12 @@ public static class SkillType {
             break;
         case SKILLTYPE.FIREBALL:
                 skillNew = new SkillFireball(chr);
+            break;
+        case SKILLTYPE.EXPLOSION:
+            skillNew = new SkillExplosion(chr);
+            break;
+        case SKILLTYPE.HEAL:
+            skillNew = new SkillHeal(chr);
             break;
 
 
@@ -226,6 +236,11 @@ public static class SkillType {
         case SKILLTYPE.VENEMOUSBITE:
             skillNew = new SkillVenomousBite(chr);
             break;
+
+        case SKILLTYPE.REST:
+            skillNew = new SkillRest(chr);
+            break;
+
 
 
 

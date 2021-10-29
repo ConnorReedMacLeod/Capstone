@@ -9,7 +9,7 @@ public class SkillFireball : Skill {
         sName = "Fireball";
         sDisplayName = "Fireball";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 1, 0, 0), true);
@@ -83,5 +83,9 @@ public class SkillFireball : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.FIREBALL;
+    }
 
 }

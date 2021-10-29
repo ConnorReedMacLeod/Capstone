@@ -83,7 +83,7 @@ public class ViewInfoSkill : MonoBehaviour {
         if(mod == null) {
             txtType.text = "";
         } else {
-            txtType.text = mod.type.getName();
+            txtType.text = mod.typeUsage.getName();
         }
     }
 

@@ -9,7 +9,7 @@ public class SkillTantrum : Skill {
         sName = "Tantrum";
         sDisplayName = "Tantrum";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(1, 0, 0, 1, 0));
@@ -70,5 +70,9 @@ public class SkillTantrum : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.TANTRUM;
+    }
 
 }

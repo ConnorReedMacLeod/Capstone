@@ -10,7 +10,7 @@ public class SkillHiss : Skill {
         sName = "Hiss";
         sDisplayName = "Hiss";
 
-        type = new TypeCantrip(this);
+        typeUsage = new TypeUsageCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 0, 0, 1));
@@ -57,5 +57,9 @@ public class SkillHiss : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.HISS;
+    }
 
 }

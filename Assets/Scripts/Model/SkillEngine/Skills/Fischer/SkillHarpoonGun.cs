@@ -11,7 +11,7 @@ public class SkillHarpoonGun : Skill {
 
         //We don't have any specific effect to take place while channeling, so just leave the
         // soulChannel effect null and let it copy our execution's effect for what it does when the channel completes
-        type = new TypeChannel(this, 2, null);
+        typeUsage = new TypeUsageChannel(this, 2, null);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 0, 0, 2));
@@ -80,5 +80,9 @@ public class SkillHarpoonGun : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.HARPOONGUN;
+    }
 
 }

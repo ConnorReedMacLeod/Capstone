@@ -9,7 +9,7 @@ public class SkillExplosion : Skill {
         sName = "Explosion";
         sDisplayName = "Explosion";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 2, 0, 0));
@@ -57,5 +57,9 @@ public class SkillExplosion : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.EXPLOSION;
+    }
 
 }

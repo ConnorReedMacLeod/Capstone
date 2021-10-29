@@ -12,7 +12,7 @@ public class SkillImpale : Skill {
         sName = "Impale";
         sDisplayName = "Impale";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(2, 0, 0, 1, 5), true);
@@ -66,5 +66,9 @@ public class SkillImpale : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.IMPALE;
+    }
 
 }

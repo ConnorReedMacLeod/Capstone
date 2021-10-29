@@ -12,7 +12,7 @@ public class SkillSpiritSlap : Skill {
         sName = "SpiritSlap";
         sDisplayName = "Spirit Slap";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 1, 0, 0, 0));
@@ -64,5 +64,9 @@ public class SkillSpiritSlap : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.SPIRITSLAP;
+    }
 
 }

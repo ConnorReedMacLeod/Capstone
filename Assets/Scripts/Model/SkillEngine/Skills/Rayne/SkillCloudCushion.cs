@@ -9,7 +9,7 @@ public class SkillCloudCushion : Skill {
         sName = "CloudCushion";
         sDisplayName = "Cloud Cushion";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 1, 0, 0));
@@ -53,5 +53,9 @@ public class SkillCloudCushion : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.CLOUDCUSHION;
+    }
 
 }
