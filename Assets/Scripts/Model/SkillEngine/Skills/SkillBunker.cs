@@ -9,7 +9,7 @@ public class SkillBunker : Skill {
         sName = "Bunker";
         sDisplayName = "Bunker";
 
-        type = new TypeCantrip(this);
+        typeUsage = new TypeUsageCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 1, 0, 0));
@@ -50,5 +50,9 @@ public class SkillBunker : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.BUNKER;
+    }
 
 }

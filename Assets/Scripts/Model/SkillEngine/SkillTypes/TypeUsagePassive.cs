@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TypePassive : TypeSkill {
+public class TypeUsagePassive : TypeUsage {
 
-    public TypePassive(Skill skill) : base(skill) {
+    public TypeUsagePassive(Skill skill) : base(skill) {
 
     }
 

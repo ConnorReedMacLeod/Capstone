@@ -37,7 +37,7 @@ public class ExecPaySkillPoints : ExecChr {
 
     public override void ExecuteEffect() {
 
-        skillUsing.type.PaySkillPoints();
+        skillUsing.typeUsage.PaySkillPoints();
 
         fDelay = ContTurns.fDelayTurnSkill;
         sLabel = chrTarget.sName + " is paying their skill point cost (and potentially transitioning readiness state";

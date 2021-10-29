@@ -12,7 +12,7 @@ public class SkillStickyBomb : Skill {
         sName = "StickyBomb";
         sDisplayName = "Sticky Bomb";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 1, 0, 0, 1));
@@ -63,5 +63,9 @@ public class SkillStickyBomb : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.STICKYBOMB;
+    }
 
 }

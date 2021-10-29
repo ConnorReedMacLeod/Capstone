@@ -9,7 +9,7 @@ public class SkillSmokeCover : Skill {
         sName = "SmokeCover";
         sDisplayName = "Smoke Cover";
 
-        type = new TypeCantrip(this);
+        typeUsage = new TypeUsageCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 1, 0, 0, 0));
@@ -53,5 +53,9 @@ public class SkillSmokeCover : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.SMOKECOVER;
+    }
 
 }

@@ -50,7 +50,7 @@ public class SoulDispirited : SoulChr {
 
         Property<Mana>.Modifier costIncrease =
                 (mana) => {
-                    if(chrTarget.arSkillSlots[iSkill].skill.type.Type() == TypeSkill.TYPE.CANTRIP) {
+                    if(chrTarget.arSkillSlots[iSkill].skill.typeUsage.Type() == TypeUsage.TYPE.CANTRIP) {
                         //Increase the cost if the skill is a cantrip
                         return new Mana(LibFunc.AddArray<int>(mana.arMana, arnCostDebuff, (x, y) => (x + y)));
                     } else {

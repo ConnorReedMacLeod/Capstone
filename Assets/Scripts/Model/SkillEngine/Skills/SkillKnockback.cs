@@ -9,7 +9,7 @@ public class SkillKnockback : Skill {
         sName = "Knockback";
         sDisplayName = "Knockback";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(1, 0, 0, 0, 0));
@@ -82,5 +82,9 @@ public class SkillKnockback : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.KNOCKBACK;
+    }
 
 }

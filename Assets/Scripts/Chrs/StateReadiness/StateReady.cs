@@ -30,13 +30,13 @@ public class StateReady : StateReadiness {
     public override bool CanSelectSkill(Skill skill) {
         //We actually can select another skill if we're in the Ready state
 
-        if(!skill.type.Usable()) {
+        if(!skill.typeUsage.Usable()) {
             //Then this type of skill cannot be activated
 
             return false;
         }
 
-        if(skill.type.GetSkillPointCost() > nCurSkillsLeft) {
+        if(skill.typeUsage.GetSkillPointCost() > nCurSkillsLeft) {
             //Then we don't have enough skill activations left for this character to use the skill
 
             return false;

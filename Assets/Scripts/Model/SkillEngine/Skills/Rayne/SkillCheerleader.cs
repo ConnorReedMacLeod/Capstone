@@ -11,7 +11,7 @@ public class SkillCheerleader : Skill {
         sName = "Cheerleader";
         sDisplayName = "Cheerleader";
 
-        type = new TypePassive(this);
+        typeUsage = new TypeUsagePassive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 0, 0, 0));
@@ -95,4 +95,8 @@ public class SkillCheerleader : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.CHEERLEADER;
+    }
 }

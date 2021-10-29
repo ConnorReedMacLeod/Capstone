@@ -9,7 +9,7 @@ public class SkillReverberate : Skill {
         sName = "Reverberate";
         sDisplayName = "Reverberate";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 0, 0, 0));
@@ -59,5 +59,9 @@ public class SkillReverberate : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.REVERBERATE;
+    }
 
 }

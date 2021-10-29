@@ -11,7 +11,7 @@ public class SkillSadism : Skill {
         sName = "Sadism";
         sDisplayName = "Sadism";
 
-        type = new TypePassive(this);
+        typeUsage = new TypeUsagePassive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 0, 0, 0));
@@ -91,4 +91,8 @@ public class SkillSadism : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.SADISM;
+    }
 }

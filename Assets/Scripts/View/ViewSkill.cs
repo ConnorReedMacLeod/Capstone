@@ -125,7 +125,7 @@ public class ViewSkill : ViewInteractive {
         if(mod == null) {
             txtType.text = "";
         } else {
-            txtType.text = "[" + mod.type.getName() + "]";
+            txtType.text = "[" + mod.typeUsage.getName() + "]";
         }
     }
 

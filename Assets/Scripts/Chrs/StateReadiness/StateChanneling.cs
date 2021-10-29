@@ -36,7 +36,7 @@ public class StateChanneling : StateReadiness {
     // this should be subcribed to each potentially invalidating subject
     public void cbInterruptifInvalid(Object target, params object[] args) {
 
-        Debug.Assert(soulBehaviour.skillSource.type.Type() == TypeSkill.TYPE.CHANNEL);
+        Debug.Assert(soulBehaviour.skillSource.typeUsage.Type() == TypeUsage.TYPE.CHANNEL);
 
         //Get the SelectionInfo stored for the channeled skill and check if it is still completable
         if(soulBehaviour.skillSource.CanCompleteAsChannel() == false) {

@@ -9,7 +9,7 @@ public class SkillBucklerParry : Skill {
         sName = "BucklerParry";
         sDisplayName = "Buckler Parry";
 
-        type = new TypeCantrip(this);
+        typeUsage = new TypeUsageCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(1, 0, 0, 0, 0));
@@ -49,5 +49,9 @@ public class SkillBucklerParry : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.BUCKLERPARRY;
+    }
 
 }

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Skill { //This should probably be made abstract
+public abstract class Skill { 
 
     public string sName;
     public string sDisplayName;
-    public TypeSkill type;
+    public TypeUsage typeUsage;
 
     public SkillSlot skillslot;
 
@@ -33,6 +33,8 @@ public class Skill { //This should probably be made abstract
         chrOwner = _chrOwner;
         lstTargets = new List<Target>();
     }
+
+    public abstract SkillType.SKILLTYPE GetSkillType();
 
     //Changes the cost of this skill, and returns the node that is modifying that cost (so you can remove it later)
     public LinkedListNode<Property<Mana>.Modifier> ChangeCost(Property<Mana>.Modifier modifier) {
@@ -121,7 +123,7 @@ public class Skill { //This should probably be made abstract
         PushEndingMarker();
 
         //Let the type of this skill dictate the behaviour and push all relevant effects onto the stack
-        type.UseSkill();
+        typeUsage.UseSkill();
 
         //Then, add a starting marker before the skills' effects
         PushStartingMarker();

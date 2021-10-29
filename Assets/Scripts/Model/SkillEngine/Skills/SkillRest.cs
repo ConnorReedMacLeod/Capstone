@@ -9,7 +9,7 @@ public class SkillRest : Skill {
         sName = "Rest";
         sDisplayName = "Rest";
 
-        type = new TypeCantrip(this);
+        typeUsage = new TypeUsageCantrip(this);
 
         chrOwner = _chrOwner;
 
@@ -54,5 +54,9 @@ public class SkillRest : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.REST;
+    }
 
 }
