@@ -40,10 +40,8 @@ public class ExecAdaptSkill : ExecSkillslot {
     public override void ExecuteEffect() {
 
         string sOldSkillName = ssTarget.skill.sDisplayName;
-
-        Debug.Log("About to set skill to " + skilltypeToAdaptTo);
+        
         ssTarget.SetSkill(skilltypeToAdaptTo);
-        Debug.Log("after setskill");
 
         fDelay = ContTurns.fDelayMinorSkill;
         sLabel = ssTarget.chrOwner.sName + " adapted " + sOldSkillName + " to " + ssTarget.skill.sName;

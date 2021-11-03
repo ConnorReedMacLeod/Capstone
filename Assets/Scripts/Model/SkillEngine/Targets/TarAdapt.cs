@@ -6,6 +6,7 @@ using System.Linq;
 public class TarAdapt : Target {
 
     public int iTargetSkillSlotToReplace;
+    ViewTarAdapt viewTarAdapt;
 
     public override int Serialize(object objToSerialize) {
         
@@ -90,7 +91,9 @@ public class TarAdapt : Target {
 
         //Bring out the ViewTarAdapt and initialize it to be offering selections to adapt to
         GameObject pfAdaptPanel = Resources.Load("Prefabs/TargettingUI/pfAdaptPanel", typeof(GameObject)) as GameObject;
-        ViewTarAdapt viewTarAdapt = pfAdaptPanel.GetComponent<ViewTarAdapt>();
+        GameObject goPanel = GameObject.Instantiate(pfAdaptPanel);
+
+        viewTarAdapt = goPanel.GetComponent<ViewTarAdapt>();
         viewTarAdapt.StartSelection(this);
 
     }
@@ -98,8 +101,10 @@ public class TarAdapt : Target {
     protected override void OnEndLocalSelection() {
 
         //Now that we're done paying, have the ViewTarAdapt clean itself up
-        ViewTarMana.Get().CleanUp();
+        viewTarAdapt.CleanUp();
 
+        //Then delete it
+        GameObject.Destroy(viewTarAdapt.gameObject);
     }
 }
 

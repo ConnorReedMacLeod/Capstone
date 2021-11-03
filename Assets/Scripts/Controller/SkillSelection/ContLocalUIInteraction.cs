@@ -28,6 +28,10 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
     public static Subject subAllStartManualSelections = new Subject(Subject.SubType.ALL);
     public static Subject subAllFinishManualSelections = new Subject(Subject.SubType.ALL);
 
+    public bool InSelectionsProcess() {
+        return selectionsInProgress != null;
+    }
+
     // Start a new round of targetting
     public void ResetStoredSelections() {
         //Clear any previous targetting information we had
@@ -67,6 +71,10 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
         // When we've clicked a skill, try to use that skill
         // There's a bunch of checks we have to do for this though first to ensure we should be selecting this skill
+        if (InSelectionsProcess()) {
+            Debug.Log("Can't select start selections process when we're already selecting targets for a different skill");
+            return;
+        }
 
         // If this skill isn't owned by a locally-controlled client, then reject this selection
         if(_skillSelected.chrOwner.plyrOwner.inputController == null) {
