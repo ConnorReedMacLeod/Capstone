@@ -2,22 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TypeCantrip : TypeSkill {
+public class TypeUsageActive : TypeUsage {
 
-    public const int nSkillPointCost = 0;
+    public const int nSkillPointCost = 1;
 
-    public TypeCantrip(Skill skill) : base(skill) {
+    public TypeUsageActive(Skill skill) : base(skill) {
 
     }
 
     public override string getName() {
-        return "Cantrip";
+        return "Active";
     }
 
     public override TYPE Type() {
-        return TYPE.CANTRIP;
+        return TYPE.ACTIVE;
     }
-
     public override int GetSkillPointCost() {
         return nSkillPointCost;
     }

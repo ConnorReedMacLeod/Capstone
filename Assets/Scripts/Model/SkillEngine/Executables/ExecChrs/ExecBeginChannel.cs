@@ -37,7 +37,7 @@ public class ExecBeginChannel : ExecChr {
     public override void ExecuteEffect() {
         Debug.Log("Beginning of ExecBeginChannel.ExecuteEffect");
 
-        TypeChannel typeChannel = (TypeChannel)skillChannel.type;
+        TypeUsageChannel typeChannel = (TypeUsageChannel)skillChannel.typeUsage;
 
         //Ask the soulbehaviour to make a copy of itself with the skill it represents
         StateChanneling newState = new StateChanneling(chrTarget, typeChannel.nStartChannelTime, typeChannel.soulBehaviour.GetCopy(skillChannel));

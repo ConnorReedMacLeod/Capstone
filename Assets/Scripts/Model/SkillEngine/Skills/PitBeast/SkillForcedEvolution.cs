@@ -9,7 +9,7 @@ public class SkillForcedEvolution : Skill {
         sName = "ForcedEvolution";
         sDisplayName = "Forced Evolution";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 0, 1, 0));
@@ -17,13 +17,15 @@ public class SkillForcedEvolution : Skill {
         nCooldownInduced = 6;
         nFatigue = 1;
 
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this),
         };
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
     }
 
     class Clause1 : Clause {
@@ -77,4 +79,8 @@ public class SkillForcedEvolution : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.FORCEDEVOLUTION;
+    }
 }

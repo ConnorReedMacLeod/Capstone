@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class TypeSkill {
+public abstract class TypeUsage {
 
     public Skill skill;
     public enum TYPE { ACTIVE, CANTRIP, CHANNEL, PASSIVE };
 
-    public TypeSkill(Skill _skill) {
+    public TypeUsage(Skill _skill) {
         this.skill = _skill;
     }
 

@@ -72,7 +72,7 @@ public class Selections {
         for(int i = 0; i < skillSelected.lstTargets.Count; i++) {
             // Ask the corresponding Target to decode the serialized int we've been provided
             // i+1 since the first entry of the serialized array refers to the chosen skill, and not the selections
-            lstSelections.Add(skillSelected.lstTargets[i].Unserialize((int)arnSerializedSelections[i + 1]));
+            lstSelections.Add(skillSelected.lstTargets[i].Unserialize((int)arnSerializedSelections[i + 1], lstSelections));
         }
     }
 
@@ -208,7 +208,14 @@ public class Selections {
         for(int i = 0; i < skillSelected.lstTargets.Count; i++) {
             AddPotentiallyInvalidSelection(skillSelected.lstTargets[i].GetRandomSelectable());
         }
+    }
+    
+    // Gives the nth most recent selection (n=0 gives most recent)
+    public object GetNthPreviousSelection(int n) {
 
+        Debug.Assert(n < lstSelections.Count);
+
+        return lstSelections[lstSelections.Count - 1 - n];
     }
 
 }

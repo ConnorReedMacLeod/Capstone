@@ -11,7 +11,7 @@ public class SkillLeech : Skill {
         sName = "Leech";
         sDisplayName = "Leech";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 0, 1, 0));
@@ -19,15 +19,17 @@ public class SkillLeech : Skill {
         nCooldownInduced = 1;
         nFatigue = 1;
 
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-            new TarChr(this, TarChr.IsDiffTeam(chrOwner))
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this),
             new Clause2(this)
         };
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
+        TarChr.AddTarget(this, TarChr.IsDiffTeam(chrOwner));
     }
 
     class Clause1 : Clause {
@@ -70,11 +72,15 @@ public class SkillLeech : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecAdaptSkill(skill.chrOwner, this.skill, SkillType.SKILLTYPE.TRANSFUSE));
+            ContSkillEngine.PushSingleExecutable(new ExecAdaptSkill(skill.chrOwner, this.skill.skillslot, SkillType.SKILLTYPE.TRANSFUSE));
 
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.LEECH;
+    }
 
 }
 
@@ -89,7 +95,7 @@ public class SkillTransfuse : Skill {
         sName = "Transfuse";
         sDisplayName = "Transfuse";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 0, 1, 0));
@@ -97,15 +103,17 @@ public class SkillTransfuse : Skill {
         nCooldownInduced = 2;
         nFatigue = 2;
 
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-            new TarChr(this, TarChr.IsSameTeam(chrOwner))
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this),
             new Clause2(this)
         };
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
+        TarChr.AddTarget(this, TarChr.IsSameTeam(chrOwner));
     }
 
     class Clause1 : Clause {
@@ -148,11 +156,15 @@ public class SkillTransfuse : Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecAdaptSkill(skill.chrOwner, this.skill, SkillType.SKILLTYPE.LEECH));
+            ContSkillEngine.PushSingleExecutable(new ExecAdaptSkill(skill.chrOwner, this.skill.skillslot, SkillType.SKILLTYPE.LEECH));
 
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.TRANSFUSE;
+    }
 
 }
 

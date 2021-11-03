@@ -12,7 +12,7 @@ public class SkillSpiritSlap : Skill {
         sName = "SpiritSlap";
         sDisplayName = "Spirit Slap";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 1, 0, 0, 0));
@@ -20,14 +20,16 @@ public class SkillSpiritSlap : Skill {
         nCooldownInduced = 0;
         nFatigue = 2;
 
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-            new TarChr(this, Target.AND(TarChr.IsFrontliner(), TarChr.IsDiffTeam(chrOwner)))
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this),
         };
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
+        TarChr.AddTarget(this, Target.AND(TarChr.IsFrontliner(), TarChr.IsDiffTeam(chrOwner)));
     }
 
     class Clause1 : Clause {
@@ -64,5 +66,9 @@ public class SkillSpiritSlap : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.SPIRITSLAP;
+    }
 
 }

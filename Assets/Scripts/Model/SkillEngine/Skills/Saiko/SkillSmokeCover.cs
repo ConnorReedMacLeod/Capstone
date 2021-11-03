@@ -9,7 +9,7 @@ public class SkillSmokeCover : Skill {
         sName = "SmokeCover";
         sDisplayName = "Smoke Cover";
 
-        type = new TypeCantrip(this);
+        typeUsage = new TypeUsageCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 1, 0, 0, 0));
@@ -17,13 +17,15 @@ public class SkillSmokeCover : Skill {
         nCooldownInduced = 10;
         nFatigue = 2;
 
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
     }
 
     class Clause1 : Clause {
@@ -53,5 +55,9 @@ public class SkillSmokeCover : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.SMOKECOVER;
+    }
 
 }

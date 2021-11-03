@@ -4,20 +4,36 @@ using UnityEngine;
 
 public class TarChr : Target {
 
-    public override int Serialize(object objToSerialize) {
-        return ((Chr)objToSerialize).globalid;
+    public static int SerializeChr(Chr chr) {
+        return chr.globalid;
     }
 
-    public override object Unserialize(int nSerialized) {
+    public static Chr UnserializeChr(int nSerialized) {
         return Chr.lstAllChrs[nSerialized];
     }
 
+
+
+    public override int Serialize(object objToSerialize) {
+        return SerializeChr((Chr)objToSerialize);
+    }
+
+    public override object Unserialize(int nSerialized, List<object> lstSelectionsSoFar) {
+        return UnserializeChr(nSerialized);
+    }
+
+    public static TarChr AddTarget(Skill _skill, FnValidSelection _IsValidSelection) {
+        TarChr tarchr = new TarChr(_skill, _IsValidSelection);
+        _skill.lstTargets.Add(tarchr);
+
+        return tarchr;
+    }
 
     public TarChr(Skill _skill, FnValidSelection _IsValidSelection) : base(_skill, _IsValidSelection) {
 
     }
 
-    public override IEnumerable<object> GetSelactableUniverse() {
+    public override IEnumerable<object> GetSelectableUniverse() {
         return Chr.lstAllChrs;
     }
 
@@ -65,7 +81,7 @@ public class TarChr : Target {
 
     protected override void OnEndLocalSelection() {
         //Remove highlighting from ALL characters (just in case somehow the list of targettable characters may have changed)
-        foreach(Chr c in GetSelactableUniverse()) {
+        foreach(Chr c in GetSelectableUniverse()) {
             c.subEndsTargettable.NotifyObs();
         }
 

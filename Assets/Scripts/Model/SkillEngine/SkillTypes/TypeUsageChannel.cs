@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TypeChannel : TypeSkill {
+public class TypeUsageChannel : TypeUsage {
 
     public const int nSkillPointCost = 1;
 
@@ -10,7 +10,7 @@ public class TypeChannel : TypeSkill {
     public int nStartChannelTime;
     public Selections selectionsStored;
 
-    public TypeChannel(Skill skill, int _nStartChannelTime, SoulChannel _soulBehaviour) : base(skill) {
+    public TypeUsageChannel(Skill skill, int _nStartChannelTime, SoulChannel _soulBehaviour) : base(skill) {
 
         nStartChannelTime = _nStartChannelTime;
 

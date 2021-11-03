@@ -9,7 +9,7 @@ public class SkillHuntersQuarry : Skill {
         sName = "HuntersQuarry";
         sDisplayName = "Hunter's Quarry";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 0, 0, 0));
@@ -17,14 +17,16 @@ public class SkillHuntersQuarry : Skill {
         nCooldownInduced = 8;
         nFatigue = 3;
 
-        lstTargets = new List<Target>(){
-            new TarMana(this, manaCost),
-            new TarChr(this, TarChr.IsOtherChr(chrOwner))
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
+        TarChr.AddTarget(this, TarChr.IsOtherChr(chrOwner));
     }
 
     class Clause1 : Clause {
@@ -55,5 +57,9 @@ public class SkillHuntersQuarry : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.HUNTERSQUARRY;
+    }
 
 }

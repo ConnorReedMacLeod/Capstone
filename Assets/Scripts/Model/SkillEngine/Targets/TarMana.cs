@@ -16,15 +16,11 @@ public class TarMana : Target {
         return (byte)((nSerialized & (63 << (6 * (4 - nManaTypeIndex)))) >> (6 * (4 - nManaTypeIndex)));
     }
 
-    public override int Serialize(object objToSerialize) {
-        Mana mana = (Mana)objToSerialize;
-
-
+    public static int SerializeMana(Mana mana) {
         return (mana[0] << 24) + (mana[1] << 18) + (mana[2] << 12) + (mana[3] << 6) + mana[4];
     }
 
-    public override object Unserialize(int nSerialized) {
-
+    public static Mana UnserializeMana(int nSerialized) {
         return new Mana(GetIndividualCost(0, nSerialized),
             GetIndividualCost(1, nSerialized),
             GetIndividualCost(2, nSerialized),
@@ -32,9 +28,31 @@ public class TarMana : Target {
             GetIndividualCost(4, nSerialized));
     }
 
+
+
+    public override int Serialize(object objToSerialize) {
+        return SerializeMana((Mana)objToSerialize);
+    }
+
+    public override object Unserialize(int nSerialized, List<object> lstSelectionsSoFar) {
+        return UnserializeMana(nSerialized);
+    }
+
     public static FnValidSelection COVERSCOST(ManaCost manaCostRequired) {
         return (object manaPaid, Selections selections) => (manaCostRequired.CanBePaidWith((Mana)manaPaid));
     }
+
+    public static TarMana AddTarget(Skill _skill, ManaCost _manaCostRequired) {
+        return AddTarget(_skill, _manaCostRequired, COVERSCOST(_manaCostRequired));
+    }
+
+    public static TarMana AddTarget(Skill _skill, ManaCost _manaCostRequried, FnValidSelection fnValidSelection) {
+        TarMana tarmana = new TarMana(_skill, _manaCostRequried, fnValidSelection);
+        _skill.lstTargets.Add(tarmana);
+
+        return tarmana;
+    }
+
 
     //If no additional requirements are present, just enforce that the proposed mana amount covers the required cost
     public TarMana(Skill _skill, ManaCost _manaCostRequired) : base(_skill, COVERSCOST(_manaCostRequired)) {
@@ -47,7 +65,7 @@ public class TarMana : Target {
     }
 
     //This doesn't really make sense for this targetting type, so just return an empty list
-    public override IEnumerable<object> GetSelactableUniverse() {
+    public override IEnumerable<object> GetSelectableUniverse() {
         return null;
     }
 

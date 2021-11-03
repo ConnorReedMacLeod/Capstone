@@ -15,7 +15,7 @@ public class SkillAmbush : Skill {
         soulChannelBehaviour = new SoulChannelAmbush(this);
 
         //Pass a reference into the channel-type so that it can copy our behaviour for channeling
-        type = new TypeChannel(this, 4, soulChannelBehaviour);
+        typeUsage = new TypeUsageChannel(this, 4, soulChannelBehaviour);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 0, 0, 1));
@@ -23,16 +23,17 @@ public class SkillAmbush : Skill {
         nCooldownInduced = 3;
         nFatigue = 1;
 
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-            new TarChr(this, TarChr.IsDiffTeam(chrOwner))
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
     }
 
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
+        TarChr.AddTarget(this, TarChr.IsDiffTeam(chrOwner));
+    }
 
     class Clause1 : Clause {
 
@@ -55,5 +56,9 @@ public class SkillAmbush : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.AMBUSH;
+    }
 
 }

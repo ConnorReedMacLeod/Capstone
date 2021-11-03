@@ -9,7 +9,7 @@ public class SkillFortissimo : Skill {
         sName = "Fortissimo";
         sDisplayName = "Fortissimo";
 
-        type = new TypeCantrip(this);
+        typeUsage = new TypeUsageCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 0, 0, 0));
@@ -17,16 +17,16 @@ public class SkillFortissimo : Skill {
         nCooldownInduced = 8;
         nFatigue = 0;
 
-
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this),
         };
     }
 
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
+    }
 
     class Clause1 : Clause {
 
@@ -54,4 +54,8 @@ public class SkillFortissimo : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.FORTISSIMO;
+    }
 }
