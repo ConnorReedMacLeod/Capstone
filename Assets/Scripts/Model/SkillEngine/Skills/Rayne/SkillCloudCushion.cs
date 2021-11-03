@@ -17,14 +17,18 @@ public class SkillCloudCushion : Skill {
         nCooldownInduced = 7;
         nFatigue = 1;
 
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-            new TarChr(this, TarChr.IsSameTeam(chrOwner))
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
+
+
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
+        TarChr.AddTarget(this, TarChr.IsSameTeam(chrOwner));
     }
 
     class Clause1 : Clause {

@@ -20,9 +20,15 @@ public class SkillRest : Skill {
 
         skillslot = null;
 
+        InitTargets();
+
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
+    }
+
+    public override void InitTargets() {
+        //No targetting required for a rest action
     }
 
     class Clause1 : Clause {

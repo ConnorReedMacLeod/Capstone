@@ -19,6 +19,8 @@ public class SkillCheerleader : Skill {
         nCooldownInduced = 0;
         nFatigue = 0;
 
+        InitTargets();
+
         soulPassive = new SoulCheerleader(this.chrOwner, this.chrOwner, this);
 
         lstClausesOnEquip = new List<Clause>() {
@@ -32,6 +34,10 @@ public class SkillCheerleader : Skill {
         lstClausesOnUnequip = new List<Clause>() {
             new ClauseUnequip(this)
         };
+    }
+
+    public override void InitTargets() {
+        //No targets needed for a passive
     }
 
     class ClauseEquip : Clause {

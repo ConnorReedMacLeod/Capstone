@@ -5,7 +5,7 @@ using UnityEngine;
 
 //Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
 
-public class ExecAdaptSkill : ExecSkill {
+public class ExecAdaptSkill : ExecSkillslot {
 
     public SkillType.SKILLTYPE skilltypeToAdaptTo;
 
@@ -39,18 +39,18 @@ public class ExecAdaptSkill : ExecSkill {
 
     public override void ExecuteEffect() {
 
-        string sOldSkillName = skTarget.sDisplayName;
+        string sOldSkillName = ssTarget.skill.sDisplayName;
 
         Debug.Log("About to set skill to " + skilltypeToAdaptTo);
-        skTarget.skillslot.SetSkill(skilltypeToAdaptTo);
+        ssTarget.SetSkill(skilltypeToAdaptTo);
         Debug.Log("after setskill");
 
         fDelay = ContTurns.fDelayMinorSkill;
-        sLabel = skTarget.chrOwner.sName + " adapted " + sOldSkillName + " to " + skTarget.sName;
+        sLabel = ssTarget.chrOwner.sName + " adapted " + sOldSkillName + " to " + ssTarget.skill.sName;
 
     }
 
-    public ExecAdaptSkill(Chr _chrSource, Skill _skTarget, SkillType.SKILLTYPE _skilltypeToAdaptTo) : base(_chrSource, _skTarget) {
+    public ExecAdaptSkill(Chr _chrSource, SkillSlot _ssTarget, SkillType.SKILLTYPE _skilltypeToAdaptTo) : base(_chrSource, _ssTarget) {
         skilltypeToAdaptTo = _skilltypeToAdaptTo;
     }
 

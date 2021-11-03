@@ -5,6 +5,8 @@ using System.Linq;
 
 public class TarAdapt : Target {
 
+    public int iTargetSkillSlotToReplace;
+
     public override int Serialize(object objToSerialize) {
         
         //Just convert the SkillType we've been passed along (converting into an int)
@@ -18,7 +20,20 @@ public class TarAdapt : Target {
 
         return (SkillType.SKILLTYPE)nSerialized;
     }
-    
+
+
+    public static TarAdapt AddTarget(Skill _skill, FnValidSelection _IsValidSkillSlot, FnValidSelection _IsValidAdaptSkill) {
+
+        TarSkillSlot tarskillslot = TarSkillSlot.AddTarget(_skill, _IsValidSkillSlot);
+
+        TarAdapt tarAdapt = new TarAdapt(_skill, _IsValidAdaptSkill);
+        
+        _skill.lstTargets.Add(tarAdapt);
+
+        tarAdapt.iTargetSkillSlotToReplace = tarskillslot.iTargetIndex;
+
+        return tarAdapt;
+    }
 
     //There's currently nothing extra to configure our TarAdapt with - can always introduce new things here if needed
     public TarAdapt(Skill _skill, FnValidSelection _fnValidSelection) : base(_skill, _fnValidSelection) {
@@ -30,9 +45,14 @@ public class TarAdapt : Target {
         return null;
     }
 
+    public SkillSlot GetSelectedSkillslot() {
+        return (SkillSlot)(selectionsSoFar.lstSelections[iTargetSkillSlotToReplace]);
+    }
+
     public List<SkillType.SkillTypeInfo> GetAdaptableSkills() {
-        //We assume the most recent selection was the skill we're adapting away from
-        Chr chrAdapting = ((Skill)selectionsSoFar.GetNthPreviousSelection(0)).chrOwner;
+        //Get the skillslot we're adapting away from
+        SkillSlot skillslotAdaptingAwayFrom = GetSelectedSkillslot();
+        Chr chrAdapting = skillslotAdaptingAwayFrom.chrOwner;
 
         //Get all the skills under this character's disciplines
         List<SkillType.SkillTypeInfo> lstSkillTypeInfosInDisciplines = SkillType.GetSkillInfosUnderDisciplines(chrAdapting).ToList();

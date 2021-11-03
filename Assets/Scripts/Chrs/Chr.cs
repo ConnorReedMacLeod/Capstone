@@ -225,7 +225,7 @@ public class Chr : MonoBehaviour {
 
             //Only reduce the cooldown if it is not currently off cooldown
             if(arSkillSlots[i].nCooldown > 0) {
-                ContSkillEngine.Get().AddExec(new ExecChangeCooldown(null, arSkillSlots[i].skill, -1) {
+                ContSkillEngine.Get().AddExec(new ExecChangeCooldown(null, arSkillSlots[i], -1) {
 
                     fDelay = ContTurns.fDelayMinorSkill
                 });

@@ -25,7 +25,12 @@ public class TarSkillSlot : Target {
         return UnserializeSkillSlot(nSerialized);
     }
 
+    public static TarSkillSlot AddTarget(Skill _skill, FnValidSelection _IsValidSelection) {
+        TarSkillSlot tarskillslot = new TarSkillSlot(_skill, _IsValidSelection);
+        _skill.lstTargets.Add(tarskillslot);
 
+        return tarskillslot;
+    }
 
     public TarSkillSlot(Skill _skill, FnValidSelection _IsValidSelection) : base(_skill, _IsValidSelection) {
 

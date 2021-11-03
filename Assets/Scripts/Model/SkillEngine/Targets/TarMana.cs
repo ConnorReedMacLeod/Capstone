@@ -42,6 +42,18 @@ public class TarMana : Target {
         return (object manaPaid, Selections selections) => (manaCostRequired.CanBePaidWith((Mana)manaPaid));
     }
 
+    public static TarMana AddTarget(Skill _skill, ManaCost _manaCostRequired) {
+        return AddTarget(_skill, _manaCostRequired, COVERSCOST(_manaCostRequired));
+    }
+
+    public static TarMana AddTarget(Skill _skill, ManaCost _manaCostRequried, FnValidSelection fnValidSelection) {
+        TarMana tarmana = new TarMana(_skill, _manaCostRequried, fnValidSelection);
+        _skill.lstTargets.Add(tarmana);
+
+        return tarmana;
+    }
+
+
     //If no additional requirements are present, just enforce that the proposed mana amount covers the required cost
     public TarMana(Skill _skill, ManaCost _manaCostRequired) : base(_skill, COVERSCOST(_manaCostRequired)) {
         manaCostRequired = _manaCostRequired;

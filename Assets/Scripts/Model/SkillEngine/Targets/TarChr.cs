@@ -22,6 +22,12 @@ public class TarChr : Target {
         return UnserializeChr(nSerialized);
     }
 
+    public static TarChr AddTarget(Skill _skill, FnValidSelection _IsValidSelection) {
+        TarChr tarchr = new TarChr(_skill, _IsValidSelection);
+        _skill.lstTargets.Add(tarchr);
+
+        return tarchr;
+    }
 
     public TarChr(Skill _skill, FnValidSelection _IsValidSelection) : base(_skill, _IsValidSelection) {
 
