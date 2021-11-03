@@ -4,17 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
-public class ViewTarAdapt : Singleton<ViewTarAdapt> {
+public class ViewTarAdapt : MonoBehaviour {
 
     public TarAdapt modTarAdapt;
     public List<SkillType.SkillTypeInfo> lstSkillTypeInfosAdaptable;
 
     public Dropdown dropdownSkillSelection;
-
-    public Vector3 v3OnScreen = new Vector3(0, 0, -2.5f);
-    public Vector3 v3OffScreen = new Vector3(-100, -100, -2.5f);
-
- 
 
     //Set the TarAdapt model that we're going to be facilitating payment for
     public void StartSelection(TarAdapt _modTarAdapt) {
@@ -39,7 +34,6 @@ public class ViewTarAdapt : Singleton<ViewTarAdapt> {
 
         lstSkillTypeInfosAdaptable = null;
 
-
     }
 
     public void SetDropDownOptions(List<SkillType.SkillTypeInfo> lstSkillTypeInfo) {
@@ -54,17 +48,8 @@ public class ViewTarAdapt : Singleton<ViewTarAdapt> {
 
     }
 
-    public void MoveOnScreen() {
-        transform.position = v3OnScreen;
-    }
-
-    public void MoveOffscreen() {
-        transform.position = v3OffScreen;
-    }
-
-    public override void Init() {
-
-
+    public void OnSelectedChanged() {
+        Debug.Log("Dropdown changed to " + dropdownSkillSelection.value);
     }
 
 
@@ -73,7 +58,9 @@ public class ViewTarAdapt : Singleton<ViewTarAdapt> {
         //Grab whichever associated Skill we have hovered in the dropdown and pass it as our selection
         SkillType.SKILLTYPE skilltypeSelected = lstSkillTypeInfosAdaptable[dropdownSkillSelection.value].type;
 
-        modTarAdapt.AttemptSelection(dropdownSkillSelection.value);
+        Debug.Log("Going to pass " + skilltypeSelected + " to adapt into");
+
+        modTarAdapt.AttemptSelection(skilltypeSelected);
     }
 
 }

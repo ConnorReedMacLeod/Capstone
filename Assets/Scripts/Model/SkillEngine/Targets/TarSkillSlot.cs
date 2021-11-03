@@ -50,7 +50,7 @@ public class TarSkillSlot : Target {
 
 
     public static FnValidSelection IsOwnedBySameChr(Chr chr) {
-        return (object skillslot, Selections selections) => (chr.id != ((SkillSlot)skillslot).chrOwner.id);
+        return (object skillslot, Selections selections) => (chr.id == ((SkillSlot)skillslot).chrOwner.id);
     }
 
     public static FnValidSelection IsOwnedByOtherChr(Chr chr) {
@@ -85,7 +85,10 @@ public class TarSkillSlot : Target {
     protected override void OnStartLocalSelection() {
 
         //TODO:: Figure out how to do good highlighting for valid skillslots
-        
+
+        //Allow the local player to click on characters to view and select their skills
+        ContLocalUIInteraction.Get().bCanSelectCharacters = true;
+
         //Set up the character-click triggers
         ViewSkill.subAllClick.Subscribe(cbClickSelectable);
     }
@@ -95,6 +98,9 @@ public class TarSkillSlot : Target {
 
         //Remove the character-click triggers
         ViewSkill.subAllClick.UnSubscribe(cbClickSelectable);
+
+        //Set our local selection state to idle since we don't want the character's skills window to still be up after clicking one
+        ContLocalUIInteraction.Get().SetState(new StateTargetIdle());
     }
 }
 

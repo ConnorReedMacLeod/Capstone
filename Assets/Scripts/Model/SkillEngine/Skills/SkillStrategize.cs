@@ -44,6 +44,7 @@ public class SkillStrategize : Skill {
 
             SkillSlot ssAdaptingFrom = (SkillSlot)selections.lstSelections[1];
             SkillType.SKILLTYPE skilltypeAdaptingTo = (SkillType.SKILLTYPE)selections.lstSelections[2];
+            Debug.Log("Adapting to " + skilltypeAdaptingTo);
             
             ContSkillEngine.PushSingleExecutable(new ExecAdaptSkill(skill.chrOwner, ssAdaptingFrom, skilltypeAdaptingTo) { 
                 sLabel = "Adapting skill"
