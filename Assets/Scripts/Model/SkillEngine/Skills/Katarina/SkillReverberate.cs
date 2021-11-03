@@ -9,7 +9,7 @@ public class SkillReverberate : Skill {
         sName = "Reverberate";
         sDisplayName = "Reverberate";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 0, 0, 0));
@@ -17,15 +17,16 @@ public class SkillReverberate : Skill {
         nCooldownInduced = 8;
         nFatigue = 4;
 
-
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-            new TarChr(this, TarChr.TRUE)
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this),
         };
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
+        TarChr.AddTarget(this, TarChr.TRUE);
     }
 
     class Clause1 : Clause {
@@ -59,5 +60,9 @@ public class SkillReverberate : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.REVERBERATE;
+    }
 
 }

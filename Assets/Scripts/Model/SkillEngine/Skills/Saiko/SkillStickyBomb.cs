@@ -12,7 +12,7 @@ public class SkillStickyBomb : Skill {
         sName = "StickyBomb";
         sDisplayName = "Sticky Bomb";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 1, 0, 0, 1));
@@ -20,14 +20,16 @@ public class SkillStickyBomb : Skill {
         nCooldownInduced = 6;
         nFatigue = 3;
 
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-            new TarChr(this, Target.TRUE)
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this),
         };
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
+        TarChr.AddTarget(this, Target.TRUE);
     }
 
     class Clause1 : Clause {
@@ -63,5 +65,9 @@ public class SkillStickyBomb : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.STICKYBOMB;
+    }
 
 }

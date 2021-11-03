@@ -12,7 +12,7 @@ using UnityEngine;
 /// from a channeling state
 /// </summary>
 
-public class ExecClearStoredSelection : ExecSkill {
+public class ExecClearStoredSelection : ExecSkillslot {
 
     //This really shouldn't be used since this is just a game-action
 
@@ -44,14 +44,14 @@ public class ExecClearStoredSelection : ExecSkill {
 
     public override void ExecuteEffect() {
 
-        ((TypeChannel)skTarget.type).ClearStoredSelectionInfo();
+        ((TypeUsageChannel)ssTarget.skill.typeUsage).ClearStoredSelectionInfo();
 
         fDelay = ContTurns.fDelayGameEffects;
-        sLabel = "Clearing stored " + skTarget.sDisplayName + "'s selections";
+        sLabel = "Clearing stored " + ssTarget.skill.sDisplayName + "'s selections";
 
     }
 
-    public ExecClearStoredSelection(Chr _chrSource, Skill _skTarget) : base(_chrSource, _skTarget) {
+    public ExecClearStoredSelection(Chr _chrSource, SkillSlot _ssTarget) : base(_chrSource, _ssTarget) {
 
     }
 

@@ -36,8 +36,8 @@ public class ViewTarMana : Singleton<ViewTarMana> {
             int nManaCanPay = Mathf.Min(nManaToPay, plyrPaying.manapool.manaUsableToPay[i]);
             int nManaUnpayable = nManaToPay - nManaCanPay;
 
-            Debug.Log("For " + (Mana.MANATYPE)i + ": nManaToPay = " + nManaToPay + " nManaCanPay = " + nManaCanPay +
-                " nManaUnpayable = " + nManaUnpayable);
+            //Debug.Log("For " + (Mana.MANATYPE)i + ": nManaToPay = " + nManaToPay + " nManaCanPay = " + nManaCanPay +
+            //    " nManaUnpayable = " + nManaUnpayable);
 
             //For each mana pip we can afford, spawn a paid icon for it
             for(int j = 0; j < nManaCanPay; j++) {
@@ -47,7 +47,6 @@ public class ViewTarMana : Singleton<ViewTarMana> {
             }
             //For each mana pip we can't afford, spawn an unpaid icon for it
             for(int j = 0; j < nManaUnpayable; j++) {
-                Debug.Log("Spawning icon for unpayable " + (Mana.MANATYPE)j);
                 AddManaIcon((Mana.MANATYPE)i, false);
             }
             
@@ -72,9 +71,7 @@ public class ViewTarMana : Singleton<ViewTarMana> {
 
         //First, add icons for all paid-for effort
         for(; iManaIcon < nManaToSpend; iManaIcon++, jEffortPaidWith++) {
-            Debug.Log("Should we add a new icon? " + iManaIcon + " == " + lstgoManaIcons.Count);
             if (iManaIcon == lstgoManaIcons.Count) {
-                Debug.Log("Adding a new icon");
                 //If we're trying to update an icon we haven't spawned yet, then spawn it instead
                 AddManaIcon(Mana.MANATYPE.EFFORT, true, lstManaAllocatedForEffort[jEffortPaidWith]);
             } else {
@@ -129,8 +126,6 @@ public class ViewTarMana : Singleton<ViewTarMana> {
     //Destroy the last-most mana icon
     public void DestroyManaIcon() {
         Debug.Assert(lstgoManaIcons.Count != 0);
-
-        Debug.Log("destroying mana icon " + (lstgoManaIcons.Count - 1));
 
         Destroy(lstgoManaIcons[lstgoManaIcons.Count - 1]);
 
@@ -201,11 +196,16 @@ public class ViewTarMana : Singleton<ViewTarMana> {
             plyrPaying.manapool.ReserveMana(manaToSpend);
         }
 
+
+        KeyBindings.SetBinding(SubmitAllocatedMana, KeyCode.T);
+
     }
 
-    //CLear out anything from the current payment process
+    //Clear out anything from the current payment process
     public void CleanUp() {
 
+        //Unbind the selection hotkey
+        KeyBindings.Unbind(KeyCode.T);
 
         //Clear out the model we were paying for
         modTarMana = null;
@@ -244,7 +244,6 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         KeyBindings.SetBinding(RemoveEnergy, KeyCode.D);
         KeyBindings.SetBinding(RemoveBlood, KeyCode.F);
 
-        KeyBindings.SetBinding(SubmitAllocatedMana, KeyCode.T);
         
     }
 

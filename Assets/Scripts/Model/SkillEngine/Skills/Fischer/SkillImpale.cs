@@ -12,7 +12,7 @@ public class SkillImpale : Skill {
         sName = "Impale";
         sDisplayName = "Impale";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(2, 0, 0, 1, 5), true);
@@ -24,14 +24,16 @@ public class SkillImpale : Skill {
         //Create a base Damage object that this skill will apply
         dmg = new Damage(this.chrOwner, null, nBaseDamage);
 
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-            new TarChr(this, Target.AND(TarChr.IsDiffTeam(chrOwner), TarChr.IsFrontliner()))
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
+        TarChr.AddTarget(this, Target.AND(TarChr.IsDiffTeam(chrOwner), TarChr.IsFrontliner()));
     }
 
     class Clause1 : Clause {
@@ -66,5 +68,9 @@ public class SkillImpale : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.IMPALE;
+    }
 
 }

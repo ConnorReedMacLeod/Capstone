@@ -9,7 +9,7 @@ public class SkillBucklerParry : Skill {
         sName = "BucklerParry";
         sDisplayName = "Buckler Parry";
 
-        type = new TypeCantrip(this);
+        typeUsage = new TypeUsageCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(1, 0, 0, 0, 0));
@@ -17,13 +17,15 @@ public class SkillBucklerParry : Skill {
         nCooldownInduced = 8;
         nFatigue = 2;
 
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this),
         };
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
     }
 
     class Clause1 : Clause {
@@ -49,5 +51,9 @@ public class SkillBucklerParry : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.BUCKLERPARRY;
+    }
 
 }

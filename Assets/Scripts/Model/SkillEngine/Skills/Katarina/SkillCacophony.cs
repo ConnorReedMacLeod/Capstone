@@ -9,7 +9,7 @@ public class SkillCacophony : Skill {
         sName = "Cacophony";
         sDisplayName = "Cacophony";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 1, 0, 1));
@@ -17,14 +17,16 @@ public class SkillCacophony : Skill {
         nCooldownInduced = 8;
         nFatigue = 4;
 
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-            new TarChr(this, TarChr.IsFrontliner())
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this),
         };
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
+        TarChr.AddTarget(this, TarChr.IsFrontliner());
     }
 
     //Deal critical damage and stun if the targetted character is a frontliner
@@ -82,4 +84,8 @@ public class SkillCacophony : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.CACOPHONY;
+    }
 }

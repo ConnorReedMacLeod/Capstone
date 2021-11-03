@@ -9,7 +9,7 @@ public class SkillThunderStorm : Skill {
         sName = "ThunderStorm";
         sDisplayName = "Thunder Storm";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 1, 1, 0, 0));
@@ -17,14 +17,16 @@ public class SkillThunderStorm : Skill {
         nCooldownInduced = 10;
         nFatigue = 5;
 
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-            new TarChr(this, Target.TRUE)
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
+        TarChr.AddTarget(this, Target.TRUE);
     }
 
     class Clause1 : Clause {
@@ -65,4 +67,9 @@ public class SkillThunderStorm : Skill {
         }
 
     }
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.THUNDERSTORM;
+    }
+
 }

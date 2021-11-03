@@ -5,7 +5,7 @@ using UnityEngine;
 
 //Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
 
-public class ExecChangeCooldown : ExecSkill {
+public class ExecChangeCooldown : ExecSkillslot {
 
     public int nAmount;
 
@@ -39,14 +39,14 @@ public class ExecChangeCooldown : ExecSkill {
 
     public override void ExecuteEffect() {
 
-        skTarget.skillslot.ChangeCooldown(nAmount);
+        ssTarget.ChangeCooldown(nAmount);
 
         fDelay = ContTurns.fDelayMinorSkill;
-        sLabel = "Reducing " + skTarget.chrOwner.sName + "'s " + skTarget.sDisplayName + " cooldown";
+        sLabel = "Reducing " + ssTarget.chrOwner.sName + "'s " + ssTarget.skill.sDisplayName + " cooldown";
 
     }
 
-    public ExecChangeCooldown(Chr _chrSource, Skill _skTarget, int _nAmount) : base(_chrSource, _skTarget) {
+    public ExecChangeCooldown(Chr _chrSource, SkillSlot _ssTarget, int _nAmount) : base(_chrSource, _ssTarget) {
         nAmount = _nAmount;
     }
 

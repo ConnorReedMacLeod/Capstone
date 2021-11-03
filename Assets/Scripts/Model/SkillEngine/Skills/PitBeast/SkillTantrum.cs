@@ -9,7 +9,7 @@ public class SkillTantrum : Skill {
         sName = "Tantrum";
         sDisplayName = "Tantrum";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(1, 0, 0, 1, 0));
@@ -17,13 +17,15 @@ public class SkillTantrum : Skill {
         nCooldownInduced = 9;
         nFatigue = 5;
 
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
     }
 
     class Clause1 : Clause {
@@ -70,5 +72,9 @@ public class SkillTantrum : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.TANTRUM;
+    }
 
 }

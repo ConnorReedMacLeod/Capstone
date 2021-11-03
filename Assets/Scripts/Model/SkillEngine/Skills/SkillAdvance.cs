@@ -9,7 +9,7 @@ public class SkillAdvance : Skill {
         sName = "Advance";
         sDisplayName = "Advance";
 
-        type = new TypeActive(this);
+        typeUsage = new TypeUsageActive(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(1, 0, 0, 0, 0));
@@ -17,13 +17,15 @@ public class SkillAdvance : Skill {
         nCooldownInduced = 6;
         nFatigue = 4;
 
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
     }
 
     class Clause1 : Clause {
@@ -48,6 +50,10 @@ public class SkillAdvance : Skill {
         }
 
     };
+
+    public override SkillType.SKILLTYPE GetSkillType() {
+        return SkillType.SKILLTYPE.ADVANCE;
+    }
 
 
 }

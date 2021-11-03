@@ -20,7 +20,7 @@ public class ChrFischer : BaseChr {
     //Defines all of a character's unique skills
     public override void SetLoadoutSkills() {
 
-        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.BUNKER;
+        chrOwner.arSkillTypesOpeningLoadout[0] = SkillType.SKILLTYPE.STRATEGIZE;
         chrOwner.arSkillTypesOpeningLoadout[1] = SkillType.SKILLTYPE.ADVANCE;
         chrOwner.arSkillTypesOpeningLoadout[2] = SkillType.SKILLTYPE.FIREBALL;
         chrOwner.arSkillTypesOpeningLoadout[3] = SkillType.SKILLTYPE.IMPALE;
