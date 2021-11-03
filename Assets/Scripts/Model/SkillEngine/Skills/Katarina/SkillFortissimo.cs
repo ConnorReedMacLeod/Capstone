@@ -17,16 +17,16 @@ public class SkillFortissimo : Skill {
         nCooldownInduced = 8;
         nFatigue = 0;
 
-
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this),
         };
     }
 
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
+    }
 
     class Clause1 : Clause {
 

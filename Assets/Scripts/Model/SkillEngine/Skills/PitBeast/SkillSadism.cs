@@ -19,6 +19,7 @@ public class SkillSadism : Skill {
         nCooldownInduced = 0;
         nFatigue = 0;
 
+        InitTargets();
 
         soulPassive = new SoulSadism(this.chrOwner, this.chrOwner, this);
 
@@ -33,6 +34,10 @@ public class SkillSadism : Skill {
         lstClausesOnUnequip = new List<Clause>() {
             new ClauseUnequip(this)
         };
+    }
+
+    public override void InitTargets() {
+        //No targets to add
     }
 
     class ClauseEquip : Clause {

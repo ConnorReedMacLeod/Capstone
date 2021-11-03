@@ -7,6 +7,8 @@ public abstract class Target {
 
     public Skill skill;
 
+    public int iTargetIndex;
+
     public delegate bool FnValidSelection(object objSelected, Selections selectionsSoFar);
 
     public FnValidSelection IsValidSelection;
@@ -105,6 +107,9 @@ public abstract class Target {
     public Target(Skill _skill, FnValidSelection _IsValidSelection) {
         skill = _skill;
         IsValidSelection = _IsValidSelection;
+
+        //Save the index that this target will be placed at in the skill's target list
+        iTargetIndex = skill.lstTargets.Count;
     }
 
     public static FnValidSelection AND(FnValidSelection fn1, FnValidSelection fn2) {

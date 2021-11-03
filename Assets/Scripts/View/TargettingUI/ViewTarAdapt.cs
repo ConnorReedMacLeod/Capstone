@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
-[RequireComponent(typeof(Dropdown))]
 public class ViewTarAdapt : Singleton<ViewTarAdapt> {
 
     public TarAdapt modTarAdapt;

@@ -17,15 +17,16 @@ public class SkillFireball : Skill {
         nCooldownInduced = 6;
         nFatigue = 4;
 
-
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-            new TarChr(this, TarChr.IsDiffTeam(chrOwner))
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
+        TarChr.AddTarget(this, TarChr.IsDiffTeam(chrOwner));
     }
 
     class Clause1 : Clause {

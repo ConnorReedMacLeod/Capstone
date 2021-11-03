@@ -138,7 +138,7 @@ public class StateChanneling : StateReadiness {
         public override void ClauseEffect(Selections selections) {
 
             Debug.Log("Pushing ClearStoredSelection for " + skill.sName);
-            ContSkillEngine.PushSingleExecutable(new ExecClearStoredSelection(skill.chrOwner, skill));
+            ContSkillEngine.PushSingleExecutable(new ExecClearStoredSelection(skill.chrOwner, skill.skillslot));
 
         }
 

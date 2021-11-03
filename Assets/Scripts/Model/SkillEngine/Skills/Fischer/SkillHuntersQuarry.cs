@@ -17,14 +17,16 @@ public class SkillHuntersQuarry : Skill {
         nCooldownInduced = 8;
         nFatigue = 3;
 
-        lstTargets = new List<Target>(){
-            new TarMana(this, manaCost),
-            new TarChr(this, TarChr.IsOtherChr(chrOwner))
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
+        TarChr.AddTarget(this, TarChr.IsOtherChr(chrOwner));
     }
 
     class Clause1 : Clause {

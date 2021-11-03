@@ -17,14 +17,16 @@ public class SkillThunderStorm : Skill {
         nCooldownInduced = 10;
         nFatigue = 5;
 
-        lstTargets = new List<Target>() {
-            new TarMana(this, manaCost),
-            new TarChr(this, Target.TRUE)
-        };
+        InitTargets();
 
         lstClauses = new List<Clause>() {
             new Clause1(this)
         };
+    }
+
+    public override void InitTargets() {
+        TarMana.AddTarget(this, manaCost);
+        TarChr.AddTarget(this, Target.TRUE);
     }
 
     class Clause1 : Clause {

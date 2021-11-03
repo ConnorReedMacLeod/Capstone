@@ -8,8 +8,6 @@ public class ViewSkillSelection : Singleton<ViewSkillSelection> {
 
     public Dropdown dropdownSkillSelection;
 
-
-
     public void SetDropDownOptions(List<SkillType.SkillTypeInfo> lstSkillTypeInfo) {
         //Clear out the current list of options
         dropdownSkillSelection.ClearOptions();

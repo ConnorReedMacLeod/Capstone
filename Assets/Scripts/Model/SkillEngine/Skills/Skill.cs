@@ -34,6 +34,7 @@ public abstract class Skill {
         lstTargets = new List<Target>();
     }
 
+    public abstract void InitTargets();
     public abstract SkillType.SKILLTYPE GetSkillType();
 
     //Changes the cost of this skill, and returns the node that is modifying that cost (so you can remove it later)
@@ -272,7 +273,7 @@ public abstract class Skill {
 
         public override void ClauseEffect(Selections selections) {
 
-            ContSkillEngine.PushSingleExecutable(new ExecChangeCooldown(skill.chrOwner, skill, skill.nCooldownInduced));
+            ContSkillEngine.PushSingleExecutable(new ExecChangeCooldown(skill.chrOwner, skill.skillslot , skill.nCooldownInduced));
 
         }
 
