@@ -24,20 +24,20 @@ public class DraftController : SingletonPersistent<DraftController> {
 
     public const int NDRAFTEDCHRSPERPLAYER = 7;
 
-    public Chr.CHARTYPE[][] arDraftedChrs = new Chr.CHARTYPE[2][];
-    public int[] arNumChrsDrafted = new int[2];
+    public Chr.CHARTYPE[][] arDraftedChrs = new Chr.CHARTYPE[Player.MAXPLAYERS][];
+    public int[] arNumChrsDrafted = new int[Player.MAXPLAYERS];
 
-    public DraftedChrDisplay[] arDraftedChrDisplay = new DraftedChrDisplay[2];
+    public DraftedChrDisplay[] arDraftedChrDisplay = new DraftedChrDisplay[Player.MAXPLAYERS];
 
-    public void InitAllDraftingPortraits() {
+    public void InitChrsAvailableToDraft() {
 
+        //Get all possible characters that can be drafted and initialize a draftable array for each char type
         arbChrsAvailableToDraft = new bool[(int)Chr.CHARTYPE.LENGTH];
 
         for(int i = 0; i < arbChrsAvailableToDraft.Length; i++) {
             arbChrsAvailableToDraft[i] = true;
         }
-
-        draftcollection.UpdateDraftableCharacterPortraits(arbChrsAvailableToDraft);
+        
 
     }
 
@@ -50,12 +50,13 @@ public class DraftController : SingletonPersistent<DraftController> {
 
     public void DraftChr(int iPlayer, Chr.CHARTYPE chrDrafted) {
         //Ensure the character actually exists
-        Debug.Assert(chrDrafted == Chr.CHARTYPE.LENGTH);
+        Debug.Assert(chrDrafted < Chr.CHARTYPE.LENGTH);
 
         //Ensure this character hasn't already been drafted/banned
         Debug.Assert(arbChrsAvailableToDraft[(int)chrDrafted] == true);
 
         arDraftedChrs[iPlayer][arNumChrsDrafted[iPlayer]] = chrDrafted;
+        arNumChrsDrafted[iPlayer]++;
 
         arbChrsAvailableToDraft[(int)chrDrafted] = false;
 
@@ -66,7 +67,7 @@ public class DraftController : SingletonPersistent<DraftController> {
 
     public void BanChr(Chr.CHARTYPE chrBanned) {
         //Ensure the character actually exists
-        Debug.Assert(chrBanned == Chr.CHARTYPE.LENGTH);
+        Debug.Assert(chrBanned < Chr.CHARTYPE.LENGTH);
 
         //Ensure this character hasn't already been drafted/banned
         Debug.Assert(arbChrsAvailableToDraft[(int)chrBanned] == true);
@@ -107,7 +108,7 @@ public class DraftController : SingletonPersistent<DraftController> {
     }
 
     public DraftAction GetNextDraftPhaseStep() {
-        Debug.Assert(queueDraftOrder.Count != 0, "Asked for a next draft phase when there are no more steps left");
+        Debug.Assert(IsDraftPhaseOver() == false, "Asked for a next draft phase when there are no more steps left");
 
         return queueDraftOrder.Peek();
 
@@ -118,7 +119,7 @@ public class DraftController : SingletonPersistent<DraftController> {
     }
 
     public void FinishDraftPhaseStep() {
-        Debug.Assert(queueDraftOrder.Count != 0, "Attempted to finish a draft phase step when there are already none left");
+        Debug.Assert(IsDraftPhaseOver() == false, "Attempted to finish a draft phase step when there are already none left");
 
         queueDraftOrder.Dequeue();
     }
@@ -155,11 +156,12 @@ public class DraftController : SingletonPersistent<DraftController> {
 
     public override void Init() {
 
+        //Set up an array for each draft pick # for each player
         for(int i = 0; i < arDraftedChrs.Length; i++) {
             arDraftedChrs[i] = new Chr.CHARTYPE[NDRAFTEDCHRSPERPLAYER];
         }
 
-        InitAllDraftingPortraits();
+        InitChrsAvailableToDraft();
 
         InitDraftOrder();
 

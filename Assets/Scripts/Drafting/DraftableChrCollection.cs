@@ -7,10 +7,27 @@ public class DraftableChrCollection : MonoBehaviour {
 
     public DraftableChr[] arDraftableChrPortraits;
 
-    public void UpdateDraftableCharacterPortraits(bool[] arbDraftableChrs) {
+    public GameObject pfDraftableChr;
 
-        for(int i = 0; i < arbDraftableChrs.Length; i++) {
+    public GameObject goContent;
+
+    public void InitDraftableCharacterPortraits() {
+        //For each possible character in the game that can be drafted, spawn an icon for it
+        // and add it to our array of ChrPortraits
+
+        arDraftableChrPortraits = new DraftableChr[(int)Chr.CHARTYPE.LENGTH];
+
+        for(int i = 0; i < (int)Chr.CHARTYPE.LENGTH; i++) {
+            //Spawn a new Icon for this character
+            GameObject goDraftableChr = Instantiate(pfDraftableChr, goContent.transform) as GameObject;
+
+            //Save a reference to its DraftableChr component
+            arDraftableChrPortraits[i] = goDraftableChr.GetComponent<DraftableChr>();
+
+            //Let it know which character it will be representing
             arDraftableChrPortraits[i].SetChrInSlot((Chr.CHARTYPE)i);
+
+            //arDraftableChrPortraits[i].RedOut();
         }
 
     }
@@ -29,7 +46,7 @@ public class DraftableChrCollection : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-
+        InitDraftableCharacterPortraits();
     }
 
     // Update is called once per frame
