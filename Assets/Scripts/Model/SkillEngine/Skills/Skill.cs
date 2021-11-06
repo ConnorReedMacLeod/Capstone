@@ -231,11 +231,11 @@ public abstract class Skill {
     }
 
     public bool IsStandardSkill() {
-        return skillslot.iSlot < Chr.nStandardCharacterSkills;
+        return skillslot.iSlot < Chr.nEquippedCharacterSkills;
     }
 
     public bool IsGenericSkill() {
-        return skillslot.iSlot >= Chr.nStandardCharacterSkills;
+        return skillslot.iSlot >= Chr.nEquippedCharacterSkills;
     }
 
     class ClausePayMana : Clause {

@@ -49,12 +49,12 @@ public class Chr : MonoBehaviour {
     public int nAbsorbedArmour;             //The amount of damage currently taken by armour
 
     public SkillSlot[] arSkillSlots;      //The slots for the character's currently usable skills - these keep track of the cooldowns of those skills
-    public const int nStandardCharacterSkills = 4; //Number of non-generic (non-rest) skills currently active on the character
+    public const int nEquippedCharacterSkills = 4; //Number of non-generic (non-rest) skills currently active on the character
     public const int nBenchCharacterSkills = 4; //Number of benched skills the character could adapt into
-    public const int nTotalCharacterSkills = nStandardCharacterSkills + nBenchCharacterSkills; // Total pool of available skills for this character
-    public const int nUsableSkills = nStandardCharacterSkills + 1; //Number of all skills (including generics)
+    public const int nTotalCharacterSkills = nEquippedCharacterSkills + nBenchCharacterSkills; // Total pool of available skills for this character
+    public const int nUsableSkills = nEquippedCharacterSkills + 1; //Number of all skills (including generics)
     public SkillRest skillRest;  //The standard reference to the rest skill the character can use
-    public const int nRestSlotId = nStandardCharacterSkills; //Id of the skillslot containing the rest skill
+    public const int nRestSlotId = nEquippedCharacterSkills; //Id of the skillslot containing the rest skill
 
     public Position position;       //A reference to the position the character is on
 
@@ -134,7 +134,7 @@ public class Chr : MonoBehaviour {
     }
 
     public Skill GetRandomActiveSkill() {
-        return arSkillSlots[Random.Range(0, nStandardCharacterSkills)].skill;
+        return arSkillSlots[Random.Range(0, nEquippedCharacterSkills)].skill;
     }
 
     public Skill GetRandomSkill() {
@@ -219,7 +219,7 @@ public class Chr : MonoBehaviour {
     public void RechargeSkills() {
 
         //Only bother recharging the active skills since those will be the only ones that can be on cooldown
-        for(int i = 0; i < Chr.nStandardCharacterSkills; i++) {
+        for(int i = 0; i < Chr.nEquippedCharacterSkills; i++) {
 
             //Only reduce the cooldown if it is not currently off cooldown
             if(arSkillSlots[i].nCooldown > 0) {
@@ -421,7 +421,7 @@ public class Chr : MonoBehaviour {
 
     public bool HasSkillEquipped(SkillType.SKILLTYPE skilltype) {
         //Loop through our skill slots and check if one of them has the desired skilltype
-        for(int i=0; i<nStandardCharacterSkills; i++) {
+        for(int i=0; i<nEquippedCharacterSkills; i++) {
             if(arSkillSlots[i].skill.GetSkillType() == skilltype) {
                 return true;
             }
@@ -438,7 +438,7 @@ public class Chr : MonoBehaviour {
     public void InitFromLoadout(LoadoutManager.Loadout loadout) {
 
         //Load in all the equipped skills
-        for (int i = 0; i < Chr.nStandardCharacterSkills; i++) {
+        for (int i = 0; i < Chr.nEquippedCharacterSkills; i++) {
             arSkillSlots[i].SetSkill(loadout.lstEquippedSkills[i]);
         }
 
