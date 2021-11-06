@@ -15,9 +15,9 @@ public class DraftableChrCollection : MonoBehaviour {
         //For each possible character in the game that can be drafted, spawn an icon for it
         // and add it to our array of ChrPortraits
 
-        arDraftableChrPortraits = new DraftableChr[(int)Chr.CHARTYPE.LENGTH];
+        arDraftableChrPortraits = new DraftableChr[(int)CharType.CHARTYPE.LENGTH];
 
-        for(int i = 0; i < (int)Chr.CHARTYPE.LENGTH; i++) {
+        for(int i = 0; i < (int)CharType.CHARTYPE.LENGTH; i++) {
             //Spawn a new Icon for this character
             GameObject goDraftableChr = Instantiate(pfDraftableChr, goContent.transform) as GameObject;
 
@@ -25,7 +25,7 @@ public class DraftableChrCollection : MonoBehaviour {
             arDraftableChrPortraits[i] = goDraftableChr.GetComponent<DraftableChr>();
 
             //Let it know which character it will be representing
-            arDraftableChrPortraits[i].SetChrInSlot((Chr.CHARTYPE)i);
+            arDraftableChrPortraits[i].SetChrInSlot((CharType.CHARTYPE)i);
 
             //arDraftableChrPortraits[i].RedOut();
         }

@@ -412,11 +412,11 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
                 } else if(stateTurn == ContTurns.STATETURN.BAN) {
 
                     //Simulate as though the player submitted a non-ban
-                    OnClientFinishedPhase(i, (int)stateTurn, (int)Chr.CHARTYPE.LENGTH);
+                    OnClientFinishedPhase(i, (int)stateTurn, (int)CharType.CHARTYPE.LENGTH);
                 } else if(stateTurn == ContTurns.STATETURN.DRAFT) {
 
                     //Simulate as though the player submitted a non-draft
-                    OnClientFinishedPhase(i, (int)stateTurn, (int)Chr.CHARTYPE.LENGTH);
+                    OnClientFinishedPhase(i, (int)stateTurn, (int)CharType.CHARTYPE.LENGTH);
                 } else {
 
                     OnClientFinishedPhase(i, (int)stateTurn);
@@ -449,7 +449,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
     }
 
     public void ResetSavedChrSelection() {
-        nSavedCharacterSelection = (int)Chr.CHARTYPE.LENGTH;
+        nSavedCharacterSelection = (int)CharType.CHARTYPE.LENGTH;
     }
 
     public void SaveSerializedSelection(int[] _arnSavedSerializedInfo) {

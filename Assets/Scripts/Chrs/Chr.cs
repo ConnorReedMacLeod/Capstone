@@ -7,11 +7,6 @@ public class Chr : MonoBehaviour {
 
     bool bStarted;
 
-    public enum CHARTYPE {          //CHARTYPE's possible values include all characters in the game
-        FISCHER, KATARINA, PITBEAST, RAYNE, SAIKO, SOHPIDIA, LENGTH
-    };
-    public static readonly string[] ARSCHRNAMES = { "Fischer", "Katarina", "PitBeast", "Rayne", "Saiko", "Sophidia", "None" };
-
     public enum STATESELECT {
         SELECTED,                   //Selected a character (to see status effects, skills)
         TARGGETING,                 //Targetting of character skills
@@ -24,6 +19,8 @@ public class Chr : MonoBehaviour {
         LARGE,
         GIANT
     };
+
+    public CharType.CHARTYPE chartype; //The type of character this is acting as (e.g., Fischer)
 
     public string sName;            //The name of the character
     public Player plyrOwner;        //The player who controls the character
@@ -53,10 +50,11 @@ public class Chr : MonoBehaviour {
 
     public SkillSlot[] arSkillSlots;      //The slots for the character's currently usable skills - these keep track of the cooldowns of those skills
     public const int nStandardCharacterSkills = 4; //Number of non-generic (non-rest) skills currently active on the character
-    public const int nTotalSkills = nStandardCharacterSkills + 1; //Number of all skills (including generics)
+    public const int nBenchCharacterSkills = 4; //Number of benched skills the character could adapt into
+    public const int nTotalCharacterSkills = nStandardCharacterSkills + nBenchCharacterSkills; // Total pool of available skills for this character
+    public const int nUsableSkills = nStandardCharacterSkills + 1; //Number of all skills (including generics)
     public SkillRest skillRest;  //The standard reference to the rest skill the character can use
     public const int nRestSlotId = nStandardCharacterSkills; //Id of the skillslot containing the rest skill
-    public SkillType.SKILLTYPE[] arSkillTypesOpeningLoadout;  //Holds the initially selected loadout of skills for the character - may shift this to some loadout manager
 
     public Position position;       //A reference to the position the character is on
 
@@ -386,14 +384,19 @@ public class Chr : MonoBehaviour {
 
     // Used to initiallize information fields of the Chr
     // Call this after creating to set information
-    public void InitChr(Player _plyrOwner, int _id, BaseChr baseChr) {
+    public void InitChr(CharType.CHARTYPE _chartype, Player _plyrOwner, int _id, LoadoutManager.Loadout loadout) {
+        chartype = _chartype;
         plyrOwner = _plyrOwner;
         id = _id;
         globalid = id + plyrOwner.id * Player.MAXCHRS;
 
         RegisterChr(this);
 
-        baseChr.Init();
+        //Initialize this character's disciplines based on their chartype
+        InitDisciplines();
+
+        //Initialize any loadout-specific qualities of the character
+        InitFromLoadout(loadout);
 
         view.Init();
     }
@@ -404,9 +407,9 @@ public class Chr : MonoBehaviour {
 
     public void InitSkillSlots() {
 
-        arSkillSlots = new SkillSlot[nTotalSkills];
+        arSkillSlots = new SkillSlot[nUsableSkills];
 
-        for(int i = 0; i < nTotalSkills; i++) {
+        for(int i = 0; i < nUsableSkills; i++) {
             arSkillSlots[i] = new SkillSlot(this, i);
         }
 
@@ -427,6 +430,23 @@ public class Chr : MonoBehaviour {
         return false;
     }
 
+    public void InitDisciplines() {
+        //Should this be done as a copy?
+        lstDisciplines = CharType.GetDisciplines(chartype);
+    }
+
+    public void InitFromLoadout(LoadoutManager.Loadout loadout) {
+
+        //Load in all the equipped skills
+        for (int i = 0; i < Chr.nStandardCharacterSkills; i++) {
+            arSkillSlots[i].SetSkill(loadout.lstEquippedSkills[i]);
+        }
+
+
+        //TODO - store all the benched skills as well
+
+    }
+
 
     // Sets up fundamental class connections for the Chr
     public void Start() {
@@ -440,6 +460,7 @@ public class Chr : MonoBehaviour {
             stateSelect = STATESELECT.IDLE;
 
             pnMaxHealth = new Property<int>(100);
+            nCurHealth = pnMaxHealth.Get();
             pnArmour = new Property<int>(0);
 
             pnPower = new Property<int>(0);

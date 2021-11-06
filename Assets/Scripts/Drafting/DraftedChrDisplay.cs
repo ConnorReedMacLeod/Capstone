@@ -8,7 +8,7 @@ public class DraftedChrDisplay : MonoBehaviour {
 
 
 
-    public void UpdateDraftedChrDisplay(Chr.CHARTYPE[] arDraftedChrs) {
+    public void UpdateDraftedChrDisplay(CharType.CHARTYPE[] arDraftedChrs) {
 
         for(int i = 0; i < arDraftedChrs.Length; i++) {
             arDraftedChrSlots[i].SetChrInSlot(arDraftedChrs[i]);
