@@ -121,12 +121,12 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
 
         case MasterNetworkController.evtCBanCharacter:
             //The master passed along which character should be banned
-            DraftController.Get().BanChr((Chr.CHARTYPE)arContent[0]);
+            DraftController.Get().BanChr((CharType.CHARTYPE)arContent[0]);
             break;
 
         case MasterNetworkController.evtCDraftCharacter:
             //The master passed along which character should be drafted next (and for which player)
-            DraftController.Get().DraftChr((int)arContent[0], (Chr.CHARTYPE)arContent[1]);
+            DraftController.Get().DraftChr((int)arContent[0], (CharType.CHARTYPE)arContent[1]);
             break;
 
         default:

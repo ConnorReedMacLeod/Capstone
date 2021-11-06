@@ -28,7 +28,7 @@ public static class LibConversions {
     }
 
     //TODO:: Eventually figure out if this can be generalized
-    public static int[] ArChrTypeToArInt(Chr.CHARTYPE[] _arChrTypes) {
+    public static int[] ArChrTypeToArInt(CharType.CHARTYPE[] _arChrTypes) {
         int[] arInt = new int[_arChrTypes.Length];
 
         for(int i = 0; i < _arChrTypes.Length; i++) {
@@ -38,11 +38,11 @@ public static class LibConversions {
         return arInt;
     }
 
-    public static Chr.CHARTYPE[] ArIntToArChrType(int[] _arInt) {
-        Chr.CHARTYPE[] arChrTypes = new Chr.CHARTYPE[_arInt.Length];
+    public static CharType.CHARTYPE[] ArIntToArChrType(int[] _arInt) {
+        CharType.CHARTYPE[] arChrTypes = new CharType.CHARTYPE[_arInt.Length];
 
         for(int i = 0; i < _arInt.Length; i++) {
-            arChrTypes[i] = (Chr.CHARTYPE)_arInt[i];
+            arChrTypes[i] = (CharType.CHARTYPE)_arInt[i];
         }
 
         return arChrTypes;

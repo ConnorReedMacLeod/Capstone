@@ -62,7 +62,7 @@ public class Match : MonoBehaviour {
 
     // Will eventually need a clean solution to adding/removing characters
     // while managing ids - some sort of Buffer of unused views will probably help
-    void InitChr(Chr.CHARTYPE type, Player player, int id) {
+    void InitChr(CharType.CHARTYPE chartype, Player player, int idChar, LoadoutManager.Loadout loadout) {
 
         GameObject goChr = Instantiate(pfChr, this.transform);
         Chr newChr = goChr.GetComponent<Chr>();
@@ -72,33 +72,10 @@ public class Match : MonoBehaviour {
 
         newChr.Start();
 
-        switch(type) {
-        case Chr.CHARTYPE.KATARINA:
-            newChr.InitChr(player, id, new ChrKatarina(newChr));
-            break;
-        case Chr.CHARTYPE.FISCHER:
-            newChr.InitChr(player, id, new ChrFischer(newChr));
-            break;
-        case Chr.CHARTYPE.SOHPIDIA:
-            newChr.InitChr(player, id, new ChrSophidia(newChr));
-            break;
-        case Chr.CHARTYPE.PITBEAST:
-            newChr.InitChr(player, id, new ChrPitBeast(newChr));
-            break;
-        case Chr.CHARTYPE.SAIKO:
-            newChr.InitChr(player, id, new ChrSaiko(newChr));
-            break;
-        case Chr.CHARTYPE.RAYNE:
-            newChr.InitChr(player, id, new ChrRayne(newChr));
-            break;
-        default:
-            Debug.LogError("INVALID CHARACTER SELECTION");
-            Application.Quit();
-            newChr.InitChr(player, id, new ChrKatarina(newChr)); //so the editor will let us compile
-            break;
-        }
-        arChrs[player.id][id] = newChr;
-        player.arChr[id] = newChr;
+        newChr.InitChr(chartype, player, idChar, loadout);
+
+        arChrs[player.id][idChar] = newChr;
+        player.arChr[idChar] = newChr;
 
 
     }
@@ -116,7 +93,7 @@ public class Match : MonoBehaviour {
             arPlayers[i].nChrs = Player.MAXCHRS;
 
             for(int j = 0; j < arPlayers[i].nChrs; j++) {
-                InitChr(CharacterSelection.Get().arChrSelections[i][j], arPlayers[i], j);
+                InitChr(CharacterSelection.Get().arChrSelections[i][j], arPlayers[i], j);//TODO - add in a way to fetch the loadout for this character
             }
         }
 

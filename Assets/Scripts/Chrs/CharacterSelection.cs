@@ -8,10 +8,10 @@ using Photon.Realtime;
 public class CharacterSelection : SingletonPersistent<CharacterSelection> {
 
     //So that these can be easily configured in the Unity inspector
-    public Chr.CHARTYPE[] arChrVIEWABLE1 = new Chr.CHARTYPE[Player.MAXCHRS];
-    public Chr.CHARTYPE[] arChrVIEWABLE2 = new Chr.CHARTYPE[Player.MAXCHRS];
+    public CharType.CHARTYPE[] arChrVIEWABLE1 = new CharType.CHARTYPE[Player.MAXCHRS];
+    public CharType.CHARTYPE[] arChrVIEWABLE2 = new CharType.CHARTYPE[Player.MAXCHRS];
 
-    public Chr.CHARTYPE[][] arChrSelections = new Chr.CHARTYPE[Player.MAXPLAYERS][];
+    public CharType.CHARTYPE[][] arChrSelections = new CharType.CHARTYPE[Player.MAXPLAYERS][];
     public int[] arnPlayerOwners = new int[Player.MAXPLAYERS];
     public Player.InputType[] arInputTypes = new Player.InputType[Player.MAXPLAYERS];
 
@@ -23,8 +23,8 @@ public class CharacterSelection : SingletonPersistent<CharacterSelection> {
 
         bSavedSelections = false;
 
-        arChrSelections[0] = new Chr.CHARTYPE[Player.MAXCHRS];
-        arChrSelections[1] = new Chr.CHARTYPE[Player.MAXCHRS];
+        arChrSelections[0] = new CharType.CHARTYPE[Player.MAXCHRS];
+        arChrSelections[1] = new CharType.CHARTYPE[Player.MAXCHRS];
         arChrVIEWABLE1.CopyTo(arChrSelections[0], 0);
         arChrVIEWABLE2.CopyTo(arChrSelections[1], 0);
 

@@ -178,7 +178,7 @@ public class ContTurns : Singleton<ContTurns> {
         case STATETURN.BAN:
 
             //Interpret the passed info as a selected character that was banned in the just-finished drafting step
-            DraftController.Get().BanChr((Chr.CHARTYPE)oAdditionalInfo);
+            DraftController.Get().BanChr((CharType.CHARTYPE)oAdditionalInfo);
 
             //End this drafting step and move on to the next one
             DraftController.Get().FinishDraftPhaseStep();
@@ -188,7 +188,7 @@ public class ContTurns : Singleton<ContTurns> {
         case STATETURN.DRAFT:
 
             //Interpret the passed info as a selected character that was drafted in the just-finished drafting step
-            DraftController.Get().DraftChr(DraftController.Get().GetActivePlayerForNextDraftPhaseStep(), (Chr.CHARTYPE)oAdditionalInfo);
+            DraftController.Get().DraftChr(DraftController.Get().GetActivePlayerForNextDraftPhaseStep(), (CharType.CHARTYPE)oAdditionalInfo);
 
             //End this drafting step and move on to the next one
             DraftController.Get().FinishDraftPhaseStep();

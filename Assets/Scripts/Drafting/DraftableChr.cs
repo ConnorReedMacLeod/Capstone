@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class DraftableChr : ViewInteractive {
     
-    public Chr.CHARTYPE chrInSlot;
+    public CharType.CHARTYPE chrInSlot;
     public Image imgPortrait;
 
     public void RedOut() {
@@ -26,14 +26,11 @@ public class DraftableChr : ViewInteractive {
         imgPortrait.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
     }
 
-    public void SetChrInSlot(Chr.CHARTYPE _chrInSlot) {
-        if(chrInSlot == _chrInSlot) {
-            return;
-        }
+    public void SetChrInSlot(CharType.CHARTYPE _chrInSlot) {
 
         chrInSlot = _chrInSlot;
 
-        string sChrName = Chr.ARSCHRNAMES[(int)chrInSlot];
+        string sChrName = CharType.GetChrName(chrInSlot);
       
         //For some reason, setting the overrideSprite (rather than the normal sprite) works here.  Unity is dumb
         imgPortrait.overrideSprite = Resources.Load("Images/Chrs/" + sChrName + "/img" + sChrName + "neutral", typeof(Sprite)) as Sprite;
