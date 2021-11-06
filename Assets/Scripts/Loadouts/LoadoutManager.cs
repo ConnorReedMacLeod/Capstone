@@ -21,7 +21,60 @@ public static class LoadoutManager {
             lstEquippedSkills = _lstEquippedSkills;
             lstBenchSkills = _lstBenchSkills;
         }
+
+        public override string ToString() {
+            string sLoadout = string.Format("{0}:\nEquipped: {1}, {2}, {3}. {4}\nBench: {5}, {6}, {7}, {8}",
+                sName,
+                lstEquippedSkills[0], lstEquippedSkills[1], lstEquippedSkills[2], lstEquippedSkills[3],
+                lstBenchSkills[0], lstBenchSkills[1], lstBenchSkills[2], lstBenchSkills[3]);
+
+            return sLoadout;
+        }
     }
+
+    public static int[] SerializeLoadout(Loadout loadout) {
+        int[] arSerialized = new int[Chr.nTotalCharacterSkills];
+
+        int iSerialized = 0;
+        for(int i = 0; i < Chr.nEquippedCharacterSkills; i++, iSerialized++) {
+            arSerialized[iSerialized] = (int)loadout.lstEquippedSkills[i];
+        }
+        for(int i = 0; i < Chr.nBenchCharacterSkills; i++, iSerialized++) {
+            arSerialized[iSerialized] = (int)loadout.lstBenchSkills[i];
+        }
+
+        return arSerialized;
+    }
+
+    public static Loadout UnserializeLoadout(int[] arSerialized) {
+
+        List<SkillType.SKILLTYPE> lstEquippedSkills = new List<SkillType.SKILLTYPE>();
+        List<SkillType.SKILLTYPE> lstBenchedSkills = new List<SkillType.SKILLTYPE>();
+
+        int iDeserialized = 0;
+        for(int i = 0; i < Chr.nEquippedCharacterSkills; i++, iDeserialized++) {
+            lstEquippedSkills.Add((SkillType.SKILLTYPE)arSerialized[iDeserialized]);
+        }
+        for(int i = 0; i < Chr.nBenchCharacterSkills; i++, iDeserialized++) {
+            lstBenchedSkills.Add((SkillType.SKILLTYPE)arSerialized[iDeserialized]);
+        }
+
+        return new Loadout("Deserialized", lstEquippedSkills, lstBenchedSkills);
+    }
+
+
+    public static int[][] SerializeLoadoutList(List<LoadoutManager.Loadout> lstLoadouts) {
+        int[][] ararnLoadoutSelection = new int[lstLoadouts.Count][];
+
+        for(int i = 0; i < lstLoadouts.Count; i++) {
+            ararnLoadoutSelection[i] = LoadoutManager.SerializeLoadout(lstLoadouts[i]);
+        }
+
+        return ararnLoadoutSelection;
+    }
+
+
+
 
     public static string GetKeyName(CharType.CHARTYPE chartype, int iSlot) {
         return string.Format(SKEYNAME, (int)chartype, iSlot);
@@ -39,7 +92,7 @@ public static class LoadoutManager {
 
         List<Loadout> lstLoadouts = new List<Loadout>();
 
-        for(int i=0; i<nLOADOUTSLOTS; i++) {
+        for(int i = 0; i < nLOADOUTSLOTS; i++) {
             if(PlayerPrefs.HasKey(GetKeyName(chartype, i)) == false) {
                 //If we try to load the ith slot for this character, but there's no entry for the name of the loadout,
                 //  we assume the loadout is blank so we can just save in the default loadout for the character then use it
@@ -53,7 +106,7 @@ public static class LoadoutManager {
                 //If the loadout should exist, then load it and add it to our return list
                 lstLoadouts.Add(LoadSavedLoadoutForChr(chartype, i));
             }
-            
+
         }
 
         return lstLoadouts;
@@ -63,12 +116,12 @@ public static class LoadoutManager {
         Debug.Assert(iSlot < nLOADOUTSLOTS, "Cannot load slot " + iSlot + " since we don't allow that many slots");
 
         // Fetch the name of the loadout
-        string _sName = PlayerPrefs.GetString(GetKeyName(chartype, iSlot)); 
+        string _sName = PlayerPrefs.GetString(GetKeyName(chartype, iSlot));
 
         // Fetch all the stored standard skill selections
         List<SkillType.SKILLTYPE> _lstEquippedSkills = new List<SkillType.SKILLTYPE>();
 
-        for (int i = 0; i < Chr.nStandardCharacterSkills; i++) {
+        for(int i = 0; i < Chr.nEquippedCharacterSkills; i++) {
             string sKey = GetKeyEquipped(chartype, iSlot, i);
 
             Debug.Assert(PlayerPrefs.HasKey(sKey) == false, "No stored entry for " + sKey + " found");
@@ -79,7 +132,7 @@ public static class LoadoutManager {
         // Then fetch all the stored bench skill selections
         List<SkillType.SKILLTYPE> _lstBenchSkills = new List<SkillType.SKILLTYPE>();
 
-        for (int i = 0; i < Chr.nBenchCharacterSkills; i++) {
+        for(int i = 0; i < Chr.nBenchCharacterSkills; i++) {
             string sKey = GetKeyBenched(chartype, iSlot, i);
 
             Debug.Assert(PlayerPrefs.HasKey(sKey) == false, "No stored entry for " + sKey + " found");
@@ -98,12 +151,12 @@ public static class LoadoutManager {
         PlayerPrefs.SetString(string.Format(SKEYNAME, (int)chartype, iSlot), sName);
 
         // Save all the standard skill selections
-        for (int i = 0; i < Chr.nStandardCharacterSkills; i++) {
+        for(int i = 0; i < Chr.nEquippedCharacterSkills; i++) {
             PlayerPrefs.SetInt(GetKeyEquipped(chartype, iSlot, i), (int)loadout.lstEquippedSkills[i]);
         }
 
         // Then save all the bench skill selections
-        for (int i = 0; i < Chr.nBenchCharacterSkills; i++) {
+        for(int i = 0; i < Chr.nBenchCharacterSkills; i++) {
             PlayerPrefs.SetInt(GetKeyBenched(chartype, iSlot, i), (int)loadout.lstEquippedSkills[i]);
         }
     }

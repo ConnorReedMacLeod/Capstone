@@ -83,7 +83,7 @@ public class Match : MonoBehaviour {
     IEnumerator InitAllChrs() {
 
         //Keep looping until we've properly setup our character selections
-        while(CharacterSelection.Get().bSavedSelections == false) {
+        while(CharacterSelection.Get().bSavedChrSelections == false) {
             Debug.Log("Waiting for character selections to be registered and distributed");
             yield return null;
         }
@@ -93,7 +93,8 @@ public class Match : MonoBehaviour {
             arPlayers[i].nChrs = Player.MAXCHRS;
 
             for(int j = 0; j < arPlayers[i].nChrs; j++) {
-                InitChr(CharacterSelection.Get().arChrSelections[i][j], arPlayers[i], j);//TODO - add in a way to fetch the loadout for this character
+                InitChr(CharacterSelection.Get().arChrSelections[i][j], arPlayers[i], j,
+                    CharacterSelection.Get().arlstLoadoutSelections[i][j]);
             }
         }
 

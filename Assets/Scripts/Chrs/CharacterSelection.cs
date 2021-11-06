@@ -12,16 +12,18 @@ public class CharacterSelection : SingletonPersistent<CharacterSelection> {
     public CharType.CHARTYPE[] arChrVIEWABLE2 = new CharType.CHARTYPE[Player.MAXCHRS];
 
     public CharType.CHARTYPE[][] arChrSelections = new CharType.CHARTYPE[Player.MAXPLAYERS][];
+    public List<LoadoutManager.Loadout>[] arlstLoadoutSelections = new List<LoadoutManager.Loadout>[Player.MAXPLAYERS];
     public int[] arnPlayerOwners = new int[Player.MAXPLAYERS];
     public Player.InputType[] arInputTypes = new Player.InputType[Player.MAXPLAYERS];
 
     public bool bSavedInputTypes;
     public bool bSavedOwners;
-    public bool bSavedSelections;
+    public bool bSavedChrSelections;
+    public bool bSavedLoadoutSelections;
 
     public override void Init() {
 
-        bSavedSelections = false;
+        bSavedChrSelections = false;
 
         arChrSelections[0] = new CharType.CHARTYPE[Player.MAXCHRS];
         arChrSelections[1] = new CharType.CHARTYPE[Player.MAXCHRS];
@@ -33,23 +35,31 @@ public class CharacterSelection : SingletonPersistent<CharacterSelection> {
 
 
 
+
     //Send the signal to the master client that our locally saved character selection data, and player input data
     // is what should be used to initialize the game for this player
-    public void SubmitSelection(int nPlayer) {
+    public void SubmitSelection(int iPlayer) {
 
-        Debug.Assert(0 <= nPlayer && nPlayer < Player.MAXCHRS);
+        Debug.Assert(0 <= iPlayer && iPlayer < Player.MAXCHRS);
 
-        int[] arnTeamSelection = LibConversions.ArChrTypeToArInt(arChrSelections[nPlayer]);
-        Debug.LogError("Sending selections for player " + nPlayer + " of " + arnTeamSelection[0] + ", " + arnTeamSelection[1] + ", " + arnTeamSelection[2] +
-            "\nAnd input type: " + arInputTypes[nPlayer]);
-        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMSubmitCharacters, new object[3] { nPlayer, arnTeamSelection, arInputTypes[nPlayer] });
+        int[] arnTeamSelection = LibConversions.ArChrTypeToArInt(arChrSelections[iPlayer]);
+        int[][] ararnLoadoutSelection = LoadoutManager.SerializeLoadoutList(arlstLoadoutSelections[iPlayer]);
+
+        Debug.Log("Sending selections for player " + iPlayer + " of " + arnTeamSelection[0] + ", " + arnTeamSelection[1] + ", " + arnTeamSelection[2] +
+            "\nAnd input type: " + arInputTypes[iPlayer]);
+        Debug.Log(string.Format("Sending selections for:\n{0}: {1}\n{2}: {3}\n{4}: {5}",
+            arChrSelections[iPlayer][0], arlstLoadoutSelections[iPlayer][0],
+            arChrSelections[iPlayer][1], arlstLoadoutSelections[iPlayer][1],
+            arChrSelections[iPlayer][2], arlstLoadoutSelections[iPlayer][2]));
+
+        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMSubmitCharacters, new object[4] { iPlayer, arnTeamSelection, ararnLoadoutSelection, arInputTypes[iPlayer] });
 
     }
 
 
     // When the master has finalized all selections from players
     // he'll broadcast them out and we can save it here locally
-    public void SaveSelections(int[][] _arChrSelections) {
+    public void SaveChrSelections(int[][] _arChrSelections) {
 
         Debug.Log("Saving received selections");
 
@@ -57,7 +67,13 @@ public class CharacterSelection : SingletonPersistent<CharacterSelection> {
             _arChrSelections[i].CopyTo(arChrSelections[i], 0);
         }
 
-        bSavedSelections = true;
+        bSavedChrSelections = true;
+
+    }
+
+    // When the master has finalized all loadouts for characters,
+    // he'll broadcast them out and we can save them here locally
+    public void SaveLoadoutSelections(int[][][] arnSelections) {
 
     }
 
@@ -87,7 +103,7 @@ public class CharacterSelection : SingletonPersistent<CharacterSelection> {
 
     public IEnumerator AssignAllLocalInputControllers() {
         //Sleep until we've recieved enough information to actually assign input controllers
-        while(bSavedSelections == false || bSavedInputTypes == false || bSavedOwners == false) {
+        while(bSavedChrSelections == false || bSavedInputTypes == false || bSavedOwners == false) {
             Debug.Log("Waiting to assign input controllers until selections have all been recieved");
             yield return null;
         }

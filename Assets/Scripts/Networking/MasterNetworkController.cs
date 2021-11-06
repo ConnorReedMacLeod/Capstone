@@ -19,9 +19,10 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
     public const byte evtCOwnershipSelected = TOCLIENTEVENTBASE + 3;
     public const byte evtCInputTypesSelected = TOCLIENTEVENTBASE + 4;
     public const byte evtCCharactersSelected = TOCLIENTEVENTBASE + 5;
-    public const byte evtCMoveToNewTurnPhase = TOCLIENTEVENTBASE + 6;
-    public const byte evtCDraftCharacter = TOCLIENTEVENTBASE + 7;
-    public const byte evtCBanCharacter = TOCLIENTEVENTBASE + 8;
+    public const byte evtCLoadoutsSelected = TOCLIENTEVENTBASE + 6;
+    public const byte evtCMoveToNewTurnPhase = TOCLIENTEVENTBASE + 7;
+    public const byte evtCDraftCharacter = TOCLIENTEVENTBASE + 8;
+    public const byte evtCBanCharacter = TOCLIENTEVENTBASE + 9;
 
     public const byte TOMASTEREVENTBASE = 100;
 
@@ -50,6 +51,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
     //We'll keep these as ints since we can't transmit custom types with photon events
     public int[][] arnCustomCharacterSelections = new int[Player.MAXPLAYERS][];
+    public int[][][] arararnLoadoutSelections = new int[Player.MAXPLAYERS][][];//indexed as playerid, charid, skillid
 
     //Whenever we recieve character selections, record which client sent it,
     //  and claim ownership of that player for that client
@@ -126,7 +128,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
         switch(eventCode) {
 
         case MasterNetworkController.evtMSubmitCharacters:
-            //Submitted as 0:PlayerID, 1:arCharacterSelections, 2:InputType
+            //Submitted as 0:PlayerID, 1:arCharacterSelections, 2:ararnLoadoutSelections 3:InputType
             Debug.Log("Recieved submitted characters");
 
             Debug.Log("Submission was sent by client " + nClientID);
@@ -138,15 +140,22 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
             arnPlayerOwners[nPlayer] = nClientID;
 
             //Grab and save what type of input type (human/computer) we're expecting for this player
-            int nInputType = (int)arContent[2];
+            int nInputType = (int)arContent[3];
 
             arnPlayerInputTypes[nPlayer] = nInputType;
 
-            //Save the results in the appropriate selection
+            //Save the character selection results in the appropriate selection
             arnCustomCharacterSelections[nPlayer] = new int[Player.MAXCHRS];
             ((int[])arContent[1]).CopyTo(arnCustomCharacterSelections[nPlayer], 0);
 
-            Debug.LogError("Master recieved selections for player " + nPlayer + " of " + arnCustomCharacterSelections[nPlayer][0] + ", " + arnCustomCharacterSelections[nPlayer][1] + ", " + arnCustomCharacterSelections[nPlayer][2]);
+            //Save the loadout selection results
+            arararnLoadoutSelections[nPlayer] = new int[Player.MAXCHRS][];
+            ((int[][])arContent[2]).CopyTo(arararnLoadoutSelections[nPlayer], 0);
+
+            Debug.Log("Master recieved selections for player " + nPlayer + " of " +
+                arnCustomCharacterSelections[nPlayer][0] + ", " +
+                arnCustomCharacterSelections[nPlayer][1] + ", " +
+                arnCustomCharacterSelections[nPlayer][2]);
 
 
             break;
@@ -176,6 +185,11 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
         Debug.Log("Master sent out evtCCharactersSelected ");
         Debug.Log("First team: " + arnCustomCharacterSelections[0][0] + " " + arnCustomCharacterSelections[0][1] + " " + arnCustomCharacterSelections[0][2]);
         Debug.Log("Second team: " + arnCustomCharacterSelections[1][0] + " " + arnCustomCharacterSelections[1][1] + " " + arnCustomCharacterSelections[1][2]);
+
+        //Let everyone know which loadouts all characters will be using
+        NetworkConnectionManager.SendEventToClients(evtCLoadoutsSelected, (object[])arararnLoadoutSelections);
+
+        Debug.Log("Master sent out evtCLoadoutsSelected with " + arnCustomCharacterSelections[0][0] + " selecting " + arararnLoadoutSelections[0][0][0] + " as their first skill");
 
         //Let all clients know who is controlling which player
         NetworkConnectionManager.SendEventToClients(evtCOwnershipSelected, LibConversions.ArIntToArObj(arnPlayerOwners));

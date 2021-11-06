@@ -98,8 +98,11 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
             break;
 
         case MasterNetworkController.evtCCharactersSelected:
-            CharacterSelection.Get().SaveSelections((int[][])arContent);
+            CharacterSelection.Get().SaveChrSelections((int[][])arContent);
+            break;
 
+        case MasterNetworkController.evtCLoadoutsSelected:
+            CharacterSelection.Get().SaveLoadoutSelections((int[][][])arContent);
             break;
 
         case MasterNetworkController.evtCMoveToNewTurnPhase:
