@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class DropDownCharacterSelect : MonoBehaviour {
 
@@ -14,9 +15,22 @@ public class DropDownCharacterSelect : MonoBehaviour {
         //Double check that our CharacterSelection instance has already Start'd itself
         MatchSetup.Get().Start();
 
-        //Ensure any pre-given value for the dropdown is accurately reflected
-        MatchSetup.Get().arLocalChrSelections[plyrselectorParent.idPlayer][idChr] = (CharType.CHARTYPE)dropdown.value;
+        InitChrTypeDropdown();
 
+        //Ensure the default-selected option for this dropdown is mirroring the default in the matchsetup
+        dropdown.value = (int)MatchSetup.Get().arLocalChrSelections[plyrselectorParent.idPlayer][idChr];
+    }
+
+
+    public void InitChrTypeDropdown() {
+        //Clear out the current list of options
+        dropdown.ClearOptions();
+
+        List<Dropdown.OptionData> lstNewOptions;
+
+        lstNewOptions = CharType.dictChrTypeInfos.Values.Select(info => new Dropdown.OptionData(info.sName)).ToList();
+
+        dropdown.AddOptions(lstNewOptions);
     }
 
     public void OnChrSelectChange(int nChrSelect) {

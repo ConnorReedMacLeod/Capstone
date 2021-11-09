@@ -93,7 +93,7 @@ public class ContSkillSelection : Singleton<ContSkillSelection> {
         // selection process was completed
         inputSentFrom.CompletedSelection();
 
-        Debug.Log("Client is about to send " + selections.ToString());
+        //Debug.Log("Client is about to send " + selections.ToString());
 
         //Submit the skill selection to the master
         ClientNetworkController.Get().SendTurnPhaseFinished(selections.GetSerialization());
@@ -106,7 +106,7 @@ public class ContSkillSelection : Singleton<ContSkillSelection> {
         //Save the result that the master broadcasted out
         selectionsFromMaster = new Selections(arnSerializedSelections);
 
-        Debug.Log("Client received selection of " + selectionsFromMaster.ToString());
+       // Debug.Log("Client received selection of " + selectionsFromMaster.ToString());
 
         //Ensure the passed skill is valid
         if (selectionsFromMaster.IsValidSelection() == false) {
@@ -125,7 +125,7 @@ public class ContSkillSelection : Singleton<ContSkillSelection> {
     }
 
     public void ResetStoredSelection() {
-        Debug.Log("Resetting stored selection from master");
+        //Debug.Log("Resetting stored selection from master");
         selectionsFromMaster = null;
     }
 
@@ -134,7 +134,7 @@ public class ContSkillSelection : Singleton<ContSkillSelection> {
         Chr chrCurActing = ContTurns.Get().GetNextActingChr();
 
         if(chrCurActing == null) {
-            Debug.Log("No character is set to act this turn - just move to the next phase");
+            //Debug.Log("No character is set to act this turn - just move to the next phase");
 
             ClientNetworkController.Get().SendTurnPhaseFinished();
             return;
@@ -146,7 +146,7 @@ public class ContSkillSelection : Singleton<ContSkillSelection> {
         if(chrCurActing.plyrOwner.inputController == null) {
             //This character is controlled by someone else on the network, so we're good to just send a turn-phase ending signal since it's
             //   a different player's job to submit the skill and targetting selection information for their character
-            Debug.Log("This character isn't owned locally - passing priority");
+            //Debug.Log("This character isn't owned locally - passing priority");
 
             ClientNetworkController.Get().SendTurnPhaseFinished();
             return;

@@ -65,6 +65,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
         // Construct a default marchparams that we can mutate when a client sends in changes
         matchparamsPrepped = new MatchSetup.MatchParams();
+        Debug.LogError("Master's initial matchparams has owner of " + matchparamsPrepped.arnPlayersOwners[0]);
     }
 
     public void OnEnable() {
