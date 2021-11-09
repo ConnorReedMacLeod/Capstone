@@ -23,7 +23,7 @@ public static class LoadoutManager {
         }
 
         public override string ToString() {
-            string sLoadout = string.Format("{0}:\nEquipped: {1}, {2}, {3}. {4}\nBench: {5}, {6}, {7}, {8}",
+            string sLoadout = string.Format("{0}:\nEquipped: {1}, {2}, {3}, {4}\nBench: {5}, {6}, {7}, {8}",
                 sName,
                 lstEquippedSkills[0], lstEquippedSkills[1], lstEquippedSkills[2], lstEquippedSkills[3],
                 lstBenchSkills[0], lstBenchSkills[1], lstBenchSkills[2], lstBenchSkills[3]);

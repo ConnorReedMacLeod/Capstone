@@ -10,8 +10,8 @@ public class DropDownInputSelect : MonoBehaviour {
 
 
     public void Start() {
-        //Ensure any pre-given value for the dropdown is accurately reflected
-        MatchSetup.Get().arLocalInputTypes[plyrselectorParent.idPlayer] = (Player.InputType)dropdown.value;
+        //Ensure we reflect the default matchparams selection
+        dropdown.value = (int)MatchSetup.Get().arLocalInputTypes[plyrselectorParent.idPlayer];
 
     }
 

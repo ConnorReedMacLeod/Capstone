@@ -386,6 +386,7 @@ public class Chr : MonoBehaviour {
     // Call this after creating to set information
     public void InitChr(CharType.CHARTYPE _chartype, Player _plyrOwner, int _id, LoadoutManager.Loadout loadout) {
         chartype = _chartype;
+        sName = CharType.GetChrName(chartype);
         plyrOwner = _plyrOwner;
         id = _id;
         globalid = id + plyrOwner.id * Player.MAXCHRS;

@@ -41,7 +41,7 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
 
             for (int i=0; i<Player.MAXPLAYERS; i++) {
 
-                string sPlayer = "Player {0}:\nOwner = {1}, InputType = {2}\n";
+                string sPlayer = string.Format("Player {0}:\nOwner = {1}, InputType = {2}\n", i, arnPlayersOwners[i], arInputTypes[i]);
                 
                 for(int j=0; j<arChrSelections[i].Length; j++) {
                     sPlayer += string.Format("{0}, {1}\n", arChrSelections[i][j], arLoadoutSelections[i][j]);
@@ -69,6 +69,7 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
             }
 
             int nLocalClientID = ClientNetworkController.Get().nLocalClientID;
+            Debug.Log("Setting nLocalClientID in MatchParams to " + nLocalClientID);
 
             //By default, assume we are locally controlling both players - can override as needed
             arnPlayersOwners = new int[Player.MAXPLAYERS];
@@ -102,10 +103,11 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
     }
 
     public static MatchParams UnserializeMatchParams (object[] arSerialized) {
+
         return new MatchParams(
             LibConversions.ArARIntToArArChrType((int[][])arSerialized[0]),
             LoadoutManager.UnserializeAllPlayersLoadouts((int[][][])arSerialized[1]),
-            (int[])arSerialized[2],
+            LibConversions.ArObjToArInt((object[])arSerialized[2]),
             LibConversions.ArObjToArInputType((object[])arSerialized[3])
             );
     }
@@ -117,8 +119,13 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
         arLocalChrSelections[1] = new CharType.CHARTYPE[Player.MAXCHRS];
         arChrVIEWABLE1.CopyTo(arLocalChrSelections[0], 0);
         arChrVIEWABLE2.CopyTo(arLocalChrSelections[1], 0);
-
-        //TODONOW - init the local selections
+        
+        for (int i = 0; i < arLocalLoadoutSelections.Length; i++) {
+            arLocalLoadoutSelections[i] = new LoadoutManager.Loadout[arLocalChrSelections[i].Length];
+            for(int j=0; j<arLocalLoadoutSelections[i].Length; j++) {
+                arLocalLoadoutSelections[i][j] = LoadoutManager.GetDefaultLoadoutForChar(arLocalChrSelections[i][j]);
+            }
+        }
 
         Debug.Log("Finished CharacterSelection.Init");
     }

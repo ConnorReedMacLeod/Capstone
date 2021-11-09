@@ -74,11 +74,12 @@ public class ViewChr : ViewInteractive {
 
             v3BasePosition = goPortrait.transform.localPosition;
             v3RecoilDirection = Vector3.left;
-
+            
         }
     }
 
     public void Init() {
+
         SetPortrait();
         if(mod.plyrOwner.id == 1) {
             //Find the portrait and flip it for one of the players
@@ -256,7 +257,7 @@ public class ViewChr : ViewInteractive {
     public void InitModel() {
         mod = GetComponent<Chr>();
         mod.Start();
-
+        
         //TODO:: Consider if we want to set up an observer for this
         //        May not need to since a Chr likely won't exist without some sort of View.  
 

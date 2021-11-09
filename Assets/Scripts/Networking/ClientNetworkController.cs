@@ -26,6 +26,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
 
     public void SetLocalClientID() {
         nLocalClientID = PhotonNetwork.LocalPlayer.ActorNumber;
+        Debug.LogError("Local ID is = " + nLocalClientID);
     }
 
     public void OnEnable() {

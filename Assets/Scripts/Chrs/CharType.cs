@@ -27,12 +27,12 @@ public static class CharType {
     }
 
 
-    static Dictionary<CHARTYPE, CharTypeInfo> dictChrTypeInfos = new Dictionary<CHARTYPE, CharTypeInfo>() {
+    public static Dictionary<CHARTYPE, CharTypeInfo> dictChrTypeInfos = new Dictionary<CHARTYPE, CharTypeInfo>() {
         { CHARTYPE.FISCHER, new CharTypeInfo(CHARTYPE.FISCHER, "Fischer", new List<Discipline.DISCIPLINE>() { FISCHER, TESTING } ) },
         { CHARTYPE.KATARINA, new CharTypeInfo(CHARTYPE.KATARINA, "Katarina", new List<Discipline.DISCIPLINE>() { KATARINA, TESTING } ) },
         { CHARTYPE.RAYNE, new CharTypeInfo(CHARTYPE.RAYNE, "Rayne", new List<Discipline.DISCIPLINE>() { RAYNE, TESTING } ) },
         { CHARTYPE.SAIKO, new CharTypeInfo(CHARTYPE.SAIKO, "Saiko", new List<Discipline.DISCIPLINE>() { SAIKO, TESTING } ) },
-        { CHARTYPE.PITBEAST, new CharTypeInfo(CHARTYPE.PITBEAST, "Pit Beast", new List<Discipline.DISCIPLINE>() { PITBEAST, TESTING } ) },
+        { CHARTYPE.PITBEAST, new CharTypeInfo(CHARTYPE.PITBEAST, "PitBeast", new List<Discipline.DISCIPLINE>() { PITBEAST, TESTING } ) },
         { CHARTYPE.SOPHIDIA, new CharTypeInfo(CHARTYPE.SOPHIDIA, "Sophidia", new List<Discipline.DISCIPLINE>() { SOPHIDIA, TESTING } ) },
 
         { CHARTYPE.DASHER, new CharTypeInfo(CHARTYPE.DASHER, "Dasher", new List<Discipline.DISCIPLINE>() { TESTING } ) },
