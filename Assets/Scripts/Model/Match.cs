@@ -83,8 +83,8 @@ public class Match : MonoBehaviour {
     IEnumerator InitAllChrs() {
 
         //Keep looping until we've properly setup our character selections
-        while(CharacterSelection.Get().bSavedChrSelections == false) {
-            Debug.Log("Waiting for character selections to be registered and distributed");
+        while(MatchSetup.Get().curMatchParams == null) {
+            Debug.Log("Waiting for matchparams (with char selections) to be recieved");
             yield return null;
         }
 
@@ -93,8 +93,8 @@ public class Match : MonoBehaviour {
             arPlayers[i].nChrs = Player.MAXCHRS;
 
             for(int j = 0; j < arPlayers[i].nChrs; j++) {
-                InitChr(CharacterSelection.Get().arChrSelections[i][j], arPlayers[i], j,
-                    CharacterSelection.Get().arlstLoadoutSelections[i][j]);
+                InitChr(MatchSetup.Get().arLocalChrSelections[i][j], arPlayers[i], j,
+                    MatchSetup.Get().arLocalLoadoutSelections[i][j]);
             }
         }
 
@@ -155,7 +155,7 @@ public class Match : MonoBehaviour {
         Debug.Log("After InitAllChrs");
 
         //Assign local input controllers for each player
-        yield return StartCoroutine(CharacterSelection.Get().AssignAllLocalInputControllers());
+        yield return StartCoroutine(MatchSetup.Get().AssignAllLocalInputControllers());
 
         Debug.Log("After assigning local input controllers");
 

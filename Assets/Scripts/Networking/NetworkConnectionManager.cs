@@ -150,10 +150,8 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         if(SceneManager.GetActiveScene().name == "_MATCH") {
             Debug.Log("We're already in the _MATCH scene, so no need to transfer to it");
         } else {
-            Debug.Log("Transferring to the match scene");
-            PhotonNetwork.LoadLevel("_MATCH");
-            Debug.Log("Asking the master to broadcast its stored character and input selections");
-            MasterNetworkController.Get().BroadcastCustomCharacterSelections();
+            Debug.Log("Passing our locally stored match parameters to the master and requesting to start");
+            MatchSetup.Get().SubmitLocalMatchParamsAndStartMatch(); 
         }
     }
 

@@ -38,6 +38,16 @@ public static class LibConversions {
         return arInt;
     }
 
+    public static int[][] ArArChrTypeToArArInt(CharType.CHARTYPE[][] _ararChrTypes) {
+        int[][] ararInt = new int[_ararChrTypes.Length][];
+
+        for (int i = 0; i < _ararChrTypes.Length; i++) {
+            ararInt[i] = ArChrTypeToArInt(_ararChrTypes[i]);
+        }
+
+        return ararInt;
+    }
+
     public static CharType.CHARTYPE[] ArIntToArChrType(int[] _arInt) {
         CharType.CHARTYPE[] arChrTypes = new CharType.CHARTYPE[_arInt.Length];
 
@@ -46,6 +56,26 @@ public static class LibConversions {
         }
 
         return arChrTypes;
+    }
+
+    public static CharType.CHARTYPE[][] ArARIntToArArChrType(int[][] _ararInt) {
+        CharType.CHARTYPE[][] ararChrTypes = new CharType.CHARTYPE[_ararInt.Length][];
+
+        for (int i = 0; i < _ararInt.Length; i++) {
+            ararChrTypes[i] = ArIntToArChrType(_ararInt[i]);
+        }
+
+        return ararChrTypes;
+    }
+
+    public static object[] ArInputTypeToArObj(Player.InputType[] _arInputTypes) {
+        object[] arObj = new object[_arInputTypes.Length];
+
+        for(int i=0; i<_arInputTypes.Length; i++) {
+            arObj[i] = (object)_arInputTypes[i];
+        }
+
+        return arObj;
     }
 
     public static Player.InputType[] ArObjToArInputType(object[] _arObj) {

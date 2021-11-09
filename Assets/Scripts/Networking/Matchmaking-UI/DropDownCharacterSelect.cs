@@ -12,10 +12,10 @@ public class DropDownCharacterSelect : MonoBehaviour {
 
     public void Start() {
         //Double check that our CharacterSelection instance has already Start'd itself
-        CharacterSelection.Get().Start();
+        MatchSetup.Get().Start();
 
         //Ensure any pre-given value for the dropdown is accurately reflected
-        CharacterSelection.Get().arChrSelections[plyrselectorParent.idPlayer][idChr] = (CharType.CHARTYPE)dropdown.value;
+        MatchSetup.Get().arLocalChrSelections[plyrselectorParent.idPlayer][idChr] = (CharType.CHARTYPE)dropdown.value;
 
     }
 
@@ -23,9 +23,7 @@ public class DropDownCharacterSelect : MonoBehaviour {
 
         Debug.Assert(0 <= idChr && idChr < 3);
 
-        CharacterSelection.Get().arChrSelections[plyrselectorParent.idPlayer][idChr] = (CharType.CHARTYPE)nChrSelect;
-        Debug.Log("Sending updated selections to the master for player " + plyrselectorParent.idPlayer);
-        CharacterSelection.Get().SubmitSelection(plyrselectorParent.idPlayer);
+        MatchSetup.Get().arLocalChrSelections[plyrselectorParent.idPlayer][idChr] = (CharType.CHARTYPE)nChrSelect;
 
     }
 }

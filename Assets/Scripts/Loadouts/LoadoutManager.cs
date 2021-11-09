@@ -62,15 +62,45 @@ public static class LoadoutManager {
         return new Loadout("Deserialized", lstEquippedSkills, lstBenchedSkills);
     }
 
+    
+    public static int[][] SerializePlayerLoadouts(Loadout[] arLoadouts) {
+        int[][] ararnLoadoutSelection = new int[arLoadouts.Length][];
 
-    public static int[][] SerializeLoadoutList(List<LoadoutManager.Loadout> lstLoadouts) {
-        int[][] ararnLoadoutSelection = new int[lstLoadouts.Count][];
-
-        for(int i = 0; i < lstLoadouts.Count; i++) {
-            ararnLoadoutSelection[i] = LoadoutManager.SerializeLoadout(lstLoadouts[i]);
+        for(int i = 0; i < arLoadouts.Length; i++) {
+            ararnLoadoutSelection[i] = SerializeLoadout(arLoadouts[i]);
         }
 
         return ararnLoadoutSelection;
+    }
+
+    public static Loadout[] UnserializePlayerLoadouts(int[][] ararLoadoutSelection) {
+        Loadout[] arLoadouts = new Loadout[ararLoadoutSelection.Length];
+
+        for (int i=0; i<ararLoadoutSelection.Length; i++) {
+            arLoadouts[i] = UnserializeLoadout(ararLoadoutSelection[i]);
+        }
+
+        return arLoadouts;
+    }
+
+    public static int[][][] SerializeAllPlayersLoadouts(Loadout[][] ararLoadouts) {
+        int[][][] arararnLoadoutSelection = new int[ararLoadouts.Length][][];
+
+        for (int i = 0; i < ararLoadouts.Length; i++) {
+            arararnLoadoutSelection[i] = SerializePlayerLoadouts(ararLoadouts[i]);
+        }
+
+        return arararnLoadoutSelection;
+    }
+
+    public static Loadout[][] UnserializeAllPlayersLoadouts(int[][][] arararLoadoutSelection) {
+        Loadout[][] ararLoadouts = new Loadout[arararLoadoutSelection.Length][];
+
+        for (int i=0; i<arararLoadoutSelection.Length; i++) {
+            ararLoadouts[i] = UnserializePlayerLoadouts(arararLoadoutSelection[i]);
+        }
+
+        return ararLoadouts;
     }
 
 
