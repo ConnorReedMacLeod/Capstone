@@ -14,12 +14,12 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
     public const byte TOCLIENTEVENTBASE = 0;
 
-    public const byte evtCSkillUsed = TOCLIENTEVENTBASE + 1;
+    public const byte evtCSkillSelected = TOCLIENTEVENTBASE + 1;
     public const byte evtCTimerTick = TOCLIENTEVENTBASE + 2;
-    public const byte evtCOwnershipSelected = TOCLIENTEVENTBASE + 3;
-    public const byte evtCInputTypesSelected = TOCLIENTEVENTBASE + 4;
-    public const byte evtCCharactersSelected = TOCLIENTEVENTBASE + 5;
-    public const byte evtCLoadoutsSelected = TOCLIENTEVENTBASE + 6;
+    public const byte evtCStartMatchWithParams = TOCLIENTEVENTBASE + 3;
+
+
+
     public const byte evtCMoveToNewTurnPhase = TOCLIENTEVENTBASE + 7;
     public const byte evtCDraftCharacter = TOCLIENTEVENTBASE + 8;
     public const byte evtCBanCharacter = TOCLIENTEVENTBASE + 9;
@@ -28,8 +28,9 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
     public const byte evtMDraftCharacterSelected = TOMASTEREVENTBASE + 0;
     public const byte evtMBanCharacterSelected = TOMASTEREVENTBASE + 1;
-    public const byte evtMSubmitCharacters = TOMASTEREVENTBASE + 2;
-    public const byte evtMFinishedTurnPhase = TOMASTEREVENTBASE + 3;
+    public const byte evtMSubmitMatchParams = TOMASTEREVENTBASE + 2;
+    public const byte evtMSubmitMatchParamsAndStartMatch = TOMASTEREVENTBASE + 3;
+    public const byte evtMFinishedTurnPhase = TOMASTEREVENTBASE + 4;
 
     public Text txtMasterDisplay;
 
@@ -49,14 +50,9 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
     // can be disseminated to all players once the Execute skill phase starts
     int[] arnSavedSerializedInfo;
 
-    //We'll keep these as ints since we can't transmit custom types with photon events
-    public int[][] arnCustomCharacterSelections = new int[Player.MAXPLAYERS][];
-    public int[][][] arararnLoadoutSelections = new int[Player.MAXPLAYERS][][];//indexed as playerid, charid, skillid
-
-    //Whenever we recieve character selections, record which client sent it,
-    //  and claim ownership of that player for that client
-    public int[] arnPlayerOwners = new int[Player.MAXPLAYERS];
-    public int[] arnPlayerInputTypes = new int[Player.MAXPLAYERS];
+    //Keep a stored compilation of all match-setup parameters that we've been passed.  When ready,
+    // we can re-serialize it and distribute it to all clients to start a match
+    public MatchSetup.MatchParams matchparamsPrepped;
 
     //TODO - look at making this into a dynamic list of connected players
     public Dictionary<int, int> dictClientExpectedPhase;
@@ -67,17 +63,8 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
     public override void Init() {
 
-        //Just hardcoding in some default values for character selections to work with
-        arnCustomCharacterSelections[0] = new int[Player.MAXCHRS] { 0, 1, 2 };
-        arnCustomCharacterSelections[1] = new int[Player.MAXCHRS] { 3, 4, 5 };
-
-        //By default, have the master own both
-        arnPlayerOwners[0] = 1;
-        arnPlayerOwners[1] = 1;
-
-        //By default, have a human and a computer
-        arnPlayerInputTypes[0] = 1;
-        arnPlayerInputTypes[1] = 2;
+        // Construct a default marchparams that we can mutate when a client sends in changes
+        matchparamsPrepped = new MatchSetup.MatchParams();
     }
 
     public void OnEnable() {
@@ -92,7 +79,6 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
         txtMasterDisplay.text = "bIsMaster: " + bIsMaster;
 
         nTime = 0;
-
 
         dictClientExpectedPhase = new Dictionary<int, int>();
         //Initialize the starting phase of the game
@@ -127,36 +113,21 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
         //The master controller should only react to player-submitted input events (addressed to evtM...)
         switch(eventCode) {
 
-        case MasterNetworkController.evtMSubmitCharacters:
-            //Submitted as 0:PlayerID, 1:arCharacterSelections, 2:ararnLoadoutSelections 3:InputType
-            Debug.Log("Recieved submitted characters");
+        case MasterNetworkController.evtMSubmitMatchParams:
+            //Deserialize the passed match params and store it locally, overwriting our current match params
+            matchparamsPrepped = MatchSetup.UnserializeMatchParams(arContent);
 
-            Debug.Log("Submission was sent by client " + nClientID);
+            Debug.Log("Master received the matchparams: " + matchparamsPrepped);
 
-            int nPlayer = (int)arContent[0];
+            break;
 
-            //Save a record of which client sent the selections for this character
-            // - they will claim ownership of that player (can be overwritten by later selection submittals)
-            arnPlayerOwners[nPlayer] = nClientID;
+        case MasterNetworkController.evtMSubmitMatchParamsAndStartMatch:
+            //Deserialize the passed match params and store it locally, overwriting our current match params
+            matchparamsPrepped = MatchSetup.UnserializeMatchParams(arContent);
 
-            //Grab and save what type of input type (human/computer) we're expecting for this player
-            int nInputType = (int)arContent[3];
+            Debug.Log("Master received the matchparams (and will now start the match): " + matchparamsPrepped);
 
-            arnPlayerInputTypes[nPlayer] = nInputType;
-
-            //Save the character selection results in the appropriate selection
-            arnCustomCharacterSelections[nPlayer] = new int[Player.MAXCHRS];
-            ((int[])arContent[1]).CopyTo(arnCustomCharacterSelections[nPlayer], 0);
-
-            //Save the loadout selection results
-            arararnLoadoutSelections[nPlayer] = new int[Player.MAXCHRS][];
-            ((int[][])arContent[2]).CopyTo(arararnLoadoutSelections[nPlayer], 0);
-
-            Debug.Log("Master recieved selections for player " + nPlayer + " of " +
-                arnCustomCharacterSelections[nPlayer][0] + ", " +
-                arnCustomCharacterSelections[nPlayer][1] + ", " +
-                arnCustomCharacterSelections[nPlayer][2]);
-
+            BroadcastMatchStart();
 
             break;
 
@@ -177,30 +148,16 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
     }
 
 
-    public void BroadcastCustomCharacterSelections() {
+    public void BroadcastMatchStart() {
 
-        //Let everyone know which characters should be populated for each team
-        NetworkConnectionManager.SendEventToClients(evtCCharactersSelected, (object[])arnCustomCharacterSelections);
+        Debug.Log("Transferring to the match scene");
+        PhotonNetwork.LoadLevel("_MATCH");
 
-        Debug.Log("Master sent out evtCCharactersSelected ");
-        Debug.Log("First team: " + arnCustomCharacterSelections[0][0] + " " + arnCustomCharacterSelections[0][1] + " " + arnCustomCharacterSelections[0][2]);
-        Debug.Log("Second team: " + arnCustomCharacterSelections[1][0] + " " + arnCustomCharacterSelections[1][1] + " " + arnCustomCharacterSelections[1][2]);
+        Debug.Log("Sending out matchparams to start a match: " + matchparamsPrepped);
 
-        //Let everyone know which loadouts all characters will be using
-        NetworkConnectionManager.SendEventToClients(evtCLoadoutsSelected, (object[])arararnLoadoutSelections);
-
-        Debug.Log("Master sent out evtCLoadoutsSelected with " + arnCustomCharacterSelections[0][0] + " selecting " + arararnLoadoutSelections[0][0][0] + " as their first skill");
-
-        //Let all clients know who is controlling which player
-        NetworkConnectionManager.SendEventToClients(evtCOwnershipSelected, LibConversions.ArIntToArObj(arnPlayerOwners));
-
-        Debug.Log("Master sent out evtCOwnershipSelected of " + arnPlayerOwners[0] + " and " + arnPlayerOwners[1]);
-
-        //Let all clients know what type of input each player is using (human/ai)
-        NetworkConnectionManager.SendEventToClients(evtCInputTypesSelected, LibConversions.ArIntToArObj(arnPlayerInputTypes));
-
-        Debug.Log("Master sent out evtCInputTypesSelected of " + arnPlayerInputTypes[0] + " and " + arnPlayerInputTypes[1]);
-
+        //Serialize and distribute our matchparams to all players to let them know how to start the match
+        NetworkConnectionManager.SendEventToClients(evtCStartMatchWithParams, MatchSetup.SerializeMatchParams(matchparamsPrepped));
+        
     }
 
 
@@ -356,7 +313,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
             //We only need to do something special if we received this end-phase signal from a client
             //  who has actually submitted a skill selection for his active character
             if(ContTurns.Get().GetNextActingChr() != null &&
-                arnPlayerOwners[ContTurns.Get().GetNextActingChr().plyrOwner.id] == nClientID) {
+                MatchSetup.Get().curMatchParams.arnPlayersOwners[ContTurns.Get().GetNextActingChr().plyrOwner.id] == nClientID) {
 
                 Selections selectionsFromClient;
 

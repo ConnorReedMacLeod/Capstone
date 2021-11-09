@@ -17,7 +17,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
 
 
     public bool IsPlayerLocallyControlled(int iPlyrId) {
-        return nLocalClientID == CharacterSelection.Get().arnPlayerOwners[iPlyrId];
+        return nLocalClientID == MatchSetup.Get().arnLocalPlayerOwners[iPlyrId];
     }
 
     public bool IsPlayerLocallyControlled(Player plyr) {
@@ -86,23 +86,9 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
             HandleTimerTick(nTime);
             break;
 
-        case MasterNetworkController.evtCOwnershipSelected:
-            //Note - we ignore arContent, since we need to cast to an int[],
-            //       so we just do the proper cast directly from the stored CustomData
-            CharacterSelection.Get().SaveOwnerships(LibConversions.ArObjToArInt((object[])photonEvent.CustomData));
-            break;
-
-        case MasterNetworkController.evtCInputTypesSelected:
-            //Note - have to directly cast PhotonEvent.CustomData, since we can't convert back from arContent
-            CharacterSelection.Get().SaveInputTypes(LibConversions.ArObjToArInputType((object[])photonEvent.CustomData));
-            break;
-
-        case MasterNetworkController.evtCCharactersSelected:
-            CharacterSelection.Get().SaveChrSelections((int[][])arContent);
-            break;
-
-        case MasterNetworkController.evtCLoadoutsSelected:
-            CharacterSelection.Get().SaveLoadoutSelections((int[][][])arContent);
+        case MasterNetworkController.evtCStartMatchWithParams:
+            Debug.Log("Got the signal from the master to start a new match");
+            MatchSetup.Get().SaveMatchParams(MatchSetup.UnserializeMatchParams(arContent));
             break;
 
         case MasterNetworkController.evtCMoveToNewTurnPhase:
@@ -151,13 +137,13 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
     public void DebugPrintCharacterSelections() {
 
         string sSelections1 = "Player 1: Unreceived";
-        if(CharacterSelection.Get().arChrSelections[0] != null) {
-            sSelections1 = "Player 1: " + CharacterSelection.Get().arChrSelections[0][0] + ", " + CharacterSelection.Get().arChrSelections[0][1] + ", " + CharacterSelection.Get().arChrSelections[0][2];
+        if(MatchSetup.Get().arLocalChrSelections[0] != null) {
+            sSelections1 = "Player 1: " + MatchSetup.Get().arLocalChrSelections[0][0] + ", " + MatchSetup.Get().arLocalChrSelections[0][1] + ", " + MatchSetup.Get().arLocalChrSelections[0][2];
         }
 
         string sSelections2 = "Player 2: Unreceived";
-        if(CharacterSelection.Get().arChrSelections[1] != null) {
-            sSelections2 = "Player 2: " + CharacterSelection.Get().arChrSelections[1][0] + ", " + CharacterSelection.Get().arChrSelections[1][1] + ", " + CharacterSelection.Get().arChrSelections[1][2];
+        if(MatchSetup.Get().arLocalChrSelections[1] != null) {
+            sSelections2 = "Player 2: " + MatchSetup.Get().arLocalChrSelections[1][0] + ", " + MatchSetup.Get().arLocalChrSelections[1][1] + ", " + MatchSetup.Get().arLocalChrSelections[1][2];
         }
 
         //SetDebugText(sSelections1 + "\n" + sSelections2);
