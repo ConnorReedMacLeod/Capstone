@@ -18,10 +18,16 @@ public class ContPositions : Singleton<ContPositions> {
 
     public List<Position> lstAllPositions;
 
+    public static int CoordsToIndex(int iColumn, int jRow) {
+        return iColumn* nROWS +jRow;
+    }
 
+    public static KeyValuePair<int, int> IndexToCoords(int i) {
+        return new KeyValuePair<int, int>(i / nROWS, i % nROWS);
+    }
 
     public Position GetPosition(int iColumn, int jRow) {
-        return lstAllPositions[iColumn * nROWS + jRow];
+        return lstAllPositions[CoordsToIndex(iColumn, jRow)];
     }
 
     public Player GetPlayerOwnerOfPosition(Position pos) {

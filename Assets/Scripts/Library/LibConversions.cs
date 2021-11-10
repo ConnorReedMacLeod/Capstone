@@ -58,7 +58,7 @@ public static class LibConversions {
         return arChrTypes;
     }
 
-    public static CharType.CHARTYPE[][] ArARIntToArArChrType(int[][] _ararInt) {
+    public static CharType.CHARTYPE[][] ArArIntToArArChrType(int[][] _ararInt) {
         CharType.CHARTYPE[][] ararChrTypes = new CharType.CHARTYPE[_ararInt.Length][];
 
         for (int i = 0; i < _ararInt.Length; i++) {
