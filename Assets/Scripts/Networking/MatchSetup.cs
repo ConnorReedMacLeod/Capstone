@@ -19,6 +19,7 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
     public LoadoutManager.Loadout[][] arLocalLoadoutSelections = new LoadoutManager.Loadout[Player.MAXPLAYERS][];
     public int[] arnLocalPlayerOwners = new int[Player.MAXPLAYERS];
     public Player.InputType[] arLocalInputTypes = new Player.InputType[Player.MAXPLAYERS];
+    public Position[][] arLocalStartingPosition = new Position[Player.MAXPLAYERS][];
 
 
     public MatchParams curMatchParams; //Holds the params forming the context of the match (if one is currently ongoing)
@@ -34,6 +35,8 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
         public int[] arnPlayersOwners;
         //Which type of input each player is using (locally controlled, AI, foreign controlled, etc.)
         public Player.InputType[] arInputTypes;
+        //The starting positions of each character
+        public Position[][] arPositionSelections;
 
         public override string ToString() {
 
@@ -44,7 +47,7 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
                 string sPlayer = string.Format("Player {0}:\nOwner = {1}, InputType = {2}\n", i, arnPlayersOwners[i], arInputTypes[i]);
                 
                 for(int j=0; j<arChrSelections[i].Length; j++) {
-                    sPlayer += string.Format("{0}, {1}\n", arChrSelections[i][j], arLoadoutSelections[i][j]);
+                    sPlayer += string.Format("{0} ({1}), {2}\n", arChrSelections[i][j], arPositionSelections[i][j], arLoadoutSelections[i][j]);
                 }
                 s += sPlayer;
             }
@@ -56,20 +59,20 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
         public MatchParams() {
 
             arChrSelections = new CharType.CHARTYPE[Player.MAXPLAYERS][];
-            for(int i=0; i<arChrSelections.Length; i++) {
+            arLoadoutSelections = new LoadoutManager.Loadout[arChrSelections.Length][];
+            arPositionSelections = new Position[arChrSelections.Length][];
+            for (int i=0; i<arChrSelections.Length; i++) {
                 arChrSelections[i] = new CharType.CHARTYPE[] { CharType.CHARTYPE.FISCHER, CharType.CHARTYPE.KATARINA , CharType.CHARTYPE.PITBEAST };
-            }
+                arLoadoutSelections[i] = new LoadoutManager.Loadout[arChrSelections[i].Length];
+                arPositionSelections[i] = new Position[arChrSelections[i].Length];
 
-            arLoadoutSelections = new LoadoutManager.Loadout[Player.MAXPLAYERS][];
-            for(int i=0; i<arLoadoutSelections.Length; i++) {
-                arLoadoutSelections[i] = new LoadoutManager.Loadout[Player.MAXCHRS];
-                for(int j=0; j<arLoadoutSelections[i].Length; j++) {
+                for (int j = 0; j < arChrSelections[i].Length; j++) {
                     arLoadoutSelections[i][j] = LoadoutManager.GetDefaultLoadoutForChar(arChrSelections[i][j]);
+                    arPositionSelections[i][j] = Position.GetDefaultPosition(i, j);
                 }
             }
 
             int nLocalClientID = ClientNetworkController.Get().nLocalClientID;
-            Debug.Log("Setting nLocalClientID in MatchParams to " + nLocalClientID);
 
             //By default, assume we are locally controlling both players - can override as needed
             arnPlayersOwners = new int[Player.MAXPLAYERS];
@@ -78,26 +81,28 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
                 arnPlayersOwners[i] = nLocalClientID;
                 arInputTypes[i] = Player.InputType.HUMAN;
             }
-
+            
         }
 
         public MatchParams(CharType.CHARTYPE[][] _arChrSelections, LoadoutManager.Loadout[][] _arLoadoutSelections,
-            int[] _arnPlayersOwners, Player.InputType[] _arInputTypes) {
+            int[] _arnPlayersOwners, Player.InputType[] _arInputTypes, Position[][] _arPositionSelections) {
             arChrSelections = _arChrSelections;
             arLoadoutSelections = _arLoadoutSelections;
             arnPlayersOwners = _arnPlayersOwners;
             arInputTypes = _arInputTypes;
+            arPositionSelections = _arPositionSelections;
         }
 
     }
 
     public static object[] SerializeMatchParams (MatchParams matchparams) {
-        object[] arSerialized = new object[4];
+        object[] arSerialized = new object[5];
 
         arSerialized[0] = LibConversions.ArArChrTypeToArArInt(matchparams.arChrSelections);
         arSerialized[1] = LoadoutManager.SerializeAllPlayersLoadouts(matchparams.arLoadoutSelections);
         arSerialized[2] = LibConversions.ArIntToArObj(matchparams.arnPlayersOwners);
         arSerialized[3] = LibConversions.ArInputTypeToArObj(matchparams.arInputTypes);
+        arSerialized[4] = LibConversions.ArArPositionsToArArInt(matchparams.arPositionSelections);
 
         return arSerialized;
     }
@@ -105,10 +110,11 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
     public static MatchParams UnserializeMatchParams (object[] arSerialized) {
 
         return new MatchParams(
-            LibConversions.ArARIntToArArChrType((int[][])arSerialized[0]),
+            LibConversions.ArArIntToArArChrType((int[][])arSerialized[0]),
             LoadoutManager.UnserializeAllPlayersLoadouts((int[][][])arSerialized[1]),
             LibConversions.ArObjToArInt((object[])arSerialized[2]),
-            LibConversions.ArObjToArInputType((object[])arSerialized[3])
+            LibConversions.ArObjToArInputType((object[])arSerialized[3]),
+            LibConversions.ArArIntsToArArPositions((int[][])arSerialized[4])
             );
     }
 
@@ -122,8 +128,10 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
         
         for (int i = 0; i < arLocalLoadoutSelections.Length; i++) {
             arLocalLoadoutSelections[i] = new LoadoutManager.Loadout[arLocalChrSelections[i].Length];
+            arLocalStartingPosition[i] = new Position[arLocalChrSelections[i].Length];
             for(int j=0; j<arLocalLoadoutSelections[i].Length; j++) {
                 arLocalLoadoutSelections[i][j] = LoadoutManager.GetDefaultLoadoutForChar(arLocalChrSelections[i][j]);
+                arLocalStartingPosition[i][j] = Position.GetDefaultPosition(i, j);
             }
         }
 
@@ -137,7 +145,8 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
             arLocalChrSelections,
             arLocalLoadoutSelections,
             arnLocalPlayerOwners,
-            arLocalInputTypes
+            arLocalInputTypes,
+            arLocalStartingPosition
             );
 
         Debug.Log("Client is submitting " + matchparamsToSend);
@@ -150,7 +159,8 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
             arLocalChrSelections,
             arLocalLoadoutSelections,
             arnLocalPlayerOwners,
-            arLocalInputTypes
+            arLocalInputTypes,
+            arLocalStartingPosition
             );
 
         Debug.Log("Client is submitting (and requesting to start): " + matchparamsToSend);

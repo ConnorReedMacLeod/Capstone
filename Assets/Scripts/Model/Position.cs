@@ -23,9 +23,18 @@ public class Position : MonoBehaviour {
     public Subject subChrEnteredPosition = new Subject();
     public Subject subSoulApplied = new Subject();
     public Subject subSoulRemoved = new Subject();
+    
+    public Subject subBecomesTargettable = new Subject(); // When a skill that is choosing targets can target this character
+    public Subject subEndsTargettable = new Subject(); // When the skill that could target this character stops its targetting process
 
     public override string ToString() {
         return string.Format("({0},{1})", iColumn, jRow);
+    }
+
+    public override bool Equals(object other) {
+        if (other.GetType() != this.GetType()) return false;
+        Position posOther = (Position)other;
+        return (this.iColumn == posOther.iColumn) == (this.jRow == posOther.jRow);
     }
 
     public void SetChrOnPosition(Chr _chrOnPosition) {
@@ -74,6 +83,28 @@ public class Position : MonoBehaviour {
         subSoulApplied = new Subject();
         subSoulRemoved = new Subject();
 
+    }
+
+
+    //Defines the default starting positions for characters (the standard triangle setup)
+    public static Position[][] arDefaultStartingPositions = new Position[][] {
+        //Player 0:
+        new Position[]{
+            new Position(1, 0),
+            new Position(2, 1),
+            new Position(1, 2)
+        },
+
+        //Player 1:
+        new Position[] {
+            new Position(4, 0),
+            new Position(3, 1),
+            new Position(4, 2)
+        }
+    };
+
+    public static Position GetDefaultPosition(int iPlayer, int iChr) {
+        return arDefaultStartingPositions[iPlayer][iChr];
     }
 
 }

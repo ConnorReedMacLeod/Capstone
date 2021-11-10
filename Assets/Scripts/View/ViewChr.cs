@@ -514,7 +514,7 @@ public class ViewChr : ViewInteractive {
             //Ensure the position is now equal to the original base position
             goPortrait.transform.localPosition = v3BasePosition;
 
-            //And reset our sate back to idle
+            //And reset our state back to idle
             statePortrait = PortraitState.IDLE;
             SetPortrait();
         }
