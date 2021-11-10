@@ -337,7 +337,9 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
                         Debug.LogError("MASTER: Received an invalid skill selection of " + selectionsFromClient.ToString());
 
+                        //Reset to a rest action and reserialize the selectionsFromClient back into arnSerializedInfo
                         selectionsFromClient.ResetToRestSelection();
+                        arnSerializedInfo = selectionsFromClient.GetSerialization();
 
                         //TODO - Consider putting a signal in here to let the current player know that they somehow submitted an invalid skill
                         //       Likely this would only occur if there was some sort of programming/sync error though

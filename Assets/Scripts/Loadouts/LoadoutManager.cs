@@ -194,7 +194,7 @@ public static class LoadoutManager {
 
     static Dictionary<CharType.CHARTYPE, Loadout> dictDefaultLoadouts = new Dictionary<CharType.CHARTYPE, Loadout>() {
 
-        { CharType.CHARTYPE.FISCHER, new Loadout("Default", new List<SkillType.SKILLTYPE>() { HUNTERSQUARRY, BUCKLERPARRY, IMPALE, HARPOONGUN},
+        { CharType.CHARTYPE.FISCHER, new Loadout("Default", new List<SkillType.SKILLTYPE>() { ADVANCE, BUCKLERPARRY, IMPALE, HARPOONGUN},
             new List<SkillType.SKILLTYPE>() { FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
         { CharType.CHARTYPE.KATARINA, new Loadout("Default", new List<SkillType.SKILLTYPE>() { FORTISSIMO, REVERBERATE, CACOPHONY, SERENADE},

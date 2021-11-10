@@ -4,21 +4,12 @@ using UnityEngine;
 
 public class TarPosition : Target {
 
-    public static int SerializePosition(Position pos) {
-        return ContPositions.CoordsToIndex(pos.iColumn, pos.jRow);
-    }
-
-    public static Position UnserializePosition(int nSerialized) {
-        KeyValuePair<int, int> kvpCoords = ContPositions.IndexToCoords(nSerialized);
-        return new Position(kvpCoords.Key, kvpCoords.Value);
-    }
-
     public override int Serialize(object objToSerialize) {
-        return SerializePosition((Position)objToSerialize);
+        return Position.SerializeCoords(((Position)objToSerialize).coords);
     }
 
     public override object Unserialize(int nSerialized, List<object> lstSelectionsSoFar) {
-        return UnserializePosition(nSerialized);
+        return ContPositions.Get().GetPosition(Position.UnserializeCoords(nSerialized));
     }
 
     public static TarPosition AddTarget(Skill _skill, FnValidSelection _IsValidSelection) {
@@ -52,11 +43,11 @@ public class TarPosition : Target {
         return (object pos, Selections selections) => (((Position)pos).IsEnemyOwned(chr.plyrOwner));
     }
 
-    public static FnValidSelection IsFrontliner() {
+    public static FnValidSelection IsFrontline() {
         return (object pos, Selections selections) => ((Position)pos).positiontype == Position.POSITIONTYPE.FRONTLINE;
     }
 
-    public static FnValidSelection IsBackliner() {
+    public static FnValidSelection IsBackline() {
         return (object pos, Selections selections) => ((Position)pos).positiontype == Position.POSITIONTYPE.BACKLINE;
     }
 
@@ -79,6 +70,8 @@ public class TarPosition : Target {
         //Highlight all the targettable positions
         foreach (Position p in GetValidSelectable(ContLocalUIInteraction.Get().selectionsInProgress)) {
             //Pass along the skill we're trying to select targets for
+            Debug.Log("About to let " + p + " know that it is selectable with sub " + p.subBecomesTargettable);
+            Debug.Log("Selecting for " + ContLocalUIInteraction.Get().selectionsInProgress.skillSelected);
             p.subBecomesTargettable.NotifyObs(null, ContLocalUIInteraction.Get().selectionsInProgress.skillSelected);
         }
 

@@ -5,6 +5,8 @@ using UnityEngine;
 public static class LibConversions {
 
 
+    // INT / OBJ
+
     public static object[] ArIntToArObj(int[] arInt) {
 
         object[] arObj = new object[arInt.Length];
@@ -27,7 +29,11 @@ public static class LibConversions {
         return arInt;
     }
 
+
     //TODO:: Eventually figure out if this can be generalized
+
+    //  CHRTYPE / INT
+
     public static int[] ArChrTypeToArInt(CharType.CHARTYPE[] _arChrTypes) {
         int[] arInt = new int[_arChrTypes.Length];
 
@@ -68,6 +74,9 @@ public static class LibConversions {
         return ararChrTypes;
     }
 
+
+    // INPUTTYPE / OBJ
+
     public static object[] ArInputTypeToArObj(Player.InputType[] _arInputTypes) {
         object[] arObj = new object[_arInputTypes.Length];
 
@@ -88,4 +97,46 @@ public static class LibConversions {
         return arInputTypes;
     }
 
+
+    // COORDS / INT
+
+    public static int[] ArPositionCoordToArInt(Position.Coords[] _arPositionCoords) {
+        int[] arInt = new int[_arPositionCoords.Length];
+
+        for (int i = 0; i < _arPositionCoords.Length; i++) {
+            arInt[i] = Position.SerializeCoords(_arPositionCoords[i]);
+        }
+
+        return arInt;
+    }
+
+    public static int[][] ArArPositionCoordToArArInt(Position.Coords[][] _ararPositionCoords) {
+        int[][] ararInt = new int[_ararPositionCoords.Length][];
+
+        for (int i = 0; i < _ararPositionCoords.Length; i++) {
+            ararInt[i] = ArPositionCoordToArInt(_ararPositionCoords[i]);
+        }
+
+        return ararInt;
+    }
+
+    public static Position.Coords[] ArIntToArPositionCoord(int[] _arInt) {
+        Position.Coords[] arPositionCoords = new Position.Coords[_arInt.Length];
+
+        for (int i = 0; i < _arInt.Length; i++) {
+            arPositionCoords[i] = Position.UnserializeCoords(_arInt[i]);
+        }
+
+        return arPositionCoords;
+    }
+
+    public static Position.Coords[][] ArArIntToArArPositionCoord(int[][] _ararInt) {
+        Position.Coords[][] ararPositionCoords = new Position.Coords[_ararInt.Length][];
+
+        for (int i = 0; i < _ararInt.Length; i++) {
+            ararPositionCoords[i] = ArIntToArPositionCoord(_ararInt[i]);
+        }
+
+        return ararPositionCoords;
+    }
 }
