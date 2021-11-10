@@ -12,6 +12,13 @@ public class ViewPosition : ViewInteractive {
 
     public static Subject subAllClick = new Subject(Subject.SubType.ALL);
 
+    public override void onMouseClick(params object[] args) {
+        Debug.Log("Clicked on " + mod);
+        subAllClick.NotifyObs(this, args);
+
+        base.onMouseClick(args);
+    }
+
     public void UpdateChrOnPositionToHere(Object target, params object[] args) {
 
         if(mod.chrOnPosition == null) return;

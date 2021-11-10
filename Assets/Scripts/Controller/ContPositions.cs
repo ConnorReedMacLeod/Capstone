@@ -18,12 +18,20 @@ public class ContPositions : Singleton<ContPositions> {
 
     public List<Position> lstAllPositions;
 
-    public static int CoordsToIndex(int iColumn, int jRow) {
-        return iColumn* nROWS +jRow;
+    public static int CoordsToIndex(Position.Coords coords) {
+        return CoordsToIndex(coords.iColumn, coords.jRow);
     }
 
-    public static KeyValuePair<int, int> IndexToCoords(int i) {
-        return new KeyValuePair<int, int>(i / nROWS, i % nROWS);
+    public static int CoordsToIndex(int iColumn, int jRow) {
+        return iColumn * nROWS + jRow;
+    }
+
+    public static Position.Coords IndexToCoords(int i) {
+        return new Position.Coords(i / nROWS, i % nROWS);
+    }
+
+    public Position GetPosition(Position.Coords coords) {
+        return GetPosition(coords.iColumn, coords.jRow);
     }
 
     public Position GetPosition(int iColumn, int jRow) {
@@ -241,6 +249,7 @@ public class ContPositions : Singleton<ContPositions> {
     }
 
     private void SwapPositions(Position pos1, Position pos2) {
+        
 
         if(IsDiffOwnerOfPosition(pos1, pos2)) {
             Debug.LogError("Can't move to an opponent's position");
@@ -258,7 +267,6 @@ public class ContPositions : Singleton<ContPositions> {
         //Update both characters
         if(chr1 != null) chr1.SetPosition(pos2);
         if(chr2 != null) chr2.SetPosition(pos1);
-
     }
 
     public void SwitchChrToPosition(Chr chr, Position pos) {
@@ -347,11 +355,7 @@ public class ContPositions : Singleton<ContPositions> {
                 Position pos = GetPosition(iColumn, jRow);
                 Debug.Assert(pos.jRow == jRow);
                 Debug.Assert(pos.iColumn == iColumn);
-
-                Position.POSITIONTYPE posTypeSetup = pos.positiontype;
-                pos.InitPositionType();
-
-                Debug.Assert(posTypeSetup == pos.positiontype);
+                
             }
         }
 

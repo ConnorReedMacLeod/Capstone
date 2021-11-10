@@ -101,22 +101,16 @@ public class Match : MonoBehaviour {
         Debug.Log("Ending Character Initializations");
     }
 
-    IEnumerator InitAllChrPositions() {
-
-        //TODO - have this set up with the character loadout phase - for now, just give default positions
-        while(false) {
-            //Wait for position input from the character loadout phase
-            yield return null;
-        }
+    public void InitAllChrPositions() {
 
         //Set up each team in a 'triangle' - two sides in the back, center in the front
-        ContPositions.Get().MoveChrToPosition(arChrs[0][0], ContPositions.Get().GetAlliedBacklinePositions(arPlayers[0])[0]);
-        ContPositions.Get().MoveChrToPosition(arChrs[0][1], ContPositions.Get().GetAlliedFrontlinePositions(arPlayers[0])[1]);
-        ContPositions.Get().MoveChrToPosition(arChrs[0][2], ContPositions.Get().GetAlliedBacklinePositions(arPlayers[0])[2]);
+        ContPositions.Get().MoveChrToPosition(arChrs[0][0], ContPositions.Get().GetPosition(MatchSetup.Get().curMatchParams.arPositionCoordsSelections[0][0]));
+        ContPositions.Get().MoveChrToPosition(arChrs[0][1], ContPositions.Get().GetPosition(MatchSetup.Get().curMatchParams.arPositionCoordsSelections[0][1]));
+        ContPositions.Get().MoveChrToPosition(arChrs[0][2], ContPositions.Get().GetPosition(MatchSetup.Get().curMatchParams.arPositionCoordsSelections[0][2]));
 
-        ContPositions.Get().MoveChrToPosition(arChrs[1][0], ContPositions.Get().GetAlliedBacklinePositions(arPlayers[1])[0]);
-        ContPositions.Get().MoveChrToPosition(arChrs[1][1], ContPositions.Get().GetAlliedFrontlinePositions(arPlayers[1])[1]);
-        ContPositions.Get().MoveChrToPosition(arChrs[1][2], ContPositions.Get().GetAlliedBacklinePositions(arPlayers[1])[2]);
+        ContPositions.Get().MoveChrToPosition(arChrs[1][0], ContPositions.Get().GetPosition(MatchSetup.Get().curMatchParams.arPositionCoordsSelections[1][0]));
+        ContPositions.Get().MoveChrToPosition(arChrs[1][1], ContPositions.Get().GetPosition(MatchSetup.Get().curMatchParams.arPositionCoordsSelections[1][1]));
+        ContPositions.Get().MoveChrToPosition(arChrs[1][2], ContPositions.Get().GetPosition(MatchSetup.Get().curMatchParams.arPositionCoordsSelections[1][2]));
 
     }
 
@@ -159,7 +153,7 @@ public class Match : MonoBehaviour {
 
         Debug.Log("After assigning local input controllers");
 
-        yield return StartCoroutine(InitAllChrPositions());
+        InitAllChrPositions();
 
         Debug.Log("After initializing positions");
 
