@@ -109,6 +109,10 @@ public static class SkillType {
         return GetSkillInfosUnderDisciplines(chr.lstDisciplines);
     }
 
+    public static List<SkillTypeInfo> GetSkillInfosUnderDisciplines(CharType.CHARTYPE chartype) {
+        return GetSkillInfosUnderDisciplines(CharType.GetDisciplines(chartype));
+    }
+
     public static List<SkillTypeInfo> GetSkillInfosUnderDisciplines(List<Discipline.DISCIPLINE> lstDisciplines) {
 
         //For each kvp, check if there are any required disciplines that aren't given in the passed lstDisciplines.  Ensure there are not any of these kvp in the
