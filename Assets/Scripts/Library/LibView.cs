@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public static class LibView {
 
@@ -62,7 +63,7 @@ public static class LibView {
         Sprite sprIcon = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
 
         if (sprIcon == null) {
-            Debug.LogError("Could not find specificed sprite: " + sSprPath);
+            Debug.LogWarning("Could not find specificed sprite: " + sSprPath);
         }
 
         sprRen.sprite = sprIcon;
@@ -74,10 +75,29 @@ public static class LibView {
         Sprite sprIcon = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
 
         if (sprIcon == null) {
-            Debug.LogError("Could not find specificed sprite: " + sSprPath);
+            Debug.LogWarning("Could not find specificed sprite: " + sSprPath);
         }
 
         img.sprite = sprIcon;
+
+    }
+
+
+    public static void SetSkillTypeDropDownOptions(Dropdown dropdown, List<SkillType.SkillTypeInfo> lstSkillTypeInfo) {
+
+        SetDropdownOptions(dropdown, lstSkillTypeInfo.Select(info => info.sName));
+
+    }
+
+    public static void SetDropdownOptions(Dropdown dropdown, IEnumerable<string> lstOptions) {
+        //Clear out the current list of options
+        dropdown.ClearOptions();
+
+        List<Dropdown.OptionData> lstNewOptions;
+
+        lstNewOptions = lstOptions.Select(str => new Dropdown.OptionData(str)).ToList();
+
+        dropdown.AddOptions(lstNewOptions);
 
     }
 }

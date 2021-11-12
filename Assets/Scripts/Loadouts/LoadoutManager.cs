@@ -7,26 +7,23 @@ public static class LoadoutManager {
 
     public const int nLOADOUTSLOTS = 3;
     public const string SKEYNAME = "loadout{0}-{1}-name";
-    public const string SKEYEQUIPPED = "loadout{0}-{1}-equipped-{2}";
-    public const string SKEYBENCHED = "loadout{0}-{1}-bench-{2}";
+    public const string SKEYSKILLS = "loadout{0}-{1}-skills-{2}";
 
     public struct Loadout {
         public string sName;
 
-        public List<SkillType.SKILLTYPE> lstEquippedSkills;
-        public List<SkillType.SKILLTYPE> lstBenchSkills;
+        public List<SkillType.SKILLTYPE> lstChosenSkills;
 
-        public Loadout(string _sName, List<SkillType.SKILLTYPE> _lstEquippedSkills, List<SkillType.SKILLTYPE> _lstBenchSkills) {
+        public Loadout(string _sName, List<SkillType.SKILLTYPE> _lstChosenSkills) {
             sName = _sName;
-            lstEquippedSkills = _lstEquippedSkills;
-            lstBenchSkills = _lstBenchSkills;
+            lstChosenSkills = _lstChosenSkills;
         }
 
         public override string ToString() {
             string sLoadout = string.Format("{0}:\nEquipped: {1}, {2}, {3}, {4}\nBench: {5}, {6}, {7}, {8}",
                 sName,
-                lstEquippedSkills[0], lstEquippedSkills[1], lstEquippedSkills[2], lstEquippedSkills[3],
-                lstBenchSkills[0], lstBenchSkills[1], lstBenchSkills[2], lstBenchSkills[3]);
+                lstChosenSkills[0], lstChosenSkills[1], lstChosenSkills[2], lstChosenSkills[3],
+                lstChosenSkills[4], lstChosenSkills[5], lstChosenSkills[6], lstChosenSkills[7]);
 
             return sLoadout;
         }
@@ -36,11 +33,8 @@ public static class LoadoutManager {
         int[] arSerialized = new int[Chr.nTotalCharacterSkills];
 
         int iSerialized = 0;
-        for(int i = 0; i < Chr.nEquippedCharacterSkills; i++, iSerialized++) {
-            arSerialized[iSerialized] = (int)loadout.lstEquippedSkills[i];
-        }
-        for(int i = 0; i < Chr.nBenchCharacterSkills; i++, iSerialized++) {
-            arSerialized[iSerialized] = (int)loadout.lstBenchSkills[i];
+        for(int i = 0; i < Chr.nTotalCharacterSkills; i++, iSerialized++) {
+            arSerialized[iSerialized] = (int)loadout.lstChosenSkills[i];
         }
 
         return arSerialized;
@@ -48,18 +42,14 @@ public static class LoadoutManager {
 
     public static Loadout UnserializeLoadout(int[] arSerialized) {
 
-        List<SkillType.SKILLTYPE> lstEquippedSkills = new List<SkillType.SKILLTYPE>();
-        List<SkillType.SKILLTYPE> lstBenchedSkills = new List<SkillType.SKILLTYPE>();
+        List<SkillType.SKILLTYPE> lstChosenSkills = new List<SkillType.SKILLTYPE>();
 
         int iDeserialized = 0;
-        for(int i = 0; i < Chr.nEquippedCharacterSkills; i++, iDeserialized++) {
-            lstEquippedSkills.Add((SkillType.SKILLTYPE)arSerialized[iDeserialized]);
-        }
-        for(int i = 0; i < Chr.nBenchCharacterSkills; i++, iDeserialized++) {
-            lstBenchedSkills.Add((SkillType.SKILLTYPE)arSerialized[iDeserialized]);
+        for(int i = 0; i < Chr.nTotalCharacterSkills; i++, iDeserialized++) {
+            lstChosenSkills.Add((SkillType.SKILLTYPE)arSerialized[iDeserialized]);
         }
 
-        return new Loadout("Deserialized", lstEquippedSkills, lstBenchedSkills);
+        return new Loadout("Deserialized", lstChosenSkills);
     }
 
     
@@ -110,139 +100,127 @@ public static class LoadoutManager {
         return string.Format(SKEYNAME, (int)chartype, iSlot);
     }
 
-    public static string GetKeyEquipped(CharType.CHARTYPE chartype, int iSlot, int iSkillType) {
-        return string.Format(SKEYEQUIPPED, (int)chartype, iSlot, iSkillType);
+    public static string GetKeySkills(CharType.CHARTYPE chartype, int iSlot, int iSkillType) {
+        return string.Format(SKEYSKILLS, (int)chartype, iSlot, iSkillType);
     }
 
-    public static string GetKeyBenched(CharType.CHARTYPE chartype, int iSlot, int iSkillType) {
-        return string.Format(SKEYBENCHED, (int)chartype, iSlot, iSkillType);
-    }
+    public static List<string> LoadAllLoadoutNamesForChr(CharType.CHARTYPE chartype) {
+        List<string> lstLoadoutNames = new List<string>();
 
-    public static List<Loadout> LoadSavedAllLoadoutsForChr(CharType.CHARTYPE chartype) {
-
-        List<Loadout> lstLoadouts = new List<Loadout>();
-
-        for(int i = 0; i < nLOADOUTSLOTS; i++) {
-            if(PlayerPrefs.HasKey(GetKeyName(chartype, i)) == false) {
+        for(int i=0; i < nLOADOUTSLOTS; i++) {
+            if (PlayerPrefs.HasKey(GetKeyName(chartype, i)) == false) {
                 //If we try to load the ith slot for this character, but there's no entry for the name of the loadout,
                 //  we assume the loadout is blank so we can just save in the default loadout for the character then use it
 
                 Loadout loadoutDefault = GetDefaultLoadoutForChar(chartype);
                 SaveLoadout(chartype, i, loadoutDefault);
 
-                lstLoadouts.Add(loadoutDefault);
-
+                lstLoadoutNames.Add(loadoutDefault.sName);
             } else {
-                //If the loadout should exist, then load it and add it to our return list
-                lstLoadouts.Add(LoadSavedLoadoutForChr(chartype, i));
+                //If the loadout name exists, then just load it
+                lstLoadoutNames.Add(PlayerPrefs.GetString(GetKeyName(chartype, i)));
             }
-
         }
 
-        return lstLoadouts;
+        Debug.Log("Returning loadoutnames with length = " + lstLoadoutNames.Count);
+        return lstLoadoutNames;
     }
 
     public static Loadout LoadSavedLoadoutForChr(CharType.CHARTYPE chartype, int iSlot) {
         Debug.Assert(iSlot < nLOADOUTSLOTS, "Cannot load slot " + iSlot + " since we don't allow that many slots");
 
+        if(PlayerPrefs.HasKey(GetKeyName(chartype, iSlot)) == false) {
+            //If we don't have a stored loadout for this slot, then save a default loadout in this slot and return it  
+            Loadout loadoutDefault = GetDefaultLoadoutForChar(chartype);
+            SaveLoadout(chartype, iSlot, loadoutDefault);
+
+            return loadoutDefault; 
+        }
+
+        //If we get this far, then we have a loadout stored in this slot, so we can load it
+
         // Fetch the name of the loadout
         string _sName = PlayerPrefs.GetString(GetKeyName(chartype, iSlot));
 
         // Fetch all the stored standard skill selections
-        List<SkillType.SKILLTYPE> _lstEquippedSkills = new List<SkillType.SKILLTYPE>();
+        List<SkillType.SKILLTYPE> _lstChosenSkills = new List<SkillType.SKILLTYPE>();
 
-        for(int i = 0; i < Chr.nEquippedCharacterSkills; i++) {
-            string sKey = GetKeyEquipped(chartype, iSlot, i);
+        for(int i = 0; i < Chr.nTotalCharacterSkills; i++) {
+            string sKey = GetKeySkills(chartype, iSlot, i);
 
-            Debug.Assert(PlayerPrefs.HasKey(sKey) == false, "No stored entry for " + sKey + " found");
+            Debug.Assert(PlayerPrefs.HasKey(sKey), "No stored entry for " + sKey + " found");
 
-            _lstEquippedSkills.Add((SkillType.SKILLTYPE)PlayerPrefs.GetInt(sKey));
+            _lstChosenSkills.Add((SkillType.SKILLTYPE)PlayerPrefs.GetInt(sKey));
         }
 
-        // Then fetch all the stored bench skill selections
-        List<SkillType.SKILLTYPE> _lstBenchSkills = new List<SkillType.SKILLTYPE>();
-
-        for(int i = 0; i < Chr.nBenchCharacterSkills; i++) {
-            string sKey = GetKeyBenched(chartype, iSlot, i);
-
-            Debug.Assert(PlayerPrefs.HasKey(sKey) == false, "No stored entry for " + sKey + " found");
-
-            _lstBenchSkills.Add((SkillType.SKILLTYPE)PlayerPrefs.GetInt(sKey));
-        }
-
-        return new Loadout(_sName, _lstEquippedSkills, _lstBenchSkills);
+        return new Loadout(_sName, _lstChosenSkills);
     }
 
 
-    public static void SaveLoadout(CharType.CHARTYPE chartype, int iSlot, Loadout loadout, string sName = "Default") {
+    public static void SaveLoadout(CharType.CHARTYPE chartype, int iSlot, Loadout loadout) {
         Debug.Assert(iSlot < nLOADOUTSLOTS, "Cannot save slot " + iSlot + " since we don't allow that many slots");
 
         // Save the name of the loadout
-        PlayerPrefs.SetString(string.Format(SKEYNAME, (int)chartype, iSlot), sName);
+        PlayerPrefs.SetString(GetKeyName(chartype, iSlot), loadout.sName);
 
         // Save all the standard skill selections
-        for(int i = 0; i < Chr.nEquippedCharacterSkills; i++) {
-            PlayerPrefs.SetInt(GetKeyEquipped(chartype, iSlot, i), (int)loadout.lstEquippedSkills[i]);
-        }
-
-        // Then save all the bench skill selections
-        for(int i = 0; i < Chr.nBenchCharacterSkills; i++) {
-            PlayerPrefs.SetInt(GetKeyBenched(chartype, iSlot, i), (int)loadout.lstEquippedSkills[i]);
+        for(int i = 0; i < Chr.nTotalCharacterSkills; i++) {
+            PlayerPrefs.SetInt(GetKeySkills(chartype, iSlot, i), (int)loadout.lstChosenSkills[i]);
         }
     }
 
 
     static Dictionary<CharType.CHARTYPE, Loadout> dictDefaultLoadouts = new Dictionary<CharType.CHARTYPE, Loadout>() {
 
-        { CharType.CHARTYPE.FISCHER, new Loadout("Default", new List<SkillType.SKILLTYPE>() { ADVANCE, BUCKLERPARRY, IMPALE, HARPOONGUN},
-            new List<SkillType.SKILLTYPE>() { FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
+        { CharType.CHARTYPE.FISCHER, new Loadout("Default", new List<SkillType.SKILLTYPE>() { ADVANCE, BUCKLERPARRY, IMPALE, HARPOONGUN,
+            FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
-        { CharType.CHARTYPE.KATARINA, new Loadout("Default", new List<SkillType.SKILLTYPE>() { FORTISSIMO, REVERBERATE, CACOPHONY, SERENADE},
-            new List<SkillType.SKILLTYPE>() { FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
+        { CharType.CHARTYPE.KATARINA, new Loadout("Default", new List<SkillType.SKILLTYPE>() { FORTISSIMO, REVERBERATE, CACOPHONY, SERENADE,
+            FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
-        { CharType.CHARTYPE.RAYNE, new Loadout("Default", new List<SkillType.SKILLTYPE>() { CHEERLEADER, CLOUDCUSHION, SPIRITSLAP, THUNDERSTORM},
-            new List<SkillType.SKILLTYPE>() { FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
+        { CharType.CHARTYPE.RAYNE, new Loadout("Default", new List<SkillType.SKILLTYPE>() { CHEERLEADER, CLOUDCUSHION, SPIRITSLAP, THUNDERSTORM,
+            FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
-        { CharType.CHARTYPE.SAIKO, new Loadout("Default", new List<SkillType.SKILLTYPE>() { AMBUSH, SMOKECOVER, STICKYBOMB, TRANQUILIZE},
-            new List<SkillType.SKILLTYPE>() { FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
+        { CharType.CHARTYPE.SAIKO, new Loadout("Default", new List<SkillType.SKILLTYPE>() { AMBUSH, SMOKECOVER, STICKYBOMB, TRANQUILIZE,
+            FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
-        { CharType.CHARTYPE.PITBEAST, new Loadout("Default", new List<SkillType.SKILLTYPE>() { FORCEDEVOLUTION, SADISM, TANTRUM, TENDRILSTAB},
-            new List<SkillType.SKILLTYPE>() { FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
+        { CharType.CHARTYPE.PITBEAST, new Loadout("Default", new List<SkillType.SKILLTYPE>() { FORCEDEVOLUTION, SADISM, TANTRUM, TENDRILSTAB,
+            FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
-        { CharType.CHARTYPE.SOPHIDIA, new Loadout("Default", new List<SkillType.SKILLTYPE>() { HISS, HYDRASREGEN, TWINSNAKES, VENEMOUSBITE},
-            new List<SkillType.SKILLTYPE>() { FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
+        { CharType.CHARTYPE.SOPHIDIA, new Loadout("Default", new List<SkillType.SKILLTYPE>() { HISS, HYDRASREGEN, TWINSNAKES, VENEMOUSBITE,
+            FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
 
 
-        { CharType.CHARTYPE.DASHER, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION},
-            new List<SkillType.SKILLTYPE>() { FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
+        { CharType.CHARTYPE.DASHER, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION,
+            FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
-        { CharType.CHARTYPE.DANCER, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION},
-            new List<SkillType.SKILLTYPE>() { FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
+        { CharType.CHARTYPE.DANCER, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION,
+            FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
-        { CharType.CHARTYPE.PRANCER, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION},
-            new List<SkillType.SKILLTYPE>() { FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
+        { CharType.CHARTYPE.PRANCER, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION,
+            FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
-        { CharType.CHARTYPE.VIXEN, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION},
-            new List<SkillType.SKILLTYPE>() { FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
+        { CharType.CHARTYPE.VIXEN, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION,
+            FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
-        { CharType.CHARTYPE.COMET, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION},
-            new List<SkillType.SKILLTYPE>() { FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
+        { CharType.CHARTYPE.COMET, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION,
+            FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
-        { CharType.CHARTYPE.CUPID, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION},
-            new List<SkillType.SKILLTYPE>() { FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
+        { CharType.CHARTYPE.CUPID, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION,
+            FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
-        { CharType.CHARTYPE.DONNER, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION},
-            new List<SkillType.SKILLTYPE>() { FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
+        { CharType.CHARTYPE.DONNER, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION,
+            FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
-        { CharType.CHARTYPE.BLITZEN, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION},
-            new List<SkillType.SKILLTYPE>() { FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
+        { CharType.CHARTYPE.BLITZEN, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION,
+            FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
-        { CharType.CHARTYPE.RUDOLPH, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION},
-            new List<SkillType.SKILLTYPE>() { FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
+        { CharType.CHARTYPE.RUDOLPH, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION,
+            FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
-        { CharType.CHARTYPE.SANTA, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION},
-            new List<SkillType.SKILLTYPE>() { FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
+        { CharType.CHARTYPE.SANTA, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION,
+            FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
     };
 

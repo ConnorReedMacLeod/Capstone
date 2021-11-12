@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 using static Discipline.DISCIPLINE;
 
 public static class CharType {
@@ -49,6 +50,10 @@ public static class CharType {
 
     public static string GetChrName(CHARTYPE type) {
         return dictChrTypeInfos[type].sName;
+    }
+
+    public static List<string> GetAllChrNames() {
+        return dictChrTypeInfos.Values.Select(info => info.sName).ToList();
     }
 
     public static List<Discipline.DISCIPLINE> GetDisciplines(CHARTYPE type) {

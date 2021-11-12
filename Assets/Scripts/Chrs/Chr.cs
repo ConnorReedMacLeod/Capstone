@@ -440,7 +440,7 @@ public class Chr : MonoBehaviour {
 
         //Load in all the equipped skills
         for (int i = 0; i < Chr.nEquippedCharacterSkills; i++) {
-            arSkillSlots[i].SetSkill(loadout.lstEquippedSkills[i]);
+            arSkillSlots[i].SetSkill(loadout.lstChosenSkills[i]);
         }
 
 

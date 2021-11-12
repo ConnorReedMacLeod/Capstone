@@ -14,30 +14,28 @@ public class DropDownCharacterSelect : MonoBehaviour {
     public void Start() {
         //Double check that our CharacterSelection instance has already Start'd itself
         MatchSetup.Get().Start();
-
-        InitChrTypeDropdown();
+        
+        LibView.SetDropdownOptions(dropdown, CharType.GetAllChrNames());
 
         //Ensure the default-selected option for this dropdown is mirroring the default in the matchsetup
         dropdown.value = (int)MatchSetup.Get().arLocalChrSelections[plyrselectorParent.idPlayer][idChr];
+
+        dropdown.RefreshShownValue();
     }
 
-
-    public void InitChrTypeDropdown() {
-        //Clear out the current list of options
-        dropdown.ClearOptions();
-
-        List<Dropdown.OptionData> lstNewOptions;
-
-        lstNewOptions = CharType.dictChrTypeInfos.Values.Select(info => new Dropdown.OptionData(info.sName)).ToList();
-
-        dropdown.AddOptions(lstNewOptions);
-    }
-
-    public void OnChrSelectChange(int nChrSelect) {
+    public void OnChrSelectChange() {
 
         Debug.Assert(0 <= idChr && idChr < 3);
 
-        MatchSetup.Get().arLocalChrSelections[plyrselectorParent.idPlayer][idChr] = (CharType.CHARTYPE)nChrSelect;
+        MatchSetup.Get().arLocalChrSelections[plyrselectorParent.idPlayer][idChr] = (CharType.CHARTYPE)dropdown.value;
 
+        //Now that our character has been reselected, we need to load in a starting loadout for that character
+        MatchSetup.Get().arLocalLoadoutSelections[plyrselectorParent.idPlayer][idChr] = 
+            LoadoutManager.LoadSavedLoadoutForChr(MatchSetup.Get().arLocalChrSelections[plyrselectorParent.idPlayer][idChr], 0);
+
+    }
+
+    public void OnClickEditLoadout() {
+        plyrselectorParent.EditChrLoadout(idChr);
     }
 }

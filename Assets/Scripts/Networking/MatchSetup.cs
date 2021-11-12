@@ -130,7 +130,8 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
             arLocalLoadoutSelections[i] = new LoadoutManager.Loadout[arLocalChrSelections[i].Length];
             arLocalStartingPositionCoords[i] = new Position.Coords[arLocalChrSelections[i].Length];
             for(int j=0; j<arLocalLoadoutSelections[i].Length; j++) {
-                arLocalLoadoutSelections[i][j] = LoadoutManager.GetDefaultLoadoutForChar(arLocalChrSelections[i][j]);
+                //Initially load the 0th slot of our personal saved loadouts
+                arLocalLoadoutSelections[i][j] = LoadoutManager.LoadSavedLoadoutForChr(arLocalChrSelections[i][j], 0);
                 arLocalStartingPositionCoords[i][j] = Position.GetDefaultPositionCoords(i, j);
             }
         }
