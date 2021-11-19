@@ -4,25 +4,17 @@ using UnityEngine;
 
 public class DraftedChrDisplay : MonoBehaviour {
 
-    public DraftableChr[] arDraftedChrSlots;
+    public DraftChrDisplay[] arDraftedChrDisplays;
 
-
-
-    public void UpdateDraftedChrDisplay(CharType.CHARTYPE[] arDraftedChrs) {
+    public void UpdateDraftedChrDisplays(CharType.CHARTYPE[] arDraftedChrs) {
 
         for(int i = 0; i < arDraftedChrs.Length; i++) {
-            arDraftedChrSlots[i].SetChrInSlot(arDraftedChrs[i]);
+
+            arDraftedChrDisplays[i].SetChrInSlot(arDraftedChrs[i]);
+
         }
 
     }
 
-    // Start is called before the first frame update
-    void Start() {
 
-    }
-
-    // Update is called once per frame
-    void Update() {
-
-    }
 }

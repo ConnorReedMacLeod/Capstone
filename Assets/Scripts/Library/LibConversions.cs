@@ -8,6 +8,7 @@ public static class LibConversions {
     // INT / OBJ
 
     public static object[] ArIntToArObj(int[] arInt) {
+        if (arInt == null) return null;
 
         object[] arObj = new object[arInt.Length];
 
@@ -19,6 +20,7 @@ public static class LibConversions {
     }
 
     public static int[] ArObjToArInt(object[] arObj) {
+        if (arObj == null) return null;
 
         int[] arInt = new int[arObj.Length];
 
@@ -34,41 +36,49 @@ public static class LibConversions {
 
     //  CHRTYPE / INT
 
-    public static int[] ArChrTypeToArInt(CharType.CHARTYPE[] _arChrTypes) {
-        int[] arInt = new int[_arChrTypes.Length];
+    public static int[] ArChrTypeToArInt(CharType.CHARTYPE[] arChrTypes) {
+        if (arChrTypes == null) return null;
 
-        for(int i = 0; i < _arChrTypes.Length; i++) {
-            arInt[i] = (int)_arChrTypes[i];
+        int[] arInt = new int[arChrTypes.Length];
+
+        for(int i = 0; i < arChrTypes.Length; i++) {
+            arInt[i] = (int)arChrTypes[i];
         }
 
         return arInt;
     }
 
-    public static int[][] ArArChrTypeToArArInt(CharType.CHARTYPE[][] _ararChrTypes) {
-        int[][] ararInt = new int[_ararChrTypes.Length][];
+    public static int[][] ArArChrTypeToArArInt(CharType.CHARTYPE[][] ararChrTypes) {
+        if (ararChrTypes == null) return null;
 
-        for (int i = 0; i < _ararChrTypes.Length; i++) {
-            ararInt[i] = ArChrTypeToArInt(_ararChrTypes[i]);
+        int[][] ararInt = new int[ararChrTypes.Length][];
+
+        for (int i = 0; i < ararChrTypes.Length; i++) {
+            ararInt[i] = ArChrTypeToArInt(ararChrTypes[i]);
         }
 
         return ararInt;
     }
 
-    public static CharType.CHARTYPE[] ArIntToArChrType(int[] _arInt) {
-        CharType.CHARTYPE[] arChrTypes = new CharType.CHARTYPE[_arInt.Length];
+    public static CharType.CHARTYPE[] ArIntToArChrType(int[] arInt) {
+        if (arInt == null) return null;
 
-        for(int i = 0; i < _arInt.Length; i++) {
-            arChrTypes[i] = (CharType.CHARTYPE)_arInt[i];
+        CharType.CHARTYPE[] arChrTypes = new CharType.CHARTYPE[arInt.Length];
+
+        for(int i = 0; i < arInt.Length; i++) {
+            arChrTypes[i] = (CharType.CHARTYPE)arInt[i];
         }
 
         return arChrTypes;
     }
 
-    public static CharType.CHARTYPE[][] ArArIntToArArChrType(int[][] _ararInt) {
-        CharType.CHARTYPE[][] ararChrTypes = new CharType.CHARTYPE[_ararInt.Length][];
+    public static CharType.CHARTYPE[][] ArArIntToArArChrType(int[][] ararInt) {
+        if (ararInt == null) return null;
 
-        for (int i = 0; i < _ararInt.Length; i++) {
-            ararChrTypes[i] = ArIntToArChrType(_ararInt[i]);
+        CharType.CHARTYPE[][] ararChrTypes = new CharType.CHARTYPE[ararInt.Length][];
+
+        for (int i = 0; i < ararInt.Length; i++) {
+            ararChrTypes[i] = ArIntToArChrType(ararInt[i]);
         }
 
         return ararChrTypes;
@@ -77,21 +87,25 @@ public static class LibConversions {
 
     // INPUTTYPE / OBJ
 
-    public static object[] ArInputTypeToArObj(Player.InputType[] _arInputTypes) {
-        object[] arObj = new object[_arInputTypes.Length];
+    public static object[] ArInputTypeToArObj(Player.InputType[] arInputTypes) {
+        if (arInputTypes == null) return null;
 
-        for(int i=0; i<_arInputTypes.Length; i++) {
-            arObj[i] = (object)_arInputTypes[i];
+        object[] arObj = new object[arInputTypes.Length];
+
+        for(int i=0; i<arInputTypes.Length; i++) {
+            arObj[i] = (object)arInputTypes[i];
         }
 
         return arObj;
     }
 
-    public static Player.InputType[] ArObjToArInputType(object[] _arObj) {
-        Player.InputType[] arInputTypes = new Player.InputType[_arObj.Length];
+    public static Player.InputType[] ArObjToArInputType(object[] arObj) {
+        if (arObj == null) return null;
 
-        for(int i = 0; i < _arObj.Length; i++) {
-            arInputTypes[i] = (Player.InputType)_arObj[i];
+        Player.InputType[] arInputTypes = new Player.InputType[arObj.Length];
+
+        for(int i = 0; i < arObj.Length; i++) {
+            arInputTypes[i] = (Player.InputType)arObj[i];
         }
 
         return arInputTypes;
@@ -100,41 +114,49 @@ public static class LibConversions {
 
     // COORDS / INT
 
-    public static int[] ArPositionCoordToArInt(Position.Coords[] _arPositionCoords) {
-        int[] arInt = new int[_arPositionCoords.Length];
+    public static int[] ArPositionCoordToArInt(Position.Coords[] arPositionCoords) {
+        if (arPositionCoords == null) return null;
 
-        for (int i = 0; i < _arPositionCoords.Length; i++) {
-            arInt[i] = Position.SerializeCoords(_arPositionCoords[i]);
+        int[] arInt = new int[arPositionCoords.Length];
+
+        for (int i = 0; i < arPositionCoords.Length; i++) {
+            arInt[i] = Position.SerializeCoords(arPositionCoords[i]);
         }
 
         return arInt;
     }
 
-    public static int[][] ArArPositionCoordToArArInt(Position.Coords[][] _ararPositionCoords) {
-        int[][] ararInt = new int[_ararPositionCoords.Length][];
+    public static int[][] ArArPositionCoordToArArInt(Position.Coords[][] ararPositionCoords) {
+        if (ararPositionCoords == null) return null;
 
-        for (int i = 0; i < _ararPositionCoords.Length; i++) {
-            ararInt[i] = ArPositionCoordToArInt(_ararPositionCoords[i]);
+        int[][] ararInt = new int[ararPositionCoords.Length][];
+
+        for (int i = 0; i < ararPositionCoords.Length; i++) {
+            ararInt[i] = ArPositionCoordToArInt(ararPositionCoords[i]);
         }
 
         return ararInt;
     }
 
-    public static Position.Coords[] ArIntToArPositionCoord(int[] _arInt) {
-        Position.Coords[] arPositionCoords = new Position.Coords[_arInt.Length];
+    public static Position.Coords[] ArIntToArPositionCoord(int[] arInt) {
+        if (arInt == null) return null;
 
-        for (int i = 0; i < _arInt.Length; i++) {
-            arPositionCoords[i] = Position.UnserializeCoords(_arInt[i]);
+        Position.Coords[] arPositionCoords = new Position.Coords[arInt.Length];
+
+        for (int i = 0; i < arInt.Length; i++) {
+            arPositionCoords[i] = Position.UnserializeCoords(arInt[i]);
         }
 
         return arPositionCoords;
     }
 
-    public static Position.Coords[][] ArArIntToArArPositionCoord(int[][] _ararInt) {
-        Position.Coords[][] ararPositionCoords = new Position.Coords[_ararInt.Length][];
+    public static Position.Coords[][] ArArIntToArArPositionCoord(int[][] ararInt) {
+        if (ararInt == null) return null;
 
-        for (int i = 0; i < _ararInt.Length; i++) {
-            ararPositionCoords[i] = ArIntToArPositionCoord(_ararInt[i]);
+        Position.Coords[][] ararPositionCoords = new Position.Coords[ararInt.Length][];
+
+        for (int i = 0; i < ararInt.Length; i++) {
+            ararPositionCoords[i] = ArIntToArPositionCoord(ararInt[i]);
         }
 
         return ararPositionCoords;

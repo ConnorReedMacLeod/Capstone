@@ -11,13 +11,13 @@ public class DropDownOwnerSelect : MonoBehaviour {
 
     public void Start() {
         //Ensure we reflect the default matchparams selection
-        dropdown.value = MatchSetup.Get().arnLocalPlayerOwners[plyrselectorParent.idPlayer] - 1;//client ids start at 1, so offset it back
+        dropdown.value = MatchSetup.Get().curMatchParams.arnPlayersOwners[plyrselectorParent.idPlayer] - 1;//client ids start at 1, so offset it back
 
     }
 
     public void OnOwnerSelectChange() {
 
-        MatchSetup.Get().arnLocalPlayerOwners[plyrselectorParent.idPlayer] = dropdown.value + 1;
+        MatchSetup.Get().curMatchParams.arnPlayersOwners[plyrselectorParent.idPlayer] = dropdown.value + 1;
 
     }
 }

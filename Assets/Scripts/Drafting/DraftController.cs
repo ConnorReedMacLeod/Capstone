@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class DraftController : SingletonPersistent<DraftController> {
+public class DraftController : Singleton<DraftController> {
 
     public class DraftAction {
         public ContTurns.STATETURN stateTurnNextStep;
@@ -15,6 +16,7 @@ public class DraftController : SingletonPersistent<DraftController> {
 
     }
 
+    public bool bActivelyLocallySelecting;
 
     public Queue<DraftAction> queueDraftOrder;
 
@@ -28,6 +30,14 @@ public class DraftController : SingletonPersistent<DraftController> {
     public int[] arNumChrsDrafted = new int[Player.MAXPLAYERS];
 
     public DraftedChrDisplay[] arDraftedChrDisplay = new DraftedChrDisplay[Player.MAXPLAYERS];
+
+    public Subject subBeginChooseLocally = new Subject();
+    public Subject subEndChooseLocally = new Subject();
+
+    public Subject subBeginChooseForeign = new Subject();
+    public Subject subEndChooseForeign = new Subject();
+
+    public Button btnStartDraft;
 
     public void InitChrsAvailableToDraft() {
 
@@ -55,13 +65,15 @@ public class DraftController : SingletonPersistent<DraftController> {
         //Ensure this character hasn't already been drafted/banned
         Debug.Assert(arbChrsAvailableToDraft[(int)chrDrafted] == true);
 
+        Debug.Log("Drafting " + chrDrafted + " for " + iPlayer);
+
         arDraftedChrs[iPlayer][arNumChrsDrafted[iPlayer]] = chrDrafted;
         arNumChrsDrafted[iPlayer]++;
 
         arbChrsAvailableToDraft[(int)chrDrafted] = false;
 
         draftcollection.SetChrAsDrafted((int)chrDrafted);
-        arDraftedChrDisplay[iPlayer].UpdateDraftedChrDisplay(arDraftedChrs[iPlayer]);
+        arDraftedChrDisplay[iPlayer].UpdateDraftedChrDisplays(arDraftedChrs[iPlayer]);
 
     }
 
@@ -72,6 +84,8 @@ public class DraftController : SingletonPersistent<DraftController> {
         //Ensure this character hasn't already been drafted/banned
         Debug.Assert(arbChrsAvailableToDraft[(int)chrBanned] == true);
 
+        Debug.Log("Banning " + chrBanned);
+
         arbChrsAvailableToDraft[(int)chrBanned] = false;
 
         draftcollection.SetChrAsBanned((int)chrBanned);
@@ -81,25 +95,25 @@ public class DraftController : SingletonPersistent<DraftController> {
     public void InitDraftOrder() {
         queueDraftOrder = new Queue<DraftAction>();
         //p1 ban
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.BAN, 0));
+        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEBAN, 0));
         //p2 ban
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.BAN, 1));
+        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEBAN, 1));
         //p1 pick
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.DRAFT, 0));
+        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 0));
         //p2 pick pick
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.DRAFT, 1));
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.DRAFT, 1));
+        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 1));
+        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 1));
         //p1 pick pick
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.DRAFT, 0));
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.DRAFT, 0));
+        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 0));
+        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 0));
         //p2 pick pick
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.DRAFT, 1));
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.DRAFT, 1));
+        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 1));
+        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 1));
         //p1 pick pick
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.DRAFT, 0));
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.DRAFT, 0));
+        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 0));
+        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 0));
         //p2 pick
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.DRAFT, 1));
+        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 1));
 
     }
 
@@ -124,41 +138,88 @@ public class DraftController : SingletonPersistent<DraftController> {
         queueDraftOrder.Dequeue();
     }
 
+    public IEnumerator BeginSelectingLocally() {
+
+        //First, check if we've actually received 
+
+        bActivelyLocallySelecting = true;
+
+        //Let anyone (UI effects probably) know that we've begun locally selecting
+        subBeginChooseLocally.NotifyObs();
+    }
+
+    public void BeginSelectingForegin() {
+
+        //Let anyone (UI effects probably) know that we've begun locally selecting
+        subBeginChooseForeign.NotifyObs();
+    }
+
+    public void EndSelecting() {
+
+        //Let anyone (UI effects probably) know that we've ended locally selecting
+        if (bActivelyLocallySelecting) {
+            subEndChooseLocally.NotifyObs();
+        } else {
+            subEndChooseForeign.NotifyObs();
+        }
+
+        bActivelyLocallySelecting = false;
+    }
+    
 
     public void OnDraftableChrClicked(CharType.CHARTYPE chrClicked) {
 
+        //Check if we've been told by the master to choose a character to draft/ban
+        if(bActivelyLocallySelecting == false) {
+            Debug.Log("We haven't been asked to draft/ban a character currently");
+            return;
+        }
+
         //Check if we're still in the draft phase
         if(IsDraftPhaseOver() == true) {
-            Debug.Log("Can't draft/ban if the draft phase is over");
+            Debug.LogError("Can't draft/ban if the draft phase is over");
             return;
         }
 
         //Check if it's even our turn to draft
         if(ClientNetworkController.Get().IsPlayerLocallyControlled(GetActivePlayerForNextDraftPhaseStep()) == false) {
-            Debug.Log("Can't draft/ban since it's not your turn");
+            Debug.LogError("Can't draft/ban since it's not your turn");
             return;
         }
 
         //Check if this character is available to draft/ban
         if(IsCharAvailable(chrClicked) == false) {
-            Debug.Log("Can't draft/ban an unavailable character");
+            Debug.LogError("Can't draft/ban an unavailable character");
             return;
         }
 
+        Debug.Log("NextStep of draft is currently " + GetNextDraftPhaseStep().stateTurnNextStep);
+
         //At this point, it's valid to pick/ban the character so send along the appropriate signal to the Master
-        if(GetNextDraftPhaseStep().stateTurnNextStep == ContTurns.STATETURN.BAN) {
-            NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMBanCharacterSelected, new object[1] { chrClicked });
-        } else if(GetNextDraftPhaseStep().stateTurnNextStep == ContTurns.STATETURN.DRAFT) {
-            NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMDraftCharacterSelected, new object[1] { chrClicked });
+        if(GetNextDraftPhaseStep().stateTurnNextStep == ContTurns.STATETURN.CHOOSEBAN) {
+            Debug.Log("Sending ban of " + chrClicked);
+            ClientNetworkController.Get().SendTurnPhaseFinished(ContTurns.STATETURN.CHOOSEBAN, new int[1] { (int)chrClicked });
+        } else if(GetNextDraftPhaseStep().stateTurnNextStep == ContTurns.STATETURN.CHOOSEDRAFT) {
+            Debug.Log("Sending draft of " + chrClicked);
+            ClientNetworkController.Get().SendTurnPhaseFinished(ContTurns.STATETURN.CHOOSEDRAFT, new int[1] { (int)chrClicked });
         }
     }
 
+    public void StartDraft() {
+        Debug.Log("Sending start draft signal to the master");
+        ClientNetworkController.Get().SendTurnPhaseFinished(ContTurns.STATETURN.STARTDRAFT, null);
+
+        btnStartDraft.gameObject.SetActive(false);
+    }
 
     public override void Init() {
 
         //Set up an array for each draft pick # for each player
         for(int i = 0; i < arDraftedChrs.Length; i++) {
             arDraftedChrs[i] = new CharType.CHARTYPE[NDRAFTEDCHRSPERPLAYER];
+            for(int j=0; j<arDraftedChrs[i].Length; j++) {
+                arDraftedChrs[i][j] = CharType.CHARTYPE.LENGTH; //Initially set the chosen character to a flag meaning no selected character yet
+            }
         }
 
         InitChrsAvailableToDraft();

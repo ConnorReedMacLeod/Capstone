@@ -134,30 +134,45 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         if(SceneManager.GetActiveScene().name == "_DRAFT") {
             Debug.Log("We're already in the _DRAFT scene, so no need to transfer to it");
         } else {
-            PhotonNetwork.LoadLevel("_DRAFT");
+            MatchSetup.Get().SubmitLocalMatchParamsAndStartDraft();
+        }
+    }
+
+    public void OnClickDirectToLoadout() {
+        if (PhotonNetwork.IsMasterClient == false) {
+            Debug.LogError("A non-master tried to move directly to the loadout phase - ignoring");
+            return;
+        } else if (ArePlayersConnected() == false) {
+            Debug.LogError("Tried to move directly to the loadout phase when not all characters are connected");
+            return;
+        }
+
+        if (SceneManager.GetActiveScene().name == "_LOADOUT") {
+            Debug.Log("We're already in the _LOADOUT scene, so no need to transfer to it");
+        } else {
+            MatchSetup.Get().SubmitLocalMatchParamsAndDirectlyStartLoadout();
         }
     }
 
     public void OnClickDirectToMatch() {
         if(PhotonNetwork.IsMasterClient == false) {
-            Debug.LogError("A non-master tried to move to the draft phase - ignoring");
+            Debug.LogError("A non-master tried to move directly to match - ignoring");
             return;
         } else if(ArePlayersConnected() == false) {
-            Debug.LogError("Tried to move to draft when not all characters are connected");
+            Debug.LogError("Tried to move to directly to match when not all characters are connected");
             return;
         }
 
         if(SceneManager.GetActiveScene().name == "_MATCH") {
             Debug.Log("We're already in the _MATCH scene, so no need to transfer to it");
         } else {
-            Debug.Log("Passing our locally stored match parameters to the master and requesting to start");
-            MatchSetup.Get().SubmitLocalMatchParamsAndStartMatch(); 
+            Debug.Log("Passing our locally stored match parameters to the master and requesting to start match");
+            MatchSetup.Get().SubmitLocalMatchParamsAndDirectlyStartMatch(); 
         }
     }
 
     public bool ArePlayersConnected() {
         return PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers;
-
     }
 
 

@@ -93,8 +93,8 @@ public class Match : MonoBehaviour {
             arPlayers[i].nChrs = Player.MAXCHRS;
 
             for(int j = 0; j < arPlayers[i].nChrs; j++) {
-                InitChr(MatchSetup.Get().arLocalChrSelections[i][j], arPlayers[i], j,
-                    MatchSetup.Get().arLocalLoadoutSelections[i][j]);
+                InitChr(MatchSetup.Get().curMatchParams.arChrSelections[i][j], arPlayers[i], j,
+                    MatchSetup.Get().curMatchParams.arLoadoutSelections[i][j]);
             }
         }
 

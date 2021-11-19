@@ -96,7 +96,7 @@ public class ContSkillSelection : Singleton<ContSkillSelection> {
         //Debug.Log("Client is about to send " + selections.ToString());
 
         //Submit the skill selection to the master
-        ClientNetworkController.Get().SendTurnPhaseFinished(selections.GetSerialization());
+        ClientNetworkController.Get().SendMatchTurnPhaseFinished(selections.GetSerialization());
 
     }
 
@@ -136,7 +136,7 @@ public class ContSkillSelection : Singleton<ContSkillSelection> {
         if(chrCurActing == null) {
             //Debug.Log("No character is set to act this turn - just move to the next phase");
 
-            ClientNetworkController.Get().SendTurnPhaseFinished();
+            ClientNetworkController.Get().SendMatchTurnPhaseFinished();
             return;
         }
 
@@ -148,7 +148,7 @@ public class ContSkillSelection : Singleton<ContSkillSelection> {
             //   a different player's job to submit the skill and targetting selection information for their character
             //Debug.Log("This character isn't owned locally - passing priority");
 
-            ClientNetworkController.Get().SendTurnPhaseFinished();
+            ClientNetworkController.Get().SendMatchTurnPhaseFinished();
             return;
         }
 
