@@ -6,6 +6,7 @@ public class MasterTimeoutController : MonoBehaviour {
 
     public MasterNetworkController master;
 
+    public const float fTimeoutToStartMatch = 30f;
     public const float fTimeoutStandard = 15f;
 
 
@@ -23,11 +24,13 @@ public class MasterTimeoutController : MonoBehaviour {
         //Save the current turnstate we're processing
         stateTurnWaitingOn = stateTurn;
 
-        if(stateTurn == ContTurns.STATETURN.CHOOSESKILL) {
+        if (stateTurn == ContTurns.STATETURN.CHOOSESKILL) {
             //TODO - only enforce the full time if we're waiting on the active player
             //just piggy-back off the local player's selection
             // TODO - sync this variable up among all players
             fTimeoutTimer = ContSkillSelection.Get().fMaxSelectionTime;
+        } else if (stateTurn == ContTurns.STATETURN.STARTDRAFT) {
+            fTimeoutTimer = fTimeoutToStartMatch;
         } else {
             fTimeoutTimer = fTimeoutStandard;
         }

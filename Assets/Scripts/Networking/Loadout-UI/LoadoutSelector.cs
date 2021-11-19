@@ -19,7 +19,7 @@ public class LoadoutSelector : MonoBehaviour {
     public List<SkillType.SkillTypeInfo> lstSelectableSkills;
 
     public CharType.CHARTYPE ChrTypeSelectingFor() {
-        return MatchSetup.Get().arLocalChrSelections[iPlayerSelectingFor][iChrSelectingFor];
+        return MatchSetup.Get().curMatchParams.arChrSelections[iPlayerSelectingFor][iChrSelectingFor];
     }
 
     public System.Action fnOnSelectionComplete;
@@ -94,7 +94,7 @@ public class LoadoutSelector : MonoBehaviour {
         InitSavedLoadoutsDropdown();
 
         //Need to initialize the loadout selector with whatever loadout is currently defined for this character in matchsetup
-        InitWithLoadout(MatchSetup.Get().arLocalLoadoutSelections[iPlayerSelectingFor][iChrSelectingFor]);
+        InitWithLoadout(MatchSetup.Get().curMatchParams.arLoadoutSelections[iPlayerSelectingFor][iChrSelectingFor]);
 
     }
 
@@ -109,9 +109,9 @@ public class LoadoutSelector : MonoBehaviour {
 
     public void CompleteSelection() {
         //Save the current loadout in the local matchsetup
-        MatchSetup.Get().arLocalLoadoutSelections[iPlayerSelectingFor][iChrSelectingFor] = loadoutCur;
+        MatchSetup.Get().curMatchParams.arLoadoutSelections[iPlayerSelectingFor][iChrSelectingFor] = loadoutCur;
 
-        Debug.Log("After completing, our selection is " + MatchSetup.Get().arLocalLoadoutSelections[iPlayerSelectingFor][iChrSelectingFor]);
+        Debug.Log("After completing, our selection is " + MatchSetup.Get().curMatchParams.arLoadoutSelections[iPlayerSelectingFor][iChrSelectingFor]);
 
         //Now that we're done selecting, just callback whatever cleanup method our creator passed to us
         fnOnSelectionComplete();

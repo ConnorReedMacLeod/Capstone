@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class ContTurns : Singleton<ContTurns> {
 
-    public enum STATETURN { DRAFT, BAN, LOADOUTSETUP, RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSESKILL, EXECUTESKILL, TURNEND };
+    public enum STATETURN { STARTDRAFT,
+        CHOOSEBAN, EXECUTEBAN, CHOOSEDRAFT, EXECUTEDRAFT,
+        LOADOUTSETUP,
+        RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSESKILL, EXECUTESKILL, TURNEND };
     public STATETURN curStateTurn;
 
     public Chr[] arChrPriority = new Chr[Player.MAXCHRS];
@@ -166,39 +169,20 @@ public class ContTurns : Singleton<ContTurns> {
 
         if(ContSkillEngine.bDEBUGENGINE) Debug.Log("Finished the turn phase: " + curStateTurn);
 
-        ClientNetworkController.Get().SendTurnPhaseFinished();
+        ClientNetworkController.Get().SendMatchTurnPhaseFinished();
 
         //We then wait til we get back a signal from the master saying that we can progress to the next phase of the turn
 
     }
 
     public void OnLeavingState(object oAdditionalInfo) {
-
-        switch(curStateTurn) {
-        case STATETURN.BAN:
-
-            //Interpret the passed info as a selected character that was banned in the just-finished drafting step
-            DraftController.Get().BanChr((CharType.CHARTYPE)oAdditionalInfo);
-
-            //End this drafting step and move on to the next one
-            DraftController.Get().FinishDraftPhaseStep();
-
-            break;
-
-        case STATETURN.DRAFT:
-
-            //Interpret the passed info as a selected character that was drafted in the just-finished drafting step
-            DraftController.Get().DraftChr(DraftController.Get().GetActivePlayerForNextDraftPhaseStep(), (CharType.CHARTYPE)oAdditionalInfo);
-
-            //End this drafting step and move on to the next one
-            DraftController.Get().FinishDraftPhaseStep();
-
-            break;
-        }
+        
 
     }
 
     public void SetTurnState(STATETURN _curStateTurn, object oAdditionalInfo = null) {
+
+        Debug.Assert(_curStateTurn >= STATETURN.TURNSTART, "ContTurns shouldn't handle a turn phase from the pre-match setup (" + _curStateTurn + ")");
 
         OnLeavingState(oAdditionalInfo);
 

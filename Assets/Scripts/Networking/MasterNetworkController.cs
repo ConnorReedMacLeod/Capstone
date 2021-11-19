@@ -16,21 +16,18 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
     public const byte evtCSkillSelected = TOCLIENTEVENTBASE + 1;
     public const byte evtCTimerTick = TOCLIENTEVENTBASE + 2;
-    public const byte evtCStartMatchWithParams = TOCLIENTEVENTBASE + 3;
+    public const byte evtCStartDraftWithParams = TOCLIENTEVENTBASE + 3;
+    public const byte evtCStartLoadoutWithParams = TOCLIENTEVENTBASE + 4;
+    public const byte evtCStartMatchWithParams = TOCLIENTEVENTBASE + 5;
 
-
-
-    public const byte evtCMoveToNewTurnPhase = TOCLIENTEVENTBASE + 7;
-    public const byte evtCDraftCharacter = TOCLIENTEVENTBASE + 8;
-    public const byte evtCBanCharacter = TOCLIENTEVENTBASE + 9;
+    public const byte evtCMoveToNewTurnPhase = TOCLIENTEVENTBASE + 6;
 
     public const byte TOMASTEREVENTBASE = 100;
 
-    public const byte evtMDraftCharacterSelected = TOMASTEREVENTBASE + 0;
-    public const byte evtMBanCharacterSelected = TOMASTEREVENTBASE + 1;
-    public const byte evtMSubmitMatchParams = TOMASTEREVENTBASE + 2;
-    public const byte evtMSubmitMatchParamsAndStartMatch = TOMASTEREVENTBASE + 3;
-    public const byte evtMFinishedTurnPhase = TOMASTEREVENTBASE + 4;
+    public const byte evtMStartDraft = TOMASTEREVENTBASE + 0;
+    public const byte evtMSubmitMatchParamsAndDirectlyStartLoadout = TOMASTEREVENTBASE + 1;
+    public const byte evtMSubmitMatchParamsAndDirectlyStartMatch = TOMASTEREVENTBASE + 2;
+    public const byte evtMFinishedTurnPhase = TOMASTEREVENTBASE + 3;
 
     public Text txtMasterDisplay;
 
@@ -44,7 +41,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
     //Save a copy of whichever character was drafted/banned so we can pass it along
     // to all players when everyone's ready to progress
-    int nSavedCharacterSelection;
+    int nSavedDraftChrSelection;
 
     //Once we're passed this by the active player picking their skill, save the selection so it
     // can be disseminated to all players once the Execute skill phase starts
@@ -63,9 +60,9 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
     public override void Init() {
 
-        // Construct a default marchparams that we can mutate when a client sends in changes
+        // Construct a default matchparams that we can mutate when a client sends in changes
         matchparamsPrepped = new MatchSetup.MatchParams();
-        Debug.LogError("Master's initial matchparams has owner of " + matchparamsPrepped.arnPlayersOwners[0]);
+        Debug.LogError("Master's initial matchparams has " + matchparamsPrepped);
     }
 
     public void OnEnable() {
@@ -114,40 +111,83 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
         //The master controller should only react to player-submitted input events (addressed to evtM...)
         switch(eventCode) {
 
-        case MasterNetworkController.evtMSubmitMatchParams:
-            //Deserialize the passed match params and store it locally, overwriting our current match params
-            matchparamsPrepped = MatchSetup.UnserializeMatchParams(arContent);
+            case MasterNetworkController.evtMStartDraft:
+                Debug.Assert(nClientID == PhotonNetwork.MasterClient.ActorNumber, 
+                    "ERROR - Master received start draft signal from a non-master client (" + nClientID + ")");
 
-            Debug.Log("Master received the matchparams: " + matchparamsPrepped);
+                //Deserialize the passed match parameters which we'll copy starting fields from and fill out throughout the
+                // draft process (should only contain entries for player owners and input types, to start)
+                matchparamsPrepped.CopyForDraftStart(MatchSetup.UnserializeMatchParams(arContent));
 
-            break;
+                Debug.Log("Master received the matchparams: " + matchparamsPrepped);
 
-        case MasterNetworkController.evtMSubmitMatchParamsAndStartMatch:
-            //Deserialize the passed match params and store it locally, overwriting our current match params
-            matchparamsPrepped = MatchSetup.UnserializeMatchParams(arContent);
+                BroadcastDraftStart();
 
-            Debug.Log("Master received the matchparams (and will now start the match): " + matchparamsPrepped);
+                break;
 
-            BroadcastMatchStart();
+            case MasterNetworkController.evtMSubmitMatchParamsAndDirectlyStartLoadout:
+                Debug.Assert(nClientID == PhotonNetwork.MasterClient.ActorNumber, 
+                    "ERROR - Master received directly start loadout signal from a non-master client (" + nClientID + ")");
 
-            break;
+                //Deserialize the passed match parameters which we'll copy starting and chrselections fields from and fill the loadout-responsible
+                //  fields while in the loadout phase
+                matchparamsPrepped.CopyForLoadoutStart(MatchSetup.UnserializeMatchParams(arContent));
 
-        case MasterNetworkController.evtMFinishedTurnPhase:
-            int nTurnState = (int)arContent[0];
-            int[] arnSerializedInfo = (int[])arContent[1];
-            Debug.Log("Recieved signal that client " + nClientID + " has finished phase " + ((ContTurns.STATETURN)nTurnState).ToString());
+                Debug.Log("Master received the matchparams (and will now directly move to the loadout phase): " + matchparamsPrepped);
 
-            OnClientFinishedPhase(nClientID, nTurnState, arnSerializedInfo);
+                BroadcastLoadoutStart();
 
-            break;
+                break;
 
-        default:
-            //Debug.Log(name + " shouldn't handle event code " + eventCode);
-            break;
-        }
+            case MasterNetworkController.evtMSubmitMatchParamsAndDirectlyStartMatch:
+                Debug.Assert(nClientID == PhotonNetwork.MasterClient.ActorNumber, 
+                    "ERROR - Master received directly start match signal from a non-master client (" + nClientID + ")");
+
+                //Deserialize the passed match params and store it locally.  We're assuming it is fully filled out
+                matchparamsPrepped.CopyForMatchStart(MatchSetup.UnserializeMatchParams(arContent));
+
+                Debug.Log("Master received the matchparams (and will now directly start the match): " + matchparamsPrepped);
+
+                BroadcastMatchStart();
+
+                break;
+
+            case MasterNetworkController.evtMFinishedTurnPhase:
+                int nTurnState = (int)arContent[0];
+                Debug.Log("Recieved signal that client " + nClientID + " has finished phase " + ((ContTurns.STATETURN)nTurnState).ToString());
+
+                OnClientFinishedPhase(nClientID, nTurnState, arContent[1]);
+
+                break;
+
+            default:
+                //Debug.Log(name + " shouldn't handle event code " + eventCode);
+                break;
+            }
 
     }
 
+    public void BroadcastDraftStart() {
+
+        Debug.Log("Transferring to the draft scene");
+        PhotonNetwork.LoadLevel("_DRAFT");
+
+        Debug.Log("Sending out matchparams to start a draft: " + matchparamsPrepped);
+
+        //Serialize and distribute our matchparams to all players to let them know how to start the draft
+        NetworkConnectionManager.SendEventToClients(evtCStartDraftWithParams, MatchSetup.SerializeMatchParams(matchparamsPrepped));
+    }
+
+    public void BroadcastLoadoutStart() {
+
+        Debug.Log("Transferring to the loadout scene");
+        PhotonNetwork.LoadLevel("_LOADOUT");
+
+        Debug.Log("Sending out matchparams to start the loadout phase: " + matchparamsPrepped);
+
+        //Serialize and distribute our matchparams to all players to let them know how to start the draft
+        NetworkConnectionManager.SendEventToClients(evtCStartLoadoutWithParams, MatchSetup.SerializeMatchParams(matchparamsPrepped));
+    }
 
     public void BroadcastMatchStart() {
 
@@ -177,7 +217,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
         return true;
     }
 
-    public void MoveToPhase(int nClientID, int nNewTurnState) {
+    public void MoveToPhase(int nClientID, int nNewTurnState, int nPrevTurnState) {
 
         //First set that client's expected turn phase to the passed state
         dictClientExpectedPhase[nClientID] = nNewTurnState;
@@ -188,119 +228,163 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
         //At this point, everyone agrees on what turnstate we should be moving to, so prep it
         //  and let everyone know they can progress to it
 
+        //Stop the timeout timer
+        timeoutcontroller.EndTimeoutTimer();
+
         object[] arAdditionalInfo = new object[2] { nNewTurnState, null };//Pass null for default extra info
 
-        switch(nNewTurnState) {
+        switch((ContTurns.STATETURN)nNewTurnState) {
 
-        case (int)ContTurns.STATETURN.GIVEMANA:
+            case ContTurns.STATETURN.CHOOSEBAN:
+            case ContTurns.STATETURN.CHOOSEDRAFT:
+                //If we're moving to choose a ban/draft, then we should check if we're coming from the startdraft state
+                //  If so, we need to distribute our matchparams to all clients first so that they know which client controls which player
+                if(nPrevTurnState == (int)ContTurns.STATETURN.STARTDRAFT) {
+                    Debug.Log("Sending initial draft params to all players for starting the draft");
+                    DistributeMatchParamsToAllClients();
+                }
 
-            //Ask our MasterManaDistributer component to determine what mana should be given to each player
-            arAdditionalInfo[1] = manadistributer.TakeNextMana();
+                break;
 
-            break;
+            case ContTurns.STATETURN.EXECUTEBAN:
 
-        case (int)ContTurns.STATETURN.CHOOSESKILL:
+                //Pass along the saved character that was sent to us to ban
+                arAdditionalInfo[1] = nSavedDraftChrSelection;
 
-            //Reset any old stored skillselection
-            ResetSavedSkillSelection();
+                //Clear out the stored character selection
+                ResetSavedDraftChrSelection();
 
-            break;
+                break;
 
-        case (int)ContTurns.STATETURN.EXECUTESKILL:
+            case ContTurns.STATETURN.EXECUTEDRAFT:
 
-            //Fetch the saved skill selection info and pass it along so each client knows what skill is being used
-            arAdditionalInfo[1] = arnSavedSerializedInfo;
+                //Pass along the saved character that was sent to us to draft
+                arAdditionalInfo[1] = nSavedDraftChrSelection;
 
-            break;
+                //Clear out the stored character selection
+                ResetSavedDraftChrSelection();
 
-        case (int)ContTurns.STATETURN.TURNEND:
+                break;
 
-            //Reset any old stored skill selection
-            ResetSavedSkillSelection();
+            case ContTurns.STATETURN.RECHARGE:
 
-            break;
+                //If we're moving away from the loadoutstep to start the match 
+                if(nPrevTurnState == (int)ContTurns.STATETURN.LOADOUTSETUP) {
+                    //gross?  TODONOW
+                        //if we just directly let execution fall through to send evtCMoveToNewTurnPhase, then it'll just 
+                        // assume we're in the normal recharge phase of an ongoing match.  Proooobably we'll do a broadcast
+                        //  match start signal?  Theoretically, if we send the signal via direct-to-match or after a draft, it should
+                        //  continue on correctly for the start of the match.
+                }
 
-        case (int)ContTurns.STATETURN.BAN:
+                break;
 
-            //Send out a signal for which character just got banned
-            NetworkConnectionManager.SendEventToClients(evtCBanCharacter, nSavedCharacterSelection);
+            case ContTurns.STATETURN.GIVEMANA:
 
-            //Clear out the stored character selection
-            ResetSavedChrSelection();
+                //Ask our MasterManaDistributer component to determine what mana should be given to each player
+                arAdditionalInfo[1] = manadistributer.TakeNextMana();
 
-            break;
+                break;
 
-        case (int)ContTurns.STATETURN.DRAFT:
+            case ContTurns.STATETURN.CHOOSESKILL:
 
-            //Send out a signal for which character just got drafted
-            NetworkConnectionManager.SendEventToClients(evtCDraftCharacter, nSavedCharacterSelection);
+                //Reset any old stored skillselection
+                ResetSavedSkillSelection();
 
-            //Clear out the stored character selection
-            ResetSavedChrSelection();
+                break;
 
-            break;
+            case ContTurns.STATETURN.EXECUTESKILL:
 
-        default:
+                //Fetch the saved skill selection info and pass it along so each client knows what skill is being used
+                arAdditionalInfo[1] = arnSavedSerializedInfo;
+
+                break;
+
+            case ContTurns.STATETURN.TURNEND:
+
+                //Reset any old stored skill selection
+                ResetSavedSkillSelection();
+
+                break;
+
+
+            default:
 
 
 
-            break;
+                break;
         }
-
+        
 
         //Let each client know that they can actually progress to that phase
         NetworkConnectionManager.SendEventToClients(evtCMoveToNewTurnPhase, arAdditionalInfo);
 
-        //Stop the timeout timer
-        timeoutcontroller.EndTimeoutTimer();
     }
 
     public void MoveToNextPhase(int nPlayerID, int nCurTurnPhase) {
 
         int nNextTurnPhase;
 
-        switch(nCurTurnPhase) {
+        switch((ContTurns.STATETURN)nCurTurnPhase) {
 
-        case (int)ContTurns.STATETURN.CHOOSESKILL:
-            //If no character is set to act, then we jump directly ahead to TurnEnd
-            if(ContTurns.Get().GetNextActingChr() == null) {
-                nNextTurnPhase = (int)ContTurns.STATETURN.TURNEND;
-            } else {
-                //Otherwise, execute whatever skill the active player has chosen
-                nNextTurnPhase = (int)ContTurns.STATETURN.EXECUTESKILL;
+            case ContTurns.STATETURN.STARTDRAFT:
+            case ContTurns.STATETURN.EXECUTEBAN:
+            case ContTurns.STATETURN.EXECUTEDRAFT:
+                //If we're going to be moving into another phase of the draft, consult the draft controller
+                //  to see which draft step is next
+
+                if(DraftController.Get().IsDraftPhaseOver() == true) {
+                    //If we're done drafting, we can move to the loadout setup phase
+                    nNextTurnPhase = (int)ContTurns.STATETURN.LOADOUTSETUP;
+                } else { 
+                    //Otherwise, see what the draftcontroller wants the next draft step to be, and we'll move to that
+                    nNextTurnPhase = (int)DraftController.Get().GetNextDraftPhaseStep().stateTurnNextStep; 
+                }
+
+                break;
+
+            case ContTurns.STATETURN.CHOOSESKILL:
+                //If no character is set to act, then we jump directly ahead to TurnEnd
+                if(ContTurns.Get().GetNextActingChr() == null) {
+                    nNextTurnPhase = (int)ContTurns.STATETURN.TURNEND;
+                } else {
+                    //Otherwise, execute whatever skill the active player has chosen
+                    nNextTurnPhase = (int)ContTurns.STATETURN.EXECUTESKILL;
+                }
+                break;
+
+            case ContTurns.STATETURN.EXECUTESKILL:
+                //If we've finished executing an skill, then we can move back to
+                //  selecting a skill for the character that is next set to act this turn
+                nNextTurnPhase = (int)ContTurns.STATETURN.CHOOSESKILL;
+
+                break;
+
+            case ContTurns.STATETURN.TURNEND:
+                //If we're at the end of turn, reset to the beginning
+                nNextTurnPhase = (int)ContTurns.STATETURN.RECHARGE;
+
+                break;
+
+            default:
+
+                //By default, just advance to the next sequential phase
+                nNextTurnPhase = nCurTurnPhase + 1;
+
+                break;
             }
-            break;
-
-        case (int)ContTurns.STATETURN.EXECUTESKILL:
-            //If we've finished executing an skill, then we can move back to
-            //  selecting a skill for the character that is next set to act this turn
-            nNextTurnPhase = (int)ContTurns.STATETURN.CHOOSESKILL;
-
-            break;
-
-        case (int)ContTurns.STATETURN.TURNEND:
-            //If we're at the end of turn, reset to the beginning
-            nNextTurnPhase = (int)ContTurns.STATETURN.RECHARGE;
-
-            break;
-
-        default:
-
-            //By default, just advance to the next sequential phase
-            nNextTurnPhase = nCurTurnPhase + 1;
-
-            break;
-        }
 
 
-        MoveToPhase(nPlayerID, nNextTurnPhase);
+        MoveToPhase(nPlayerID, nNextTurnPhase, nCurTurnPhase);
     }
 
     public void OnClientFinishedPhase(int nClientID, int nCurTurnPhase, int nSerializedInfo) {
         OnClientFinishedPhase(nClientID, nCurTurnPhase, new int[1] { nSerializedInfo });
     }
 
-    public void OnClientFinishedPhase(int nClientID, int nCurTurnPhase, int[] arnSerializedInfo = null) {
+    //Note, the arSerializedInfo is passed as an object so it can be cast into whatever type we expect to receive based
+    //  on the turn phase we're finishing
+    public void OnClientFinishedPhase(int nClientID, int nCurTurnPhase, object arSerializedInfo = null) {
 
         //Double check that the phase they claim to have ended is the one we expect them to be on
         Debug.Assert(dictClientExpectedPhase[nClientID] == nCurTurnPhase, "Client " + nClientID + " is expected to be in " +
@@ -308,64 +392,133 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
         //Check if we're in any weird phases that need us to do something special
 
-        //If we're expecting an skill selection
-        if(nCurTurnPhase == (int)ContTurns.STATETURN.CHOOSESKILL) {
+        switch ((ContTurns.STATETURN)nCurTurnPhase) {
 
-            //We only need to do something special if we received this end-phase signal from a client
-            //  who has actually submitted a skill selection for his active character
-            if(ContTurns.Get().GetNextActingChr() != null &&
-                MatchSetup.Get().curMatchParams.arnPlayersOwners[ContTurns.Get().GetNextActingChr().plyrOwner.id] == nClientID) {
+            case ContTurns.STATETURN.LOADOUTSETUP:
+                //If the client just finished their loadout step, then they'll be passing their entire matchparams updated with their
+                //   loadouts, so we'll incorporate that into our start matchparams
+                MatchSetup.MatchParams matchparamsReceived = MatchSetup.UnserializeMatchParams((object[])arSerializedInfo);
 
-                Selections selectionsFromClient;
+                AdoptMatchParamsForMatchStart(matchparamsReceived, nClientID);
 
-                //We need to move ahead with finalizing a skill selection.  If no serialized info for selections
-                // was passed along, then just treat the selection as a rest skill
-                if(arnSerializedInfo == null) {
+                break;
 
-                    Debug.Log("MASTER: Received no selection from the client - issuing a Rest skill");
+            //If we're expecting an skill selection
+            case ContTurns.STATETURN.CHOOSESKILL:
 
-                    selectionsFromClient = Selections.GetRestSelection(ContTurns.Get().GetNextActingChr());
+                //We only need to do something special if we received this end-phase signal from a client
+                //  who has actually submitted a skill selection for his active character
+                if (ContTurns.Get().GetNextActingChr() != null &&
+                    MatchSetup.Get().curMatchParams.arnPlayersOwners[ContTurns.Get().GetNextActingChr().plyrOwner.id] == nClientID) {
 
-                    //If we did get a serialized selection, then we can deserialize it to see what it's targetting
-                } else {
+                    Selections selectionsFromClient;
 
-                    //Deserialize by constructing a new Selections from the serialized array
-                    selectionsFromClient = new Selections(arnSerializedInfo);
+                    //We need to move ahead with finalizing a skill selection.  If no serialized info for selections
+                    // was passed along, then just treat the selection as a rest skill
+                    if (arSerializedInfo == null) {
 
-                    //If the selections we got correspond to a set of invalid targets, then reset that selection to a rest skill
-                    if(selectionsFromClient.IsValidSelection() == false) {
+                        Debug.Log("MASTER: Received no selection from the client - issuing a Rest skill");
 
-                        Debug.LogError("MASTER: Received an invalid skill selection of " + selectionsFromClient.ToString());
+                        selectionsFromClient = Selections.GetRestSelection(ContTurns.Get().GetNextActingChr());
 
-                        //Reset to a rest action and reserialize the selectionsFromClient back into arnSerializedInfo
-                        selectionsFromClient.ResetToRestSelection();
-                        arnSerializedInfo = selectionsFromClient.GetSerialization();
-
-                        //TODO - Consider putting a signal in here to let the current player know that they somehow submitted an invalid skill
-                        //       Likely this would only occur if there was some sort of programming/sync error though
-
-
+                        //If we did get a serialized selection, then we can deserialize it to see what it's targetting
                     } else {
 
-                        Debug.Log("MASTER: Received valid selection of " + selectionsFromClient.ToString());
+                        //Deserialize by constructing a new Selections from the serialized array
+                        selectionsFromClient = new Selections((int[])arSerializedInfo);
+
+                        //If the selections we got correspond to a set of invalid targets, then reset that selection to a rest skill
+                        if (selectionsFromClient.IsValidSelection() == false) {
+
+                            Debug.LogError("MASTER: Received an invalid skill selection of " + selectionsFromClient.ToString());
+
+                            //Reset to a rest action and reserialize the selectionsFromClient back into arnSerializedInfo
+                            selectionsFromClient.ResetToRestSelection();
+                            arSerializedInfo = selectionsFromClient.GetSerialization();
+
+                            //TODO - Consider putting a signal in here to let the current player know that they somehow submitted an invalid skill
+                            //       Likely this would only occur if there was some sort of programming/sync error though
+
+
+                        } else {
+
+                            Debug.Log("MASTER: Received valid selection of " + selectionsFromClient.ToString());
+                        }
                     }
+
+                    //By this point, we have either received a valid skill, or we have just wrote-in a rest selection.
+                    //  Either way, we can save this as a valid selection to be distributed to all players once we are ready
+                    //  to progress to the next phase of the turn
+                    SaveSerializedSelection((int[])arSerializedInfo);
+
+
+                } else {
+                    //Don't need to do anything special if we recieved the signal from the non-active player
+                    // since they're not selecting any skill right now
                 }
+                break;
+            case ContTurns.STATETURN.CHOOSEBAN:
 
-                //By this point, we have either received a valid skill, or we have just wrote-in a rest selection.
-                //  Either way, we can save this as a valid selection to be distributed to all players once we are ready
-                //  to progress to the next phase of the turn
-                SaveSerializedSelection(arnSerializedInfo);
+                int nClientOwningActingBanner = matchparamsPrepped.arnPlayersOwners[DraftController.Get().GetActivePlayerForNextDraftPhaseStep()];
 
+                Debug.Log("nClientID sent = " + nClientID + " and the active client for the next ban is " + nClientOwningActingBanner);
 
-            } else {
-                //Don't need to do anything special if we recieved the signal from the non-active player
-                // since they're not drafting anything right now
-            }
+                //check if the passed ban is valid and reset it if not
+                if (nClientOwningActingBanner == nClientID) {
 
-        } else if(nCurTurnPhase == (int)ContTurns.STATETURN.BAN) {
-            //
+                    CharType.CHARTYPE chrSelected = ((CharType.CHARTYPE[])arSerializedInfo)[0];
 
+                    if (DraftController.Get().IsCharAvailable(chrSelected) == false) {
+                        //If the attempted ban was for an already unavailable character, then just reset the selection to CHARTYPE.LENGTH (invalid/pass)
+                        chrSelected = CharType.CHARTYPE.LENGTH;
+                    }
+
+                    //Save the passed character selection to later broadcast when this phase is complete
+                    nSavedDraftChrSelection = (int)chrSelected;
+
+                    Debug.Log("Master is saving " + (CharType.CHARTYPE)nSavedDraftChrSelection + " as the chosen ban");
+
+                } else {
+                    //Don't need to do anything here if we aren't the active player 
+                }
+                break;
+
+            case ContTurns.STATETURN.CHOOSEDRAFT:
+
+                int nClientOwningActingDrafter = matchparamsPrepped.arnPlayersOwners[DraftController.Get().GetActivePlayerForNextDraftPhaseStep()];
+
+                Debug.Log("nClientID sent = " + nClientID + " and the active client for the next draft is " + nClientOwningActingDrafter);
+
+                //check if the passed ban is valid and reset it if not
+                if (nClientOwningActingDrafter == nClientID) {
+
+                    CharType.CHARTYPE chrSelected = ((CharType.CHARTYPE[])arSerializedInfo)[0];
+
+                    if (DraftController.Get().IsCharAvailable(chrSelected) == false) {
+                        //If the attempted draft was for an unavailable character, then we need to find the first available character that is possible to draft
+                        //  Note - the client shouldn't be able to send an invalid selection, so this is a panic to fix a broken gamestate
+
+                        Debug.LogError("Master received an attempted draft of " + chrSelected);
+
+                        chrSelected = (CharType.CHARTYPE)0;
+                        while (DraftController.Get().IsCharAvailable(chrSelected) == false) {
+                            chrSelected++;
+                        }
+
+                        Debug.LogError("We have instead assigned tham " + chrSelected);
+                    }
+
+                    //Save the passed character selection to later broadcast when this phase is complete
+                    nSavedDraftChrSelection = (int)chrSelected;
+
+                    Debug.Log("Master is saving " + (CharType.CHARTYPE)nSavedDraftChrSelection + " as the chosen ban");
+
+                } else {
+                    //Don't need to do anything here if we aren't the active player 
+                }
+                break;
         }
+
 
         //If we're done any special actions for this phase, then we can just progress this player to the next phase
         MoveToNextPhase(nClientID, nCurTurnPhase);
@@ -383,11 +536,11 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
                     //Pass no selections for the skill we want the character to use (will be reset to a rest)
                     OnClientFinishedPhase(i, (int)stateTurn, null);
 
-                } else if(stateTurn == ContTurns.STATETURN.BAN) {
+                } else if(stateTurn == ContTurns.STATETURN.EXECUTEBAN) {
 
                     //Simulate as though the player submitted a non-ban
                     OnClientFinishedPhase(i, (int)stateTurn, (int)CharType.CHARTYPE.LENGTH);
-                } else if(stateTurn == ContTurns.STATETURN.DRAFT) {
+                } else if(stateTurn == ContTurns.STATETURN.EXECUTEDRAFT) {
 
                     //Simulate as though the player submitted a non-draft
                     OnClientFinishedPhase(i, (int)stateTurn, (int)CharType.CHARTYPE.LENGTH);
@@ -396,11 +549,19 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
                     OnClientFinishedPhase(i, (int)stateTurn);
 
                 }
-
             }
-
         }
+    }
 
+
+    //When a client is ready to start a match, they can submit their matchparams and we'll incorporate any relevent information into our local
+    //   master-stored matchparams to later be distributed to all clients
+    public void AdoptMatchParamsForMatchStart(MatchSetup.MatchParams matchparamSubmitted, int nClientIDSubmitting) {
+
+        //At this point, we can copy over any remaining setup parameters (defined by the loadout setup phase)
+        matchparamsPrepped.UpdateChrSelectionsForClient(nClientIDSubmitting, matchparamSubmitted);
+        matchparamsPrepped.UpdateLoadoutsForClient(nClientIDSubmitting, matchparamSubmitted);
+        matchparamsPrepped.UpdatePositionCoordsForClient(nClientIDSubmitting, matchparamSubmitted);
     }
 
 
@@ -419,11 +580,11 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
 
     public void SaveCharacterSelection(int _iChr) {
-        nSavedCharacterSelection = _iChr;
+        nSavedDraftChrSelection = _iChr;
     }
 
-    public void ResetSavedChrSelection() {
-        nSavedCharacterSelection = (int)CharType.CHARTYPE.LENGTH;
+    public void ResetSavedDraftChrSelection() {
+        nSavedDraftChrSelection = (int)CharType.CHARTYPE.LENGTH;
     }
 
     public void SaveSerializedSelection(int[] _arnSavedSerializedInfo) {

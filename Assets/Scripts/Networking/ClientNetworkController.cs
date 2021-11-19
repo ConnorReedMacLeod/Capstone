@@ -17,7 +17,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
 
 
     public bool IsPlayerLocallyControlled(int iPlyrId) {
-        return nLocalClientID == MatchSetup.Get().arnLocalPlayerOwners[iPlyrId];
+        return nLocalClientID == MatchSetup.Get().curMatchParams.arnPlayersOwners[iPlyrId];
     }
 
     public bool IsPlayerLocallyControlled(Player plyr) {
@@ -53,19 +53,27 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
 
 
     //By default, no extra information is needed, can pass extra info via the overloaded method if needed
-    public void SendTurnPhaseFinished() {
-        SendTurnPhaseFinished(new int[0]);
+    public void SendMatchTurnPhaseFinished() {
+        SendMatchTurnPhaseFinished(new int[0]); //just pass an empty array for our extra info param
     }
 
 
-    //Can optionally pass in any extra serialized fields to communicate player choices to the master
-    public void SendTurnPhaseFinished(int[] arnSerializedInfo) {
+    //For when we've finished a phase in the middle of a match and can get our current turnphase from ContTurns
+    public void SendMatchTurnPhaseFinished(int[] arnSerializedInfo) {
+        SendTurnPhaseFinished(ContTurns.Get().curStateTurn, arnSerializedInfo);
+    }
 
+    //Be default, no extra information is needed, can pass extra info via the overloaded method if needed
+    public void SendTurnPhaseFinished(ContTurns.STATETURN stateturnFinished) {
+        SendTurnPhaseFinished(stateturnFinished, new int[0]); //just pass an empty array for our extra info param
+    }
+
+    //For when some portion of the turn is finished and we want to let the master know that we're done
+    public void SendTurnPhaseFinished(ContTurns.STATETURN stateturnFinished, int[] arnSerializedInfo) {
         NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMFinishedTurnPhase, new object[2] {
-            (int)ContTurns.Get().curStateTurn,
+            stateturnFinished,
             arnSerializedInfo
         });
-
     }
 
     public void OnEvent(ExitGames.Client.Photon.EventData photonEvent) {
@@ -81,50 +89,130 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
         //Players should only react to authoritative commands from the master 
         switch(eventCode) {
 
-        case MasterNetworkController.evtCTimerTick:
-            //Debug.Log("Recieved timer tick with " + arContent[0]);
-            int nTime = (int)arContent[0];
-            HandleTimerTick(nTime);
-            break;
+            case MasterNetworkController.evtCTimerTick:
+                //Debug.Log("Recieved timer tick with " + arContent[0]);
+                int nTime = (int)arContent[0];
+                HandleTimerTick(nTime);
+                break;
 
-        case MasterNetworkController.evtCStartMatchWithParams:
-            Debug.Log("Got the signal from the master to start a new match");
-            MatchSetup.Get().SaveMatchParams(MatchSetup.UnserializeMatchParams(arContent));
-            break;
+            case MasterNetworkController.evtCStartDraftWithParams:
+                Debug.Log("Got the signal from the master to start a new draft");
+                MatchSetup.Get().SaveMatchParams(MatchSetup.UnserializeMatchParams(arContent));
+                break;
 
-        case MasterNetworkController.evtCMoveToNewTurnPhase:
+            case MasterNetworkController.evtCStartLoadoutWithParams:
+                Debug.Log("Got the signal from the master to start a new match");
+                MatchSetup.Get().SaveMatchParams(MatchSetup.UnserializeMatchParams(arContent));
+                break;
 
-            ContTurns.STATETURN newTurnState = (ContTurns.STATETURN)arContent[0];
+            case MasterNetworkController.evtCStartMatchWithParams:
+                Debug.Log("Got the signal from the master to start a new match");
+                MatchSetup.Get().SaveMatchParams(MatchSetup.UnserializeMatchParams(arContent));
+                break;
 
-            Debug.Log("Master told us to move to " + newTurnState.ToString());
+            case MasterNetworkController.evtCMoveToNewTurnPhase:
 
-            //First, check if we're in the draft phase (no ContTurns interaction needed)
-            if(newTurnState == ContTurns.STATETURN.BAN || newTurnState == ContTurns.STATETURN.DRAFT || newTurnState == ContTurns.STATETURN.LOADOUTSETUP) {
-                //If we're in the draft, just let the controller know that we're good to move on to the next phase of the draft
-                DraftController.Get().FinishDraftPhaseStep();
-            } else {
-                //Pass along whatever phase of the turn we're now in to the ContTurns
-                ContTurns.Get().SetTurnState((ContTurns.STATETURN)arContent[0], arContent[1]);
-            }
+                ContTurns.STATETURN newTurnState = (ContTurns.STATETURN)arContent[0];
 
-            break;
+                Debug.Log("Master told us to move to " + newTurnState.ToString());
 
-        case MasterNetworkController.evtCBanCharacter:
-            //The master passed along which character should be banned
-            DraftController.Get().BanChr((CharType.CHARTYPE)arContent[0]);
-            break;
+                    MoveToTurnPhase(newTurnState, arContent[1]);
 
-        case MasterNetworkController.evtCDraftCharacter:
-            //The master passed along which character should be drafted next (and for which player)
-            DraftController.Get().DraftChr((int)arContent[0], (CharType.CHARTYPE)arContent[1]);
-            break;
+                break;
 
-        default:
-            //Debug.Log(name + " shouldn't handle event code " + eventCode);
-            break;
+            default:
+                //Debug.Log(name + " shouldn't handle event code " + eventCode);
+                break;
         }
 
     }
+
+    public void MoveToTurnPhase(ContTurns.STATETURN newTurnState, object additionalInfo) {
+
+        switch (newTurnState) {
+            case ContTurns.STATETURN.STARTDRAFT:
+
+                Debug.LogError("We were asked by the master to move to the STARTMATCH phase - seems weird");
+
+                break;
+
+            case ContTurns.STATETURN.CHOOSEBAN:
+                Debug.Log("Starting CHOOSEBAN phase");
+
+                if (IsPlayerLocallyControlled(DraftController.Get().GetActivePlayerForNextDraftPhaseStep())) {
+                    DraftController.Get().BeginSelectingLocally();
+                } else {
+                    //If we aren't locally controlling the character who will ban next, then we can just immediately let the 
+                    // master know that we're done processing this phase
+                    SendTurnPhaseFinished(ContTurns.STATETURN.CHOOSEBAN);
+
+                    //Let any UI elements know that we're waiting for someone else to select their ban
+                    DraftController.Get().subBeginChooseForeign.NotifyObs();
+                }
+                break;
+
+            case ContTurns.STATETURN.EXECUTEBAN:
+
+                //End our previous selection phase
+                DraftController.Get().EndSelecting();
+
+                CharType.CHARTYPE chrtypeBanning = (CharType.CHARTYPE)additionalInfo;
+
+                Debug.Log("Master asked us to ban " + chrtypeBanning);
+
+                //Ban the character that was passed to us, then figure out what draft step to move to next
+                DraftController.Get().BanChr((CharType.CHARTYPE)additionalInfo);
+                DraftController.Get().FinishDraftPhaseStep();
+
+                break;
+
+            case ContTurns.STATETURN.CHOOSEDRAFT:
+                Debug.Log("Starting CHOOSEDRAFT phase");
+
+                if (IsPlayerLocallyControlled(DraftController.Get().GetActivePlayerForNextDraftPhaseStep())) {
+                    DraftController.Get().BeginSelectingLocally();
+                } else {
+                    //If we aren't locally controlling the character who will draft next, then we can just immediately let the 
+                    // master know that we're done processing this phase
+                    SendTurnPhaseFinished(ContTurns.STATETURN.CHOOSEDRAFT);
+
+                    //Let any UI elements know that we're waiting for someone else to select their ban
+                    DraftController.Get().subBeginChooseForeign.NotifyObs();
+                }
+                break;
+
+            case ContTurns.STATETURN.EXECUTEDRAFT:
+
+                //End our previous selection phase
+                DraftController.Get().EndSelecting();
+
+                int nPlayerIDDrafting = (int)((object[])additionalInfo)[0];
+                CharType.CHARTYPE chrtypeDrafted = (CharType.CHARTYPE)((object[])additionalInfo)[1];
+
+                Debug.Log("Master asked us to draft " + chrtypeDrafted + " for " + nPlayerIDDrafting);
+
+                //Draft the passed character tot he passed player, then figure out what draft step to move to next
+                DraftController.Get().DraftChr(nPlayerIDDrafting, chrtypeDrafted);
+                DraftController.Get().FinishDraftPhaseStep();
+
+                break;
+
+            case ContTurns.STATETURN.LOADOUTSETUP:
+
+                Debug.LogError("Set up the loadoutsetup handling");
+
+                break;
+
+            default:
+                //By default, we are in the middle of a match
+                //Pass along whatever phase of the turn we're now in to the ContTurns
+                ContTurns.Get().SetTurnState(newTurnState, additionalInfo);
+
+                break;
+        }
+
+    }
+
     public void HandleTimerTick(int nTime) {
         SetDebugText("Timer: " + nTime);
     }
@@ -133,21 +221,6 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
     void Update() {
 
 
-    }
-
-    public void DebugPrintCharacterSelections() {
-
-        string sSelections1 = "Player 1: Unreceived";
-        if(MatchSetup.Get().arLocalChrSelections[0] != null) {
-            sSelections1 = "Player 1: " + MatchSetup.Get().arLocalChrSelections[0][0] + ", " + MatchSetup.Get().arLocalChrSelections[0][1] + ", " + MatchSetup.Get().arLocalChrSelections[0][2];
-        }
-
-        string sSelections2 = "Player 2: Unreceived";
-        if(MatchSetup.Get().arLocalChrSelections[1] != null) {
-            sSelections2 = "Player 2: " + MatchSetup.Get().arLocalChrSelections[1][0] + ", " + MatchSetup.Get().arLocalChrSelections[1][1] + ", " + MatchSetup.Get().arLocalChrSelections[1][2];
-        }
-
-        //SetDebugText(sSelections1 + "\n" + sSelections2);
     }
 
     public void SetDebugText(string sMessage) {

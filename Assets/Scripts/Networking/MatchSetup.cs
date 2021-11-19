@@ -10,20 +10,7 @@ using Photon.Realtime;
 //  starting positions, loadouts, etc.)  
 public class MatchSetup : SingletonPersistent<MatchSetup> {
 
-    //So that these can be easily configured in the Unity inspector
-    public CharType.CHARTYPE[] arChrVIEWABLE1 = new CharType.CHARTYPE[Player.MAXCHRS];
-    public CharType.CHARTYPE[] arChrVIEWABLE2 = new CharType.CHARTYPE[Player.MAXCHRS];
-
-    //Keep locally configured contributions for a match setup in these variables which we can submit to the master client
-    public CharType.CHARTYPE[][] arLocalChrSelections = new CharType.CHARTYPE[Player.MAXPLAYERS][];
-    public LoadoutManager.Loadout[][] arLocalLoadoutSelections = new LoadoutManager.Loadout[Player.MAXPLAYERS][];
-    public int[] arnLocalPlayerOwners = new int[Player.MAXPLAYERS];
-    public Player.InputType[] arLocalInputTypes = new Player.InputType[Player.MAXPLAYERS];
-    public Position.Coords[][] arLocalStartingPositionCoords = new Position.Coords[Player.MAXPLAYERS][];
-
-
     public MatchParams curMatchParams; //Holds the params forming the context of the match (if one is currently ongoing)
- 
 
     //Hold all the information needed to start a match
     public class MatchParams {
@@ -40,48 +27,106 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
 
         public override string ToString() {
 
+            //If we haven't filled anything out yet, just return null
+            if (arnPlayersOwners == null) return "(matchparams) null";
+
             string s = "";
 
             for (int i=0; i<Player.MAXPLAYERS; i++) {
 
                 string sPlayer = string.Format("Player {0}:\nOwner = {1}, InputType = {2}\n", i, arnPlayersOwners[i], arInputTypes[i]);
-                
-                for(int j=0; j<arChrSelections[i].Length; j++) {
-                    sPlayer += string.Format("{0} ({1}), {2}\n", arChrSelections[i][j], arPositionCoordsSelections[i][j], arLoadoutSelections[i][j]);
+
+                if (arChrSelections[i] == null) {
+
+                    s += "null\n";
+
+                } else {
+
+                    for (int j = 0; j < arChrSelections[i].Length; j++) {
+                        sPlayer += string.Format("{0} ({1}), {2}\n", arChrSelections[i][j], arPositionCoordsSelections[i][j], arLoadoutSelections[i][j]);
+                    }
+                    s += sPlayer;
                 }
-                s += sPlayer;
             }
 
             return s;
         }
 
-        //For setting up a 'default' match params to be filled in later
-        public MatchParams() {
+        public void UpdateChrSelectionsForClient(int idClient, MatchParams matchparamsOther) {
+            for (int i = 0; i < arnPlayersOwners.Length; i++) {
+                //if the passed client owns this player, we'll copy over this entry from the passed matchparams
+                if (arnPlayersOwners[i] == idClient) {
+                    UpdateChrSelectionsForPlayer(i, matchparamsOther.arChrSelections[i]);
+                }
+            }
+        }
 
+        public void UpdateChrSelectionsForPlayer(int idPlayer, CharType.CHARTYPE[] arChrSelectionsForPlayer) {
+            arChrSelections[idPlayer] = arChrSelectionsForPlayer;
+        }
+
+        public void UpdateLoadoutsForClient(int idClient, MatchParams matchparamsOther) {
+            for (int i = 0; i < arnPlayersOwners.Length; i++) {
+                //if the passed client owns this player, we'll copy over this entry from the passed matchparams
+                if (arnPlayersOwners[i] == idClient) {
+                    UpdateLoadoutsForPlayer(i, matchparamsOther.arLoadoutSelections[i]);
+                }
+            }
+        }
+
+        public void UpdateLoadoutsForPlayer(int idPlayer, LoadoutManager.Loadout[] arLoadoutsForPlayer) {
+            arLoadoutSelections[idPlayer] = arLoadoutsForPlayer;
+        }
+
+        public void UpdatePositionCoordsForClient(int idClient, MatchParams matchparamsOther) {
+            for(int i=0; i<arnPlayersOwners.Length; i++) {
+                //if the passed client owns this player, we'll copy over this entry from the passed matchparams
+                if(arnPlayersOwners[i] == idClient) {
+                    UpdatePositionCoordsForPlayer(i, matchparamsOther.arPositionCoordsSelections[i]);
+                }
+            }
+        }
+
+        public void UpdatePositionCoordsForPlayer(int idPlayer, Position.Coords[] arPositionCoordsForPlayer) {
+            arPositionCoordsSelections[idPlayer] = arPositionCoordsForPlayer;
+        }
+
+        public void UpdatePlayerOwners(int[] _arnPlayersOwners) {
+            arnPlayersOwners = _arnPlayersOwners;
+        }
+
+        public void UpdateInputTypes(Player.InputType[] _arInputTypes) {
+            arInputTypes = _arInputTypes;
+        }
+
+        //Copy in all relevent fields of the passed MatchParams that are relevent for starting a draft
+        public void CopyForDraftStart(MatchParams other) {
+            arnPlayersOwners = other.arnPlayersOwners;
+            arInputTypes = other.arInputTypes;
+        }
+
+        //Copy in all relevent fields of the passed MatchParams that are relevent for moving to the loadout phase
+        public void CopyForLoadoutStart(MatchParams other) {
+            CopyForDraftStart(other);
+            arChrSelections = other.arChrSelections;
+        }
+
+        //Copy in all relevent fields of the passed MatchParams that are relevent for moving to a match
+        public void CopyForMatchStart(MatchParams other) {
+            //Just copy the full matchParams
+            CopyForLoadoutStart(other);
+            arLoadoutSelections = other.arLoadoutSelections;
+            arPositionCoordsSelections = other.arPositionCoordsSelections;
+        }
+
+        //Create as blank a match params as possible
+        public MatchParams() {
             arChrSelections = new CharType.CHARTYPE[Player.MAXPLAYERS][];
             arLoadoutSelections = new LoadoutManager.Loadout[arChrSelections.Length][];
             arPositionCoordsSelections = new Position.Coords[arChrSelections.Length][];
-            for (int i=0; i<arChrSelections.Length; i++) {
-                arChrSelections[i] = new CharType.CHARTYPE[] { CharType.CHARTYPE.FISCHER, CharType.CHARTYPE.KATARINA , CharType.CHARTYPE.PITBEAST };
-                arLoadoutSelections[i] = new LoadoutManager.Loadout[arChrSelections[i].Length];
-                arPositionCoordsSelections[i] = new Position.Coords[arChrSelections[i].Length];
 
-                for (int j = 0; j < arChrSelections[i].Length; j++) {
-                    arLoadoutSelections[i][j] = LoadoutManager.GetDefaultLoadoutForChar(arChrSelections[i][j]);
-                    arPositionCoordsSelections[i][j] = Position.GetDefaultPositionCoords(i, j);
-                }
-            }
-
-            int nLocalClientID = ClientNetworkController.Get().nLocalClientID;
-
-            //By default, assume we are locally controlling both players - can override as needed
-            arnPlayersOwners = new int[Player.MAXPLAYERS];
-            arInputTypes = new Player.InputType[Player.MAXPLAYERS];
-            for(int i=0; i<Player.MAXPLAYERS; i++) {
-                arnPlayersOwners[i] = nLocalClientID;
-                arInputTypes[i] = Player.InputType.HUMAN;
-            }
-            
+            arnPlayersOwners = null;
+            arInputTypes = null;
         }
 
         public MatchParams(CharType.CHARTYPE[][] _arChrSelections, LoadoutManager.Loadout[][] _arLoadoutSelections,
@@ -93,6 +138,40 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
             arPositionCoordsSelections = _arPositionCoordsSelections;
         }
 
+
+
+    }
+
+
+    //Create a basic filled-out match params 
+    public static MatchParams CreateDefaultMatchParams() {
+
+
+        CharType.CHARTYPE[][] arChrSelections = new CharType.CHARTYPE[Player.MAXPLAYERS][];
+        LoadoutManager.Loadout[][] arLoadoutSelections = new LoadoutManager.Loadout[arChrSelections.Length][];
+        Position.Coords[][] arPositionCoordsSelections = new Position.Coords[arChrSelections.Length][];
+        for (int i = 0; i < arChrSelections.Length; i++) {
+            arChrSelections[i] = new CharType.CHARTYPE[] { CharType.CHARTYPE.FISCHER, CharType.CHARTYPE.KATARINA, CharType.CHARTYPE.PITBEAST };
+            arLoadoutSelections[i] = new LoadoutManager.Loadout[arChrSelections[i].Length];
+            arPositionCoordsSelections[i] = new Position.Coords[arChrSelections[i].Length];
+
+            for (int j = 0; j < arChrSelections[i].Length; j++) {
+                arLoadoutSelections[i][j] = LoadoutManager.GetDefaultLoadoutForChar(arChrSelections[i][j]);
+                arPositionCoordsSelections[i][j] = Position.GetDefaultPositionCoords(i, j);
+            }
+        }
+
+        int nLocalClientID = ClientNetworkController.Get().nLocalClientID;
+
+        //By default, assume we are locally controlling both players - can override as needed
+        int[] arnPlayersOwners = new int[Player.MAXPLAYERS];
+        Player.InputType[] arInputTypes = new Player.InputType[Player.MAXPLAYERS];
+        for (int i = 0; i < Player.MAXPLAYERS; i++) {
+            arnPlayersOwners[i] = nLocalClientID;
+            arInputTypes[i] = Player.InputType.HUMAN;
+        }
+
+        return new MatchParams(arChrSelections, arLoadoutSelections, arnPlayersOwners, arInputTypes, arPositionCoordsSelections);
     }
 
     public static object[] SerializeMatchParams (MatchParams matchparams) {
@@ -121,52 +200,40 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
 
     public override void Init() {
 
-        arLocalChrSelections[0] = new CharType.CHARTYPE[Player.MAXCHRS];
-        arLocalChrSelections[1] = new CharType.CHARTYPE[Player.MAXCHRS];
-        arChrVIEWABLE1.CopyTo(arLocalChrSelections[0], 0);
-        arChrVIEWABLE2.CopyTo(arLocalChrSelections[1], 0);
-        
-        for (int i = 0; i < arLocalLoadoutSelections.Length; i++) {
-            arLocalLoadoutSelections[i] = new LoadoutManager.Loadout[arLocalChrSelections[i].Length];
-            arLocalStartingPositionCoords[i] = new Position.Coords[arLocalChrSelections[i].Length];
-            for(int j=0; j<arLocalLoadoutSelections[i].Length; j++) {
-                //Initially load the 0th slot of our personal saved loadouts
-                arLocalLoadoutSelections[i][j] = LoadoutManager.LoadSavedLoadoutForChr(arLocalChrSelections[i][j], 0);
-                arLocalStartingPositionCoords[i][j] = Position.GetDefaultPositionCoords(i, j);
-            }
-        }
+        curMatchParams = new MatchParams();
+
+        int nLocalIDController = ClientNetworkController.Get().nLocalClientID;
+
+        //Set the defaults for the curMatchParams to include player owners and input types
+        curMatchParams.UpdatePlayerOwners(new int[] { nLocalIDController, nLocalIDController });
+        curMatchParams.UpdateInputTypes(new Player.InputType[] { Player.InputType.HUMAN, Player.InputType.AI });
 
         Debug.Log("Finished CharacterSelection.Init");
     }
 
-    // Convert our locally stored setup-params into a MatchParams and send it to the master to be used for a match
-    public void SubmitLocalMatchParams() {
 
-        MatchParams matchparamsToSend = new MatchParams(
-            arLocalChrSelections,
-            arLocalLoadoutSelections,
-            arnLocalPlayerOwners,
-            arLocalInputTypes,
-            arLocalStartingPositionCoords
-            );
+    // Send a complete matchparams to the master to move to the start of the draft
+    public void SubmitLocalMatchParamsAndStartDraft() {
 
-        Debug.Log("Client is submitting " + matchparamsToSend);
+        Debug.Log("Client is submitting an initially filled (with owners/input types) match params (and requesting to start the draft): " + curMatchParams);
 
-        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMSubmitMatchParams, SerializeMatchParams(matchparamsToSend));
+        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMStartDraft, SerializeMatchParams(curMatchParams));
     }
 
-    public void SubmitLocalMatchParamsAndStartMatch() {
-        MatchParams matchparamsToSend = new MatchParams(
-            arLocalChrSelections,
-            arLocalLoadoutSelections,
-            arnLocalPlayerOwners,
-            arLocalInputTypes,
-            arLocalStartingPositionCoords
-            );
+    // Send a complete matchparams to the master to jump directly to the loadout phase
+    public void SubmitLocalMatchParamsAndDirectlyStartLoadout() {
 
-        Debug.Log("Client is submitting (and requesting to start): " + matchparamsToSend);
+        Debug.Log("Client is submitting a match params that is (supposedly) filled with chr selections (and requesting to directly start the loadout phase): " + curMatchParams);
 
-        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMSubmitMatchParamsAndStartMatch, SerializeMatchParams(matchparamsToSend));
+        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMSubmitMatchParamsAndDirectlyStartLoadout, SerializeMatchParams(curMatchParams));
+    }
+
+    // Send a complete matchparams to the master to jump directly to the start of a match
+    public void SubmitLocalMatchParamsAndDirectlyStartMatch() {
+
+        Debug.Log("Client is submitting a supposedly completed match params (and requesting to directly start the match): " + curMatchParams);
+
+        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMSubmitMatchParamsAndDirectlyStartMatch, SerializeMatchParams(curMatchParams));
     }
 
 
@@ -197,7 +264,7 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
             plyr.SetInputType(Player.InputType.NONE);
         } else {
             //Otherwise, this character is controlled by this local client - figure out which input type they'll need and add it
-            plyr.SetInputType((Player.InputType)arLocalInputTypes[plyr.id]);
+            plyr.SetInputType((Player.InputType)curMatchParams.arInputTypes[plyr.id]);
         }
     }
 
