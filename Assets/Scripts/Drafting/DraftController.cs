@@ -138,7 +138,7 @@ public class DraftController : Singleton<DraftController> {
         queueDraftOrder.Dequeue();
     }
 
-    public IEnumerator BeginSelectingLocally() {
+    public void BeginSelectingLocally() {
 
         //First, check if we've actually received 
 
