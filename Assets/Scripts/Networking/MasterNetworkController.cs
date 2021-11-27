@@ -237,12 +237,8 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
             case ContTurns.STATETURN.CHOOSEBAN:
             case ContTurns.STATETURN.CHOOSEDRAFT:
-                //If we're moving to choose a ban/draft, then we should check if we're coming from the startdraft state
-                //  If so, we need to distribute our matchparams to all clients first so that they know which client controls which player
-                if(nPrevTurnState == (int)ContTurns.STATETURN.STARTDRAFT) {
-                    Debug.Log("Sending initial draft params to all players for starting the draft");
-                    DistributeMatchParamsToAllClients();
-                }
+                
+
 
                 break;
 
@@ -266,15 +262,20 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
                 break;
 
+            case ContTurns.STATETURN.LOADOUTSETUP:
+
+                //Rather than advancing to the next turn step, we'll just directly broadcast
+                //  that we're moving to a new scene for the loadout setup step
+                BroadcastLoadoutStart();
+                break;
+
             case ContTurns.STATETURN.RECHARGE:
 
                 //If we're moving away from the loadoutstep to start the match 
                 if(nPrevTurnState == (int)ContTurns.STATETURN.LOADOUTSETUP) {
-                    //gross?  TODONOW
-                        //if we just directly let execution fall through to send evtCMoveToNewTurnPhase, then it'll just 
-                        // assume we're in the normal recharge phase of an ongoing match.  Proooobably we'll do a broadcast
-                        //  match start signal?  Theoretically, if we send the signal via direct-to-match or after a draft, it should
-                        //  continue on correctly for the start of the match.
+                    // Then broadcast that we're moving to a new scene and we're starting the proper match
+                    BroadcastMatchStart();
+                    return;
                 }
 
                 break;
@@ -321,7 +322,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
     }
 
-    public void MoveToNextPhase(int nPlayerID, int nCurTurnPhase) {
+    public int GetNextPhase(int nPlayerID, int nCurTurnPhase) {
 
         int nNextTurnPhase;
 
@@ -374,8 +375,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
                 break;
             }
 
-
-        MoveToPhase(nPlayerID, nNextTurnPhase, nCurTurnPhase);
+        return nNextTurnPhase;
     }
 
     public void OnClientFinishedPhase(int nClientID, int nCurTurnPhase, int nSerializedInfo) {
@@ -390,7 +390,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
         Debug.Assert(dictClientExpectedPhase[nClientID] == nCurTurnPhase, "Client " + nClientID + " is expected to be in " +
             (ContTurns.STATETURN)dictClientExpectedPhase[nClientID] + " but received the signal that they finished " + (ContTurns.STATETURN)nCurTurnPhase);
 
-        //Check if we're in any weird phases that need us to do something special
+        //Check if we're in any weird phases that need us to do something special (primarily storing information passed to us from the client
 
         switch ((ContTurns.STATETURN)nCurTurnPhase) {
 
@@ -474,7 +474,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
                     }
 
                     //Save the passed character selection to later broadcast when this phase is complete
-                    nSavedDraftChrSelection = (int)chrSelected;
+                    SaveCharacterSelection((int)chrSelected);
 
                     Debug.Log("Master is saving " + (CharType.CHARTYPE)nSavedDraftChrSelection + " as the chosen ban");
 
@@ -509,7 +509,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
                     }
 
                     //Save the passed character selection to later broadcast when this phase is complete
-                    nSavedDraftChrSelection = (int)chrSelected;
+                    SaveCharacterSelection((int)chrSelected);
 
                     Debug.Log("Master is saving " + (CharType.CHARTYPE)nSavedDraftChrSelection + " as the chosen ban");
 
@@ -521,7 +521,9 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
 
         //If we're done any special actions for this phase, then we can just progress this player to the next phase
-        MoveToNextPhase(nClientID, nCurTurnPhase);
+        int nNextTurnState = GetNextPhase(nClientID, nCurTurnPhase);
+
+        MoveToPhase(nClientID, nNextTurnState, nCurTurnPhase);
 
     }
 
