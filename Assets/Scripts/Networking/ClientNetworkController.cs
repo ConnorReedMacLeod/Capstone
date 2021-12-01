@@ -154,7 +154,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
             case ContTurns.STATETURN.EXECUTEBAN:
 
                 //End our previous selection phase
-                DraftController.Get().EndSelecting();
+                DraftController.Get().EndWaitingOnDraftInput();
 
                 CharType.CHARTYPE chrtypeBanning = (CharType.CHARTYPE)additionalInfo;
 
@@ -184,7 +184,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
             case ContTurns.STATETURN.EXECUTEDRAFT:
 
                 //End our previous selection phase
-                DraftController.Get().EndSelecting();
+                DraftController.Get().EndWaitingOnDraftInput();
 
                 int nPlayerIDDrafting = (int)((object[])additionalInfo)[0];
                 CharType.CHARTYPE chrtypeDrafted = (CharType.CHARTYPE)((object[])additionalInfo)[1];

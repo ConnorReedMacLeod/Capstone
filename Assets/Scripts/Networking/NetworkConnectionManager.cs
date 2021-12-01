@@ -150,6 +150,10 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         if (SceneManager.GetActiveScene().name == "_LOADOUT") {
             Debug.Log("We're already in the _LOADOUT scene, so no need to transfer to it");
         } else {
+            //Publish any of the local selections for characters we have before moving to the loadout scene
+            plyrselector1.PublishCharacterSelections();
+            plyrselector2.PublishCharacterSelections();
+
             MatchSetup.Get().SubmitLocalMatchParamsAndDirectlyStartLoadout();
         }
     }
@@ -167,6 +171,13 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
             Debug.Log("We're already in the _MATCH scene, so no need to transfer to it");
         } else {
             Debug.Log("Passing our locally stored match parameters to the master and requesting to start match");
+            //Publish any of the local selections for characters and loadouts we have before moving to the loadout scene
+            plyrselector1.PublishCharacterSelections();
+            plyrselector2.PublishCharacterSelections();
+
+            plyrselector1.PublishLoadouts();
+            plyrselector2.PublishLoadouts();
+
             MatchSetup.Get().SubmitLocalMatchParamsAndDirectlyStartMatch(); 
         }
     }
@@ -243,7 +254,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
         Debug.Log("Spawning networkcontroller");
 
-        //Spawn the client networking manager for the local player (and let the opponent spawn their own controller)
+        //Spawn the networking manager for the local player
         GameObject goNetworkController = PhotonNetwork.Instantiate("Networking/pfNetworkController", Vector3.zero, Quaternion.identity);
 
         if(goNetworkController = null) {
@@ -265,23 +276,6 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         SpawnNetworkController();
 
     }
-
-    public static void SendEventToMaster(byte evtCode, object content) {
-
-        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient };
-        ExitGames.Client.Photon.SendOptions sendOptions = new ExitGames.Client.Photon.SendOptions { Reliability = true };
-
-        PhotonNetwork.RaiseEvent(evtCode, content, raiseEventOptions, sendOptions);
-    }
-
-    public static void SendEventToClients(byte evtCode, object content) {
-
-        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
-        ExitGames.Client.Photon.SendOptions sendOptions = new ExitGames.Client.Photon.SendOptions { Reliability = true };
-
-        PhotonNetwork.RaiseEvent(evtCode, content, raiseEventOptions, sendOptions);
-    }
-
 
     public override void OnJoinRandomFailed(short returnCode, string message) {
         base.OnJoinRandomFailed(returnCode, message);
