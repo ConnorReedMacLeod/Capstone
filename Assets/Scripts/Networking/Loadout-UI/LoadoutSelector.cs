@@ -82,7 +82,7 @@ public class LoadoutSelector : MonoBehaviour {
         }
     }
 
-    public void BeginSelection(int _iPlayerSelectingFor, int _iChrSelectingFor, System.Action _fnOnSelectionComplete) {
+    public void BeginSelection(int _iPlayerSelectingFor, int _iChrSelectingFor, System.Action _fnOnSelectionComplete, LoadoutManager.Loadout loadoutToStart) {
         iPlayerSelectingFor = _iPlayerSelectingFor;
         iChrSelectingFor = _iChrSelectingFor;
 
@@ -94,7 +94,7 @@ public class LoadoutSelector : MonoBehaviour {
         InitSavedLoadoutsDropdown();
 
         //Need to initialize the loadout selector with whatever loadout is currently defined for this character in matchsetup
-        InitWithLoadout(MatchSetup.Get().curMatchParams.arLoadoutSelections[iPlayerSelectingFor][iChrSelectingFor]);
+        InitWithLoadout(loadoutToStart);
 
     }
 
@@ -108,10 +108,8 @@ public class LoadoutSelector : MonoBehaviour {
     }
 
     public void CompleteSelection() {
-        //Save the current loadout in the local matchsetup
-        MatchSetup.Get().curMatchParams.arLoadoutSelections[iPlayerSelectingFor][iChrSelectingFor] = loadoutCur;
 
-        Debug.Log("After completing, our selection is " + MatchSetup.Get().curMatchParams.arLoadoutSelections[iPlayerSelectingFor][iChrSelectingFor]);
+        Debug.Log("After completing, our loadout is " + loadoutCur);
 
         //Now that we're done selecting, just callback whatever cleanup method our creator passed to us
         fnOnSelectionComplete();

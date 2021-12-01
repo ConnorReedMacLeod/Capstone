@@ -10,14 +10,13 @@ public class DropDownInputSelect : MonoBehaviour {
 
 
     public void Start() {
-        //Ensure we reflect the default matchparams selection
-        dropdown.value = (int)MatchSetup.Get().curMatchParams.arInputTypes[plyrselectorParent.idPlayer];
-
+        //Start the match by reacting to 'selecting' whatever's defaultedly set here
+        OnInputSelectChange();
     }
 
     public void OnInputSelectChange() {
-
-        MatchSetup.Get().curMatchParams.arInputTypes[plyrselectorParent.idPlayer] = (Player.InputType)dropdown.value;
+        
+        NetworkMatchSetup.SetInputType(plyrselectorParent.idPlayer, (Player.InputType)dropdown.value); 
 
     }
 }

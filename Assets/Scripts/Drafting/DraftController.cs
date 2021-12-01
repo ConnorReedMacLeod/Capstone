@@ -6,19 +6,23 @@ using UnityEngine.UI;
 public class DraftController : Singleton<DraftController> {
 
     public class DraftAction {
-        public ContTurns.STATETURN stateTurnNextStep;
+        public enum DRAFTACTIONTYPE { DRAFT, BAN };
+
+        public DRAFTACTIONTYPE draftactionType;
         public int iPlayer;
 
-        public DraftAction(ContTurns.STATETURN _stateTurnNextStep, int _iPlayer) {
-            stateTurnNextStep = _stateTurnNextStep;
+        public DraftAction(DRAFTACTIONTYPE _draftactionType, int _iPlayer) {
+            draftactionType = _draftactionType;
             iPlayer = _iPlayer;
         }
 
     }
 
-    public bool bActivelyLocallySelecting;
+    public bool bWaitingOnLocalDraftInput;
+    public bool bWaitingOnForeignDraftInput;
 
-    public Queue<DraftAction> queueDraftOrder;
+    public int indexCurDraftStep;
+    public List<DraftAction> lstDraftOrder;
 
     public bool[] arbChrsAvailableToDraft;
 
@@ -38,6 +42,52 @@ public class DraftController : Singleton<DraftController> {
     public Subject subEndChooseForeign = new Subject();
 
     public Button btnStartDraft;
+
+
+    public void ProcessDraftInputBuffer() {
+        //First, check if we've progressed through the whole draft
+        if (IsDraftPhaseOver()) {
+
+            return;
+        }
+
+        //Next, check if we have the input that we're waiting for
+        if(NetworkDraftReceiver.Get().IsCurSelectionReady() == false) {
+            Debug.LogFormat("Still waiting on {0}th draft input", NetworkDraftReceiver.Get().indexCurDraftInput);
+
+            //Check if we're responsible for filling that draft input
+            if (NetworkMatchSetup.IsLocallyOwned(GetActivePlayerForNextDraftPhaseStep())) {
+                BeginSelectingLocally();
+            } else {
+                //If we're not responsible for filling that draft input, then locally display that we're waiting for foreign input
+                BeginSelectingForeign();
+            }
+            return;
+        }
+
+        //If we do have the input we were waiting on, then let's process it
+        DraftAction draftaction = GetNextDraftPhaseStep();
+        CharType.CHARTYPE chartypeInput = NetworkDraftReceiver.Get().GetCurSelection();
+
+        if(draftaction.draftactionType == DraftAction.DRAFTACTIONTYPE.DRAFT) {
+            //Draft the character
+            DraftChr(draftaction.iPlayer, chartypeInput);
+        }else {
+            //Ban the character
+            BanChr(draftaction.iPlayer, chartypeInput);
+        }
+
+        //Do any cleanup of local display now that the input we were waiting (or maybe not waiting) on is done
+        EndWaitingOnDraftInput();
+
+
+        //Now that the draft/ban is complete and processed, increment our 'current' indices
+        NetworkDraftReceiver.Get().FinishCurSelection();
+        FinishDraftPhaseStep();
+
+        //Finally, try to continue to process further buffer events (if they exist)
+        ProcessDraftInputBuffer();
+    }
 
     public void InitChrsAvailableToDraft() {
 
@@ -67,6 +117,10 @@ public class DraftController : Singleton<DraftController> {
 
         Debug.Log("Drafting " + chrDrafted + " for " + iPlayer);
 
+        //Ensure the draft selection has been registered in the roomoptions (maybe someone else beat us to it, but that's fine)
+        NetworkMatchSetup.SetCharacterSelection(iPlayer, arNumChrsDrafted[iPlayer], chrDrafted);
+
+        //Then ensure that everything locally is tracked and displayed properly
         arDraftedChrs[iPlayer][arNumChrsDrafted[iPlayer]] = chrDrafted;
         arNumChrsDrafted[iPlayer]++;
 
@@ -77,7 +131,7 @@ public class DraftController : Singleton<DraftController> {
 
     }
 
-    public void BanChr(CharType.CHARTYPE chrBanned) {
+    public void BanChr(int iPlayer, CharType.CHARTYPE chrBanned) {
         //Ensure the character actually exists
         Debug.Assert(chrBanned < CharType.CHARTYPE.LENGTH);
 
@@ -86,6 +140,9 @@ public class DraftController : Singleton<DraftController> {
 
         Debug.Log("Banning " + chrBanned);
 
+        //We shouldn't need to save any bans in the room options since it's only relevent in this scene
+        // We still need to update our local information and display this ban properly
+
         arbChrsAvailableToDraft[(int)chrBanned] = false;
 
         draftcollection.SetChrAsBanned((int)chrBanned);
@@ -93,38 +150,44 @@ public class DraftController : Singleton<DraftController> {
     }
 
     public void InitDraftOrder() {
-        queueDraftOrder = new Queue<DraftAction>();
+        lstDraftOrder = new List<DraftAction>();
         //p1 ban
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEBAN, 0));
+        lstDraftOrder.Add(new DraftAction(DraftAction.DRAFTACTIONTYPE.BAN, 0));
         //p2 ban
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEBAN, 1));
+        lstDraftOrder.Add(new DraftAction(DraftAction.DRAFTACTIONTYPE.BAN, 1));
         //p1 pick
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 0));
+        lstDraftOrder.Add(new DraftAction(DraftAction.DRAFTACTIONTYPE.DRAFT, 0));
         //p2 pick pick
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 1));
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 1));
+        lstDraftOrder.Add(new DraftAction(DraftAction.DRAFTACTIONTYPE.DRAFT, 1));
+        lstDraftOrder.Add(new DraftAction(DraftAction.DRAFTACTIONTYPE.DRAFT, 1));
         //p1 pick pick
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 0));
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 0));
+        lstDraftOrder.Add(new DraftAction(DraftAction.DRAFTACTIONTYPE.DRAFT, 0));
+        lstDraftOrder.Add(new DraftAction(DraftAction.DRAFTACTIONTYPE.DRAFT, 0));
         //p2 pick pick
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 1));
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 1));
+        lstDraftOrder.Add(new DraftAction(DraftAction.DRAFTACTIONTYPE.DRAFT, 1));
+        lstDraftOrder.Add(new DraftAction(DraftAction.DRAFTACTIONTYPE.DRAFT, 1));
         //p1 pick pick
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 0));
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 0));
+        lstDraftOrder.Add(new DraftAction(DraftAction.DRAFTACTIONTYPE.DRAFT, 0));
+        lstDraftOrder.Add(new DraftAction(DraftAction.DRAFTACTIONTYPE.DRAFT, 0));
+        //p2 pick pick
+        lstDraftOrder.Add(new DraftAction(DraftAction.DRAFTACTIONTYPE.DRAFT, 1));
+        lstDraftOrder.Add(new DraftAction(DraftAction.DRAFTACTIONTYPE.DRAFT, 1));
+        //p1 pick pick
+        lstDraftOrder.Add(new DraftAction(DraftAction.DRAFTACTIONTYPE.DRAFT, 0));
+        lstDraftOrder.Add(new DraftAction(DraftAction.DRAFTACTIONTYPE.DRAFT, 0));
         //p2 pick
-        queueDraftOrder.Enqueue(new DraftAction(ContTurns.STATETURN.CHOOSEDRAFT, 1));
+        lstDraftOrder.Add(new DraftAction(DraftAction.DRAFTACTIONTYPE.DRAFT, 1));
 
     }
 
     public bool IsDraftPhaseOver() {
-        return queueDraftOrder.Count == 0;
+        return indexCurDraftStep == lstDraftOrder.Count;
     }
 
     public DraftAction GetNextDraftPhaseStep() {
         Debug.Assert(IsDraftPhaseOver() == false, "Asked for a next draft phase when there are no more steps left");
 
-        return queueDraftOrder.Peek();
+        return lstDraftOrder[indexCurDraftStep];
 
     }
 
@@ -133,44 +196,42 @@ public class DraftController : Singleton<DraftController> {
     }
 
     public void FinishDraftPhaseStep() {
-        Debug.Assert(IsDraftPhaseOver() == false, "Attempted to finish a draft phase step when there are already none left");
-
-        queueDraftOrder.Dequeue();
+        //Increment the current draft step we're on
+        indexCurDraftStep++;
     }
 
     public void BeginSelectingLocally() {
-
-        //First, check if we've actually received 
-
-        bActivelyLocallySelecting = true;
+        bWaitingOnLocalDraftInput = true;
 
         //Let anyone (UI effects probably) know that we've begun locally selecting
         subBeginChooseLocally.NotifyObs();
     }
 
-    public void BeginSelectingForegin() {
+    public void BeginSelectingForeign() {
+        bWaitingOnForeignDraftInput = true;
 
-        //Let anyone (UI effects probably) know that we've begun locally selecting
+        //Let anyone (UI effects probably) know that we're waiting for another player to make a selection
         subBeginChooseForeign.NotifyObs();
     }
 
-    public void EndSelecting() {
+    //Figure out what type of draft action we were waiting on (foreign/local) and react appropriately to completing it
+    public void EndWaitingOnDraftInput() {
 
-        //Let anyone (UI effects probably) know that we've ended locally selecting
-        if (bActivelyLocallySelecting) {
+        //Let anyone (UI effects probably) know that the current player has finished their selection
+        if (bWaitingOnLocalDraftInput) {
             subEndChooseLocally.NotifyObs();
-        } else {
+            bWaitingOnLocalDraftInput = false;
+        } else if (bWaitingOnForeignDraftInput) {
             subEndChooseForeign.NotifyObs();
+            bWaitingOnForeignDraftInput = false;
         }
-
-        bActivelyLocallySelecting = false;
     }
     
 
     public void OnDraftableChrClicked(CharType.CHARTYPE chrClicked) {
 
         //Check if we've been told by the master to choose a character to draft/ban
-        if(bActivelyLocallySelecting == false) {
+        if(bWaitingOnLocalDraftInput == false) {
             Debug.Log("We haven't been asked to draft/ban a character currently");
             return;
         }
@@ -182,7 +243,7 @@ public class DraftController : Singleton<DraftController> {
         }
 
         //Check if it's even our turn to draft
-        if(ClientNetworkController.Get().IsPlayerLocallyControlled(GetActivePlayerForNextDraftPhaseStep()) == false) {
+        if(NetworkMatchSetup.IsLocallyOwned(GetActivePlayerForNextDraftPhaseStep()) == false) {
             Debug.LogError("Can't draft/ban since it's not your turn");
             return;
         }
@@ -193,23 +254,36 @@ public class DraftController : Singleton<DraftController> {
             return;
         }
 
-        Debug.Log("NextStep of draft is currently " + GetNextDraftPhaseStep().stateTurnNextStep);
+        Debug.Log("Current step of draft is " + GetNextDraftPhaseStep().draftactionType);
 
         //At this point, it's valid to pick/ban the character so send along the appropriate signal to the Master
-        if(GetNextDraftPhaseStep().stateTurnNextStep == ContTurns.STATETURN.CHOOSEBAN) {
+        if(GetNextDraftPhaseStep().draftactionType == DraftAction.DRAFTACTIONTYPE.BAN){
+
             Debug.Log("Sending ban of " + chrClicked);
-            ClientNetworkController.Get().SendTurnPhaseFinished(ContTurns.STATETURN.CHOOSEBAN, new int[1] { (int)chrClicked });
-        } else if(GetNextDraftPhaseStep().stateTurnNextStep == ContTurns.STATETURN.CHOOSEDRAFT) {
+            NetworkDraftSender.Get().SendBan(chrClicked);
+
+        } else if (GetNextDraftPhaseStep().draftactionType == DraftAction.DRAFTACTIONTYPE.DRAFT) {
+
             Debug.Log("Sending draft of " + chrClicked);
-            ClientNetworkController.Get().SendTurnPhaseFinished(ContTurns.STATETURN.CHOOSEDRAFT, new int[1] { (int)chrClicked });
+            NetworkDraftSender.Get().SendDraft(chrClicked);
+
         }
     }
 
     public void StartDraft() {
-        Debug.Log("Sending start draft signal to the master");
-        ClientNetworkController.Get().SendTurnPhaseFinished(ContTurns.STATETURN.STARTDRAFT, null);
 
+        //Deactivate the 'start draft' button
         btnStartDraft.gameObject.SetActive(false);
+
+        //Start processing the draft input buffer
+        ProcessDraftInputBuffer();
+    }
+
+    public void FinishDraft() {
+        //TODONOW - figure this out exactly
+        // Essentially, we'll wait a few seconds (for both players to catch up and view the last drafted character), then 
+        //  if we're the master client, we'll move the cohort to the loadout setup scene
+        // Could instead add a button to progress to next scene?
     }
 
     public override void Init() {
