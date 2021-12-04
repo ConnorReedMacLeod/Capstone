@@ -245,27 +245,6 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
     }
 
 
-    public IEnumerator AssignAllLocalInputControllers() {
-        //Sleep until we've recieved enough information to actually assign input controllers
-        while(curMatchParams == null) {
-            Debug.Log("Waiting to assign input controllers until matchparams have been received from the masted");
-            yield return null;
-        }
-
-        for(int i = 0; i < Player.MAXPLAYERS; i++) {
-            AssignLocalInputController(Match.Get().arPlayers[i]);
-        }
-    }
-
-    public void AssignLocalInputController(Player plyr) {
-
-        //If the player isn't controlled locally, just set the plyr's controller to null since it's not our job to control them
-        if(ClientNetworkController.Get().IsPlayerLocallyControlled(plyr) == false) {
-            plyr.SetInputType(Player.InputType.NONE);
-        } else {
-            //Otherwise, this character is controlled by this local client - figure out which input type they'll need and add it
-            plyr.SetInputType((Player.InputType)curMatchParams.arInputTypes[plyr.id]);
-        }
-    }
+    
 
 }

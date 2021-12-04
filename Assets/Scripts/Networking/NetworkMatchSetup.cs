@@ -144,5 +144,28 @@ public static class NetworkMatchSetup {
 
         return s;
     }
+
+    public static bool HasAllMatchSetupInfo() {
+        //Note that we always assume that there will be a default entry for player owners and input types for all players
+        //  We'll also only be checking that there are enough character selections to start a match with (you can potentially draft
+        //  more than this though)
+
+        for(int i=0; i<Player.MAXPLAYERS; i++) {
+
+            for(int j=0; j<Player.MAXCHRS; j++) {
+                if(HasEntryCharacterSelection(i, j) == false) {
+                    Debug.LogFormat("Still waiting on char selection {1} for player {0}", i, j);
+                    return false;
+                }
+                if (HasEntryCharacterSelection(i, j) == false) {
+                    Debug.LogFormat("Still waiting on char selection {1} for player {0}", i, j);
+                    return false;
+                }
+            }
+
+        }
+        return true;
+
+    }
     
 }

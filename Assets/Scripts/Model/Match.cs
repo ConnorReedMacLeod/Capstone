@@ -5,7 +5,7 @@ using UnityEngine;
 using Photon.Pun;
 
 // Will generally contain everything in a match
-// responsible for creating and managing the game
+// responsible for initializing and containing components a match
 
 public class Match : MonoBehaviour {
 
@@ -77,41 +77,27 @@ public class Match : MonoBehaviour {
         arChrs[player.id][idChar] = newChr;
         player.arChr[idChar] = newChr;
 
-
     }
 
-    IEnumerator InitAllChrs() {
-
-        //Keep looping until we've properly setup our character selections
-        while(MatchSetup.Get().curMatchParams == null) {
-            Debug.Log("Waiting for matchparams (with char selections) to be recieved");
-            yield return null;
-        }
+    void InitAllChrs() {
 
         for(int i = 0; i < nPlayers; i++) {
             arChrs[i] = new Chr[Player.MAXCHRS];
             arPlayers[i].nChrs = Player.MAXCHRS;
 
             for(int j = 0; j < arPlayers[i].nChrs; j++) {
-                InitChr(MatchSetup.Get().curMatchParams.arChrSelections[i][j], arPlayers[i], j,
-                    MatchSetup.Get().curMatchParams.arLoadoutSelections[i][j]);
+                InitChr(NetworkMatchSetup.GetCharacterSelection(i, j),
+                    arPlayers[i], j,
+                    NetworkMatchSetup.GetLoadout(i,j));
             }
         }
-
-        Debug.Log("Ending Character Initializations");
+        
     }
 
-    public void InitAllChrPositions() {
-
-        //Set up each team in a 'triangle' - two sides in the back, center in the front
-        ContPositions.Get().MoveChrToPosition(arChrs[0][0], ContPositions.Get().GetPosition(MatchSetup.Get().curMatchParams.arPositionCoordsSelections[0][0]));
-        ContPositions.Get().MoveChrToPosition(arChrs[0][1], ContPositions.Get().GetPosition(MatchSetup.Get().curMatchParams.arPositionCoordsSelections[0][1]));
-        ContPositions.Get().MoveChrToPosition(arChrs[0][2], ContPositions.Get().GetPosition(MatchSetup.Get().curMatchParams.arPositionCoordsSelections[0][2]));
-
-        ContPositions.Get().MoveChrToPosition(arChrs[1][0], ContPositions.Get().GetPosition(MatchSetup.Get().curMatchParams.arPositionCoordsSelections[1][0]));
-        ContPositions.Get().MoveChrToPosition(arChrs[1][1], ContPositions.Get().GetPosition(MatchSetup.Get().curMatchParams.arPositionCoordsSelections[1][1]));
-        ContPositions.Get().MoveChrToPosition(arChrs[1][2], ContPositions.Get().GetPosition(MatchSetup.Get().curMatchParams.arPositionCoordsSelections[1][2]));
-
+    public void AssignAllLocalInputControllers() {
+        for (int i = 0; i < Player.MAXPLAYERS; i++) {
+            AssignLocalInputController(Match.Get().arPlayers[i]);
+        }
     }
 
     public void InitNetworking() {
@@ -126,14 +112,37 @@ public class Match : MonoBehaviour {
         }
     }
 
+    public void AssignLocalInputController(Player plyr) {
 
-    public IEnumerator Start() {
-        if(bStarted) {
+        //If the player isn't controlled locally, just set the plyr's controller to null since it's not our job to control them
+        if (NetworkMatchSetup.IsLocallyOwned(plyr.id) == false) {
+            plyr.SetInputType(Player.InputType.NONE);
+        } else {
+            //Otherwise, this character is controlled by this local client - figure out which input type they'll need and add it
+            plyr.SetInputType(NetworkMatchSetup.GetInputType(plyr.id));
+        }
+    }
+
+    public void InitAllChrPositions() {
+
+        //Set up each team in a 'triangle' - two sides in the back, center in the front
+        ContPositions.Get().MoveChrToPosition(arChrs[0][0], ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(0, 0)));
+        ContPositions.Get().MoveChrToPosition(arChrs[0][1], ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(0, 1)));
+        ContPositions.Get().MoveChrToPosition(arChrs[0][2], ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(0, 2)));
+
+        ContPositions.Get().MoveChrToPosition(arChrs[1][0], ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(1, 0)));
+        ContPositions.Get().MoveChrToPosition(arChrs[1][1], ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(1, 1)));
+        ContPositions.Get().MoveChrToPosition(arChrs[1][2], ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(1, 2)));
+
+    }
+
+    public IEnumerator SetupMatch() {
+
+        while (NetworkMatchSetup.HasAllMatchSetupInfo() == false) {
+            //Spin until we have all the match setup info that we need to start the match
             yield return null;
         }
-        bStarted = true;
-
-        gameObject.tag = "Match"; // So that anything can find this very quickly
+        Debug.Log("Starting match initializations since we have enough information");
 
         InitPlayers(nPlayers);
 
@@ -144,12 +153,12 @@ public class Match : MonoBehaviour {
         Debug.Log("Finished Initializing Networking");
 
         //Initialize characters (and spin until we get their selections)
-        yield return StartCoroutine(InitAllChrs());
+        InitAllChrs();
 
         Debug.Log("After InitAllChrs");
 
         //Assign local input controllers for each player
-        yield return StartCoroutine(MatchSetup.Get().AssignAllLocalInputControllers());
+        AssignAllLocalInputControllers();
 
         Debug.Log("After assigning local input controllers");
 
@@ -162,8 +171,20 @@ public class Match : MonoBehaviour {
         ContTurns.Get().InitializePriorities();
 
         Debug.Log("After InitializePriorities");
+    }
 
+
+    public void Start() {
+        if(bStarted) {
+            return;
+        }
+        bStarted = true;
+
+        gameObject.tag = "Match"; // So that anything can find this very quickly
+        
         Cursor.SetCursor(txCursor, v2HotSpot, cursorMode);
 
+        //Do all the match setup stuff (once it is ready)
+        StartCoroutine(SetupMatch());
     }
 }

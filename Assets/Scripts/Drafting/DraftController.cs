@@ -47,7 +47,7 @@ public class DraftController : Singleton<DraftController> {
     public void ProcessDraftInputBuffer() {
         //First, check if we've progressed through the whole draft
         if (IsDraftPhaseOver()) {
-
+            FinishDraft();
             return;
         }
 
@@ -280,6 +280,7 @@ public class DraftController : Singleton<DraftController> {
     }
 
     public void FinishDraft() {
+        Debug.Log("Need to implement FinishDraft");
         //TODONOW - figure this out exactly
         // Essentially, we'll wait a few seconds (for both players to catch up and view the last drafted character), then 
         //  if we're the master client, we'll move the cohort to the loadout setup scene
