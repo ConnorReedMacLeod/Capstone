@@ -38,10 +38,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
     }
 
     int nTime;
-
-    //Save a copy of whichever character was drafted/banned so we can pass it along
-    // to all players when everyone's ready to progress
-    int nSavedDraftChrSelection;
+    
 
     //Once we're passed this by the active player picking their skill, save the selection so it
     // can be disseminated to all players once the Execute skill phase starts
@@ -110,20 +107,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
         //The master controller should only react to player-submitted input events (addressed to evtM...)
         switch(eventCode) {
-
-            case MasterNetworkController.evtMStartDraft:
-                Debug.Assert(nClientID == PhotonNetwork.MasterClient.ActorNumber, 
-                    "ERROR - Master received start draft signal from a non-master client (" + nClientID + ")");
-
-                //Deserialize the passed match parameters which we'll copy starting fields from and fill out throughout the
-                // draft process (should only contain entries for player owners and input types, to start)
-                matchparamsPrepped.CopyForDraftStart(MatchSetup.UnserializeMatchParams(arContent));
-
-                Debug.Log("Master received the matchparams: " + matchparamsPrepped);
-
-                BroadcastDraftStart();
-
-                break;
+            
 
             case MasterNetworkController.evtMSubmitMatchParamsAndDirectlyStartLoadout:
                 Debug.Assert(nClientID == PhotonNetwork.MasterClient.ActorNumber, 
@@ -235,50 +219,6 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
         switch((ContTurns.STATETURN)nNewTurnState) {
 
-            case ContTurns.STATETURN.CHOOSEBAN:
-            case ContTurns.STATETURN.CHOOSEDRAFT:
-                
-
-
-                break;
-
-            case ContTurns.STATETURN.EXECUTEBAN:
-
-                //Pass along the saved character that was sent to us to ban
-                arAdditionalInfo[1] = nSavedDraftChrSelection;
-
-                //Clear out the stored character selection
-                ResetSavedDraftChrSelection();
-
-                break;
-
-            case ContTurns.STATETURN.EXECUTEDRAFT:
-
-                //Pass along the saved character that was sent to us to draft
-                arAdditionalInfo[1] = nSavedDraftChrSelection;
-
-                //Clear out the stored character selection
-                ResetSavedDraftChrSelection();
-
-                break;
-
-            case ContTurns.STATETURN.LOADOUTSETUP:
-
-                //Rather than advancing to the next turn step, we'll just directly broadcast
-                //  that we're moving to a new scene for the loadout setup step
-                BroadcastLoadoutStart();
-                break;
-
-            case ContTurns.STATETURN.RECHARGE:
-
-                //If we're moving away from the loadoutstep to start the match 
-                if(nPrevTurnState == (int)ContTurns.STATETURN.LOADOUTSETUP) {
-                    // Then broadcast that we're moving to a new scene and we're starting the proper match
-                    BroadcastMatchStart();
-                    return;
-                }
-
-                break;
 
             case ContTurns.STATETURN.GIVEMANA:
 
@@ -327,22 +267,6 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
         int nNextTurnPhase;
 
         switch((ContTurns.STATETURN)nCurTurnPhase) {
-
-            case ContTurns.STATETURN.STARTDRAFT:
-            case ContTurns.STATETURN.EXECUTEBAN:
-            case ContTurns.STATETURN.EXECUTEDRAFT:
-                //If we're going to be moving into another phase of the draft, consult the draft controller
-                //  to see which draft step is next
-
-                if(DraftController.Get().IsDraftPhaseOver() == true) {
-                    //If we're done drafting, we can move to the loadout setup phase
-                    nNextTurnPhase = (int)ContTurns.STATETURN.LOADOUTSETUP;
-                } else { 
-                    //Otherwise, see what the draftcontroller wants the next draft step to be, and we'll move to that
-                    nNextTurnPhase = (int)DraftController.Get().GetNextDraftPhaseStep().stateTurnNextStep; 
-                }
-
-                break;
 
             case ContTurns.STATETURN.CHOOSESKILL:
                 //If no character is set to act, then we jump directly ahead to TurnEnd
@@ -393,15 +317,6 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
         //Check if we're in any weird phases that need us to do something special (primarily storing information passed to us from the client
 
         switch ((ContTurns.STATETURN)nCurTurnPhase) {
-
-            case ContTurns.STATETURN.LOADOUTSETUP:
-                //If the client just finished their loadout step, then they'll be passing their entire matchparams updated with their
-                //   loadouts, so we'll incorporate that into our start matchparams
-                MatchSetup.MatchParams matchparamsReceived = MatchSetup.UnserializeMatchParams((object[])arSerializedInfo);
-
-                AdoptMatchParamsForMatchStart(matchparamsReceived, nClientID);
-
-                break;
 
             //If we're expecting an skill selection
             case ContTurns.STATETURN.CHOOSESKILL:
@@ -456,67 +371,9 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
                     //Don't need to do anything special if we recieved the signal from the non-active player
                     // since they're not selecting any skill right now
                 }
-                break;
-            case ContTurns.STATETURN.CHOOSEBAN:
+             break;
 
-                int nClientOwningActingBanner = matchparamsPrepped.arnPlayersOwners[DraftController.Get().GetActivePlayerForNextDraftPhaseStep()];
 
-                Debug.Log("nClientID sent = " + nClientID + " and the active client for the next ban is " + nClientOwningActingBanner);
-
-                //check if the passed ban is valid and reset it if not
-                if (nClientOwningActingBanner == nClientID) {
-
-                    CharType.CHARTYPE chrSelected = ((CharType.CHARTYPE[])arSerializedInfo)[0];
-
-                    if (DraftController.Get().IsCharAvailable(chrSelected) == false) {
-                        //If the attempted ban was for an already unavailable character, then just reset the selection to CHARTYPE.LENGTH (invalid/pass)
-                        chrSelected = CharType.CHARTYPE.LENGTH;
-                    }
-
-                    //Save the passed character selection to later broadcast when this phase is complete
-                    SaveCharacterSelection((int)chrSelected);
-
-                    Debug.Log("Master is saving " + (CharType.CHARTYPE)nSavedDraftChrSelection + " as the chosen ban");
-
-                } else {
-                    //Don't need to do anything here if we aren't the active player 
-                }
-                break;
-
-            case ContTurns.STATETURN.CHOOSEDRAFT:
-
-                int nClientOwningActingDrafter = matchparamsPrepped.arnPlayersOwners[DraftController.Get().GetActivePlayerForNextDraftPhaseStep()];
-
-                Debug.Log("nClientID sent = " + nClientID + " and the active client for the next draft is " + nClientOwningActingDrafter);
-
-                //check if the passed ban is valid and reset it if not
-                if (nClientOwningActingDrafter == nClientID) {
-
-                    CharType.CHARTYPE chrSelected = ((CharType.CHARTYPE[])arSerializedInfo)[0];
-
-                    if (DraftController.Get().IsCharAvailable(chrSelected) == false) {
-                        //If the attempted draft was for an unavailable character, then we need to find the first available character that is possible to draft
-                        //  Note - the client shouldn't be able to send an invalid selection, so this is a panic to fix a broken gamestate
-
-                        Debug.LogError("Master received an attempted draft of " + chrSelected);
-
-                        chrSelected = (CharType.CHARTYPE)0;
-                        while (DraftController.Get().IsCharAvailable(chrSelected) == false) {
-                            chrSelected++;
-                        }
-
-                        Debug.LogError("We have instead assigned tham " + chrSelected);
-                    }
-
-                    //Save the passed character selection to later broadcast when this phase is complete
-                    SaveCharacterSelection((int)chrSelected);
-
-                    Debug.Log("Master is saving " + (CharType.CHARTYPE)nSavedDraftChrSelection + " as the chosen ban");
-
-                } else {
-                    //Don't need to do anything here if we aren't the active player 
-                }
-                break;
         }
 
 
@@ -538,14 +395,6 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
                     //Pass no selections for the skill we want the character to use (will be reset to a rest)
                     OnClientFinishedPhase(i, (int)stateTurn, null);
 
-                } else if(stateTurn == ContTurns.STATETURN.EXECUTEBAN) {
-
-                    //Simulate as though the player submitted a non-ban
-                    OnClientFinishedPhase(i, (int)stateTurn, (int)CharType.CHARTYPE.LENGTH);
-                } else if(stateTurn == ContTurns.STATETURN.EXECUTEDRAFT) {
-
-                    //Simulate as though the player submitted a non-draft
-                    OnClientFinishedPhase(i, (int)stateTurn, (int)CharType.CHARTYPE.LENGTH);
                 } else {
 
                     OnClientFinishedPhase(i, (int)stateTurn);
@@ -556,38 +405,12 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
     }
 
 
-    //When a client is ready to start a match, they can submit their matchparams and we'll incorporate any relevent information into our local
-    //   master-stored matchparams to later be distributed to all clients
-    public void AdoptMatchParamsForMatchStart(MatchSetup.MatchParams matchparamSubmitted, int nClientIDSubmitting) {
-
-        //At this point, we can copy over any remaining setup parameters (defined by the loadout setup phase)
-        matchparamsPrepped.UpdateChrSelectionsForClient(nClientIDSubmitting, matchparamSubmitted);
-        matchparamsPrepped.UpdateLoadoutsForClient(nClientIDSubmitting, matchparamSubmitted);
-        matchparamsPrepped.UpdatePositionCoordsForClient(nClientIDSubmitting, matchparamSubmitted);
-    }
-
-
     public void Update() {
         //Remaain inactive if we're not the master
         if(bIsMaster == false) return;
 
-        int nNewTime = Mathf.FloorToInt(Time.time);
-        if(nNewTime > nTime) {
-            nTime = nNewTime;
-            NetworkConnectionManager.SendEventToClients(evtCTimerTick, new object[1] { nTime });
-            //PrintExpectedPhases();
-        }
     }
 
-
-
-    public void SaveCharacterSelection(int _iChr) {
-        nSavedDraftChrSelection = _iChr;
-    }
-
-    public void ResetSavedDraftChrSelection() {
-        nSavedDraftChrSelection = (int)CharType.CHARTYPE.LENGTH;
-    }
 
     public void SaveSerializedSelection(int[] _arnSavedSerializedInfo) {
         arnSavedSerializedInfo = _arnSavedSerializedInfo;

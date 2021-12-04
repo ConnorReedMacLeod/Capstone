@@ -52,12 +52,6 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
     }
 
 
-    //By default, no extra information is needed, can pass extra info via the overloaded method if needed
-    public void SendMatchTurnPhaseFinished() {
-        SendMatchTurnPhaseFinished(new int[0]); //just pass an empty array for our extra info param
-    }
-
-
     //For when we've finished a phase in the middle of a match and can get our current turnphase from ContTurns
     public void SendMatchTurnPhaseFinished(int[] arnSerializedInfo) {
         SendTurnPhaseFinished(ContTurns.Get().curStateTurn, arnSerializedInfo);
@@ -130,79 +124,7 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
     public void MoveToTurnPhase(ContTurns.STATETURN newTurnState, object additionalInfo) {
 
         switch (newTurnState) {
-            case ContTurns.STATETURN.STARTDRAFT:
-
-                Debug.LogError("We were asked by the master to move to the STARTMATCH phase - seems weird");
-
-                break;
-
-            case ContTurns.STATETURN.CHOOSEBAN:
-                Debug.Log("Starting CHOOSEBAN phase");
-
-                if (IsPlayerLocallyControlled(DraftController.Get().GetActivePlayerForNextDraftPhaseStep())) {
-                    DraftController.Get().BeginSelectingLocally();
-                } else {
-                    //If we aren't locally controlling the character who will ban next, then we can just immediately let the 
-                    // master know that we're done processing this phase
-                    SendTurnPhaseFinished(ContTurns.STATETURN.CHOOSEBAN);
-
-                    //Let any UI elements know that we're waiting for someone else to select their ban
-                    DraftController.Get().subBeginChooseForeign.NotifyObs();
-                }
-                break;
-
-            case ContTurns.STATETURN.EXECUTEBAN:
-
-                //End our previous selection phase
-                DraftController.Get().EndWaitingOnDraftInput();
-
-                CharType.CHARTYPE chrtypeBanning = (CharType.CHARTYPE)additionalInfo;
-
-                Debug.Log("Master asked us to ban " + chrtypeBanning);
-
-                //Ban the character that was passed to us, then figure out what draft step to move to next
-                DraftController.Get().BanChr((CharType.CHARTYPE)additionalInfo);
-                DraftController.Get().FinishDraftPhaseStep();
-
-                break;
-
-            case ContTurns.STATETURN.CHOOSEDRAFT:
-                Debug.Log("Starting CHOOSEDRAFT phase");
-
-                if (IsPlayerLocallyControlled(DraftController.Get().GetActivePlayerForNextDraftPhaseStep())) {
-                    DraftController.Get().BeginSelectingLocally();
-                } else {
-                    //If we aren't locally controlling the character who will draft next, then we can just immediately let the 
-                    // master know that we're done processing this phase
-                    SendTurnPhaseFinished(ContTurns.STATETURN.CHOOSEDRAFT);
-
-                    //Let any UI elements know that we're waiting for someone else to select their ban
-                    DraftController.Get().subBeginChooseForeign.NotifyObs();
-                }
-                break;
-
-            case ContTurns.STATETURN.EXECUTEDRAFT:
-
-                //End our previous selection phase
-                DraftController.Get().EndWaitingOnDraftInput();
-
-                int nPlayerIDDrafting = (int)((object[])additionalInfo)[0];
-                CharType.CHARTYPE chrtypeDrafted = (CharType.CHARTYPE)((object[])additionalInfo)[1];
-
-                Debug.Log("Master asked us to draft " + chrtypeDrafted + " for " + nPlayerIDDrafting);
-
-                //Draft the passed character tot he passed player, then figure out what draft step to move to next
-                DraftController.Get().DraftChr(nPlayerIDDrafting, chrtypeDrafted);
-                DraftController.Get().FinishDraftPhaseStep();
-
-                break;
-
-            case ContTurns.STATETURN.LOADOUTSETUP:
-
-                Debug.LogError("Set up the loadoutsetup handling");
-
-                break;
-
+            
             default:
                 //By default, we are in the middle of a match
                 //Pass along whatever phase of the turn we're now in to the ContTurns

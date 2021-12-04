@@ -10,24 +10,20 @@ public class DraftPrompt : MonoBehaviour{
     public void cbStartLocalSelection(Object tar, params object[] args) {
         DraftController.DraftAction curDraftStep = DraftController.Get().GetNextDraftPhaseStep();
 
-        if (curDraftStep.stateTurnNextStep == ContTurns.STATETURN.CHOOSEBAN) {
+        if (curDraftStep.draftactionType == DraftController.DraftAction.DRAFTACTIONTYPE.BAN) {
             txtDraftPrompt.text = string.Format("Ban a character for Player {0}", curDraftStep.iPlayer);
-        }else if (curDraftStep.stateTurnNextStep == ContTurns.STATETURN.CHOOSEDRAFT) {
+        }else if (curDraftStep.draftactionType == DraftController.DraftAction.DRAFTACTIONTYPE.DRAFT) {
             txtDraftPrompt.text = string.Format("Draft a character for Player {0}", curDraftStep.iPlayer);
-        } else {
-            Debug.LogError("Shouldn't be reacting to a local draft if we're not supposed to be choosing a character right now");
         }
     }
 
     public void cbStartForeignSelection(Object tar, params object[] args) {
         DraftController.DraftAction curDraftStep = DraftController.Get().GetNextDraftPhaseStep();
 
-        if (curDraftStep.stateTurnNextStep == ContTurns.STATETURN.CHOOSEBAN) {
+        if (curDraftStep.draftactionType == DraftController.DraftAction.DRAFTACTIONTYPE.BAN) {
             txtDraftPrompt.text = string.Format("Waiting for Player {0} to ban", curDraftStep.iPlayer);
-        } else if (curDraftStep.stateTurnNextStep == ContTurns.STATETURN.CHOOSEDRAFT) {
+        } else if (curDraftStep.draftactionType == DraftController.DraftAction.DRAFTACTIONTYPE.DRAFT) {
             txtDraftPrompt.text = string.Format("Waiting for Player {0} to draft", curDraftStep.iPlayer);
-        } else {
-            Debug.LogError("Shouldn't be reacting to a local draft if we're not supposed to be choosing a character right now");
         }
     }
 

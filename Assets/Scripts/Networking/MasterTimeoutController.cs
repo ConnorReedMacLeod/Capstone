@@ -29,8 +29,6 @@ public class MasterTimeoutController : MonoBehaviour {
             //just piggy-back off the local player's selection
             // TODO - sync this variable up among all players
             fTimeoutTimer = ContSkillSelection.Get().fMaxSelectionTime;
-        } else if (stateTurn == ContTurns.STATETURN.STARTDRAFT) {
-            fTimeoutTimer = fTimeoutToStartMatch;
         } else {
             fTimeoutTimer = fTimeoutStandard;
         }
