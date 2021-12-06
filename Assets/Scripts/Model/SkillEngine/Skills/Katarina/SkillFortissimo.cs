@@ -19,7 +19,7 @@ public class SkillFortissimo : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this),
         };
     }
@@ -28,7 +28,7 @@ public class SkillFortissimo : Skill {
         TarMana.AddTarget(this, manaCost);
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         public SoulFortissimo soulToCopy;
 
@@ -42,7 +42,7 @@ public class SkillFortissimo : Skill {
             return string.Format("Gain {0} POWER and {1} DEFENSE for {2} turns.", soulToCopy.nPowerBuff, soulToCopy.nDefenseBuff, soulToCopy.pnMaxDuration.Get());
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = skill.chrOwner;
 

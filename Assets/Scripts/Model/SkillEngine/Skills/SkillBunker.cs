@@ -19,7 +19,7 @@ public class SkillBunker : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this)
         };
     }
@@ -28,7 +28,7 @@ public class SkillBunker : Skill {
         TarMana.AddTarget(this, manaCost);
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         public SoulPositionBunker soulToCopy;
 
@@ -42,7 +42,7 @@ public class SkillBunker : Skill {
             return string.Format("The Position under this character gives +{0} DEFENSE to the character on it for {1} turns.", soulToCopy.nDefenseBuff, soulToCopy.pnMaxDuration.Get());
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             ContSkillEngine.PushSingleExecutable(new ExecApplySoulPosition(skill.chrOwner, skill.chrOwner.position, new SoulPositionBunker(soulToCopy, skill.chrOwner.position)) {
 

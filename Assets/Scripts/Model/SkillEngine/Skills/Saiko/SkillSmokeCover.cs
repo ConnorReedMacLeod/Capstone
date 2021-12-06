@@ -19,7 +19,7 @@ public class SkillSmokeCover : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this)
         };
     }
@@ -28,7 +28,7 @@ public class SkillSmokeCover : Skill {
         TarMana.AddTarget(this, manaCost);
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         public SoulSmokeCover soulToCopy;
 
@@ -43,7 +43,7 @@ public class SkillSmokeCover : Skill {
                 "[SHROUDED]: This character is immune to damage.  If this character becomes the Vanguard, dispel this.");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = skill.chrOwner;
 

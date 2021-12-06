@@ -19,7 +19,7 @@ public class SkillCacophony : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this),
         };
     }
@@ -35,7 +35,7 @@ public class SkillCacophony : Skill {
     }
 
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         Damage dmg;
 
@@ -65,7 +65,7 @@ public class SkillCacophony : Skill {
                 nBaseDamage, nBaseStun, nCriticalBaseDamage, nCriticalStun);
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = (Chr)selections.lstSelections[1];
 

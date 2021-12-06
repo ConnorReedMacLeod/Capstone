@@ -59,11 +59,13 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     }
 
-    public static void PushClauses(List<Clause> lstClauses) {
+    public static void PushClauses(IEnumerable<Clause> enumerClauses) {
+        List<Clause> lstClauses = new List<Clause>(enumerClauses);
 
         //Push each Clause in sequence onto the stack, and ensure that the first
         // Clause in the sequence ends up at the top of the stack
-        for(int i = lstClauses.Count - 1; i >= 0; i--) {
+
+        for (int i = lstClauses.Count - 1; i >= 0; i--) {
             PushSingleClause(lstClauses[i]);
         }
 

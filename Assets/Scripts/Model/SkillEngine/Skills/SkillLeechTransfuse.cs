@@ -21,7 +21,7 @@ public class SkillLeech : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this),
             new Clause2(this)
         };
@@ -32,7 +32,7 @@ public class SkillLeech : Skill {
         TarChr.AddTarget(this, TarChr.IsDiffTeam(chrOwner));
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         Damage dmg;
         public int nBaseDamage = 10;
@@ -47,7 +47,7 @@ public class SkillLeech : Skill {
             return string.Format("Deal {0} damage to an Enemy", dmg.Get());
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = (Chr)selections.lstSelections[1];
 
@@ -59,7 +59,7 @@ public class SkillLeech : Skill {
 
     };
 
-    class Clause2 : Clause {
+    class Clause2 : ClauseSkillSelection {
 
         public Clause2(Skill _skill) : base(_skill) {
 
@@ -70,7 +70,7 @@ public class SkillLeech : Skill {
             return string.Format("Transform this skill into [Transfuse]");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             ContSkillEngine.PushSingleExecutable(new ExecAdaptSkill(skill.chrOwner, this.skill.skillslot, SkillType.SKILLTYPE.TRANSFUSE));
 
@@ -105,7 +105,7 @@ public class SkillTransfuse : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this),
             new Clause2(this)
         };
@@ -116,7 +116,7 @@ public class SkillTransfuse : Skill {
         TarChr.AddTarget(this, TarChr.IsSameTeam(chrOwner));
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         Healing healing;
         public int nHealAmount = 20;
@@ -131,7 +131,7 @@ public class SkillTransfuse : Skill {
             return string.Format("Heal an Ally for {0}", healing.Get());
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = (Chr)selections.lstSelections[1];
 
@@ -143,7 +143,7 @@ public class SkillTransfuse : Skill {
 
     };
 
-    class Clause2 : Clause {
+    class Clause2 : ClauseSkillSelection {
 
         public Clause2(Skill _skill) : base(_skill) {
 
@@ -154,7 +154,7 @@ public class SkillTransfuse : Skill {
             return string.Format("Transform this skill into [Leech]");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             ContSkillEngine.PushSingleExecutable(new ExecAdaptSkill(skill.chrOwner, this.skill.skillslot, SkillType.SKILLTYPE.LEECH));
 

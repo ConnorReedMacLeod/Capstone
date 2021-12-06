@@ -19,7 +19,7 @@ public class SkillReverberate : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this),
         };
     }
@@ -29,7 +29,7 @@ public class SkillReverberate : Skill {
         TarChr.AddTarget(this, TarChr.TRUE);
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         Damage dmg;
         public int nBaseDamage = 5;
@@ -44,7 +44,7 @@ public class SkillReverberate : Skill {
             return string.Format("Deal {0} damage to all characters on the target character's team", dmg.Get());
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = (Chr)selections.lstSelections[1];
 

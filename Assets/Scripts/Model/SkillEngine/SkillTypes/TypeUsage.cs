@@ -40,9 +40,9 @@ public abstract class TypeUsage {
     }
 
     //Fetch the current selection information passed to us from the Master
-    public virtual Selections GetUsedSelections() {
+    public virtual InputSkillSelection GetUsedSelections() {
 
-        Selections selections = ContSkillSelection.Get().selectionsFromMaster;
+        InputSkillSelection selections = ContSkillSelection.Get().selectionsFromMaster;
 
         //You can only get legitimate selections for this skill if the selection passed is referring to
         //  this skill

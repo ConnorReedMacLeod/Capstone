@@ -9,24 +9,24 @@ public abstract class Target {
 
     public int iTargetIndex;
 
-    public delegate bool FnValidSelection(object objSelected, Selections selectionsSoFar);
+    public delegate bool FnValidSelection(object objSelected, InputSkillSelection selectionsSoFar);
 
     public FnValidSelection IsValidSelection;
 
-    public Selections selectionsSoFar;
+    public InputSkillSelection selectionsSoFar;
 
     //Return a list of all entities of the corresponding type for this target
     public abstract IEnumerable<object> GetSelectableUniverse();
 
     //Return a list of all valid entities that could be selected our of the universe of the corresponding type
-    public List<object> GetValidSelectable(Selections selectionsSoFar) {
+    public List<object> GetValidSelectable(InputSkillSelection selectionsSoFar) {
 
         return GetSelectableUniverse().Where(obj => IsValidSelection(obj, selectionsSoFar)).ToList();
 
     }
 
     //Get a random valid selection for this type of target (for AI purposes mainly)
-    public object GetRandomValidSelectable(Selections selectionsSoFar) {
+    public object GetRandomValidSelectable(InputSkillSelection selectionsSoFar) {
 
         List<object> lstPossibleValidSelections = GetValidSelectable(selectionsSoFar);
 
@@ -57,7 +57,7 @@ public abstract class Target {
     protected virtual void OnStartLocalSelection() {
         //Don't need to do anything by default
     }
-    public void StartLocalSelection(Selections _selectionsSoFar) {
+    public void StartLocalSelection(InputSkillSelection _selectionsSoFar) {
         //Temporarily store the currently made selections so far in case we need to retrieve them to assist in our targetting
         selectionsSoFar = _selectionsSoFar;
 
@@ -113,8 +113,8 @@ public abstract class Target {
     }
 
     public static FnValidSelection AND(FnValidSelection fn1, FnValidSelection fn2) {
-        return (object o, Selections selections) => fn1(o, selections) && fn2(o, selections);
+        return (object o, InputSkillSelection selections) => fn1(o, selections) && fn2(o, selections);
     }
 
-    public static bool TRUE(object obj, Selections selections) { return true; }
+    public static bool TRUE(object obj, InputSkillSelection selections) { return true; }
 }

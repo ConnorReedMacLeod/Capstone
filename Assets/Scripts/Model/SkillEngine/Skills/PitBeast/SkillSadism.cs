@@ -23,15 +23,15 @@ public class SkillSadism : Skill {
 
         soulPassive = new SoulSadism(this.chrOwner, this.chrOwner, this);
 
-        lstClausesOnEquip = new List<Clause>() {
+        lstClausesOnEquip = new List<ClauseSkill>() {
             new ClauseEquip(this)
         };
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this)
         };
 
-        lstClausesOnUnequip = new List<Clause>() {
+        lstClausesOnUnequip = new List<ClauseSkill>() {
             new ClauseUnequip(this)
         };
     }
@@ -40,7 +40,7 @@ public class SkillSadism : Skill {
         //No targets to add
     }
 
-    class ClauseEquip : Clause {
+    class ClauseEquip : ClauseSkill {
 
         public ClauseEquip(Skill _skill) : base(_skill) {
         }
@@ -50,7 +50,7 @@ public class SkillSadism : Skill {
             return string.Format("Initially applying Sadism on equip");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void Execute() {
 
             ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, skill.chrOwner, ((SkillSadism)skill).soulPassive) {
                 sLabel = "applying sadism"
@@ -60,7 +60,7 @@ public class SkillSadism : Skill {
 
     };
 
-    class ClauseUnequip : Clause {
+    class ClauseUnequip : ClauseSkill {
 
         public ClauseUnequip(Skill _skill) : base(_skill) {
         }
@@ -70,7 +70,7 @@ public class SkillSadism : Skill {
             return string.Format("Removing Sadism on unequip");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void Execute() {
 
             ContSkillEngine.PushSingleExecutable(new ExecRemoveSoulChr(skill.chrOwner, ((SkillSadism)skill).soulPassive) {
                 sLabel = "removing sadism"
@@ -80,7 +80,7 @@ public class SkillSadism : Skill {
 
     };
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         public Clause1(Skill _skill) : base(_skill) { }
 
@@ -89,7 +89,7 @@ public class SkillSadism : Skill {
             return string.Format("When {0} would deal damage to a character with greater health, heal {1}.", skill.chrOwner.sName, ((SkillSadism)skill).soulPassive.heal.Get());
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Debug.LogError("Shouldn't be executing a passive");
 

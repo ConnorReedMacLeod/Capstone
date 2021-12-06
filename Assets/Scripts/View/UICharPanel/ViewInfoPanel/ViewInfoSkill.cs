@@ -114,26 +114,26 @@ public class ViewInfoSkill : MonoBehaviour {
     }
 
     public void DisplayDescription1() {
-        if(mod == null || mod.lstClauses.Count() <= 0) {
+        if(mod == null || mod.lstSkillClauses.Count() <= 0) {
             txtDescription1.text = "";
         } else {
-            txtDescription1.text = mod.lstClauses[0].GetDescription();
+            txtDescription1.text = mod.lstSkillClauses[0].GetDescription();
         }
     }
 
     public void DisplayDescription2() {
-        if(mod == null || mod.lstClauses.Count() <= 1) {
+        if(mod == null || mod.lstSkillClauses.Count() <= 1) {
             txtDescription2.text = "";
         } else {
-            txtDescription2.text = mod.lstClauses[1].GetDescription();
+            txtDescription2.text = mod.lstSkillClauses[1].GetDescription();
         }
     }
 
     public void DisplayDescription3() {
-        if(mod == null || mod.lstClauses.Count() <= 2) {
+        if(mod == null || mod.lstSkillClauses.Count() <= 2) {
             txtDescription3.text = "";
         } else {
-            txtDescription3.text = mod.lstClauses[2].GetDescription();
+            txtDescription3.text = mod.lstSkillClauses[2].GetDescription();
         }
     }
 

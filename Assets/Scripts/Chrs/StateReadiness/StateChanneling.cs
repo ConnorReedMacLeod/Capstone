@@ -126,7 +126,7 @@ public class StateChanneling : StateReadiness {
 
     }
 
-    class ClauseClearStoredSelection : Clause {
+    class ClauseClearStoredSelection : ClauseSkill {
 
         public ClauseClearStoredSelection(Skill _skill) : base(_skill) {
         }
@@ -135,7 +135,7 @@ public class StateChanneling : StateReadiness {
             return string.Format("Clear out stored selection info for " + skill.sName);
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void Execute() {
 
             Debug.Log("Pushing ClearStoredSelection for " + skill.sName);
             ContSkillEngine.PushSingleExecutable(new ExecClearStoredSelection(skill.chrOwner, skill.skillslot));

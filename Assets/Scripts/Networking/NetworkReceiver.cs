@@ -8,69 +8,75 @@ public class NetworkReceiver : Singleton<NetworkReceiver> {
 
     public const int NDEFAULTSELECTIONSCAPACITY = 100;
 
-    public int indexCurSelection;
-    public List<Selections> lstSelectionsBuffer;
+    public int indexCurMatchInput;
+    public List<MatchInput> lstMatchInputBuffer;
 
 
     [PunRPC]
     void ReceiveSkillSelection(int indexInput, int[] arnSerializedSelection) {
 
-        if(indexInput != indexCurSelection) {
-            Debug.LogErrorFormat("ALERT!  Received input index {0}, but we are expecting index {1}", indexInput, indexCurSelection);
+        //Deserialize the passed selections
+        InputSkillSelection selectionsReceived = new InputSkillSelection(arnSerializedSelection);
+
+        AddInputToBuffer(indexInput, selectionsReceived);
+    }
+
+
+    void AddInputToBuffer(int indexInput, MatchInput matchInput) {
+
+        if(indexInput != indexCurMatchInput) {
+            Debug.LogErrorFormat("ALERT!  Received input index {0}, but we are expecting index {1}", indexInput, indexCurMatchInput);
         }
 
         //Ensure that our received index is within the bounds of our buffer
-        while(indexInput > lstSelectionsBuffer.Count) {
-            IncreaseSelectionsReceivedCapacity();
+        while(indexInput > lstMatchInputBuffer.Count) {
+            IncreaseMatchInputsReceivedCapacity();
         }
 
-        //Deserialize the passed selections
-        Selections selectionsReceived = new Selections(arnSerializedSelection);
-
         //Check if this entry in the buffer is already filled
-        if (lstSelectionsBuffer[indexInput] != null) {
-            Debug.LogErrorFormat("ALERT! Filled index {0} received another selection of {1}", indexInput, selectionsReceived);
+        if (lstMatchInputBuffer[indexInput] != null) {
+            Debug.LogErrorFormat("ALERT! Filled index {0} received another input of {1}", indexInput, matchInput);
             return;
         }
 
-        lstSelectionsBuffer[indexInput] = selectionsReceived;
+        lstMatchInputBuffer[indexInput] = matchInput;
 
-        //If we've received the selection we've been waitign for, then react to that selection
-        if(indexInput == indexCurSelection) {
-            ReceivedPendingSelection();
+        //If we've received the selection we've been waiting for, then react to that selection
+        if(indexInput == indexCurMatchInput) {
+            ReceivedPendingMatchInput();
         }
 
     }
 
-    public void ReceivedPendingSelection() {
+    public void ReceivedPendingMatchInput() {
         //todo - generally process the events of the skill selection
     }
 
-    public bool IsCurSelectionReady() {
-        return lstSelectionsBuffer[indexCurSelection] != null;
+    public bool IsCurMatchInputReady() {
+        return lstMatchInputBuffer[indexCurMatchInput] != null;
     }
 
-    public Selections GetCurSelection() {
-        Debug.Assert(IsCurSelectionReady());
+    public MatchInput GetCurMatchInput() {
+        Debug.Assert(IsCurMatchInputReady());
 
-        return lstSelectionsBuffer[indexCurSelection];
+        return lstMatchInputBuffer[indexCurMatchInput];
     }
 
     //To be called once execution of the current skill is completely finished
-    public void FinishCurSelection() {
-        indexCurSelection++;
+    public void FinishCurMatchInput() {
+        indexCurMatchInput++;
     }
 
     // Increase the number of selections that can be stored by the default amount
-    public void IncreaseSelectionsReceivedCapacity() {
+    public void IncreaseMatchInputsReceivedCapacity() {
         for (int i = 0; i < NDEFAULTSELECTIONSCAPACITY; i++) {
-            lstSelectionsBuffer.Add(null);
+            lstMatchInputBuffer.Add(null);
         }
     }
 
     public override void Init() {
-        lstSelectionsBuffer = new List<Selections>(NDEFAULTSELECTIONSCAPACITY);
-        IncreaseSelectionsReceivedCapacity();
+        lstMatchInputBuffer = new List<MatchInput>(NDEFAULTSELECTIONSCAPACITY);
+        IncreaseMatchInputsReceivedCapacity();
     }
 
 }
