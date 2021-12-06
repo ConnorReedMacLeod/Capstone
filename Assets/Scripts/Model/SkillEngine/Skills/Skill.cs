@@ -23,9 +23,9 @@ public abstract class Skill {
 
     public List<Target> lstTargets;
 
-    public List<Clause> lstClauses = new List<Clause>();
-    public List<Clause> lstClausesOnEquip = new List<Clause>();
-    public List<Clause> lstClausesOnUnequip = new List<Clause>();
+    public List<ClauseSkillSelection> lstSkillClauses = new List<ClauseSkillSelection>();
+    public List<ClauseSkill> lstClausesOnEquip = new List<ClauseSkill>();
+    public List<ClauseSkill> lstClausesOnUnequip = new List<ClauseSkill>();
 
     public Subject subSkillChange = new Subject();
 
@@ -146,11 +146,11 @@ public abstract class Skill {
     public void Execute() {
 
         //Push a reference to each of our clauses onto the stack so they may be evaluated later
-        ContSkillEngine.PushClauses(lstClauses);
+        ContSkillEngine.PushClauses(lstSkillClauses);
     }
 
     //Determine if the skill could be used targetting the passed selections 
-    public virtual bool CanSelect(Selections selections) {// Maybe this doesn't need to be virtual
+    public bool CanSelect(InputSkillSelection selections) {// Maybe this doesn't need to be virtual
 
         //First, check if we're at least alive
         if(chrOwner.bDead == true) {
@@ -179,7 +179,7 @@ public abstract class Skill {
 
     //Determine if the skill can be executed with the given selection parameters - this is more allowable
     //  since we just want to ensure a prepped skill will not fizzle if it can at least do something
-    public bool CanExecute(Selections selections) {
+    public bool CanExecute(InputSkillSelection selections) {
 
         //First, check if we're at least alive
         if(chrOwner.bDead == true) {
@@ -213,8 +213,6 @@ public abstract class Skill {
 
         Debug.Log("WARNING - remember to consider what needs to be checked to see if a channel should be cancelled");
 
-        //This used to just check if the dominant clause could find a valid target, but we don't have that anymore
-
         return true;
     }
 
@@ -238,7 +236,7 @@ public abstract class Skill {
         return skillslot.iSlot >= Chr.nEquippedCharacterSkills;
     }
 
-    class ClausePayMana : Clause {
+    class ClausePayMana : ClauseSkill {
 
         public ClausePayMana(Skill _skill) : base(_skill) {
         }
@@ -247,7 +245,7 @@ public abstract class Skill {
             return string.Format("Paying mana for skill");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void Execute() {
     
             //TODO:: Think if this is an acceptable solution, since it seems potentially narrow.  It also assumes that the mana you reserved
             //       exactly corresponds to the mana you NEED to pay.  I guess this helps with any optional costs that might get played, but I
@@ -262,7 +260,7 @@ public abstract class Skill {
 
     };
 
-    class ClausePayCooldown : Clause {
+    class ClausePayCooldown : ClauseSkill{
 
         public ClausePayCooldown(Skill _skill) : base(_skill) {
         }
@@ -271,7 +269,7 @@ public abstract class Skill {
             return string.Format("Paying cooldown for skill");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void Execute() {
 
             ContSkillEngine.PushSingleExecutable(new ExecChangeCooldown(skill.chrOwner, skill.skillslot , skill.nCooldownInduced));
 
@@ -279,7 +277,7 @@ public abstract class Skill {
 
     };
 
-    class ClausePayFatigue : Clause {
+    class ClausePayFatigue : ClauseSkill {
 
         public ClausePayFatigue(Skill _skill) : base(_skill) {
         }
@@ -288,7 +286,7 @@ public abstract class Skill {
             return string.Format("Paying fatigue for skill");
         }
 
-        public override void ClauseEffect(Selections selection) {
+        public override void Execute() {
 
             ContSkillEngine.PushSingleExecutable(new ExecChangeFatigue(skill.chrOwner, skill.chrOwner, skill.nFatigue, false));
 
@@ -296,7 +294,7 @@ public abstract class Skill {
 
     };
 
-    class ClausePaySkillPoints : Clause {
+    class ClausePaySkillPoints : ClauseSkill {
 
         public ClausePaySkillPoints(Skill _skill) : base(_skill) {
 
@@ -306,12 +304,12 @@ public abstract class Skill {
             return string.Format("Paying skill points");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void Execute() {
             ContSkillEngine.PushSingleExecutable(new ExecPaySkillPoints(skill.chrOwner, skill.chrOwner, skill));
         }
     };
 
-    class ClauseStartSkill : Clause {
+    class ClauseStartSkill : ClauseSkill {
 
         public ClauseStartSkill(Skill _skill) : base(_skill) {
         }
@@ -320,7 +318,7 @@ public abstract class Skill {
             return string.Format("Starting marker for this skill");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void Execute() {
 
             ContSkillEngine.PushSingleExecutable(new ExecStartSkill(skill.chrOwner, skill));
 
@@ -328,7 +326,7 @@ public abstract class Skill {
 
     };
 
-    class ClauseEndSkill : Clause {
+    class ClauseEndSkill : ClauseSkill {
 
         public ClauseEndSkill(Skill _skill) : base(_skill) {
         }
@@ -337,7 +335,7 @@ public abstract class Skill {
             return string.Format("Ending marker for this skill");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void Execute() {
 
             ContSkillEngine.PushSingleExecutable(new ExecEndSkill(skill.chrOwner, skill));
 

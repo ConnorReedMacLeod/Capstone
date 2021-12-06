@@ -8,7 +8,7 @@ public class TypeUsageChannel : TypeUsage {
 
     public SoulChannel soulBehaviour;
     public int nStartChannelTime;
-    public Selections selectionsStored;
+    public InputSkillSelection selectionsStored;
 
     public TypeUsageChannel(Skill skill, int _nStartChannelTime, SoulChannel _soulBehaviour) : base(skill) {
 
@@ -50,7 +50,7 @@ public class TypeUsageChannel : TypeUsage {
         ContSkillEngine.PushSingleClause(new ClauseBeginChannel(skill));
     }
 
-    public override Selections GetUsedSelections() {
+    public override InputSkillSelection GetUsedSelections() {
         return selectionsStored;
     }
 
@@ -58,7 +58,7 @@ public class TypeUsageChannel : TypeUsage {
         selectionsStored = null;
     }
 
-    class ClauseBeginChannel : Clause {
+    class ClauseBeginChannel : ClauseSkill {
 
         public ClauseBeginChannel(Skill _skill) : base(_skill) {
         }
@@ -67,7 +67,7 @@ public class TypeUsageChannel : TypeUsage {
             return string.Format("Transition to a channeling state");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void Execute() {
 
             ContSkillEngine.PushSingleExecutable(new ExecBeginChannel(skill.chrOwner, skill.chrOwner, skill));
 

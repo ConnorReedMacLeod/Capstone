@@ -21,7 +21,7 @@ public class SkillHarpoonGun : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this),
             new Clause2(this)
         };
@@ -32,7 +32,7 @@ public class SkillHarpoonGun : Skill {
         TarChr.AddTarget(this, TarChr.IsDiffTeam(chrOwner));
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         Damage dmg;
         public int nBaseDamage = 30;
@@ -46,7 +46,7 @@ public class SkillHarpoonGun : Skill {
             return string.Format("After channeling, deal {0} damage to the chosen enemy.", dmg.Get());
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = (Chr)selections.lstSelections[0];
 
@@ -59,7 +59,7 @@ public class SkillHarpoonGun : Skill {
 
     };
 
-    class Clause2 : Clause {
+    class Clause2 : ClauseSkillSelection {
 
         public Clause2(Skill _skill) : base(_skill) {
 
@@ -70,7 +70,7 @@ public class SkillHarpoonGun : Skill {
             return string.Format("That enemy Switches to the position in front of them");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = (Chr)selections.lstSelections[1];
 

@@ -19,7 +19,7 @@ public class SkillTantrum : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this)
         };
     }
@@ -28,7 +28,7 @@ public class SkillTantrum : Skill {
         TarMana.AddTarget(this, manaCost);
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         Damage dmgEnemy;
         public int nEnemyDamage = 20;
@@ -47,7 +47,7 @@ public class SkillTantrum : Skill {
             return string.Format("Deal {0} damage to all enemies and {1} damage to all other allies", dmgEnemy.Get(), dmgAlly.Get());
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             //First, deal damage to all enemies
             List<Chr> lstChrEnemy = skill.chrOwner.plyrOwner.GetEnemyPlayer().GetActiveChrs();

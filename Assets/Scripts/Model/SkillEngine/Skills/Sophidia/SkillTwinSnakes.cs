@@ -19,7 +19,7 @@ public class SkillTwinSnakes : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this),
             new Clause1(this)
         };
@@ -30,7 +30,7 @@ public class SkillTwinSnakes : Skill {
         TarChr.AddTarget(this, TarChr.IsDiffTeam(chrOwner));
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         Damage dmg;
         public int nBaseDamage = 20;
@@ -46,7 +46,7 @@ public class SkillTwinSnakes : Skill {
             return string.Format("Deal {0} damage to the chosen character.  Lose {1} health", dmg.Get(), nLifeloss);
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = (Chr)selections.lstSelections[1];
 

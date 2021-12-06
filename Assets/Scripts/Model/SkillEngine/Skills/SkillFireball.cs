@@ -19,7 +19,7 @@ public class SkillFireball : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this)
         };
     }
@@ -29,7 +29,7 @@ public class SkillFireball : Skill {
         TarChr.AddTarget(this, TarChr.IsDiffTeam(chrOwner));
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         Damage dmg;
         public int nBaseDamage = 10;
@@ -43,7 +43,7 @@ public class SkillFireball : Skill {
             return string.Format("Deal {0}*X damage to an Enemy", nBaseDamage);
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             //Ask our manacost target how much excess mana was spent on it
             int nX = ((TarMana)skill.lstTargets[0]).manaCostRequired.GetXPaid((Mana)selections.lstSelections[0]);
@@ -61,7 +61,7 @@ public class SkillFireball : Skill {
 
     };
 
-    class Clause2 : Clause {
+    class Clause2 : ClauseSkillSelection {
 
         public SoulBurning soulToCopy;
 
@@ -75,7 +75,7 @@ public class SkillFireball : Skill {
             return string.Format("Apply Burning(4) to that enemy");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = (Chr)selections.lstSelections[1];
 

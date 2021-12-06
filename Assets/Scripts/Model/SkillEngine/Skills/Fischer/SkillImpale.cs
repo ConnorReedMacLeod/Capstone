@@ -26,7 +26,7 @@ public class SkillImpale : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this)
         };
     }
@@ -36,7 +36,7 @@ public class SkillImpale : Skill {
         TarChr.AddTarget(this, Target.AND(TarChr.IsDiffTeam(chrOwner), TarChr.IsFrontliner()));
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         Damage dmg;
         public int nBaseDamage = 20;
@@ -53,7 +53,7 @@ public class SkillImpale : Skill {
             return string.Format("Deal {0} damage to the enemy Vanguard and reduce their max health by {1}.", dmg.Get(), soulToCopy.nMaxLifeReduction);
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = (Chr)selections.lstSelections[1];
 

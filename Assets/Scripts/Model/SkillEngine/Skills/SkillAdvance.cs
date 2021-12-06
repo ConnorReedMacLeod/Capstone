@@ -19,7 +19,7 @@ public class SkillAdvance : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this)
         };
     }
@@ -29,7 +29,7 @@ public class SkillAdvance : Skill {
         TarPosition.AddTarget(this, Target.AND(TarPosition.IsFrontline(), TarPosition.IsSameTeam(chrOwner)));
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
 
         public Clause1(Skill _skill) : base(_skill) {
@@ -41,7 +41,7 @@ public class SkillAdvance : Skill {
             return string.Format("Switch to target Allied Frontline Position");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
             Chr chrSelected = skill.chrOwner;
 
             Position posToSwitchTo = (Position)selections.lstSelections[1];

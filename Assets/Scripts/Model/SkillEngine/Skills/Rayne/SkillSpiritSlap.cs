@@ -22,7 +22,7 @@ public class SkillSpiritSlap : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this),
         };
     }
@@ -32,7 +32,7 @@ public class SkillSpiritSlap : Skill {
         TarChr.AddTarget(this, Target.AND(TarChr.IsFrontliner(), TarChr.IsDiffTeam(chrOwner)));
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         Damage dmg;
         public int nBaseDamage = 5;
@@ -50,7 +50,7 @@ public class SkillSpiritSlap : Skill {
                 "[DISPIRITED]: This character's cantrips cost [O] more.", dmg.Get());
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = (Chr)selections.lstSelections[1];
 

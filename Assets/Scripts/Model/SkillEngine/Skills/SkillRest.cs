@@ -22,7 +22,7 @@ public class SkillRest : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this)
         };
     }
@@ -31,7 +31,7 @@ public class SkillRest : Skill {
         //No targetting required for a rest action
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         public int nRestFatigue;
 
@@ -45,7 +45,7 @@ public class SkillRest : Skill {
             return string.Format("Finish this character's turn");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             //Check if the character has any fatigue already
             if(skill.chrOwner.nFatigue == 0) {

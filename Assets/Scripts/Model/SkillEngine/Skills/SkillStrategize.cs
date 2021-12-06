@@ -19,7 +19,7 @@ public class SkillStrategize : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this)
         };
     }
@@ -29,7 +29,7 @@ public class SkillStrategize : Skill {
         TarAdapt.AddTarget(this, TarSkillSlot.IsOwnedBySameChr(chrOwner), Target.TRUE);
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         public Clause1(Skill _skill) : base(_skill) {
 
@@ -40,7 +40,7 @@ public class SkillStrategize : Skill {
             return string.Format("Adapt target Skill on this Character");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             SkillSlot ssAdaptingFrom = (SkillSlot)selections.lstSelections[1];
             SkillType.SKILLTYPE skilltypeAdaptingTo = (SkillType.SKILLTYPE)selections.lstSelections[2];

@@ -5,8 +5,8 @@ using UnityEngine;
 public class LocalInputScripted : LocalInputType {
 
 
-    public int[] arScriptedTargettingIndices;                         //Holds the current index of the script we're using for each character's next skill
-    public KeyValuePair<int, Selections>[,] arTargettingScript;
+    public int[] arScriptedInputIndices;                         //Holds the current index of the script we're using for each character's next input
+    public KeyValuePair<int, MatchInput>[,] arTargettingScript;
     public const int MAXTARGETATTEMPTS = 5;
 
     public override void StartSelection() {
@@ -22,7 +22,7 @@ public class LocalInputScripted : LocalInputType {
 
         arTargettingScript = _arTargettingScript;
 
-        arScriptedTargettingIndices = new int[arTargettingScript.Length];
+        arScriptedInputIndices = new int[arTargettingScript.Length];
 
     }
 
@@ -43,14 +43,14 @@ public class LocalInputScripted : LocalInputType {
         while(true) {
 
             //Double check that the index we're on for this character is before the end of that character's script
-            if(arScriptedTargettingIndices[chrToAct.id] >= arTargettingScript.GetLength(1)) {
+            if(arScriptedInputIndices[chrToAct.id] >= arTargettingScript.GetLength(1)) {
                 Debug.LogError("ERROR - not enough targetting information stored in this script for this character - resetting");
-                arScriptedTargettingIndices[chrToAct.id] = 0;
+                arScriptedInputIndices[chrToAct.id] = 0;
             }
 
             //Get the current targetting information, then increase the index for next time
-            nextSelection = arTargettingScript[chrToAct.id, arScriptedTargettingIndices[chrToAct.id]];
-            arScriptedTargettingIndices[chrToAct.id]++;
+            nextSelection = arTargettingScript[chrToAct.id, arScriptedInputIndices[chrToAct.id]];
+            arScriptedInputIndices[chrToAct.id]++;
             nTargetsTried++;
 
             selections = nextSelection.Value;
