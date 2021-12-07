@@ -15,6 +15,21 @@ public class NetworkDraftReceiver : Singleton<NetworkDraftReceiver> {
     [PunRPC]
     void ReceiveBan(int indexDraftInput, CharType.CHARTYPE chartypeToBan) {
 
+        Debug.LogFormat("Received input #{0}: Ban {1}", indexCurDraftInput, chartypeToBan);
+        AddInputToBuffer(indexDraftInput, chartypeToBan);
+
+    }
+
+    [PunRPC]
+    void ReceiveDraft(int indexDraftInput, CharType.CHARTYPE chartypeToDraft) {
+
+        Debug.LogFormat("Received input #{0}: Draft {1}", indexCurDraftInput, chartypeToDraft);
+        AddInputToBuffer(indexDraftInput, chartypeToDraft);
+
+    }
+
+    void AddInputToBuffer(int indexDraftInput, CharType.CHARTYPE chartype) {
+
         if (indexDraftInput != indexCurDraftInput) {
             Debug.LogErrorFormat("ALERT!  Received draftinput index {0}, but we are expecting index {1}", indexDraftInput, indexCurDraftInput);
         }
@@ -26,22 +41,11 @@ public class NetworkDraftReceiver : Singleton<NetworkDraftReceiver> {
 
         //Check if this entry in the buffer is already filled (LENGTH indicates an unfilled selection)
         if (lstDraftInputBuffer[indexDraftInput] != CharType.CHARTYPE.LENGTH) {
-            Debug.LogErrorFormat("ALERT! Filled index {0} received another selection of {1}", indexDraftInput, chartypeToBan);
+            Debug.LogErrorFormat("ALERT! Filled index {0} received another selection of {1}", indexDraftInput, chartype);
             return;
         }
 
-        lstDraftInputBuffer[indexDraftInput] = chartypeToBan;
-
-        //If we've received the selection we've been waitign for, then react to that selection
-        if (indexDraftInput == indexCurDraftInput) {
-            ReceivedPendingDraftInput();
-        }
-
-    }
-
-    public void ReceivedPendingDraftInput() {
-        //Let our draft controller know that it can process the input that it was waiting on
-        DraftController.Get().ProcessDraftInputBuffer();
+        lstDraftInputBuffer[indexDraftInput] = chartype;
     }
 
     public bool IsCurSelectionReady() {

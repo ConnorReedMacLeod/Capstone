@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MatchInput {
-   
+public abstract class MatchInput {
 
+    public abstract IEnumerator Execute();
 
 }

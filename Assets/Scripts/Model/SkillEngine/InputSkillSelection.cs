@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputSkillSelection : MatchInput {
+public abstract class InputSkillSelection : MatchInput {
     public Skill skillSelected;
     public List<object> lstSelections;
 
