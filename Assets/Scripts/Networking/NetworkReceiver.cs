@@ -41,15 +41,7 @@ public class NetworkReceiver : Singleton<NetworkReceiver> {
 
         lstMatchInputBuffer[indexInput] = matchInput;
 
-        //If we've received the selection we've been waiting for, then react to that selection
-        if(indexInput == indexCurMatchInput) {
-            ReceivedPendingMatchInput();
-        }
 
-    }
-
-    public void ReceivedPendingMatchInput() {
-        //todo - generally process the events of the skill selection
     }
 
     public bool IsCurMatchInputReady() {
