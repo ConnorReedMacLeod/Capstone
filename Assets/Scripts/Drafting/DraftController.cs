@@ -18,8 +18,7 @@ public class DraftController : Singleton<DraftController> {
 
     }
 
-    public bool bWaitingOnLocalDraftInput;
-    public bool bWaitingOnForeignDraftInput;
+    public DraftAction draftactionWaitingOn;
 
     public int indexCurDraftStep;
     public List<DraftAction> lstDraftOrder;
@@ -43,50 +42,69 @@ public class DraftController : Singleton<DraftController> {
 
     public Button btnStartDraft;
 
+    //The main loop that will spin waiting for outside networked input and process
+    //  it, once our local simulation is ready for a new input
+    public IEnumerator CRDraftLoop() {
 
-    public void ProcessDraftInputBuffer() {
-        //First, check if we've progressed through the whole draft
-        if (IsDraftPhaseOver()) {
-            FinishDraft();
-            return;
-        }
+        //Do any animation processing that needs to be done before the draft input actually starts
+        yield return StartCoroutine(CRPrepDraft());
 
-        //Next, check if we have the input that we're waiting for
-        if(NetworkDraftReceiver.Get().IsCurSelectionReady() == false) {
-            Debug.LogFormat("Still waiting on {0}th draft input", NetworkDraftReceiver.Get().indexCurDraftInput);
 
-            //Check if we're responsible for filling that draft input
-            if (NetworkMatchSetup.IsLocallyOwned(GetActivePlayerForNextDraftPhaseStep())) {
-                BeginSelectingLocally();
-            } else {
-                //If we're not responsible for filling that draft input, then locally display that we're waiting for foreign input
-                BeginSelectingForeign();
+        //Keep processing turn events while the draft isn't finished
+        while (IsDraftPhaseOver()) {
+
+            //Check if we have input waiting for us in the network buffer
+            while(NetworkDraftReceiver.Get().IsCurSelectionReady() == false) {
+                //Keep spinning until we get the input we're waiting on
+
+                WaitForDraftInput();
+                yield return null;
             }
-            return;
+            //If we were waiting on input, then clean up the waiting process
+            if (draftactionWaitingOn != null) EndWaitingOnDraftInput();
+
+            //At this point, we have an input in the buffer that we are able to process
+            DraftAction draftaction = GetNextDraftPhaseStep();
+            CharType.CHARTYPE chartypeInput = NetworkDraftReceiver.Get().GetCurSelection();
+
+            //Start a coroutine to process whichever event we need to execute
+            if (draftaction.draftactionType == DraftAction.DRAFTACTIONTYPE.DRAFT) {
+                //Draft the character
+                yield return StartCoroutine(CRDraftChr(draftaction.iPlayer, chartypeInput));
+            } else {
+                //Ban the character
+                yield return StartCoroutine(CRBanChr(draftaction.iPlayer, chartypeInput));
+            }
+
+            //Now that the draft/ban is complete and processed, increment our 'current' indices
+            NetworkDraftReceiver.Get().FinishCurSelection();
+            FinishDraftPhaseStep();
         }
 
-        //If we do have the input we were waiting on, then let's process it
-        DraftAction draftaction = GetNextDraftPhaseStep();
-        CharType.CHARTYPE chartypeInput = NetworkDraftReceiver.Get().GetCurSelection();
+        //Do any animation process that needs to be done before we leave the draft scene
+        yield return StartCoroutine(CRCleanUpDraft());
 
-        if(draftaction.draftactionType == DraftAction.DRAFTACTIONTYPE.DRAFT) {
-            //Draft the character
-            DraftChr(draftaction.iPlayer, chartypeInput);
-        }else {
-            //Ban the character
-            BanChr(draftaction.iPlayer, chartypeInput);
-        }
+        //Wrap up the draft phase
+        FinishDraft();
+        yield break;
+    }
 
-        //Do any cleanup of local display now that the input we were waiting (or maybe not waiting) on is done
-        EndWaitingOnDraftInput();
+    //Do any initial intro animations and loading for before we start processing draft input
+    public IEnumerator CRPrepDraft() {
 
+        Debug.Log("Starting up the draft");
 
-        //Now that the draft/ban is complete and processed, increment our 'current' indices
-        NetworkDraftReceiver.Get().FinishCurSelection();
-        FinishDraftPhaseStep();
+        yield return new WaitForSeconds(3.0f);
 
-        //Finally, try to continue to process further buffer events (if they exist)
-        ProcessDraftInputBuffer();
+    }
+
+    //Do any cleanup animations for the end of the draft
+    public IEnumerator CRCleanUpDraft() {
+
+        Debug.Log("Cleaning up the draft");
+
+        yield return new WaitForSeconds(3.0f);
+
     }
 
     public void InitChrsAvailableToDraft() {
@@ -108,7 +126,7 @@ public class DraftController : Singleton<DraftController> {
         return arbChrsAvailableToDraft[(int)chr];
     }
 
-    public void DraftChr(int iPlayer, CharType.CHARTYPE chrDrafted) {
+    public IEnumerator CRDraftChr(int iPlayer, CharType.CHARTYPE chrDrafted) {
         //Ensure the character actually exists
         Debug.Assert(chrDrafted < CharType.CHARTYPE.LENGTH);
 
@@ -129,9 +147,12 @@ public class DraftController : Singleton<DraftController> {
         draftcollection.SetChrAsDrafted((int)chrDrafted);
         arDraftedChrDisplay[iPlayer].UpdateDraftedChrDisplays(arDraftedChrs[iPlayer]);
 
+        yield return new WaitForSeconds(1.0f);
+
+        Debug.Log("Finished 'waiting' for the draft to finish");
     }
 
-    public void BanChr(int iPlayer, CharType.CHARTYPE chrBanned) {
+    public IEnumerator CRBanChr(int iPlayer, CharType.CHARTYPE chrBanned) {
         //Ensure the character actually exists
         Debug.Assert(chrBanned < CharType.CHARTYPE.LENGTH);
 
@@ -147,6 +168,9 @@ public class DraftController : Singleton<DraftController> {
 
         draftcollection.SetChrAsBanned((int)chrBanned);
 
+        yield return new WaitForSeconds(1.0f);
+
+        Debug.Log("Finished 'waiting' for the ban to finish");
     }
 
     public void InitDraftOrder() {
@@ -200,50 +224,50 @@ public class DraftController : Singleton<DraftController> {
         indexCurDraftStep++;
     }
 
-    public void BeginSelectingLocally() {
-        bWaitingOnLocalDraftInput = true;
+    public void WaitForDraftInput() {
+        //If we're already waiting, then we don't need to do anything further
+        if (draftactionWaitingOn != null) return;
 
-        //Let anyone (UI effects probably) know that we've begun locally selecting
-        subBeginChooseLocally.NotifyObs();
-    }
+        //Raise the flag that we're waiting for input
+        draftactionWaitingOn = GetNextDraftPhaseStep();
 
-    public void BeginSelectingForeign() {
-        bWaitingOnForeignDraftInput = true;
-
-        //Let anyone (UI effects probably) know that we're waiting for another player to make a selection
-        subBeginChooseForeign.NotifyObs();
+        //Check what type of input we're waiting on
+        if (NetworkMatchSetup.IsLocallyOwned(draftactionWaitingOn.iPlayer)) {
+            //Prompt the local player to select input
+            subBeginChooseLocally.NotifyObs();
+        } else {
+            //Let anyone (UI effects probably) know that we're waiting for another player to make a selection
+            subBeginChooseForeign.NotifyObs();
+        }
+        return;
     }
 
     //Figure out what type of draft action we were waiting on (foreign/local) and react appropriately to completing it
     public void EndWaitingOnDraftInput() {
 
-        //Let anyone (UI effects probably) know that the current player has finished their selection
-        if (bWaitingOnLocalDraftInput) {
+        //Check what type of input we're waiting on
+        if (NetworkMatchSetup.IsLocallyOwned(draftactionWaitingOn.iPlayer)) {
+            //Let anyone (UI effects probably) know that the current player has finished their selection
             subEndChooseLocally.NotifyObs();
-            bWaitingOnLocalDraftInput = false;
-        } else if (bWaitingOnForeignDraftInput) {
+        } else {
             subEndChooseForeign.NotifyObs();
-            bWaitingOnForeignDraftInput = false;
         }
+
+        //Clear the action we were waiting on
+        draftactionWaitingOn = null;
     }
     
 
     public void OnDraftableChrClicked(CharType.CHARTYPE chrClicked) {
 
         //Check if we've been told by the master to choose a character to draft/ban
-        if(bWaitingOnLocalDraftInput == false) {
-            Debug.Log("We haven't been asked to draft/ban a character currently");
-            return;
-        }
-
-        //Check if we're still in the draft phase
-        if(IsDraftPhaseOver() == true) {
-            Debug.LogError("Can't draft/ban if the draft phase is over");
+        if(draftactionWaitingOn == null) {
+            Debug.Log("We aren't waiting on any input right now");
             return;
         }
 
         //Check if it's even our turn to draft
-        if(NetworkMatchSetup.IsLocallyOwned(GetActivePlayerForNextDraftPhaseStep()) == false) {
+        if(NetworkMatchSetup.IsLocallyOwned(draftactionWaitingOn.iPlayer) == false) {
             Debug.LogError("Can't draft/ban since it's not your turn");
             return;
         }
@@ -276,7 +300,7 @@ public class DraftController : Singleton<DraftController> {
         btnStartDraft.gameObject.SetActive(false);
 
         //Start processing the draft input buffer
-        ProcessDraftInputBuffer();
+        StartCoroutine(CRDraftLoop());
     }
 
     public void FinishDraft() {
