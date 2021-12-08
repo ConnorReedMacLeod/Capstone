@@ -122,6 +122,11 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
     }
 
+    public void InitRandomization() {
+        //Attempt to set the randomization seed (we'll only succeed if we're the master, but we should still try)
+        NetworkMatchSetup.SetRandomizationSeed(Random.Range(0, 1000000));
+    }
+
     public void OnClickStartDraft() {
         if(PhotonNetwork.IsMasterClient == false) {
             Debug.LogError("A non-master tried to move to the draft phase - ignoring");

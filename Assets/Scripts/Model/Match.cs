@@ -144,6 +144,10 @@ public class Match : MonoBehaviour {
         }
         Debug.Log("Starting match initializations since we have enough information");
 
+        ContRandomization.Get().InitGenerator(NetworkMatchSetup.GetRandomizationSeed());
+
+        Debug.Log("Finished initializing the randomizer");
+
         InitPlayers(nPlayers);
 
         Debug.Log("Finished initializing players");

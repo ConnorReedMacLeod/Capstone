@@ -191,8 +191,6 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     public void ProcessStacks() {
 
-
-
         //First, check if there's any executables to process
         if(stackExec.Count > 0) {
 
@@ -254,24 +252,13 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
             return;
         }
 
-        //Then we have nothing left to process
-        //So pass along the message to the Master that we're done this phase of the turn
+        //Then we have nothing left to process, so we need to move to the next phase to put its executable on the stack
+        if(bDEBUGENGINE) Debug.Log("No Clauses or Executables so move to the next part of the turn");
+        ContTurns.Get().FinishedTurnPhase();
 
-
-        //If we're using manual turn evaluation, then wait for the user to click the manual button again so
-        //  that we're ready to progress to the next phase of the turn; if automatic, then we can move
-        //  to just finish the phase now
-        if(ContSkillEngine.Get().bAutoTurns) {
-            if(bDEBUGENGINE) Debug.Log("No Clauses or Executables so move to the next part of the turn");
-            ContTurns.Get().FinishedTurnPhase();
-        }
-
-        //We used to recurse here since the FinishedTurnPhase would immediately put a new executable on the stack.  
-        //  As is, we'll need to wait for the master network to let us know when we can progress to the next phase 
-        //  of the turn, at which point we can start ProcessStacks() then
-
-        //ProcessStacks();
-
+        //Now recurse here so that we can process the next executable that has been put on our stack for the next
+        //  phase of the turn
+        ProcessStacks();
 
         if(bDEBUGENGINE) Debug.Log("Reached the end of ProcessStacks");
 

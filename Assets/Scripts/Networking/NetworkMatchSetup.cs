@@ -9,6 +9,23 @@ using Photon.Realtime;
 public static class NetworkMatchSetup {
 
 
+    // Randomization Seed
+    public static string GetRandomizationSeedKey() {
+        return "rnd";
+    }
+
+    public static void SetRandomizationSeed(int nSeed) {
+        if (PhotonNetwork.IsMasterClient == false) return; //Only allow the master to set the randomization key
+
+        ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { GetRandomizationSeedKey(), nSeed } };
+
+        PhotonNetwork.CurrentRoom.SetCustomProperties(hashNewProperties);
+    }
+
+    public static int GetRandomizationSeed() {
+        return (int)PhotonNetwork.CurrentRoom.CustomProperties[GetRandomizationSeedKey()];
+    }
+
     // Player Owner
     public static string GetPlayerOwnerKey(int idPlayer) {
         return string.Format("po{0}", idPlayer);
@@ -122,7 +139,7 @@ public static class NetworkMatchSetup {
 
     public static string MatchSetupToString() {
         
-        string s = "";
+        string s = string.Format("Seed: {0}\n", GetRandomizationSeed());
 
         for (int i = 0; i < Player.MAXPLAYERS; i++) {
 
@@ -146,7 +163,7 @@ public static class NetworkMatchSetup {
     }
 
     public static bool HasAllMatchSetupInfo() {
-        //Note that we always assume that there will be a default entry for player owners and input types for all players
+        //Note that we always assume that there will be a default entry for the randomization seed, player owners and input types for all players
         //  We'll also only be checking that there are enough character selections to start a match with (you can potentially draft
         //  more than this though)
 
