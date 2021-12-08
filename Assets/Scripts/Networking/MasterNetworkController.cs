@@ -51,7 +51,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
     //TODO - look at making this into a dynamic list of connected players
     public Dictionary<int, int> dictClientExpectedPhase;
 
-    public MasterManaDistributer manadistributer;
+    public ContManaDistributer manadistributer;
     public MasterTimeoutController timeoutcontroller;
 
 
@@ -66,7 +66,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
         Debug.Log("When MasterNetworkController is enabled, we have " + PhotonNetwork.CurrentRoom.PlayerCount + " players in the room");
 
-        manadistributer = GetComponent<MasterManaDistributer>();
+        manadistributer = GetComponent<ContManaDistributer>();
         timeoutcontroller = GetComponent<MasterTimeoutController>();
 
         PhotonNetwork.AddCallbackTarget(this);
@@ -234,13 +234,6 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
                 break;
 
-            case ContTurns.STATETURN.EXECUTESKILL:
-
-                //Fetch the saved skill selection info and pass it along so each client knows what skill is being used
-                arAdditionalInfo[1] = arnSavedSerializedInfo;
-
-                break;
-
             case ContTurns.STATETURN.TURNEND:
 
                 //Reset any old stored skill selection
@@ -262,45 +255,7 @@ public class MasterNetworkController : SingletonPersistent<MasterNetworkControll
 
     }
 
-    public int GetNextPhase(int nPlayerID, int nCurTurnPhase) {
-
-        int nNextTurnPhase;
-
-        switch((ContTurns.STATETURN)nCurTurnPhase) {
-
-            case ContTurns.STATETURN.CHOOSESKILL:
-                //If no character is set to act, then we jump directly ahead to TurnEnd
-                if(ContTurns.Get().GetNextActingChr() == null) {
-                    nNextTurnPhase = (int)ContTurns.STATETURN.TURNEND;
-                } else {
-                    //Otherwise, execute whatever skill the active player has chosen
-                    nNextTurnPhase = (int)ContTurns.STATETURN.EXECUTESKILL;
-                }
-                break;
-
-            case ContTurns.STATETURN.EXECUTESKILL:
-                //If we've finished executing an skill, then we can move back to
-                //  selecting a skill for the character that is next set to act this turn
-                nNextTurnPhase = (int)ContTurns.STATETURN.CHOOSESKILL;
-
-                break;
-
-            case ContTurns.STATETURN.TURNEND:
-                //If we're at the end of turn, reset to the beginning
-                nNextTurnPhase = (int)ContTurns.STATETURN.RECHARGE;
-
-                break;
-
-            default:
-
-                //By default, just advance to the next sequential phase
-                nNextTurnPhase = nCurTurnPhase + 1;
-
-                break;
-            }
-
-        return nNextTurnPhase;
-    }
+    
 
     public void OnClientFinishedPhase(int nClientID, int nCurTurnPhase, int nSerializedInfo) {
         OnClientFinishedPhase(nClientID, nCurTurnPhase, new int[1] { nSerializedInfo });

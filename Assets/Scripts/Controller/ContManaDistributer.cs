@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MasterManaDistributer : MonoBehaviour {
+public class ContManaDistributer : Singleton<ContManaDistributer> {
     
     public const int NRESERVESPERMANA = 3;
+    //Don't need to distribute effort mana - hence the -1
     public const int NRESERVELENGTH = NRESERVESPERMANA * (Mana.nManaTypes - 1);
 
-    //Don't need to distribute effort mana - hence the -1
-    public int[,] arnManaReserves = new int[Player.MAXPLAYERS, NRESERVELENGTH];
+    public Mana.MANATYPE[,] arManaReserves = new Mana.MANATYPE[Player.MAXPLAYERS, NRESERVELENGTH];
 
     public int[] ariReserveProgression = new int[Player.MAXPLAYERS];
 
     // Start is called before the first frame update
-    void Start() {
+    public override void Init() {
         
         for(int i=0; i<Player.MAXPLAYERS; i++) {
             //Init ReserveProgression to the start of the reserves for each player
@@ -22,7 +22,7 @@ public class MasterManaDistributer : MonoBehaviour {
             //And initialize the contents of the reserves to be NRESERVESPERMANA copies of each mana type
             for(int j=0; j<NRESERVELENGTH; j++) {
                 //so the mana type increases after every NRESERVESPERMANA iterations
-                arnManaReserves[i, j] = j / NRESERVESPERMANA;
+                arManaReserves[i, j] = (Mana.MANATYPE)(j / NRESERVESPERMANA);
             }
 
             //Initially scramble that player's mana reserves
@@ -33,31 +33,32 @@ public class MasterManaDistributer : MonoBehaviour {
 
     public void RandomizePlayerReserves(int iPlayer) {
 
-        int nSwap;
+        Mana.MANATYPE swap;
         for (int i = 0; i < NRESERVELENGTH; i++) {
-            nSwap = arnManaReserves[iPlayer, i];
-            int iRandomIndex = Random.Range(0, NRESERVELENGTH);
-            arnManaReserves[iPlayer, i] = arnManaReserves[iPlayer, iRandomIndex];
-            arnManaReserves[iPlayer, iRandomIndex] = nSwap;
+            swap = arManaReserves[iPlayer, i];
+            //Note that we have to use a standardized randomization source so that every player will simulate with the same randomization
+            int iRandomIndex = ContRandomization.Get().GetRandom(0, NRESERVELENGTH);
+            arManaReserves[iPlayer, i] = arManaReserves[iPlayer, iRandomIndex];
+            arManaReserves[iPlayer, iRandomIndex] = swap;
         }
     }
 
-    public int PeekNextMana(int iPlayer) {
-        return arnManaReserves[iPlayer, ariReserveProgression[iPlayer]];
+    public Mana.MANATYPE PeekNextMana(int iPlayer) {
+        return arManaReserves[iPlayer, ariReserveProgression[iPlayer]];
     }
 
-    public int[] TakeNextMana() {
-        int[] arnReturnMana = new int[Player.MAXPLAYERS];
+    public Mana.MANATYPE[] TakeNextMana() {
+        Mana.MANATYPE[] arReturnMana = new Mana.MANATYPE[Player.MAXPLAYERS];
 
         for(int i=0; i<Player.MAXPLAYERS; i++) {
-            arnReturnMana[i] = TakeNextManaFromPlayer(i);
+            arReturnMana[i] = TakeNextManaFromPlayer(i);
         }
 
-        return arnReturnMana;
+        return arReturnMana;
     }
 
-    public int TakeNextManaFromPlayer(int iPlayer) {
-        int nReturnMana = PeekNextMana(iPlayer);
+    public Mana.MANATYPE TakeNextManaFromPlayer(int iPlayer) {
+        Mana.MANATYPE manaReturn = PeekNextMana(iPlayer);
         ariReserveProgression[iPlayer]++;
 
         //if we've advanced through all of our reserves
@@ -70,6 +71,6 @@ public class MasterManaDistributer : MonoBehaviour {
             ariReserveProgression[iPlayer] = 0;
         }
 
-        return nReturnMana;
+        return manaReturn;
     }
 }
