@@ -30,7 +30,7 @@ public abstract class Executable {
         return true;
     }
 
-    public void Execute() {
+    public IEnumerator Execute() {
         if (isLegal() == false) {
             Debug.Log("Executable of type  " + this.GetType().ToString() + " has been cancelled since it's no longer legal");
 
@@ -39,7 +39,6 @@ public abstract class Executable {
 
             //Perform all of the effects of the executable
             ExecuteEffect();
-
 
             //Let the AudioManager play the associated sound effect (if there is one)
             if (arSoundEffects != null && arSoundEffects.Length != 0) {
@@ -50,6 +49,11 @@ public abstract class Executable {
             //Put our post-trigger effects onto the stack so they'll be executed next
             GetPostTrigger().NotifyObs(null, this);
 
+        }
+
+        //Delay for the appropriate amount of time before 
+        if(fDelay > 0) {
+            yield return new WaitForSeconds(fDelay);
         }
 
         //Now that we've done our thing, let the engine know to start processing the next thing

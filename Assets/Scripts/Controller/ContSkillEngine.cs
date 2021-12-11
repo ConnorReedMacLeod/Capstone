@@ -35,6 +35,57 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         ProcessStacks();
     }
 
+
+    //The main loop that will process the effects of the game.  If it needs inputs, it will flag what
+    //  it's waiting on and pull input from the network buffer to decide what action should be taken
+    public IEnumerator CRMatchLoop() {
+
+        //Do any animation processing that needs to be done before the match processing actually starts
+        yield return StartCoroutine(CRPrepMatch());
+
+
+        //Keep processing effects while the match isn't finished
+        while (IsMatchOver()) {
+
+            // Pass control over to the stack-processing loop until it needs player input to continue the simulation
+            yield return ProcessStackUntilInputNeeded();
+
+            //Check if we have input waiting for us in the network buffer
+            while (NetworkDraftReceiver.Get().IsCurSelectionReady() == false) {
+                //Keep spinning until we get the input we're waiting on
+
+                WaitForMatchInput();
+                yield return null;
+            }
+            //If we were waiting on input, then clean up the waiting process
+            if (draftactionWaitingOn != null) EndWaitingOnDraftInput();
+
+            //At this point, we have an input in the buffer that we are able to process
+            DraftAction draftaction = GetNextDraftPhaseStep();
+            CharType.CHARTYPE chartypeInput = NetworkDraftReceiver.Get().GetCurSelection();
+
+            //Start a coroutine to process whichever event we need to execute
+            if (draftaction.draftactionType == DraftAction.DRAFTACTIONTYPE.DRAFT) {
+                //Draft the character
+                yield return StartCoroutine(CRDraftChr(draftaction.iPlayer, chartypeInput));
+            } else {
+                //Ban the character
+                yield return StartCoroutine(CRBanChr(draftaction.iPlayer, chartypeInput));
+            }
+
+            //Now that the draft/ban is complete and processed, increment our 'current' indices
+            NetworkDraftReceiver.Get().FinishCurSelection();
+            FinishDraftPhaseStep();
+        }
+
+        //Do any animation process that needs to be done before we leave the draft scene
+        yield return StartCoroutine(CRCleanUpMatch());
+
+        //Wrap up the draft phase
+        FinishMatch();
+        yield break;
+    }
+
     public void cbManualExecuteEvent(Object target, params object[] args) {
         bAutoTurns = false;
 
@@ -96,12 +147,12 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
     }
 
 
-    public void ResolveExec() {
+    public IEnumerator ResolveExec() {
 
         if(bDEBUGENGINE) Debug.Log("Resolving an Executable of type" + stackExec.Peek().GetType().ToString());
 
         //Remove the Executable from the top of the stack and execute it
-        stackExec.Pop().Execute();
+        yield return stackExec.Pop().Execute();
 
     }
 
@@ -167,6 +218,8 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         //TODO:: Consider if we should check for replacement effects and triggers at resolve-time or at stack-pushing-time
     }
 
+
+    //TODONOW - consider making this a coroutine - be needed forever for everything, but can serve as 'animations' to describe the effects that are happening
     public void SpawnTimer(float fDelay, string sLabel) {
         GameObject goTimer = Instantiate(pfTimer, Match.Get().transform); //TIMER SPAWN POSITION
         ViewTimer viewTimer = goTimer.GetComponent<ViewTimer>();
@@ -189,14 +242,42 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         return stackExec.Count == 0 && stackClause.Count == 0;
     }
 
-    public void ProcessStacks() {
+    public IEnumerator ProcessStackUntilInputNeeded() {
 
-        //First, check if there's any executables to process
-        if(stackExec.Count > 0) {
+        // Check if the flag has been raised to indicate we need player input to continue
+        while (todo) {
+            // Keep processing game-actions until we need player input
+            yield return ProcessStacks();
+        }
 
-            //If we're seeing this executable for the first time and have
-            //to process replacement and pre-trigger effects
-            if(!stackExec.Peek().bPreTriggered) {
+    }
+
+    public IEnumerator ProcessStacks() {
+
+        while (true) {
+            while (stackExec.Count == 0) {
+                //If we don't have any executables to process, then we have to unpack clauses until we do have an executable
+
+                if (stackClause.Count > 0) {
+                    //If we have a clause on our stack, then unpack that to hopefully add an executable to the stack
+                    if (bDEBUGENGINE) Debug.Log("No Executables, so unpack a Clause");
+                    ResolveClause();
+                } else {
+                    //If we have no clauses on our stack, then our stack is completely empty, so we can push 
+                    // a new executable for the next phase of the turn
+                    if (bDEBUGENGINE) Debug.Log("No Clauses or Executables so move to the next part of the turn");
+                    ContTurns.Get().FinishedTurnPhase();
+                }
+            }
+
+            //If we've gotten this far, then we know we have an executable to examine
+
+            //Check if the executable on top of our stack has dealt with its pre-triggers/replacements yet
+            if (stackExec.Peek().bPreTriggered) {
+                //If we've already dealt with all its pretriggers/replacements, then we're ready to actually evaluate and we can 
+                //  exit our loop
+                break;
+            } else { 
 
                 //Debug.Log("Performing Replacement effects and Pre-Triggers");
 
@@ -222,46 +303,15 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
                 //Set our flag so that we don't pre-trigger this effect again
                 top.bPreTriggered = true;
 
-                //Now recurse so that we can process whatever effect should come next
-                if(bDEBUGENGINE) Debug.Log("Recursing on ProcessStacks after resolving replacements");
-                ProcessStacks();
-
-            } else {
-                //at this point, we can actually evaluate this executable
-                ResolveExec();
-
+                //Now we can continue our loop to process whatever executable is now at the top of the stack
             }
 
-            return;
         }
 
-        //Debug.Log("Processing stack with no executables");
-
-        //Check statebased actions
-        MaintainStateBasedActions();
-
-        //Next, check if there's any clauses to process
-        if(stackClause.Count > 0) {
-            if(bDEBUGENGINE) Debug.Log("No Executables, so unpack a Clause");
-            ResolveClause();
-
-            //Then recurse to find something new we can process
-
-            if(bDEBUGENGINE) Debug.Log("Recursing on ProcessStacks after unpacking a clause");
-            ProcessStacks();
-            return;
-        }
-
-        //Then we have nothing left to process, so we need to move to the next phase to put its executable on the stack
-        if(bDEBUGENGINE) Debug.Log("No Clauses or Executables so move to the next part of the turn");
-        ContTurns.Get().FinishedTurnPhase();
-
-        //Now recurse here so that we can process the next executable that has been put on our stack for the next
-        //  phase of the turn
-        ProcessStacks();
-
-        if(bDEBUGENGINE) Debug.Log("Reached the end of ProcessStacks");
-
+        //If we've gotten this far, then we know we have an executable at the top of our stack and 
+        //  we are ready to process it
+        yield return ResolveExec();
+        
     }
 
     //Other classes can call this to invoke the ProcessStack method after a delay
