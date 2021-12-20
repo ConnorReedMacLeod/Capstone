@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class InputSkillSelection : MatchInput {
+    public Chr chrActing;
     public Skill skillSelected;
     public List<object> lstSelections;
 
     //For creating a new skill selection collection to be filled out in the selection process
-    public InputSkillSelection(Skill _skSelected) {
+    public InputSkillSelection(int _iPlayerActing, Chr _chrActing, Skill _skSelected) : base(_iPlayerActing) {
+        chrActing = _chrActing;
         skillSelected = _skSelected;
         lstSelections = new List<object>();
     }
@@ -15,9 +17,10 @@ public class InputSkillSelection : MatchInput {
     //For deserializing a master-provided set of serialized skill selection into their corresponding objects
     // By convention, the leading entry of the array corresponds to the chosen skill, with the remaining
     // entries corresponding to selections for that skill's targets
-    public InputSkillSelection(int[] arnSerializedSelections) {
+    public InputSkillSelection(int _iPlayerActing, int[] arnSerializedSelections) : base(_iPlayerActing) {
 
         skillSelected = Serializer.DeserializeSkill(arnSerializedSelections[0]);
+        chrActing = skillSelected.chrOwner;
 
         Debug.Assert(skillSelected.lstTargets.Count == arnSerializedSelections.Length - 1,
             "Received " + (arnSerializedSelections.Length - 1) + " selections for a skill requiring " + skillSelected.lstTargets.Count);
@@ -32,7 +35,8 @@ public class InputSkillSelection : MatchInput {
         }
     }
 
-    public InputSkillSelection(InputSkillSelection other) {
+    public InputSkillSelection(InputSkillSelection other) : base(other) {
+        chrActing = other.chrActing;
         skillSelected = other.skillSelected;
         lstSelections = other.lstSelections;
     }
@@ -42,7 +46,7 @@ public class InputSkillSelection : MatchInput {
     }
 
     public static InputSkillSelection GetRestSelection(Chr chr) {
-        return new InputSkillSelection(chr.skillRest);
+        return new InputSkillSelection(chr.plyrOwner.id, chr, chr.skillRest);
     }
 
     public void ResetToRestSelection() {

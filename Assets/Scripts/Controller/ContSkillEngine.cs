@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ContSkillEngine : Singleton<ContSkillEngine> {
 
-    public bool bAutoTurns = false;
+    public bool bStartedMatchLoop = false;
 
     public Stack<Clause> stackClause = new Stack<Clause>();
     public Stack<Executable> stackExec = new Stack<Executable>();
@@ -14,26 +14,17 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     public const bool bDEBUGENGINE = false;
 
-    public void StartAutoProcessingStacks() {
-        if(bAutoTurns == true) return; //If we were already started, no need to start again
-        bAutoTurns = true;
+    public MatchInput matchinputToFillOut;  //A reference to the match input that needs to be filled out before we can progress
+                                            //  with the rest of the match simulation (may be filled out locally, or we can ignore it
+                                            //  if a foreign player is supposed to fill it out)
 
-        if(bAutoTurns) {
-            Debug.Log("Going to next event in " + 1.0f);
+    public void StartMatchLoop() {
+        if(bStartedMatchLoop == true) return; //If we were already started, no need to start again
+        bStartedMatchLoop = true;
 
-            ContTime.Get().Invoke(1.0f, AutoProcessStacks);
-        }
+        StartCoroutine(CRMatchLoop());
     }
-    public void AutoProcessStacks() {
 
-        if(!bAutoTurns) {
-            //Then we must have switched to manual turns while waiting for this event,
-            //so don't actually execute anything automatically
-            return;
-        }
-
-        ProcessStacks();
-    }
 
 
     //The main loop that will process the effects of the game.  If it needs inputs, it will flag what
@@ -50,58 +41,42 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
             // Pass control over to the stack-processing loop until it needs player input to continue the simulation
             yield return ProcessStackUntilInputNeeded();
 
-            //Check if we have input waiting for us in the network buffer
-            while (NetworkDraftReceiver.Get().IsCurSelectionReady() == false) {
+            // At this point, we should have an input field that's been set up that needs to be filled out
+            Debug.Assert(matchinputToFillOut != null);
+
+            // Now that input is needed by some player, check if we locally control that player
+            if (NetworkMatchSetup.IsLocallyOwned(matchinputToFillOut.iPlayerActing)) {
+                //Have the matchinput start its process for how it should be filled out
+                yield return matchinputToFillOut.GatherManualInput();
+            } else {
+                //If we don't locally control the player who needs to decide an input
+                Debug.Log("Waiting for foreign input");
+            }
+
+            //Wait until we have input waiting for us in the network buffer
+            while (NetworkReceiver.Get().IsCurMatchInputReady() == false) {
                 //Keep spinning until we get the input we're waiting on
 
-                WaitForMatchInput();
+                Debug.Log("Waiting for input");
                 yield return null;
             }
-            //If we were waiting on input, then clean up the waiting process
-            if (draftactionWaitingOn != null) EndWaitingOnDraftInput();
 
             //At this point, we have an input in the buffer that we are able to process
-            DraftAction draftaction = GetNextDraftPhaseStep();
-            CharType.CHARTYPE chartypeInput = NetworkDraftReceiver.Get().GetCurSelection();
+            MatchInput matchinput = NetworkReceiver.Get().GetCurMatchInput();
 
-            //Start a coroutine to process whichever event we need to execute
-            if (draftaction.draftactionType == DraftAction.DRAFTACTIONTYPE.DRAFT) {
-                //Draft the character
-                yield return StartCoroutine(CRDraftChr(draftaction.iPlayer, chartypeInput));
-            } else {
-                //Ban the character
-                yield return StartCoroutine(CRBanChr(draftaction.iPlayer, chartypeInput));
-            }
+            //Process that match input by deferring to its execute method
+            yield return matchinput.Execute();
 
-            //Now that the draft/ban is complete and processed, increment our 'current' indices
-            NetworkDraftReceiver.Get().FinishCurSelection();
-            FinishDraftPhaseStep();
+            //The execute method should have pushed new executables/clauses onto the stack, so we can
+            // continue with the next loop to process them
         }
 
-        //Do any animation process that needs to be done before we leave the draft scene
+        //Do any animation process that needs to be done before we leave the match scene
         yield return StartCoroutine(CRCleanUpMatch());
 
-        //Wrap up the draft phase
+        //Do any fill wrap-up for the match
         FinishMatch();
         yield break;
-    }
-
-    public void cbManualExecuteEvent(Object target, params object[] args) {
-        bAutoTurns = false;
-
-        Debug.Log("********************************************");
-        //Check if there's any stack to process
-        if(AreStacksEmpty()) {
-            //If the stacks are empty, then manual execution of the phase just means
-            // submitting a signal to the master to let it know we're done with the phase
-            Debug.Log("Manually finishing a turn phase");
-            ContTurns.Get().FinishedTurnPhase();
-        } else {
-            //There's still effects to process, so process the contents of the stacks just once
-            Debug.Log("Manually processing stacks");
-            ProcessStacks();
-        }
-
     }
 
     public void ResolveClause() {
@@ -218,8 +193,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         //TODO:: Consider if we should check for replacement effects and triggers at resolve-time or at stack-pushing-time
     }
 
-
-    //TODONOW - consider making this a coroutine - be needed forever for everything, but can serve as 'animations' to describe the effects that are happening
+    //Note, this isn't a coroutine, so if you want to delay until the timer is finished, just do a WaitForSeconds after spawning the timer
     public void SpawnTimer(float fDelay, string sLabel) {
         GameObject goTimer = Instantiate(pfTimer, Match.Get().transform); //TIMER SPAWN POSITION
         ViewTimer viewTimer = goTimer.GetComponent<ViewTimer>();
@@ -245,7 +219,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
     public IEnumerator ProcessStackUntilInputNeeded() {
 
         // Check if the flag has been raised to indicate we need player input to continue
-        while (todo) {
+        while (matchinputToFillOut == null) {
             // Keep processing game-actions until we need player input
             yield return ProcessStacks();
         }
@@ -314,43 +288,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         
     }
 
-    //Other classes can call this to invoke the ProcessStack method after a delay
-    public void InvokeProcessStack(float fDelay, string sLabel, bool bCancelInvoke) {
-        if(bAutoTurns) {
-
-            if(fDelay > 0) {
-                //Check if we need to spawn a timer
-
-                SpawnTimer(fDelay, sLabel);
-            }
-            if(bCancelInvoke == false) {
-
-                if(bDEBUGENGINE) Debug.Log("Calling autoprocessstacks with a delay after finishing processing a previous executable");
-                ContTime.Get().Invoke(fDelay, AutoProcessStacks);
-            }
-        } else {
-            //Debug.Log("Manually executing " + sLabel);
-            //Then we're doing manual execution - still spawn a quick timer to show what we're processing right now
-
-            if(fDelay == 0.0f) {
-                //If there wouldn't be any delay on evaluating anyway, then just immediately 
-                //Process the next event immediately without spawning a timer
-
-
-                if(bDEBUGENGINE) Debug.Log("Immediately calling ProcessStacks since there's no delay between executions");
-                ProcessStacks();
-            } else {
-                //If there is a delay, then just spawn the timer and wait for the user to click to move
-                // on to evaluating the next event later
-
-                SpawnTimer(1.0f, sLabel);
-            }
-
-
-        }
-
-
-    }
+   
 
     public override void Init() {
         
