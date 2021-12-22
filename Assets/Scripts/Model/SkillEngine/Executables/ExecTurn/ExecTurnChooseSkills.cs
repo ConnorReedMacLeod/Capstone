@@ -54,7 +54,7 @@ public class ExecTurnChooseSkills : Executable {
     }
 
     public ExecTurnChooseSkills(Chr _chrSource) : base(_chrSource) {
-        bStopAutoProcessing = true;
+
     }
 
     public ExecTurnChooseSkills(ExecTurnChooseSkills other) : base(other) {

@@ -99,30 +99,7 @@ public class ContSkillSelection : Singleton<ContSkillSelection> {
         ClientNetworkController.Get().SendMatchTurnPhaseFinished(selections.GetSerialization());
 
     }
-
-    public void ReceiveSelectionFromMaster(int[] arnSerializedSelections) {
-        Debug.Assert(ContTurns.Get().curStateTurn == ContTurns.STATETURN.EXECUTESKILL);
-
-        //Save the result that the master broadcasted out
-        selectionsFromMaster = new Selections(arnSerializedSelections);
-
-       // Debug.Log("Client received selection of " + selectionsFromMaster.ToString());
-
-        //Ensure the passed skill is valid
-        if (selectionsFromMaster.IsValidSelection() == false) {
-            Debug.LogError("Received invalid selection from master! : " + selectionsFromMaster);
-            selectionsFromMaster.ResetToRestSelection();
-        }
-
-        
-        if(ClientNetworkController.Get().IsPlayerLocallyControlled(ContTurns.Get().GetNextActingChr().plyrOwner)){
-                //If we were responsible for selecting a skill for the currently active character,
-                // then stop the selection process (if it's still ongoing) since the decision has already been finalized by the master
-                ContTurns.Get().GetNextActingChr().plyrOwner.inputController.EndSelection();
-
-         }
-
-    }
+    
 
     public void ResetStoredSelection() {
         //Debug.Log("Resetting stored selection from master");

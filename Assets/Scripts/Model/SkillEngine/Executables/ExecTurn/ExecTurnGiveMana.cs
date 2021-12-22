@@ -37,7 +37,7 @@ public class ExecTurnGiveMana : Executable {
 
     public void GiveManaToAllPlayers() {
         
-        //Give the mana to each player as stored in arManaToGive
+        //Give the mana to each player as specified by the ContManaDistributer
         for(int i = 0; i < Match.Get().nPlayers; i++) {
 
             Player plyrToGive = Match.Get().arPlayers[i];

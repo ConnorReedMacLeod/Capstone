@@ -172,7 +172,7 @@ public class ContTurns : Singleton<ContTurns> {
 
     public void SetTurnState(STATETURN _curStateTurn) {
         
-        OnLeavingState(oAdditionalInfo);
+        OnLeavingState(curStateTurn);
 
         curStateTurn = _curStateTurn;
 
@@ -198,10 +198,7 @@ public class ContTurns : Singleton<ContTurns> {
 
         case STATETURN.GIVEMANA:
 
-            //Consult the Mana generation controller for what mana should be distributed
-            ContManaDistributer.
-
-            ContSkillEngine.Get().AddExec(new ExecTurnGiveMana(_chrSource: null) { arManaToGive = (int[])oAdditionalInfo });
+            ContSkillEngine.Get().AddExec(new ExecTurnGiveMana(_chrSource: null));
 
             break;
 

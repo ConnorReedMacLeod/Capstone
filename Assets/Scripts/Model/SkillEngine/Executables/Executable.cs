@@ -13,8 +13,6 @@ public abstract class Executable {
 
     public bool bCancelIfSourceDies;
 
-    public bool bStopAutoProcessing;
-
     public SoundEffect[] arSoundEffects;
 
     public abstract Subject GetPreTrigger();
@@ -80,7 +78,6 @@ public abstract class Executable {
         sLabel = other.sLabel;
         fDelay = other.fDelay;
         bPreTriggered = other.bPreTriggered;
-        bStopAutoProcessing = other.bStopAutoProcessing;
         bCancelIfSourceDies = other.bCancelIfSourceDies;
 
         arSoundEffects = other.arSoundEffects;

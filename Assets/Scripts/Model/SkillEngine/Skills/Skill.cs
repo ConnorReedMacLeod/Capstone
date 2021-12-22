@@ -111,7 +111,11 @@ public abstract class Skill {
     //Use the selected skill with the supplied targets
     public void UseSkill() {
 
-        if(CanSelect(ContSkillSelection.Get().selectionsFromMaster) == false) {
+        if(NetworkReceiver.Get().IsCurMatchInputReady() == false) {
+            Debug.LogError("Tried to use skill, but we don't have the current input ready yet (input " + NetworkReceiver.Get().indexCurMatchInput);
+        }
+
+        if(CanSelect((InputSkillSelection)NetworkReceiver.Get().GetCurMatchInput()) == false) {
             Debug.LogError("Tried to use skill, but the master-provided selections were invalid! : " + ContSkillSelection.Get().selectionsFromMaster.ToString());
         }
 
@@ -150,7 +154,7 @@ public abstract class Skill {
     }
 
     //Determine if the skill could be used targetting the passed selections 
-    public bool CanSelect(InputSkillSelection selections) {// Maybe this doesn't need to be virtual
+    public bool CanSelect(InputSkillSelection selections) {
 
         //First, check if we're at least alive
         if(chrOwner.bDead == true) {

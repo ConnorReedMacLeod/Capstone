@@ -14,24 +14,24 @@ public class InputSkillSelection : MatchInput {
         lstSelections = new List<object>();
     }
 
-    //For deserializing a master-provided set of serialized skill selection into their corresponding objects
-    // By convention, the leading entry of the array corresponds to the chosen skill, with the remaining
+    //For deserializing a network-provided serialized skill selection (including targets) into their corresponding objects
+    // By convention, the array leads with the acting character's global id, then the chosen skill slot, with the remaining
     // entries corresponding to selections for that skill's targets
-    public InputSkillSelection(int _iPlayerActing, int[] arnSerializedSelections) : base(_iPlayerActing) {
+    public InputSkillSelection(int[] arnSerializedSelections) : base((Chr.GetTargetByIndex(arnSerializedSelections[0])).plyrOwner.id) {
 
-        skillSelected = Serializer.DeserializeSkill(arnSerializedSelections[0]);
-        chrActing = skillSelected.chrOwner;
+        chrActing = Chr.GetTargetByIndex(arnSerializedSelections[0]);
+        skillSelected = Serializer.DeserializeSkill(arnSerializedSelections[1]);
 
-        Debug.Assert(skillSelected.lstTargets.Count == arnSerializedSelections.Length - 1,
-            "Received " + (arnSerializedSelections.Length - 1) + " selections for a skill requiring " + skillSelected.lstTargets.Count);
+        Debug.Assert(skillSelected.lstTargets.Count == arnSerializedSelections.Length - 2,
+            "Received " + (arnSerializedSelections.Length - 2) + " selections for a skill requiring " + skillSelected.lstTargets.Count);
 
         lstSelections = new List<object>();
 
-        //For each required target, have it decode the master-provided serialization
+        //For each required target, have it decode the network-provided serialization
         for (int i = 0; i < skillSelected.lstTargets.Count; i++) {
             // Ask the corresponding Target to decode the serialized int we've been provided
             // i+1 since the first entry of the serialized array refers to the chosen skill, and not the selections
-            lstSelections.Add(skillSelected.lstTargets[i].Unserialize((int)arnSerializedSelections[i + 1], lstSelections));
+            lstSelections.Add(skillSelected.lstTargets[i].Unserialize((int)arnSerializedSelections[i + 2], lstSelections));
         }
     }
 
@@ -54,31 +54,32 @@ public class InputSkillSelection : MatchInput {
         lstSelections = new List<object>();
     }
 
-    
-
     public int GetSerializedSkill() {
         return Serializer.SerializeSkill(skillSelected);
     }
 
     public int[] GetSerialization() {
 
-        int[] arnSerializedSelections = new int[skillSelected.lstTargets.Count + 1];
+        int[] arnSerializedSelections = new int[skillSelected.lstTargets.Count + 2];
 
-        //First, add the serialization of the use skill
-        arnSerializedSelections[0] = GetSerializedSkill();
+        //First, add the character who's set to be acting
+        arnSerializedSelections[0] = TarChr.SerializeChr(chrActing);
 
-        //Then add all the selections aftererward
+        //Second, add the serialization of the use skill
+        arnSerializedSelections[1] = Serializer.SerializeSkill(skillSelected);
+
+        //Then add all the selections afterward
         for (int i = 0; i < skillSelected.lstTargets.Count; i++) {
             //For each Target, ask it how we should serialize the selected object we have stored
             // Note - i+1, since we're adding all selections after the used skill
-            arnSerializedSelections[i + 1] = skillSelected.lstTargets[i].Serialize(lstSelections[i]);
+            arnSerializedSelections[i + 2] = skillSelected.lstTargets[i].Serialize(lstSelections[i]);
         }
 
         return arnSerializedSelections;
     }
 
     public override string ToString() {
-        string s = skillSelected.ToString() + " - ";
+        string s = chrActing.ToString() + " " + skillSelected.ToString() + " - ";
 
         for (int i = 0; i < skillSelected.lstTargets.Count; i++) {
 
@@ -167,5 +168,20 @@ public class InputSkillSelection : MatchInput {
         Debug.Assert(n < lstSelections.Count);
 
         return lstSelections[lstSelections.Count - 1 - n];
+    }
+
+
+
+    public override IEnumerator Execute() {
+
+        Debug.Log("Executing " + skillSelected.ToString());
+
+        //For a standard skill usage, we need to use the skill using the stored selections we have accrued
+        skillSelected.UseSkill();
+
+        //Note - We are currently having each clause of a skill grab input directly from the networkreceiver buffer, but it would also
+        //       be possible to copy clauses and embed the selections directly into them.  
+
+        yield return new WaitForSeconds(0.1f);
     }
 }
