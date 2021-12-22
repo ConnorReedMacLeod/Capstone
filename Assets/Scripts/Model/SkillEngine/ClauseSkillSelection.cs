@@ -11,10 +11,10 @@ public abstract class ClauseSkillSelection : ClauseSkill {
     
 
     public override void Execute() {
-        //Grab the stored selections, and pass it to the overrideable ClauseEffect where
+        //Grab the stored selections for the current input, and pass it to the overrideable ClauseEffect where
         // the abilities can customize what they will do
 
-        ClauseEffect(ContSkillSelection.Get().selectionsFromMaster);
+        ClauseEffect((InputSkillSelection)NetworkReceiver.Get().GetCurMatchInput());
 
     }
 
