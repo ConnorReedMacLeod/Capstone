@@ -8,6 +8,42 @@ public class ContTime : Singleton<ContTime> {
     public bool bPaused;
     public float fDeltaTime;
 
+    public enum DELAYOPTIONS {
+        FAST, MEDIUM, INF
+    };
+
+    public const float fDelayChooseSkillFast = 5.0f;
+    public const float fDelayChooseSkillMedium = 30.0f;
+    public const float fDelayChooseSkillInf = 9999999.0f;
+
+    public float fMaxSelectionTime;
+
+    public const float fDelayGameEffects = 0.5f;
+    public const float fDelayTurnSkill = 0.5f;
+    public const float fDelayMinorSkill = 0.5f;
+    public const float fDelayStandard = 1.25f;
+    public const float fDelayBan = 20f;
+    public const float fDelayDraftPick = 20f;
+    public const float fDelayLoadoutSetup = 120f;
+
+
+    public void SetMaxSelectionTime(DELAYOPTIONS delay) {
+        switch (delay) {
+            case DELAYOPTIONS.FAST:
+                fMaxSelectionTime = fDelayChooseSkillFast;
+                break;
+
+            case DELAYOPTIONS.MEDIUM:
+                fMaxSelectionTime = fDelayChooseSkillMedium;
+                break;
+
+            case DELAYOPTIONS.INF:
+                fMaxSelectionTime = fDelayChooseSkillInf;
+                break;
+        }
+    }
+
+
 
     public class InvokeFunc {
         public float fDelay;

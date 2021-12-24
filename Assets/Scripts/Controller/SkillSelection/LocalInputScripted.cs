@@ -5,9 +5,8 @@ using UnityEngine;
 public class LocalInputScripted : LocalInputType {
 
 
-    public int[] arScriptedInputIndices;                         //Holds the current index of the script we're using for each character's next input
-    public KeyValuePair<int, MatchInput>[,] arTargettingScript;
-    public const int MAXTARGETATTEMPTS = 5;
+    public int nInputIndex;                         //The current index we've reached in our list of inputs we'll provide
+    public List<MatchInput> lstInputScript;              //The list of inputs that we'll give in order
 
     public override void StartSelection() {
         base.StartSelection();
@@ -18,82 +17,58 @@ public class LocalInputScripted : LocalInputType {
 
     }
 
-    public void SetTargettingScript(KeyValuePair<int, Selections>[,] _arTargettingScript) {
+    public void SetTargettingScript(List<MatchInput> _lstInputScript) {
 
-        arTargettingScript = _arTargettingScript;
+        lstInputScript = _lstInputScript;
 
-        arScriptedInputIndices = new int[arTargettingScript.Length];
+        //Start reading inputs from the beginning of the script
+        nInputIndex = 0;
 
     }
 
     public void SubmitNextSkill() {
+        MatchInput matchinputPending = ContSkillEngine.Get().matchinputToFillOut;
 
-        //Save the character who we'll be selecting skills for
-        Chr chrToAct = ContTurns.Get().chrNextReady;
+        Debug.Assert(ContSkillEngine.Get().matchinputToFillOut != null, "Scripted input was asked to submit an input, but we're not locally waiting on any input");
+        Debug.AssertFormat(ContSkillEngine.Get().matchinputToFillOut.iPlayerActing == plyrOwner.id, 
+            "Scripted input was asked to submit an input for player {0}, but this script is for player {1}",
+            ContSkillEngine.Get().matchinputToFillOut.iPlayerActing, plyrOwner.id);
 
-        Debug.Assert(chrToAct != null, "Scripted input was asked to submit an skill for a character, but no character is acting");
-        Debug.Assert(chrToAct.plyrOwner.id == plyrOwner.id, "Scripted input was asked to submit an skill for a character is doesn't own");
+        //If we still have inputs in our script, then grab the next one
+        if (nInputIndex < lstInputScript.Count) {
 
-        KeyValuePair<int, Selections> nextSelection;
-        int nTargetsTried = 0;
-
-        Selections selections;
-
-        //Keep looking until we find a valid skill selection
-        while(true) {
-
-            //Double check that the index we're on for this character is before the end of that character's script
-            if(arScriptedInputIndices[chrToAct.id] >= arTargettingScript.GetLength(1)) {
-                Debug.LogError("ERROR - not enough targetting information stored in this script for this character - resetting");
-                arScriptedInputIndices[chrToAct.id] = 0;
-            }
-
-            //Get the current targetting information, then increase the index for next time
-            nextSelection = arTargettingScript[chrToAct.id, arScriptedInputIndices[chrToAct.id]];
-            arScriptedInputIndices[chrToAct.id]++;
-            nTargetsTried++;
-
-            selections = nextSelection.Value;
-
-            Debug.Log(chrToAct.sName + " wants chosen to use " + selections.ToString());
-
-            //Test to see if this skill would be valid
-            if(selections.IsValidSelection() == false) {
-                Debug.Log("The skill selection would not be legal");
-
-                if(nTargetsTried >= MAXTARGETATTEMPTS) {
-                    //If we've tried too many skills with no success, just end our selections
-                    // by setting our skill as a rest
-
-                    selections.ResetToRestSelection();
-
-                    break;
-
-                } else {
-                    //Otherwise, just try selecting the next skill
-                    continue;
-                }
-            } else {
-                //If the selection is valid
-                Debug.Log("Automatic selection is valid");
-
-                //Our selection information has already been saved
-
-
-                break;
-            }
-
+            ContSkillEngine.Get().matchinputToFillOut = lstInputScript[nInputIndex];
+            
+        } else {
+            //If we already used all of the inputs in our script, then set our input to a random one
+            ContSkillEngine.Get().matchinputToFillOut.FillRandomly();
+        
         }
 
-        //At this point, we will have selected a skill/targetting and saved the information in infoSelection
-        Debug.Log(chrToAct.sName + " has automatically chosen to use " + selections.ToString());
+        //Double check that the input that we're planning to submit is actually valid
+        if(ContSkillEngine.Get().matchinputToFillOut.CanLegallyExecute() == false) {
+            Debug.LogErrorFormat("Warning - resetting input to default since an illegal input {0} was attempted", ContSkillEngine.Get().matchinputToFillOut);
+            //If it wasn't legal, then reset it to some default failsafe that is guaranteed to be legal
+            ContSkillEngine.Get().matchinputToFillOut.ResetToDefaultInput();
+        }
 
-        ContSkillSelection.Get().SubmitSkill(selections, this);
+        //Since we've grabbed this input, advance our index to be ready for the next requested input
+        nInputIndex++;
+
+        if (nInputIndex == lstInputScript.Count) {
+            //If we've reached the end of our script, figure out how we should continue;
+            OnFinishedScript();
+        }
+        
+        //By this point, we have a valid input, so let's submit it
 
 
     }
 
-
+    public virtual void OnFinishedScript() {
+        //For when we've finished submitting all the inputs we have stored in our script - extend as needed
+        //For now, we're just letting a scripted input continue to just provide random selections if its run out
+    }
 
     public static void SetRandomSkills(LocalInputScripted input) {
 
