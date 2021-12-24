@@ -65,21 +65,21 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
 
     public void cbClickTimerFast(Object target, params object[] args) {
 
-        ContSkillSelection.Get().SetMaxSelectionTime(ContSkillSelection.DELAYOPTIONS.FAST);
+        ContTime.Get().SetMaxSelectionTime(ContTime.DELAYOPTIONS.FAST);
 
         subTimerSelectedInGroup.NotifyObs(target);
     }
 
     public void cbClickTimerMedium(Object target, params object[] args) {
 
-        ContSkillSelection.Get().SetMaxSelectionTime(ContSkillSelection.DELAYOPTIONS.MEDIUM);
+        ContTime.Get().SetMaxSelectionTime(ContTime.DELAYOPTIONS.MEDIUM);
 
         subTimerSelectedInGroup.NotifyObs(target);
     }
 
     public void cbClickTimerInf(Object target, params object[] args) {
 
-        ContSkillSelection.Get().SetMaxSelectionTime(ContSkillSelection.DELAYOPTIONS.INF);
+        ContTime.Get().SetMaxSelectionTime(ContTime.DELAYOPTIONS.INF);
 
         subTimerSelectedInGroup.NotifyObs(target);
     }
@@ -151,7 +151,7 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
         btnPlyr1AI.bSelected = true;
         subPlayer1SelectedInGroup.NotifyObs(btnPlyr1AI);
 
-        ContSkillSelection.Get().SetMaxSelectionTime(ContSkillSelection.DELAYOPTIONS.MEDIUM);
+        ContTime.Get().SetMaxSelectionTime(ContTime.DELAYOPTIONS.MEDIUM);
         btnTimerMedium.bSelected = true;
         subTimerSelectedInGroup.NotifyObs(btnTimerMedium);
     }

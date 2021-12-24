@@ -9,12 +9,17 @@ public class NetworkSender : Singleton<NetworkSender> {
     PhotonView photonview;
 
 
-    public void SendSkillSelection(int indexInput, InputSkillSelection selectionsToSend) {
+    public void SendInput(int indexInput, MatchInput matchinputToSend) {
 
-        Debug.LogFormat("Sending selection: {0}", selectionsToSend);
+        Debug.LogFormat("Sending selection: {0}", matchinputToSend);
 
-        photonview.RPC("ReceiveSkillSelection", RpcTarget.AllBufferedViaServer, selectionsToSend.GetSerialization());
+        photonview.RPC("ReceiveSkillSelection", RpcTarget.AllBufferedViaServer, matchinputToSend.GetSerialization());
 
+    }
+
+    //Send the input for the current input that we have processed up to (according to the networkreceiver)
+    public void SendNextInput(MatchInput matchinputToSend) {
+        SendInput(NetworkReceiver.Get().indexCurMatchInput, matchinputToSend);
     }
 
     public override void Init() {

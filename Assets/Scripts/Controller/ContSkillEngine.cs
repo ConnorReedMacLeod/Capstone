@@ -64,6 +64,9 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
             //At this point, we have an input in the buffer that we are able to process
             MatchInput matchinput = NetworkReceiver.Get().GetCurMatchInput();
 
+            //Clear out the matchinput we prompting to be filled out
+            matchinputToFillOut = null;
+
             //Process that match input by deferring to its execute method
             yield return matchinput.Execute();
 

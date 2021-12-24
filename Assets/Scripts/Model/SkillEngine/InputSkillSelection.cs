@@ -17,7 +17,7 @@ public class InputSkillSelection : MatchInput {
     //For deserializing a network-provided serialized skill selection (including targets) into their corresponding objects
     // By convention, the array leads with the acting character's global id, then the chosen skill slot, with the remaining
     // entries corresponding to selections for that skill's targets
-    public InputSkillSelection(int[] arnSerializedSelections) : base((Chr.GetTargetByIndex(arnSerializedSelections[0])).plyrOwner.id) {
+    public InputSkillSelection(int[] arnSerializedSelections) : base(arnSerializedSelections) {
 
         chrActing = Chr.GetTargetByIndex(arnSerializedSelections[0]);
         skillSelected = Serializer.DeserializeSkill(arnSerializedSelections[1]);
@@ -58,7 +58,7 @@ public class InputSkillSelection : MatchInput {
         return Serializer.SerializeSkill(skillSelected);
     }
 
-    public int[] GetSerialization() {
+    public override int[] Serialize() {
 
         int[] arnSerializedSelections = new int[skillSelected.lstTargets.Count + 2];
 
