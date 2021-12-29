@@ -71,8 +71,8 @@ public class TarPosition : Target {
         foreach (Position p in GetValidSelectable(ContLocalUIInteraction.Get().selectionsInProgress)) {
             //Pass along the skill we're trying to select targets for
             Debug.Log("About to let " + p + " know that it is selectable with sub " + p.subBecomesTargettable);
-            Debug.Log("Selecting for " + ContLocalUIInteraction.Get().selectionsInProgress.skillSelected);
-            p.subBecomesTargettable.NotifyObs(null, ContLocalUIInteraction.Get().selectionsInProgress.skillSelected);
+            Debug.Log("Selecting for " + ContLocalUIInteraction.Get().selectionsInProgress.skillslotSelected);
+            p.subBecomesTargettable.NotifyObs(null, ContLocalUIInteraction.Get().selectionsInProgress.skillslotSelected);
         }
 
         //Set up the position-click triggers

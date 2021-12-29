@@ -16,14 +16,15 @@ using UnityEngine;
 //  skills to see information on them, but not to take any action with them.)
 public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
-    //The current character-selection state
+    //The current character-selection state (If we're selecting any character and, if so, which character)
     public StateTarget curState;
 
     public bool bCanSelectCharacters;
 
     public Chr chrSelected;
 
-    public Selections selectionsInProgress;
+    //A package of selection information that is being filled out by the selections process for a chosen skill
+    public InputSkillSelection selectionsInProgress;
 
     public static Subject subAllStartManualSelections = new Subject(Subject.SubType.ALL);
     public static Subject subAllFinishManualSelections = new Subject(Subject.SubType.ALL);
@@ -43,7 +44,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
     public void CancelSelectionsProcess() {
 
         //In case we've reserved any mana for mana costs, let's un-reserve that amount
-        selectionsInProgress.skillSelected.chrOwner.plyrOwner.manapool.ResetReservedMana();
+        selectionsInProgress.skillslotSelected.chrOwner.plyrOwner.manapool.ResetReservedMana();
 
         //Now end the selections process normally
         ExitSelectionsProcess();

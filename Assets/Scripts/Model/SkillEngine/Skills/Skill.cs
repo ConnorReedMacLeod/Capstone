@@ -99,15 +99,6 @@ public abstract class Skill {
 
     }
 
-    public bool CanPayMana() {
-        //Check if you have enough mana
-        if(chrOwner.plyrOwner.manapool.CanPayManaCost(this.manaCost) == false) {
-            Debug.Log("Not enough mana");
-            return false;
-        }
-        return true;
-    }
-
     //Use the selected skill with the supplied targets
     public void UseSkill() {
 
@@ -175,31 +166,6 @@ public abstract class Skill {
 
         if(selections.HasLegallyFilledTargets() == false) {
             Debug.Log("This selection has an invalid choice");
-            return false;
-        }
-
-        return true;
-    }
-
-    //Determine if the skill can be executed with the given selection parameters - this is more allowable
-    //  since we just want to ensure a prepped skill will not fizzle if it can at least do something
-    public bool CanExecute(InputSkillSelection selections) {
-
-        //First, check if we're at least alive
-        if(chrOwner.bDead == true) {
-            return false;
-        }
-
-        //Check that we're in a readiness state (with enough usable skills left)
-        if(chrOwner.curStateReadiness.CanSelectSkill(this) == false) {
-            //Debug.Log("Not in a state where we can use this skill");
-            return false;
-        }
-
-        //Finally, check if enough of the targets are valid to let the skill execute (if some become invalid,
-        // this may be okay, but it depends on the ability)
-        if(selections.IsGoodEnoughToExecute() == false) {
-            Debug.Log("Skill cannot execute due to some number of invalid selections");
             return false;
         }
 

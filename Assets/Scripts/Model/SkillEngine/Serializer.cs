@@ -40,15 +40,15 @@ public static class Serializer {
         return Player.arAllPlayers[b];
     }
 
-    public static int SerializeSkill(Skill skill) {
-        return Serializer.Serialize((byte)skill.chrOwner.globalid, (byte)skill.skillslot.iSlot, 0, 0);
+    public static int SerializeSkillSlot(SkillSlot skillslot) {
+        return Serializer.Serialize((byte)skillslot.chrOwner.globalid, (byte)skillslot.iSlot, 0, 0);
     }
 
-    public static Skill DeserializeSkill(int nSerializedSkill) {
+    public static SkillSlot DeserializeSkillSlot(int nSerializedSkill) {
         Chr chrUsing = Serializer.DeserializeChr(Serializer.GetByte(0, nSerializedSkill));
         int iSkillSlot = Serializer.GetByte(1, nSerializedSkill);
 
-        return chrUsing.arSkillSlots[iSkillSlot].skill;
+        return chrUsing.arSkillSlots[iSkillSlot];
     }
 }
 
