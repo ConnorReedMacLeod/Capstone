@@ -50,7 +50,7 @@ public abstract class TypeUsage {
 
         Debug.Assert(ContTurns.Get().GetNextActingChr() == skill.chrOwner, "ERROR - The acting character isn't the owner of this skill");
 
-        Debug.Assert(selections.skillSelected == skill, "ERROR - The selected skill from the player does not match this skill");
+        Debug.Assert(selections.skillslotSelected == skill, "ERROR - The selected skill from the player does not match this skill");
 
         return selections;
 

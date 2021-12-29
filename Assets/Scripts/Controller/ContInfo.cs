@@ -16,7 +16,7 @@ public class ContInfo : MonoBehaviour {
     public Skill skillFocus;
 
     public void cbStartTargetting(Object target, params object[] args) {
-        SetSkillFocus(ContLocalUIInteraction.Get().selectionsInProgress.skillSelected);
+        SetSkillFocus(ContLocalUIInteraction.Get().selectionsInProgress.skillslotSelected);
         bLocked = true;
     }
 

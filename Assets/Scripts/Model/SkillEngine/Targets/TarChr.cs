@@ -72,7 +72,7 @@ public class TarChr : Target {
         //Highlight all the targettable characters
         foreach(Chr c in GetValidSelectable(ContLocalUIInteraction.Get().selectionsInProgress)) {
             //Pass along the skill we're trying to select targets for
-            c.subBecomesTargettable.NotifyObs(null, ContLocalUIInteraction.Get().selectionsInProgress.skillSelected);
+            c.subBecomesTargettable.NotifyObs(null, ContLocalUIInteraction.Get().selectionsInProgress.skillslotSelected);
         }
 
         //Set up the character-click triggers

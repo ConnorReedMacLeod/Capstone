@@ -4,13 +4,21 @@ using UnityEngine;
 
 public class InputSkillSelection : MatchInput {
     public Chr chrActing;
-    public Skill skillSelected;
+    public SkillSlot skillslotSelected;
+
+    //Note: we strictly only store the skillslot that was selected (since this will always be usable
+    //      even if the skill that was in the slot was swapped to something unexpected before execution).  
+    //      We'll still provide the interface to just directly refer to the skill itself since that's convenient
+    public Skill skillSelected {
+        get { return skillslotSelected.skill; }
+    }
+
     public List<object> lstSelections;
 
     //For creating a new skill selection collection to be filled out in the selection process
-    public InputSkillSelection(int _iPlayerActing, Chr _chrActing, Skill _skSelected) : base(_iPlayerActing) {
+    public InputSkillSelection(int _iPlayerActing, Chr _chrActing, SkillSlot _skillslotSelected) : base(_iPlayerActing) {
         chrActing = _chrActing;
-        skillSelected = _skSelected;
+        skillslotSelected = _skillslotSelected;
         lstSelections = new List<object>();
     }
 
@@ -20,7 +28,7 @@ public class InputSkillSelection : MatchInput {
     public InputSkillSelection(int[] arnSerializedSelections) : base(arnSerializedSelections) {
 
         chrActing = Chr.GetTargetByIndex(arnSerializedSelections[0]);
-        skillSelected = Serializer.DeserializeSkill(arnSerializedSelections[1]);
+        skillslotSelected =   Serializer.DeserializeSkillSlot(arnSerializedSelections[1]);
 
         Debug.Assert(skillSelected.lstTargets.Count == arnSerializedSelections.Length - 2,
             "Received " + (arnSerializedSelections.Length - 2) + " selections for a skill requiring " + skillSelected.lstTargets.Count);
@@ -37,25 +45,12 @@ public class InputSkillSelection : MatchInput {
 
     public InputSkillSelection(InputSkillSelection other) : base(other) {
         chrActing = other.chrActing;
-        skillSelected = other.skillSelected;
+        skillslotSelected = other.skillslotSelected;
         lstSelections = other.lstSelections;
     }
 
     public InputSkillSelection GetCopy() {
         return new InputSkillSelection(this);
-    }
-
-    public static InputSkillSelection GetRestSelection(Chr chr) {
-        return new InputSkillSelection(chr.plyrOwner.id, chr, chr.skillRest);
-    }
-
-    public void ResetToRestSelection() {
-        skillSelected = skillSelected.chrOwner.skillRest;
-        lstSelections = new List<object>();
-    }
-
-    public int GetSerializedSkill() {
-        return Serializer.SerializeSkill(skillSelected);
     }
 
     public override int[] Serialize() {
@@ -66,7 +61,7 @@ public class InputSkillSelection : MatchInput {
         arnSerializedSelections[0] = TarChr.SerializeChr(chrActing);
 
         //Second, add the serialization of the use skill
-        arnSerializedSelections[1] = Serializer.SerializeSkill(skillSelected);
+        arnSerializedSelections[1] = Serializer.SerializeSkillSlot(skillslotSelected);
 
         //Then add all the selections afterward
         for (int i = 0; i < skillSelected.lstTargets.Count; i++) {
@@ -174,7 +169,7 @@ public class InputSkillSelection : MatchInput {
 
     public override IEnumerator Execute() {
 
-        Debug.Log("Executing " + skillSelected.ToString());
+        Debug.Log("Executing " + skillslotSelected.ToString());
 
         //For a standard skill usage, we need to use the skill using the stored selections we have accrued
         skillSelected.UseSkill();
@@ -183,5 +178,81 @@ public class InputSkillSelection : MatchInput {
         //       be possible to copy clauses and embed the selections directly into them.  
 
         yield return new WaitForSeconds(0.1f);
+    }
+
+    public override bool CanLegallyExecute() {
+        if (chrActing == null) return false;
+        if (skillslotSelected == null) return false;
+
+        if (skillslotSelected.chrOwner != chrActing) {
+            Debug.Log("Tried to select " + skillslotSelected.chrOwner + "'s " + skillslotSelected + " but we want " + chrActing + " to act");
+            return false;
+        }
+
+        //As long as we can execute the filled out skill with this selection, then we're good enough to execute this selection
+        if (skillSelected.CanSelect(this) == false) return false;
+
+        return true;
+    }
+
+    protected override void AttemptFillRandomly() {
+        chrActing = ContTurns.Get().GetNextActingChr();
+
+        int nMaxSelectionAttempts = 5;
+        int nCurSelectionAttempt = 0;
+
+        //We'll attempt a few selections to see if we can find something legal 
+        while(nCurSelectionAttempt < nMaxSelectionAttempts) {
+            nCurSelectionAttempt++;
+
+            //Select a random skill we have that's off cooldown
+            skillslotSelected = chrActing.arSkillSlots[Random.Range(0, Chr.nEquippedCharacterSkills)];
+            lstSelections = new List<object>();
+
+            //If the skill is on cooldown, then we'll skip to the next attempt
+            if (skillslotSelected.IsOffCooldown() == false) continue;
+
+            //For each target we have to fill out, get a random selectable for its targetting type
+            bool bFailedSelection = false;
+
+            for (int i = 0; i < skillslotSelected.skill.lstTargets.Count; i++) {
+                if(skillSelected.lstTargets[i].HasAValidSelectable(this) == false) {
+                    bFailedSelection = true;
+                    break;
+                }
+                //If there's at least something selectable, then pick one of them randomly
+                lstSelections[i] = skillSelected.lstTargets[i].GetRandomValidSelectable(this);
+            }
+
+            if (bFailedSelection) {
+                //If we failed finding a selection for some skill, then continue on in the loop to find a different skill selection
+                continue;
+            }
+
+            //If we reached this far without failing a selection, then we should have a fully filled out random selection so we can return
+            Debug.Assert(CanLegallyExecute());
+            return;
+        }
+
+        //If we tried many times and couldn't get a valid selection, then we'll just reset the default input
+        ResetToDefaultInput();
+    }
+
+
+
+    public void ResetToRestSelection() {
+        chrActing = ContTurns.Get().GetNextActingChr();
+        skillslotSelected = chrActing.skillRest.skillslot;
+        lstSelections = new List<object>();
+    }
+
+    public override void ResetToDefaultInput() {
+        //Just set ourselves to a rest action since that's guaranteed to be a legal selection no matter what
+        ResetToRestSelection();
+    }
+
+    //Set up any UI for prompting the selection of a skill and unlock the capability for the local player to go through the 
+    //  target selection process
+    public override void StartManualInputProcess() {
     }
 }

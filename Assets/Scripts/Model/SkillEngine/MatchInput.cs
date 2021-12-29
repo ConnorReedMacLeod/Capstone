@@ -14,8 +14,10 @@ public abstract class MatchInput {
         iPlayerActing = (Chr.GetTargetByIndex(arnSerializedSelections[0])).plyrOwner.id;
     }
 
-    //Each input type should extend this to provide some process by which the MatchInput information is filled out
-    public abstract IEnumerator GatherManualInput();
+    //Each input type should extend these to provide some process by which the MatchInput information is filled out
+    //  Additional functions to help with the real-time interaction with this process will likely be needed
+    public abstract void StartManualInputProcess();
+    public abstract void EndManualInputProcess();
 
     //Each input type should extend this to define what this input should actually do to affect the game state
     public abstract IEnumerator Execute();

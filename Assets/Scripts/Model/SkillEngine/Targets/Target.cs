@@ -25,6 +25,10 @@ public abstract class Target {
 
     }
 
+    public bool HasAValidSelectable(InputSkillSelection selectionsSoFar) {
+        return GetValidSelectable(selectionsSoFar).Count == 0;
+    }
+
     //Get a random valid selection for this type of target (for AI purposes mainly)
     public object GetRandomValidSelectable(InputSkillSelection selectionsSoFar) {
 

@@ -46,8 +46,8 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
             // Now that input is needed by some player, check if we locally control that player
             if (NetworkMatchSetup.IsLocallyOwned(matchinputToFillOut.iPlayerActing)) {
-                //Have the matchinput start its process for how it should be filled out
-                yield return matchinputToFillOut.GatherManualInput();
+                //Let the match input prepare to start gathering manual input 
+                matchinputToFillOut.StartManualInputProcess();
             } else {
                 //If we don't locally control the player who needs to decide an input
                 Debug.Log("Waiting for foreign input");

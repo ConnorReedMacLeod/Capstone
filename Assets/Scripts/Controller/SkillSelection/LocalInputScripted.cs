@@ -13,7 +13,7 @@ public class LocalInputScripted : LocalInputType {
 
         //Give a small delay before we return the skill selection
         // so that we can give a chance to clear the stack out
-        ContTime.Get().Invoke(Mathf.Min(ContSkillSelection.Get().fMaxSelectionTime / 2, 1.5f), SubmitNextSkill);
+        ContTime.Get().Invoke(Mathf.Min(ContTime.Get().fMaxSelectionTime / 2, 1.5f), SubmitNextSkill);
 
     }
 
@@ -59,9 +59,9 @@ public class LocalInputScripted : LocalInputType {
             //If we've reached the end of our script, figure out how we should continue;
             OnFinishedScript();
         }
-        
-        //By this point, we have a valid input, so let's submit it
 
+        //By this point, we have a valid input, so let's submit it
+        NetworkSender.Get().SendNextInput(ContSkillEngine.Get().matchinputToFillOut);
 
     }
 
@@ -70,29 +70,13 @@ public class LocalInputScripted : LocalInputType {
         //For now, we're just letting a scripted input continue to just provide random selections if its run out
     }
 
-    public static void SetRandomSkills(LocalInputScripted input) {
 
-        int nScriptLength = 100;
-        KeyValuePair<int, Selections>[,] arListRandomSelections = new KeyValuePair<int, Selections>[Player.MAXCHRS, nScriptLength];
+    public void LoadInputFromFileForPlayer(LocalInputScripted input, string sLogFilePath, int iPlayer) {
+        
+        lstInputScript = new List<MatchInput>();
 
-        for(int i = 0; i < Player.MAXCHRS; i++) {
-
-            Chr chr = input.plyrOwner.arChr[i];
-
-            for(int j = 0; j < nScriptLength; j++) {
-
-                //Select a random skill to be used
-                Skill skillRandom = chr.GetRandomSkill();
-
-                //Generate random selections for the skill
-                Selections selectionsRandom = new Selections(skillRandom);
-                selectionsRandom.FillWithRandomSelections();
-
-                arListRandomSelections[i, j] = new KeyValuePair<int, Selections>(skillRandom.skillslot.iSlot, selectionsRandom);
-            }
-        }
-
-        input.SetTargettingScript(arListRandomSelections);
+        //Read through the file and scan for inputs from the given player - add those inputs to the input script
+        throw new System.NotImplementedException();
 
     }
 }
