@@ -23,28 +23,18 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
     public Chr chrSelected;
 
-    //A package of selection information that is being filled out by the selections process for a chosen skill
-    public InputSkillSelection selectionsInProgress;
-
     public static Subject subAllStartManualSelections = new Subject(Subject.SubType.ALL);
     public static Subject subAllFinishManualSelections = new Subject(Subject.SubType.ALL);
 
-    public bool InSelectionsProcess() {
-        return selectionsInProgress != null;
-    }
+    //We hold a locally-filled out InputSkillSelection that is initialized based on ContSkillEngine's matchinputToFillOut
+    public InputSkillSelection selectionsInProgress;
 
-    // Start a new round of targetting
-    public void ResetStoredSelections() {
-        //Clear any previous targetting information we had
-        selectionsInProgress = null;
-
-    }
 
     // Cancel the selections phase early (without fully selecting all targets for the skil)
     public void CancelSelectionsProcess() {
 
         //In case we've reserved any mana for mana costs, let's un-reserve that amount
-        selectionsInProgress.skillslotSelected.chrOwner.plyrOwner.manapool.ResetReservedMana();
+        selectionsInProgress.chrActing.plyrOwner.manapool.ResetReservedMana();
 
         //Now end the selections process normally
         ExitSelectionsProcess();
@@ -59,7 +49,8 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         //Re-enable general selections
         bCanSelectCharacters = true;
 
-        ResetStoredSelections();
+        //Clear out our locally-progressing skill selections
+        selectionsInProgress = null;
 
         SetState(new StateTargetIdle());
 
@@ -68,26 +59,40 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
     }
 
 
-    public void StartSelections(Skill _skillSelected) {
+    public void ChooseSkillToSelect(Skill _skillSelected) {
 
         // When we've clicked a skill, try to use that skill
         // There's a bunch of checks we have to do for this though first to ensure we should be selecting this skill
-        if (InSelectionsProcess()) {
-            Debug.Log("Can't select start selections process when we're already selecting targets for a different skill");
+
+        // Check if we're already in the process of selecting for a skill
+        if(selectionsInProgress != null) {
+            Debug.Log("We are already in the process of selecting targets for a skill, so we can't start the selections process for another skill");
             return;
         }
 
         // If this skill isn't owned by a locally-controlled client, then reject this selection
-        if(_skillSelected.chrOwner.plyrOwner.inputController == null) {
+        if (_skillSelected.chrOwner.plyrOwner.inputController == null) {
 
             Debug.Log("We can't select skills for a character we don't locally control");
             return;
         }
 
         // Check if it's actually got a LocalInputType that will allow us to select a skill
-        if(_skillSelected.chrOwner.plyrOwner.inputController.CanProceedWithSkillSelection() == false) {
+        // (i.e., if we have asked this locally-controlled client to select a skill for us
+        if (_skillSelected.chrOwner.plyrOwner.inputController.CanProceedWithSkillSelection() == false) {
 
-            Debug.Log("This character is owner by a local player, but selection of skills is not available currently");
+            Debug.Log("This character is owned by a local player, but selecting targets for a new skill is not available currently");
+            return;
+        }
+
+        if (((InputSkillSelection)ContSkillEngine.Get().matchinputToFillOut).chrActing != _skillSelected.chrOwner) { 
+            Debug.Log("Can't start selections for a character who's not expected to be acting now");
+            return;
+        }
+
+        //If the skill we've selected doesn't belong to the next acting character, then we can't proceed with selecting it
+        if (selectionsInProgress.chrActing != _skillSelected.chrOwner) {
+            Debug.Log("Can't select skills for a character who isn't currently acting");
             return;
         }
 
@@ -98,12 +103,12 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         }
 
         if(!_skillSelected.chrOwner.curStateReadiness.CanSelectSkill(_skillSelected)) {
-            Debug.Log("We can't use a skill right now cause the character's readiness state doesn't allow it");
+            Debug.Log("We can't use a skill right now cause the character's readiness state doesn't allow it"); //(like trying to use a second active)
             return;
         }
 
-        //Start off a new selections structure to be filled in during the selection process
-        selectionsInProgress = new Selections(_skillSelected);
+        //Initiallize our local selectionsInProgress to be choosing selections for the targets of the provided skill
+        selectionsInProgress = new InputSkillSelection(_skillSelected.chrOwner.plyrOwner.id, _skillSelected.chrOwner, _skillSelected.skillslot);
 
         //Lock character selections (can unlock as needed depending on which targetting type we need to do)
         bCanSelectCharacters = false;
@@ -112,10 +117,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         SetState(new StateTargetIdle());
 
         //Transition to the appropriate state for gettings the selections for the first required target (likely mana cost payment)
-
         EnterNextSelectionState();
-
-
     }
 
     //The current selection 'state' should call this function as part of its submission process
@@ -169,7 +171,9 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         Debug.Assert(ClientNetworkController.Get().IsPlayerLocallyControlled(ContTurns.Get().GetNextActingChr().plyrOwner),
             "Error - can only submit skills for >locally-owned< human's characters");
 
-        ContSkillSelection.Get().SubmitSkill(selectionsInProgress, ContTurns.Get().GetNextActingChr().plyrOwner.inputController);
+
+        //By this point, we have built up the matchinputToFillOut into a valid selection of targets, so let's submit it
+        NetworkSender.Get().SendNextInput(ContSkillEngine.Get().matchinputToFillOut);
 
         //Clean up the selection process (clears out the stored selections structure, sends notifications, etc.)
         ExitSelectionsProcess();

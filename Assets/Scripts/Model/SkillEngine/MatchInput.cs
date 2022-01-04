@@ -17,7 +17,7 @@ public abstract class MatchInput {
     //Each input type should extend these to provide some process by which the MatchInput information is filled out
     //  Additional functions to help with the real-time interaction with this process will likely be needed
     public abstract void StartManualInputProcess();
-    public abstract void EndManualInputProcess();
+    //TODO - consider if an EndManualInputProcess function is needed - when is this needed between timing out and naturally submitting and executing a skill?
 
     //Each input type should extend this to define what this input should actually do to affect the game state
     public abstract IEnumerator Execute();
@@ -50,4 +50,8 @@ public abstract class MatchInput {
     public MatchInput(MatchInput other) {
         iPlayerActing = other.iPlayerActing;
     }
+
+    // If we have partially filled out some of the required input but then cancel the process, we need to be able to clear out that partial input
+    //  to clean out that data so that a fresh selection process can start without any lingering stale data.  
+    public abstract void ResetPartialSelection();
 }
