@@ -132,6 +132,9 @@ public class InputSkillSelection : MatchInput {
         return IsValidSelection();
     }
 
+    public void SetSkillSelection(SkillSlot skillslot) {
+        skillslotSelected = skillslot;
+    }
 
     public void AddSelection(object objSelected) {
 
@@ -251,8 +254,26 @@ public class InputSkillSelection : MatchInput {
         ResetToRestSelection();
     }
 
+    // Clear out all non-essential data that could have been partially filled out from an incomplete selections process
+    public override void ResetPartialSelection() {
+        //Keep the acting character the same
+
+        //Unreserve any reserved mana we have set aside while selecting mana costs for this skill
+        chrActing.plyrOwner.manapool.ResetReservedMana();
+
+        //Reset the skill choice (since the player may want to change their choice)
+        skillslotSelected = null;
+
+        //Reset all the selections for the skill's targets
+        lstSelections = null;
+    }
+
     //Set up any UI for prompting the selection of a skill and unlock the capability for the local player to go through the 
     //  target selection process
     public override void StartManualInputProcess() {
+        //In this case, we're just going to pass off control to the local controller by letting it know we
+        //  want to be selecting a skill
+        chrActing.plyrOwner.inputController.StartSelection();
     }
+
 }

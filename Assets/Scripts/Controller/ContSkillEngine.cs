@@ -44,21 +44,29 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
             // At this point, we should have an input field that's been set up that needs to be filled out
             Debug.Assert(matchinputToFillOut != null);
 
-            // Now that input is needed by some player, check if we locally control that player
-            if (NetworkMatchSetup.IsLocallyOwned(matchinputToFillOut.iPlayerActing)) {
-                //Let the match input prepare to start gathering manual input 
-                matchinputToFillOut.StartManualInputProcess();
-            } else {
-                //If we don't locally control the player who needs to decide an input
-                Debug.Log("Waiting for foreign input");
-            }
+            //If we need input, let's check if we already have input waiting in our buffer for that input
+            if (NetworkReceiver.Get().IsCurMatchInputReady() == false) {
 
-            //Wait until we have input waiting for us in the network buffer
-            while (NetworkReceiver.Get().IsCurMatchInputReady() == false) {
-                //Keep spinning until we get the input we're waiting on
+                // Now that input is needed by some player, check if we locally control that player
+                if (NetworkMatchSetup.IsLocallyOwned(matchinputToFillOut.iPlayerActing)) {
+                    //Let the match input prepare to start gathering manual input 
+                    matchinputToFillOut.StartManualInputProcess();
+                } else {
+                    //If we don't locally control the player who needs to decide an input
+                    Debug.Log("Waiting for foreign input");
+                }
 
-                Debug.Log("Waiting for input");
-                yield return null;
+                //Wait until we have input waiting for us in the network buffer
+                while (NetworkReceiver.Get().IsCurMatchInputReady() == false) {
+                    //Keep spinning until we get the input we're waiting on
+
+                    Debug.Log("Waiting for input");
+                    yield return null;
+                }
+
+                //Do any cleanup that we need to do if we were waiting on input
+                //TODO - figure out what needs to be done and under what circumstances - careful of potentially changing local input controllers
+
             }
 
             //At this point, we have an input in the buffer that we are able to process
