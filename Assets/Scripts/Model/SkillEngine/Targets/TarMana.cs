@@ -39,7 +39,7 @@ public class TarMana : Target {
     }
 
     public static FnValidSelection COVERSCOST(ManaCost manaCostRequired) {
-        return (object manaPaid, Selections selections) => (manaCostRequired.CanBePaidWith((Mana)manaPaid));
+        return (object manaPaid, InputSkillSelection selections) => (manaCostRequired.CanBePaidWith((Mana)manaPaid));
     }
 
     public static TarMana AddTarget(Skill _skill, ManaCost _manaCostRequired) {

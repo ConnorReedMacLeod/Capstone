@@ -225,7 +225,7 @@ public class Chr : MonoBehaviour {
             if(arSkillSlots[i].nCooldown > 0) {
                 ContSkillEngine.Get().AddExec(new ExecChangeCooldown(null, arSkillSlots[i], -1) {
 
-                    fDelay = ContTurns.fDelayMinorSkill
+                    fDelay = ContTime.fDelayMinorSkill
                 });
             }
         }

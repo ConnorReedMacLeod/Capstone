@@ -69,7 +69,7 @@ public abstract class Executable {
 
     public Executable(Chr _chrSource) {
         chrSource = _chrSource;
-        fDelay = ContTurns.fDelayStandard;
+        fDelay = ContTime.fDelayStandard;
     }
 
     public Executable(Executable other) {

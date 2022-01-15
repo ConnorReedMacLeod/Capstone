@@ -50,7 +50,7 @@ public class ExecMoveChar : ExecChr {
 
         sLabel = chrSource.sName + " is moving to " + posDestination.ToString();
 
-        fDelay = ContTurns.fDelayMinorSkill;
+        fDelay = ContTime.fDelayMinorSkill;
     }
 
 

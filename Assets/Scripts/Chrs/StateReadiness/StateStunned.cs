@@ -32,7 +32,7 @@ public class StateStunned : StateReadiness {
             //Leave the source as null since it's just the game rules causing the readying
             ContSkillEngine.Get().AddExec(new ExecReadyChar (null, chrOwner) { 
 
-                fDelay = ContTurns.fDelayStandard,
+                fDelay = ContTime.fDelayStandard,
                 sLabel = chrOwner.sName + " is Readying"
             });
 

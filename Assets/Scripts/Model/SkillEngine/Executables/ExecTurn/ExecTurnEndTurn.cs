@@ -39,7 +39,7 @@ public class ExecTurnEndTurn : Executable {
     public override void ExecuteEffect() {
 
         sLabel = "End of Turn";
-        fDelay = ContTurns.fDelayTurnSkill;
+        fDelay = ContTime.fDelayTurnSkill;
 
         ContTurns.Get().nTurnNumber++;
 

@@ -107,7 +107,7 @@ public abstract class Skill {
         }
 
         if(CanSelect((InputSkillSelection)NetworkReceiver.Get().GetCurMatchInput()) == false) {
-            Debug.LogError("Tried to use skill, but the master-provided selections were invalid! : " + ContSkillSelection.Get().selectionsFromMaster.ToString());
+            Debug.LogError("Tried to use skill, but the master-provided selections were invalid! : " + NetworkReceiver.Get().GetCurMatchInput().ToString());
         }
 
         // IMPORTANT - since we're pushing these effects onto the stack, we'll want to 

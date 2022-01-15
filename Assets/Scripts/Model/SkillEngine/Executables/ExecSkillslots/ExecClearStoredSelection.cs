@@ -46,7 +46,7 @@ public class ExecClearStoredSelection : ExecSkillslot {
 
         ((TypeUsageChannel)ssTarget.skill.typeUsage).ClearStoredSelectionInfo();
 
-        fDelay = ContTurns.fDelayGameEffects;
+        fDelay = ContTime.fDelayGameEffects;
         sLabel = "Clearing stored " + ssTarget.skill.sDisplayName + "'s selections";
 
     }

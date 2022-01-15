@@ -42,7 +42,7 @@ public class ExecReadyChar : ExecChr {
         //Just transition to the ready state
         chrTarget.SetStateReadiness(newState);
 
-        fDelay = ContTurns.fDelayStandard;
+        fDelay = ContTime.fDelayStandard;
         sLabel = chrTarget.sName + " has Readied";
 
     }
