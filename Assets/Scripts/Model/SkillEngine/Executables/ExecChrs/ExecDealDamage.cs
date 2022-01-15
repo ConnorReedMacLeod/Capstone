@@ -42,7 +42,7 @@ public class ExecDealDamage : ExecChr {
 
         sLabel = chrSource.sName + " is harming " + chrTarget.sName + " for " + dmg.Get();
 
-        fDelay = ContTurns.fDelayMinorSkill;
+        fDelay = ContTime.fDelayMinorSkill;
     }
 
     //If you're always expecting the same base amount, then just have an interface that just requires an integer for the damage amount

@@ -43,7 +43,7 @@ public class ExecHeal : ExecChr {
 
         sLabel = chrSource.sName + " is healing " + chrTarget.sName + " for " + heal.Get();
 
-        fDelay = ContTurns.fDelayMinorSkill;
+        fDelay = ContTime.fDelayMinorSkill;
 
     }
 

@@ -53,7 +53,7 @@ public class ExecTurnGiveMana : Executable {
         GiveManaToAllPlayers();
 
         sLabel = "Giving Mana to each player";
-        fDelay = ContTurns.fDelayTurnSkill;
+        fDelay = ContTime.fDelayTurnSkill;
 
     }
 

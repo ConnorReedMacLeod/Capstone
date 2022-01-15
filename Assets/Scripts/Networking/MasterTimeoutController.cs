@@ -28,7 +28,7 @@ public class MasterTimeoutController : MonoBehaviour {
             //TODO - only enforce the full time if we're waiting on the active player
             //just piggy-back off the local player's selection
             // TODO - sync this variable up among all players
-            fTimeoutTimer = ContSkillSelection.Get().fMaxSelectionTime;
+            fTimeoutTimer = ContTime.Get().fMaxSelectionTime;
         } else {
             fTimeoutTimer = fTimeoutStandard;
         }

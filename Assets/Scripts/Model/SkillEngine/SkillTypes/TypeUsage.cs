@@ -42,7 +42,7 @@ public abstract class TypeUsage {
     //Fetch the current selection information passed to us from the Master
     public virtual InputSkillSelection GetUsedSelections() {
 
-        InputSkillSelection selections = ContSkillSelection.Get().selectionsFromMaster;
+        InputSkillSelection selections = (InputSkillSelection)NetworkReceiver.Get().GetCurMatchInput();
 
         //You can only get legitimate selections for this skill if the selection passed is referring to
         //  this skill
@@ -50,7 +50,7 @@ public abstract class TypeUsage {
 
         Debug.Assert(ContTurns.Get().GetNextActingChr() == skill.chrOwner, "ERROR - The acting character isn't the owner of this skill");
 
-        Debug.Assert(selections.skillslotSelected == skill, "ERROR - The selected skill from the player does not match this skill");
+        Debug.Assert(selections.skillslotSelected.skill == skill, "ERROR - The selected skill from the player does not match this skill");
 
         return selections;
 

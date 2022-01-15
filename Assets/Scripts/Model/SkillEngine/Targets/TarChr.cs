@@ -39,22 +39,22 @@ public class TarChr : Target {
 
 
     public static FnValidSelection IsOtherChr(Chr chr) {
-        return (object chr2, Selections selections) => (chr.globalid != ((Chr)chr2).globalid);
+        return (object chr2, InputSkillSelection selections) => (chr.globalid != ((Chr)chr2).globalid);
     }
 
     public static FnValidSelection IsSameTeam(Chr chr) {
-        return (object chr2, Selections selections) => (chr.plyrOwner.id == ((Chr)chr2).plyrOwner.id);
+        return (object chr2, InputSkillSelection selections) => (chr.plyrOwner.id == ((Chr)chr2).plyrOwner.id);
     }
 
     public static FnValidSelection IsDiffTeam(Chr chr) {
-        return (object chr2, Selections selections) => (chr.plyrOwner.id != ((Chr)chr2).plyrOwner.id);
+        return (object chr2, InputSkillSelection selections) => (chr.plyrOwner.id != ((Chr)chr2).plyrOwner.id);
     }
 
     public static FnValidSelection IsFrontliner() {
-        return (object chr, Selections selections) => ((Chr)chr).position.positiontype == Position.POSITIONTYPE.FRONTLINE;
+        return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype == Position.POSITIONTYPE.FRONTLINE;
     }
     public static FnValidSelection IsBackliner() {
-        return (object chr, Selections selections) => ((Chr)chr).position.positiontype == Position.POSITIONTYPE.BACKLINE;
+        return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype == Position.POSITIONTYPE.BACKLINE;
     }
 
 

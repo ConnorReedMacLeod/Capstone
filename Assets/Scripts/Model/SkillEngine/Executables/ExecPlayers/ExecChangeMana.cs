@@ -73,7 +73,7 @@ public class ExecChangeMana : ExecPlayer {
             plyrTarget.manapool.ChangeMana(manaChange);
         }
 
-        fDelay = ContTurns.fDelayMinorSkill;
+        fDelay = ContTime.fDelayMinorSkill;
         sLabel = "Changing mana for player " + plyrTarget.id;
 
     }

@@ -28,31 +28,31 @@ public class TarPosition : Target {
     }
 
     public static FnValidSelection IsOnPositionOfChr(Chr chr) {
-        return (object pos, Selections selections) => (chr.position == (Position)pos);
+        return (object pos, InputSkillSelection selections) => (chr.position == (Position)pos);
     }
 
     public static FnValidSelection IsPositionNotOfChr(Chr chr) {
-        return (object pos, Selections selections) => (chr.position != (Position)pos);
+        return (object pos, InputSkillSelection selections) => (chr.position != (Position)pos);
     }
 
     public static FnValidSelection IsSameTeam(Chr chr) {
-        return (object pos, Selections selections) => (((Position)pos).IsAllyOwned(chr.plyrOwner));
+        return (object pos, InputSkillSelection selections) => (((Position)pos).IsAllyOwned(chr.plyrOwner));
     }
 
     public static FnValidSelection IsDiffTeam(Chr chr) {
-        return (object pos, Selections selections) => (((Position)pos).IsEnemyOwned(chr.plyrOwner));
+        return (object pos, InputSkillSelection selections) => (((Position)pos).IsEnemyOwned(chr.plyrOwner));
     }
 
     public static FnValidSelection IsFrontline() {
-        return (object pos, Selections selections) => ((Position)pos).positiontype == Position.POSITIONTYPE.FRONTLINE;
+        return (object pos, InputSkillSelection selections) => ((Position)pos).positiontype == Position.POSITIONTYPE.FRONTLINE;
     }
 
     public static FnValidSelection IsBackline() {
-        return (object pos, Selections selections) => ((Position)pos).positiontype == Position.POSITIONTYPE.BACKLINE;
+        return (object pos, InputSkillSelection selections) => ((Position)pos).positiontype == Position.POSITIONTYPE.BACKLINE;
     }
 
     public static FnValidSelection IsBench() {
-        return (object pos, Selections selections) => ((Position)pos).positiontype == Position.POSITIONTYPE.BENCH;
+        return (object pos, InputSkillSelection selections) => ((Position)pos).positiontype == Position.POSITIONTYPE.BENCH;
     }
 
 

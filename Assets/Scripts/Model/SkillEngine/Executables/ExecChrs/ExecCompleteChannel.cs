@@ -38,7 +38,7 @@ public class ExecCompleteChannel : ExecChr {
         Debug.Log("Executing ExecCompleteChannel");
 
 
-        fDelay = ContTurns.fDelayTurnSkill;
+        fDelay = ContTime.fDelayTurnSkill;
         sLabel = chrTarget.sName + " has completed their channel";
 
         StateChanneling stateChannel = (StateChanneling)chrTarget.curStateReadiness;

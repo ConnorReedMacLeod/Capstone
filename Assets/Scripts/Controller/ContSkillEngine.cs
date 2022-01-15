@@ -26,6 +26,29 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
     }
 
 
+    public IEnumerator CRPrepMatch() {
+
+        Debug.Log("Prepping Match");
+        return null;
+    }
+
+    public bool IsMatchOver() {
+
+        Debug.Log("IsMatchOver - not yet implemented");
+        return false;
+    }
+
+    //Do any closing animations for the end of a match
+    public IEnumerator CRCleanUpMatch() {
+
+        Debug.Log("Cleaning up Match");
+        return null;
+    }
+
+    //Do any saving of results/rewards and move to a new scene
+    public void FinishMatch() {
+        Debug.Log("Finishing Match");
+    }
 
     //The main loop that will process the effects of the game.  If it needs inputs, it will flag what
     //  it's waiting on and pull input from the network buffer to decide what action should be taken
@@ -87,7 +110,6 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
         //Do any fill wrap-up for the match
         FinishMatch();
-        yield break;
     }
 
     public void ResolveClause() {

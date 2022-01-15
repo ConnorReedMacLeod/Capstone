@@ -56,7 +56,7 @@ public class ExecTurnReady : Executable {
         ReadyAll();
 
         sLabel = "Readying Characters";
-        fDelay = ContTurns.fDelayTurnSkill;
+        fDelay = ContTime.fDelayTurnSkill;
 
     }
 

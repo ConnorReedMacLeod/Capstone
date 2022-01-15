@@ -48,7 +48,7 @@ public class ExecBeginChannel : ExecChr {
         // soulchannel effect can be applied (and do any on-application effects if necessary)
         chrTarget.SetStateReadiness(newState);
 
-        fDelay = ContTurns.fDelayTurnSkill;
+        fDelay = ContTime.fDelayTurnSkill;
         sLabel = chrTarget.sName + " is beginning their channel";
         Debug.Log("After SetStateReadiness");
 

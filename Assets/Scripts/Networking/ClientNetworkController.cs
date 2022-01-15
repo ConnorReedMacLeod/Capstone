@@ -104,16 +104,6 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
                 MatchSetup.Get().SaveMatchParams(MatchSetup.UnserializeMatchParams(arContent));
                 break;
 
-            case MasterNetworkController.evtCMoveToNewTurnPhase:
-
-                ContTurns.STATETURN newTurnState = (ContTurns.STATETURN)arContent[0];
-
-                Debug.Log("Master told us to move to " + newTurnState.ToString());
-
-                    MoveToTurnPhase(newTurnState, arContent[1]);
-
-                break;
-
             default:
                 //Debug.Log(name + " shouldn't handle event code " + eventCode);
                 break;
@@ -121,14 +111,14 @@ public class ClientNetworkController : MonoBehaviourPun, IOnEventCallback {
 
     }
 
-    public void MoveToTurnPhase(ContTurns.STATETURN newTurnState, object additionalInfo) {
+    public void MoveToTurnPhase(ContTurns.STATETURN newTurnState) {
 
         switch (newTurnState) {
             
             default:
                 //By default, we are in the middle of a match
                 //Pass along whatever phase of the turn we're now in to the ContTurns
-                ContTurns.Get().SetTurnState(newTurnState, additionalInfo);
+                ContTurns.Get().SetTurnState(newTurnState);
 
                 break;
         }
