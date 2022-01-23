@@ -14,7 +14,7 @@ public abstract class ClauseSkillSelection : ClauseSkill {
         //Grab the stored selections for the current input, and pass it to the overrideable ClauseEffect where
         // the abilities can customize what they will do
 
-        ClauseEffect((InputSkillSelection)NetworkReceiver.Get().GetCurMatchInput());
+        ClauseEffect((InputSkillSelection)NetworkMatchReceiver.Get().GetCurMatchInput());
 
     }
 

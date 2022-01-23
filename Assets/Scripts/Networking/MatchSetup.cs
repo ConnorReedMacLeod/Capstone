@@ -161,7 +161,7 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
             }
         }
 
-        int nLocalClientID = ClientNetworkController.Get().nLocalClientID;
+        int nLocalClientID = PhotonNetwork.LocalPlayer.ActorNumber;
 
         //By default, assume we are locally controlling both players - can override as needed
         int[] arnPlayersOwners = new int[Player.MAXPLAYERS];
@@ -202,7 +202,7 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
 
         curMatchParams = new MatchParams();
 
-        int nLocalIDController = ClientNetworkController.Get().nLocalClientID;
+        int nLocalIDController = PhotonNetwork.LocalPlayer.ActorNumber;
 
         //Set the defaults for the curMatchParams to include player owners and input types
         curMatchParams.UpdatePlayerOwners(new int[] { nLocalIDController, nLocalIDController });
@@ -210,32 +210,6 @@ public class MatchSetup : SingletonPersistent<MatchSetup> {
 
         Debug.Log("Finished CharacterSelection.Init");
     }
-
-
-    // Send a complete matchparams to the master to move to the start of the draft
-    public void SubmitLocalMatchParamsAndStartDraft() {
-
-        Debug.Log("Client is submitting an initially filled (with owners/input types) match params (and requesting to start the draft): " + curMatchParams);
-
-        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMStartDraft, SerializeMatchParams(curMatchParams));
-    }
-
-    // Send a complete matchparams to the master to jump directly to the loadout phase
-    public void SubmitLocalMatchParamsAndDirectlyStartLoadout() {
-
-        Debug.Log("Client is submitting a match params that is (supposedly) filled with chr selections (and requesting to directly start the loadout phase): " + curMatchParams);
-
-        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMSubmitMatchParamsAndDirectlyStartLoadout, SerializeMatchParams(curMatchParams));
-    }
-
-    // Send a complete matchparams to the master to jump directly to the start of a match
-    public void SubmitLocalMatchParamsAndDirectlyStartMatch() {
-
-        Debug.Log("Client is submitting a supposedly completed match params (and requesting to directly start the match): " + curMatchParams);
-
-        NetworkConnectionManager.SendEventToMaster(MasterNetworkController.evtMSubmitMatchParamsAndDirectlyStartMatch, SerializeMatchParams(curMatchParams));
-    }
-
 
     // When the master has sent out out the information for forming a match, we'll save it locally
     //  and set up anything relevant for the start of the match

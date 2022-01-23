@@ -61,7 +61,7 @@ public class LocalInputScripted : LocalInputType {
         }
 
         //By this point, we have a valid input, so let's submit it
-        NetworkSender.Get().SendNextInput(ContSkillEngine.Get().matchinputToFillOut);
+        NetworkMatchSender.Get().SendNextInput(ContSkillEngine.Get().matchinputToFillOut);
 
     }
 

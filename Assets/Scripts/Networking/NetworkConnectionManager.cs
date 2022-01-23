@@ -139,7 +139,8 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         if(SceneManager.GetActiveScene().name == "_DRAFT") {
             Debug.Log("We're already in the _DRAFT scene, so no need to transfer to it");
         } else {
-            MatchSetup.Get().SubmitLocalMatchParamsAndStartDraft();
+            Debug.Log("We as the master are moving us to the Draft scene");
+            PhotonNetwork.LoadLevel("_DRAFT");
         }
     }
 
@@ -155,11 +156,14 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         if (SceneManager.GetActiveScene().name == "_LOADOUT") {
             Debug.Log("We're already in the _LOADOUT scene, so no need to transfer to it");
         } else {
+            Debug.Log("Setting character selections using the Master's locally-chosen characters");
+
             //Publish any of the local selections for characters we have before moving to the loadout scene
             plyrselector1.PublishCharacterSelections();
             plyrselector2.PublishCharacterSelections();
 
-            MatchSetup.Get().SubmitLocalMatchParamsAndDirectlyStartLoadout();
+            Debug.Log("We as the master are moving us to the Loadout scene");
+            PhotonNetwork.LoadLevel("_LOADOUT");
         }
     }
 
@@ -175,7 +179,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         if(SceneManager.GetActiveScene().name == "_MATCH") {
             Debug.Log("We're already in the _MATCH scene, so no need to transfer to it");
         } else {
-            Debug.Log("Passing our locally stored match parameters to the master and requesting to start match");
+            Debug.Log("Setting Character selections and Loadouts for the Master's locally-chosen characters and loadouts");
             //Publish any of the local selections for characters and loadouts we have before moving to the loadout scene
             plyrselector1.PublishCharacterSelections();
             plyrselector2.PublishCharacterSelections();
@@ -183,7 +187,8 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
             plyrselector1.PublishLoadouts();
             plyrselector2.PublishLoadouts();
 
-            MatchSetup.Get().SubmitLocalMatchParamsAndDirectlyStartMatch(); 
+            Debug.Log("We as the master are moving us to the Match scene");
+            PhotonNetwork.LoadLevel("_MATCH");
         }
     }
 
@@ -198,8 +203,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         PhotonNetwork.AutomaticallySyncScene = true; //PhotonNetwork.LoadLevel() will keep the same
                                                      // level for everyone in the room
         PhotonNetwork.GameVersion = "v1"; //Only players with the same game version can play together
-
-
+        
         bTriesToConnectToMaster = true;
         PhotonNetwork.ConnectUsingSettings();
     }
@@ -260,7 +264,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         Debug.Log("Spawning networkcontroller");
 
         //Spawn the networking manager for the local player
-        GameObject goNetworkController = PhotonNetwork.Instantiate("Networking/pfNetworkController", Vector3.zero, Quaternion.identity);
+        GameObject goNetworkController = PhotonNetwork.Instantiate("Prefabs/Networking/pfNetworkController", Vector3.zero, Quaternion.identity);
 
         if(goNetworkController = null) {
             Debug.LogError("No prefab found for network controller");
@@ -291,7 +295,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         //Debug.LogError("Failed to join a room: " + returnCode + " " + message);
 
         RoomOptions roomOptions = new RoomOptions();
-        roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable() { { "lvl", nMyLevel }, { "trn", 0 } };
+        roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable() { { "lvl", nMyLevel } };
         roomOptions.CustomRoomPropertiesForLobby = new string[] { "type", "lvl" };
 
         //Set the max players to be the amount we most recently queue'd up for
@@ -310,9 +314,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer) {
         base.OnPlayerEnteredRoom(newPlayer);
-
-        //Pass along the call to the master 
-        MasterNetworkController.Get().OnPlayerEnteredRoom(newPlayer);
+        
     }
 
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) {

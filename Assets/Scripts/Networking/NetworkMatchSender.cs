@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class NetworkSender : Singleton<NetworkSender> {
+public class NetworkMatchSender : Singleton<NetworkMatchSender> {
 
     PhotonView photonview;
 
@@ -19,7 +19,7 @@ public class NetworkSender : Singleton<NetworkSender> {
 
     //Send the input for the current input that we have processed up to (according to the networkreceiver)
     public void SendNextInput(MatchInput matchinputToSend) {
-        SendInput(NetworkReceiver.Get().indexCurMatchInput, matchinputToSend);
+        SendInput(NetworkMatchReceiver.Get().indexCurMatchInput, matchinputToSend);
     }
 
     public override void Init() {

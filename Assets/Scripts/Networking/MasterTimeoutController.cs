@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class MasterTimeoutController : MonoBehaviour {
 
-    public MasterNetworkController master;
 
     public const float fTimeoutToStartMatch = 30f;
     public const float fTimeoutStandard = 15f;
@@ -39,23 +38,13 @@ public class MasterTimeoutController : MonoBehaviour {
 
         Debug.Log("Timeout reached");
 
-        //If the time limit has been reached, force all players to move onto the next
-        //  phase of the turn (whether ready or not) - TODO - does this make sense?
-        master.ForceAllClientsEndPhase(stateTurnWaitingOn);
+        //If the time limit has been reached, react appropriately - TODO
 
         EndTimeoutTimer();
     }
 
     public void EndTimeoutTimer() {
         fTimeoutTimer = 0.0f;
-    }
-
-    private void OnEnable() {
-
-        master = GetComponent<MasterNetworkController>();
-
-        Debug.Assert(master != null, "ERROR - no MasterNetworkController component found with MasterTimeoutController");
-
     }
 
     // Update is called once per frame
