@@ -74,7 +74,7 @@ public static class NetworkMatchSetup {
     public static void SetCharacterSelection(int idPlayer, int iChrSlot, CharType.CHARTYPE chartype) {
 
         if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(GetCharSelectionsKey(idPlayer, iChrSlot))){
-            Debug.Log("Tried to set character selection for player {0}'s {1}th character to {2}, but it was already set");
+            Debug.Log("Overwriting character selection for player {0}'s {1}th character to {2}");
             return;
         }
 
@@ -99,7 +99,7 @@ public static class NetworkMatchSetup {
 
     public static void SetLoadout(int idPlayer, int iChrSlot, LoadoutManager.Loadout loadout) {
         if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(GetLoadoutKey(idPlayer, iChrSlot))) {
-            Debug.Log("Tried to set loadout for player {0}'s {1}th character to {2}, but it was already set");
+            Debug.Log("Overwriting loadout for player {0}'s {1}th character to {2}");
             return;
         }
 

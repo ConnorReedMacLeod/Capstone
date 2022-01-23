@@ -68,7 +68,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
             Debug.Assert(matchinputToFillOut != null);
 
             //If we need input, let's check if we already have input waiting in our buffer for that input
-            if (NetworkReceiver.Get().IsCurMatchInputReady() == false) {
+            if (NetworkMatchReceiver.Get().IsCurMatchInputReady() == false) {
 
                 // Now that input is needed by some player, check if we locally control that player
                 if (NetworkMatchSetup.IsLocallyOwned(matchinputToFillOut.iPlayerActing)) {
@@ -80,7 +80,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
                 }
 
                 //Wait until we have input waiting for us in the network buffer
-                while (NetworkReceiver.Get().IsCurMatchInputReady() == false) {
+                while (NetworkMatchReceiver.Get().IsCurMatchInputReady() == false) {
                     //Keep spinning until we get the input we're waiting on
 
                     Debug.Log("Waiting for input");
@@ -93,7 +93,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
             }
 
             //At this point, we have an input in the buffer that we are able to process
-            MatchInput matchinput = NetworkReceiver.Get().GetCurMatchInput();
+            MatchInput matchinput = NetworkMatchReceiver.Get().GetCurMatchInput();
 
             //Clear out the matchinput we prompting to be filled out
             matchinputToFillOut = null;

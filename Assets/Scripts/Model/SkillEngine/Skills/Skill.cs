@@ -102,12 +102,12 @@ public abstract class Skill {
     //Use the selected skill with the supplied targets
     public void UseSkill() {
 
-        if(NetworkReceiver.Get().IsCurMatchInputReady() == false) {
-            Debug.LogError("Tried to use skill, but we don't have the current input ready yet (input " + NetworkReceiver.Get().indexCurMatchInput);
+        if(NetworkMatchReceiver.Get().IsCurMatchInputReady() == false) {
+            Debug.LogError("Tried to use skill, but we don't have the current input ready yet (input " + NetworkMatchReceiver.Get().indexCurMatchInput);
         }
 
-        if(CanSelect((InputSkillSelection)NetworkReceiver.Get().GetCurMatchInput()) == false) {
-            Debug.LogError("Tried to use skill, but the master-provided selections were invalid! : " + NetworkReceiver.Get().GetCurMatchInput().ToString());
+        if(CanSelect((InputSkillSelection)NetworkMatchReceiver.Get().GetCurMatchInput()) == false) {
+            Debug.LogError("Tried to use skill, but the master-provided selections were invalid! : " + NetworkMatchReceiver.Get().GetCurMatchInput().ToString());
         }
 
         // IMPORTANT - since we're pushing these effects onto the stack, we'll want to 

@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class NetworkReceiver : Singleton<NetworkReceiver> {
+public class NetworkMatchReceiver : Singleton<NetworkMatchReceiver> {
 
     public const int NDEFAULTSELECTIONSCAPACITY = 100;
 

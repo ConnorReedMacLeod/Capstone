@@ -42,7 +42,7 @@ public abstract class TypeUsage {
     //Fetch the current selection information passed to us from the Master
     public virtual InputSkillSelection GetUsedSelections() {
 
-        InputSkillSelection selections = (InputSkillSelection)NetworkReceiver.Get().GetCurMatchInput();
+        InputSkillSelection selections = (InputSkillSelection)NetworkMatchReceiver.Get().GetCurMatchInput();
 
         //You can only get legitimate selections for this skill if the selection passed is referring to
         //  this skill

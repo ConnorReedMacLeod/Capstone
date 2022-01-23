@@ -168,12 +168,12 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         Debug.Assert(ContTurns.Get().GetNextActingChr().plyrOwner.curInputType == Player.InputType.HUMAN,
             "Error - can only submit skills for locally-owned >human<'s characters");
 
-        Debug.Assert(ClientNetworkController.Get().IsPlayerLocallyControlled(ContTurns.Get().GetNextActingChr().plyrOwner),
+        Debug.Assert(NetworkMatchSetup.IsLocallyOwned(ContTurns.Get().GetNextActingChr().plyrOwner.id),
             "Error - can only submit skills for >locally-owned< human's characters");
 
 
         //By this point, we have built up the matchinputToFillOut into a valid selection of targets, so let's submit it
-        NetworkSender.Get().SendNextInput(ContSkillEngine.Get().matchinputToFillOut);
+        NetworkMatchSender.Get().SendNextInput(ContSkillEngine.Get().matchinputToFillOut);
 
         //Clean up the selection process (clears out the stored selections structure, sends notifications, etc.)
         ExitSelectionsProcess();
