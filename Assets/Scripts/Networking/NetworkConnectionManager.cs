@@ -259,16 +259,19 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         }
     }
 
-    public void SpawnNetworkController() {
 
-        Debug.Log("Spawning networkcontroller");
+    public void SpawnSceneNetworkManager(string sPrefabName) {
+        GameObject goSceneNetworkManager;
+
+        Debug.LogFormat("Spawning {0}", sPrefabName);
 
         //Spawn the networking manager for the local player
-        GameObject goNetworkController = PhotonNetwork.Instantiate("Prefabs/Networking/pfNetworkController", Vector3.zero, Quaternion.identity);
+        goSceneNetworkManager = PhotonNetwork.Instantiate(string.Format("Prefabs/Networking/{0}", sPrefabName), Vector3.zero, Quaternion.identity);
 
-        if(goNetworkController = null) {
-            Debug.LogError("No prefab found for network controller");
+        if (goSceneNetworkManager = null) {
+            Debug.LogErrorFormat("No prefab found for {0}", sPrefabName);
         }
+
     }
 
     public override void OnJoinedRoom() {
@@ -281,8 +284,6 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
             " | Level: " + PhotonNetwork.CurrentRoom.CustomProperties["lvl"] +
             " | Number of Players: " + PhotonNetwork.CurrentRoom.PlayerCount +
             " | Max Number of Players: " + PhotonNetwork.CurrentRoom.MaxPlayers);
-
-        SpawnNetworkController();
 
     }
 
