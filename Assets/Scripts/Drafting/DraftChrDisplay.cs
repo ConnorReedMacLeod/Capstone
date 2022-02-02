@@ -19,9 +19,20 @@ public class DraftChrDisplay : MonoBehaviour {
         imgPortrait.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
     }
 
+    public void SetEmptySlot() {
+        txtChrNameLabel.text = "---";
+
+        imgPortrait.overrideSprite = Resources.Load("Images/Chrs/imgLain", typeof(Sprite)) as Sprite;
+    }
+
     public void SetChrInSlot(CharType.CHARTYPE _chrInSlot) {
 
         chrInSlot = _chrInSlot;
+
+        if(chrInSlot == CharType.CHARTYPE.LENGTH) {
+            SetEmptySlot();
+            return;
+        }
 
         string sChrName = CharType.GetChrName(chrInSlot);
 

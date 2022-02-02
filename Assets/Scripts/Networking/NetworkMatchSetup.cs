@@ -68,13 +68,17 @@ public static class NetworkMatchSetup {
 
     // Character Selections
     public static string GetCharSelectionsKey(int idPlayer, int idChar) {
-        return string.Format("cs{0}-{1}}", idPlayer, idChar);
+        return string.Format("cs{0}-{1}", idPlayer, idChar);
     }
 
     public static void SetCharacterSelection(int idPlayer, int iChrSlot, CharType.CHARTYPE chartype) {
 
+        Debug.LogFormat("Setting character selection for player {0}'s {1}th character to {2}",
+                idPlayer, iChrSlot, chartype);
+
         if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(GetCharSelectionsKey(idPlayer, iChrSlot))){
-            Debug.Log("Overwriting character selection for player {0}'s {1}th character to {2}");
+            Debug.LogFormat("Overwriting character selection for player {0}'s {1}th character to {2}",
+                idPlayer, iChrSlot, chartype);
             return;
         }
 
@@ -94,12 +98,13 @@ public static class NetworkMatchSetup {
 
     // Loadouts
     public static string GetLoadoutKey(int idPlayer, int idChar) {
-        return string.Format("lo{0}-{1}}", idPlayer, idChar);
+        return string.Format("lo{0}-{1}", idPlayer, idChar);
     }
 
     public static void SetLoadout(int idPlayer, int iChrSlot, LoadoutManager.Loadout loadout) {
         if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(GetLoadoutKey(idPlayer, iChrSlot))) {
-            Debug.Log("Overwriting loadout for player {0}'s {1}th character to {2}");
+            Debug.LogFormat("Overwriting loadout for player {0}'s {1}th character to {2}",
+                idPlayer, iChrSlot, loadout);
             return;
         }
 
@@ -119,7 +124,7 @@ public static class NetworkMatchSetup {
 
     // Starting Position Coords
     public static string GetPositionCoordsKey(int idPlayer, int idChar) {
-        return string.Format("pc{0}-{1}}", idPlayer, idChar);
+        return string.Format("pc{0}-{1}", idPlayer, idChar);
     }
 
     public static void SetPositionCoords(int idPlayer, int iChrSlot, Position position) {

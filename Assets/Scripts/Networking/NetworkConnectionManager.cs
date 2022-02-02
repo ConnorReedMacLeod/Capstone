@@ -266,7 +266,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         Debug.LogFormat("Spawning {0}", sPrefabName);
 
         //Spawn the networking manager for the local player
-        goSceneNetworkManager = PhotonNetwork.Instantiate(string.Format("Prefabs/Networking/{0}", sPrefabName), Vector3.zero, Quaternion.identity);
+        goSceneNetworkManager = PhotonNetwork.InstantiateSceneObject(string.Format("Prefabs/Networking/{0}", sPrefabName), Vector3.zero, Quaternion.identity);
 
         if (goSceneNetworkManager = null) {
             Debug.LogErrorFormat("No prefab found for {0}", sPrefabName);
