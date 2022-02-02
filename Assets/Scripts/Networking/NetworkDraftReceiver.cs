@@ -15,7 +15,7 @@ public class NetworkDraftReceiver : Singleton<NetworkDraftReceiver> {
     [PunRPC]
     void ReceiveBan(int indexDraftInput, CharType.CHARTYPE chartypeToBan) {
 
-        Debug.LogFormat("Received input #{0}: Ban {1}", indexCurDraftInput, chartypeToBan);
+        Debug.LogErrorFormat("Received input #{0}: Ban {1}", indexCurDraftInput, chartypeToBan);
         AddInputToBuffer(indexDraftInput, chartypeToBan);
 
     }
@@ -23,7 +23,7 @@ public class NetworkDraftReceiver : Singleton<NetworkDraftReceiver> {
     [PunRPC]
     void ReceiveDraft(int indexDraftInput, CharType.CHARTYPE chartypeToDraft) {
 
-        Debug.LogFormat("Received input #{0}: Draft {1}", indexCurDraftInput, chartypeToDraft);
+        Debug.LogErrorFormat("Received input #{0}: Draft {1}", indexCurDraftInput, chartypeToDraft);
         AddInputToBuffer(indexDraftInput, chartypeToDraft);
 
     }

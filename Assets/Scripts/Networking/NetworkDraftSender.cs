@@ -13,7 +13,7 @@ public class NetworkDraftSender : Singleton<NetworkDraftSender> {
 
         int indexCurDraftInput = NetworkDraftReceiver.Get().indexCurDraftInput;
 
-        Debug.LogFormat("Sending step {0}: Ban {1}", indexCurDraftInput, chartypeToBan);
+        Debug.LogErrorFormat("Sending step {0}: Ban {1}", indexCurDraftInput, chartypeToBan);
 
         photonview.RPC("ReceiveBan", RpcTarget.AllBufferedViaServer, indexCurDraftInput, chartypeToBan);
 
@@ -23,7 +23,7 @@ public class NetworkDraftSender : Singleton<NetworkDraftSender> {
 
         int indexCurDraftInput = NetworkDraftReceiver.Get().indexCurDraftInput;
 
-        Debug.LogFormat("Sending step {0}: Draft {1}", indexCurDraftInput, chartypeToDraft);
+        Debug.LogErrorFormat("Sending step {0}: Draft {1}", indexCurDraftInput, chartypeToDraft);
 
         photonview.RPC("ReceiveDraft", RpcTarget.AllBufferedViaServer, indexCurDraftInput, chartypeToDraft);
     }

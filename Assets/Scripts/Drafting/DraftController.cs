@@ -49,9 +49,11 @@ public class DraftController : Singleton<DraftController> {
         //Do any animation processing that needs to be done before the draft input actually starts
         yield return StartCoroutine(CRPrepDraft());
 
+        Debug.Log("Done prepping draft");
+
 
         //Keep processing turn events while the draft isn't finished
-        while (IsDraftPhaseOver()) {
+        while (!IsDraftPhaseOver()) {
 
             //Check if we have input waiting for us in the network buffer
             while(NetworkDraftReceiver.Get().IsCurSelectionReady() == false) {
@@ -66,6 +68,8 @@ public class DraftController : Singleton<DraftController> {
             //At this point, we have an input in the buffer that we are able to process
             DraftAction draftaction = GetNextDraftPhaseStep();
             CharType.CHARTYPE chartypeInput = NetworkDraftReceiver.Get().GetCurSelection();
+
+            Debug.Log("Got a draft action of type " + draftaction.draftactionType + " for chr " + chartypeInput);
 
             //Start a coroutine to process whichever event we need to execute
             if (draftaction.draftactionType == DraftAction.DRAFTACTIONTYPE.DRAFT) {
@@ -220,6 +224,8 @@ public class DraftController : Singleton<DraftController> {
     }
 
     public void FinishDraftPhaseStep() {
+        Debug.Log("Finished draft phase step " + indexCurDraftStep);
+
         //Increment the current draft step we're on
         indexCurDraftStep++;
     }
@@ -296,6 +302,8 @@ public class DraftController : Singleton<DraftController> {
 
     public void StartDraft() {
 
+        Debug.Log("Starting draft");
+
         //Deactivate the 'start draft' button
         btnStartDraft.gameObject.SetActive(false);
 
@@ -319,6 +327,8 @@ public class DraftController : Singleton<DraftController> {
             for(int j=0; j<arDraftedChrs[i].Length; j++) {
                 arDraftedChrs[i][j] = CharType.CHARTYPE.LENGTH; //Initially set the chosen character to a flag meaning no selected character yet
             }
+
+            arDraftedChrDisplay[i].UpdateDraftedChrDisplays(arDraftedChrs[i]);
         }
 
         InitChrsAvailableToDraft();
