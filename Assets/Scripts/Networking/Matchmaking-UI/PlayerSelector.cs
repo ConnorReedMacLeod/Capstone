@@ -18,6 +18,9 @@ public class PlayerSelector : MonoBehaviour {
     public static CharType.CHARTYPE[,] CHRSELECTIONSDEFAULT = 
         {{CharType.CHARTYPE.FISCHER, CharType.CHARTYPE.KATARINA, CharType.CHARTYPE.PITBEAST },
         {CharType.CHARTYPE.RAYNE, CharType.CHARTYPE.SAIKO, CharType.CHARTYPE.SOPHIDIA }};
+    public static Position.Coords[,] POSITIONSDEFAULT =
+        {{ new Position.Coords(1, 0), new Position.Coords(2, 1), new Position.Coords(1, 2)},
+        {new Position.Coords(4, 0), new Position.Coords(3, 1), new Position.Coords(4, 2) }};
 
     public void Start() {
         lstLoadoutSelected = new List<LoadoutManager.Loadout>();
@@ -30,6 +33,9 @@ public class PlayerSelector : MonoBehaviour {
 
             //Set the loadout to be the default loadout for the selected player
             lstLoadoutSelected.Add(LoadoutManager.GetDefaultLoadoutForChar((CharType.CHARTYPE)arDropdownCharSelect[i].dropdown.value));
+
+            //Set the default position of that character
+            NetworkMatchSetup.SetPositionCoords(idPlayer, i, POSITIONSDEFAULT[idPlayer, i]);
 
             //Ensure our character selection dropdown is initialized
             arDropdownCharSelect[i].UpdateDropdownOptions();

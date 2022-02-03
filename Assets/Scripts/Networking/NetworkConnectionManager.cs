@@ -285,6 +285,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
             " | Number of Players: " + PhotonNetwork.CurrentRoom.PlayerCount +
             " | Max Number of Players: " + PhotonNetwork.CurrentRoom.MaxPlayers);
 
+        InitRandomization();
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message) {
