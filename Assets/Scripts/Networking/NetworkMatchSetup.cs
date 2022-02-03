@@ -127,8 +127,8 @@ public static class NetworkMatchSetup {
         return string.Format("pc{0}-{1}", idPlayer, idChar);
     }
 
-    public static void SetPositionCoords(int idPlayer, int iChrSlot, Position position) {
-        ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { GetPositionCoordsKey(idPlayer, iChrSlot), Position.SerializeCoords(position.coords) } };
+    public static void SetPositionCoords(int idPlayer, int iChrSlot, Position.Coords positionCoords) {
+        ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { GetPositionCoordsKey(idPlayer, iChrSlot), Position.SerializeCoords(positionCoords) } };
 
         PhotonNetwork.CurrentRoom.SetCustomProperties(hashNewProperties);
     }

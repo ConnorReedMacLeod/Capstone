@@ -29,7 +29,8 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
     public IEnumerator CRPrepMatch() {
 
         Debug.Log("Prepping Match");
-        return null;
+
+        yield return new WaitForSeconds(1.0f);
     }
 
     public bool IsMatchOver() {
@@ -42,7 +43,8 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
     public IEnumerator CRCleanUpMatch() {
 
         Debug.Log("Cleaning up Match");
-        return null;
+
+        yield return new WaitForSeconds(1.0f);
     }
 
     //Do any saving of results/rewards and move to a new scene
@@ -59,7 +61,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
 
         //Keep processing effects while the match isn't finished
-        while (IsMatchOver()) {
+        while (!IsMatchOver()) {
 
             // Pass control over to the stack-processing loop until it needs player input to continue the simulation
             yield return ProcessStackUntilInputNeeded();
