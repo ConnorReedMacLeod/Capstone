@@ -31,7 +31,7 @@ public class ViewPosition : ViewInteractive {
 
     //For when the currently targetting skill can target this position
     public void cbOnBecomesTargettable(Object target, params object[] args) {
-        Skill skillTargetting = (Skill)args[0];
+        Skill skillTargetting = ((SkillSlot)args[0]).skill;
 
         Debug.Log(mod + " is currently targettable by " + skillTargetting.sName);
 

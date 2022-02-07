@@ -151,6 +151,15 @@ public class ContTurns : Singleton<ContTurns> {
         //Loop around to the recharge phase if we've reached the end of a turn
         if(turnphase == STATETURN.TURNEND) {
             return STATETURN.RECHARGE;
+
+        }else if(turnphase == STATETURN.CHOOSESKILL) {
+            //If we have finished choosing and executing a skill, then let's check if we want to stay in the choose-skills phase of the turn,
+            // or we can move to the end of turn if no one is left to act
+            if(GetNextActingChr() == null) {
+                return STATETURN.TURNEND;
+            } else {
+                return STATETURN.CHOOSESKILL;
+            }
         }
 
         //Generally, just move to the next sequential turn phase

@@ -13,7 +13,7 @@ public class NetworkMatchSender : Singleton<NetworkMatchSender> {
 
         Debug.LogFormat("Sending selection: {0}", matchinputToSend);
 
-        photonview.RPC("ReceiveSkillSelection", RpcTarget.AllBufferedViaServer, matchinputToSend.Serialize());
+        photonview.RPC("ReceiveMatchInput", RpcTarget.AllBufferedViaServer, indexInput, matchinputToSend.Serialize());
 
     }
 
