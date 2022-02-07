@@ -59,12 +59,11 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         //Do any animation processing that needs to be done before the match processing actually starts
         yield return StartCoroutine(CRPrepMatch());
 
+        //Do any initial processing for beginning of match effects
+        yield return ProcessStackUntilInputNeeded();
 
         //Keep processing effects while the match isn't finished
         while (!IsMatchOver()) {
-
-            // Pass control over to the stack-processing loop until it needs player input to continue the simulation
-            yield return ProcessStackUntilInputNeeded();
 
             // At this point, we should have an input field that's been set up that needs to be filled out
             Debug.Assert(matchinputToFillOut != null);
@@ -103,8 +102,12 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
             //Process that match input by deferring to its execute method
             yield return matchinput.Execute();
 
-            //The execute method should have pushed new executables/clauses onto the stack, so we can
-            // continue with the next loop to process them
+            //The execute method should have pushed new executables/clauses onto the stack, so we can process them
+            // Pass control over to the stack-processing loop until it needs player input to continue the simulation
+            yield return ProcessStackUntilInputNeeded();
+
+            //Since we're done processing all the effects that may need access to the most recent input, we can advance to the next needed input
+            NetworkMatchReceiver.Get().FinishCurMatchInput();
         }
 
         //Do any animation process that needs to be done before we leave the match scene

@@ -65,8 +65,19 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         // There's a bunch of checks we have to do for this though first to ensure we should be selecting this skill
 
         // Check if we're already in the process of selecting for a skill
-        if(selectionsInProgress != null) {
+        if (selectionsInProgress != null) {
             Debug.Log("We are already in the process of selecting targets for a skill, so we can't start the selections process for another skill");
+            return;
+        }
+
+        if (ContSkillEngine.Get().matchinputToFillOut == null) {
+            Debug.Log("Can't select a skill since we're not waiting on any input right now");
+            return;
+        }
+
+        //If the skill we've selected doesn't belong to the next acting character, then we can't proceed with selecting it
+        if (ContSkillEngine.Get().matchinputToFillOut.iPlayerActing != _skillSelected.chrOwner.plyrOwner.id) {
+            Debug.Log("Can't select skills for a character who isn't currently acting");
             return;
         }
 
@@ -87,12 +98,6 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
         if (((InputSkillSelection)ContSkillEngine.Get().matchinputToFillOut).chrActing != _skillSelected.chrOwner) { 
             Debug.Log("Can't start selections for a character who's not expected to be acting now");
-            return;
-        }
-
-        //If the skill we've selected doesn't belong to the next acting character, then we can't proceed with selecting it
-        if (selectionsInProgress.chrActing != _skillSelected.chrOwner) {
-            Debug.Log("Can't select skills for a character who isn't currently acting");
             return;
         }
 
@@ -150,6 +155,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         //Then, check if there are any targets we still need to fill in with selections
         if(selectionsInProgress.HasAllStoredSelections()) {
             Debug.Log("All required selections stored - should move to finishing targetting");
+
             FinishSelections();
             return;
         }
@@ -171,8 +177,10 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         Debug.Assert(NetworkMatchSetup.IsLocallyOwned(ContTurns.Get().GetNextActingChr().plyrOwner.id),
             "Error - can only submit skills for >locally-owned< human's characters");
 
+        //By this point, we have built up our local selectionsInProgress skill selection into a valid selection of targets, 
+        // so let's pass a reference into the Skill Engine's matchinputToFillOut so it can be submitted
+        ContSkillEngine.Get().matchinputToFillOut = selectionsInProgress;
 
-        //By this point, we have built up the matchinputToFillOut into a valid selection of targets, so let's submit it
         NetworkMatchSender.Get().SendNextInput(ContSkillEngine.Get().matchinputToFillOut);
 
         //Clean up the selection process (clears out the stored selections structure, sends notifications, etc.)

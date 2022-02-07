@@ -143,6 +143,8 @@ public class InputSkillSelection : MatchInput {
             return;
         }
 
+        Debug.LogFormat("Adding selection {0}", objSelected);
+
         lstSelections.Add(objSelected);
     }
 
@@ -271,6 +273,8 @@ public class InputSkillSelection : MatchInput {
     //Set up any UI for prompting the selection of a skill and unlock the capability for the local player to go through the 
     //  target selection process
     public override void StartManualInputProcess() {
+
+        Debug.Log("Starting manual input for skillselection");
         //In this case, we're just going to pass off control to the local controller by letting it know we
         //  want to be selecting a skill
         chrActing.plyrOwner.inputController.StartSelection();
