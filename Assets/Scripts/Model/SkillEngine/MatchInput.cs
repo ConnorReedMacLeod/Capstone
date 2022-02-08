@@ -17,7 +17,7 @@ public abstract class MatchInput {
     //Each input type should extend these to provide some process by which the MatchInput information is filled out
     //  Additional functions to help with the real-time interaction with this process will likely be needed
     public abstract void StartManualInputProcess();
-    //TODO - consider if an EndManualInputProcess function is needed - when is this needed between timing out and naturally submitting and executing a skill?
+    public abstract void EndManualInputProcess();
 
     //Each input type should extend this to define what this input should actually do to affect the game state
     public abstract IEnumerator Execute();

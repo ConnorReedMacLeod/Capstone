@@ -68,11 +68,14 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
             // At this point, we should have an input field that's been set up that needs to be filled out
             Debug.Assert(matchinputToFillOut != null);
 
+            bool bNeedsLocalInput = false;
+
             //If we need input, let's check if we already have input waiting in our buffer for that input
             if (NetworkMatchReceiver.Get().IsCurMatchInputReady() == false) {
 
                 // Now that input is needed by some player, check if we locally control that player
                 if (NetworkMatchSetup.IsLocallyOwned(matchinputToFillOut.iPlayerActing)) {
+                    bNeedsLocalInput = true;
                     //Let the match input prepare to start gathering manual input 
                     matchinputToFillOut.StartManualInputProcess();
                 } else {
@@ -90,6 +93,10 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
                 //Do any cleanup that we need to do if we were waiting on input
                 //TODO - figure out what needs to be done and under what circumstances - careful of potentially changing local input controllers
+                if(bNeedsLocalInput == true) {
+                    //Have the match input let the local input controller know that we're done with gathering input
+                    matchinputToFillOut.EndManualInputProcess();
+                }
 
             }
 

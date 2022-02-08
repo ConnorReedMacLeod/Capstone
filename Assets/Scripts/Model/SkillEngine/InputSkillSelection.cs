@@ -280,4 +280,13 @@ public class InputSkillSelection : MatchInput {
         chrActing.plyrOwner.inputController.StartSelection();
     }
 
+
+    //Clean up any UI for prompting the selection of a skill and re-lock the ability for the local player to go through the
+    //   target selection process
+    public override void EndManualInputProcess() {
+
+        Debug.Log("Ending manual input for skillselection");
+        //Have the localinputController clean up it's selection-related UI
+        chrActing.plyrOwner.inputController.EndSelection();
+    }
 }
