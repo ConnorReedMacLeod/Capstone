@@ -26,6 +26,8 @@ public class LocalInputHuman : LocalInputType {
     public override void StartSelection() {
         base.StartSelection();
 
+        Debug.LogError("Starting Input Selection for " + ContTurns.Get().chrNextReady);
+
         ContTurns.Get().chrNextReady.subBecomesActiveForHumans.NotifyObs();
         subAllHumanStartSelection.NotifyObs(this);
 
@@ -33,6 +35,8 @@ public class LocalInputHuman : LocalInputType {
 
     public override void EndSelection() {
         base.EndSelection();
+
+        Debug.LogError("Finished Input Selection for " + ContTurns.Get().chrNextReady);
 
         ContTurns.Get().chrNextReady.subEndsActiveForHumans.NotifyObs();
         subAllHumanEndSelection.NotifyObs(this);

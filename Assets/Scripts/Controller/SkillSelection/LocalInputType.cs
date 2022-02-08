@@ -18,10 +18,6 @@ public abstract class LocalInputType : MonoBehaviour {
         bCurrentlySelectingSkill = true;
     }
 
-    public virtual void CompletedSelection() {
-        bCurrentlySelectingSkill = false;
-    }
-
     public virtual void EndSelection() {
 
         bCurrentlySelectingSkill = false;
