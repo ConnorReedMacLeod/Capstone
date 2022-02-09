@@ -25,16 +25,8 @@ public class ManaPool : MonoBehaviour {
     public bool CanPayManaCost(ManaCost manaCost) {
 
         //Just treat our entire mana pool as a Mana payment and see if it could cover the cost
-        return manaCost.CanBePaidWith(manaOwned);
-    }
-
-    //Quickly check if we've got enough un-reserved mana to pay for another cost
-    public bool HaveEnoughUsableMana(ManaCost manaCost) {
-
-        //Pass along all our un-committed mana to the mana cost to see if it would be enough
         return manaCost.CanBePaidWith(manaUsableToPay);
     }
-
 
     public void ChangeMana(Mana.MANATYPE manaType, int nAmount = 1) {
         manaOwned.ChangeMana(manaType, nAmount);
@@ -91,7 +83,7 @@ public class ManaPool : MonoBehaviour {
 
     //Auto-generate a possible payment we can use to pay for the provided cost
     public Mana GetPaymentForManaCost(ManaCost manaCost) {
-        Debug.Assert(HaveEnoughUsableMana(manaCost));
+        Debug.Assert(CanPayManaCost(manaCost));
 
         Mana manaFinalCost = manaCost.pManaCost.Get();
 

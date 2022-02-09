@@ -36,7 +36,7 @@ public abstract class MatchInput {
 
         //If this resulted in an illegally filled input, then hard-reset to a default legal selection
         if(CanLegallyExecute() == false) {
-
+            ResetToDefaultInput();
         }
     }
 
