@@ -25,8 +25,8 @@ public abstract class Target {
 
     }
 
-    public bool HasAValidSelectable(InputSkillSelection selectionsSoFar) {
-        return GetValidSelectable(selectionsSoFar).Count == 0;
+    public virtual bool HasAValidSelectable(InputSkillSelection selectionsSoFar) {
+        return GetValidSelectable(selectionsSoFar).Count != 0;
     }
 
     //Get a random valid selection for this type of target (for AI purposes mainly)
@@ -42,11 +42,8 @@ public abstract class Target {
 
     //Get a random **possibly invalid** selection for this type of target (currently used for a simple AI with a randomized script of selections)
     public virtual object GetRandomSelectable() {
-        List<object> lstPossibleSelections = GetSelectableUniverse().ToList();
 
-        int nRandomIndex = Random.Range(0, lstPossibleSelections.Count);
-
-        return lstPossibleSelections[nRandomIndex];
+        return LibRandom.GetRandomElementOfList<object>(GetSelectableUniverse().ToList());
     }
 
     public abstract int Serialize(object objToSerialize);

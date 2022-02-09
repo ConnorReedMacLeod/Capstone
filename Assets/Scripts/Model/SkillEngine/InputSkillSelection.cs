@@ -221,16 +221,19 @@ public class InputSkillSelection : MatchInput {
             bool bFailedSelection = false;
 
             for (int i = 0; i < skillslotSelected.skill.lstTargets.Count; i++) {
+                Debug.LogErrorFormat("Skill {0} is asking for selections for its {1}th target, {2}", skillSelected, i, skillSelected.lstTargets[i]);
                 if(skillSelected.lstTargets[i].HasAValidSelectable(this) == false) {
                     bFailedSelection = true;
                     break;
                 }
                 //If there's at least something selectable, then pick one of them randomly
-                lstSelections[i] = skillSelected.lstTargets[i].GetRandomValidSelectable(this);
+                lstSelections.Add(skillSelected.lstTargets[i].GetRandomValidSelectable(this));
             }
 
             if (bFailedSelection) {
                 //If we failed finding a selection for some skill, then continue on in the loop to find a different skill selection
+                //Before we move on to the next selection attempt, clear out any reserved mana amounts
+                chrActing.plyrOwner.manapool.ResetReservedMana();
                 continue;
             }
 
