@@ -238,7 +238,7 @@ public class InputSkillSelection : MatchInput {
             }
 
             //If we reached this far without failing a selection, then we should have a fully filled out random selection so we can return
-            Debug.Assert(CanLegallyExecute());
+            Debug.AssertFormat(CanLegallyExecute(), "{0} is an invalid random selection", ToString());
             return;
         }
 

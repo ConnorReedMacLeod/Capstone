@@ -31,6 +31,9 @@ public class DropDownCharacterSelect : MonoBehaviour {
         NetworkMatchSetup.SetLoadout(plyrselectorParent.idPlayer, idChr,
             LoadoutManager.LoadSavedLoadoutForChr(NetworkMatchSetup.GetCharacterSelection(plyrselectorParent.idPlayer, idChr), 0));
 
+        Debug.LogFormat("Changed chr to {0} with a starting loadout of {1}", NetworkMatchSetup.GetCharacterSelection(plyrselectorParent.idPlayer, idChr),
+            NetworkMatchSetup.GetLoadout(plyrselectorParent.idPlayer, idChr));
+
     }
 
     public void OnClickEditLoadout() {
