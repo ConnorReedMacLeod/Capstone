@@ -33,7 +33,7 @@ public class ViewPosition : ViewInteractive {
     public void cbOnBecomesTargettable(Object target, params object[] args) {
         Skill skillTargetting = ((SkillSlot)args[0]).skill;
 
-        Debug.Log(mod + " is currently targettable by " + skillTargetting.sName);
+        //Debug.Log(mod + " is currently targettable by " + skillTargetting.sName);
 
         //If the source of this skill was an ally
         if (mod.IsAllyOwned(skillTargetting.chrOwner.plyrOwner)) {
@@ -46,7 +46,7 @@ public class ViewPosition : ViewInteractive {
 
     //For when the currently targetting skill has stopped, so this character can clear any targetting display
     public void cbOnEndsTargettable(Object target, params object[] args) {
-        Debug.Log(mod + " is no longer targettable");
+        //Debug.Log(mod + " is no longer targettable");
         DecideIfHighlighted(SelectabilityState.NONE);
     }
 

@@ -32,8 +32,6 @@ public class LoadoutSelector : MonoBehaviour {
         //Overwrite the stored loadout slot with whatever loadout is currently configured
         LoadoutManager.SaveLoadout(ChrTypeSelectingFor(), dropdownSavedLoadouts.value, loadoutCur);
 
-        Debug.Log("Saved " + loadoutCur);
-
         //Update the LoadoutDropdown entry's name to reflect this newly saved loadout
         dropdownSavedLoadouts.options[dropdownSavedLoadouts.value].text = loadoutCur.sName;
 
@@ -108,8 +106,6 @@ public class LoadoutSelector : MonoBehaviour {
     }
 
     public void CompleteSelection() {
-
-        Debug.Log("After completing, our loadout is " + loadoutCur);
 
         //Now that we're done selecting, just callback whatever cleanup method our creator passed to us
         fnOnSelectionComplete();

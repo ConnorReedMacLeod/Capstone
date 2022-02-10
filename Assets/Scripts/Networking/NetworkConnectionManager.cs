@@ -156,11 +156,12 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         if (SceneManager.GetActiveScene().name == "_LOADOUT") {
             Debug.Log("We're already in the _LOADOUT scene, so no need to transfer to it");
         } else {
-            Debug.Log("Setting character selections using the Master's locally-chosen characters");
+            //Shouldn't need to publish any character selections or loadouts, since these should be pre-published when loading into the room
 
+            //Debug.Log("Setting character selections using the Master's locally-chosen characters");
             //Publish any of the local selections for characters we have before moving to the loadout scene
-            plyrselector1.PublishCharacterSelections();
-            plyrselector2.PublishCharacterSelections();
+            //plyrselector1.PublishCharacterSelections();
+            //plyrselector2.PublishCharacterSelections();
 
             Debug.Log("We as the master are moving us to the Loadout scene");
             PhotonNetwork.LoadLevel("_LOADOUT");
@@ -179,13 +180,15 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         if(SceneManager.GetActiveScene().name == "_MATCH") {
             Debug.Log("We're already in the _MATCH scene, so no need to transfer to it");
         } else {
-            Debug.Log("Setting Character selections and Loadouts for the Master's locally-chosen characters and loadouts");
-            //Publish any of the local selections for characters and loadouts we have before moving to the loadout scene
-            plyrselector1.PublishCharacterSelections();
-            plyrselector2.PublishCharacterSelections();
+            //Shouldn't need to publish any character selections or loadouts, since these should be pre-published when loading into the room
 
-            plyrselector1.PublishLoadouts();
-            plyrselector2.PublishLoadouts();
+            //Debug.Log("Setting Character selections and Loadouts for the Master's locally-chosen characters and loadouts");
+            //Publish any of the local selections for characters and loadouts we have before moving to the loadout scene
+            //plyrselector1.PublishCharacterSelections();
+            //plyrselector2.PublishCharacterSelections();
+
+            //plyrselector1.PublishLoadouts();
+            //plyrselector2.PublishLoadouts();
 
             Debug.Log("We as the master are moving us to the Match scene");
             PhotonNetwork.LoadLevel("_MATCH");

@@ -110,8 +110,6 @@ public class Position : MonoBehaviour {
 
     public void Start() {
 
-        Debug.LogError("Calling Position's Start!");
-
         if(bStarted == true) return;
         bStarted = true;
 

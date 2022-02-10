@@ -40,7 +40,7 @@ public static class LoadoutManager {
         return arSerialized;
     }
 
-    public static Loadout UnserializeLoadout(int[] arSerialized) {
+    public static Loadout UnserializeLoadout(int[] arSerialized, string sLoadoutName = "") {
 
         List<SkillType.SKILLTYPE> lstChosenSkills = new List<SkillType.SKILLTYPE>();
 
@@ -49,7 +49,7 @@ public static class LoadoutManager {
             lstChosenSkills.Add((SkillType.SKILLTYPE)arSerialized[iDeserialized]);
         }
 
-        return new Loadout("Deserialized", lstChosenSkills);
+        return new Loadout(sLoadoutName, lstChosenSkills);
     }
 
     
@@ -92,25 +92,20 @@ public static class LoadoutManager {
 
         return ararLoadouts;
     }
-
-
-
+   
 
     public static string GetKeyName(CharType.CHARTYPE chartype, int iSlot) {
         return string.Format(SKEYNAME, (int)chartype, iSlot);
     }
 
-    public static string GetKeySkills(CharType.CHARTYPE chartype, int iSlot, int iSkillType) {
-        return string.Format(SKEYSKILLS, (int)chartype, iSlot, iSkillType);
-    }
-
     public static List<string> LoadAllLoadoutNamesForChr(CharType.CHARTYPE chartype) {
         List<string> lstLoadoutNames = new List<string>();
 
-        for(int i=0; i < nLOADOUTSLOTS; i++) {
+        for (int i = 0; i < nLOADOUTSLOTS; i++) {
             if (PlayerPrefs.HasKey(GetKeyName(chartype, i)) == false) {
                 //If we try to load the ith slot for this character, but there's no entry for the name of the loadout,
                 //  we assume the loadout is blank so we can just save in the default loadout for the character then use it
+                Debug.LogFormat("No loadout names for {0} - setting defaults", chartype);
 
                 Loadout loadoutDefault = GetDefaultLoadoutForChar(chartype);
                 SaveLoadout(chartype, i, loadoutDefault);
@@ -122,8 +117,11 @@ public static class LoadoutManager {
             }
         }
 
-        Debug.Log("Returning loadoutnames with length = " + lstLoadoutNames.Count);
         return lstLoadoutNames;
+    }
+
+    public static string GetKeySkills(CharType.CHARTYPE chartype, int iSlot, int iSkillType) {
+        return string.Format(SKEYSKILLS, (int)chartype, iSlot, iSkillType);
     }
 
     public static Loadout LoadSavedLoadoutForChr(CharType.CHARTYPE chartype, int iSlot) {
@@ -131,6 +129,9 @@ public static class LoadoutManager {
 
         if(PlayerPrefs.HasKey(GetKeyName(chartype, iSlot)) == false) {
             //If we don't have a stored loadout for this slot, then save a default loadout in this slot and return it  
+
+            Debug.LogFormat("No loadout for {0} - setting defaults", chartype);
+
             Loadout loadoutDefault = GetDefaultLoadoutForChar(chartype);
             SaveLoadout(chartype, iSlot, loadoutDefault);
 

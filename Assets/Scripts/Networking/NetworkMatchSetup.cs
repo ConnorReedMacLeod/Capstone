@@ -76,14 +76,8 @@ public static class NetworkMatchSetup {
         Debug.LogFormat("Setting character selection for player {0}'s {1}th character to {2}",
                 idPlayer, iChrSlot, chartype);
 
-        if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(GetCharSelectionsKey(idPlayer, iChrSlot))){
-            Debug.LogFormat("Overwriting character selection for player {0}'s {1}th character to {2}",
-                idPlayer, iChrSlot, chartype);
-            return;
-        }
-
         ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { GetCharSelectionsKey(idPlayer, iChrSlot), chartype } };
-        
+
         PhotonNetwork.CurrentRoom.SetCustomProperties(hashNewProperties);
     }
 
@@ -102,11 +96,6 @@ public static class NetworkMatchSetup {
     }
 
     public static void SetLoadout(int idPlayer, int iChrSlot, LoadoutManager.Loadout loadout) {
-        if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(GetLoadoutKey(idPlayer, iChrSlot))) {
-            Debug.LogFormat("Overwriting loadout for player {0}'s {1}th character to {2}",
-                idPlayer, iChrSlot, loadout);
-            return;
-        }
 
         ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { GetLoadoutKey(idPlayer, iChrSlot), LoadoutManager.SerializeLoadout(loadout) } };
 

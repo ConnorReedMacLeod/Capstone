@@ -32,7 +32,7 @@ public class PlayerSelector : MonoBehaviour {
             NetworkMatchSetup.SetCharacterSelection(idPlayer, i, CHRSELECTIONSDEFAULT[idPlayer, i]);
 
             //Set the loadout to be the default loadout for the selected player
-            lstLoadoutSelected.Add(LoadoutManager.GetDefaultLoadoutForChar((CharType.CHARTYPE)arDropdownCharSelect[i].dropdown.value));
+            NetworkMatchSetup.SetLoadout(idPlayer, i, LoadoutManager.LoadSavedLoadoutForChr(CHRSELECTIONSDEFAULT[idPlayer, i], 0));
 
             //Set the default position of that character
             NetworkMatchSetup.SetPositionCoords(idPlayer, i, POSITIONSDEFAULT[idPlayer, i]);
@@ -51,18 +51,21 @@ public class PlayerSelector : MonoBehaviour {
         //Spawn the loadout selector
         loadoutselectActive = GameObject.Instantiate(pfLoadoutSelector, this.transform.parent).GetComponent<LoadoutSelector>();
 
-        loadoutselectActive.BeginSelection(idPlayer, iChrToEdit, CleanupEditLoadout, lstLoadoutSelected[iChrToEdit]);
+        loadoutselectActive.BeginSelection(idPlayer, iChrToEdit, CleanupEditLoadout, NetworkMatchSetup.GetLoadout(idPlayer, iChrToEdit));
     }
 
     public void CleanupEditLoadout() {
         //Save the generated loadout in the slot for the character we were editing
-        lstLoadoutSelected[loadoutselectActive.iChrSelectingFor] = loadoutselectActive.loadoutCur;
+        NetworkMatchSetup.SetLoadout(idPlayer, loadoutselectActive.iChrSelectingFor, loadoutselectActive.loadoutCur);
 
         //Once the loadout editing is done, we can just destroy the loadout selector window, and clear out our reference to it
         GameObject.Destroy(loadoutselectActive.gameObject);
         loadoutselectActive = null;
     }
 
+    //Not currently storing anything in temporary client-side variables - instead just publishing character/loadout selection information immediately
+    // when the players connect, and updating it as needed
+    /*
     //If we are indeed using these 'direct to match' inputs to set up the match, then we'll need to save the character selections as though
     //  we went through a draft
     public void PublishCharacterSelections() {
@@ -79,5 +82,5 @@ public class PlayerSelector : MonoBehaviour {
             NetworkMatchSetup.SetLoadout(idPlayer, i, lstLoadoutSelected[i]);
         }
     }
-
+    */
 }

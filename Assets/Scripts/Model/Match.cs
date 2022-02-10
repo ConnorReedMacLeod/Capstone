@@ -152,10 +152,6 @@ public class Match : MonoBehaviour {
 
         Debug.Log("Finished initializing players");
 
-        //InitNetworking();
-
-        Debug.Log(" Remove if unneeded - Finished Initializing Networking");
-
         //Initialize characters 
         InitAllChrs();
 
