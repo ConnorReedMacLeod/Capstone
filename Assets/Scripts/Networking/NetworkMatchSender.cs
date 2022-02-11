@@ -11,7 +11,7 @@ public class NetworkMatchSender : Singleton<NetworkMatchSender> {
 
     public void SendInput(int indexInput, MatchInput matchinputToSend) {
 
-        LibDebug.LogWithColor("Sending selection: {0}", LibDebug.Col.BLUE, matchinputToSend);
+        Debug.LogFormat(LibDebug.AddColor("Sending selection: {0}", LibDebug.Col.BLUE), matchinputToSend);
 
         photonview.RPC("ReceiveMatchInput", RpcTarget.AllBufferedViaServer, indexInput, matchinputToSend.Serialize());
 
