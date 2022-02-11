@@ -69,6 +69,6 @@ public class SoulChannel : SoulChr {
     //This is a nice way to have a SoulChannel reference be able to get its proper derived-type's copy constructor while
     // still returning as a base SoulChannel type.  Just override derived type's implementation of GetCopy to 
     public virtual SoulChannel GetCopy(Skill _skill) {
-        return new SoulChannel(_skill);
+        return new SoulChannel(this, _skill);
     }
 }

@@ -214,6 +214,9 @@ public class InputSkillSelection : MatchInput {
             skillslotSelected = chrActing.arSkillSlots[Random.Range(0, Chr.nEquippedCharacterSkills)];
             lstSelections = new List<object>();
 
+            //If the skill can't be activated for whatever reason (like being a passive), then skip to the next attempt
+            if (skillslotSelected.chrOwner.curStateReadiness.CanSelectSkill(skillslotSelected.skill) == false) continue;
+
             //If the skill is on cooldown, then we'll skip to the next attempt
             if (skillslotSelected.IsOffCooldown() == false) continue;
 
@@ -221,7 +224,7 @@ public class InputSkillSelection : MatchInput {
             bool bFailedSelection = false;
 
             for (int i = 0; i < skillslotSelected.skill.lstTargets.Count; i++) {
-                Debug.LogErrorFormat("Skill {0} is asking for selections for its {1}th target, {2}", skillSelected, i, skillSelected.lstTargets[i]);
+                //Debug.LogFormat("Skill {0} is asking for selections for its {1}th target, {2}", skillSelected, i, skillSelected.lstTargets[i]);
                 if(skillSelected.lstTargets[i].HasAValidSelectable(this) == false) {
                     bFailedSelection = true;
                     break;
