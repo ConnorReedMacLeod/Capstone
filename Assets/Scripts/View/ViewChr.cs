@@ -286,21 +286,21 @@ public class ViewChr : ViewInteractive {
 
     //For when it becomes this character's turn to act
     public void cbOnBecomesActiveForHumans(Object target, params object[] args) {
-        Debug.Log(mod.sName + " became active");
+        //Debug.Log(mod.sName + " became active");
         DecideIfHighlighted(SelectabilityState.ACTIVETURN);
     }
 
     //For when it is no longer this character's turn to act
     public void cbOnEndsActiveForHumans(Object target, params object[] args) {
-        Debug.Log(mod.sName + " is no longer active");
+        //Debug.Log(mod.sName + " is no longer active");
         DecideIfHighlighted(SelectabilityState.NONE);
     }
 
     //For when the currently targetting skill can target this character
     public void cbOnBecomesTargettable(Object target, params object[] args) {
-        Skill skillTargetting = (Skill)args[0];
+        Skill skillTargetting = ((SkillSlot)args[0]).skill;
 
-        Debug.Log(mod.sName + " is currently targettable by " + skillTargetting.sName);
+        //Debug.Log(mod.sName + " is currently targettable by " + skillTargetting.sName);
 
         //If the source of this skill was an ally
         if(skillTargetting.chrOwner.plyrOwner == mod.plyrOwner) {
@@ -313,7 +313,7 @@ public class ViewChr : ViewInteractive {
 
     //For when the currently targetting skill has stopped, so this character can clear any targetting display
     public void cbOnEndsTargettable(Object target, params object[] args) {
-        Debug.Log(mod.sName + " is no longer targettable");
+        //Debug.Log(mod.sName + " is no longer targettable");
         DecideIfHighlighted(SelectabilityState.NONE);
     }
 

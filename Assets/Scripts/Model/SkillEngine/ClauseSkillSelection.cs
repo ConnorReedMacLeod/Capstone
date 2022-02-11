@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-//This defines a clause that takes effect as part of an activated skill
-//  It will draw input from the top of the NetworkReceiver buffer and execute
-//  its effect by passing that input to ClauseEffect
+//This defines a clause that takes effect as part of used skill
+//  It will draw input from the NetworkReceiver (from the top usually for 
+//  standard activated skills, but potentially from older inputs if we're using
+//  a channeled delayed skill).  We then pass that input to ClauseEffect to execute
 public abstract class ClauseSkillSelection : ClauseSkill {
 
     
 
     public override void Execute() {
-        //Grab the stored selections for the current input, and pass it to the overrideable ClauseEffect where
+        
+        //Grab the stored selections input (as defined by our skill's usage type), and pass it to the overrideable ClauseEffect where
         // the abilities can customize what they will do
 
-        ClauseEffect((InputSkillSelection)NetworkMatchReceiver.Get().GetCurMatchInput());
+        ClauseEffect(skill.typeUsage.GetUsedSelections());
 
     }
 

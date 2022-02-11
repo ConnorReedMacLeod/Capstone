@@ -8,7 +8,8 @@ public class TypeUsageChannel : TypeUsage {
 
     public SoulChannel soulBehaviour;
     public int nStartChannelTime;
-    public InputSkillSelection selectionsStored;
+
+    public int nSelectionsInputIndex; //Which index we should use from the NetworkReceiver buffer for our input
 
     public TypeUsageChannel(Skill skill, int _nStartChannelTime, SoulChannel _soulBehaviour) : base(skill) {
 
@@ -44,18 +45,18 @@ public class TypeUsageChannel : TypeUsage {
 
     public override void UseSkill() {
 
-        //Store a copy of the current selections so that we can use it later when the channel finishes (or triggers in some way)
-        selectionsStored = base.GetUsedSelections().GetCopy();
+        //Store the index of the current selections so that we can refer back to it later when the channel finishes (or triggers in some way)
+        nSelectionsInputIndex = NetworkMatchReceiver.Get().indexCurMatchInput;
 
         ContSkillEngine.PushSingleClause(new ClauseBeginChannel(skill));
     }
 
     public override InputSkillSelection GetUsedSelections() {
-        return selectionsStored;
+        return (InputSkillSelection)NetworkMatchReceiver.Get().lstMatchInputBuffer[nSelectionsInputIndex];
     }
 
     public void ClearStoredSelectionInfo() {
-        selectionsStored = null;
+        nSelectionsInputIndex = -1;
     }
 
     class ClauseBeginChannel : ClauseSkill {
