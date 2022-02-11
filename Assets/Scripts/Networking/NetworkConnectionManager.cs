@@ -256,7 +256,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         bTriesToConnectToMaster = false;
         Debug.Log("Connected to Master!");
 
-        if(bOfflineMode) {
+        if (bOfflineMode) {
             //Pretend like we clicked a button to join a room
             OnClickJoinSoloRoom();
         }
