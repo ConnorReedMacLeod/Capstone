@@ -74,14 +74,15 @@ public abstract class Target {
         OnEndLocalSelection();
         ContGlobalInteractions.subGlobalRightClick.UnSubscribe(cbCancelSelectionProcess);
 
-        //Clear out the temporary storage of the ongoing selections
+        //Clear out the temporary local storage of the ongoing selections
         selectionsSoFar = null;
     }
 
     public void cbCancelSelectionProcess(Object target, params object[] args) {
-        
-        //Clean up any local-setup for chosing this target (like spawned UI)
-        OnEndLocalSelection();
+
+        //End the local selection process for this target, including 
+        // cleaning up any local-setup for chosing this target (like spawned UI)
+        EndLocalSelection();
         ContLocalUIInteraction.Get().CancelSelectionsProcess();
     }
 
