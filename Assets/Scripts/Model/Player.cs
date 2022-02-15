@@ -68,12 +68,15 @@ public class Player : MonoBehaviour {
         switch(inputType) {
         case InputType.AI:
             //Then we want a script to control this player's selection
+
             inputController = gameObject.AddComponent<LocalInputScripted>();
 
             //Let the controller know which player its representing
             inputController.SetOwner(this);
 
-            LocalInputScripted.SetRandomSkills((LocalInputScripted)inputController);
+            //Initiallize the targetting script with just a blank script (for now - can do file loading options later)
+
+            ((LocalInputScripted)inputController).SetTargettingScript(new List<MatchInput>());
 
             break;
 

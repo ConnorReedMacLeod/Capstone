@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ContSkillEngine : Singleton<ContSkillEngine> {
 
-    public bool bAutoTurns = false;
+    public bool bStartedMatchLoop = false;
 
     public Stack<Clause> stackClause = new Stack<Clause>();
     public Stack<Executable> stackExec = new Stack<Executable>();
@@ -14,43 +14,114 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     public const bool bDEBUGENGINE = false;
 
-    public void StartAutoProcessingStacks() {
-        if(bAutoTurns == true) return; //If we were already started, no need to start again
-        bAutoTurns = true;
+    public MatchInput matchinputToFillOut;  //A reference to the match input that needs to be filled out before we can progress
+                                            //  with the rest of the match simulation (may be filled out locally, or we can ignore it
+                                            //  if a foreign player is supposed to fill it out)
 
-        if(bAutoTurns) {
-            Debug.Log("Going to next event in " + 1.0f);
+    public void StartMatchLoop() {
+        if(bStartedMatchLoop == true) return; //If we were already started, no need to start again
+        bStartedMatchLoop = true;
 
-            ContTime.Get().Invoke(1.0f, AutoProcessStacks);
-        }
-    }
-    public void AutoProcessStacks() {
-
-        if(!bAutoTurns) {
-            //Then we must have switched to manual turns while waiting for this event,
-            //so don't actually execute anything automatically
-            return;
-        }
-
-        ProcessStacks();
+        StartCoroutine(CRMatchLoop());
     }
 
-    public void cbManualExecuteEvent(Object target, params object[] args) {
-        bAutoTurns = false;
 
-        Debug.Log("********************************************");
-        //Check if there's any stack to process
-        if(AreStacksEmpty()) {
-            //If the stacks are empty, then manual execution of the phase just means
-            // submitting a signal to the master to let it know we're done with the phase
-            Debug.Log("Manually finishing a turn phase");
-            ContTurns.Get().FinishedTurnPhase();
-        } else {
-            //There's still effects to process, so process the contents of the stacks just once
-            Debug.Log("Manually processing stacks");
-            ProcessStacks();
+    public IEnumerator CRPrepMatch() {
+
+        Debug.Log("Prepping Match");
+
+        yield return new WaitForSeconds(1.0f);
+    }
+
+    public bool IsMatchOver() {
+
+        Debug.Log("IsMatchOver - not yet implemented");
+        return false;
+    }
+
+    //Do any closing animations for the end of a match
+    public IEnumerator CRCleanUpMatch() {
+
+        Debug.Log("Cleaning up Match");
+
+        yield return new WaitForSeconds(1.0f);
+    }
+
+    //Do any saving of results/rewards and move to a new scene
+    public void FinishMatch() {
+        Debug.Log("Finishing Match");
+    }
+
+    //The main loop that will process the effects of the game.  If it needs inputs, it will flag what
+    //  it's waiting on and pull input from the network buffer to decide what action should be taken
+    public IEnumerator CRMatchLoop() {
+
+        //Do any animation processing that needs to be done before the match processing actually starts
+        yield return StartCoroutine(CRPrepMatch());
+
+        //Do any initial processing for beginning of match effects
+        yield return ProcessStackUntilInputNeeded();
+
+        //Keep processing effects while the match isn't finished
+        while (!IsMatchOver()) {
+
+            // At this point, we should have an input field that's been set up that needs to be filled out
+            Debug.Assert(matchinputToFillOut != null);
+
+            bool bNeedsLocalInput = false;
+
+            //If we need input, let's check if we already have input waiting in our buffer for that input
+            if (NetworkMatchReceiver.Get().IsCurMatchInputReady() == false) {
+
+                // Now that input is needed by some player, check if we locally control that player
+                if (NetworkMatchSetup.IsLocallyOwned(matchinputToFillOut.iPlayerActing)) {
+                    bNeedsLocalInput = true;
+                    //Let the match input prepare to start gathering manual input 
+                    matchinputToFillOut.StartManualInputProcess();
+                } else {
+                    //If we don't locally control the player who needs to decide an input
+                    DebugDisplay.Get().SetDebugText("Waiting for foreign input");
+                }
+
+                //Wait until we have input waiting for us in the network buffer
+                while (NetworkMatchReceiver.Get().IsCurMatchInputReady() == false) {
+                    //Keep spinning until we get the input we're waiting on
+
+                    DebugDisplay.Get().SetDebugText("Waiting for input");
+                    yield return null;
+                }
+
+                //Do any cleanup that we need to do if we were waiting on input
+                //TODO - figure out what needs to be done and under what circumstances - careful of potentially changing local input controllers
+                if(bNeedsLocalInput == true) {
+                    //Have the match input let the local input controller know that we're done with gathering input
+                    matchinputToFillOut.EndManualInputProcess();
+                }
+
+            }
+
+            //At this point, we have an input in the buffer that we are able to process
+            MatchInput matchinput = NetworkMatchReceiver.Get().GetCurMatchInput();
+
+            //Clear out the matchinput we prompting to be filled out
+            matchinputToFillOut = null;
+
+            //Process that match input by deferring to its execute method
+            yield return matchinput.Execute();
+
+            //The execute method should have pushed new executables/clauses onto the stack, so we can process them
+            // Pass control over to the stack-processing loop until it needs player input to continue the simulation
+            yield return ProcessStackUntilInputNeeded();
+
+            //Since we're done processing all the effects that may need access to the most recent input, we can advance to the next needed input
+            NetworkMatchReceiver.Get().FinishCurMatchInput();
         }
 
+        //Do any animation process that needs to be done before we leave the match scene
+        yield return StartCoroutine(CRCleanUpMatch());
+
+        //Do any fill wrap-up for the match
+        FinishMatch();
     }
 
     public void ResolveClause() {
@@ -59,11 +130,13 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     }
 
-    public static void PushClauses(List<Clause> lstClauses) {
+    public static void PushClauses(IEnumerable<Clause> enumerClauses) {
+        List<Clause> lstClauses = new List<Clause>(enumerClauses);
 
         //Push each Clause in sequence onto the stack, and ensure that the first
         // Clause in the sequence ends up at the top of the stack
-        for(int i = lstClauses.Count - 1; i >= 0; i--) {
+
+        for (int i = lstClauses.Count - 1; i >= 0; i--) {
             PushSingleClause(lstClauses[i]);
         }
 
@@ -94,12 +167,12 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
     }
 
 
-    public void ResolveExec() {
+    public IEnumerator ResolveExec() {
 
         if(bDEBUGENGINE) Debug.Log("Resolving an Executable of type" + stackExec.Peek().GetType().ToString());
 
         //Remove the Executable from the top of the stack and execute it
-        stackExec.Pop().Execute();
+        yield return stackExec.Pop().Execute();
 
     }
 
@@ -165,6 +238,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         //TODO:: Consider if we should check for replacement effects and triggers at resolve-time or at stack-pushing-time
     }
 
+    //Note, this isn't a coroutine, so if you want to delay until the timer is finished, just do a WaitForSeconds after spawning the timer
     public void SpawnTimer(float fDelay, string sLabel) {
         GameObject goTimer = Instantiate(pfTimer, Match.Get().transform); //TIMER SPAWN POSITION
         ViewTimer viewTimer = goTimer.GetComponent<ViewTimer>();
@@ -187,16 +261,42 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         return stackExec.Count == 0 && stackClause.Count == 0;
     }
 
-    public void ProcessStacks() {
+    public IEnumerator ProcessStackUntilInputNeeded() {
 
+        // Check if the flag has been raised to indicate we need player input to continue
+        while (matchinputToFillOut == null) {
+            // Keep processing game-actions until we need player input
+            yield return ProcessStacks();
+        }
 
+    }
 
-        //First, check if there's any executables to process
-        if(stackExec.Count > 0) {
+    public IEnumerator ProcessStacks() {
 
-            //If we're seeing this executable for the first time and have
-            //to process replacement and pre-trigger effects
-            if(!stackExec.Peek().bPreTriggered) {
+        while (true) {
+            while (stackExec.Count == 0) {
+                //If we don't have any executables to process, then we have to unpack clauses until we do have an executable
+
+                if (stackClause.Count > 0) {
+                    //If we have a clause on our stack, then unpack that to hopefully add an executable to the stack
+                    if (bDEBUGENGINE) Debug.Log("No Executables, so unpack a Clause");
+                    ResolveClause();
+                } else {
+                    //If we have no clauses on our stack, then our stack is completely empty, so we can push 
+                    // a new executable for the next phase of the turn
+                    if (bDEBUGENGINE) Debug.Log("No Clauses or Executables so move to the next part of the turn");
+                    ContTurns.Get().FinishedTurnPhase();
+                }
+            }
+
+            //If we've gotten this far, then we know we have an executable to examine
+
+            //Check if the executable on top of our stack has dealt with its pre-triggers/replacements yet
+            if (stackExec.Peek().bPreTriggered) {
+                //If we've already dealt with all its pretriggers/replacements, then we're ready to actually evaluate and we can 
+                //  exit our loop
+                break;
+            } else { 
 
                 //Debug.Log("Performing Replacement effects and Pre-Triggers");
 
@@ -222,96 +322,18 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
                 //Set our flag so that we don't pre-trigger this effect again
                 top.bPreTriggered = true;
 
-                //Now recurse so that we can process whatever effect should come next
-                if(bDEBUGENGINE) Debug.Log("Recursing on ProcessStacks after resolving replacements");
-                ProcessStacks();
-
-            } else {
-                //at this point, we can actually evaluate this executable
-                ResolveExec();
-
+                //Now we can continue our loop to process whatever executable is now at the top of the stack
             }
 
-            return;
         }
 
-        //Debug.Log("Processing stack with no executables");
-
-        //Check statebased actions
-        MaintainStateBasedActions();
-
-        //Next, check if there's any clauses to process
-        if(stackClause.Count > 0) {
-            if(bDEBUGENGINE) Debug.Log("No Executables, so unpack a Clause");
-            ResolveClause();
-
-            //Then recurse to find something new we can process
-
-            if(bDEBUGENGINE) Debug.Log("Recursing on ProcessStacks after unpacking a clause");
-            ProcessStacks();
-            return;
-        }
-
-        //Then we have nothing left to process
-        //So pass along the message to the Master that we're done this phase of the turn
-
-
-        //If we're using manual turn evaluation, then wait for the user to click the manual button again so
-        //  that we're ready to progress to the next phase of the turn; if automatic, then we can move
-        //  to just finish the phase now
-        if(ContSkillEngine.Get().bAutoTurns) {
-            if(bDEBUGENGINE) Debug.Log("No Clauses or Executables so move to the next part of the turn");
-            ContTurns.Get().FinishedTurnPhase();
-        }
-
-        //We used to recurse here since the FinishedTurnPhase would immediately put a new executable on the stack.  
-        //  As is, we'll need to wait for the master network to let us know when we can progress to the next phase 
-        //  of the turn, at which point we can start ProcessStacks() then
-
-        //ProcessStacks();
-
-
-        if(bDEBUGENGINE) Debug.Log("Reached the end of ProcessStacks");
-
+        //If we've gotten this far, then we know we have an executable at the top of our stack and 
+        //  we are ready to process it
+        yield return ResolveExec();
+        
     }
 
-    //Other classes can call this to invoke the ProcessStack method after a delay
-    public void InvokeProcessStack(float fDelay, string sLabel, bool bCancelInvoke) {
-        if(bAutoTurns) {
-
-            if(fDelay > 0) {
-                //Check if we need to spawn a timer
-
-                SpawnTimer(fDelay, sLabel);
-            }
-            if(bCancelInvoke == false) {
-
-                if(bDEBUGENGINE) Debug.Log("Calling autoprocessstacks with a delay after finishing processing a previous executable");
-                ContTime.Get().Invoke(fDelay, AutoProcessStacks);
-            }
-        } else {
-            //Debug.Log("Manually executing " + sLabel);
-            //Then we're doing manual execution - still spawn a quick timer to show what we're processing right now
-
-            if(fDelay == 0.0f) {
-                //If there wouldn't be any delay on evaluating anyway, then just immediately 
-                //Process the next event immediately without spawning a timer
-
-
-                if(bDEBUGENGINE) Debug.Log("Immediately calling ProcessStacks since there's no delay between executions");
-                ProcessStacks();
-            } else {
-                //If there is a delay, then just spawn the timer and wait for the user to click to move
-                // on to evaluating the next event later
-
-                SpawnTimer(1.0f, sLabel);
-            }
-
-
-        }
-
-
-    }
+   
 
     public override void Init() {
         

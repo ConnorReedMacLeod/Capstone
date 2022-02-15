@@ -41,15 +41,19 @@ public class ExecTurnChooseSkills : Executable {
     //All that chooseskills needs to do is store the selection information for the
     // chosen skill so that ContTurns->FinishedTurnPhase can post this information to the master
     public override void ExecuteEffect() {
-        //Debug.Log("Executing ExecTurnChooseSkill");
 
-        //Let the SkillSelection controller handle what should be done here
-        ContSkillSelection.Get().StartSelection();
+        //Get the character that is currently set to be acting next
+        Chr chrActing = ContTurns.Get().GetNextActingChr();
 
+        //Fill the current matchinputtofill with a new blank skill selection request
+        ContSkillEngine.Get().matchinputToFillOut = new InputSkillSelection(chrActing.plyrOwner.id, chrActing, null);
+
+        //Note that since matchinputToFillOut is 'raised' by being non-null, then we'll stop evaluating executables until we 
+        //  receive completed input from the active player
     }
 
     public ExecTurnChooseSkills(Chr _chrSource) : base(_chrSource) {
-        bStopAutoProcessing = true;
+
     }
 
     public ExecTurnChooseSkills(ExecTurnChooseSkills other) : base(other) {

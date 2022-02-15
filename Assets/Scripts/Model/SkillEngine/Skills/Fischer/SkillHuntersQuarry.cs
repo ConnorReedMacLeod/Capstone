@@ -19,7 +19,7 @@ public class SkillHuntersQuarry : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this)
         };
     }
@@ -29,7 +29,7 @@ public class SkillHuntersQuarry : Skill {
         TarChr.AddTarget(this, TarChr.IsOtherChr(chrOwner));
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         public SoulHunted soulToCopy;
 
@@ -44,7 +44,7 @@ public class SkillHuntersQuarry : Skill {
                 "[HUNTED]: Before {0} deals damage to this character, they lose {1} DEFENSE until end of turn.", skill.chrOwner.sName, soulToCopy.nDefenseLoss);
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = (Chr)selections.lstSelections[1];
 

@@ -19,7 +19,7 @@ public class SkillBucklerParry : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this),
         };
     }
@@ -28,7 +28,7 @@ public class SkillBucklerParry : Skill {
         TarMana.AddTarget(this, manaCost);
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         public SoulParry soulToCopy;
 
@@ -42,7 +42,7 @@ public class SkillBucklerParry : Skill {
                 "[PARRY]: When an enemy would deal damage to {0}, deal {1} damage to them and dispel.", skill.chrOwner.sName, soulToCopy.dmgCounterAttack.Get());
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = skill.chrOwner;
 

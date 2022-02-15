@@ -19,7 +19,7 @@ public class SkillForcedEvolution : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this),
         };
     }
@@ -28,7 +28,7 @@ public class SkillForcedEvolution : Skill {
         TarMana.AddTarget(this, manaCost);
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         public int nLifeLoss = 5;
 
@@ -41,7 +41,7 @@ public class SkillForcedEvolution : Skill {
             return string.Format("Lose {0} life.", nLifeLoss);
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = skill.chrOwner;
 
@@ -53,7 +53,7 @@ public class SkillForcedEvolution : Skill {
 
     };
 
-    class Clause2 : Clause {
+    class Clause2 : ClauseSkillSelection {
 
         public SoulEvolved soulToCopy;
 
@@ -67,7 +67,7 @@ public class SkillForcedEvolution : Skill {
             return string.Format("Gain {0} POWER.", soulToCopy.nPowerBuff);
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = skill.chrOwner;
 

@@ -22,7 +22,7 @@ public class SkillHeal : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this)
         };
     }
@@ -32,7 +32,7 @@ public class SkillHeal : Skill {
         TarChr.AddTarget(this, TarChr.IsSameTeam(chrOwner));
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         int nBaseHealing = 5;
         Healing heal;
@@ -51,7 +51,7 @@ public class SkillHeal : Skill {
             return string.Format("Heal {0} life to an Ally", heal.Get());
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = (Chr)selections.lstSelections[1];
 

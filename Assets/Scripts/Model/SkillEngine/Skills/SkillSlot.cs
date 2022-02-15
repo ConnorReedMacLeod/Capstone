@@ -28,7 +28,7 @@ public class SkillSlot {
             skill.OnEquip();
         }
 
-        Debug.Log("Skill in slot " + iSlot + " has been set to " + skill.sDisplayName);
+        //Debug.Log("Skill in slot " + iSlot + " has been set to " + skill.sDisplayName);
         skill.subSkillChange.NotifyObs();
         //TODO - if a skill transforms while you're hovering over it, the tooltip doesn't instantly update to match the new skill description
     }

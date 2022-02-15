@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using System.Linq;
 
 public static class LibView {
 
@@ -14,7 +16,7 @@ public static class LibView {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        if(Physics.Raycast(ray, out hit)) {
+        if (Physics.Raycast(ray, out hit)) {
             // If there's a gameobject under the mouse, return it
             return hit.collider.gameObject;
         }
@@ -32,7 +34,7 @@ public static class LibView {
 
     public static MonoBehaviour IsUnderMouse(System.Type type) {
         GameObject go = GetObjectUnderMouse();
-        if(go != null) {
+        if (go != null) {
             MonoBehaviour mono = (MonoBehaviour)go.GetComponentInChildren(type);
             return mono;
         } else {
@@ -41,18 +43,61 @@ public static class LibView {
     }
 
     public static void AssignSpritePathToObject(string sSprPath, GameObject go) {
-        AssignSpritePathToObject(sSprPath, go.GetComponent<SpriteRenderer>());
+        SpriteRenderer sprren = go.GetComponent<SpriteRenderer>();
+        if (sprren != null) {
+            AssignSpritePathToSpriteRenderer(sSprPath, sprren);
+            return;
+        }
+
+        Image img = go.GetComponent<Image>();
+        if(img != null) {
+            AssignSpritePathToImage(sSprPath, img);
+            return;
+        }
+
+        Debug.Log("Tried to assign an image to " + go + " but it has no spriterenderer or image component!");
     }
 
-    public static void AssignSpritePathToObject(string sSprPath, SpriteRenderer sprRen) {
+    public static void AssignSpritePathToSpriteRenderer(string sSprPath, SpriteRenderer sprRen) {
 
         Sprite sprIcon = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
 
-        if(sprIcon == null) {
-            Debug.LogError("Could not find specificed sprite: " + sSprPath);
+        if (sprIcon == null) {
+            Debug.LogWarning("Could not find specificed sprite: " + sSprPath);
         }
 
         sprRen.sprite = sprIcon;
+
+    }
+
+    public static void AssignSpritePathToImage(string sSprPath, Image img) {
+
+        Sprite sprIcon = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
+
+        if (sprIcon == null) {
+            Debug.LogWarning("Could not find specificed sprite: " + sSprPath);
+        }
+
+        img.sprite = sprIcon;
+
+    }
+
+
+    public static void SetSkillTypeDropDownOptions(Dropdown dropdown, List<SkillType.SkillTypeInfo> lstSkillTypeInfo) {
+
+        SetDropdownOptions(dropdown, lstSkillTypeInfo.Select(info => info.sName));
+
+    }
+
+    public static void SetDropdownOptions(Dropdown dropdown, IEnumerable<string> lstOptions) {
+        //Clear out the current list of options
+        dropdown.ClearOptions();
+
+        List<Dropdown.OptionData> lstNewOptions;
+
+        lstNewOptions = lstOptions.Select(str => new Dropdown.OptionData(str)).ToList();
+
+        dropdown.AddOptions(lstNewOptions);
 
     }
 }

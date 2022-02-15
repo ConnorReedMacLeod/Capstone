@@ -43,7 +43,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         if(inst != null) {
             //If a static instance exists,
             // then panic!  Destroy ourselves
-            Debug.LogError("Warning!  This singleton already exists (" + gameObject.name + "), so we shouldn't instantiate a new one");
+            //Debug.Log("Warning!  This singleton already exists (" + gameObject.name + "), so we shouldn't instantiate a new one");
             Destroy(gameObject);
 
         } else {
@@ -122,6 +122,11 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
     }
 
+    public void InitRandomization() {
+        //Attempt to set the randomization seed (we'll only succeed if we're the master, but we should still try)
+        NetworkMatchSetup.SetRandomizationSeed(Random.Range(0, 1000000));
+    }
+
     public void OnClickStartDraft() {
         if(PhotonNetwork.IsMasterClient == false) {
             Debug.LogError("A non-master tried to move to the draft phase - ignoring");
@@ -134,32 +139,64 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         if(SceneManager.GetActiveScene().name == "_DRAFT") {
             Debug.Log("We're already in the _DRAFT scene, so no need to transfer to it");
         } else {
+            Debug.Log("We as the master are moving us to the Draft scene");
             PhotonNetwork.LoadLevel("_DRAFT");
+        }
+    }
+
+    public void OnClickDirectToLoadout() {
+        if (PhotonNetwork.IsMasterClient == false) {
+            Debug.LogError("A non-master tried to move directly to the loadout phase - ignoring");
+            return;
+        } else if (ArePlayersConnected() == false) {
+            Debug.LogError("Tried to move directly to the loadout phase when not all characters are connected");
+            return;
+        }
+
+        if (SceneManager.GetActiveScene().name == "_LOADOUT") {
+            Debug.Log("We're already in the _LOADOUT scene, so no need to transfer to it");
+        } else {
+            //Shouldn't need to publish any character selections or loadouts, since these should be pre-published when loading into the room
+
+            //Debug.Log("Setting character selections using the Master's locally-chosen characters");
+            //Publish any of the local selections for characters we have before moving to the loadout scene
+            //plyrselector1.PublishCharacterSelections();
+            //plyrselector2.PublishCharacterSelections();
+
+            Debug.Log("We as the master are moving us to the Loadout scene");
+            PhotonNetwork.LoadLevel("_LOADOUT");
         }
     }
 
     public void OnClickDirectToMatch() {
         if(PhotonNetwork.IsMasterClient == false) {
-            Debug.LogError("A non-master tried to move to the draft phase - ignoring");
+            Debug.LogError("A non-master tried to move directly to match - ignoring");
             return;
         } else if(ArePlayersConnected() == false) {
-            Debug.LogError("Tried to move to draft when not all characters are connected");
+            Debug.LogError("Tried to move to directly to match when not all characters are connected");
             return;
         }
 
         if(SceneManager.GetActiveScene().name == "_MATCH") {
             Debug.Log("We're already in the _MATCH scene, so no need to transfer to it");
         } else {
-            Debug.Log("Transferring to the match scene");
+            //Shouldn't need to publish any character selections or loadouts, since these should be pre-published when loading into the room
+
+            //Debug.Log("Setting Character selections and Loadouts for the Master's locally-chosen characters and loadouts");
+            //Publish any of the local selections for characters and loadouts we have before moving to the loadout scene
+            //plyrselector1.PublishCharacterSelections();
+            //plyrselector2.PublishCharacterSelections();
+
+            //plyrselector1.PublishLoadouts();
+            //plyrselector2.PublishLoadouts();
+
+            Debug.Log("We as the master are moving us to the Match scene");
             PhotonNetwork.LoadLevel("_MATCH");
-            Debug.Log("Asking the master to broadcast its stored character and input selections");
-            MasterNetworkController.Get().BroadcastCustomCharacterSelections();
         }
     }
 
     public bool ArePlayersConnected() {
         return PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers;
-
     }
 
 
@@ -169,8 +206,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         PhotonNetwork.AutomaticallySyncScene = true; //PhotonNetwork.LoadLevel() will keep the same
                                                      // level for everyone in the room
         PhotonNetwork.GameVersion = "v1"; //Only players with the same game version can play together
-
-
+        
         bTriesToConnectToMaster = true;
         PhotonNetwork.ConnectUsingSettings();
     }
@@ -220,22 +256,25 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         bTriesToConnectToMaster = false;
         Debug.Log("Connected to Master!");
 
-        if(bOfflineMode) {
+        if (bOfflineMode) {
             //Pretend like we clicked a button to join a room
             OnClickJoinSoloRoom();
         }
     }
 
-    public void SpawnNetworkController() {
 
-        Debug.Log("Spawning networkcontroller");
+    public void SpawnSceneNetworkManager(string sPrefabName) {
+        GameObject goSceneNetworkManager;
 
-        //Spawn the client networking manager for the local player (and let the opponent spawn their own controller)
-        GameObject goNetworkController = PhotonNetwork.Instantiate("pfNetworkController", Vector3.zero, Quaternion.identity);
+        //Debug.LogFormat("Spawning {0}", sPrefabName);
 
-        if(goNetworkController = null) {
-            Debug.LogError("No prefab found for network controller");
+        //Spawn the networking manager for the local player
+        goSceneNetworkManager = PhotonNetwork.InstantiateSceneObject(string.Format("Prefabs/Networking/{0}", sPrefabName), Vector3.zero, Quaternion.identity);
+
+        if (goSceneNetworkManager = null) {
+            Debug.LogErrorFormat("No prefab found for {0}", sPrefabName);
         }
+
     }
 
     public override void OnJoinedRoom() {
@@ -249,26 +288,8 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
             " | Number of Players: " + PhotonNetwork.CurrentRoom.PlayerCount +
             " | Max Number of Players: " + PhotonNetwork.CurrentRoom.MaxPlayers);
 
-        SpawnNetworkController();
-
+        InitRandomization();
     }
-
-    public static void SendEventToMaster(byte evtCode, object content) {
-
-        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient };
-        ExitGames.Client.Photon.SendOptions sendOptions = new ExitGames.Client.Photon.SendOptions { Reliability = true };
-
-        PhotonNetwork.RaiseEvent(evtCode, content, raiseEventOptions, sendOptions);
-    }
-
-    public static void SendEventToClients(byte evtCode, object content) {
-
-        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
-        ExitGames.Client.Photon.SendOptions sendOptions = new ExitGames.Client.Photon.SendOptions { Reliability = true };
-
-        PhotonNetwork.RaiseEvent(evtCode, content, raiseEventOptions, sendOptions);
-    }
-
 
     public override void OnJoinRandomFailed(short returnCode, string message) {
         base.OnJoinRandomFailed(returnCode, message);
@@ -279,7 +300,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         //Debug.LogError("Failed to join a room: " + returnCode + " " + message);
 
         RoomOptions roomOptions = new RoomOptions();
-        roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable() { { "lvl", nMyLevel }, { "trn", 0 } };
+        roomOptions.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable() { { "lvl", nMyLevel } };
         roomOptions.CustomRoomPropertiesForLobby = new string[] { "type", "lvl" };
 
         //Set the max players to be the amount we most recently queue'd up for
@@ -298,9 +319,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
 
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer) {
         base.OnPlayerEnteredRoom(newPlayer);
-
-        //Pass along the call to the master 
-        MasterNetworkController.Get().OnPlayerEnteredRoom(newPlayer);
+        
     }
 
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) {

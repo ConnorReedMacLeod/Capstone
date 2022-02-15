@@ -63,7 +63,7 @@ public class ExecTurnRecharge : Executable {
         RechargeChars();
 
         sLabel = "Reducing Fatigue/ChannelTimes";
-        fDelay = ContTurns.fDelayTurnSkill;
+        fDelay = ContTime.fDelayTurnSkill;
 
         ViewAnnouncement.Get().InitAnnouncement(2.0f, "TURN " + ContTurns.Get().nTurnNumber);
 

@@ -35,22 +35,18 @@ public class ExecBeginChannel : ExecChr {
     Skill skillChannel;
 
     public override void ExecuteEffect() {
-        Debug.Log("Beginning of ExecBeginChannel.ExecuteEffect");
 
         TypeUsageChannel typeChannel = (TypeUsageChannel)skillChannel.typeUsage;
 
         //Ask the soulbehaviour to make a copy of itself with the skill it represents
         StateChanneling newState = new StateChanneling(chrTarget, typeChannel.nStartChannelTime, typeChannel.soulBehaviour.GetCopy(skillChannel));
 
-        Debug.Log("Before SetStateReadiness");
-
         //We don't need to perform any real action on starting channeling other than changing our readiness state so that the 
         // soulchannel effect can be applied (and do any on-application effects if necessary)
         chrTarget.SetStateReadiness(newState);
 
-        fDelay = ContTurns.fDelayTurnSkill;
+        fDelay = ContTime.fDelayTurnSkill;
         sLabel = chrTarget.sName + " is beginning their channel";
-        Debug.Log("After SetStateReadiness");
 
     }
 

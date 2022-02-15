@@ -128,7 +128,7 @@ public abstract class SoulContainer : MonoBehaviour {
         for(int i = 0; i < lstSoul.Count; i++) {
             string sVisible = "";
             string sDuration = "";
-            if(lstSoul[i].bVisible == true) {
+            if (lstSoul[i].bVisible == true) {
                 sVisible = "(Visible)";
             }
             if(lstSoul[i].bDuration == true) {

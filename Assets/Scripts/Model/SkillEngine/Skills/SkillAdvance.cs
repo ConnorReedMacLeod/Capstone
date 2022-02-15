@@ -19,16 +19,17 @@ public class SkillAdvance : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this)
         };
     }
 
     public override void InitTargets() {
         TarMana.AddTarget(this, manaCost);
+        TarPosition.AddTarget(this, Target.AND(TarPosition.IsFrontline(), TarPosition.IsSameTeam(chrOwner)));
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
 
         public Clause1(Skill _skill) : base(_skill) {
@@ -37,13 +38,15 @@ public class SkillAdvance : Skill {
 
         public override string GetDescription() {
 
-            return string.Format("Switch to the middle Frontline Position");
+            return string.Format("Switch to target Allied Frontline Position");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
             Chr chrSelected = skill.chrOwner;
 
-            ContSkillEngine.PushSingleExecutable(new ExecSwitchChar(skill.chrOwner, chrSelected, ContPositions.Get().GetAlliedFrontlinePositions(chrSelected.plyrOwner)[1]) {
+            Position posToSwitchTo = (Position)selections.lstSelections[1];
+
+            ContSkillEngine.PushSingleExecutable(new ExecSwitchChar(skill.chrOwner, chrSelected, posToSwitchTo) {
                 sLabel = "I'll lead the way"
             });
 

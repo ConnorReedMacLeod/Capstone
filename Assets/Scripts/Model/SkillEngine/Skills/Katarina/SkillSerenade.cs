@@ -19,7 +19,7 @@ public class SkillSerenade : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this)
         };
 
@@ -30,7 +30,7 @@ public class SkillSerenade : Skill {
         TarChr.AddTarget(this, TarChr.IsSameTeam(chrOwner));
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         Healing heal;
         int nBaseHealing = 25;
@@ -49,7 +49,7 @@ public class SkillSerenade : Skill {
             return string.Format("Heal {0} life to the chosen Ally", heal.Get());
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = (Chr)selections.lstSelections[1];
 

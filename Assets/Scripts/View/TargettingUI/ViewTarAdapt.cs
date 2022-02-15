@@ -19,7 +19,7 @@ public class ViewTarAdapt : MonoBehaviour {
         //Save a copy of the skills we can adapt into
         lstSkillTypeInfosAdaptable = modTarAdapt.GetAdaptableSkills();
 
-        SetDropDownOptions(lstSkillTypeInfosAdaptable);
+        LibView.SetSkillTypeDropDownOptions(dropdownSkillSelection, lstSkillTypeInfosAdaptable);
 
         //Set up the submission keybinding
         KeyBindings.SetBinding(SubmitSelectedSkill, KeyCode.T);

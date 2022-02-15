@@ -16,7 +16,7 @@ public class ContInfo : MonoBehaviour {
     public Skill skillFocus;
 
     public void cbStartTargetting(Object target, params object[] args) {
-        SetSkillFocus(ContLocalUIInteraction.Get().selectionsInProgress.skillSelected);
+        SetSkillFocus(ContLocalUIInteraction.Get().selectionsInProgress.skillslotSelected.skill);
         bLocked = true;
     }
 
@@ -33,9 +33,9 @@ public class ContInfo : MonoBehaviour {
 
     public void cbSoulStartHover(Object target, params object[] args) {
         if(((ViewSoul)target).mod == null || ((ViewSoul)target).mod.skillSource == null) {
-            Debug.Log("No skill source to display");
+            //Debug.Log("No skill source to display");
         } else {
-            Debug.Log("Displaying " + ((ViewSoul)target).mod.sName);
+            //Debug.Log("Displaying " + ((ViewSoul)target).mod.sName);
             DisplaySkill(((ViewSoul)target).mod.skillSource);
         }
     }

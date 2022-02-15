@@ -43,7 +43,7 @@ public class ExecAdaptSkill : ExecSkillslot {
         
         ssTarget.SetSkill(skilltypeToAdaptTo);
 
-        fDelay = ContTurns.fDelayMinorSkill;
+        fDelay = ContTime.fDelayMinorSkill;
         sLabel = ssTarget.chrOwner.sName + " adapted " + sOldSkillName + " to " + ssTarget.skill.sName;
 
     }
