@@ -27,7 +27,7 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
         if (inst != null) {
             //If an static instance exists,
             // then panic!  Destroy ourselves
-            Debug.LogError("Warning!  This singleton already exists (" + gameObject.name + "), so we shouldn't instantiate a new one");
+            //Debug.Log("Warning!  This singleton already exists (" + gameObject.name + "), so we shouldn't instantiate a new one");
             Destroy(gameObject);
             
         } else {

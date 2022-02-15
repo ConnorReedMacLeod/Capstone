@@ -238,7 +238,6 @@ public class ContPositions : Singleton<ContPositions> {
         pos.SetChrOnPosition(chr);
         chr.SetPosition(pos);
 
-
         //Send updates out for all affected character/positions (in reverse order so they take effect in chronological order)
         pos.subChrEnteredPosition.NotifyObs(chr);
         chr.subEnteredPosition.NotifyObs(pos);
@@ -362,6 +361,10 @@ public class ContPositions : Singleton<ContPositions> {
     }
 
     public override void Init() {
+
+        for(int i=0; i< lstAllPositions.Count; i++) {
+            lstAllPositions[i].Start();
+        }
 
         ConfirmValidPositionSetup();
     }

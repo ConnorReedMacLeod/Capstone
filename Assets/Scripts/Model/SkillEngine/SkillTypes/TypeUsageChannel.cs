@@ -20,7 +20,6 @@ public class TypeUsageChannel : TypeUsage {
             soulBehaviour = _soulBehaviour;
         } else {
             //Otherwise just make a blank one
-            Debug.Log("Warning - making a blank channel soul behaviour");
             soulBehaviour = new SoulChannel(skill);
 
             //Since this is a specially created soulBehaviour, we don't need to

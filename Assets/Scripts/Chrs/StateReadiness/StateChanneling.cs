@@ -18,7 +18,7 @@ public class StateChanneling : StateReadiness {
 
         //Set the channel time to be equal to whatever the soul's duration is
 
-        Debug.Log("soulBehaviour's skill is initially " + soulBehaviour.skillSource.sName + " with duration " + nChannelTime);
+        //Debug.Log("soulBehaviour's skill is initially " + soulBehaviour.skillSource.sName + " with duration " + nChannelTime);
     }
 
     public override TYPE Type() {

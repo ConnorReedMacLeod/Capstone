@@ -41,7 +41,6 @@ public class ExecTurnChooseSkills : Executable {
     //All that chooseskills needs to do is store the selection information for the
     // chosen skill so that ContTurns->FinishedTurnPhase can post this information to the master
     public override void ExecuteEffect() {
-        Debug.Log("Executing ExecTurnChooseSkill");
 
         //Get the character that is currently set to be acting next
         Chr chrActing = ContTurns.Get().GetNextActingChr();

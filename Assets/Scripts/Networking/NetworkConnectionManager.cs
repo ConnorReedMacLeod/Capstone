@@ -43,7 +43,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         if(inst != null) {
             //If a static instance exists,
             // then panic!  Destroy ourselves
-            Debug.LogError("Warning!  This singleton already exists (" + gameObject.name + "), so we shouldn't instantiate a new one");
+            //Debug.Log("Warning!  This singleton already exists (" + gameObject.name + "), so we shouldn't instantiate a new one");
             Destroy(gameObject);
 
         } else {
@@ -266,7 +266,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
     public void SpawnSceneNetworkManager(string sPrefabName) {
         GameObject goSceneNetworkManager;
 
-        Debug.LogFormat("Spawning {0}", sPrefabName);
+        //Debug.LogFormat("Spawning {0}", sPrefabName);
 
         //Spawn the networking manager for the local player
         goSceneNetworkManager = PhotonNetwork.InstantiateSceneObject(string.Format("Prefabs/Networking/{0}", sPrefabName), Vector3.zero, Quaternion.identity);

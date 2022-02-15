@@ -12,7 +12,7 @@ public class MatchSceneManager : MonoBehaviour {
             Debug.Log("No need to instantiate another MatchNetworkManager if we're not the master client");
             return;
         }
-        Debug.Log("Requesting for networkconnectionmanager to add pfMatchNetworkManager");
+        
         NetworkConnectionManager.Get().SpawnSceneNetworkManager("pfMatchNetworkManager");
     }
 }
