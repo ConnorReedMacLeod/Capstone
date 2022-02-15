@@ -19,7 +19,7 @@ public class SkillCloudCushion : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this)
         };
 
@@ -31,7 +31,7 @@ public class SkillCloudCushion : Skill {
         TarChr.AddTarget(this, TarChr.IsSameTeam(chrOwner));
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         public SoulCloudCushion soulToCopy;
 
@@ -45,7 +45,7 @@ public class SkillCloudCushion : Skill {
             return string.Format("Target ally gains {0} DEFENSE for {1} turns.", soulToCopy.nDefenseBuff, soulToCopy.pnMaxDuration.Get());
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = (Chr)selections.lstSelections[1];
 

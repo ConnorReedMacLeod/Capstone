@@ -8,7 +8,8 @@ public class TypeUsageChannel : TypeUsage {
 
     public SoulChannel soulBehaviour;
     public int nStartChannelTime;
-    public Selections selectionsStored;
+
+    public int nSelectionsInputIndex; //Which index we should use from the NetworkReceiver buffer for our input
 
     public TypeUsageChannel(Skill skill, int _nStartChannelTime, SoulChannel _soulBehaviour) : base(skill) {
 
@@ -19,7 +20,6 @@ public class TypeUsageChannel : TypeUsage {
             soulBehaviour = _soulBehaviour;
         } else {
             //Otherwise just make a blank one
-            Debug.Log("Warning - making a blank channel soul behaviour");
             soulBehaviour = new SoulChannel(skill);
 
             //Since this is a specially created soulBehaviour, we don't need to
@@ -44,21 +44,21 @@ public class TypeUsageChannel : TypeUsage {
 
     public override void UseSkill() {
 
-        //Store a copy of the current selections so that we can use it later when the channel finishes (or triggers in some way)
-        selectionsStored = base.GetUsedSelections().GetCopy();
+        //Store the index of the current selections so that we can refer back to it later when the channel finishes (or triggers in some way)
+        nSelectionsInputIndex = NetworkMatchReceiver.Get().indexCurMatchInput;
 
         ContSkillEngine.PushSingleClause(new ClauseBeginChannel(skill));
     }
 
-    public override Selections GetUsedSelections() {
-        return selectionsStored;
+    public override InputSkillSelection GetUsedSelections() {
+        return (InputSkillSelection)NetworkMatchReceiver.Get().lstMatchInputBuffer[nSelectionsInputIndex];
     }
 
     public void ClearStoredSelectionInfo() {
-        selectionsStored = null;
+        nSelectionsInputIndex = -1;
     }
 
-    class ClauseBeginChannel : Clause {
+    class ClauseBeginChannel : ClauseSkill {
 
         public ClauseBeginChannel(Skill _skill) : base(_skill) {
         }
@@ -67,7 +67,7 @@ public class TypeUsageChannel : TypeUsage {
             return string.Format("Transition to a channeling state");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void Execute() {
 
             ContSkillEngine.PushSingleExecutable(new ExecBeginChannel(skill.chrOwner, skill.chrOwner, skill));
 

@@ -10,7 +10,7 @@ public class StateTargetIdle : StateTarget {
 
     public void cbClickChar(Object target, params object[] args) {
 
-        Debug.Log("Clicked a Char with bCanSelectCharacters = " + ContLocalUIInteraction.Get().bCanSelectCharacters);
+        //Debug.Log("Clicked a Char with bCanSelectCharacters = " + ContLocalUIInteraction.Get().bCanSelectCharacters);
 
         //Only procede if we're allowed to select characters currently
         if(ContLocalUIInteraction.Get().bCanSelectCharacters == false) return;

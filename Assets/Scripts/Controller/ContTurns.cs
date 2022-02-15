@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ContTurns : Singleton<ContTurns> {
 
-    public enum STATETURN { DRAFT, BAN, LOADOUTSETUP, RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSESKILL, EXECUTESKILL, TURNEND };
+    public enum STATETURN { RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSESKILL, TURNEND };
     public STATETURN curStateTurn;
 
     public Chr[] arChrPriority = new Chr[Player.MAXCHRS];
@@ -15,14 +15,6 @@ public class ContTurns : Singleton<ContTurns> {
 
     public Subject subNextActingChrChange = new Subject();
     public static Subject subAllPriorityChange = new Subject(Subject.SubType.ALL);
-
-    public const float fDelayGameEffects = 0.5f;
-    public const float fDelayTurnSkill = 0.5f;
-    public const float fDelayMinorSkill = 0.5f;
-    public const float fDelayStandard = 1.25f;
-    public const float fDelayBan = 20f;
-    public const float fDelayDraftPick = 20f;
-    public const float fDelayLoadoutSetup = 120f;
 
 
     public void FixSortedPriority(Chr chr) {
@@ -148,59 +140,40 @@ public class ContTurns : Singleton<ContTurns> {
             Debug.LogError("There's still more to evaluate on the stacks, so we can't finish the turn yet");
             return;
         }
+        if (ContSkillEngine.bDEBUGENGINE) Debug.Log("Finished the turn phase: " + curStateTurn);
 
-        if(curStateTurn == STATETURN.CHOOSESKILL) {
-            //If the current phase of the turn is for choosing skills, then just let
-            // the selection controller send its result for when the phase should end
-            // (since this may require waiting for AI calculation or human input)
-            //They might send it immediately if it's not their turn or if there's no
-            // character acting this turn.
+        //Move to the next phase of the turn
+        SetTurnState(GetNextPhase(curStateTurn));
+    }
 
-            return;
-        } else if(curStateTurn == STATETURN.EXECUTESKILL) {
-            //After we're done executing the skill (and processing all associated effects) that was passed to us,
-            //  then we can clear out the selection info that the master passed to us since we're done with it
-            ContSkillSelection.Get().ResetStoredSelection();
+    public STATETURN GetNextPhase(STATETURN turnphase) {
+
+        //Loop around to the recharge phase if we've reached the end of a turn
+        if(turnphase == STATETURN.TURNEND) {
+            return STATETURN.RECHARGE;
+
+        }else if(turnphase == STATETURN.CHOOSESKILL) {
+            //If we have finished choosing and executing a skill, then let's check if we want to stay in the choose-skills phase of the turn,
+            // or we can move to the end of turn if no one is left to act
+            if(GetNextActingChr() == null) {
+                return STATETURN.TURNEND;
+            } else {
+                return STATETURN.CHOOSESKILL;
+            }
         }
 
-
-        if(ContSkillEngine.bDEBUGENGINE) Debug.Log("Finished the turn phase: " + curStateTurn);
-
-        ClientNetworkController.Get().SendTurnPhaseFinished();
-
-        //We then wait til we get back a signal from the master saying that we can progress to the next phase of the turn
-
+        //Generally, just move to the next sequential turn phase
+        return turnphase + 1;
     }
 
     public void OnLeavingState(object oAdditionalInfo) {
-
-        switch(curStateTurn) {
-        case STATETURN.BAN:
-
-            //Interpret the passed info as a selected character that was banned in the just-finished drafting step
-            DraftController.Get().BanChr((Chr.CHARTYPE)oAdditionalInfo);
-
-            //End this drafting step and move on to the next one
-            DraftController.Get().FinishDraftPhaseStep();
-
-            break;
-
-        case STATETURN.DRAFT:
-
-            //Interpret the passed info as a selected character that was drafted in the just-finished drafting step
-            DraftController.Get().DraftChr(DraftController.Get().GetActivePlayerForNextDraftPhaseStep(), (Chr.CHARTYPE)oAdditionalInfo);
-
-            //End this drafting step and move on to the next one
-            DraftController.Get().FinishDraftPhaseStep();
-
-            break;
-        }
+        
 
     }
 
-    public void SetTurnState(STATETURN _curStateTurn, object oAdditionalInfo = null) {
-
-        OnLeavingState(oAdditionalInfo);
+    public void SetTurnState(STATETURN _curStateTurn) {
+        
+        OnLeavingState(curStateTurn);
 
         curStateTurn = _curStateTurn;
 
@@ -226,11 +199,7 @@ public class ContTurns : Singleton<ContTurns> {
 
         case STATETURN.GIVEMANA:
 
-            //Interpret the additional info as an array of the types of mana given to each player,
-            // and pass this along to the ExecTurnGiveMana that's put on the stack
-            Debug.Assert(oAdditionalInfo != null);
-
-            ContSkillEngine.Get().AddExec(new ExecTurnGiveMana(_chrSource: null) { arManaToGive = (int[])oAdditionalInfo });
+            ContSkillEngine.Get().AddExec(new ExecTurnGiveMana(_chrSource: null));
 
             break;
 
@@ -247,26 +216,11 @@ public class ContTurns : Singleton<ContTurns> {
 
             break;
 
-        case STATETURN.EXECUTESKILL:
-
-            //Interpret the additional info passed from Master as skill selection info from the active player
-            int[] arnSerializedSelectionInfo = (int[])oAdditionalInfo;
-            ContSkillSelection.Get().ReceiveSelectionFromMaster(arnSerializedSelectionInfo);
-
-            ContSkillEngine.Get().AddExec(new ExecTurnExecuteSkill(_chrSource: null));
-
-            break;
-
         case STATETURN.TURNEND:
 
             ContSkillEngine.Get().AddExec(new ExecTurnEndTurn(_chrSource: null));
 
             break;
-        }
-
-        if(ContSkillEngine.Get().bAutoTurns) {
-            //Now that the appropriate ExecTurn as been added, we can resume processing the stack
-            ContSkillEngine.Get().ProcessStacks();
         }
     }
 

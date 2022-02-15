@@ -25,7 +25,7 @@ public class SkillAmbush : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this)
         };
     }
@@ -35,7 +35,7 @@ public class SkillAmbush : Skill {
         TarChr.AddTarget(this, TarChr.IsDiffTeam(chrOwner));
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         public Clause1(Skill _skill) : base(_skill) {
 
@@ -47,7 +47,7 @@ public class SkillAmbush : Skill {
                 ((SkillAmbush)skill).soulChannelBehaviour.nBaseDamage);
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             //Since this is a channel, we only have to include effects here that would happen upon
             // channel completion.  

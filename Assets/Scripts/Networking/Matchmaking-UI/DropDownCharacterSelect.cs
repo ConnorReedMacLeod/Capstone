@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class DropDownCharacterSelect : MonoBehaviour {
 
@@ -10,22 +11,32 @@ public class DropDownCharacterSelect : MonoBehaviour {
     public Dropdown dropdown;
     public int idChr;
 
-    public void Start() {
-        //Double check that our CharacterSelection instance has already Start'd itself
-        CharacterSelection.Get().Start();
+    public void UpdateDropdownOptions() {
+        
+        LibView.SetDropdownOptions(dropdown, CharType.GetAllChrNames());
 
-        //Ensure any pre-given value for the dropdown is accurately reflected
-        CharacterSelection.Get().arChrSelections[plyrselectorParent.idPlayer][idChr] = (Chr.CHARTYPE)dropdown.value;
+        //Ensure the default-selected option for this dropdown is mirroring the default in the matchsetup
+        dropdown.SetValueWithoutNotify((int)NetworkMatchSetup.GetCharacterSelection(plyrselectorParent.idPlayer, idChr));
 
+        dropdown.RefreshShownValue();
     }
 
-    public void OnChrSelectChange(int nChrSelect) {
+    public void OnChrSelectChange() {
 
         Debug.Assert(0 <= idChr && idChr < 3);
 
-        CharacterSelection.Get().arChrSelections[plyrselectorParent.idPlayer][idChr] = (Chr.CHARTYPE)nChrSelect;
-        Debug.Log("Sending updated selections to the master for player " + plyrselectorParent.idPlayer);
-        CharacterSelection.Get().SubmitSelection(plyrselectorParent.idPlayer);
+        NetworkMatchSetup.SetCharacterSelection(plyrselectorParent.idPlayer, idChr, (CharType.CHARTYPE)dropdown.value);
 
+        //Now that our character has been reselected, we need to load in a starting loadout for that character
+        NetworkMatchSetup.SetLoadout(plyrselectorParent.idPlayer, idChr,
+            LoadoutManager.LoadSavedLoadoutForChr(NetworkMatchSetup.GetCharacterSelection(plyrselectorParent.idPlayer, idChr), 0));
+
+        Debug.LogFormat("Changed chr to {0} with a starting loadout of {1}", NetworkMatchSetup.GetCharacterSelection(plyrselectorParent.idPlayer, idChr),
+            NetworkMatchSetup.GetLoadout(plyrselectorParent.idPlayer, idChr));
+
+    }
+
+    public void OnClickEditLoadout() {
+        plyrselectorParent.EditChrLoadout(idChr);
     }
 }

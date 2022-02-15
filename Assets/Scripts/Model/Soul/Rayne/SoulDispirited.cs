@@ -21,14 +21,14 @@ public class SoulDispirited : SoulChr {
         //Increase the cost by one effort
         arnCostDebuff = new int[] { 0, 0, 0, 0, 1 };
 
-        arnodeCostModifier = new LinkedListNode<Property<Mana>.Modifier>[Chr.nStandardCharacterSkills];
+        arnodeCostModifier = new LinkedListNode<Property<Mana>.Modifier>[Chr.nEquippedCharacterSkills];
 
     }
 
     public override void ApplicationEffect() {
 
         //Loop through each skill on the targetted character
-        for(int i = 0; i < Chr.nStandardCharacterSkills; i++) {
+        for(int i = 0; i < Chr.nEquippedCharacterSkills; i++) {
 
             ApplyCostIncreaseToSkill(i);
         }
@@ -71,14 +71,14 @@ public class SoulDispirited : SoulChr {
 
         arnCostDebuff = new int[Mana.nManaTypes];
         System.Array.Copy(other.arnCostDebuff, arnCostDebuff, other.arnCostDebuff.Length);
-        arnodeCostModifier = new LinkedListNode<Property<Mana>.Modifier>[Chr.nStandardCharacterSkills];
+        arnodeCostModifier = new LinkedListNode<Property<Mana>.Modifier>[Chr.nEquippedCharacterSkills];
         System.Array.Copy(other.arnodeCostModifier, arnodeCostModifier, other.arnodeCostModifier.Length);
 
     }
 
     public override void RemoveEffect() {
         //When removed we'll clear all the cost modifiers we've applied
-        for(int i = 0; i < Chr.nStandardCharacterSkills; i++) {
+        for(int i = 0; i < Chr.nEquippedCharacterSkills; i++) {
             chrTarget.arSkillSlots[i].skill.manaCost.pManaCost.RemoveModifier(arnodeCostModifier[i]);
         }
 

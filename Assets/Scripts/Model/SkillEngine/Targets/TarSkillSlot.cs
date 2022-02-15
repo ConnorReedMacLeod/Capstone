@@ -50,26 +50,26 @@ public class TarSkillSlot : Target {
 
 
     public static FnValidSelection IsOwnedBySameChr(Chr chr) {
-        return (object skillslot, Selections selections) => (chr.id == ((SkillSlot)skillslot).chrOwner.id);
+        return (object skillslot, InputSkillSelection selections) => (chr.id == ((SkillSlot)skillslot).chrOwner.id);
     }
 
     public static FnValidSelection IsOwnedByOtherChr(Chr chr) {
-        return (object skillslot, Selections selections) => (chr.id != ((SkillSlot)skillslot).chrOwner.id);
+        return (object skillslot, InputSkillSelection selections) => (chr.id != ((SkillSlot)skillslot).chrOwner.id);
     }
 
     public static FnValidSelection IsOwnedBySameTeam(Chr chr) {
-        return (object skillslot, Selections selections) => (chr.plyrOwner.id == ((SkillSlot)skillslot).chrOwner.plyrOwner.id);
+        return (object skillslot, InputSkillSelection selections) => (chr.plyrOwner.id == ((SkillSlot)skillslot).chrOwner.plyrOwner.id);
     }
 
     public static FnValidSelection IsOwnedByDiffTeam(Chr chr) {
-        return (object skillslot, Selections selections) => (chr.plyrOwner.id != ((SkillSlot)skillslot).chrOwner.plyrOwner.id);
+        return (object skillslot, InputSkillSelection selections) => (chr.plyrOwner.id != ((SkillSlot)skillslot).chrOwner.plyrOwner.id);
     }
 
     public static FnValidSelection IsOwnedByFrontliner() {
-        return (object skillslot, Selections selections) => ((SkillSlot)skillslot).chrOwner.position.positiontype == Position.POSITIONTYPE.FRONTLINE;
+        return (object skillslot, InputSkillSelection selections) => ((SkillSlot)skillslot).chrOwner.position.positiontype == Position.POSITIONTYPE.FRONTLINE;
     }
     public static FnValidSelection IsOwnedByBackliner() {
-        return (object skillslot, Selections selections) => ((SkillSlot)skillslot).chrOwner.position.positiontype == Position.POSITIONTYPE.BACKLINE;
+        return (object skillslot, InputSkillSelection selections) => ((SkillSlot)skillslot).chrOwner.position.positiontype == Position.POSITIONTYPE.BACKLINE;
     }
 
 

@@ -38,7 +38,7 @@ public class ExecTurnStartTurn : Executable {
     public override void ExecuteEffect() {
 
         sLabel = "Beginning of Turn";
-        fDelay = ContTurns.fDelayStandard;
+        fDelay = ContTime.fDelayStandard;
 
     }
 

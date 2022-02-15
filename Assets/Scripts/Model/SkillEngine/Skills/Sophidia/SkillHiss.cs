@@ -20,7 +20,7 @@ public class SkillHiss : Skill {
 
         InitTargets();
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this)
         };
     }
@@ -29,7 +29,7 @@ public class SkillHiss : Skill {
         TarMana.AddTarget(this, manaCost);
     }
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         public SoulSpooked soulToCopy;
 
@@ -43,7 +43,7 @@ public class SkillHiss : Skill {
             return string.Format("All enemies lose {0} POWER for {1} turns.", soulToCopy.nPowerDebuff, soulToCopy.pnMaxDuration.Get());
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
 
             List<Chr> lstEnemyChrs = skill.chrOwner.plyrOwner.GetEnemyPlayer().GetActiveChrs();

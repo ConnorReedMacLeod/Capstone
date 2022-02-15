@@ -74,11 +74,12 @@ public class ViewChr : ViewInteractive {
 
             v3BasePosition = goPortrait.transform.localPosition;
             v3RecoilDirection = Vector3.left;
-
+            
         }
     }
 
     public void Init() {
+
         SetPortrait();
         if(mod.plyrOwner.id == 1) {
             //Find the portrait and flip it for one of the players
@@ -256,7 +257,7 @@ public class ViewChr : ViewInteractive {
     public void InitModel() {
         mod = GetComponent<Chr>();
         mod.Start();
-
+        
         //TODO:: Consider if we want to set up an observer for this
         //        May not need to since a Chr likely won't exist without some sort of View.  
 
@@ -285,21 +286,21 @@ public class ViewChr : ViewInteractive {
 
     //For when it becomes this character's turn to act
     public void cbOnBecomesActiveForHumans(Object target, params object[] args) {
-        Debug.Log(mod.sName + " became active");
+        //Debug.Log(mod.sName + " became active");
         DecideIfHighlighted(SelectabilityState.ACTIVETURN);
     }
 
     //For when it is no longer this character's turn to act
     public void cbOnEndsActiveForHumans(Object target, params object[] args) {
-        Debug.Log(mod.sName + " is no longer active");
+        //Debug.Log(mod.sName + " is no longer active");
         DecideIfHighlighted(SelectabilityState.NONE);
     }
 
     //For when the currently targetting skill can target this character
     public void cbOnBecomesTargettable(Object target, params object[] args) {
-        Skill skillTargetting = (Skill)args[0];
+        Skill skillTargetting = ((SkillSlot)args[0]).skill;
 
-        Debug.Log(mod.sName + " is currently targettable by " + skillTargetting.sName);
+        //Debug.Log(mod.sName + " is currently targettable by " + skillTargetting.sName);
 
         //If the source of this skill was an ally
         if(skillTargetting.chrOwner.plyrOwner == mod.plyrOwner) {
@@ -312,7 +313,7 @@ public class ViewChr : ViewInteractive {
 
     //For when the currently targetting skill has stopped, so this character can clear any targetting display
     public void cbOnEndsTargettable(Object target, params object[] args) {
-        Debug.Log(mod.sName + " is no longer targettable");
+        //Debug.Log(mod.sName + " is no longer targettable");
         DecideIfHighlighted(SelectabilityState.NONE);
     }
 
@@ -513,7 +514,7 @@ public class ViewChr : ViewInteractive {
             //Ensure the position is now equal to the original base position
             goPortrait.transform.localPosition = v3BasePosition;
 
-            //And reset our sate back to idle
+            //And reset our state back to idle
             statePortrait = PortraitState.IDLE;
             SetPortrait();
         }

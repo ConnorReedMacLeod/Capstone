@@ -23,9 +23,9 @@ public abstract class Skill {
 
     public List<Target> lstTargets;
 
-    public List<Clause> lstClauses = new List<Clause>();
-    public List<Clause> lstClausesOnEquip = new List<Clause>();
-    public List<Clause> lstClausesOnUnequip = new List<Clause>();
+    public List<ClauseSkillSelection> lstSkillClauses = new List<ClauseSkillSelection>();
+    public List<ClauseSkill> lstClausesOnEquip = new List<ClauseSkill>();
+    public List<ClauseSkill> lstClausesOnUnequip = new List<ClauseSkill>();
 
     public Subject subSkillChange = new Subject();
 
@@ -99,20 +99,15 @@ public abstract class Skill {
 
     }
 
-    public bool CanPayMana() {
-        //Check if you have enough mana
-        if(chrOwner.plyrOwner.manapool.CanPayManaCost(this.manaCost) == false) {
-            Debug.Log("Not enough mana");
-            return false;
-        }
-        return true;
-    }
-
     //Use the selected skill with the supplied targets
     public void UseSkill() {
 
-        if(CanSelect(ContSkillSelection.Get().selectionsFromMaster) == false) {
-            Debug.LogError("Tried to use skill, but the master-provided selections were invalid! : " + ContSkillSelection.Get().selectionsFromMaster.ToString());
+        if(NetworkMatchReceiver.Get().IsCurMatchInputReady() == false) {
+            Debug.LogError("Tried to use skill, but we don't have the current input ready yet (input " + NetworkMatchReceiver.Get().indexCurMatchInput);
+        }
+
+        if(CanSelect((InputSkillSelection)NetworkMatchReceiver.Get().GetCurMatchInput()) == false) {
+            Debug.LogError("Tried to use skill, but the master-provided selections were invalid! : " + NetworkMatchReceiver.Get().GetCurMatchInput().ToString());
         }
 
         // IMPORTANT - since we're pushing these effects onto the stack, we'll want to 
@@ -146,11 +141,11 @@ public abstract class Skill {
     public void Execute() {
 
         //Push a reference to each of our clauses onto the stack so they may be evaluated later
-        ContSkillEngine.PushClauses(lstClauses);
+        ContSkillEngine.PushClauses(lstSkillClauses);
     }
 
     //Determine if the skill could be used targetting the passed selections 
-    public virtual bool CanSelect(Selections selections) {// Maybe this doesn't need to be virtual
+    public bool CanSelect(InputSkillSelection selections) {
 
         //First, check if we're at least alive
         if(chrOwner.bDead == true) {
@@ -177,31 +172,6 @@ public abstract class Skill {
         return true;
     }
 
-    //Determine if the skill can be executed with the given selection parameters - this is more allowable
-    //  since we just want to ensure a prepped skill will not fizzle if it can at least do something
-    public bool CanExecute(Selections selections) {
-
-        //First, check if we're at least alive
-        if(chrOwner.bDead == true) {
-            return false;
-        }
-
-        //Check that we're in a readiness state (with enough usable skills left)
-        if(chrOwner.curStateReadiness.CanSelectSkill(this) == false) {
-            //Debug.Log("Not in a state where we can use this skill");
-            return false;
-        }
-
-        //Finally, check if enough of the targets are valid to let the skill execute (if some become invalid,
-        // this may be okay, but it depends on the ability)
-        if(selections.IsGoodEnoughToExecute() == false) {
-            Debug.Log("Skill cannot execute due to some number of invalid selections");
-            return false;
-        }
-
-        return true;
-    }
-
     //Determine if the skill should continue as a channel.  If the character dies, or has no valid targets for completing
     //  the channel targetting, then we can cancel it
     public bool CanCompleteAsChannel() {
@@ -212,8 +182,6 @@ public abstract class Skill {
         }
 
         Debug.Log("WARNING - remember to consider what needs to be checked to see if a channel should be cancelled");
-
-        //This used to just check if the dominant clause could find a valid target, but we don't have that anymore
 
         return true;
     }
@@ -231,14 +199,14 @@ public abstract class Skill {
     }
 
     public bool IsStandardSkill() {
-        return skillslot.iSlot < Chr.nStandardCharacterSkills;
+        return skillslot.iSlot < Chr.nEquippedCharacterSkills;
     }
 
     public bool IsGenericSkill() {
-        return skillslot.iSlot >= Chr.nStandardCharacterSkills;
+        return skillslot.iSlot >= Chr.nEquippedCharacterSkills;
     }
 
-    class ClausePayMana : Clause {
+    class ClausePayMana : ClauseSkill {
 
         public ClausePayMana(Skill _skill) : base(_skill) {
         }
@@ -247,7 +215,7 @@ public abstract class Skill {
             return string.Format("Paying mana for skill");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void Execute() {
     
             //TODO:: Think if this is an acceptable solution, since it seems potentially narrow.  It also assumes that the mana you reserved
             //       exactly corresponds to the mana you NEED to pay.  I guess this helps with any optional costs that might get played, but I
@@ -262,7 +230,7 @@ public abstract class Skill {
 
     };
 
-    class ClausePayCooldown : Clause {
+    class ClausePayCooldown : ClauseSkill{
 
         public ClausePayCooldown(Skill _skill) : base(_skill) {
         }
@@ -271,7 +239,7 @@ public abstract class Skill {
             return string.Format("Paying cooldown for skill");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void Execute() {
 
             ContSkillEngine.PushSingleExecutable(new ExecChangeCooldown(skill.chrOwner, skill.skillslot , skill.nCooldownInduced));
 
@@ -279,7 +247,7 @@ public abstract class Skill {
 
     };
 
-    class ClausePayFatigue : Clause {
+    class ClausePayFatigue : ClauseSkill {
 
         public ClausePayFatigue(Skill _skill) : base(_skill) {
         }
@@ -288,7 +256,7 @@ public abstract class Skill {
             return string.Format("Paying fatigue for skill");
         }
 
-        public override void ClauseEffect(Selections selection) {
+        public override void Execute() {
 
             ContSkillEngine.PushSingleExecutable(new ExecChangeFatigue(skill.chrOwner, skill.chrOwner, skill.nFatigue, false));
 
@@ -296,7 +264,7 @@ public abstract class Skill {
 
     };
 
-    class ClausePaySkillPoints : Clause {
+    class ClausePaySkillPoints : ClauseSkill {
 
         public ClausePaySkillPoints(Skill _skill) : base(_skill) {
 
@@ -306,12 +274,12 @@ public abstract class Skill {
             return string.Format("Paying skill points");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void Execute() {
             ContSkillEngine.PushSingleExecutable(new ExecPaySkillPoints(skill.chrOwner, skill.chrOwner, skill));
         }
     };
 
-    class ClauseStartSkill : Clause {
+    class ClauseStartSkill : ClauseSkill {
 
         public ClauseStartSkill(Skill _skill) : base(_skill) {
         }
@@ -320,7 +288,7 @@ public abstract class Skill {
             return string.Format("Starting marker for this skill");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void Execute() {
 
             ContSkillEngine.PushSingleExecutable(new ExecStartSkill(skill.chrOwner, skill));
 
@@ -328,7 +296,7 @@ public abstract class Skill {
 
     };
 
-    class ClauseEndSkill : Clause {
+    class ClauseEndSkill : ClauseSkill {
 
         public ClauseEndSkill(Skill _skill) : base(_skill) {
         }
@@ -337,7 +305,7 @@ public abstract class Skill {
             return string.Format("Ending marker for this skill");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void Execute() {
 
             ContSkillEngine.PushSingleExecutable(new ExecEndSkill(skill.chrOwner, skill));
 

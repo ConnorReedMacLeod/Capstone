@@ -23,15 +23,15 @@ public class SkillCheerleader : Skill {
 
         soulPassive = new SoulCheerleader(this.chrOwner, this.chrOwner, this);
 
-        lstClausesOnEquip = new List<Clause>() {
+        lstClausesOnEquip = new List<ClauseSkill>() {
             new ClauseEquip(this)
         };
 
-        lstClauses = new List<Clause>() {
+        lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this)
         };
 
-        lstClausesOnUnequip = new List<Clause>() {
+        lstClausesOnUnequip = new List<ClauseSkill>() {
             new ClauseUnequip(this)
         };
     }
@@ -40,7 +40,7 @@ public class SkillCheerleader : Skill {
         //No targets needed for a passive
     }
 
-    class ClauseEquip : Clause {
+    class ClauseEquip : ClauseSkill {
 
         public ClauseEquip(Skill _skill) : base(_skill) {
 
@@ -51,7 +51,7 @@ public class SkillCheerleader : Skill {
             return string.Format("Initially applying Cheerleader on equip");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void Execute() {
 
             ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, skill.chrOwner, ((SkillCheerleader)skill).soulPassive) {
                 sLabel = skill.chrOwner.sName + " is one peppy boi"
@@ -61,7 +61,7 @@ public class SkillCheerleader : Skill {
 
     };
 
-    class ClauseUnequip : Clause {
+    class ClauseUnequip : ClauseSkill {
 
         public ClauseUnequip(Skill _skill) : base(_skill) {
 
@@ -72,7 +72,7 @@ public class SkillCheerleader : Skill {
             return string.Format("Removing Cheerleader on unequip");
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void Execute() {
 
             ContSkillEngine.PushSingleExecutable(new ExecRemoveSoulChr(skill.chrOwner, ((SkillCheerleader)skill).soulPassive) {
                 sLabel = skill.chrOwner.sName + " is no longer peppy"
@@ -82,7 +82,7 @@ public class SkillCheerleader : Skill {
 
     };
 
-    class Clause1 : Clause {
+    class Clause1 : ClauseSkillSelection {
 
         public Clause1(Skill _skill) : base(_skill) {
 
@@ -94,7 +94,7 @@ public class SkillCheerleader : Skill {
                 skill.chrOwner.sName, ((SkillCheerleader)skill).soulPassive.nPowerGain);
         }
 
-        public override void ClauseEffect(Selections selections) {
+        public override void ClauseEffect(InputSkillSelection selections) {
 
             Debug.LogError("Shouldn't be executing a passive");
 

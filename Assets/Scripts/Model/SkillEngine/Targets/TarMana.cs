@@ -39,7 +39,7 @@ public class TarMana : Target {
     }
 
     public static FnValidSelection COVERSCOST(ManaCost manaCostRequired) {
-        return (object manaPaid, Selections selections) => (manaCostRequired.CanBePaidWith((Mana)manaPaid));
+        return (object manaPaid, InputSkillSelection selections) => (manaCostRequired.CanBePaidWith((Mana)manaPaid));
     }
 
     public static TarMana AddTarget(Skill _skill, ManaCost _manaCostRequired) {
@@ -64,9 +64,16 @@ public class TarMana : Target {
         manaCostRequired = _manaCostRequired;
     }
 
-    //This doesn't really make sense for this targetting type, so just return an empty list
+    //This is a bit weird since we don't have a general universe of selectables, so we'll instead just either return a
+    //  list with a single possible random mana cost, or an empty list (if there's no way to pay the mana cost)
     public override IEnumerable<object> GetSelectableUniverse() {
-        return null;
+        List<Mana> lstManaPayable = new List<Mana>();
+
+        if (skill.chrOwner.plyrOwner.manapool.CanPayManaCost(manaCostRequired)) {
+            //If we are capable of paying this mana cost, then add a payment of this mana cost to our lst
+            lstManaPayable.Add(skill.chrOwner.plyrOwner.manapool.GetPaymentForManaCost(manaCostRequired));
+        }
+        return lstManaPayable;
     }
 
     public override object GetRandomSelectable() {

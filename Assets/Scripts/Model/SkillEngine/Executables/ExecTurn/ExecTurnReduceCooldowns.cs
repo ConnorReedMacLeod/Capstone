@@ -61,7 +61,7 @@ public class ExecTurnReduceCooldowns : Executable {
         ReduceCooldowns();
 
         sLabel = "Reducing Cooldowns";
-        fDelay = ContTurns.fDelayTurnSkill;
+        fDelay = ContTime.fDelayTurnSkill;
 
     }
 

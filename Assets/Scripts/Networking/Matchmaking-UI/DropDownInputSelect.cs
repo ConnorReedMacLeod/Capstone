@@ -10,16 +10,13 @@ public class DropDownInputSelect : MonoBehaviour {
 
 
     public void Start() {
-        //Ensure any pre-given value for the dropdown is accurately reflected
-        CharacterSelection.Get().arInputTypes[plyrselectorParent.idPlayer] = (Player.InputType)dropdown.value;
-
+        //Start the match by reacting to 'selecting' whatever's defaultedly set here
+        OnInputSelectChange();
     }
 
-    public void OnInputSelectChange(int nInputSelect) {
-
-        CharacterSelection.Get().arInputTypes[plyrselectorParent.idPlayer] = (Player.InputType)nInputSelect;
-        Debug.Log("Sending updated selections to the master for player " + plyrselectorParent.idPlayer);
-        CharacterSelection.Get().SubmitSelection(plyrselectorParent.idPlayer);
+    public void OnInputSelectChange() {
+        
+        NetworkMatchSetup.SetInputType(plyrselectorParent.idPlayer, (Player.InputType)dropdown.value); 
 
     }
 }

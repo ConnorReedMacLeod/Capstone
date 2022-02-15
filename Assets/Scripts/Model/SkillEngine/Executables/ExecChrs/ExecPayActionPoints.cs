@@ -39,7 +39,7 @@ public class ExecPaySkillPoints : ExecChr {
 
         skillUsing.typeUsage.PaySkillPoints();
 
-        fDelay = ContTurns.fDelayTurnSkill;
+        fDelay = ContTime.fDelayTurnSkill;
         sLabel = chrTarget.sName + " is paying their skill point cost (and potentially transitioning readiness state";
 
     }

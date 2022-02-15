@@ -41,7 +41,7 @@ public class ExecChangeFatigue : ExecChr {
         chrTarget.ChangeFatigue(nAmount, bBeginningTurn);
 
         //Debug.Log(chrTarget.sName + " is changing their fatigue by " + nAmount);
-        fDelay = ContTurns.fDelayMinorSkill;
+        fDelay = ContTime.fDelayMinorSkill;
         
     }
 
