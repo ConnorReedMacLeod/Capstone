@@ -174,8 +174,6 @@ public class InputSkillSelection : MatchInput {
 
     public override IEnumerator Execute() {
 
-        Debug.Log("Executing " + skillslotSelected.ToString());
-
         //For a standard skill usage, we need to use the skill using the stored selections we have accrued
         skillSelected.UseSkill();
 
@@ -280,7 +278,7 @@ public class InputSkillSelection : MatchInput {
     //  target selection process
     public override void StartManualInputProcess() {
 
-        Debug.Log("Starting manual input for skillselection");
+        //Debug.Log("Starting manual input for skillselection");
         //In this case, we're just going to pass off control to the local controller by letting it know we
         //  want to be selecting a skill
         chrActing.plyrOwner.inputController.StartSelection();
@@ -291,7 +289,7 @@ public class InputSkillSelection : MatchInput {
     //   target selection process
     public override void EndManualInputProcess() {
 
-        Debug.Log("Ending manual input for skillselection");
+        //Debug.Log("Ending manual input for skillselection");
         //Have the localinputController clean up it's selection-related UI
         chrActing.plyrOwner.inputController.EndSelection();
     }

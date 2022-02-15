@@ -66,6 +66,7 @@ public class Match : MonoBehaviour {
 
         GameObject goChr = Instantiate(pfChr, this.transform);
         Chr newChr = goChr.GetComponent<Chr>();
+
         if(newChr == null) {
             Debug.LogError("ERROR! NO CHR COMPONENT ON CHR PREFAB!");
         }
@@ -124,6 +125,9 @@ public class Match : MonoBehaviour {
     }
 
     public void InitAllChrPositions() {
+
+        //Ensure all positions have been initialized properly
+        ContPositions.Get().Start();
 
         //Set up each team in a 'triangle' - two sides in the back, center in the front
         ContPositions.Get().MoveChrToPosition(arChrs[0][0], ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(0, 0)));

@@ -80,14 +80,14 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
                     matchinputToFillOut.StartManualInputProcess();
                 } else {
                     //If we don't locally control the player who needs to decide an input
-                    Debug.Log("Waiting for foreign input");
+                    DebugDisplay.Get().SetDebugText("Waiting for foreign input");
                 }
 
                 //Wait until we have input waiting for us in the network buffer
                 while (NetworkMatchReceiver.Get().IsCurMatchInputReady() == false) {
                     //Keep spinning until we get the input we're waiting on
 
-                    Debug.Log("Waiting for input");
+                    DebugDisplay.Get().SetDebugText("Waiting for input");
                     yield return null;
                 }
 

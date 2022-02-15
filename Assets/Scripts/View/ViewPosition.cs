@@ -6,6 +6,8 @@ public class ViewPosition : ViewInteractive {
 
     public Position mod;
 
+    public bool bStarted;
+
     public enum SelectabilityState {
         NONE, ALLYSELECTABLE, ENEMYSELECTABLE
     };
@@ -13,7 +15,7 @@ public class ViewPosition : ViewInteractive {
     public static Subject subAllClick = new Subject(Subject.SubType.ALL);
 
     public override void onMouseClick(params object[] args) {
-        Debug.Log("Clicked on " + mod);
+        //Debug.Log("Clicked on " + mod);
         subAllClick.NotifyObs(this, args);
 
         base.onMouseClick(args);
@@ -72,6 +74,10 @@ public class ViewPosition : ViewInteractive {
     }
 
     public override void Start() {
+
+        if (bStarted == true) return;
+        bStarted = true;
+
         base.Start();
 
         mod.Start();

@@ -33,9 +33,9 @@ public class ContInfo : MonoBehaviour {
 
     public void cbSoulStartHover(Object target, params object[] args) {
         if(((ViewSoul)target).mod == null || ((ViewSoul)target).mod.skillSource == null) {
-            Debug.Log("No skill source to display");
+            //Debug.Log("No skill source to display");
         } else {
-            Debug.Log("Displaying " + ((ViewSoul)target).mod.sName);
+            //Debug.Log("Displaying " + ((ViewSoul)target).mod.sName);
             DisplaySkill(((ViewSoul)target).mod.skillSource);
         }
     }

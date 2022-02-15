@@ -26,6 +26,8 @@ public class Position : MonoBehaviour {
 
     public Chr chrOnPosition;
 
+    public ViewPosition view;
+
     public SoulContainerPosition soulContainer;
 
     public Subject subChrLeftPosition = new Subject();
@@ -123,6 +125,7 @@ public class Position : MonoBehaviour {
         subBecomesTargettable = new Subject();
         subEndsTargettable = new Subject();
 
+        view.Start();
     }
 
 
