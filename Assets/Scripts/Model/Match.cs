@@ -152,6 +152,10 @@ public class Match : MonoBehaviour {
 
         Debug.Log("Finished initializing the randomizer");
 
+        LogManager.Get().InitMatchLog();
+
+        Debug.Log("Finished initializing the log file");
+
         InitPlayers(nPlayers);
 
         Debug.Log("Finished initializing players");

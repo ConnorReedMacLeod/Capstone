@@ -103,6 +103,9 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
             //At this point, we have an input in the buffer that we are able to process
             MatchInput matchinput = NetworkMatchReceiver.Get().GetCurMatchInput();
 
+            //Make a record of which input we're going to be processing in our logs
+            LogManager.Get().LogMatchInput();
+
             //Clear out the matchinput we prompting to be filled out
             matchinputToFillOut = null;
 
