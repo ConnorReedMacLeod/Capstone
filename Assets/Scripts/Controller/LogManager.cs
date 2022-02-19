@@ -10,7 +10,7 @@ public class LogManager : SingletonPersistent<LogManager> {
     string sLogfilePath;
     StreamWriter swFileWriter;
 
-    public const string sLOGSPATH = "Logs/";
+    public const string sLOGSDIR = "Logs/";
     public const int nMAXLOGFILES = 5;
 
     public override void Init() {
@@ -29,9 +29,13 @@ public class LogManager : SingletonPersistent<LogManager> {
 
     public void CleanOldLogFiles() {
 
-        //Get a list of all log files currently in the logs folder and only keep the 5 newest ones
-        foreach (FileInfo fileInfo in new DirectoryInfo(sLOGSPATH).GetFiles().OrderByDescending(x => x.LastWriteTime).Skip(nMAXLOGFILES))
+        Debug.Log(new DirectoryInfo(sLOGSDIR).GetFiles().Length + " is the number of files in our log directory");
+
+        //Get a list of all log files currently in the logs folder and only keep the N newest ones
+        foreach (FileInfo fileInfo in new DirectoryInfo(sLOGSDIR).GetFiles().OrderByDescending(x => x.LastWriteTime).Skip(nMAXLOGFILES - 1)) {
+            Debug.Log(fileInfo.Name + " is old, so we're deleting it");
             fileInfo.Delete();
+        }
 
     }
 
@@ -55,7 +59,7 @@ public class LogManager : SingletonPersistent<LogManager> {
         timeStart = new System.DateTimeOffset(System.DateTime.UtcNow).ToLocalTime();
         Debug.Log("Current time is " + timeStart.ToString());
 
-        sLogfilePath = string.Format("{0}log-{1}.txt", sLOGSPATH, GetDateTime());
+        sLogfilePath = string.Format("{0}log-{1}.txt", sLOGSDIR, GetDateTime());
 
         //Delete the file if it already exists
         if(File.Exists(sLogfilePath)) File.Delete(sLogfilePath);
@@ -92,6 +96,40 @@ public class LogManager : SingletonPersistent<LogManager> {
 
         string[] arsLogLines = File.ReadAllLines(sLogFilePath);
 
+        foreach(string sLine in arsLogLines) {
+            string[] arsSplitLine = sLine.Split(':');
+
+            switch (arsSplitLine[0]) {
+                case "po":
+                    LoadLoggedPlayerOwners(arsSplitLine);
+                    break;
+
+                case "it":
+                    LoadLoggedInputTypes(arsSplitLine);
+                    break;
+
+                case "cs":
+                    LoadLoggedCharacterSelections(arsSplitLine);
+                    break;
+
+                case "lo":
+                    LoadLoggedLoadouts(arsSplitLine);
+                    break;
+
+                case "pc":
+                    LoadLoggedPositionCoords(arsSplitLine);
+                    break;
+
+                case "rs":
+                    LoadLoggedRandomizationSeed(arsSplitLine);
+                    break;
+
+                default:
+                    Debug.LogFormat("Nothing to load for entry: {0}", arsSplitLine[0]);
+                    break;
+            }
+        }
+
         LoadLoggedPlayerOwners(arsLogLines[0].Split(':'));
         LoadLoggedInputTypes(arsLogLines[1].Split(':'));
         LoadLoggedCharacterSelections(arsLogLines[2].Split(':'));
@@ -100,7 +138,7 @@ public class LogManager : SingletonPersistent<LogManager> {
         LoadLoggedLoadouts(arsLogLines[5].Split(':'));
         LoadLoggedPositionCoords(arsLogLines[6].Split(':'));
         LoadLoggedPositionCoords(arsLogLines[7].Split(':'));
-        LoadLoggedRandomizationKey(arsLogLines[8].Split(':'));
+        LoadLoggedRandomizationSeed(arsLogLines[8].Split(':'));
 
     }
 
@@ -128,7 +166,7 @@ public class LogManager : SingletonPersistent<LogManager> {
     }
 
     public void LogInputTypes() {
-        WriteToMatchLogFile(string.Format("it:{0}:{1}", NetworkMatchSetup.GetInputType(0), NetworkMatchSetup.GetInputType(1)));
+        WriteToMatchLogFile(string.Format("it:{0}:{1}", (int)NetworkMatchSetup.GetInputType(0), (int)NetworkMatchSetup.GetInputType(1)));
     }
 
     public void LoadLoggedInputTypes(string[] arsSplitLogs) {
@@ -155,7 +193,7 @@ public class LogManager : SingletonPersistent<LogManager> {
         for(int iChr = 0; iChr < Player.MAXCHRS; iChr++) {
             CharType.CHARTYPE chartype = NetworkMatchSetup.GetCharacterSelection(iPlayer, iChr);
 
-            WriteToMatchLogFile(string.Format("cs:{0}-{1}:{2}:{3}", iPlayer, iChr, chartype, CharType.GetChrName(chartype)));
+            WriteToMatchLogFile(string.Format("cs:{0}-{1}:{2}:{3}", iPlayer, iChr, (int)chartype, CharType.GetChrName(chartype)));
         }
     }
 
@@ -195,7 +233,7 @@ public class LogManager : SingletonPersistent<LogManager> {
                 sLoadout += ":" + arnSerializedLoadout[i].ToString();
             }
 
-            sLoadout += ":" + loadout;
+            sLoadout += "\n" + loadout;
 
             WriteToMatchLogFile(sLoadout);
         }
@@ -265,17 +303,17 @@ public class LogManager : SingletonPersistent<LogManager> {
         WriteToMatchLogFile(string.Format("rs:{0}", NetworkMatchSetup.GetRandomizationSeed().ToString()));
     }
 
-    public void LoadLoggedRandomizationKey(string[] arsSplitLogs) {
+    public void LoadLoggedRandomizationSeed(string[] arsSplitLogs) {
 
         Debug.Assert(arsSplitLogs[0] == "rs");
 
-        int nRandomizationKey;
+        int nRandomizationSeed;
 
-        if (int.TryParse(arsSplitLogs[1], out nRandomizationKey) == false) {
-            Debug.LogErrorFormat("Error! {0} was not a valid randomization key to be loaded", arsSplitLogs[1]);
+        if (int.TryParse(arsSplitLogs[1], out nRandomizationSeed) == false) {
+            Debug.LogErrorFormat("Error! {0} was not a valid randomization seed to be loaded", arsSplitLogs[1]);
             return;
         }
-        NetworkMatchSetup.SetRandomizationSeed(nRandomizationKey);
+        NetworkMatchSetup.SetRandomizationSeed(nRandomizationSeed);
     }
 
     public void LogMatchInput() {
