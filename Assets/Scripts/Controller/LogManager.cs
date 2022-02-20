@@ -12,6 +12,9 @@ public class LogManager : SingletonPersistent<LogManager> {
 
     public const string sLOGSDIR = "Logs/";
     public const int nMAXLOGFILES = 5;
+    public const string sLogFileHeader = "log-match";
+
+    public List<FileInfo> lstLogFiles;
 
     public override void Init() {
         
@@ -27,13 +30,35 @@ public class LogManager : SingletonPersistent<LogManager> {
 
     }
 
-    public void CleanOldLogFiles() {
+    public bool IsValidLogFile(FileInfo fileinfo) {
+        //Do some verification checks to determine if this file is indeed a log file
 
-        Debug.Log(new DirectoryInfo(sLOGSDIR).GetFiles().Length + " is the number of files in our log directory");
+        //Currently just checking that the file header is correct
+        if (File.ReadLines(string.Concat(sLOGSDIR, fileinfo.Name)).First() != sLogFileHeader) {
+            //Debug.Log(File.ReadLines(string.Concat(sLOGSDIR, fileinfo.Name)).First() + " isn't a valid header for a log file");
+            return false;
+        }
+
+        return true;
+    }
+
+    public void UpdateRecognizedLogFiles() {
+
+        FileInfo[] arFilesInLogDir = new DirectoryInfo(sLOGSDIR).GetFiles();
+        lstLogFiles = new List<FileInfo>();
+
+        foreach (FileInfo fileinfo in arFilesInLogDir) {
+            if (IsValidLogFile(fileinfo)) {
+                lstLogFiles.Add(fileinfo);
+            }
+        }
+    }
+
+    public void CleanOldLogFiles() {
+        UpdateRecognizedLogFiles();
 
         //Get a list of all log files currently in the logs folder and only keep the N newest ones
-        foreach (FileInfo fileInfo in new DirectoryInfo(sLOGSDIR).GetFiles().OrderByDescending(x => x.LastWriteTime).Skip(nMAXLOGFILES - 1)) {
-            Debug.Log(fileInfo.Name + " is old, so we're deleting it");
+        foreach (FileInfo fileInfo in lstLogFiles.OrderByDescending(x => x.LastWriteTime).Skip(nMAXLOGFILES - 1)) {
             fileInfo.Delete();
         }
 
@@ -43,7 +68,8 @@ public class LogManager : SingletonPersistent<LogManager> {
 
         System.DateTimeOffset timeCur = new System.DateTimeOffset(System.DateTime.UtcNow).ToLocalTime();
 
-        return string.Format("{0}-{1}-{2}-{3}-{4}", timeCur.Year, timeCur.Month, timeCur.Day, timeCur.Hour, timeCur.Minute);
+        return string.Format("{0}-{1}-{2}-{3}-{4}", timeCur.Year, timeCur.Month.ToString().PadLeft(2, '0'), timeCur.Day.ToString().PadLeft(2, '0'), 
+            timeCur.Hour.ToString().PadLeft(2, '0'), timeCur.Minute.ToString().PadLeft(2, '0'));
     }
 
     public string GetTimestamp() {
@@ -57,7 +83,6 @@ public class LogManager : SingletonPersistent<LogManager> {
 
         //Initialize the file name we'll want for the log for this match
         timeStart = new System.DateTimeOffset(System.DateTime.UtcNow).ToLocalTime();
-        Debug.Log("Current time is " + timeStart.ToString());
 
         sLogfilePath = string.Format("{0}log-{1}.txt", sLOGSDIR, GetDateTime());
 
@@ -68,6 +93,14 @@ public class LogManager : SingletonPersistent<LogManager> {
 
         //Initialize the writer
         swFileWriter = new StreamWriter(sLogfilePath, false);
+
+        //Add a log file header to the file
+        WriteLogFileHeader();
+    }
+
+    public void WriteLogFileHeader() {
+
+        WriteToMatchLogFile(sLogFileHeader);
 
     }
 
@@ -92,9 +125,9 @@ public class LogManager : SingletonPersistent<LogManager> {
 
     }
 
-    public void LoadLoggedMatchSetup(string sLogFilePath) {
+    public void LoadLoggedMatchSetup(FileInfo fileinfoLog) {
 
-        string[] arsLogLines = File.ReadAllLines(sLogFilePath);
+        string[] arsLogLines = File.ReadAllLines(string.Concat(sLOGSDIR, fileinfoLog.Name));
 
         foreach(string sLine in arsLogLines) {
             string[] arsSplitLine = sLine.Split(':');
@@ -125,20 +158,13 @@ public class LogManager : SingletonPersistent<LogManager> {
                     break;
 
                 default:
-                    Debug.LogFormat("Nothing to load for entry: {0}", arsSplitLine[0]);
+                    //Debug.LogFormat("Nothing to load for entry: {0}", arsSplitLine[0]);
                     break;
             }
         }
 
-        LoadLoggedPlayerOwners(arsLogLines[0].Split(':'));
-        LoadLoggedInputTypes(arsLogLines[1].Split(':'));
-        LoadLoggedCharacterSelections(arsLogLines[2].Split(':'));
-        LoadLoggedCharacterSelections(arsLogLines[3].Split(':'));
-        LoadLoggedLoadouts(arsLogLines[4].Split(':'));
-        LoadLoggedLoadouts(arsLogLines[5].Split(':'));
-        LoadLoggedPositionCoords(arsLogLines[6].Split(':'));
-        LoadLoggedPositionCoords(arsLogLines[7].Split(':'));
-        LoadLoggedRandomizationSeed(arsLogLines[8].Split(':'));
+        //Now that all the match setup parameters have been loaded from the log file, have the NetworkConnectionManager move us into the Match scene
+        NetworkConnectionManager.Get().TransferToMatchScene();
 
     }
 
@@ -193,7 +219,7 @@ public class LogManager : SingletonPersistent<LogManager> {
         for(int iChr = 0; iChr < Player.MAXCHRS; iChr++) {
             CharType.CHARTYPE chartype = NetworkMatchSetup.GetCharacterSelection(iPlayer, iChr);
 
-            WriteToMatchLogFile(string.Format("cs:{0}-{1}:{2}:{3}", iPlayer, iChr, (int)chartype, CharType.GetChrName(chartype)));
+            WriteToMatchLogFile(string.Format("cs:{0}:{1}:{2}:{3}", iPlayer, iChr, (int)chartype, CharType.GetChrName(chartype)));
         }
     }
 
@@ -201,7 +227,7 @@ public class LogManager : SingletonPersistent<LogManager> {
 
         Debug.Assert(arsSplitLogs[0] == "cs");
 
-        int iPlayer, iChr, nSerializedCoords;
+        int iPlayer, iChr, nchrSelection;
 
         if (int.TryParse(arsSplitLogs[1], out iPlayer) == false || iPlayer < 0 || iPlayer >= Player.MAXPLAYERS) {
             Debug.LogErrorFormat("Error! {0} was not a valid player id to be loaded", arsSplitLogs[1]);
@@ -211,12 +237,12 @@ public class LogManager : SingletonPersistent<LogManager> {
             Debug.LogErrorFormat("Error! {0} was not a valid chr id to be loaded", arsSplitLogs[2]);
             return;
         }
-        if (int.TryParse(arsSplitLogs[3], out nSerializedCoords) == false) {
+        if (int.TryParse(arsSplitLogs[3], out nchrSelection) == false) {
             Debug.LogErrorFormat("Error! {0} was not a valid serialized character selections to be loaded", arsSplitLogs[3]);
             return;
         }
 
-        NetworkMatchSetup.SetPositionCoords(iPlayer, iChr, Position.UnserializeCoords(nSerializedCoords));
+        NetworkMatchSetup.SetCharacterSelection(iPlayer, iChr, (CharType.CHARTYPE)nchrSelection);
     }
 
     public void LogLoadouts(int iPlayer) {
@@ -224,7 +250,7 @@ public class LogManager : SingletonPersistent<LogManager> {
         for(int iChr = 0; iChr < Player.MAXCHRS; iChr++) {
             LoadoutManager.Loadout loadout = NetworkMatchSetup.GetLoadout(iPlayer, iChr);
 
-            string sLoadout = string.Format("lo:{0}-{1}", iPlayer, iChr);
+            string sLoadout = string.Format("lo:{0}:{1}", iPlayer, iChr);
 
             int[] arnSerializedLoadout = LoadoutManager.SerializeLoadout(loadout);
 
@@ -273,7 +299,7 @@ public class LogManager : SingletonPersistent<LogManager> {
         for(int iChr=0; iChr < Player.MAXCHRS; iChr++) {
             Position.Coords poscoords = NetworkMatchSetup.GetPositionCoords(iPlayer, iChr);
 
-            WriteToMatchLogFile(string.Format("pc:{0}-{1}:{2}:{3}", iPlayer, iChr, Position.SerializeCoords(poscoords), poscoords));
+            WriteToMatchLogFile(string.Format("pc:{0}:{1}:{2}:{3}", iPlayer, iChr, Position.SerializeCoords(poscoords), poscoords));
         }
     }
 
@@ -322,6 +348,8 @@ public class LogManager : SingletonPersistent<LogManager> {
     }
 
     public void OnApplicationQuit() {
+
+        if (swFileWriter == null) return;
 
         WriteToMatchLogFile("ApplicationQuit");
 

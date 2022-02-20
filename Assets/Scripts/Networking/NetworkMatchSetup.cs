@@ -157,9 +157,8 @@ public static class NetworkMatchSetup {
     }
 
     public static bool HasAllMatchSetupInfo() {
-        //Note that we always assume that there will be a default entry for the randomization seed, player owners and input types for all players
-        //  We'll also only be checking that there are enough character selections to start a match with (you can potentially draft
-        //  more than this though)
+        //Note that we always assume that there will be a default entry for player owners and input types for all players
+        // We'll check if every character has a character selections, a loadout, and a starting position
 
         for(int i=0; i<Player.MAXPLAYERS; i++) {
 
@@ -168,8 +167,12 @@ public static class NetworkMatchSetup {
                     Debug.LogFormat("Still waiting on char selection {1} for player {0}", i, j);
                     return false;
                 }
-                if (HasEntryCharacterSelection(i, j) == false) {
-                    Debug.LogFormat("Still waiting on char selection {1} for player {0}", i, j);
+                if (HasEntryLoadout(i, j) == false) {
+                    Debug.LogFormat("Still waiting on loadout {1} for player {0}", i, j);
+                    return false;
+                }
+                if (HasEntryPositionCoords(i, j) == false) {
+                    Debug.LogFormat("Still waiting on starting position {1} for player {0}", i, j);
                     return false;
                 }
             }
