@@ -23,6 +23,8 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
     public PlayerSelector plyrselector1;
     public PlayerSelector plyrselector2;
 
+    public LoadLogfileSelect loadlogfileselect;
+
     public Text txtDisplayMessage;
 
     public bool bOfflineMode;
@@ -110,6 +112,8 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         ShowIfAllPlayersConnectedInRoomAndMaster(btnStartDraft);
         ShowIfAllPlayersConnectedInRoomAndMaster(btnDirectToMatch);
 
+        ShowIfAllPlayersConnectedInRoomAndMaster(loadlogfileselect);
+
         if(txtDisplayMessage != null) {
             txtDisplayMessage.gameObject.SetActive(PhotonNetwork.InRoom);
             if(PhotonNetwork.InRoom && ArePlayersConnected() == false) {
@@ -127,7 +131,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         NetworkMatchSetup.SetRandomizationSeed(Random.Range(0, 1000000));
     }
 
-    public void OnClickStartDraft() {
+    public void TransferToDraftScene() {
         if(PhotonNetwork.IsMasterClient == false) {
             Debug.LogError("A non-master tried to move to the draft phase - ignoring");
             return;
@@ -144,7 +148,7 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         }
     }
 
-    public void OnClickDirectToLoadout() {
+    public void TransferToLoadoutScene() {
         if (PhotonNetwork.IsMasterClient == false) {
             Debug.LogError("A non-master tried to move directly to the loadout phase - ignoring");
             return;
@@ -156,40 +160,28 @@ public class NetworkConnectionManager : MonoBehaviourPunCallbacks {
         if (SceneManager.GetActiveScene().name == "_LOADOUT") {
             Debug.Log("We're already in the _LOADOUT scene, so no need to transfer to it");
         } else {
-            //Shouldn't need to publish any character selections or loadouts, since these should be pre-published when loading into the room
-
-            //Debug.Log("Setting character selections using the Master's locally-chosen characters");
-            //Publish any of the local selections for characters we have before moving to the loadout scene
-            //plyrselector1.PublishCharacterSelections();
-            //plyrselector2.PublishCharacterSelections();
 
             Debug.Log("We as the master are moving us to the Loadout scene");
             PhotonNetwork.LoadLevel("_LOADOUT");
         }
     }
 
-    public void OnClickDirectToMatch() {
+    public void TransferToMatchScene() {
         if(PhotonNetwork.IsMasterClient == false) {
             Debug.LogError("A non-master tried to move directly to match - ignoring");
             return;
         } else if(ArePlayersConnected() == false) {
             Debug.LogError("Tried to move to directly to match when not all characters are connected");
             return;
+        } else if(NetworkMatchSetup.HasAllMatchSetupInfo() == false) {
+            Debug.LogError("MatchSetup is not filled out enough to start a match");
+            return;
         }
 
         if(SceneManager.GetActiveScene().name == "_MATCH") {
             Debug.Log("We're already in the _MATCH scene, so no need to transfer to it");
         } else {
-            //Shouldn't need to publish any character selections or loadouts, since these should be pre-published when loading into the room
-
-            //Debug.Log("Setting Character selections and Loadouts for the Master's locally-chosen characters and loadouts");
-            //Publish any of the local selections for characters and loadouts we have before moving to the loadout scene
-            //plyrselector1.PublishCharacterSelections();
-            //plyrselector2.PublishCharacterSelections();
-
-            //plyrselector1.PublishLoadouts();
-            //plyrselector2.PublishLoadouts();
-
+            Debug.Log(NetworkMatchSetup.MatchSetupToString());
             Debug.Log("We as the master are moving us to the Match scene");
             PhotonNetwork.LoadLevel("_MATCH");
         }
