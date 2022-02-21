@@ -16,6 +16,9 @@ public class LogManager : SingletonPersistent<LogManager> {
 
     public List<FileInfo> lstLogFiles;
 
+    //Each index of the array stores a list of all the found serialized match inputs (as int[]) for the player whose id is that index
+    public List<int[]>[] arlstMatchInputs;
+
     public override void Init() {
         
     }
@@ -127,6 +130,12 @@ public class LogManager : SingletonPersistent<LogManager> {
 
     public void LoadLoggedMatchSetup(FileInfo fileinfoLog) {
 
+        //Initialize the array of lists of MatchInputs we'll be storing chosen skills in
+        arlstMatchInputs = new List<int[]>[Player.MAXPLAYERS];
+        for(int i=0; i<arlstMatchInputs.Length; i++) {
+            arlstMatchInputs[i] = new List<int[]>();
+        }
+
         string[] arsLogLines = File.ReadAllLines(string.Concat(sLOGSDIR, fileinfoLog.Name));
 
         foreach(string sLine in arsLogLines) {
@@ -155,6 +164,10 @@ public class LogManager : SingletonPersistent<LogManager> {
 
                 case "rs":
                     LoadLoggedRandomizationSeed(arsSplitLine);
+                    break;
+
+                case "mi":
+                    LoadLoggedMatchInput(arsSplitLine);
                     break;
 
                 default:
@@ -342,9 +355,45 @@ public class LogManager : SingletonPersistent<LogManager> {
         NetworkMatchSetup.SetRandomizationSeed(nRandomizationSeed);
     }
 
-    public void LogMatchInput() {
-        MatchInput curinput = NetworkMatchReceiver.Get().GetCurMatchInput();
-        WriteToMatchLogFile(string.Format("mi:{0}:{1}:{2}", NetworkMatchReceiver.Get().indexCurMatchInput, curinput.Serialize(), curinput));
+    public void LogMatchInput(MatchInput matchinput) {
+        string sMatchInput = string.Format("mi:{0}", matchinput.iPlayerActing);
+
+        int[] arnSerializedMatchInput = matchinput.Serialize();
+
+        //For each entry of our match input, add it to the string we'll be logging
+        for (int i = 0; i < arnSerializedMatchInput.Length; i++) {
+            sMatchInput += ":" + arnSerializedMatchInput[i].ToString();
+        }
+
+        //Also print out a friendly human-readable input
+        sMatchInput += "\n" + matchinput.ToString();
+
+        WriteToMatchLogFile(sMatchInput);
+    }
+
+    public void LoadLoggedMatchInput(string[] arsSplitLogs) {
+
+        Debug.Assert(arsSplitLogs[0] == "mi");
+
+        int iPlayerActing;
+
+        if (int.TryParse(arsSplitLogs[1], out iPlayerActing) == false || iPlayerActing < 0 || iPlayerActing >= Player.MAXPLAYERS) {
+            Debug.LogErrorFormat("Error! {0} was not a valid player id to be loaded", arsSplitLogs[1]);
+            return;
+        }
+
+        int[] arnSerializedMatchInput = new int[arsSplitLogs.Length - 2];
+
+        //Copy and translate all the logged strings into serialized ints in an array
+        for (int i = 0; i < arnSerializedMatchInput.Length; i++) {
+            if (int.TryParse(arsSplitLogs[i + 2], out arnSerializedMatchInput[i]) == false) {
+                Debug.LogErrorFormat("Error! {0} was not a valid serialized matchinput entry to be loaded", arsSplitLogs[i + 2]);
+                return;
+            }
+        }
+
+        //Now that we've recorded the matchinput data from the log file, let's store it for when we load it into some scripted player input
+        arlstMatchInputs[iPlayerActing].Add(arnSerializedMatchInput);
     }
 
     public void OnApplicationQuit() {

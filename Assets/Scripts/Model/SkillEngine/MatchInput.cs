@@ -10,8 +10,7 @@ public abstract class MatchInput {
     //Each input type has to provide a way to serialize and deserialize itself
     public abstract int[] Serialize();
     public MatchInput(int[] arnSerializedSelections) {
-        //By convention, the first index of the serialization must be the index of the player who must submit it
-        iPlayerActing = (Chr.GetTargetByIndex(arnSerializedSelections[0])).plyrOwner.id;
+
     }
 
     //Each input type should extend these to provide some process by which the MatchInput information is filled out
