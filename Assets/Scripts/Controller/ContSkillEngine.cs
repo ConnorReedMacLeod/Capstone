@@ -104,7 +104,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
             MatchInput matchinput = NetworkMatchReceiver.Get().GetCurMatchInput();
 
             //Make a record of which input we're going to be processing in our logs
-            LogManager.Get().LogMatchInput();
+            LogManager.Get().LogMatchInput(matchinput);
 
             //Clear out the matchinput we prompting to be filled out
             matchinputToFillOut = null;
