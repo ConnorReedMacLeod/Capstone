@@ -16,7 +16,7 @@ public class DropDownInputSelect : MonoBehaviour {
 
     public void OnInputSelectChange() {
         
-        NetworkMatchSetup.SetInputType(plyrselectorParent.idPlayer, (Player.InputType)dropdown.value); 
+        NetworkMatchSetup.SetInputType(plyrselectorParent.idPlayer, (LocalInputType.InputType)dropdown.value); 
 
     }
 }

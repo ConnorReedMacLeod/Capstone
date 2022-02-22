@@ -44,7 +44,6 @@ public class NetworkMatchReceiver : Singleton<NetworkMatchReceiver> {
 
         lstMatchInputBuffer[indexInput] = matchInput;
 
-
     }
 
     public bool IsCurMatchInputReady() {

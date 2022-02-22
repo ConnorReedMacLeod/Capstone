@@ -53,7 +53,7 @@ public static class NetworkMatchSetup {
         return string.Format("it{0}", idPlayer);
     }
 
-    public static void SetInputType(int idPlayer, Player.InputType inputtype) {
+    public static void SetInputType(int idPlayer, LocalInputType.InputType inputtype) {
         if (PhotonNetwork.IsMasterClient == false) return; //Only allow the master to do modifications for controller params
 
         ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { GetInputTypeKey(idPlayer), inputtype } };
@@ -61,8 +61,8 @@ public static class NetworkMatchSetup {
         PhotonNetwork.CurrentRoom.SetCustomProperties(hashNewProperties);
     }
 
-    public static Player.InputType GetInputType(int idPlayer) {
-        return (Player.InputType)PhotonNetwork.CurrentRoom.CustomProperties[GetInputTypeKey(idPlayer)];
+    public static LocalInputType.InputType GetInputType(int idPlayer) {
+        return (LocalInputType.InputType)PhotonNetwork.CurrentRoom.CustomProperties[GetInputTypeKey(idPlayer)];
     }
 
 

@@ -99,6 +99,8 @@ public class Match : MonoBehaviour {
         for (int i = 0; i < Player.MAXPLAYERS; i++) {
             AssignLocalInputController(Match.Get().arPlayers[i]);
         }
+        //In case we loaded match inputs from a log file, let's clear that out since it won't be needed any further
+        LogManager.Get().ClearMatchInputs();
     }
 
     public void InitNetworking() {
@@ -117,7 +119,7 @@ public class Match : MonoBehaviour {
 
         //If the player isn't controlled locally, just set the plyr's controller to null since it's not our job to control them
         if (NetworkMatchSetup.IsLocallyOwned(plyr.id) == false) {
-            plyr.SetInputType(Player.InputType.NONE);
+            plyr.SetInputType(LocalInputType.InputType.NONE);
         } else {
             //Otherwise, this character is controlled by this local client - figure out which input type they'll need and add it
             plyr.SetInputType(NetworkMatchSetup.GetInputType(plyr.id));

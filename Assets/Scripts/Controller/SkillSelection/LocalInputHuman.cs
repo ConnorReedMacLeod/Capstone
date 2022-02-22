@@ -10,6 +10,10 @@ public class LocalInputHuman : LocalInputType {
     public static Subject subAllHumanStartSelection = new Subject(Subject.SubType.ALL);
     public static Subject subAllHumanEndSelection = new Subject(Subject.SubType.ALL);
 
+    public override InputType GetInputType() {
+        return InputType.HUMAN;
+    }
+
     public override bool CanProceedWithSkillSelection() {
 
         //We can only proceed with selecting a skill if it's our turn to actually
@@ -29,7 +33,7 @@ public class LocalInputHuman : LocalInputType {
         Debug.Log(LibDebug.AddColor("Starting Input Selection for " + ContTurns.Get().chrNextReady, LibDebug.Col.RED));
 
         ContTurns.Get().chrNextReady.subBecomesActiveForHumans.NotifyObs();
-        subAllHumanStartSelection.NotifyObs(this);
+        subAllHumanStartSelection.NotifyObs(plyrOwner);
 
     }
 
@@ -39,7 +43,7 @@ public class LocalInputHuman : LocalInputType {
         Debug.Log(LibDebug.AddColor("Finished Input Selection for " + ContTurns.Get().chrNextReady, LibDebug.Col.RED));
 
         ContTurns.Get().chrNextReady.subEndsActiveForHumans.NotifyObs();
-        subAllHumanEndSelection.NotifyObs(this);
+        subAllHumanEndSelection.NotifyObs(plyrOwner);
 
     }
 

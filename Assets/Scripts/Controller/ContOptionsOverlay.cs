@@ -36,14 +36,14 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
 
     public void cbClickPlyr0Human(Object target, params object[] args) {
 
-        Match.Get().arPlayers[0].SetInputType(Player.InputType.HUMAN);
+        Match.Get().arPlayers[0].SetInputType(LocalInputType.InputType.HUMAN);
 
         subPlayer0SelectedInGroup.NotifyObs(target);
     }
 
     public void cbClickPlyr0AI(Object target, params object[] args) {
 
-        Match.Get().arPlayers[0].SetInputType(Player.InputType.AI);
+        Match.Get().arPlayers[0].SetInputType(LocalInputType.InputType.AI);
 
         subPlayer0SelectedInGroup.NotifyObs(target);
     }
@@ -51,14 +51,14 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
 
     public void cbClickPlyr1Human(Object target, params object[] args) {
 
-        Match.Get().arPlayers[1].SetInputType(Player.InputType.HUMAN);
+        Match.Get().arPlayers[1].SetInputType(LocalInputType.InputType.HUMAN);
 
         subPlayer1SelectedInGroup.NotifyObs(target);
     }
 
     public void cbClickPlyr1AI(Object target, params object[] args) {
 
-        Match.Get().arPlayers[1].SetInputType(Player.InputType.AI);
+        Match.Get().arPlayers[1].SetInputType(LocalInputType.InputType.AI);
 
         subPlayer1SelectedInGroup.NotifyObs(target);
     }
