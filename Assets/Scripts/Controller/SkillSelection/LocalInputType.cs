@@ -11,11 +11,6 @@ public abstract class LocalInputType {
 
     public abstract InputType GetInputType();
 
-
-    public virtual void Init() {
-        //Nothing needs to be done by default - override as necessary
-    }
-
     public virtual bool CanProceedWithSkillSelection() {
         // By default, we don't allow manual selection of any of our character skills
         // unless this is a local controller

@@ -14,21 +14,6 @@ public class LocalInputScripted : LocalInputType {
         return InputType.SCRIPTED;
     }
 
-    public override void Init() {
-
-        //We'll need to grab our targetting script that's been loaded into the LogManager
-        List<int[]> lstSerializedInputs = LogManager.Get().arlstMatchInputs[plyrOwner.id];
-
-        List<MatchInput> lstMatchInputs = new List<MatchInput>();
-        for(int i=0; i<lstSerializedInputs.Count; i++) {
-            //TODO - expand this construction to account for other types of inputs that could be serialized
-            lstMatchInputs.Add(new InputSkillSelection(lstSerializedInputs[i]));
-        }
-
-        SetTargettingScript(lstMatchInputs);
-
-    }
-
     public override void StartSelection() {
         base.StartSelection();
 

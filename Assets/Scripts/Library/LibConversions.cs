@@ -4,6 +4,18 @@ using UnityEngine;
 
 public static class LibConversions {
 
+    // AR<T> / Str
+    public static string ArToStr<T>(T[] arT) {
+
+        string s = "";
+
+        //For each entry of our match input, add it to the string we'll be logging
+        for (int i = 0; i < arT.Length; i++) {
+            s += ":" + arT[i].ToString();
+        }
+
+        return s;
+    }
 
     // INT / OBJ
 

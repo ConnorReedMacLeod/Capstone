@@ -28,7 +28,7 @@ public class NetworkMatchReceiver : Singleton<NetworkMatchReceiver> {
     void AddInputToBuffer(int indexInput, MatchInput matchInput) {
 
         if(indexInput != indexCurMatchInput) {
-            Debug.LogErrorFormat("ALERT!  Received input index {0}, but we are expecting index {1}", indexInput, indexCurMatchInput);
+            Debug.LogErrorFormat("ALERT!  Received input index {0}, but we are waiting to process index {1}", indexInput, indexCurMatchInput);
         }
 
         //Ensure that our received index is within the bounds of our buffer

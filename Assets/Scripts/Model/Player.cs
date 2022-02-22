@@ -73,8 +73,6 @@ public class Player : MonoBehaviour {
         if (inputController != null) {
 
             inputController.SetOwner(this);
-
-            inputController.Init();
         }
 
         subAllInputTypeChanged.NotifyObs(this, inputtype);
