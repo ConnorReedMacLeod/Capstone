@@ -23,12 +23,6 @@ public class Player : MonoBehaviour {
     public static Subject subAllInputTypeChanged = new Subject(Subject.SubType.ALL);
     public static Subject subAllPlayerLost = new Subject(Subject.SubType.ALL);
 
-    public InputType curInputType;
-
-    public enum InputType {
-        NONE, HUMAN, AI
-    };
-
     public List<Chr> GetActiveChrs() {
         return arChr.ToList<Chr>();
     }
@@ -55,49 +49,35 @@ public class Player : MonoBehaviour {
         id = _id;
     }
 
-    public void SetInputType(InputType inputType) {
+    public void SetInputType(LocalInputType.InputType inputtype) {
 
-        //If we already have an input Controller, then delete it
-        if(inputController != null) {
+        switch (inputtype) {
 
-            Destroy(inputController);
+            case LocalInputType.InputType.NONE:
+                inputController = null;
+                break;
+
+            case LocalInputType.InputType.HUMAN:
+                inputController = new LocalInputHuman();
+                break;
+
+            case LocalInputType.InputType.AI:
+                inputController = new LocalInputAI();
+                break;
+
+            case LocalInputType.InputType.SCRIPTED:
+                inputController = new LocalInputScripted();
+                break;
         }
 
-        curInputType = inputType;
+        if (inputController != null) {
 
-        switch(inputType) {
-        case InputType.AI:
-            //Then we want a script to control this player's selection
-
-            inputController = gameObject.AddComponent<LocalInputScripted>();
-
-            //Let the controller know which player its representing
             inputController.SetOwner(this);
 
-            //Initiallize the targetting script with just a blank script (for now - can do file loading options later)
-
-            ((LocalInputScripted)inputController).SetTargettingScript(new List<MatchInput>());
-
-            break;
-
-        case InputType.HUMAN:
-            //Then we want the player to control this player's selection
-            inputController = gameObject.AddComponent<LocalInputHuman>();
-
-            //Let the controller know which player its representing
-            inputController.SetOwner(this);
-
-            break;
-
-        case InputType.NONE:
-            //Then no inputcontroller needs to be present for this player
-            inputController = null;
-
-            break;
+            inputController.Init();
         }
 
-
-        subAllInputTypeChanged.NotifyObs(this, curInputType);
+        subAllInputTypeChanged.NotifyObs(this, inputtype);
     }
 
 

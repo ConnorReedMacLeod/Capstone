@@ -223,8 +223,8 @@ public class LogManager : SingletonPersistent<LogManager> {
             return;
         }
 
-        NetworkMatchSetup.SetInputType(0, (Player.InputType)inputtype0);
-        NetworkMatchSetup.SetInputType(1, (Player.InputType)inputtype1);
+        NetworkMatchSetup.SetInputType(0, (LocalInputType.InputType)inputtype0);
+        NetworkMatchSetup.SetInputType(1, (LocalInputType.InputType)inputtype1);
     }
 
     public void LogCharacterSelections(int iPlayer) {
@@ -394,6 +394,10 @@ public class LogManager : SingletonPersistent<LogManager> {
 
         //Now that we've recorded the matchinput data from the log file, let's store it for when we load it into some scripted player input
         arlstMatchInputs[iPlayerActing].Add(arnSerializedMatchInput);
+    }
+
+    public void ClearMatchInputs() {
+        arlstMatchInputs = null;
     }
 
     public void OnApplicationQuit() {

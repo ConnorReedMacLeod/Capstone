@@ -8,6 +8,27 @@ public class LocalInputScripted : LocalInputType {
     public int nInputIndex;                         //The current index we've reached in our list of inputs we'll provide
     public List<MatchInput> lstInputScript;              //The list of inputs that we'll give in order
 
+    public InputType inputtypeToSwitchTo;
+
+    public override InputType GetInputType() {
+        return InputType.SCRIPTED;
+    }
+
+    public override void Init() {
+
+        //We'll need to grab our targetting script that's been loaded into the LogManager
+        List<int[]> lstSerializedInputs = LogManager.Get().arlstMatchInputs[plyrOwner.id];
+
+        List<MatchInput> lstMatchInputs = new List<MatchInput>();
+        for(int i=0; i<lstSerializedInputs.Count; i++) {
+            //TODO - expand this construction to account for other types of inputs that could be serialized
+            lstMatchInputs.Add(new InputSkillSelection(lstSerializedInputs[i]));
+        }
+
+        SetTargettingScript(lstMatchInputs);
+
+    }
+
     public override void StartSelection() {
         base.StartSelection();
 
@@ -27,26 +48,29 @@ public class LocalInputScripted : LocalInputType {
     }
 
     public void SubmitNextSkill() {
-        MatchInput matchinputPending = ContSkillEngine.Get().matchinputToFillOut;
 
         Debug.Assert(ContSkillEngine.Get().matchinputToFillOut != null, "Scripted input was asked to submit an input, but we're not locally waiting on any input");
         Debug.AssertFormat(ContSkillEngine.Get().matchinputToFillOut.iPlayerActing == plyrOwner.id, 
             "Scripted input was asked to submit an input for player {0}, but this script is for player {1}",
             ContSkillEngine.Get().matchinputToFillOut.iPlayerActing, plyrOwner.id);
 
-        //If we still have inputs in our script, then grab the next one
-        if (nInputIndex < lstInputScript.Count) {
 
-            ContSkillEngine.Get().matchinputToFillOut = lstInputScript[nInputIndex];
-            
-        } else {
-            //If we already used all of the inputs in our script, then set our input to a random one
-            ContSkillEngine.Get().matchinputToFillOut.FillRandomly();
-        
+        //If we already used all of the inputs in our script, then we should change our inputtype to something more flexible
+        if (nInputIndex >= lstInputScript.Count) {
+            Debug.LogFormat("Finished scripted input for Player {0} - switching to type {1}", plyrOwner, inputtypeToSwitchTo);
+
+            plyrOwner.SetInputType(inputtypeToSwitchTo);
+
+            plyrOwner.inputController.StartSelection();
+
+            return;
         }
 
+        //If we still have inputs in our script, take the appropriate one
+        ContSkillEngine.Get().matchinputToFillOut = lstInputScript[nInputIndex];
+
         //Double check that the input that we're planning to submit is actually valid
-        if(ContSkillEngine.Get().matchinputToFillOut.CanLegallyExecute() == false) {
+        if (ContSkillEngine.Get().matchinputToFillOut.CanLegallyExecute() == false) {
             Debug.LogErrorFormat("Warning - resetting input to default since an illegal input {0} was attempted", ContSkillEngine.Get().matchinputToFillOut);
             //If it wasn't legal, then reset it to some default failsafe that is guaranteed to be legal
             ContSkillEngine.Get().matchinputToFillOut.ResetToDefaultInput();
@@ -55,28 +79,10 @@ public class LocalInputScripted : LocalInputType {
         //Since we've grabbed this input, advance our index to be ready for the next requested input
         nInputIndex++;
 
-        if (nInputIndex == lstInputScript.Count) {
-            //If we've reached the end of our script, figure out how we should continue;
-            OnFinishedScript();
-        }
-
         //By this point, we have a valid input, so let's submit it
         NetworkMatchSender.Get().SendNextInput(ContSkillEngine.Get().matchinputToFillOut);
 
     }
 
-    public virtual void OnFinishedScript() {
-        //For when we've finished submitting all the inputs we have stored in our script - extend as needed
-        //For now, we're just letting a scripted input continue to just provide random selections if its run out
-    }
 
-
-    public void LoadInputFromFileForPlayer(LocalInputScripted input, string sLogFilePath, int iPlayer) {
-        
-        lstInputScript = new List<MatchInput>();
-
-        //Read through the file and scan for inputs from the given player - add those inputs to the input script
-        throw new System.NotImplementedException();
-
-    }
 }
