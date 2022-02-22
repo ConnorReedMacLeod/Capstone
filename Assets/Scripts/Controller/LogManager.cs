@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using System.Linq;
+using Photon.Pun;
 
 public class LogManager : SingletonPersistent<LogManager> {
 
@@ -16,8 +17,8 @@ public class LogManager : SingletonPersistent<LogManager> {
 
     public List<FileInfo> lstLogFiles;
 
-    //Each index of the array stores a list of all the found serialized match inputs (as int[]) for the player whose id is that index
-    public List<int[]>[] arlstMatchInputs;
+    //Holds all the serialized match inputs that we've loaded in from the current log file
+    public List<int[]> lstLoggedSerializedMatchInputs;
 
     public override void Init() {
         
@@ -131,10 +132,7 @@ public class LogManager : SingletonPersistent<LogManager> {
     public void LoadLoggedMatchSetup(FileInfo fileinfoLog) {
 
         //Initialize the array of lists of MatchInputs we'll be storing chosen skills in
-        arlstMatchInputs = new List<int[]>[Player.MAXPLAYERS];
-        for(int i=0; i<arlstMatchInputs.Length; i++) {
-            arlstMatchInputs[i] = new List<int[]>();
-        }
+        lstLoggedSerializedMatchInputs = new List<int[]>();
 
         string[] arsLogLines = File.ReadAllLines(string.Concat(sLOGSDIR, fileinfoLog.Name));
 
@@ -267,10 +265,7 @@ public class LogManager : SingletonPersistent<LogManager> {
 
             int[] arnSerializedLoadout = LoadoutManager.SerializeLoadout(loadout);
 
-            //For each entry of our loadout, add it to our string to log
-            for(int i=0; i<arnSerializedLoadout.Length; i++) {
-                sLoadout += ":" + arnSerializedLoadout[i].ToString();
-            }
+            sLoadout += LibConversions.ArToStr(arnSerializedLoadout);
 
             sLoadout += "\n" + loadout;
 
@@ -360,10 +355,7 @@ public class LogManager : SingletonPersistent<LogManager> {
 
         int[] arnSerializedMatchInput = matchinput.Serialize();
 
-        //For each entry of our match input, add it to the string we'll be logging
-        for (int i = 0; i < arnSerializedMatchInput.Length; i++) {
-            sMatchInput += ":" + arnSerializedMatchInput[i].ToString();
-        }
+        sMatchInput += LibConversions.ArToStr(arnSerializedMatchInput);
 
         //Also print out a friendly human-readable input
         sMatchInput += "\n" + matchinput.ToString();
@@ -393,12 +385,24 @@ public class LogManager : SingletonPersistent<LogManager> {
         }
 
         //Now that we've recorded the matchinput data from the log file, let's store it for when we load it into some scripted player input
-        arlstMatchInputs[iPlayerActing].Add(arnSerializedMatchInput);
+        lstLoggedSerializedMatchInputs.Add(arnSerializedMatchInput);
     }
 
-    public void ClearMatchInputs() {
-        arlstMatchInputs = null;
+    public void LoadStartingInputs() {
+
+        //If we're not the master, then it's not our job to load any inputs
+        if(PhotonNetwork.IsMasterClient == false) return;
+
+        //If we have any loaded logged match inputs, then we can send these all to the matchnetworkreceiver's input buffer
+        for (int i=0; i < lstLoggedSerializedMatchInputs.Count; i++) {
+            //For the index, just send 0, 1, 2,... in order since we'll be starting from the very beginning of the match
+            NetworkMatchSender.Get().SendInput(i, lstLoggedSerializedMatchInputs[i]);
+        }
+
+        //Since we're done giving all our logged inputs to the networkreceiver, we cna clear out our locally stored lst of inputs
+        lstLoggedSerializedMatchInputs = null;
     }
+
 
     public void OnApplicationQuit() {
 

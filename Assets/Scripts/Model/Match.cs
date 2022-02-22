@@ -99,8 +99,6 @@ public class Match : MonoBehaviour {
         for (int i = 0; i < Player.MAXPLAYERS; i++) {
             AssignLocalInputController(Match.Get().arPlayers[i]);
         }
-        //In case we loaded match inputs from a log file, let's clear that out since it won't be needed any further
-        LogManager.Get().ClearMatchInputs();
     }
 
     public void InitNetworking() {
@@ -154,10 +152,6 @@ public class Match : MonoBehaviour {
 
         Debug.Log("Finished initializing the randomizer");
 
-        LogManager.Get().InitMatchLog();
-
-        Debug.Log("Finished initializing the log file");
-
         InitPlayers(nPlayers);
 
         Debug.Log("Finished initializing players");
@@ -181,6 +175,15 @@ public class Match : MonoBehaviour {
         ContTurns.Get().InitializePriorities();
 
         Debug.Log("After InitializePriorities");
+
+        //Check if the LogManager wants to load in any starting inputs
+        LogManager.Get().LoadStartingInputs();
+
+        Debug.Log("After LoadStartingInputs");
+
+        LogManager.Get().InitMatchLog();
+
+        Debug.Log("Finished initializing the log file");
     }
 
 
