@@ -393,6 +393,9 @@ public class LogManager : SingletonPersistent<LogManager> {
         //If we're not the master, then it's not our job to load any inputs
         if(PhotonNetwork.IsMasterClient == false) return;
 
+        //If we don't have any logged match inputs, then we don't need to do anything here
+        if (lstLoggedSerializedMatchInputs == null) return;
+
         //If we have any loaded logged match inputs, then we can send these all to the matchnetworkreceiver's input buffer
         for (int i=0; i < lstLoggedSerializedMatchInputs.Count; i++) {
             //For the index, just send 0, 1, 2,... in order since we'll be starting from the very beginning of the match

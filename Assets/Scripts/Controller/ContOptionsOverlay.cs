@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
 
@@ -14,6 +15,8 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
     public ViewOptionsButton btnTimerInf;
 
     public ViewOptionsButton btnRestart;
+
+    public Toggle togFastForward;
 
     public Subject subPlayer0SelectedInGroup = new Subject();
     public Subject subPlayer1SelectedInGroup = new Subject();
@@ -84,6 +87,10 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
         subTimerSelectedInGroup.NotifyObs(target);
     }
 
+
+    public void OnToggleFastForward() {
+        ContTime.Get().bFastForward = togFastForward.isOn;
+    }
 
     public void cbOnEnter(Object target, params object[] args) {
 
