@@ -141,7 +141,7 @@ public class ContTurns : Singleton<ContTurns> {
             return;
         }
         if (ContSkillEngine.bDEBUGENGINE) Debug.Log("Finished the turn phase: " + curStateTurn);
-
+        
         //Move to the next phase of the turn
         SetTurnState(GetNextPhase(curStateTurn));
     }
@@ -149,10 +149,17 @@ public class ContTurns : Singleton<ContTurns> {
     public STATETURN GetNextPhase(STATETURN turnphase) {
 
         //Loop around to the recharge phase if we've reached the end of a turn
-        if(turnphase == STATETURN.TURNEND) {
+        if (turnphase == STATETURN.TURNEND) {
             return STATETURN.RECHARGE;
 
-        }else if(turnphase == STATETURN.CHOOSESKILL) {
+        }else if(turnphase == STATETURN.TURNSTART) {
+            //If we'd normally move to choosing a skill for a character, but no character is set to move this turn, then we can directly skip to the end of turn
+            if (GetNextActingChr() == null) {
+                return STATETURN.TURNEND;
+            } else {
+                return STATETURN.CHOOSESKILL;
+            }
+        } else if(turnphase == STATETURN.CHOOSESKILL) {
             //If we have finished choosing and executing a skill, then let's check if we want to stay in the choose-skills phase of the turn,
             // or we can move to the end of turn if no one is left to act
             if(GetNextActingChr() == null) {

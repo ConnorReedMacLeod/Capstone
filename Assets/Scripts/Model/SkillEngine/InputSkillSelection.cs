@@ -37,6 +37,7 @@ public class InputSkillSelection : MatchInput {
 
         //For each required target, have it decode the network-provided serialization
         for (int i = 0; i < skillSelected.lstTargets.Count; i++) {
+            Debug.Log("Adding serializtion entry " + (i + 2) + " of skill " + skillSelected.sName);
             // Ask the corresponding Target to decode the serialized int we've been provided
             // i+1 since the first entry of the serialized array refers to the chosen skill, and not the selections
             lstSelections.Add(skillSelected.lstTargets[i].Unserialize((int)arnSerializedSelections[i + 2], lstSelections));
@@ -180,7 +181,8 @@ public class InputSkillSelection : MatchInput {
         //Note - We are currently having each clause of a skill grab input directly from the networkreceiver buffer, but it would also
         //       be possible to copy clauses and embed the selections directly into them.  
 
-        yield return new WaitForSeconds(0.1f);
+        //Do a small delay for skill animations
+        yield return new WaitForSeconds(ContTime.fDelayTurnSkill);
     }
 
     public override bool CanLegallyExecute() {
