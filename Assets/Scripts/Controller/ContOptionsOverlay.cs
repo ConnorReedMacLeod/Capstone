@@ -89,7 +89,7 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
 
 
     public void OnToggleFastForward() {
-        ContTime.Get().bFastForward = togFastForward.isOn;
+        ContTime.Get().SetFastForward(togFastForward.isOn);
     }
 
     public void cbOnEnter(Object target, params object[] args) {

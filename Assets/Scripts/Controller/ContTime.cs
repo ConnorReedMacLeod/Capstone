@@ -181,6 +181,12 @@ public class ContTime : Singleton<ContTime> {
         SetDeltaTime();
     }
 
+    public void SetFastForward(bool _bFastForward) {
+        if(bFastForward != _bFastForward) {
+            Debug.Log(LibDebug.AddColor(string.Format("Changing Fast Forwarding to {0}", _bFastForward), LibDebug.Col.MAGENTA));
+        }
+        bFastForward = _bFastForward;
+    }
 
     private void Update() {
 

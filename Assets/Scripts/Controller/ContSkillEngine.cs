@@ -6,6 +6,8 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     public bool bStartedMatchLoop = false;
 
+    public const int nFASTFORWARDTHRESHOLD = 3; //The number of stacked-up inputs beyond which we will fast forward through
+
     public Stack<Clause> stackClause = new Stack<Clause>();
     public Stack<Executable> stackExec = new Stack<Executable>();
 
@@ -59,6 +61,9 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         //Do any animation processing that needs to be done before the match processing actually starts
         yield return StartCoroutine(CRPrepMatch());
 
+        //Initially decide if we want to do any fast forwarding from early loaded input
+        HandleFastForwarding();
+
         //Do any initial processing for beginning of match effects
         yield return ProcessStackUntilInputNeeded();
 
@@ -100,6 +105,9 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
             }
 
+            //Check if we should be master forwarding through our inputs if we have a bunch stacked up waiting to be processed (like from loading a log file or reconnecting)
+            HandleFastForwarding();
+
             //At this point, we have an input in the buffer that we are able to process
             MatchInput matchinput = NetworkMatchReceiver.Get().GetCurMatchInput();
 
@@ -125,6 +133,16 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
         //Do any fill wrap-up for the match
         FinishMatch();
+    }
+
+    public void HandleFastForwarding() {
+        //Check if we have a stacked up number of stored inputs that we need to plow through
+
+        if (NetworkMatchReceiver.Get().HasNReadyInputs(nFASTFORWARDTHRESHOLD)) {
+            ContTime.Get().SetFastForward(true);
+        } else {
+            ContTime.Get().SetFastForward(false);
+        }
     }
 
     public void ResolveClause() {
