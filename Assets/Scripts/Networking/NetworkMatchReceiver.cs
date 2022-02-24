@@ -56,6 +56,21 @@ public class NetworkMatchReceiver : Singleton<NetworkMatchReceiver> {
         return lstMatchInputBuffer[indexCurMatchInput];
     }
 
+    public bool HasNReadyInputs(int n) {
+        //Determines if we have at least n inputs waiting in our buffer that we haven't yet processed (i.e., after the current input)
+
+        for(int i=indexCurMatchInput; i<indexCurMatchInput + n; i++) {
+            if(i > lstMatchInputBuffer.Count) {
+                IncreaseMatchInputsReceivedCapacity();
+            }
+            if (lstMatchInputBuffer[i] == null) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     //To be called once execution of the current skill is completely finished
     public void FinishCurMatchInput() {
         indexCurMatchInput++;
