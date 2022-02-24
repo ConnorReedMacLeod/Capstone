@@ -88,15 +88,30 @@ public class LogManager : SingletonPersistent<LogManager> {
         //Initialize the file name we'll want for the log for this match
         timeStart = new System.DateTimeOffset(System.DateTime.UtcNow).ToLocalTime();
 
-        sLogfilePath = string.Format("{0}log-{1}.txt", sLOGSDIR, GetDateTime());
+        string sLogName = string.Format("{0}log-{1}", sLOGSDIR, GetDateTime());
+        sLogfilePath = sLogName + ".txt";
 
-        //Delete the file if it already exists
-        if(File.Exists(sLogfilePath)) File.Delete(sLogfilePath);
+        int nAttemptsUsed = 0;
+        while (nAttemptsUsed < 3) {
+            try {
+                Debug.LogFormat("Attempting to create {0}", sLogfilePath);
 
-        Debug.LogFormat("Creating {0}", sLogfilePath);
+                Debug.LogFormat("Does the file exist?: {0}", File.Exists(sLogfilePath));
 
-        //Initialize the writer
-        swFileWriter = new StreamWriter(sLogfilePath, false);
+                //Attempt to initialize the writer
+                swFileWriter = new StreamWriter(sLogfilePath, false);
+
+                break;
+            } catch (IOException e) {
+                Debug.LogErrorFormat("{0} encountered - trying new log path", e);
+
+                //Update the attempted logfile path
+                nAttemptsUsed++;
+                sLogfilePath = string.Format("{0}({1}).txt", sLogName, nAttemptsUsed);
+            }
+        }
+
+        Debug.LogFormat("Created {0}", sLogfilePath);
 
         //Add a log file header to the file
         WriteLogFileHeader();
@@ -113,10 +128,13 @@ public class LogManager : SingletonPersistent<LogManager> {
         WriteToMatchLogFile("Log Complete");
 
         swFileWriter.Close();
+
+        swFileWriter.Dispose();
     }
 
     public void LogMatchSetup() {
 
+        LogMaster();
         LogPlayerOwners();
         LogInputTypes();
         LogCharacterSelections(0);
@@ -177,6 +195,10 @@ public class LogManager : SingletonPersistent<LogManager> {
         //Now that all the match setup parameters have been loaded from the log file, have the NetworkConnectionManager move us into the Match scene
         NetworkConnectionManager.Get().TransferToMatchScene();
 
+    }
+
+    public void LogMaster() {
+        WriteToMatchLogFile(string.Format("ma:{0}", PhotonNetwork.IsMasterClient));
     }
 
     public void LogPlayerOwners() {
@@ -419,7 +441,8 @@ public class LogManager : SingletonPersistent<LogManager> {
     
 
     public void WriteToMatchLogFile(string sText, bool bTimestamp = false) {
-
+        //Consider if the stream writer should only be opened and closed for a short time to add one line of text rather than 
+        //  the current method of keeping it open at all times
         swFileWriter.WriteLine(sText);
 
     }

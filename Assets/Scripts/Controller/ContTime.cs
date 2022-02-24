@@ -6,7 +6,15 @@ public class ContTime : Singleton<ContTime> {
 
 
     public bool bPaused;
-    public bool bFastForward;
+
+    public bool bAutoFastForward;
+    public bool bManualFastForward;
+
+    public bool bFastForward {
+        get {
+            return bAutoFastForward || bManualFastForward;
+        }
+    }
     public const float fFastForwardDelays = 0f; //Use no delay when fast forwarding
 
     public float fDeltaTime;
@@ -181,11 +189,18 @@ public class ContTime : Singleton<ContTime> {
         SetDeltaTime();
     }
 
-    public void SetFastForward(bool _bFastForward) {
-        if(bFastForward != _bFastForward) {
-            Debug.Log(LibDebug.AddColor(string.Format("Changing Fast Forwarding to {0}", _bFastForward), LibDebug.Col.MAGENTA));
+    public void SetAutoFastForward(bool _bAutoFastForward) {
+        if(bAutoFastForward != _bAutoFastForward) {
+            Debug.Log(LibDebug.AddColor(string.Format("Changing Auto Fast Forwarding to {0}", _bAutoFastForward), LibDebug.Col.MAGENTA));
         }
-        bFastForward = _bFastForward;
+        bAutoFastForward = _bAutoFastForward;
+    }
+
+    public void SetManualFastForward(bool _bManualFastForward) {
+        if (bManualFastForward != _bManualFastForward) {
+            Debug.Log(LibDebug.AddColor(string.Format("Changing Auto Fast Forwarding to {0}", _bManualFastForward), LibDebug.Col.MAGENTA));
+        }
+        bManualFastForward = _bManualFastForward;
     }
 
     private void Update() {
