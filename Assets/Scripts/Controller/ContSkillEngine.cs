@@ -139,9 +139,9 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         //Check if we have a stacked up number of stored inputs that we need to plow through
 
         if (NetworkMatchReceiver.Get().HasNReadyInputs(nFASTFORWARDTHRESHOLD)) {
-            ContTime.Get().SetFastForward(true);
+            ContTime.Get().SetAutoFastForward(true);
         } else {
-            ContTime.Get().SetFastForward(false);
+            ContTime.Get().SetAutoFastForward(false);
         }
     }
 
