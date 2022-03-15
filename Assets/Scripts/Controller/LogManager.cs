@@ -20,18 +20,34 @@ public class LogManager : SingletonPersistent<LogManager> {
     //Holds all the serialized match inputs that we've loaded in from the current log file
     public List<int[]> lstLoggedSerializedMatchInputs;
 
+    private bool bLoggingInfo;
+
     public override void Init() {
         
     }
 
     public void InitMatchLog() {
 
-        CleanOldLogFiles();
+        try {
+            bLoggingInfo = true;
 
-        CreateMatchLogFile();
+            CleanOldLogFiles();
 
-        LogMatchSetup();
+            CreateMatchLogFile();
 
+            LogMatchSetup();
+        }catch(IOException e) {
+            Debug.Log("Encountered " + e);
+            OnFileSharingError();
+        }
+
+    }
+
+    public void OnFileSharingError() {
+        Debug.Log(LibDebug.AddColor("Warning! Log File Use Conflict - Disabling Log File Usage", LibDebug.Col.RED));
+
+        //Turn off logging since there was an issue with this instance of the game recording log information
+        bLoggingInfo = false;
     }
 
     public bool IsValidLogFile(FileInfo fileinfo) {
@@ -47,6 +63,8 @@ public class LogManager : SingletonPersistent<LogManager> {
     }
 
     public void UpdateRecognizedLogFiles() {
+
+        EnsureLogDirExists();
 
         FileInfo[] arFilesInLogDir = new DirectoryInfo(sLOGSDIR).GetFiles();
         lstLogFiles = new List<FileInfo>();
@@ -83,33 +101,27 @@ public class LogManager : SingletonPersistent<LogManager> {
         return string.Format("{0}-{1}", timeCur.Minute, timeCur.Second);
     }
 
+    public void EnsureLogDirExists() {
+        //Note that this won't do anythign if the directory already exists (which works out nicely)
+        Directory.CreateDirectory(sLOGSDIR);
+
+    }
+
     public void CreateMatchLogFile() {
+
+        EnsureLogDirExists();
 
         //Initialize the file name we'll want for the log for this match
         timeStart = new System.DateTimeOffset(System.DateTime.UtcNow).ToLocalTime();
 
-        string sLogName = string.Format("{0}log-{1}", sLOGSDIR, GetDateTime());
-        sLogfilePath = sLogName + ".txt";
+        sLogfilePath = string.Format("{0}log-{1}.txt", sLOGSDIR, GetDateTime());
 
-        int nAttemptsUsed = 0;
-        while (nAttemptsUsed < 3) {
-            try {
-                Debug.LogFormat("Attempting to create {0}", sLogfilePath);
+        Debug.LogFormat("Attempting to create {0}", sLogfilePath);
 
-                Debug.LogFormat("Does the file exist?: {0}", File.Exists(sLogfilePath));
+        Debug.LogFormat("Does the file exist?: {0}", File.Exists(sLogfilePath));
 
-                //Attempt to initialize the writer
-                swFileWriter = new StreamWriter(sLogfilePath, false);
-
-                break;
-            } catch (IOException e) {
-                Debug.LogErrorFormat("{0} encountered - trying new log path", e);
-
-                //Update the attempted logfile path
-                nAttemptsUsed++;
-                sLogfilePath = string.Format("{0}({1}).txt", sLogName, nAttemptsUsed);
-            }
-        }
+        //Attempt to initialize the writer
+        swFileWriter = new StreamWriter(sLogfilePath, false);
 
         Debug.LogFormat("Created {0}", sLogfilePath);
 
@@ -418,6 +430,9 @@ public class LogManager : SingletonPersistent<LogManager> {
         //If we don't have any logged match inputs, then we don't need to do anything here
         if (lstLoggedSerializedMatchInputs == null) return;
 
+        //First, double check that the NetworkMatchSender has been started so we can ask it to send some input for us
+        NetworkMatchSender.Get().Start();
+
         //If we have any loaded logged match inputs, then we can send these all to the matchnetworkreceiver's input buffer
         for (int i=0; i < lstLoggedSerializedMatchInputs.Count; i++) {
             //For the index, just send 0, 1, 2,... in order since we'll be starting from the very beginning of the match
@@ -441,6 +456,9 @@ public class LogManager : SingletonPersistent<LogManager> {
     
 
     public void WriteToMatchLogFile(string sText, bool bTimestamp = false) {
+        //Don't bother logging anything if we've been deactivated
+        if (bLoggingInfo == false) return;
+
         //Consider if the stream writer should only be opened and closed for a short time to add one line of text rather than 
         //  the current method of keeping it open at all times
         swFileWriter.WriteLine(sText);

@@ -146,6 +146,14 @@ public class Match : MonoBehaviour {
             //Spin until we have all the match setup info that we need to start the match
             yield return null;
         }
+
+        while (NetworkMatchSender.Get() == null) {
+            //Spin until the needed networking objects have been spawned and given a chance to initialize
+            // - in particular, the NetworkMatchSender needs to be ready in case we need to immediately send inputs
+            //    as part of initializing the match (like for loading a log file)
+            yield return null;
+        }
+
         Debug.Log("Starting match initializations since we have enough information");
 
         ContRandomization.Get().InitGenerator(NetworkMatchSetup.GetRandomizationSeed());
@@ -165,6 +173,10 @@ public class Match : MonoBehaviour {
         AssignAllLocalInputControllers();
 
         Debug.Log("After assigning local input controllers");
+
+        ContManaDistributer.Get().InitializeReserves();
+
+        Debug.Log("After initializing mana reserves");
 
         InitAllChrPositions();
 
