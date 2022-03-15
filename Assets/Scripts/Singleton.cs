@@ -16,7 +16,7 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
     public static T Get() {
 
         if (inst == null) {
-            Debug.LogError("Error! Static instance not set!");
+            Debug.LogWarning("Error! Static instance not set!");
         }
 
         return inst;

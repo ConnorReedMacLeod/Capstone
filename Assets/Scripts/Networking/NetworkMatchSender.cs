@@ -10,8 +10,6 @@ public class NetworkMatchSender : Singleton<NetworkMatchSender> {
 
 
     public void SendInput(int indexInput, MatchInput matchinputToSend) {
-        //Ensure we have started and initialized ourselves before trying to handle any networking duties
-        this.Start();
 
         Debug.LogFormat(LibDebug.AddColor("Sending selection: {0}", LibDebug.Col.BLUE), matchinputToSend);
 
@@ -20,8 +18,6 @@ public class NetworkMatchSender : Singleton<NetworkMatchSender> {
     }
 
     public void SendInput(int indexInput, int[] arSerializedMatchInput) {
-        //Ensure we have started and initialized ourselves before trying to handle any networking duties
-        this.Start();
         
         Debug.LogFormat(LibDebug.AddColor("Sending serialized selection: {0}", LibDebug.Col.BLUE),  LibConversions.ArToStr(arSerializedMatchInput));
 
@@ -33,8 +29,18 @@ public class NetworkMatchSender : Singleton<NetworkMatchSender> {
         SendInput(NetworkMatchReceiver.Get().indexCurMatchInput, matchinputToSend);
     }
 
-    public override void Init() {
+    protected override void Awake() {
+        base.Awake();
+        Debug.Log("Awaking NetworkMatchSender");
+    }
 
+    public override void Start() {
+        base.Start();
+        Debug.Log("Starting NetworkMatchSender");
+    }
+
+    public override void Init() {
+        Debug.Log("Initing NetworkMatchSender");
         photonview = PhotonView.Get(this);
     }
 }
