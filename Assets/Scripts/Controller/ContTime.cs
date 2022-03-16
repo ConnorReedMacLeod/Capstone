@@ -6,25 +6,81 @@ public class ContTime : Singleton<ContTime> {
 
 
     public bool bPaused;
+
+    public bool bAutoFastForward;
+    public bool bManualFastForward;
+
+    public bool bFastForward {
+        get {
+            return bAutoFastForward || bManualFastForward;
+        }
+    }
+    public const float fFastForwardDelays = 0f; //Use no delay when fast forwarding
+
     public float fDeltaTime;
 
     public enum DELAYOPTIONS {
         FAST, MEDIUM, INF
     };
 
-    public const float fDelayChooseSkillFast = 5.0f;
-    public const float fDelayChooseSkillMedium = 30.0f;
-    public const float fDelayChooseSkillInf = 9999999.0f;
+    //Get the time delay when accounting for fastforwarding
+    static float GetRealTimeDelay(float fRawTime) {
+        return Get().bFastForward ? fFastForwardDelays : fRawTime;
+    }
+
+    public static float fDelayChooseSkillFast {
+        get {
+            return GetRealTimeDelay(5.0f);
+        }
+    }
+    public static float fDelayChooseSkillMedium{
+        get {
+            return GetRealTimeDelay(30.0f);
+        }
+    }
+    public static float fDelayChooseSkillInf {
+        get {
+            return GetRealTimeDelay(9999999.0f);
+        }
+    }
 
     public float fMaxSelectionTime;
 
-    public const float fDelayGameEffects = 0.5f;
-    public const float fDelayTurnSkill = 0.5f;
-    public const float fDelayMinorSkill = 0.5f;
-    public const float fDelayStandard = 1.25f;
-    public const float fDelayBan = 20f;
-    public const float fDelayDraftPick = 20f;
-    public const float fDelayLoadoutSetup = 120f;
+    public static float fDelayGameEffects {
+        get {
+            return GetRealTimeDelay(0.5f);
+        }
+    }
+    public static float fDelayTurnSkill {
+        get {
+            return GetRealTimeDelay(0.5f);
+        }
+    }
+    public static float fDelayMinorSkill {
+        get {
+            return GetRealTimeDelay(0.5f);
+        }
+    }
+    public static float fDelayStandard {
+        get {
+            return GetRealTimeDelay(1.25f);
+        }
+    }
+    public static float fDelayBan {
+        get {
+            return GetRealTimeDelay(20.0f);
+        }
+    }
+    public static float fDelayDraftPick {
+        get {
+            return GetRealTimeDelay(20.0f);
+        }
+    }
+    public static float fDelayLoadoutSetup {
+        get {
+            return GetRealTimeDelay(120.0f);
+        }
+    }
 
 
     public void SetMaxSelectionTime(DELAYOPTIONS delay) {
@@ -66,7 +122,15 @@ public class ContTime : Singleton<ContTime> {
 
 
     public void Invoke(float _fDelay, System.Action _funcToCall) {
-        lstBufferToInvoke.Add(new InvokeFunc(_fDelay, _funcToCall));
+
+        //If there's no delay, then just call the function immediately
+        if (_fDelay == 0f) {
+            //Note - I'm a bit worried this might lead to really inflated call stacks that can't get cleared out
+            _funcToCall();
+        } else {
+            //Set it up to call after a delay
+            lstBufferToInvoke.Add(new InvokeFunc(_fDelay, _funcToCall));
+        }
 
     }
 
@@ -125,6 +189,19 @@ public class ContTime : Singleton<ContTime> {
         SetDeltaTime();
     }
 
+    public void SetAutoFastForward(bool _bAutoFastForward) {
+        if(bAutoFastForward != _bAutoFastForward) {
+            Debug.Log(LibDebug.AddColor(string.Format("Changing Auto Fast Forwarding to {0}", _bAutoFastForward), LibDebug.Col.MAGENTA));
+        }
+        bAutoFastForward = _bAutoFastForward;
+    }
+
+    public void SetManualFastForward(bool _bManualFastForward) {
+        if (bManualFastForward != _bManualFastForward) {
+            Debug.Log(LibDebug.AddColor(string.Format("Changing Auto Fast Forwarding to {0}", _bManualFastForward), LibDebug.Col.MAGENTA));
+        }
+        bManualFastForward = _bManualFastForward;
+    }
 
     private void Update() {
 

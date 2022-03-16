@@ -117,7 +117,7 @@ public class Match : MonoBehaviour {
 
         //If the player isn't controlled locally, just set the plyr's controller to null since it's not our job to control them
         if (NetworkMatchSetup.IsLocallyOwned(plyr.id) == false) {
-            plyr.SetInputType(Player.InputType.NONE);
+            plyr.SetInputType(LocalInputType.InputType.NONE);
         } else {
             //Otherwise, this character is controlled by this local client - figure out which input type they'll need and add it
             plyr.SetInputType(NetworkMatchSetup.GetInputType(plyr.id));
@@ -146,6 +146,14 @@ public class Match : MonoBehaviour {
             //Spin until we have all the match setup info that we need to start the match
             yield return null;
         }
+
+        while (NetworkMatchSender.Get() == null) {
+            //Spin until the needed networking objects have been spawned and given a chance to initialize
+            // - in particular, the NetworkMatchSender needs to be ready in case we need to immediately send inputs
+            //    as part of initializing the match (like for loading a log file)
+            yield return null;
+        }
+
         Debug.Log("Starting match initializations since we have enough information");
 
         ContRandomization.Get().InitGenerator(NetworkMatchSetup.GetRandomizationSeed());
@@ -166,6 +174,10 @@ public class Match : MonoBehaviour {
 
         Debug.Log("After assigning local input controllers");
 
+        ContManaDistributer.Get().InitializeReserves();
+
+        Debug.Log("After initializing mana reserves");
+
         InitAllChrPositions();
 
         Debug.Log("After initializing positions");
@@ -175,6 +187,15 @@ public class Match : MonoBehaviour {
         ContTurns.Get().InitializePriorities();
 
         Debug.Log("After InitializePriorities");
+
+        //Check if the LogManager wants to load in any starting inputs
+        LogManager.Get().LoadStartingInputs();
+
+        Debug.Log("After LoadStartingInputs");
+
+        LogManager.Get().InitMatchLog();
+
+        Debug.Log("Finished initializing the log file");
     }
 
 

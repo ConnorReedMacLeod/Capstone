@@ -52,6 +52,11 @@ public class Position : MonoBehaviour {
             if (obj.GetType() != this.GetType()) return false;
             return (((Coords)obj).iColumn == this.iColumn) && (((Coords)obj).jRow == this.jRow);
         }
+
+        public override string ToString() {
+            return string.Format("({0},{1})", iColumn, jRow);
+        }
+
     }
 
     public static int SerializeCoords(Position.Coords coords) {

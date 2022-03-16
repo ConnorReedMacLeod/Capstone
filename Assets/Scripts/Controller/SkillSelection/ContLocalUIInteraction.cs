@@ -170,7 +170,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
     public void FinishSelections() {
 
         //Only allow manual selections when the local player is human
-        Debug.Assert(ContTurns.Get().GetNextActingChr().plyrOwner.curInputType == Player.InputType.HUMAN,
+        Debug.Assert(ContTurns.Get().GetNextActingChr().plyrOwner.inputController.GetInputType() == LocalInputType.InputType.HUMAN,
             "Error - can only submit skills for locally-owned >human<'s characters");
 
         Debug.Assert(NetworkMatchSetup.IsLocallyOwned(ContTurns.Get().GetNextActingChr().plyrOwner.id),
