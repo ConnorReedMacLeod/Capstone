@@ -4,6 +4,18 @@ using UnityEngine;
 
 public static class LibConversions {
 
+    // AR<T> / Str
+    public static string ArToStr<T>(T[] arT) {
+
+        string s = "";
+
+        //For each entry of our match input, add it to the string we'll be logging
+        for (int i = 0; i < arT.Length; i++) {
+            s += ":" + arT[i].ToString();
+        }
+
+        return s;
+    }
 
     // INT / OBJ
 
@@ -82,33 +94,6 @@ public static class LibConversions {
         }
 
         return ararChrTypes;
-    }
-
-
-    // INPUTTYPE / OBJ
-
-    public static object[] ArInputTypeToArObj(Player.InputType[] arInputTypes) {
-        if (arInputTypes == null) return null;
-
-        object[] arObj = new object[arInputTypes.Length];
-
-        for(int i=0; i<arInputTypes.Length; i++) {
-            arObj[i] = (object)arInputTypes[i];
-        }
-
-        return arObj;
-    }
-
-    public static Player.InputType[] ArObjToArInputType(object[] arObj) {
-        if (arObj == null) return null;
-
-        Player.InputType[] arInputTypes = new Player.InputType[arObj.Length];
-
-        for(int i = 0; i < arObj.Length; i++) {
-            arInputTypes[i] = (Player.InputType)arObj[i];
-        }
-
-        return arInputTypes;
     }
 
 

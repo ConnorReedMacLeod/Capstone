@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
 
@@ -14,6 +15,8 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
     public ViewOptionsButton btnTimerInf;
 
     public ViewOptionsButton btnRestart;
+
+    public Toggle togFastForward;
 
     public Subject subPlayer0SelectedInGroup = new Subject();
     public Subject subPlayer1SelectedInGroup = new Subject();
@@ -36,14 +39,14 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
 
     public void cbClickPlyr0Human(Object target, params object[] args) {
 
-        Match.Get().arPlayers[0].SetInputType(Player.InputType.HUMAN);
+        Match.Get().arPlayers[0].SetInputType(LocalInputType.InputType.HUMAN);
 
         subPlayer0SelectedInGroup.NotifyObs(target);
     }
 
     public void cbClickPlyr0AI(Object target, params object[] args) {
 
-        Match.Get().arPlayers[0].SetInputType(Player.InputType.AI);
+        Match.Get().arPlayers[0].SetInputType(LocalInputType.InputType.AI);
 
         subPlayer0SelectedInGroup.NotifyObs(target);
     }
@@ -51,14 +54,14 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
 
     public void cbClickPlyr1Human(Object target, params object[] args) {
 
-        Match.Get().arPlayers[1].SetInputType(Player.InputType.HUMAN);
+        Match.Get().arPlayers[1].SetInputType(LocalInputType.InputType.HUMAN);
 
         subPlayer1SelectedInGroup.NotifyObs(target);
     }
 
     public void cbClickPlyr1AI(Object target, params object[] args) {
 
-        Match.Get().arPlayers[1].SetInputType(Player.InputType.AI);
+        Match.Get().arPlayers[1].SetInputType(LocalInputType.InputType.AI);
 
         subPlayer1SelectedInGroup.NotifyObs(target);
     }
@@ -84,6 +87,10 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
         subTimerSelectedInGroup.NotifyObs(target);
     }
 
+
+    public void OnToggleFastForward() {
+        ContTime.Get().SetManualFastForward(togFastForward.isOn);
+    }
 
     public void cbOnEnter(Object target, params object[] args) {
 

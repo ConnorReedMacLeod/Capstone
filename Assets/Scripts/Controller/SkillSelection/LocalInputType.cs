@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class LocalInputType : MonoBehaviour {
+public abstract class LocalInputType {
 
     public Player plyrOwner;
     public bool bCurrentlySelectingSkill;
+
+    public enum InputType { NONE, HUMAN, AI, SCRIPTED }
+
+    public abstract InputType GetInputType();
 
     public virtual bool CanProceedWithSkillSelection() {
         // By default, we don't allow manual selection of any of our character skills

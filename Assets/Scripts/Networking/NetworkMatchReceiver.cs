@@ -28,7 +28,7 @@ public class NetworkMatchReceiver : Singleton<NetworkMatchReceiver> {
     void AddInputToBuffer(int indexInput, MatchInput matchInput) {
 
         if(indexInput != indexCurMatchInput) {
-            Debug.LogErrorFormat("ALERT!  Received input index {0}, but we are expecting index {1}", indexInput, indexCurMatchInput);
+            Debug.LogErrorFormat("ALERT!  Received input index {0}, but we are waiting to process index {1}", indexInput, indexCurMatchInput);
         }
 
         //Ensure that our received index is within the bounds of our buffer
@@ -44,7 +44,6 @@ public class NetworkMatchReceiver : Singleton<NetworkMatchReceiver> {
 
         lstMatchInputBuffer[indexInput] = matchInput;
 
-
     }
 
     public bool IsCurMatchInputReady() {
@@ -55,6 +54,21 @@ public class NetworkMatchReceiver : Singleton<NetworkMatchReceiver> {
         Debug.Assert(IsCurMatchInputReady());
 
         return lstMatchInputBuffer[indexCurMatchInput];
+    }
+
+    public bool HasNReadyInputs(int n) {
+        //Determines if we have at least n inputs waiting in our buffer that we haven't yet processed (i.e., after the current input)
+
+        for(int i=indexCurMatchInput; i<indexCurMatchInput + n; i++) {
+            if(i > lstMatchInputBuffer.Count) {
+                IncreaseMatchInputsReceivedCapacity();
+            }
+            if (lstMatchInputBuffer[i] == null) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     //To be called once execution of the current skill is completely finished

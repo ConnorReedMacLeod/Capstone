@@ -12,8 +12,12 @@ public class ContManaDistributer : Singleton<ContManaDistributer> {
 
     public int[] ariReserveProgression = new int[Player.MAXPLAYERS];
 
-    // Start is called before the first frame update
     public override void Init() {
+        
+    }
+
+    // Start is called before the first frame update
+    public void InitializeReserves() {
         
         for(int i=0; i<Player.MAXPLAYERS; i++) {
             //Init ReserveProgression to the start of the reserves for each player
