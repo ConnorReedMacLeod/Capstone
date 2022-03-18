@@ -42,9 +42,7 @@ public class ExecTurnGiveMana : Executable {
 
             Player plyrToGive = Match.Get().arPlayers[i];
 
-            ContSkillEngine.Get().AddExec(new ExecChangeMana(null, plyrToGive, (Mana.MANATYPE)ContManaDistributer.Get().TakeNextManaFromPlayer(i)) {
-                chrSource = null
-            });
+            ContSkillEngine.Get().AddExec(new ExecChangeMana(null, plyrToGive, ContManaDistributer.Get().GetCurrentTurnStartManaForPlayer(plyrToGive)));
         }
     }
 

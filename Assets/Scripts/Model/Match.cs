@@ -174,7 +174,7 @@ public class Match : MonoBehaviour {
 
         Debug.Log("After assigning local input controllers");
 
-        ContManaDistributer.Get().InitializeReserves();
+        ContManaDistributer.Get().InitializeRandomReserves();
 
         Debug.Log("After initializing mana reserves");
 

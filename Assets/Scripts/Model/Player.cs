@@ -19,6 +19,7 @@ public class Player : MonoBehaviour {
     public LocalInputType inputController;
 
     public ManaPool manapool;
+    public ManaCalendar manacalendar;
 
     public static Subject subAllInputTypeChanged = new Subject(Subject.SubType.ALL);
     public static Subject subAllPlayerLost = new Subject(Subject.SubType.ALL);
