@@ -117,7 +117,7 @@ public class ViewSkill : ViewInteractive {
         if(mod == null) {
             txtType.text = "";
         } else {
-            txtCost.text = GetEncodedManaCostText(mod.manaCost);
+            txtCost.text = mod.manaCost.ToPrettyString();
         }
     }
 

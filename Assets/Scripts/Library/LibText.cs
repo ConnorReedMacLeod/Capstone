@@ -34,18 +34,13 @@ public static class LibText {
 
 		while (i < arsComponents.Length) {
 
-			if (!dictTextConversions.ContainsKey (arsComponents [i])) {
-				//Then no dictionary translation exists
-				Debug.LogError ("ERROR! NO TRANSLATION EXISTS FOR: " + arsComponents [i]);
-			} else {
-
-				//Replace this string with it's translation in the dictionary
-				arsComponents [i] = (dictTextConversions [arsComponents [i]]).ToString();
-			}
+            arsComponents[i] = PrepSymbol(arsComponents[i]).ToString();
 
 			i += 2; //advance to the next escaped string
 		}
 
 		return string.Join(string.Empty, arsComponents);
 	}
+
+    
 }
