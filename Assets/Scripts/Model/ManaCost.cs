@@ -39,7 +39,21 @@ public class ManaCost {
     }
 
     public override string ToString() {
-        return pManaCost.Get().ToString();
+        string sCost = pManaCost.Get().ToString();
+        if (bXCost) {
+            sCost += "X";
+        }
+
+        return sCost;
+    }
+
+    public string ToPrettyString() {
+        string sCost = pManaCost.Get().ToPrettyString();
+        if (bXCost) {
+            sCost += "X";
+        }
+
+        return sCost;
     }
 
     public int GetXPaid(Mana manaPaid) {
