@@ -69,13 +69,13 @@ public class ContManaDistributer : Singleton<ContManaDistributer> {
 
     public Mana GetCurrentTurnStartManaForPlayer(Player plyr) {
 
-        ManaCalendar.ManaDate manadateCur = plyr.manacalendar.GetCurrentManaDay();
+        ManaDate manadateCur = plyr.manacalendar.GetCurrentManaDate();
 
         //Start with a base of any coloured mana we'll be scheduled to give the player
-        Mana manaToGive = new Mana(manadateCur.pmanaToGain.Get());
+        Mana manaToGive = new Mana(manadateCur.pmanaScheduled.Get());
 
         //Add a random mana type (dictated by the random reserves) for each random mana we're scheduled to recieve
-        for (int i = 0; i < manadateCur.nRandomManaToGain; i++) {
+        for (int i = 0; i < manadateCur.nScheduledRandomMana; i++) {
             manaToGive.ChangeMana(GetNextRandomManaForPlayer(plyr.id));
         }
 

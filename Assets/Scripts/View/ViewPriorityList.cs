@@ -30,7 +30,7 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
 
 
     public void InitViewPriorityList() {
-        ContTurns.subAllPriorityChange.Subscribe(cbUpdateHeadshots);
+        ContTurns.Get().subAllPriorityChange.Subscribe(cbUpdateHeadshots);
 
         //Initially set up the headshots
         cbUpdateHeadshots(null);
