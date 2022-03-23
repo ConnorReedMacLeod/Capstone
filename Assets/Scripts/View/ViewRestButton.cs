@@ -50,7 +50,7 @@ public class ViewRestButton : ViewInteractive {
 
 
             Chr.subAllStatusChange.Subscribe(cbChrSelectionChange);
-            ContTurns.subAllPriorityChange.Subscribe(cbChrPriorityOrderChange);
+            ContTurns.Get().subAllPriorityChange.Subscribe(cbChrPriorityOrderChange);
 
             Display();
 

@@ -1,18 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class ViewManaCalendar : MonoBehaviour
-{
+public class ViewManaCalendar : MonoBehaviour {
+
+    public ViewManaDate[] arViewManaDate;
+
+    public ManaCalendar modManaCalendar;
+    
     // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public void Start() {
 
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
+    
+
+
 }

@@ -13,9 +13,17 @@ public class ContTurns : Singleton<ContTurns> {
     public int nLiveCharacters;
     public int nTurnNumber;
 
-    public Subject subNextActingChrChange = new Subject();
-    public static Subject subAllPriorityChange = new Subject(Subject.SubType.ALL);
 
+
+    public Subject subNextActingChrChange = new Subject();
+    public Subject subAllPriorityChange = new Subject();
+    public Subject subTurnChange = new Subject();
+
+    public void NextTurn() {
+        nTurnNumber++;
+
+        subTurnChange.NotifyObs();
+    }
 
     public void FixSortedPriority(Chr chr) {
 
