@@ -60,6 +60,9 @@ public class ExecTurnRecharge : Executable {
 
     public override void ExecuteEffect() {
 
+        //Advance the turn count to the next turn number since this is the first phase of a turn
+        ContTurns.Get().NextTurn();
+
         RechargeChars();
 
         sLabel = "Reducing Fatigue/ChannelTimes";

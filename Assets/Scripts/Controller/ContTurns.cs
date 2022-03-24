@@ -245,7 +245,7 @@ public class ContTurns : Singleton<ContTurns> {
         InitChrTurns();
 
 
-        nTurnNumber = 1;
+        nTurnNumber = 0;
 
         nLiveCharacters = Player.MAXPLAYERS * Player.MAXCHRS;
 

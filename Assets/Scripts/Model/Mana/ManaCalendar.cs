@@ -15,6 +15,10 @@ public class ManaCalendar : MonoBehaviour {
         ContTurns.Get().subTurnChange.Subscribe(cbOnDateChange);
     }
 
+    public void SetPlayer(Player _plyrOwner) {
+        plyrOwner = _plyrOwner;
+    }
+
     public void cbOnDateChange(Object tar, params object[] args) {
 
         //Pass along the notification to the dates for the previous active day, and the new active day
@@ -25,14 +29,16 @@ public class ManaCalendar : MonoBehaviour {
 
     public ManaDate GetCurrentManaDate() {
 
-        int nCurDay = ContTurns.Get().nTurnNumber % NDAYS;
+        int nCurDay = (ContTurns.Get().nTurnNumber - 1) % NDAYS;
 
         return arManaDates[nCurDay];
 
     }
 
     public ManaDate GetPreviousManaDate() {
-        int nPrevDay = (ContTurns.Get().nTurnNumber - 1) % NDAYS;
+        int nPrevDay = (ContTurns.Get().nTurnNumber - 2) % NDAYS;
+
+        if (nPrevDay < 0) nPrevDay += NDAYS;
 
         return arManaDates[nPrevDay];
     }
