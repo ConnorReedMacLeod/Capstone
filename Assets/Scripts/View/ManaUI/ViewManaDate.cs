@@ -25,14 +25,11 @@ public class ViewManaDate : MonoBehaviour {
     }
 
     public void cbOnScheduleManaChange(Object tar, params object[] args) {
-        SetScheduledManaText(modManaDate.pmanaScheduled.Get(), modManaDate.nScheduledRandomMana);
+        SetScheduledManaText(modManaDate.pmanaScheduled.Get());
     }
 
-    public void SetScheduledManaText(Mana manaScheduled, int nScheduledRandomMana) {
+    public void SetScheduledManaText(Mana manaScheduled) {
         Mana manaTotalScheduled = new Mana(manaScheduled);
-
-        //Displayer all extra random mana to be generated as effort icons
-        manaTotalScheduled.ChangeMana(Mana.MANATYPE.EFFORT, nScheduledRandomMana);
 
         txtManaScheduled.text = manaTotalScheduled.ToPrettyString();
     }

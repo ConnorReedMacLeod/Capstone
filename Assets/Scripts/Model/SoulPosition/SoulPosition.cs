@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// All this really needs to do is add a chrTarget field
 public class SoulPosition : Soul {
 
     public Position posTarget;     //A reference to the Position this soul effect is applied to

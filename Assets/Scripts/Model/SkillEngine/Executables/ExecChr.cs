@@ -10,6 +10,7 @@ public abstract class ExecChr : Executable {
 
         if(chrTarget == null) {
             Debug.Log("Executable of type " + this.GetType().ToString() + " not legal since chrTarget is null");
+            return false;
         } else if(chrTarget.bDead) {
             Debug.Log("Executable of type  " + this.GetType().ToString() + " not legal since " + chrTarget.sName + "(target) is dead");
             return false;
