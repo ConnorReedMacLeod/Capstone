@@ -6,8 +6,7 @@ public class ManaDate : MonoBehaviour {
     public ManaCalendar manacalendar;
 
     public int nDay;
-
-    public int nScheduledRandomMana;
+    
     public Property<Mana> pmanaScheduled;
 
     public Subject subBecomeActiveDate = new Subject();
@@ -18,9 +17,9 @@ public class ManaDate : MonoBehaviour {
     public void Start() {
         if (bStarted) return;
         bStarted = true;
-
-        nScheduledRandomMana = 1;
-        pmanaScheduled = new Property<Mana>(new Mana(0, 0, 0, 0));
+        
+        //Note that any scheduled effort mana will be distributed as random coloured mana
+        pmanaScheduled = new Property<Mana>(new Mana(0, 0, 0, 0, 1));
     }
 
 

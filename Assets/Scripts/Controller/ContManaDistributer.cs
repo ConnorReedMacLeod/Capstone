@@ -74,10 +74,13 @@ public class ContManaDistributer : Singleton<ContManaDistributer> {
         //Start with a base of any coloured mana we'll be scheduled to give the player
         Mana manaToGive = new Mana(manadateCur.pmanaScheduled.Get());
 
-        //Add a random mana type (dictated by the random reserves) for each random mana we're scheduled to recieve
-        for (int i = 0; i < manadateCur.nScheduledRandomMana; i++) {
+        //Add a random mana type (dictated by the random reserves) for each effort mana we're scheduled to recieve
+        for (int i = manadateCur.pmanaScheduled.Get().arMana[(int)Mana.MANATYPE.EFFORT]; i > 0; i--) {
             manaToGive.ChangeMana(GetNextRandomManaForPlayer(plyr.id));
         }
+
+        //Clear out the effort mana now that it's been distributed as randomized coloured mana
+        manaToGive.ChangeMana(Mana.MANATYPE.EFFORT, - manaToGive.arMana[(int)Mana.MANATYPE.EFFORT]);
 
         return manaToGive;
     }

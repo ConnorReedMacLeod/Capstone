@@ -111,14 +111,6 @@ public class Player : MonoBehaviour {
         manacalendar = goManaCalendar.GetComponent<ManaCalendar>();
 
         manacalendar.SetPlayer(this);
-
-        //TODO: Change this, all this, to work with networking
-        if (id == 0) {
-            goManaCalendar.transform.position = new Vector3(0.75f, -2.33f, -0.5f);
-        } else {
-            //move it offscreen for now
-            goManaCalendar.transform.position = new Vector3(100f, 100f, -0.5f);
-        }
     }
 
     // Use this for initialization
