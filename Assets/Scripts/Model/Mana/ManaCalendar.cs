@@ -5,6 +5,9 @@ using UnityEngine;
 //Tracks the mana gain scheduled for a player at the beginning of each turn
 public class ManaCalendar : MonoBehaviour {
 
+    //TODO - Make a Soul Container for SoulManaDate affects where you can remove added mana modifiers
+    //       either by reference or by triggers on the SoulManaDate itself
+
     public const int NDAYS = 12;
 
     public Player plyrOwner;
