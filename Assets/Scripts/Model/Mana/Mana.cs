@@ -110,4 +110,14 @@ public class Mana {
         return lstManaTypes;
     }
 
+    public string ToPrettyString() {
+        string sPhys = new string(LibText.PrepSymbol("P"), arMana[(int)MANATYPE.PHYSICAL]);
+        string sMen = new string(LibText.PrepSymbol("M"), arMana[(int)MANATYPE.MENTAL]);
+        string sEnergy = new string(LibText.PrepSymbol("E"), arMana[(int)MANATYPE.ENERGY]);
+        string sBld = new string(LibText.PrepSymbol("B"), arMana[(int)MANATYPE.BLOOD]);
+        string sEff = new string(LibText.PrepSymbol("O"), arMana[(int)MANATYPE.EFFORT]);
+
+        return sPhys + sMen + sEnergy + sBld + sEff;
+        
+    }
 }

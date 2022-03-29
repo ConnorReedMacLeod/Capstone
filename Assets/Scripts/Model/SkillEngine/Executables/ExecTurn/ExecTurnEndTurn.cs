@@ -41,7 +41,6 @@ public class ExecTurnEndTurn : Executable {
         sLabel = "End of Turn";
         fDelay = ContTime.fDelayTurnSkill;
 
-        ContTurns.Get().nTurnNumber++;
 
     }
 

@@ -55,27 +55,13 @@ public class ViewInfoSkill : MonoBehaviour {
             txtName.text = mod.sDisplayName;
         }
     }
-
-    public string CostToString(int[] _cost) {
-        if(_cost.Length != Mana.nManaTypes) {
-            Debug.Log("ERROR!  GIVEN MANA COST HAS WRONG NUMBER OF VALUES!");
-            return "";
-        } else {
-            string sPhys = new string(LibText.PrepSymbol("P"), _cost[0]);
-            string sMen = new string(LibText.PrepSymbol("M"), _cost[1]);
-            string sEnergy = new string(LibText.PrepSymbol("E"), _cost[2]);
-            string sBld = new string(LibText.PrepSymbol("B"), _cost[3]);
-            string sEff = new string(LibText.PrepSymbol("O"), _cost[4]);
-
-            return sPhys + sMen + sEnergy + sBld + sEff;
-        }
-    }
+    
 
     public void DisplayCost() {
         if(mod == null) {
             txtType.text = "";
         } else {
-            txtCost.text = ViewSkill.GetEncodedManaCostText(mod.manaCost);
+            txtCost.text = mod.manaCost.ToPrettyString();
         }
     }
 

@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnGiveMana : Executable {
+//Can create executables like ...= new Exec(){manadateTarget = ..., modManaDateToApply = ...};
 
+public class ExecApplyManaDateMod : ExecManaDate {
+
+    public Property<Mana>.Modifier modManaDateToApply;
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -30,37 +33,20 @@ public class ExecTurnGiveMana : Executable {
     }
     // This is the end of the section that should be copied and pasted
 
-    public override bool isLegal() {
-        //Can't invalidate a turn effect
-        return true;
-    }
-
-    public void GiveManaToAllPlayers() {
-        
-        //Give the mana to each player as specified by the ContManaDistributer
-        for(int i = 0; i < Match.Get().nPlayers; i++) {
-
-            Player plyrToGive = Match.Get().arPlayers[i];
-
-            ContSkillEngine.Get().AddExec(new ExecChangeMana(null, plyrToGive, ContManaDistributer.Get().GetCurrentTurnStartManaForPlayer(plyrToGive)));
-        }
-    }
 
     public override void ExecuteEffect() {
 
-        GiveManaToAllPlayers();
-
-        sLabel = "Giving Mana to each player";
-        fDelay = ContTime.fDelayTurnSkill;
+        manadateTarget.pmanaScheduled.AddModifier(modManaDateToApply);
 
     }
 
-
-    public ExecTurnGiveMana(Chr _chrSource) : base(_chrSource) {
+    public ExecApplyManaDateMod(Chr _chrSource, ManaDate _manadateTarget, Property<Mana>.Modifier _modManaDateToApply) : base(_chrSource, _manadateTarget) {
+        modManaDateToApply = _modManaDateToApply;
 
     }
 
-    public ExecTurnGiveMana(ExecTurnGiveMana other) : base(other) {
+    public ExecApplyManaDateMod(ExecApplyManaDateMod other) : base(other) {
+        modManaDateToApply = other.modManaDateToApply;
 
     }
 

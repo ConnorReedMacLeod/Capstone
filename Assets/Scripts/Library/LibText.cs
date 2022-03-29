@@ -5,13 +5,13 @@ using System.Text;
 
 public static class LibText {
 
-	public static Dictionary<string, char> dictTextConversions =
-		new Dictionary<string, char>(){
-		{"P", (char)176},
-		{"M", (char)177},
-		{"E", (char)178},
-		{"B", (char)179},
-		{"O", (char)180}};
+    public static Dictionary<string, char> dictTextConversions =
+        new Dictionary<string, char>(){
+        {"P", '1'},//(char)176},
+		{"M", '2'},//(char)177},
+		{"E", '3'},//(char)178},
+		{"B", '4'},//(char)179},
+		{"O", '5' } };//(char)180}};
 
 	//Convert a single Symbol to it's ascii char representation
 	public static char PrepSymbol(string sSym){
@@ -34,18 +34,13 @@ public static class LibText {
 
 		while (i < arsComponents.Length) {
 
-			if (!dictTextConversions.ContainsKey (arsComponents [i])) {
-				//Then no dictionary translation exists
-				Debug.LogError ("ERROR! NO TRANSLATION EXISTS FOR: " + arsComponents [i]);
-			} else {
-
-				//Replace this string with it's translation in the dictionary
-				arsComponents [i] = (dictTextConversions [arsComponents [i]]).ToString();
-			}
+            arsComponents[i] = PrepSymbol(arsComponents[i]).ToString();
 
 			i += 2; //advance to the next escaped string
 		}
 
 		return string.Join(string.Empty, arsComponents);
 	}
+
+    
 }

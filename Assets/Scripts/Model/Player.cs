@@ -15,10 +15,12 @@ public class Player : MonoBehaviour {
 
     public static Player[] arAllPlayers;
     public GameObject pfManaPanel;
+    public GameObject pfManaCalendar;
 
     public LocalInputType inputController;
 
     public ManaPool manapool;
+    public ManaCalendar manacalendar;
 
     public static Subject subAllInputTypeChanged = new Subject(Subject.SubType.ALL);
     public static Subject subAllPlayerLost = new Subject(Subject.SubType.ALL);
@@ -88,6 +90,29 @@ public class Player : MonoBehaviour {
         }
     }
 
+    public void SpawnManaPool() {
+        GameObject manaPanel = Instantiate(pfManaPanel, Match.Get().transform);
+        manapool = manaPanel.GetComponent<ManaPool>();
+
+        manapool.SetPlayer(this);
+
+        //TODO: Change this, all this, to work with networking
+        if (id == 0) {
+            manaPanel.transform.position = new Vector3(0f, 2.85f, -0.4f);
+        } else {
+            //move it offscreen for now
+            manaPanel.transform.position = new Vector3(100f, 100f, -0.4f);
+        }
+    }
+
+    public void SpawnManaCalendar() {
+
+        GameObject goManaCalendar = Instantiate(pfManaCalendar, Match.Get().transform);
+        manacalendar = goManaCalendar.GetComponent<ManaCalendar>();
+
+        manacalendar.SetPlayer(this);
+    }
+
     // Use this for initialization
     public void Start() {
 
@@ -98,18 +123,8 @@ public class Player : MonoBehaviour {
 
             arChr = new Chr[MAXCHRS];
 
-            GameObject manaPanel = Instantiate(pfManaPanel, Match.Get().transform);
-            manapool = manaPanel.GetComponent<ManaPool>();
-
-            manapool.SetPlayer(this);
-
-            //TODO: Change this, all this, to work with networking
-            if(id == 0) {
-                manaPanel.transform.position = new Vector3(0f, 2.85f, -0.4f);
-            } else {
-                //move it offscreen for now
-                manaPanel.transform.position = new Vector3(100f, 100f, -0.4f);
-            }
+            SpawnManaPool();
+            SpawnManaCalendar();
 
         }
     }
