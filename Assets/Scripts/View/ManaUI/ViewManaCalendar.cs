@@ -18,7 +18,7 @@ public class ViewManaCalendar : MonoBehaviour {
     // Start is called before the first frame update
     public void Start() {
         
-        txtTitle.text = string.Format("Mana Calendar for Player {0}", modManaCalendar.plyrOwner.id);
+        txtTitle.text = string.Format("Mana Calendar for Player {0}", modManaCalendar.plyrOwner.id + 1);
 
         //Initially hide the panel
         HidePanel();
