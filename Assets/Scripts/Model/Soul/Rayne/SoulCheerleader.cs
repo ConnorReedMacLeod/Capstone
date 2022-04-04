@@ -63,7 +63,7 @@ public class SoulCheerleader : SoulChr {
 
         //Loop through each of the characters on this character's team, and let ApplyBuff decide
         // if they should recieve a buff
-        foreach(Chr chrAlly in chrTarget.plyrOwner.GetActiveChrs()) {
+        foreach(Chr chrAlly in ChrCollection.Get().GetActiveChrsOwnedBy(chrTarget.plyrOwner)) {
             ApplyBuff(chrAlly);
         }
     }

@@ -47,10 +47,10 @@ public class SkillThunderStorm : Skill {
         public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = (Chr)selections.lstSelections[1];
+            
+            List<Chr> lstChrsOnTeam = ChrCollection.Get().GetActiveChrsOwnedBy(chrSelected.plyrOwner);
 
-            List<Chr> lstChrsOnTeam = chrSelected.plyrOwner.GetActiveChrs();
-
-            for(int i = 0; i < lstChrsOnTeam.Count; i++) {
+            for (int i = 0; i < lstChrsOnTeam.Count; i++) {
 
                 ContSkillEngine.PushSingleExecutable(new ExecStun(skill.chrOwner, lstChrsOnTeam[i], nBaseStun) {
                     sLabel = "Crackle Crackle"
