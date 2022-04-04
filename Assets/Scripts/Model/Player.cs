@@ -10,7 +10,6 @@ public class Player : MonoBehaviour {
     public int id;
     public const int MAXCHRS = 3;
     public const int MAXPLAYERS = 2;
-    public Chr[] arChr;
     public int nChrs;
 
     public static Player[] arAllPlayers;
@@ -24,10 +23,6 @@ public class Player : MonoBehaviour {
 
     public static Subject subAllInputTypeChanged = new Subject(Subject.SubType.ALL);
     public static Subject subAllPlayerLost = new Subject(Subject.SubType.ALL);
-
-    public List<Chr> GetActiveChrs() {
-        return arChr.ToList<Chr>();
-    }
 
     public int GetTargettingId() {
         return id;
@@ -120,8 +115,6 @@ public class Player : MonoBehaviour {
             bStarted = true;
 
             RegisterPlayer(this);
-
-            arChr = new Chr[MAXCHRS];
 
             SpawnManaPool();
             SpawnManaCalendar();

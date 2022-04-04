@@ -76,7 +76,6 @@ public class Match : MonoBehaviour {
         newChr.InitChr(chartype, player, idChar, loadout);
 
         arChrs[player.id][idChar] = newChr;
-        player.arChr[idChar] = newChr;
 
     }
 
@@ -129,14 +128,14 @@ public class Match : MonoBehaviour {
         //Ensure all positions have been initialized properly
         ContPositions.Get().Start();
 
-        //Set up each team in a 'triangle' - two sides in the back, center in the front
-        ContPositions.Get().MoveChrToPosition(arChrs[0][0], ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(0, 0)));
-        ContPositions.Get().MoveChrToPosition(arChrs[0][1], ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(0, 1)));
-        ContPositions.Get().MoveChrToPosition(arChrs[0][2], ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(0, 2)));
+        for(int i=0; i<Player.MAXPLAYERS; i++) {
+            List<Chr> lstChrsOwned = ChrCollection.Get().GetAllChrsOwnedBy(arPlayers[i]);
 
-        ContPositions.Get().MoveChrToPosition(arChrs[1][0], ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(1, 0)));
-        ContPositions.Get().MoveChrToPosition(arChrs[1][1], ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(1, 1)));
-        ContPositions.Get().MoveChrToPosition(arChrs[1][2], ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(1, 2)));
+            //Set up each team according to the saved positions from the NetworkMatchSetup
+            for (int j = 0; j < Player.MAXCHRS; j++) {
+                ContPositions.Get().MoveChrToPosition(lstChrsOwned[i], ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(i, j)));
+            }
+        }
 
     }
 
