@@ -39,20 +39,11 @@ public class ExecTurnReduceCooldowns : Executable {
 
     public void ReduceCooldowns() {
 
-        for(int i = 0; i < Match.Get().nPlayers; i++) {
-            for(int j = 0; j < Player.MAXCHRS; j++) {
-                if(Match.Get().arChrs[i][j] == null) {
-                    continue; // A character isn't actually here (extra space for characters)
-                }
+        foreach(Chr chrAlive in ChrCollection.Get().GetAllLiveChrs()) {
 
-                if(Match.Get().arChrs[i][j].bDead) {
-                    continue; //The character's already dead
-                }
-
-                //Reduce the cd of that character's skills
-                Match.Get().arChrs[i][j].RechargeSkills();
-
-            }
+            //Reduce the cd of that character's skills
+            chrAlive.RechargeSkills();
+            
         }
     }
 
@@ -61,7 +52,7 @@ public class ExecTurnReduceCooldowns : Executable {
         ReduceCooldowns();
 
         sLabel = "Reducing Cooldowns";
-        fDelay = ContTime.fDelayTurnSkill;
+        fDelay = ContTime.fDelayInstant;
 
     }
 

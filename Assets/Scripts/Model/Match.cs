@@ -82,7 +82,6 @@ public class Match : MonoBehaviour {
     void InitAllChrs() {
 
         for(int i = 0; i < nPlayers; i++) {
-            arChrs[i] = new Chr[Player.MAXCHRS];
             arPlayers[i].nChrs = Player.MAXCHRS;
 
             for(int j = 0; j < arPlayers[i].nChrs; j++) {
