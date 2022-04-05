@@ -7,10 +7,9 @@ public class ContTurns : Singleton<ContTurns> {
     public enum STATETURN { RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSESKILL, TURNEND };
     public STATETURN curStateTurn;
 
-    public Chr[] arChrPriority;
+    public List<Chr> lstChrPriority;
     public Chr chrNextReady; //Stores the currently acting character this turn (or null if none are acting)
 
-    public int nLiveCharacters;
     public int nTurnNumber;
 
 
@@ -29,31 +28,64 @@ public class ContTurns : Singleton<ContTurns> {
 
         //Find the referenced character
         int i = 0;
-        while(arChrPriority[i] != chr) {
+        while(lstChrPriority[i] != chr) {
             i++;
-        }
 
+            if(i == lstChrPriority.Count) {
+                Debug.LogErrorFormat("Tried to find {0} in the priority list, but they didn't exist", chr);
+                return;
+            }
+        }
 
         //First try to move ahead the character
         //If there is some character ahead and we go on a earlier turn
-        while(i > 0 && arChrPriority[i - 1].GetPriority() > chr.GetPriority()) {
+        while(i > 0 && lstChrPriority[i - 1].GetPriority() > chr.GetPriority()) {
             //Swap these characters
-            arChrPriority[i] = arChrPriority[i - 1];
-            arChrPriority[i - 1] = chr;
+            lstChrPriority[i] = lstChrPriority[i - 1];
+            lstChrPriority[i - 1] = chr;
             //And move to the next possible slot
             i--;
         }
 
         //Next try to move the character back in the list
         //If there is a character after us, and we go on the same turn or later
-        while(i < (nLiveCharacters - 1) &&
-            chr.GetPriority() >= arChrPriority[i + 1].GetPriority()) {
+        while(i < lstChrPriority.Count - 1 &&
+            chr.GetPriority() >= lstChrPriority[i + 1].GetPriority()) {
             //Swap these character
-            arChrPriority[i] = arChrPriority[i + 1];
-            arChrPriority[i + 1] = chr;
+            lstChrPriority[i] = lstChrPriority[i + 1];
+            lstChrPriority[i + 1] = chr;
             //And move to the next possible slot
             i++;
         }
+
+        subAllPriorityChange.NotifyObs(this);
+    }
+
+    public void RemoveChrFromPriorityList(Chr chr) {
+
+        //Find the referenced character
+        int i = 0;
+        while(lstChrPriority[i] != chr) {
+            i++;
+
+            if(i == lstChrPriority.Count) {
+                Debug.LogErrorFormat("Tried to find {0} in the priority list, but they didn't exist", chr);
+                return;
+            }
+        }
+
+        //Now that we've found the character, swap them to the very end of the priority list
+        while(i < lstChrPriority.Count - 1) {
+            //Swap this character with the next
+            lstChrPriority[i] = lstChrPriority[i + 1];
+            lstChrPriority[i + 1] = chr;
+            //And move to the next possible slot
+            i++;
+        }
+
+        //Now that we've reached the end of the priority list and this character is guaranteed to be at the very end,
+        //   we're safe to remove them
+        lstChrPriority.RemoveAt(lstChrPriority.Count - 1);
 
         subAllPriorityChange.NotifyObs(this);
     }
@@ -74,16 +106,16 @@ public class ContTurns : Singleton<ContTurns> {
         //Now we should look for the first character in our priority queue in a ready state
         int i = 0;
 
-        while(i < nLiveCharacters) {
+        while(i < lstChrPriority.Count) {
             //Just skip this character if they don't have their readiness state created yet
-            if(arChrPriority[i].curStateReadiness == null) {
+            if(lstChrPriority[i].curStateReadiness == null) {
                 i++;
                 continue;
             }
 
-            if(arChrPriority[i].curStateReadiness.Type() == StateReadiness.TYPE.READY) {
+            if(lstChrPriority[i].curStateReadiness.Type() == StateReadiness.TYPE.READY) {
                 //If we find a character in the ready state, then they will become our new chrNextReady
-                chrNextReady = arChrPriority[i];
+                chrNextReady = lstChrPriority[i];
 
                 Debug.Assert(chrNextReady.bDead == false);
                 break;
@@ -99,31 +131,14 @@ public class ContTurns : Singleton<ContTurns> {
 
 
     //Copy the array of characters so we have references we can sort by priority
+    // NOTE - this assumes the characters in GetAllLiveChrs have been initialized in order of initial fatigue
     public void InitChrPriority() {
 
-        /*
-        for(int i = 0; i < Match.Get().nPlayers; i++) {
-            for(int j = 0; j < Match.Get().arPlayers[i].nChrs; j++) {
+        lstChrPriority = new List<Chr>();
 
-                arChrPriority[i + 2 * j] = Match.Get().arChrs[i][j];
-            }
-        }*/
-    }
-
-    //Initially assign Fatigue values to each character
-    public void InitChrTurns() {
-
-        /*
-        for(int i = 0; i < Match.Get().nPlayers; i++) {
-            for(int j = 0; j < Match.Get().arPlayers[i].nChrs; j++) {
-                //TODO:: Consider putting this on the stack
-                //Initially start each character off in a fatigued state with 1/2/3/4/5/6 fatigue
-                Match.Get().arChrs[i][j].ChangeFatigue(2 * j + i + 1);
-
-            }
+        foreach(Chr chr in ChrCollection.Get().GetAllLiveChrs()) {
+            lstChrPriority.Add(chr);
         }
-        */
-
     }
 
 
@@ -230,7 +245,6 @@ public class ContTurns : Singleton<ContTurns> {
     public void InitializePriorities() {
 
         InitChrPriority();
-        InitChrTurns();
 
 
         nTurnNumber = 0;
