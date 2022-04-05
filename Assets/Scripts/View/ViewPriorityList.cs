@@ -23,7 +23,7 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
 
     public void cbUpdateHeadshots(Object target, params object[] args) {
 
-        for (int i = 0; i < Player.MAXCHRS * Player.MAXPLAYERS; i++) {
+        for(int i = 0; i < arHeadshots.Length; i++) {
             SetHeadshot(i);
         }
     }
@@ -36,8 +36,8 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
         cbUpdateHeadshots(null);
     }
 
-	// Use this for initialization
-	public override void Init () {
-        
-	}
+    // Use this for initialization
+    public override void Init() {
+
+    }
 }

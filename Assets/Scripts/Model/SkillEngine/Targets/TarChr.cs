@@ -5,14 +5,12 @@ using UnityEngine;
 public class TarChr : Target {
 
     public static int SerializeChr(Chr chr) {
-        return chr.globalid;
+        return chr.id;
     }
 
     public static Chr UnserializeChr(int nSerialized) {
-        return Chr.lstAllChrs[nSerialized];
+        return ChrCollection.Get().GetChr(nSerialized);
     }
-
-
 
     public override int Serialize(object objToSerialize) {
         return SerializeChr((Chr)objToSerialize);
@@ -34,12 +32,12 @@ public class TarChr : Target {
     }
 
     public override IEnumerable<object> GetSelectableUniverse() {
-        return Chr.lstAllChrs;
+        return ChrCollection.Get().GetAllLiveChrs();
     }
 
 
     public static FnValidSelection IsOtherChr(Chr chr) {
-        return (object chr2, InputSkillSelection selections) => (chr.globalid != ((Chr)chr2).globalid);
+        return (object chr2, InputSkillSelection selections) => (chr.id != ((Chr)chr2).id);
     }
 
     public static FnValidSelection IsSameTeam(Chr chr) {

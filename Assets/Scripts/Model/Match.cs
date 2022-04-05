@@ -9,12 +9,14 @@ using Photon.Pun;
 
 public class Match : MonoBehaviour {
 
+    public const int NPLAYERS = 2;
+    public const int NMINACTIVECHRSPERTEAM = 3;
+    public const int NINITIALCHRSPERTEAM = 5;
+    public const int NCHRSPERDRAFT = 7;
+
     bool bStarted;                          //Confirms the Start() method has executed
 
-    public int nPlayers = 2;
     public Player[] arPlayers;
-
-    public Chr[][] arChrs;
 
     public GameObject pfPlayer;
     public GameObject pfChr;
@@ -41,12 +43,10 @@ public class Match : MonoBehaviour {
         return instance;
     }
 
-    void InitPlayers(int _nPlayers) {
-        nPlayers = _nPlayers;//in case this needs to be changed based on the match
-        arPlayers = new Player[nPlayers];
-        arChrs = new Chr[nPlayers][];
+    void InitPlayers() {
+        arPlayers = new Player[NPLAYERS];
 
-        for(int i = 0; i < _nPlayers; i++) {
+        for(int i = 0; i < arPlayers.Length; i++) {
             GameObject goPlayer = Instantiate(pfPlayer, this.transform);
             Player newPlayer = goPlayer.GetComponent<Player>();
             if(newPlayer == null) {
@@ -62,7 +62,7 @@ public class Match : MonoBehaviour {
 
     // Will eventually need a clean solution to adding/removing characters
     // while managing ids - some sort of Buffer of unused views will probably help
-    void InitChr(CharType.CHARTYPE chartype, Player player, int idChar, LoadoutManager.Loadout loadout) {
+    void InitChr(CharType.CHARTYPE chartype, Player player, LoadoutManager.Loadout loadout) {
 
         GameObject goChr = Instantiate(pfChr, this.transform);
         Chr newChr = goChr.GetComponent<Chr>();
@@ -73,28 +73,28 @@ public class Match : MonoBehaviour {
 
         newChr.Start();
 
-        newChr.InitChr(chartype, player, idChar, loadout);
-
-        arChrs[player.id][idChar] = newChr;
+        newChr.InitChr(chartype, player, loadout);
 
     }
 
     void InitAllChrs() {
 
-        for(int i = 0; i < nPlayers; i++) {
-            arPlayers[i].nChrs = Player.MAXCHRS;
+        for(int j = 0; j < NINITIALCHRSPERTEAM; j++) {
 
-            for(int j = 0; j < arPlayers[i].nChrs; j++) {
+            for(int i = 0; i < NPLAYERS; i++) {
+
                 InitChr(NetworkMatchSetup.GetCharacterSelection(i, j),
-                    arPlayers[i], j,
-                    NetworkMatchSetup.GetLoadout(i,j));
+                    arPlayers[i],
+                    NetworkMatchSetup.GetLoadout(i, j));
+
             }
+
         }
-        
+
     }
 
     public void AssignAllLocalInputControllers() {
-        for (int i = 0; i < Player.MAXPLAYERS; i++) {
+        for(int i = 0; i < Match.NPLAYERS; i++) {
             AssignLocalInputController(Match.Get().arPlayers[i]);
         }
     }
@@ -114,7 +114,7 @@ public class Match : MonoBehaviour {
     public void AssignLocalInputController(Player plyr) {
 
         //If the player isn't controlled locally, just set the plyr's controller to null since it's not our job to control them
-        if (NetworkMatchSetup.IsLocallyOwned(plyr.id) == false) {
+        if(NetworkMatchSetup.IsLocallyOwned(plyr.id) == false) {
             plyr.SetInputType(LocalInputType.InputType.NONE);
         } else {
             //Otherwise, this character is controlled by this local client - figure out which input type they'll need and add it
@@ -127,11 +127,11 @@ public class Match : MonoBehaviour {
         //Ensure all positions have been initialized properly
         ContPositions.Get().Start();
 
-        for(int i=0; i<Player.MAXPLAYERS; i++) {
+        for(int i = 0; i < Match.NPLAYERS; i++) {
             List<Chr> lstChrsOwned = ChrCollection.Get().GetAllChrsOwnedBy(arPlayers[i]);
 
             //Set up each team according to the saved positions from the NetworkMatchSetup
-            for (int j = 0; j < Player.MAXCHRS; j++) {
+            for(int j = 0; j < Match.NINITIALCHRSPERTEAM; j++) {
                 ContPositions.Get().MoveChrToPosition(lstChrsOwned[i], ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(i, j)));
             }
         }
@@ -140,12 +140,12 @@ public class Match : MonoBehaviour {
 
     public IEnumerator SetupMatch() {
 
-        while (NetworkMatchSetup.HasAllMatchSetupInfo() == false) {
+        while(NetworkMatchSetup.HasAllMatchSetupInfo() == false) {
             //Spin until we have all the match setup info that we need to start the match
             yield return null;
         }
 
-        while (NetworkMatchSender.Get() == null) {
+        while(NetworkMatchSender.Get() == null) {
             //Spin until the needed networking objects have been spawned and given a chance to initialize
             // - in particular, the NetworkMatchSender needs to be ready in case we need to immediately send inputs
             //    as part of initializing the match (like for loading a log file)
@@ -158,7 +158,7 @@ public class Match : MonoBehaviour {
 
         Debug.Log("Finished initializing the randomizer");
 
-        InitPlayers(nPlayers);
+        InitPlayers();
 
         Debug.Log("Finished initializing players");
 
@@ -204,7 +204,7 @@ public class Match : MonoBehaviour {
         bStarted = true;
 
         gameObject.tag = "Match"; // So that anything can find this very quickly
-        
+
         Cursor.SetCursor(txCursor, v2HotSpot, cursorMode);
 
         //Do all the match setup stuff (once it is ready)
