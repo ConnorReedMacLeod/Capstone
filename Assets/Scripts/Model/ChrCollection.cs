@@ -27,6 +27,40 @@ public class ChrCollection : Singleton<ChrCollection> {
 
 
     // Common Query methods
+
+    public List<Chr> GetAllLiveAndDeadChrs() {
+        return lstChrs;
+    }
+
+    public List<Chr> GetAllLiveChrs() {
+        return GetChrs((Chr c) => c.bDead == false);
+    }
+
+    public List<Chr> GetAllDeadChrs() {
+        return GetChrs((Chr c) => c.bDead == true);
+    }
+
+    // General Positional Queries
+
+
+
+    public List<Chr> GetAllActiveChrs() {
+        return GetChrs((Chr c) => (c.bDead == false) && (c.position.positiontype != Position.POSITIONTYPE.BENCH));
+    }
+
+    public List<Chr> GetAllFrontlineChrs() {
+        return GetChrs((Chr c) => (c.bDead == false) && (c.position.positiontype == Position.POSITIONTYPE.FRONTLINE));
+    }
+    public List<Chr> GetAllBacklineChrs() {
+        return GetChrs((Chr c) => (c.bDead == false) && (c.position.positiontype == Position.POSITIONTYPE.BACKLINE));
+    }
+
+    public List<Chr> GetAllBenchChrs() {
+        return GetChrs((Chr c) => (c.bDead == false) && (c.position.positiontype == Position.POSITIONTYPE.BENCH));
+    }
+
+
+    // Querying for specific player-owned characters
     public List<Chr> GetAllChrsOwnedBy(Player plyr) {
         return GetChrs((Chr c) =>  plyr == c.plyrOwner);
     }
