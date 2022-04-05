@@ -19,7 +19,7 @@ public class ChrCollection : Singleton<ChrCollection> {
 
         chr.id = lstChrs.Count;
         lstChrs.Add(chr);
-        
+
     }
     //Note there is not method to remove characters from this global list
     // Killed characters should just be flagged as such - some other affect may need them,
@@ -27,6 +27,10 @@ public class ChrCollection : Singleton<ChrCollection> {
 
 
     // Common Query methods
+
+    public Chr GetChr(int id) {
+        return lstChrs[id];
+    }
 
     public List<Chr> GetAllLiveAndDeadChrs() {
         return lstChrs;
@@ -62,7 +66,7 @@ public class ChrCollection : Singleton<ChrCollection> {
 
     // Querying for specific player-owned characters
     public List<Chr> GetAllChrsOwnedBy(Player plyr) {
-        return GetChrs((Chr c) =>  plyr == c.plyrOwner);
+        return GetChrs((Chr c) => plyr == c.plyrOwner);
     }
 
     public List<Chr> GetLiveChrsOwnedBy(Player plyr) {

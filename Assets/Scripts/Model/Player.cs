@@ -8,11 +8,7 @@ public class Player : MonoBehaviour {
     bool bStarted;
 
     public int id;
-    public const int MAXCHRS = 3;
-    public const int MAXPLAYERS = 2;
-    public int nChrs;
 
-    public static Player[] arAllPlayers;
     public GameObject pfManaPanel;
     public GameObject pfManaCalendar;
 
@@ -28,46 +24,32 @@ public class Player : MonoBehaviour {
         return id;
     }
 
-    public static Player GetTargetByIndex(int ind) {
-        return arAllPlayers[ind];
-    }
-
-    public static void RegisterPlayer(Player plyr) {
-        if(arAllPlayers == null) {
-            arAllPlayers = new Player[MAXPLAYERS];
-        }
-
-        Debug.Assert(plyr.id < MAXPLAYERS, "Can't ask for id " + plyr.id + " when MAXPLAYERS = " + MAXPLAYERS);
-
-        arAllPlayers[plyr.id] = plyr;
-    }
-
     public void SetID(int _id) {
         id = _id;
     }
 
     public void SetInputType(LocalInputType.InputType inputtype) {
 
-        switch (inputtype) {
+        switch(inputtype) {
 
-            case LocalInputType.InputType.NONE:
-                inputController = null;
-                break;
+        case LocalInputType.InputType.NONE:
+            inputController = null;
+            break;
 
-            case LocalInputType.InputType.HUMAN:
-                inputController = new LocalInputHuman();
-                break;
+        case LocalInputType.InputType.HUMAN:
+            inputController = new LocalInputHuman();
+            break;
 
-            case LocalInputType.InputType.AI:
-                inputController = new LocalInputAI();
-                break;
+        case LocalInputType.InputType.AI:
+            inputController = new LocalInputAI();
+            break;
 
-            case LocalInputType.InputType.SCRIPTED:
-                inputController = new LocalInputScripted();
-                break;
+        case LocalInputType.InputType.SCRIPTED:
+            inputController = new LocalInputScripted();
+            break;
         }
 
-        if (inputController != null) {
+        if(inputController != null) {
 
             inputController.SetOwner(this);
         }
@@ -92,7 +74,7 @@ public class Player : MonoBehaviour {
         manapool.SetPlayer(this);
 
         //TODO: Change this, all this, to work with networking
-        if (id == 0) {
+        if(id == 0) {
             manaPanel.transform.position = new Vector3(0f, 2.85f, -0.4f);
         } else {
             //move it offscreen for now
@@ -113,8 +95,6 @@ public class Player : MonoBehaviour {
 
         if(bStarted == false) {
             bStarted = true;
-
-            RegisterPlayer(this);
 
             SpawnManaPool();
             SpawnManaCalendar();

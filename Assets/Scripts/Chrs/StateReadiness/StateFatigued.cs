@@ -5,7 +5,7 @@ using UnityEngine;
 public class StateFatigued : StateReadiness {
 
     public StateFatigued(Chr _chrOwner) : base(_chrOwner) {
-        
+
     }
 
     public override TYPE Type() {
@@ -13,16 +13,21 @@ public class StateFatigued : StateReadiness {
     }
 
     public override void Ready() {
-        if (chrOwner.bDead) {
-            Debug.Log("Tried to Ready, but " + chrOwner.sName + " is dead");
+        if(chrOwner.bDead) {
+            Debug.LogFormat("Tried to Ready, but {0} is dead", chrOwner.sName);
             return;
         }
 
-        if (chrOwner.nFatigue == 0) {
+        if(chrOwner.position.positiontype == Position.POSITIONTYPE.BENCH) {
+            Debug.LogFormat("Tried to Ready, but {0} is on the bench", chrOwner.sName);
+            return;
+        }
+
+        if(chrOwner.nFatigue == 0) {
             //Then transition to the ready state
 
             //Leave the source as null since it's just the game rules causing the readying
-            ContSkillEngine.Get().AddExec(new ExecReadyChar(null, chrOwner){
+            ContSkillEngine.Get().AddExec(new ExecReadyChar(null, chrOwner) {
 
                 fDelay = ContTime.fDelayStandard,
                 sLabel = chrOwner.sName + " is Readying"

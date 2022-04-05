@@ -25,15 +25,11 @@ public class Chr : MonoBehaviour {
     public string sName;            //The name of the character
     public Player plyrOwner;        //The player who controls the character
 
-    public static List<Chr> lstChrInPlay; //A static list of the characters in play (not on the bench)
-    public static List<Chr> lstAllChrs;  //A static list of all characters
-
-    public int globalid;            //The character's unique identifier across all characters
-    public int id;                  //The character's unique identifier for this team
+    public int id;                  //The character's unique identifier (across all characters)
     public int nFatigue;            //Number of turns a character must wait before their next skill
     public StateReadiness curStateReadiness; //A reference to the current state of readiness
 
-    public int nMaxSkillsLeft;     //The total maximum number of skills a character can use in a turn (usually 1, cantrips cost 0)
+    public const int nMaxSkillUsesPerActivation = 1;     //The total maximum number of skills a character can use in a turn (usually 1, cantrips cost 0)
 
     public int nCurHealth;          //The character's current health
     public Property<int> pnMaxHealth;          //The character's max health
@@ -121,18 +117,6 @@ public class Chr : MonoBehaviour {
         return "Chr(" + sName + ")";
     }
 
-    public int GetTargettingId() {
-        return globalid;
-    }
-
-    public static Chr GetTargetByIndex(int ind) {
-        return lstAllChrs[ind];
-    }
-
-    public static Chr GetRandomChr() {
-        return lstChrInPlay[Random.Range(0, lstChrInPlay.Count)];
-    }
-
     public Skill GetRandomActiveSkill() {
         return arSkillSlots[Random.Range(0, nEquippedCharacterSkills)].skill;
     }
@@ -146,23 +130,6 @@ public class Chr : MonoBehaviour {
         } else {
             return GetRandomActiveSkill();
         }
-    }
-
-    public static void RegisterChr(Chr chr) {
-        if(lstAllChrs == null) {
-            lstAllChrs = new List<Chr>(Player.MAXPLAYERS * Player.MAXCHRS);
-        }
-
-        lstAllChrs.Insert(chr.globalid, chr);
-
-        //TODO:: do something more sophisticated for this once the bench is added
-        if(lstChrInPlay == null) {
-            lstChrInPlay = new List<Chr>(Player.MAXPLAYERS * Player.MAXCHRS);
-        }
-
-        lstChrInPlay.Add(chr);
-
-
     }
 
 
@@ -384,14 +351,12 @@ public class Chr : MonoBehaviour {
 
     // Used to initiallize information fields of the Chr
     // Call this after creating to set information
-    public void InitChr(CharType.CHARTYPE _chartype, Player _plyrOwner, int _id, LoadoutManager.Loadout loadout) {
+    public void InitChr(CharType.CHARTYPE _chartype, Player _plyrOwner, LoadoutManager.Loadout loadout) {
         chartype = _chartype;
         sName = CharType.GetChrName(chartype);
         plyrOwner = _plyrOwner;
-        id = _id;
-        globalid = id + plyrOwner.id * Player.MAXCHRS;
 
-        RegisterChr(this);
+        ChrCollection.Get().AddChr(this);
 
         //Initialize this character's disciplines based on their chartype
         InitDisciplines();
@@ -422,7 +387,7 @@ public class Chr : MonoBehaviour {
 
     public bool HasSkillEquipped(SkillType.SKILLTYPE skilltype) {
         //Loop through our skill slots and check if one of them has the desired skilltype
-        for(int i=0; i<nEquippedCharacterSkills; i++) {
+        for(int i = 0; i < nEquippedCharacterSkills; i++) {
             if(arSkillSlots[i].skill.GetSkillType() == skilltype) {
                 return true;
             }
@@ -439,7 +404,7 @@ public class Chr : MonoBehaviour {
     public void InitFromLoadout(LoadoutManager.Loadout loadout) {
 
         //Load in all the equipped skills
-        for (int i = 0; i < Chr.nEquippedCharacterSkills; i++) {
+        for(int i = 0; i < Chr.nEquippedCharacterSkills; i++) {
             arSkillSlots[i].SetSkill(loadout.lstChosenSkills[i]);
         }
 
@@ -453,8 +418,6 @@ public class Chr : MonoBehaviour {
     public void Start() {
         if(bStarted == false) {
             bStarted = true;
-
-            nMaxSkillsLeft = 1;
 
             InitSkillSlots();
 

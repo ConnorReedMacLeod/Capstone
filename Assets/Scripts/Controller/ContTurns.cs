@@ -7,7 +7,7 @@ public class ContTurns : Singleton<ContTurns> {
     public enum STATETURN { RECHARGE, READY, REDUCECOOLDOWNS, GIVEMANA, TURNSTART, CHOOSESKILL, TURNEND };
     public STATETURN curStateTurn;
 
-    public Chr[] arChrPriority = new Chr[Player.MAXCHRS];
+    public Chr[] arChrPriority;
     public Chr chrNextReady; //Stores the currently acting character this turn (or null if none are acting)
 
     public int nLiveCharacters;
@@ -97,36 +97,23 @@ public class ContTurns : Singleton<ContTurns> {
 
     }
 
-    //Fetch the character owned by plyr who will act next
-    public Chr GetNextToActOwnedBy(Player plyr) {
-        int i = 0;
-
-        while(i < nLiveCharacters) {
-            if(arChrPriority[i].plyrOwner == plyr) {
-                return arChrPriority[i];
-            }
-
-            i++;
-        }
-
-        Debug.LogError("Error: Player " + plyr.id + " does not have a live character");
-        return null;
-    }
-
 
     //Copy the array of characters so we have references we can sort by priority
     public void InitChrPriority() {
+
+        /*
         for(int i = 0; i < Match.Get().nPlayers; i++) {
             for(int j = 0; j < Match.Get().arPlayers[i].nChrs; j++) {
 
                 arChrPriority[i + 2 * j] = Match.Get().arChrs[i][j];
             }
-        }
+        }*/
     }
 
     //Initially assign Fatigue values to each character
     public void InitChrTurns() {
 
+        /*
         for(int i = 0; i < Match.Get().nPlayers; i++) {
             for(int j = 0; j < Match.Get().arPlayers[i].nChrs; j++) {
                 //TODO:: Consider putting this on the stack
@@ -135,6 +122,7 @@ public class ContTurns : Singleton<ContTurns> {
 
             }
         }
+        */
 
     }
 
@@ -148,8 +136,8 @@ public class ContTurns : Singleton<ContTurns> {
             Debug.LogError("There's still more to evaluate on the stacks, so we can't finish the turn yet");
             return;
         }
-        if (ContSkillEngine.bDEBUGENGINE) Debug.Log("Finished the turn phase: " + curStateTurn);
-        
+        if(ContSkillEngine.bDEBUGENGINE) Debug.Log("Finished the turn phase: " + curStateTurn);
+
         //Move to the next phase of the turn
         SetTurnState(GetNextPhase(curStateTurn));
     }
@@ -157,12 +145,12 @@ public class ContTurns : Singleton<ContTurns> {
     public STATETURN GetNextPhase(STATETURN turnphase) {
 
         //Loop around to the recharge phase if we've reached the end of a turn
-        if (turnphase == STATETURN.TURNEND) {
+        if(turnphase == STATETURN.TURNEND) {
             return STATETURN.RECHARGE;
 
-        }else if(turnphase == STATETURN.TURNSTART) {
+        } else if(turnphase == STATETURN.TURNSTART) {
             //If we'd normally move to choosing a skill for a character, but no character is set to move this turn, then we can directly skip to the end of turn
-            if (GetNextActingChr() == null) {
+            if(GetNextActingChr() == null) {
                 return STATETURN.TURNEND;
             } else {
                 return STATETURN.CHOOSESKILL;
@@ -182,12 +170,12 @@ public class ContTurns : Singleton<ContTurns> {
     }
 
     public void OnLeavingState(object oAdditionalInfo) {
-        
+
 
     }
 
     public void SetTurnState(STATETURN _curStateTurn) {
-        
+
         OnLeavingState(curStateTurn);
 
         curStateTurn = _curStateTurn;
@@ -246,8 +234,6 @@ public class ContTurns : Singleton<ContTurns> {
 
 
         nTurnNumber = 0;
-
-        nLiveCharacters = Player.MAXPLAYERS * Player.MAXCHRS;
 
         ViewPriorityList.Get().InitViewPriorityList();
     }

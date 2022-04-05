@@ -39,8 +39,8 @@ public class ContPositions : Singleton<ContPositions> {
     }
 
     public Player GetPlayerOwnerOfPosition(Position pos) {
-        if(pos.iColumn < nCOLUMNS / 2) return Player.GetTargetByIndex(0);
-        else return Player.GetTargetByIndex(1);
+        if(pos.iColumn < nCOLUMNS / 2) return Match.Get().arPlayers[0];
+        else return Match.Get().arPlayers[1];
     }
 
     public bool IsSameOwnerOfPosition(Position pos1, Position pos2) {
@@ -248,7 +248,7 @@ public class ContPositions : Singleton<ContPositions> {
     }
 
     private void SwapPositions(Position pos1, Position pos2) {
-        
+
 
         if(IsDiffOwnerOfPosition(pos1, pos2)) {
             Debug.LogError("Can't move to an opponent's position");
@@ -354,7 +354,7 @@ public class ContPositions : Singleton<ContPositions> {
                 Position pos = GetPosition(iColumn, jRow);
                 Debug.Assert(pos.jRow == jRow);
                 Debug.Assert(pos.iColumn == iColumn);
-                
+
             }
         }
 
@@ -362,7 +362,7 @@ public class ContPositions : Singleton<ContPositions> {
 
     public override void Init() {
 
-        for(int i=0; i< lstAllPositions.Count; i++) {
+        for(int i = 0; i < lstAllPositions.Count; i++) {
             lstAllPositions[i].Start();
         }
 

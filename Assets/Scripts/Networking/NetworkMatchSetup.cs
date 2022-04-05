@@ -15,7 +15,7 @@ public static class NetworkMatchSetup {
     }
 
     public static void SetRandomizationSeed(int nSeed) {
-        if (PhotonNetwork.IsMasterClient == false) return; //Only allow the master to set the randomization key
+        if(PhotonNetwork.IsMasterClient == false) return; //Only allow the master to set the randomization key
 
         ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { GetRandomizationSeedKey(), nSeed } };
 
@@ -32,7 +32,7 @@ public static class NetworkMatchSetup {
     }
 
     public static void SetPlayerOwner(int idPlayer, int idClient) {
-        if (PhotonNetwork.IsMasterClient == false) return; //Only allow the master to do modifications for controller params
+        if(PhotonNetwork.IsMasterClient == false) return; //Only allow the master to do modifications for controller params
 
         ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { GetPlayerOwnerKey(idPlayer), idClient } };
 
@@ -54,7 +54,7 @@ public static class NetworkMatchSetup {
     }
 
     public static void SetInputType(int idPlayer, LocalInputType.InputType inputtype) {
-        if (PhotonNetwork.IsMasterClient == false) return; //Only allow the master to do modifications for controller params
+        if(PhotonNetwork.IsMasterClient == false) return; //Only allow the master to do modifications for controller params
 
         ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { GetInputTypeKey(idPlayer), inputtype } };
 
@@ -126,23 +126,23 @@ public static class NetworkMatchSetup {
         return PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(GetLoadoutKey(idPlayer, iChrSlot));
     }
 
-    public static  Position.Coords GetPositionCoords(int idPlayer, int iChrSlot) {
+    public static Position.Coords GetPositionCoords(int idPlayer, int iChrSlot) {
         return Position.UnserializeCoords((int)PhotonNetwork.CurrentRoom.CustomProperties[GetPositionCoordsKey(idPlayer, iChrSlot)]);
     }
 
 
     public static string MatchSetupToString() {
-        
+
         string s = string.Format("Seed: {0}\n", GetRandomizationSeed());
 
-        for (int i = 0; i < Player.MAXPLAYERS; i++) {
+        for(int i = 0; i < Match.NPLAYERS; i++) {
 
             string sPlayer = string.Format("Player {0}:\nOwner = {1}, InputType = {2}\n", i, GetPlayerOwner(i), GetInputType(i));
 
-            
+
             s += "Character Selections:\n";
 
-            for (int j = 0; j < Player.MAXCHRS; j++) {
+            for(int j = 0; j < Match.NINITIALCHRSPERTEAM; j++) {
 
                 sPlayer += string.Format("{0} ({1}), {2}\n",
                     HasEntryCharacterSelection(i, j) ? GetCharacterSelection(i, j).ToString() : "Null",
@@ -150,7 +150,7 @@ public static class NetworkMatchSetup {
                     HasEntryLoadout(i, j) ? GetLoadout(i, j).ToString() : "Null");
             }
             s += sPlayer;
-            
+
         }
 
         return s;
@@ -160,18 +160,18 @@ public static class NetworkMatchSetup {
         //Note that we always assume that there will be a default entry for player owners and input types for all players
         // We'll check if every character has a character selections, a loadout, and a starting position
 
-        for(int i=0; i<Player.MAXPLAYERS; i++) {
+        for(int i = 0; i < Match.NPLAYERS; i++) {
 
-            for(int j=0; j<Player.MAXCHRS; j++) {
+            for(int j = 0; j < Match.NINITIALCHRSPERTEAM; j++) {
                 if(HasEntryCharacterSelection(i, j) == false) {
                     Debug.LogFormat("Still waiting on char selection {1} for player {0}", i, j);
                     return false;
                 }
-                if (HasEntryLoadout(i, j) == false) {
+                if(HasEntryLoadout(i, j) == false) {
                     Debug.LogFormat("Still waiting on loadout {1} for player {0}", i, j);
                     return false;
                 }
-                if (HasEntryPositionCoords(i, j) == false) {
+                if(HasEntryPositionCoords(i, j) == false) {
                     Debug.LogFormat("Still waiting on starting position {1} for player {0}", i, j);
                     return false;
                 }
@@ -181,5 +181,5 @@ public static class NetworkMatchSetup {
         return true;
 
     }
-    
+
 }
