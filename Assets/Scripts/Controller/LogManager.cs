@@ -149,8 +149,8 @@ public class LogManager : SingletonPersistent<LogManager> {
         LogMaster();
         LogPlayerOwners();
         LogInputTypes();
-        LogCharacterSelections(0);
-        LogCharacterSelections(1);
+        LogCharacterOrdering(0);
+        LogCharacterOrdering(1);
         LogLoadouts(0);
         LogLoadouts(1);
         LogPositionCoords(0);
@@ -178,8 +178,8 @@ public class LogManager : SingletonPersistent<LogManager> {
                 LoadLoggedInputTypes(arsSplitLine);
                 break;
 
-            case "cs":
-                LoadLoggedCharacterSelections(arsSplitLine);
+            case "co":
+                LoadLoggedCharacterOrdering(arsSplitLine);
                 break;
 
             case "lo":
@@ -259,18 +259,18 @@ public class LogManager : SingletonPersistent<LogManager> {
         NetworkMatchSetup.SetInputType(1, (LocalInputType.InputType)inputtype1);
     }
 
-    public void LogCharacterSelections(int iPlayer) {
+    public void LogCharacterOrdering(int iPlayer) {
 
         for(int iChr = 0; iChr < Match.NINITIALCHRSPERTEAM; iChr++) {
-            CharType.CHARTYPE chartype = NetworkMatchSetup.GetCharacterSelection(iPlayer, iChr);
+            CharType.CHARTYPE chartype = NetworkMatchSetup.GetCharacterOrdering(iPlayer, iChr);
 
-            WriteToMatchLogFile(string.Format("cs:{0}:{1}:{2}:{3}", iPlayer, iChr, (int)chartype, CharType.GetChrName(chartype)));
+            WriteToMatchLogFile(string.Format("co:{0}:{1}:{2}:{3}", iPlayer, iChr, (int)chartype, CharType.GetChrName(chartype)));
         }
     }
 
-    public void LoadLoggedCharacterSelections(string[] arsSplitLogs) {
+    public void LoadLoggedCharacterOrdering(string[] arsSplitLogs) {
 
-        Debug.Assert(arsSplitLogs[0] == "cs");
+        Debug.Assert(arsSplitLogs[0] == "co");
 
         int iPlayer, iChr, nchrSelection;
 
@@ -287,7 +287,7 @@ public class LogManager : SingletonPersistent<LogManager> {
             return;
         }
 
-        NetworkMatchSetup.SetCharacterSelection(iPlayer, iChr, (CharType.CHARTYPE)nchrSelection);
+        NetworkMatchSetup.SetCharacterOrdering(iPlayer, iChr, (CharType.CHARTYPE)nchrSelection);
     }
 
     public void LogLoadouts(int iPlayer) {
@@ -338,7 +338,7 @@ public class LogManager : SingletonPersistent<LogManager> {
 
     public void LogPositionCoords(int iPlayer) {
 
-        for(int iChr = 0; iChr < Match.NINITIALCHRSPERTEAM; iChr++) {
+        for(int iChr = 0; iChr < Match.NMINACTIVECHRSPERTEAM; iChr++) {
             Position.Coords poscoords = NetworkMatchSetup.GetPositionCoords(iPlayer, iChr);
 
             WriteToMatchLogFile(string.Format("pc:{0}:{1}:{2}:{3}", iPlayer, iChr, Position.SerializeCoords(poscoords), poscoords));
@@ -355,7 +355,7 @@ public class LogManager : SingletonPersistent<LogManager> {
             Debug.LogErrorFormat("Error! {0} was not a valid player id to be loaded", arsSplitLogs[1]);
             return;
         }
-        if(int.TryParse(arsSplitLogs[2], out iChr) == false || iChr < 0 || iChr >= Match.NINITIALCHRSPERTEAM) {
+        if(int.TryParse(arsSplitLogs[2], out iChr) == false || iChr < 0 || iChr >= Match.NMINACTIVECHRSPERTEAM) {
             Debug.LogErrorFormat("Error! {0} was not a valid chr id to be loaded", arsSplitLogs[2]);
             return;
         }

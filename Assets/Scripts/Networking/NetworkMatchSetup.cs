@@ -66,27 +66,62 @@ public static class NetworkMatchSetup {
     }
 
 
-    // Character Selections
-    public static string GetCharSelectionsKey(int idPlayer, int idChar) {
-        return string.Format("cs{0}-{1}", idPlayer, idChar);
+    //Drafted Characters
+    public static string GetDraftedCharactersKey(int idPlayer, int idChar) {
+        return string.Format("dc{0}-{1}", idPlayer, idChar);
     }
 
-    public static void SetCharacterSelection(int idPlayer, int iChrSlot, CharType.CHARTYPE chartype) {
+    public static void SetDraftedCharacter(int idPlayer, int iChrSlot, CharType.CHARTYPE chartype) {
 
-        Debug.LogFormat("Setting character selection for player {0}'s {1}th character to {2}",
+        Debug.LogFormat("Setting drafted character for player {0}'s {1}th character to {2}",
                 idPlayer, iChrSlot, chartype);
 
-        ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { GetCharSelectionsKey(idPlayer, iChrSlot), chartype } };
+        ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { GetDraftedCharactersKey(idPlayer, iChrSlot), chartype } };
 
         PhotonNetwork.CurrentRoom.SetCustomProperties(hashNewProperties);
     }
 
-    public static bool HasEntryCharacterSelection(int idPlayer, int iChrSlot) {
-        return PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(GetCharSelectionsKey(idPlayer, iChrSlot));
+    public static bool HasEntryDraftedCharacter(int idPlayer, int iChrSlot) {
+        return PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(GetDraftedCharactersKey(idPlayer, iChrSlot));
     }
 
-    public static CharType.CHARTYPE GetCharacterSelection(int idPlayer, int iChrSlot) {
-        return (CharType.CHARTYPE)PhotonNetwork.CurrentRoom.CustomProperties[GetCharSelectionsKey(idPlayer, iChrSlot)];
+    public static CharType.CHARTYPE GetDraftedCharacter(int idPlayer, int iChrSlot) {
+        return (CharType.CHARTYPE)PhotonNetwork.CurrentRoom.CustomProperties[GetDraftedCharactersKey(idPlayer, iChrSlot)];
+    }
+
+
+    // Character Ordering
+    // - First N characters are active and in order of activation (starting fatigue)
+    // - Next M Characters start on the bench (with their order dictating their bench position)
+    // - Any remaining drafted characters should not be included in this list since they won't be used in the match
+    public static string GetCharacterOrderingKey(int idPlayer, int idChar) {
+        return string.Format("co{0}-{1}", idPlayer, idChar);
+    }
+
+    public static void SetCharacterOrdering(int idPlayer, int iChrSlot, CharType.CHARTYPE chartype) {
+
+        Debug.LogFormat("Setting character ordering for player {0}'s {1}th character to {2}",
+                idPlayer, iChrSlot, chartype);
+
+        string sKey = GetCharacterOrderingKey(idPlayer, iChrSlot);
+
+        ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { sKey, chartype } };
+
+        bool bSuccess = PhotonNetwork.CurrentRoom.SetCustomProperties(hashNewProperties);
+        Debug.LogFormat("Were room properties set successfully?: {0}", bSuccess);
+        Debug.LogFormat("hash's entry for {0} is {1}, while roomproperties' is {2}", sKey, hashNewProperties[sKey], PhotonNetwork.CurrentRoom.CustomProperties[sKey]);
+    }
+
+    public static bool HasEntryCharacterOrdering(int idPlayer, int iChrSlot) {
+        return PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(GetCharacterOrderingKey(idPlayer, iChrSlot));
+    }
+
+    public static CharType.CHARTYPE GetCharacterOrdering(int idPlayer, int iChrSlot) {
+        Debug.LogFormat("Requesting character ordering for player {0}'s {1}th",
+                idPlayer, iChrSlot);
+        Debug.LogFormat("Requesting roomproperty for {0}", GetCharacterOrderingKey(idPlayer, iChrSlot));
+        Debug.LogFormat("Current Room is " + PhotonNetwork.CurrentRoom);
+        return (CharType.CHARTYPE)PhotonNetwork.CurrentRoom.CustomProperties[GetCharacterOrderingKey(idPlayer, iChrSlot)];
     }
 
 
@@ -145,7 +180,7 @@ public static class NetworkMatchSetup {
             for(int j = 0; j < Match.NINITIALCHRSPERTEAM; j++) {
 
                 sPlayer += string.Format("{0} ({1}), {2}\n",
-                    HasEntryCharacterSelection(i, j) ? GetCharacterSelection(i, j).ToString() : "Null",
+                    HasEntryCharacterOrdering(i, j) ? GetCharacterOrdering(i, j).ToString() : "Null",
                     HasEntryPositionCoords(i, j) ? GetPositionCoords(i, j).ToString() : "Null",
                     HasEntryLoadout(i, j) ? GetLoadout(i, j).ToString() : "Null");
             }
@@ -158,12 +193,12 @@ public static class NetworkMatchSetup {
 
     public static bool HasAllMatchSetupInfo() {
         //Note that we always assume that there will be a default entry for player owners and input types for all players
-        // We'll check if every character has a character selections, a loadout, and a starting position
+        // We'll check if every character has a character ordering, a loadout, and a starting position
 
         for(int i = 0; i < Match.NPLAYERS; i++) {
 
             for(int j = 0; j < Match.NINITIALCHRSPERTEAM; j++) {
-                if(HasEntryCharacterSelection(i, j) == false) {
+                if(HasEntryCharacterOrdering(i, j) == false) {
                     Debug.LogFormat("Still waiting on char selection {1} for player {0}", i, j);
                     return false;
                 }
@@ -171,7 +206,7 @@ public static class NetworkMatchSetup {
                     Debug.LogFormat("Still waiting on loadout {1} for player {0}", i, j);
                     return false;
                 }
-                if(HasEntryPositionCoords(i, j) == false) {
+                if(j < Match.NMINACTIVECHRSPERTEAM && HasEntryPositionCoords(i, j) == false) {
                     Debug.LogFormat("Still waiting on starting position {1} for player {0}", i, j);
                     return false;
                 }

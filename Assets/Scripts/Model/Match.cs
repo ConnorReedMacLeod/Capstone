@@ -83,7 +83,7 @@ public class Match : MonoBehaviour {
 
             for(int i = 0; i < NPLAYERS; i++) {
 
-                InitChr(NetworkMatchSetup.GetCharacterSelection(i, j),
+                InitChr(NetworkMatchSetup.GetCharacterOrdering(i, j),
                     arPlayers[i],
                     NetworkMatchSetup.GetLoadout(i, j));
 
@@ -130,9 +130,20 @@ public class Match : MonoBehaviour {
         for(int i = 0; i < Match.NPLAYERS; i++) {
             List<Chr> lstChrsOwned = ChrCollection.Get().GetAllChrsOwnedBy(arPlayers[i]);
 
-            //Set up each team according to the saved positions from the NetworkMatchSetup
+            //Set up each team's initial positions (either by the saved selected positions for those characters, or by default bench positions)
             for(int j = 0; j < Match.NINITIALCHRSPERTEAM; j++) {
-                ContPositions.Get().MoveChrToPosition(lstChrsOwned[i], ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(i, j)));
+
+                Position posStart;
+
+                if(j < Match.NMINACTIVECHRSPERTEAM) {
+                    //If this is one of our initially active characters, then lookup their starting coords, and fetch the corresponding position from ContPositions
+                    posStart = ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(i, j));
+                } else {
+                    //Otherwise, they must be starting on the bench so we can define their position to be consecutive positions on the bench
+                    int kBenchPosition = j - Match.NMINACTIVECHRSPERTEAM;
+                    posStart = ContPositions.Get().GetPositionsOfTypeForPlayer(Position.POSITIONTYPE.BENCH, arPlayers[i])[kBenchPosition];
+                }
+                ContPositions.Get().MoveChrToPosition(lstChrsOwned[i], posStart);
             }
         }
 
