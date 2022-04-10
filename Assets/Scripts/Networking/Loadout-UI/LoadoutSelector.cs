@@ -19,7 +19,7 @@ public class LoadoutSelector : MonoBehaviour {
     public List<SkillType.SkillTypeInfo> lstSelectableSkills;
 
     public CharType.CHARTYPE ChrTypeSelectingFor() {
-        return NetworkMatchSetup.GetCharacterSelection(iPlayerSelectingFor, iChrSelectingFor);
+        return NetworkMatchSetup.GetCharacterOrdering(iPlayerSelectingFor, iChrSelectingFor);
     }
 
     public System.Action fnOnSelectionComplete;

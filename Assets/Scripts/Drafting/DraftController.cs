@@ -138,7 +138,7 @@ public class DraftController : Singleton<DraftController> {
         Debug.Log("Drafting " + chrDrafted + " for " + iPlayer);
 
         //Ensure the draft selection has been registered in the roomoptions (maybe someone else beat us to it, but that's fine)
-        NetworkMatchSetup.SetCharacterSelection(iPlayer, arNumChrsDrafted[iPlayer], chrDrafted);
+        NetworkMatchSetup.SetDraftedCharacter(iPlayer, arNumChrsDrafted[iPlayer], chrDrafted);
 
         //Then ensure that everything locally is tracked and displayed properly
         arDraftedChrs[iPlayer][arNumChrsDrafted[iPlayer]] = chrDrafted;
