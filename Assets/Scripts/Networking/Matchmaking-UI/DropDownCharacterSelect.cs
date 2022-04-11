@@ -15,12 +15,12 @@ public class DropDownCharacterSelect : MonoBehaviour {
     public Dropdown dropdown;
     public int idChr;
 
-    public void UpdateDropdownOptions() {
+    public void UpdateDropdownOptions(CharType.CHARTYPE chartypeInitialSelection) {
 
         LibView.SetDropdownOptions(dropdown, CharType.GetAllChrNames());
 
         //Ensure the default-selected option for this dropdown is mirroring the default in the matchsetup
-        dropdown.SetValueWithoutNotify((int)NetworkMatchSetup.GetCharacterOrdering(plyrselectorParent.idPlayer, idChr));
+        dropdown.SetValueWithoutNotify((int)chartypeInitialSelection);
 
         dropdown.RefreshShownValue();
     }

@@ -28,22 +28,24 @@ public class PlayerSelector : MonoBehaviour {
         lstLoadoutSelected = new List<LoadoutManager.Loadout>();
 
         //Initially save the selected loadouts as just being the default loadout for the default character in that position
-        for(int i = 0; i < arDropdownCharSelect.Length; i++) {
+        for (int i = 0; i < arDropdownCharSelect.Length; i++) {
+
+            CharType.CHARTYPE chartypeDefault = CHRSELECTIONSDEFAULT[idPlayer, i];
 
             //Initially set the selected char to the default for that player+slot combo
-            NetworkMatchSetup.SetCharacterOrdering(idPlayer, i, CHRSELECTIONSDEFAULT[idPlayer, i]);
+            NetworkMatchSetup.SetCharacterOrdering(idPlayer, i, chartypeDefault);
 
             //Set the loadout to be the default loadout for the selected player
-            NetworkMatchSetup.SetLoadout(idPlayer, i, LoadoutManager.LoadSavedLoadoutForChr(CHRSELECTIONSDEFAULT[idPlayer, i], 0));
+            NetworkMatchSetup.SetLoadout(idPlayer, i, LoadoutManager.LoadSavedLoadoutForChr(chartypeDefault, 0));
 
             //Set the default position of that character
-            if(i < Match.NMINACTIVECHRSPERTEAM) {
+            if (i < Match.NMINACTIVECHRSPERTEAM) {
                 //We only need to define starting positions for characters who will start in-play and not on the bench
                 NetworkMatchSetup.SetPositionCoords(idPlayer, i, POSITIONSDEFAULT[idPlayer, i]);
             }
 
             //Ensure our character selection dropdown is initialized
-            arDropdownCharSelect[i].UpdateDropdownOptions();
+            arDropdownCharSelect[i].UpdateDropdownOptions(chartypeDefault);
         }
     }
 

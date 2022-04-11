@@ -100,16 +100,9 @@ public static class NetworkMatchSetup {
 
     public static void SetCharacterOrdering(int idPlayer, int iChrSlot, CharType.CHARTYPE chartype) {
 
-        Debug.LogFormat("Setting character ordering for player {0}'s {1}th character to {2}",
-                idPlayer, iChrSlot, chartype);
+        ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { GetCharacterOrderingKey(idPlayer, iChrSlot), chartype } };
 
-        string sKey = GetCharacterOrderingKey(idPlayer, iChrSlot);
-
-        ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { sKey, chartype } };
-
-        bool bSuccess = PhotonNetwork.CurrentRoom.SetCustomProperties(hashNewProperties);
-        Debug.LogFormat("Were room properties set successfully?: {0}", bSuccess);
-        Debug.LogFormat("hash's entry for {0} is {1}, while roomproperties' is {2}", sKey, hashNewProperties[sKey], PhotonNetwork.CurrentRoom.CustomProperties[sKey]);
+        PhotonNetwork.CurrentRoom.SetCustomProperties(hashNewProperties);
     }
 
     public static bool HasEntryCharacterOrdering(int idPlayer, int iChrSlot) {
@@ -117,10 +110,6 @@ public static class NetworkMatchSetup {
     }
 
     public static CharType.CHARTYPE GetCharacterOrdering(int idPlayer, int iChrSlot) {
-        Debug.LogFormat("Requesting character ordering for player {0}'s {1}th",
-                idPlayer, iChrSlot);
-        Debug.LogFormat("Requesting roomproperty for {0}", GetCharacterOrderingKey(idPlayer, iChrSlot));
-        Debug.LogFormat("Current Room is " + PhotonNetwork.CurrentRoom);
         return (CharType.CHARTYPE)PhotonNetwork.CurrentRoom.CustomProperties[GetCharacterOrderingKey(idPlayer, iChrSlot)];
     }
 
