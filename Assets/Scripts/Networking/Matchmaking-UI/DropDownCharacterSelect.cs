@@ -27,16 +27,18 @@ public class DropDownCharacterSelect : MonoBehaviour {
 
     public void OnCharacterOrderingChange() {
 
-        Debug.Assert(0 <= idChr && idChr < 3);
+        Debug.Assert(0 <= idChr && idChr < Match.NINITIALCHRSPERTEAM);
 
-        NetworkMatchSetup.SetCharacterOrdering(plyrselectorParent.idPlayer, idChr, (CharType.CHARTYPE)dropdown.value);
+        CharType.CHARTYPE chartypeSelected = (CharType.CHARTYPE)dropdown.value;
+
+        NetworkMatchSetup.SetCharacterOrdering(plyrselectorParent.idPlayer, idChr, chartypeSelected);
+
+        LoadoutManager.Loadout loadoutStarting = LoadoutManager.LoadSavedLoadoutForChr(chartypeSelected, 0);
 
         //Now that our character for this ordering slot has been provided, we need to load in a starting loadout for that character
-        NetworkMatchSetup.SetLoadout(plyrselectorParent.idPlayer, idChr,
-            LoadoutManager.LoadSavedLoadoutForChr(NetworkMatchSetup.GetCharacterOrdering(plyrselectorParent.idPlayer, idChr), 0));
+        NetworkMatchSetup.SetLoadout(plyrselectorParent.idPlayer, idChr, loadoutStarting);
 
-        Debug.LogFormat("Changed chr to {0} with a starting loadout of {1}", NetworkMatchSetup.GetCharacterOrdering(plyrselectorParent.idPlayer, idChr),
-            NetworkMatchSetup.GetLoadout(plyrselectorParent.idPlayer, idChr));
+        Debug.LogFormat("Changed chr to {0} with a starting loadout of {1}", chartypeSelected, loadoutStarting);
 
     }
 

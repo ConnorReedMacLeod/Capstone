@@ -103,6 +103,8 @@ public static class NetworkMatchSetup {
         ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { GetCharacterOrderingKey(idPlayer, iChrSlot), chartype } };
 
         PhotonNetwork.CurrentRoom.SetCustomProperties(hashNewProperties);
+
+        Debug.LogFormat("Setting player {0}'s {1}th character to {2}", idPlayer, iChrSlot, chartype);
     }
 
     public static bool HasEntryCharacterOrdering(int idPlayer, int iChrSlot) {
@@ -170,7 +172,7 @@ public static class NetworkMatchSetup {
 
                 sPlayer += string.Format("{0} ({1}), {2}\n",
                     HasEntryCharacterOrdering(i, j) ? GetCharacterOrdering(i, j).ToString() : "Null",
-                    HasEntryPositionCoords(i, j) ? GetPositionCoords(i, j).ToString() : "Null",
+                    j < Match.NMINACTIVECHRSPERTEAM ? (HasEntryPositionCoords(i, j) ? GetPositionCoords(i, j).ToString() : "Null") : "BENCH",
                     HasEntryLoadout(i, j) ? GetLoadout(i, j).ToString() : "Null");
             }
             s += sPlayer;
