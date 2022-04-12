@@ -116,10 +116,6 @@ public class LogManager : SingletonPersistent<LogManager> {
 
         sLogfilePath = string.Format("{0}log-{1}.txt", sLOGSDIR, GetDateTime());
 
-        Debug.LogFormat("Attempting to create {0}", sLogfilePath);
-
-        Debug.LogFormat("Does the file exist?: {0}", File.Exists(sLogfilePath));
-
         //Attempt to initialize the writer
         swFileWriter = new StreamWriter(sLogfilePath, false);
 

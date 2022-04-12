@@ -16,8 +16,8 @@ public class PlayerSelector : MonoBehaviour {
     public List<LoadoutManager.Loadout> lstLoadoutSelected;
 
     public static CharType.CHARTYPE[,] CHRSELECTIONSDEFAULT =
-        {{CharType.CHARTYPE.FISCHER, CharType.CHARTYPE.KATARINA, CharType.CHARTYPE.PITBEAST },
-        {CharType.CHARTYPE.RAYNE, CharType.CHARTYPE.SAIKO, CharType.CHARTYPE.SOPHIDIA }};
+        {{CharType.CHARTYPE.FISCHER, CharType.CHARTYPE.KATARINA, CharType.CHARTYPE.PITBEAST, CharType.CHARTYPE.BLITZEN, CharType.CHARTYPE.COMET },
+        {CharType.CHARTYPE.RAYNE, CharType.CHARTYPE.SAIKO, CharType.CHARTYPE.SOPHIDIA, CharType.CHARTYPE.CUPID, CharType.CHARTYPE.DANCER }};
 
     //This is the standard triangle setup for both sides (one frontline in the center, plus two backliners on the flanks)
     public static Position.Coords[,] POSITIONSDEFAULT =
@@ -28,7 +28,7 @@ public class PlayerSelector : MonoBehaviour {
         lstLoadoutSelected = new List<LoadoutManager.Loadout>();
 
         //Initially save the selected loadouts as just being the default loadout for the default character in that position
-        for (int i = 0; i < arDropdownCharSelect.Length; i++) {
+        for(int i = 0; i < arDropdownCharSelect.Length; i++) {
 
             CharType.CHARTYPE chartypeDefault = CHRSELECTIONSDEFAULT[idPlayer, i];
 
@@ -39,7 +39,7 @@ public class PlayerSelector : MonoBehaviour {
             NetworkMatchSetup.SetLoadout(idPlayer, i, LoadoutManager.LoadSavedLoadoutForChr(chartypeDefault, 0));
 
             //Set the default position of that character
-            if (i < Match.NMINACTIVECHRSPERTEAM) {
+            if(i < Match.NMINACTIVECHRSPERTEAM) {
                 //We only need to define starting positions for characters who will start in-play and not on the bench
                 NetworkMatchSetup.SetPositionCoords(idPlayer, i, POSITIONSDEFAULT[idPlayer, i]);
             }
@@ -58,7 +58,10 @@ public class PlayerSelector : MonoBehaviour {
         //Spawn the loadout selector
         loadoutselectActive = GameObject.Instantiate(pfLoadoutSelector, this.transform.parent).GetComponent<LoadoutSelector>();
 
-        loadoutselectActive.BeginSelection(idPlayer, iChrToEdit, CleanupEditLoadout, NetworkMatchSetup.GetLoadout(idPlayer, iChrToEdit));
+        //Get the currently selected character type that's we want to edit for.  
+        CharType.CHARTYPE chartypeToEditLoadoutFor = (CharType.CHARTYPE)arDropdownCharSelect[iChrToEdit].dropdown.value;
+
+        loadoutselectActive.BeginSelection(idPlayer, iChrToEdit, chartypeToEditLoadoutFor, CleanupEditLoadout, NetworkMatchSetup.GetLoadout(idPlayer, iChrToEdit));
     }
 
     public void CleanupEditLoadout() {

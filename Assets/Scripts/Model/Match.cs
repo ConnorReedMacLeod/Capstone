@@ -79,6 +79,10 @@ public class Match : MonoBehaviour {
 
     void InitAllChrs() {
 
+        //Since we're initializing characters, we want to ensure the character collection container has been set up
+        //  before we starting making characters
+        ChrCollection.Get().Init();
+
         for(int j = 0; j < NINITIALCHRSPERTEAM; j++) {
 
             for(int i = 0; i < NPLAYERS; i++) {
@@ -143,7 +147,7 @@ public class Match : MonoBehaviour {
                     int kBenchPosition = j - Match.NMINACTIVECHRSPERTEAM;
                     posStart = ContPositions.Get().GetPositionsOfTypeForPlayer(Position.POSITIONTYPE.BENCH, arPlayers[i])[kBenchPosition];
                 }
-                ContPositions.Get().MoveChrToPosition(lstChrsOwned[i], posStart);
+                ContPositions.Get().MoveChrToPosition(lstChrsOwned[j], posStart);
             }
         }
 
