@@ -62,7 +62,7 @@ public class Match : MonoBehaviour {
 
     // Will eventually need a clean solution to adding/removing characters
     // while managing ids - some sort of Buffer of unused views will probably help
-    void InitChr(CharType.CHARTYPE chartype, Player player, LoadoutManager.Loadout loadout) {
+    Chr InitChr(CharType.CHARTYPE chartype, Player player, LoadoutManager.Loadout loadout) {
 
         GameObject goChr = Instantiate(pfChr, this.transform);
         Chr newChr = goChr.GetComponent<Chr>();
@@ -75,25 +75,38 @@ public class Match : MonoBehaviour {
 
         newChr.InitChr(chartype, player, loadout);
 
+        return newChr; 
     }
 
     void InitAllChrs() {
 
         //Since we're initializing characters, we want to ensure the character collection container has been set up
         //  before we starting making characters
-        ChrCollection.Get().Init();
+        ChrCollection.Get().Start();
+        //Also have to ensure the priority system is set up since we'll be initializing fatigues here
+        ContTurns.Get().Start();
 
         for(int j = 0; j < NINITIALCHRSPERTEAM; j++) {
 
             for(int i = 0; i < NPLAYERS; i++) {
 
-                InitChr(NetworkMatchSetup.GetCharacterOrdering(i, j),
+                Chr chrNew = InitChr(NetworkMatchSetup.GetCharacterOrdering(i, j),
                     arPlayers[i],
                     NetworkMatchSetup.GetLoadout(i, j));
 
+
+                //Initially set this character's fatigue according to their position in the CharacterOrdering setup
+                int nStartingFatigue = 0;
+
+                if(j < NMINACTIVECHRSPERTEAM) {
+                    nStartingFatigue = j * NPLAYERS + i + 1;
+                }//For characters who aren't active, their starting fatigue will just be 0
+                
+                chrNew.ChangeFatigue(nStartingFatigue, true);
             }
 
         }
+        
 
     }
 

@@ -21,7 +21,7 @@ public class ChrCollection : Singleton<ChrCollection> {
         lstChrs.Add(chr);
 
     }
-    //Note there is not method to remove characters from this global list
+    //Note there is no method to remove characters from this global list
     // Killed characters should just be flagged as such - some other affect may need them,
     // and we want to maintain ids
 
