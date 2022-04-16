@@ -147,7 +147,7 @@ public class Match : MonoBehaviour {
                     int kBenchPosition = j - Match.NMINACTIVECHRSPERTEAM;
                     posStart = ContPositions.Get().GetPositionsOfTypeForPlayer(Position.POSITIONTYPE.BENCH, arPlayers[i])[kBenchPosition];
                 }
-                ContPositions.Get().MoveChrToPosition(lstChrsOwned[j], posStart);
+                ContPositions.Get().InitChrToPosition(lstChrsOwned[j], posStart);
             }
         }
 
