@@ -21,7 +21,7 @@ public class ViewPosition : ViewInteractive {
         base.onMouseClick(args);
     }
 
-    public void UpdateChrOnPositionToHere(Object target, params object[] args) {
+    public void UpdateChrOnPositionToHere() {
 
         if(mod.chrOnPosition == null) return;
 
@@ -81,9 +81,6 @@ public class ViewPosition : ViewInteractive {
         base.Start();
 
         mod.Start();
-
-        mod.subChrEnteredPosition.Subscribe(UpdateChrOnPositionToHere);
-
 
         mod.subBecomesTargettable.Subscribe(cbOnBecomesTargettable);
         mod.subEndsTargettable.Subscribe(cbOnEndsTargettable);
