@@ -212,6 +212,39 @@ public class ContPositions : Singleton<ContPositions> {
 
     //Interface for modifying Positions
 
+    //Initially sets the position of the character (so the character didn't previously have any position, 
+    //   and no movement-triggers will triggered.  Also, can set to any in-play or bench position.
+    public void InitChrToPosition(Chr chr, Position pos) {
+
+        if(pos == null) {
+            Debug.LogError("Cannot initialize a character to a null position");
+            return;
+        }
+
+        if(chr.position != null) {
+            Debug.LogError("Cannot initialize a character's position when they already have a non-null position");
+            return;
+        }
+
+        pos.SetChrOnPosition(chr);
+
+        chr.SetPosition(pos);
+
+        pos.view.UpdateChrOnPositionToHere();
+    }
+
+    //When a character dies or is otherwise completely removed from the playing space, then this will 
+    //  completely remove them (without triggering any movement triggers)
+    public void DeleteChrFromPosition(Chr chr) {
+
+        chr.position.SetChrOnPosition(null);
+
+        chr.SetPosition(null);
+
+        Debug.Log("TODO - delete the game object (maybe?) associated with the character");
+    }
+
+    //Moves a character from an in-play position to an unoccupied in-play position
     public void MoveChrToPosition(Chr chr, Position pos) {
 
         Position posStarting = chr.position;
@@ -221,7 +254,12 @@ public class ContPositions : Singleton<ContPositions> {
             return;
         }
 
-        if(pos.positiontype == Position.POSITIONTYPE.BENCH) {
+        if (chr.position.positiontype == Position.POSITIONTYPE.BENCH) {
+            Debug.LogError("Can't move a character who is starting on the bench");
+            return;
+        }
+
+        if (pos.positiontype == Position.POSITIONTYPE.BENCH) {
             Debug.LogError("Can't standardly move to a bench position");
             return;
         }
@@ -247,8 +285,10 @@ public class ContPositions : Singleton<ContPositions> {
 
     }
 
+    // Swaps the characters in two positions (optionally can be empty positions).  To be used by other
+    //   public switch calls that are specialized in which types of positions are being swapped, and that will
+    //   trigger appropriate movement triggers
     private void SwapPositions(Position pos1, Position pos2) {
-
 
         if(IsDiffOwnerOfPosition(pos1, pos2)) {
             Debug.LogError("Can't move to an opponent's position");
@@ -268,7 +308,15 @@ public class ContPositions : Singleton<ContPositions> {
         if(chr2 != null) chr2.SetPosition(pos1);
     }
 
+    
+    //Switches an in-play character to an in-play position (and if another character is already in that position,
+    //  then it will swap to the consumed character's starting position)
     public void SwitchChrToPosition(Chr chr, Position pos) {
+
+        if(chr.position.positiontype == Position.POSITIONTYPE.BENCH) {
+            Debug.LogError("Can't switch a character who is starting on the bench");
+            return;
+        }
 
         if(IsDiffOwnerOfPosition(chr.position, pos)) {
             Debug.LogError("Can't move to an opponent's position");
@@ -307,7 +355,14 @@ public class ContPositions : Singleton<ContPositions> {
 
     }
 
+    //Switches an in-play character to the bench (and if a character is in that bench position, then 
+    // that character will switch to the consumed character's starting position)
     public void SwitchChrToBench(Chr chr, Position pos) {
+
+        if(chr.position.positiontype == Position.POSITIONTYPE.BENCH) {
+            Debug.LogError("Can't switch a character who is starting on the bench");
+            return;
+        }
 
         if(IsDiffOwnerOfPosition(chr.position, pos)) {
             Debug.LogError("Can't move to an opponent's position");
@@ -316,11 +371,6 @@ public class ContPositions : Singleton<ContPositions> {
 
         if(pos.positiontype != Position.POSITIONTYPE.BENCH) {
             Debug.LogError("Can only select a bench-position to move to when bench-swapping");
-            return;
-        }
-
-        if(chr.position.positiontype == Position.POSITIONTYPE.BENCH) {
-            Debug.LogError("Can't swap to the bench when " + chr.sName + " is already on the bench");
             return;
         }
 
