@@ -159,7 +159,7 @@ public class Chr : MonoBehaviour {
 
 
     // Apply this amount of fatigue to the character
-    public void ChangeFatigue(int _nChange, bool bBeginningTurn = false) {
+    public void ChangeFatigue(int _nChange, bool bGlobalFatigueChange = false) {
         if(_nChange + nFatigue < 0) {
             nFatigue = 0;
         } else {
@@ -169,9 +169,9 @@ public class Chr : MonoBehaviour {
         subFatigueChange.NotifyObs(this);
         subAllFatigueChange.NotifyObs(this);
 
-        //TODO:: Probably delete this bBeginningTurn flag once I get a nice solution for priority handling
-        if(!bBeginningTurn) {
-            //Then this is a stun or an skills used
+        //TODO:: Probably delete this bGlobalFatigueChange flag once I get a nice solution for priority handling
+        if (bGlobalFatigueChange == false) {
+            //Then this is an individual fatigue change for a single character that may change their priority
             ContTurns.Get().FixSortedPriority(this);
             //So make sure we're in the right place in the priority list
         }
