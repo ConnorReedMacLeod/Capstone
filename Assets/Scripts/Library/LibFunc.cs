@@ -27,4 +27,30 @@ public static class LibFunc {
 
         return arToReturn;
     }
+    
+    public static System.Func<TIN, bool> AND<TIN>(System.Func<TIN, bool> fn1, System.Func<TIN, bool> fn2) {
+        return (TIN in1) => (fn1(in1) && fn2(in1));
+    }
+
+    public static System.Func<TIN1, TIN2, bool> AND<TIN1, TIN2>(System.Func<TIN1, TIN2, bool> fn1, System.Func<TIN1, TIN2, bool> fn2) {
+        return (TIN1 in1, TIN2 in2) => (fn1(in1, in2) && fn2(in1, in2));
+    }
+
+    public static System.Func<TIN1, TIN2, TIN3, bool> AND<TIN1, TIN2, TIN3>(System.Func<TIN1, TIN2, TIN3, bool> fn1, System.Func<TIN1, TIN2, TIN3, bool> fn2) {
+        return (TIN1 in1, TIN2 in2, TIN3 in3) => (fn1(in1, in2, in3) && fn2(in1, in2, in3));
+    }
+
+
+
+    public static System.Func<TIN, bool> OR<TIN>(System.Func<TIN, bool> fn1, System.Func<TIN, bool> fn2) {
+        return (TIN in1) => (fn1(in1) || fn2(in1));
+    }
+
+    public static System.Func<TIN1, TIN2, bool> OR<TIN1, TIN2>(System.Func<TIN1, TIN2, bool> fn1, System.Func<TIN1, TIN2, bool> fn2) {
+        return (TIN1 in1, TIN2 in2) => (fn1(in1, in2) || fn2(in1, in2));
+    }
+
+    public static System.Func<TIN1, TIN2, TIN3, bool> OR<TIN1, TIN2, TIN3>(System.Func<TIN1, TIN2, TIN3, bool> fn1, System.Func<TIN1, TIN2, TIN3, bool> fn2) {
+        return (TIN1 in1, TIN2 in2, TIN3 in3) => (fn1(in1, in2, in3) || fn2(in1, in2, in3));
+    }
 }

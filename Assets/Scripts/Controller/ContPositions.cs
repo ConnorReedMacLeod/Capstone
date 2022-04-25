@@ -378,6 +378,14 @@ public class ContPositions : Singleton<ContPositions> {
 
         SwapPositions(pos, posStarting);
 
+        //Ensure the character swapping out will be set to a general fatigued state
+        chr.SetStateReadiness(new StateFatigued(chr));
+
+        //Set the switching-in character to be in the switchingin readiness state
+        if(posStarting.chrOnPosition != null) {
+            posStarting.chrOnPosition.SetStateReadiness(new StateSwitchingIn(posStarting.chrOnPosition, Match.NSWITCHINGINDURATION));
+        }
+
         //TODO - figure out what bench triggers to put in here
         //  Will probably have to put in similar sub notifications as in the SwitchChr function
     }

@@ -12,7 +12,7 @@ public class StateFatigued : StateReadiness {
         return TYPE.FATIGUED;
     }
 
-    public override void Ready() {
+    public override void ReadyIfNoFatigue() {
         if(chrOwner.bDead) {
             Debug.LogFormat("Tried to Ready, but {0} is dead", chrOwner.sName);
             return;
