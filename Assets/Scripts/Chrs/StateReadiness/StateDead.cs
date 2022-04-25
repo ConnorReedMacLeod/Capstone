@@ -12,7 +12,7 @@ public class StateDead : StateReadiness {
         return TYPE.DEAD;
     }
 
-    public override void Ready() {
+    public override void ReadyIfNoFatigue() {
         //Can't ready when dead
     }
 

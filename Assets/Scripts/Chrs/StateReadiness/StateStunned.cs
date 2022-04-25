@@ -19,7 +19,7 @@ public class StateStunned : StateReadiness {
 
 
     //Same implementation as Fatigued
-    public override void Ready() {
+    public override void ReadyIfNoFatigue() {
         if (chrOwner.bDead) {
             Debug.Log("Tried to ready, but " + chrOwner.sName + " is dead");
             return;
@@ -41,6 +41,8 @@ public class StateStunned : StateReadiness {
 
 
     public override void OnEnter() {
+
+        Debug.LogError("Probably remove this since it prevented multiple stuns");
 
         //First, increase the fatigue value of the character
         ContSkillEngine.Get().AddExec(new ExecChangeFatigue (null, chrOwner, nStunAmount, false));

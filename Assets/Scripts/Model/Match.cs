@@ -14,6 +14,8 @@ public class Match : MonoBehaviour {
     public const int NINITIALCHRSPERTEAM = 5;
     public const int NCHRSPERDRAFT = 7;
 
+    public const int NSWITCHINGINDURATION = 3;
+
     bool bStarted;                          //Confirms the Start() method has executed
 
     public Player[] arPlayers;

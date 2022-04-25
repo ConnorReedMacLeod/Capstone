@@ -11,9 +11,15 @@ public abstract class Target {
 
     public delegate bool FnValidSelection(object objSelected, InputSkillSelection selectionsSoFar);
 
-    public FnValidSelection IsValidSelection;
+    protected FnValidSelection IsValidSelection;
 
     public InputSkillSelection selectionsSoFar;
+
+    public virtual bool CanSelect(object objSelected, InputSkillSelection selectionsSoFar) {
+        //By default, just call our stored IsValidSelection function.  Extenders of this may need to ask the object being selected
+        //  if it needs to override the ability to be selected
+        return IsValidSelection(objSelected, selectionsSoFar);
+    }
 
     //Return a list of all entities of the corresponding type for this target
     public abstract IEnumerable<object> GetSelectableUniverse();
@@ -97,7 +103,7 @@ public abstract class Target {
 
     public void AttemptSelection(object objSelected) {
         Debug.Log("Attempted to select " + objSelected);
-        if(IsValidSelection(objSelected, ContLocalUIInteraction.Get().selectionsInProgress) == false) {
+        if(CanSelect(objSelected, ContLocalUIInteraction.Get().selectionsInProgress) == false) {
             Debug.Log("Invalid selection attempted!");
             return;
         }

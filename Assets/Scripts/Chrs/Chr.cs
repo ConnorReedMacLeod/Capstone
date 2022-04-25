@@ -13,13 +13,6 @@ public class Chr : MonoBehaviour {
         IDLE                        //Default character state
     };
 
-    public enum SIZE {
-        SMALL,
-        MEDIUM,
-        LARGE,
-        GIANT
-    };
-
     public CharType.CHARTYPE chartype; //The type of character this is acting as (e.g., Fischer)
 
     public string sName;            //The name of the character
@@ -51,6 +44,11 @@ public class Chr : MonoBehaviour {
     public const int nUsableSkills = nEquippedCharacterSkills + 1; //Number of all skills (including generics)
     public SkillRest skillRest;  //The standard reference to the rest skill the character can use
     public const int nRestSlotId = nEquippedCharacterSkills; //Id of the skillslot containing the rest skill
+
+    //If we need extra modifiers for if we can or cannot be selected for a given skill's target, then 
+    //  we can decorate them in this property.  By default we don't do any overrides and just listen to what the TarChr says
+    public delegate bool CanSelectedBy(TarChr tar, InputSkillSelection selectionsSoFar, bool bCanSelectSoFar);
+    public Property<CanSelectedBy> pOverrideCanBeSelectedBy;
 
     public Position position;       //A reference to the position the character is on
 
@@ -429,6 +427,9 @@ public class Chr : MonoBehaviour {
 
             pnPower = new Property<int>(0);
             pnDefense = new Property<int>(0);
+
+            //By default, we don't override any targetting - just listen to the base response of if the target can select us
+            pOverrideCanBeSelectedBy = new Property<CanSelectedBy>((tar, selectionsSoFar, bCanSelectSoFar) => bCanSelectSoFar);
 
             SetStateReadiness(new StateFatigued(this));
 

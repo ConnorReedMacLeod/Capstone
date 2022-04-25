@@ -34,7 +34,7 @@ public class ExecTurnReady : Executable {
         //Loop through all characters and transition any 0 fatigue characters to be ready (or whatever else their readiness state asks them to do)
 
         foreach (Chr chrAlive in ChrCollection.Get().GetAllLiveChrs()) {
-            chrAlive.curStateReadiness.Ready();
+            chrAlive.curStateReadiness.ReadyIfNoFatigue();
         }
 
     }

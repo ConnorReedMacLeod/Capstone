@@ -31,6 +31,11 @@ public class TarChr : Target {
 
     }
 
+    public override bool CanSelect(object objSelected, InputSkillSelection selectionsSoFar) {
+        //Ask the character if they need to override the basic selection validation that we'd normally do in our TarChr checks
+        return ((Chr)objSelected).pOverrideCanBeSelectedBy.Get()(this, selectionsSoFar, base.CanSelect(objSelected, selectionsSoFar));
+    }
+
     public override IEnumerable<object> GetSelectableUniverse() {
         return ChrCollection.Get().GetAllLiveChrs();
     }
