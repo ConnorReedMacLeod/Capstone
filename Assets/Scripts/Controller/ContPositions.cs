@@ -244,12 +244,87 @@ public class ContPositions : Singleton<ContPositions> {
         Debug.Log("TODO - delete the game object (maybe?) associated with the character");
     }
 
+    // Triggers all relevent triggers for a movement of characters between the two consumed positions
+    public void TriggerMovementTriggers(Position posStarting, Position posEnding) {
+
+        Chr chrMoved = posEnding.chrOnPosition;
+        Chr chrSwappedWith = posStarting.chrOnPosition;
+
+
+        //Send all notifications out for affected characters and positions
+        // Sending in reverse order of intended execution so that events placed on the stack
+        //  will execute as expected
+
+        //Note that the character will always send out generic subChrLeftAnyPosition/subEnteredAnyPosition updates,
+        //  but will need to consult its position to determine if it should send out Bench/non-Bench updates.  
+
+        //Let the positions broadcast that a new character has entered them 
+        posEnding.subChrEnteredPosition.NotifyObs(chrMoved);
+        posStarting.subChrEnteredPosition.NotifyObs(chrSwappedWith);
+
+
+        //Send position-entering updates for the character we swapped with (if there is one)
+        if (chrSwappedWith != null) {
+            if(posStarting.positiontype != Position.POSITIONTYPE.BENCH) {
+                chrSwappedWith.subEnteredInPlayPosition.NotifyObs(posStarting);
+            } else if (posEnding.positiontype != Position.POSITIONTYPE.BENCH && posStarting.positiontype == Position.POSITIONTYPE.BENCH) {
+                //If this character moved from a non-bench position to a bench position, then we'll throw the appropriate update
+                chrSwappedWith.subEnteredBench.NotifyObs(posStarting);
+            }
+
+            chrSwappedWith.subEnteredAnyPosition.NotifyObs(posStarting);
+        }
+        //Send position-entering updates for the primary character we moved
+        if (posEnding.positiontype != Position.POSITIONTYPE.BENCH) {
+            chrMoved.subEnteredInPlayPosition.NotifyObs(posEnding);
+        } else if (posStarting.positiontype != Position.POSITIONTYPE.BENCH && posEnding.positiontype == Position.POSITIONTYPE.BENCH) {
+            //If this character moved from a non-bench position to a bench position, then we'll throw the appropriate update
+            chrMoved.subEnteredBench.NotifyObs(posEnding);
+        }
+        chrMoved.subEnteredAnyPosition.NotifyObs(posEnding);
+
+        //Let the positions broadcast that the character that was on them has left
+        posEnding.subChrLeftPosition.NotifyObs(chrSwappedWith);
+        posStarting.subChrLeftPosition.NotifyObs(chrMoved);
+
+        
+        //Send position-leaving updates for the character we swapped with (if there is one)
+        if (chrSwappedWith != null) {
+            if (posEnding.positiontype != Position.POSITIONTYPE.BENCH) {
+                chrSwappedWith.subLeftInPlayPosition.NotifyObs(posEnding);
+            } else if (posEnding.positiontype == Position.POSITIONTYPE.BENCH && posStarting.positiontype != Position.POSITIONTYPE.BENCH) {
+                //If this character moved from a bench position to a non-bench position, then we'll throw the appropriate update
+                chrSwappedWith.subLeftBench.NotifyObs(posEnding);
+            }
+
+            chrSwappedWith.subLeftAnyPosition.NotifyObs(posEnding);
+        }
+        //Send position-leaving updates for the primary character we moved
+        if (posStarting.positiontype != Position.POSITIONTYPE.BENCH) {
+            chrMoved.subLeftInPlayPosition.NotifyObs(posStarting);
+        } else if (posStarting.positiontype == Position.POSITIONTYPE.BENCH && posEnding.positiontype != Position.POSITIONTYPE.BENCH) {
+            //If this character moved from a bench position to a non-bench position, then we'll throw the appropriate update
+            chrMoved.subLeftBench.NotifyObs(posStarting);
+        }
+        chrMoved.subLeftAnyPosition.NotifyObs(posStarting);
+
+    }
+
     //Moves a character from an in-play position to an unoccupied in-play position
     public void MoveChrToPosition(Chr chr, Position pos) {
 
         Position posStarting = chr.position;
 
-        if(posStarting != null && IsDiffOwnerOfPosition(posStarting, pos)) {
+        if(posStarting == null) {
+            Debug.LogError("Can't move a character that isn't already in a position - use InitChrToPosition instead");
+            return;
+        }
+
+        if (posStarting == pos) {
+            Debug.LogErrorFormat("{0} is already in position {1} - no need to do any switching", chr, pos);
+        }
+
+        if (IsDiffOwnerOfPosition(posStarting, pos)) {
             Debug.LogError("Can't move to an opponent's position");
             return;
         }
@@ -276,18 +351,12 @@ public class ContPositions : Singleton<ContPositions> {
         pos.SetChrOnPosition(chr);
         chr.SetPosition(pos);
 
-        //Send updates out for all affected character/positions (in reverse order so they take effect in chronological order)
-        pos.subChrEnteredPosition.NotifyObs(chr);
-        chr.subEnteredPosition.NotifyObs(pos);
-
-        if(posStarting != null) posStarting.subChrLeftPosition.NotifyObs(chr);
-        chr.subLeftPosition.NotifyObs(posStarting);
+        //Send updates out for all affected character/positions
+        TriggerMovementTriggers(pos, posStarting);
 
     }
 
-    // Swaps the characters in two positions (optionally can be empty positions).  To be used by other
-    //   public switch calls that are specialized in which types of positions are being swapped, and that will
-    //   trigger appropriate movement triggers
+    // Swaps the characters in two positions (optionally can be empty positions).
     private void SwapPositions(Position pos1, Position pos2) {
 
         if(IsDiffOwnerOfPosition(pos1, pos2)) {
@@ -309,13 +378,12 @@ public class ContPositions : Singleton<ContPositions> {
     }
 
     
-    //Switches an in-play character to an in-play position (and if another character is already in that position,
-    //  then it will swap to the consumed character's starting position)
+    //Switches a character to another different allied position (and if there's already a character in that position, 
+    //  then that character will move to the consumed character's starting position)
     public void SwitchChrToPosition(Chr chr, Position pos) {
 
-        if(chr.position.positiontype == Position.POSITIONTYPE.BENCH) {
-            Debug.LogError("Can't switch a character who is starting on the bench");
-            return;
+        if(chr.position == pos) {
+            Debug.LogErrorFormat("{0} is already in position {1} - no need to do any switching", chr, pos);
         }
 
         if(IsDiffOwnerOfPosition(chr.position, pos)) {
@@ -338,56 +406,9 @@ public class ContPositions : Singleton<ContPositions> {
 
         SwapPositions(pos, posStarting);
 
-        //Send all notifications out for affected characters and positions
-        // Sending in reverse order of intended execution so that events placed on the stack
-        //  will execute as expected
-        pos.subChrEnteredPosition.NotifyObs(chr);
-        posStarting.subChrEnteredPosition.NotifyObs(chrSwappingWith);
+        //Send updates out for all affected character/positions
+        TriggerMovementTriggers(pos, posStarting);
 
-        if(chrSwappingWith != null) chrSwappingWith.subEnteredPosition.NotifyObs(posStarting);
-        chr.subEnteredPosition.NotifyObs(pos);
-
-        pos.subChrLeftPosition.NotifyObs(chrSwappingWith);
-        posStarting.subChrLeftPosition.NotifyObs(chr);
-
-        if(chrSwappingWith != null) chrSwappingWith.subLeftPosition.NotifyObs(pos);
-        chr.subLeftPosition.NotifyObs(posStarting);
-
-    }
-
-    //Switches an in-play character to the bench (and if a character is in that bench position, then 
-    // that character will switch to the consumed character's starting position)
-    public void SwitchChrToBench(Chr chr, Position pos) {
-
-        if(chr.position.positiontype == Position.POSITIONTYPE.BENCH) {
-            Debug.LogError("Can't switch a character who is starting on the bench");
-            return;
-        }
-
-        if(IsDiffOwnerOfPosition(chr.position, pos)) {
-            Debug.LogError("Can't move to an opponent's position");
-            return;
-        }
-
-        if(pos.positiontype != Position.POSITIONTYPE.BENCH) {
-            Debug.LogError("Can only select a bench-position to move to when bench-swapping");
-            return;
-        }
-
-        Position posStarting = chr.position;
-
-        SwapPositions(pos, posStarting);
-
-        //Ensure the character swapping out will be set to a general fatigued state
-        chr.SetStateReadiness(new StateFatigued(chr));
-
-        //Set the switching-in character to be in the switchingin readiness state
-        if(posStarting.chrOnPosition != null) {
-            posStarting.chrOnPosition.SetStateReadiness(new StateSwitchingIn(posStarting.chrOnPosition, Match.NSWITCHINGINDURATION));
-        }
-
-        //TODO - figure out what bench triggers to put in here
-        //  Will probably have to put in similar sub notifications as in the SwitchChr function
     }
 
 

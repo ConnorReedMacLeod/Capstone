@@ -47,8 +47,8 @@ public class Chr : MonoBehaviour {
 
     //If we need extra modifiers for if we can or cannot be selected for a given skill's target, then 
     //  we can decorate them in this property.  By default we don't do any overrides and just listen to what the TarChr says
-    public delegate bool CanSelectedBy(TarChr tar, InputSkillSelection selectionsSoFar, bool bCanSelectSoFar);
-    public Property<CanSelectedBy> pOverrideCanBeSelectedBy;
+    public delegate bool CanBeSelectedBy(TarChr tar, InputSkillSelection selectionsSoFar, bool bCanDefaultSelect);
+    public Property<CanBeSelectedBy> pOverrideCanBeSelectedBy;
 
     public Position position;       //A reference to the position the character is on
 
@@ -84,8 +84,14 @@ public class Chr : MonoBehaviour {
     public static Subject subAllFatigueChange = new Subject(Subject.SubType.ALL);
     public Subject subChannelTimeChange = new Subject();
 
-    public Subject subLeftPosition = new Subject();
-    public Subject subEnteredPosition = new Subject();
+    public Subject subLeftAnyPosition = new Subject();
+    public Subject subEnteredAnyPosition = new Subject();
+
+    public Subject subLeftInPlayPosition = new Subject();
+    public Subject subEnteredInPlayPosition = new Subject();
+
+    public Subject subLeftBench = new Subject();
+    public Subject subEnteredBench = new Subject();
 
     public Subject subStatusChange = new Subject();
     public static Subject subAllStatusChange = new Subject(Subject.SubType.ALL);
@@ -429,7 +435,7 @@ public class Chr : MonoBehaviour {
             pnDefense = new Property<int>(0);
 
             //By default, we don't override any targetting - just listen to the base response of if the target can select us
-            pOverrideCanBeSelectedBy = new Property<CanSelectedBy>((tar, selectionsSoFar, bCanSelectSoFar) => bCanSelectSoFar);
+            pOverrideCanBeSelectedBy = new Property<CanBeSelectedBy>((tar, selectionsSoFar, bCanSelectSoFar) => bCanSelectSoFar);
 
             SetStateReadiness(new StateFatigued(this));
 
