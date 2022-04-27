@@ -4,9 +4,9 @@ using UnityEngine;
 
 //Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
 
-public class ExecSwitchChar : ExecChr {
+public class ExecSwitchCharWithChar : ExecChr {
 
-    public Position.FuncGetPosition funcGetTargetPosition;
+    public Chr chrSwappingWith;
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -35,33 +35,26 @@ public class ExecSwitchChar : ExecChr {
 
     public override void ExecuteEffect() {
 
-        //Figure out what the target position should be at the time of execution (relative to the character that's moving)
-        Position posDestination = funcGetTargetPosition(chrTarget);
+        //Figure out what the target position should be at the time of execution (fetch the position of the character we want to swap with)
+        Position posDestination = chrSwappingWith.position;
 
         //Call the Switch method in the position controller
         ContPositions.Get().SwitchChrToPosition(chrTarget, posDestination);
 
-        sLabel = chrSource.sName + " is moving to " + posDestination.ToString();
+        sLabel = chrSource.sName + " is switching to " + posDestination.ToString();
 
         fDelay = ContTime.fDelayMinorSkill;
     }
 
 
-    //Can construct an ExecSwitchChar with just a static Position if it'll always be the same (i.e., not dependent on being relative to where the character is moving)
-    public ExecSwitchChar(Chr _chrSource, Chr _chrTarget, Position posDestination) : this(_chrSource, _chrTarget, (chrTarget) => posDestination) {
+    public ExecSwitchCharWithChar(Chr _chrSource, Chr _chrTarget, Chr _chrSwappingWith) : base(_chrSource, _chrTarget) {
+
+        chrSwappingWith = _chrSwappingWith;
 
     }
 
-    //Can construct an 
-
-    public ExecSwitchChar(Chr _chrSource, Chr _chrTarget, Position.FuncGetPosition _funcGetPosition) : base(_chrSource, _chrTarget) {
-
-        funcGetTargetPosition = _funcGetPosition;
-
-    }
-
-    public ExecSwitchChar(ExecMoveChar other) : base(other) {
-        funcGetTargetPosition = other.funcGetTargetPosition;
+    public ExecSwitchCharWithChar(ExecSwitchCharWithChar other) : base(other) {
+        chrSwappingWith = other.chrSwappingWith;
     }
 
 }

@@ -13,6 +13,7 @@ public static class SkillType {
     public enum SKILLTYPE {
         //TESTING
         LEECH, TRANSFUSE, KNOCKBACK, ADVANCE, BUNKER, FIREBALL, EXPLOSION, HEAL, STRATEGIZE, MANABLOSSOM,
+        RETREAT,
 
         //Fischer
         BUCKLERPARRY, HARPOONGUN, HUNTERSQUARRY, IMPALE,
@@ -62,6 +63,7 @@ public static class SkillType {
         { HEAL, new SkillTypeInfo (HEAL, "Heal", new List<Discipline.DISCIPLINE> { TESTING } ) },
         { STRATEGIZE, new SkillTypeInfo (STRATEGIZE, "Strategize", new List<Discipline.DISCIPLINE> { TESTING } ) },
         { MANABLOSSOM, new SkillTypeInfo (MANABLOSSOM, "Mana Blossom", new List<Discipline.DISCIPLINE> { TESTING } ) },
+        { RETREAT, new SkillTypeInfo (RETREAT, "Retreat", new List<Discipline.DISCIPLINE> { TESTING } ) },
 
         //FISHER
         { BUCKLERPARRY, new SkillTypeInfo ( BUCKLERPARRY, "Buckler Parry", new List<Discipline.DISCIPLINE> { FISCHER } ) },
@@ -162,6 +164,9 @@ public static class SkillType {
             break;
         case SKILLTYPE.MANABLOSSOM:
             skillNew = new SkillManaBlossom(chr);
+            break;
+        case SKILLTYPE.RETREAT:
+            skillNew = new SkillRetreat(chr);
             break;
 
 

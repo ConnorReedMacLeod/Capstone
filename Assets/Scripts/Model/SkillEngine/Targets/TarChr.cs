@@ -59,6 +59,9 @@ public class TarChr : Target {
     public static FnValidSelection IsBackliner() {
         return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype == Position.POSITIONTYPE.BACKLINE;
     }
+    public static FnValidSelection IsBenched() {
+        return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype == Position.POSITIONTYPE.BENCH;
+    }
 
 
     public override void InitTargetDescription() {

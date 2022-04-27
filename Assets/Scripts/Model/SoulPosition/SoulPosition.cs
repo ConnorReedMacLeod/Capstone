@@ -78,7 +78,7 @@ public class SoulPosition : Soul {
 
             for(int i = 0; i < lstSoulAppliedToChrOnPosition.Count; i++) {
                 Debug.Log("Adding OnChrLeftPosition trigger to remove the " + i + "th SoulChr effect for " + this.sName);
-                lstSoulAppliedToChrOnPosition[i].observer.Observe(chrOnPosition.subLeftPosition, lstSoulAppliedToChrOnPosition[i].cbRemoveIfPositionChanged);
+                lstSoulAppliedToChrOnPosition[i].observer.Observe(chrOnPosition.subLeftAnyPosition, lstSoulAppliedToChrOnPosition[i].cbRemoveIfPositionChanged);
 
                 Debug.Log("Pushing Executable for adding " + lstSoulAppliedToChrOnPosition[i].sName + " to " + chrOnPosition.sName + " on " + posTarget.ToString());
                 ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(chrSource, chrOnPosition, lstSoulAppliedToChrOnPosition[i]));
