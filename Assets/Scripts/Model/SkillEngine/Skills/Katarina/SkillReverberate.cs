@@ -26,7 +26,7 @@ public class SkillReverberate : Skill {
 
     public override void InitTargets() {
         TarMana.AddTarget(this, manaCost);
-        TarChr.AddTarget(this, TarChr.TRUE);
+        TarChr.AddTarget(this, TarChr.IsInPlay());
     }
 
     class Clause1 : ClauseSkillSelection {

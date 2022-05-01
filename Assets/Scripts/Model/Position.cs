@@ -95,6 +95,7 @@ public class Position : MonoBehaviour {
 
         chrOnPosition = _chrOnPosition;
 
+        view.UpdateChrOnPositionToHere();
     }
 
     public void InitPositionType() {

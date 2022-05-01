@@ -229,8 +229,6 @@ public class ContPositions : Singleton<ContPositions> {
         pos.SetChrOnPosition(chr);
 
         chr.SetPosition(pos);
-
-        pos.view.UpdateChrOnPositionToHere();
     }
 
     //When a character dies or is otherwise completely removed from the playing space, then this will 
@@ -329,16 +327,6 @@ public class ContPositions : Singleton<ContPositions> {
             return;
         }
 
-        if (chr.position.positiontype == Position.POSITIONTYPE.BENCH) {
-            Debug.LogError("Can't move a character who is starting on the bench");
-            return;
-        }
-
-        if (pos.positiontype == Position.POSITIONTYPE.BENCH) {
-            Debug.LogError("Can't standardly move to a bench position");
-            return;
-        }
-
         if(pos.chrOnPosition != null) {
             Debug.LogError("Can't move " + chr.sName + " to " + pos.ToString() + " since it's occupied by " + pos.chrOnPosition.sName);
             return;
@@ -384,22 +372,12 @@ public class ContPositions : Singleton<ContPositions> {
 
         if(chr.position == pos) {
             Debug.LogErrorFormat("{0} is already in position {1} - no need to do any switching", chr, pos);
+            return;
         }
 
         if(IsDiffOwnerOfPosition(chr.position, pos)) {
             Debug.LogError("Can't move to an opponent's position");
             return;
-        }
-
-        if(pos.positiontype == Position.POSITIONTYPE.BENCH) {
-            Debug.LogError("Can't standardly swap to a bench position");
-            return;
-        }
-
-        Chr chrSwappingWith = pos.chrOnPosition;
-
-        if(chrSwappingWith == chr) {
-            Debug.Log("Swapping " + chr.sName + " with themselves");
         }
 
         Position posStarting = chr.position;
@@ -409,6 +387,7 @@ public class ContPositions : Singleton<ContPositions> {
         //Send updates out for all affected character/positions
         TriggerMovementTriggers(pos, posStarting);
 
+        Debug.LogFormat("{0} is now in position {1}", chr, chr.position);
     }
 
 
@@ -447,7 +426,5 @@ public class ContPositions : Singleton<ContPositions> {
 
         ConfirmValidPositionSetup();
     }
-
-
-
+    
 }

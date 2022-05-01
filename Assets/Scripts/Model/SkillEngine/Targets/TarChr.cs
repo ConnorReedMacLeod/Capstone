@@ -33,7 +33,12 @@ public class TarChr : Target {
 
     public override bool CanSelect(object objSelected, InputSkillSelection selectionsSoFar) {
         //Ask the character if they need to override the basic selection validation that we'd normally do in our TarChr checks
-        return ((Chr)objSelected).pOverrideCanBeSelectedBy.Get()(this, selectionsSoFar, base.CanSelect(objSelected, selectionsSoFar));
+        bool bCanSelect = ((Chr)objSelected).pOverrideCanBeSelectedBy.Get()(this, selectionsSoFar, base.CanSelect(objSelected, selectionsSoFar));
+
+        Debug.LogFormat("Can we select {0}?: {1} (pOverrideCanBeSelectedBy has length {2})", (Chr)objSelected, bCanSelect, ((Chr)objSelected).pOverrideCanBeSelectedBy.lstModifiers.Count);
+        
+
+        return bCanSelect;
     }
 
     public override IEnumerable<object> GetSelectableUniverse() {
@@ -58,6 +63,9 @@ public class TarChr : Target {
     }
     public static FnValidSelection IsBackliner() {
         return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype == Position.POSITIONTYPE.BACKLINE;
+    }
+    public static FnValidSelection IsInPlay() {
+        return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype != Position.POSITIONTYPE.BENCH;
     }
     public static FnValidSelection IsBenched() {
         return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype == Position.POSITIONTYPE.BENCH;

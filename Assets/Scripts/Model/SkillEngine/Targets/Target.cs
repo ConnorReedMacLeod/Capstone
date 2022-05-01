@@ -27,7 +27,7 @@ public abstract class Target {
     //Return a list of all valid entities that could be selected our of the universe of the corresponding type
     public List<object> GetValidSelectable(InputSkillSelection selectionsSoFar) {
 
-        return GetSelectableUniverse().Where(obj => IsValidSelection(obj, selectionsSoFar)).ToList();
+        return GetSelectableUniverse().Where(obj => CanSelect(obj, selectionsSoFar)).ToList();
 
     }
 
