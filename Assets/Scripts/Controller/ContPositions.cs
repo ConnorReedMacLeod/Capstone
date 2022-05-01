@@ -272,7 +272,10 @@ public class ContPositions : Singleton<ContPositions> {
 
                 chrSwappedWith.subEnteredInPlayPosition.NotifyObs(posStarting);
             } else if (posEnding.positiontype != Position.POSITIONTYPE.BENCH && posStarting.positiontype == Position.POSITIONTYPE.BENCH) {
-                //If this character moved from a non-bench position to a bench position, then we'll throw the appropriate update
+                //If this character moved from a non-bench position to a bench position, then we'll set them to a fatigued state (cancelling any channels
+                // and ending their turn if they were active) and broadcast the appropriate updates
+
+                chrSwappedWith.SetStateReadiness(new StateFatigued(chrSwappedWith));
                 chrSwappedWith.subEnteredBench.NotifyObs(posStarting);
             }
 
@@ -288,7 +291,10 @@ public class ContPositions : Singleton<ContPositions> {
 
             chrMoved.subEnteredInPlayPosition.NotifyObs(posEnding);
         } else if (posStarting.positiontype != Position.POSITIONTYPE.BENCH && posEnding.positiontype == Position.POSITIONTYPE.BENCH) {
-            //If this character moved from a non-bench position to a bench position, then we'll throw the appropriate update
+            //If this character moved from a non-bench position to a bench position, then we'll set them to a fatigued state (cancelling any channels
+            // and ending their turn if they were active) and broadcast the appropriate updates
+
+            chrMoved.SetStateReadiness(new StateFatigued(chrMoved));
             chrMoved.subEnteredBench.NotifyObs(posEnding);
         }
         chrMoved.subEnteredAnyPosition.NotifyObs(posEnding);
