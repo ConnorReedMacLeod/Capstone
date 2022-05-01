@@ -264,6 +264,12 @@ public class ContPositions : Singleton<ContPositions> {
         //Send position-entering updates for the character we swapped with (if there is one)
         if (chrSwappedWith != null) {
             if(posStarting.positiontype != Position.POSITIONTYPE.BENCH) {
+
+                //If this character ended in play, but started on the bench, then we need to switch their state
+                if(posEnding.positiontype == Position.POSITIONTYPE.BENCH) {
+                    chrSwappedWith.SetStateReadiness(new StateSwitchingIn(chrSwappedWith, Match.NSWITCHINGINDURATION));
+                }
+
                 chrSwappedWith.subEnteredInPlayPosition.NotifyObs(posStarting);
             } else if (posEnding.positiontype != Position.POSITIONTYPE.BENCH && posStarting.positiontype == Position.POSITIONTYPE.BENCH) {
                 //If this character moved from a non-bench position to a bench position, then we'll throw the appropriate update
@@ -274,6 +280,12 @@ public class ContPositions : Singleton<ContPositions> {
         }
         //Send position-entering updates for the primary character we moved
         if (posEnding.positiontype != Position.POSITIONTYPE.BENCH) {
+
+            //If this character ended in play, but started on the bench, then we need to switch their state
+            if (posStarting.positiontype == Position.POSITIONTYPE.BENCH) {
+                chrMoved.SetStateReadiness(new StateSwitchingIn(chrMoved, Match.NSWITCHINGINDURATION));
+            }
+
             chrMoved.subEnteredInPlayPosition.NotifyObs(posEnding);
         } else if (posStarting.positiontype != Position.POSITIONTYPE.BENCH && posEnding.positiontype == Position.POSITIONTYPE.BENCH) {
             //If this character moved from a non-bench position to a bench position, then we'll throw the appropriate update
