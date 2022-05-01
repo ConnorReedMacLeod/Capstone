@@ -26,7 +26,7 @@ public class SkillThunderStorm : Skill {
 
     public override void InitTargets() {
         TarMana.AddTarget(this, manaCost);
-        TarChr.AddTarget(this, Target.TRUE);
+        TarChr.AddTarget(this, TarChr.IsInPlay());
     }
 
     class Clause1 : ClauseSkillSelection {

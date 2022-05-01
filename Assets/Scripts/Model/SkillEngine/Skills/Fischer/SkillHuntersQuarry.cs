@@ -26,7 +26,7 @@ public class SkillHuntersQuarry : Skill {
 
     public override void InitTargets() {
         TarMana.AddTarget(this, manaCost);
-        TarChr.AddTarget(this, TarChr.IsOtherChr(chrOwner));
+        TarChr.AddTarget(this, Target.AND(TarChr.IsInPlay(), TarChr.IsOtherChr(chrOwner)));
     }
 
     class Clause1 : ClauseSkillSelection {

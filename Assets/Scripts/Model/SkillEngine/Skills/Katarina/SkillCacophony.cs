@@ -26,7 +26,7 @@ public class SkillCacophony : Skill {
 
     public override void InitTargets() {
         TarMana.AddTarget(this, manaCost);
-        TarChr.AddTarget(this, TarChr.IsFrontliner());
+        TarChr.AddTarget(this, TarChr.IsInPlay());
     }
 
     //Deal critical damage and stun if the targetted character is a frontliner
