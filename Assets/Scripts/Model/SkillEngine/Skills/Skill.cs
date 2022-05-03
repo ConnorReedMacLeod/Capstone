@@ -177,12 +177,30 @@ public abstract class Skill {
     public bool CanCompleteAsChannel() {
 
         //First, check if we're at least alive
-        if(chrOwner.bDead == true) {
+        if (chrOwner.bDead == true) {
             return false;
         }
 
-        Debug.Log("WARNING - remember to consider what needs to be checked to see if a channel should be cancelled");
+        if (ExtraCanCompleteAsChannelChecks() == false) {
+            Debug.Log("Cannot complete channel due to skill-specific checks");
+            return false;
+        }
 
+        Debug.Log("WARNING - remember to consider what global checks need to be done to see if a channel should be cancelled");
+
+        return true;
+    }
+
+    //Overload as needed for channels to listen for triggers that may force the channel to automatically end early due to invalid targets
+    public virtual List<Subject> GetPotentialCancelTriggers() {
+        //By default, we'll return null - if any channels uses this base-method it'll likely crash alerting you to the fact that you
+        //  really should have some triggers that your channel should cancel under.  If there's really nothing, just override this to produce an empty list
+        return null;
+    }
+
+    //Overload as needed for skill-specific checks for if that channel is in a state where it could be cancelled
+    public virtual bool ExtraCanCompleteAsChannelChecks() {
+        //By default, no extra checks are performed
         return true;
     }
 

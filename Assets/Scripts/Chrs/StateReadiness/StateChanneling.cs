@@ -8,7 +8,13 @@ public class StateChanneling : StateReadiness {
 
     public SoulChannel soulBehaviour; //Handles all customized behaviour of what the channel effect should do
 
-    public StateChanneling(Chr _chrOwner, int _nChannelTime, SoulChannel _soulBehaviour) : base(_chrOwner) {
+    //TODO - Consider if this should be implemented as a list of pairs of Subject, Predicate pairs that only
+    //       check the relevent cancellation condition when the subject is updated.  Could save some computation time, 
+    //       but might not be as coder-friendly to set up skills for
+    public List<Subject> lstPotentialChannelCancelTriggers; //Can define a list of subjects we'll subscribe ourselves to that 
+                                                            // are points at which we need to confirm if we should cancel channeling or not
+
+    public StateChanneling(Chr _chrOwner, int _nChannelTime, SoulChannel _soulBehaviour, List<Subject> _lstPotentialChannelCancelTriggers) : base(_chrOwner) {
 
         nChannelTime = _nChannelTime;
 
@@ -16,7 +22,7 @@ public class StateChanneling : StateReadiness {
         Debug.Assert(_soulBehaviour.bVisible == false);
         soulBehaviour = _soulBehaviour;
 
-        //Set the channel time to be equal to whatever the soul's duration is
+        lstPotentialChannelCancelTriggers = _lstPotentialChannelCancelTriggers;
 
         //Debug.Log("soulBehaviour's skill is initially " + soulBehaviour.skillSource.sName + " with duration " + nChannelTime);
     }
@@ -102,9 +108,17 @@ public class StateChanneling : StateReadiness {
 
         chrOwner.soulContainer.ApplySoul(soulBehaviour);
 
-        //TODO:: Add a subscription list of potentially cancelling triggers to listen for a channel
-        // which we can then subcribe cbInterrupifInvalid to
-        Chr.subAllDeath.Subscribe(cbInterruptifInvalid);
+        if (lstPotentialChannelCancelTriggers == null) {
+
+        }
+
+        //Add in any baseline potential cancellation triggers
+        lstPotentialChannelCancelTriggers.Add(Chr.subAllDeath);
+
+        //Subscribe to each potential cancellation trigger 
+        for(int i=0; i<lstPotentialChannelCancelTriggers.Count; i++) {
+            lstPotentialChannelCancelTriggers[i].Subscribe(cbInterruptifInvalid);
+        }
 
         //Once we're in this state, let people know that the channel time has taken effect
         chrOwner.subChannelTimeChange.NotifyObs();
@@ -119,8 +133,10 @@ public class StateChanneling : StateReadiness {
         //    effects of the soulBehaviour have been resolved
         ContSkillEngine.PushSingleClause(new ClauseClearStoredSelection(soulBehaviour.skillSource));
 
-        //TODO:: unsubscribe from all of these cancelling triggers
-        Chr.subAllDeath.UnSubscribe(cbInterruptifInvalid);
+        //Unsubscribe from all of the potential cancellation triggers
+        for (int i = lstPotentialChannelCancelTriggers.Count-1; i >= 0; i--) {
+            lstPotentialChannelCancelTriggers[i].Subscribe(cbInterruptifInvalid);
+        }
 
         chrOwner.soulContainer.RemoveSoul(soulBehaviour);
 
