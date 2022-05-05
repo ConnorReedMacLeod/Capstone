@@ -52,7 +52,7 @@ public class SoulChannel : SoulChr {
         //   baseline - we don't need to do anything
     }
 
-    public void OnInterrupted() {
+    public virtual void OnInterrupted() {
 
         Debug.Log("SoulChannel " + sName + " interrupted");
 

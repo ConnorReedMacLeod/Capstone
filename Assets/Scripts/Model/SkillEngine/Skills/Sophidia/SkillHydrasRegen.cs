@@ -34,20 +34,6 @@ public class SkillHydrasRegen : Skill {
         TarMana.AddTarget(this, manaCost);
     }
 
-
-    //Channels should usually have situations where they should automatically cancel if their targetting becomes invalid
-    public override List<Subject> GetPotentialCancelTriggers() {
-        return new List<Subject>(
-            
-            );
-    }
-
-    public override bool ExtraCanCompleteAsChannelChecks() {
-        
-
-    }
-
-
     class Clause1 : ClauseSkillSelection {
 
         public Clause1(Skill _skill) : base(_skill) {

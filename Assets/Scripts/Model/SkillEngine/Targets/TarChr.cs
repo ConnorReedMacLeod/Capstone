@@ -35,9 +35,6 @@ public class TarChr : Target {
         //Ask the character if they need to override the basic selection validation that we'd normally do in our TarChr checks
         bool bCanSelect = ((Chr)objSelected).pOverrideCanBeSelectedBy.Get()(this, selectionsSoFar, base.CanSelect(objSelected, selectionsSoFar));
 
-        Debug.LogFormat("Can we select {0}?: {1} (pOverrideCanBeSelectedBy has length {2})", (Chr)objSelected, bCanSelect, ((Chr)objSelected).pOverrideCanBeSelectedBy.lstModifiers.Count);
-        
-
         return bCanSelect;
     }
 
@@ -101,5 +98,31 @@ public class TarChr : Target {
 
         //Remove the character-click triggers
         ViewChr.subAllClick.UnSubscribe(cbClickSelectable);
+    }
+
+    //Performs some default checks for if a given selected character for a channel's target is still
+    //  legal enough to let the channel complete.  
+    public virtual bool DefaultCanCompleteAsChannelTarget(Chr chr) {
+        //By default, just check if the target character is still alive and in-play
+        if(chr.bDead == true) {
+            Debug.Log("Can't complete a channel selecting a dead character");
+            return false;
+        }else if(chr.position.positiontype != Position.POSITIONTYPE.BENCH) {
+            Debug.Log("Can't complete a channel selecting a benched character");
+            return false;
+        }
+        //TODO - consider if this should also confirm that the team the character is on hasn't changed
+
+        return false;
+    }
+
+    //Gets the list of triggers associated with the default checks we should do to ensure 
+    //  that the targetted character is still legal enough of a target to complete a channel
+    // Note - should be paired with the checks in DefaultCanCompleteAsChannelTarget
+    public virtual void AddDefaultTriggersToCompleteAsChannel(List<Subject> lstTriggersSoFar, Chr chr) {
+
+        lstTriggersSoFar.Add(chr.subDeath);
+        lstTriggersSoFar.Add(chr.subEnteredBench);
+
     }
 }

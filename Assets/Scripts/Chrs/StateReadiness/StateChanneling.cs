@@ -61,7 +61,7 @@ public class StateChanneling : StateReadiness {
     //To be called as part of a stun, before transitioning to the stunned state
     public override void InterruptChannel() {
 
-        Debug.Log("Interupting a skill with " + soulBehaviour.skillSource.sName);
+        Debug.Log("Interupting the channel, " + soulBehaviour.skillSource.sName);
 
         //Activate any Interruption trigger on the soul effect
         soulBehaviour.OnInterrupted();
@@ -135,7 +135,7 @@ public class StateChanneling : StateReadiness {
 
         //Unsubscribe from all of the potential cancellation triggers
         for (int i = lstPotentialChannelCancelTriggers.Count-1; i >= 0; i--) {
-            lstPotentialChannelCancelTriggers[i].Subscribe(cbInterruptifInvalid);
+            lstPotentialChannelCancelTriggers[i].UnSubscribe(cbInterruptifInvalid);
         }
 
         chrOwner.soulContainer.RemoveSoul(soulBehaviour);
