@@ -201,8 +201,10 @@ public class LogManager : SingletonPersistent<LogManager> {
         }
 
         //Now that all the match setup parameters have been loaded from the log file, have the NetworkConnectionManager move us into the Match scene
-        NetworkConnectionManager.Get().TransferToMatchScene();
-
+        //We'll do a small delay just to ensure that the submitted setup information has been properly setup in the room
+        //TODO - Have a safer way of confirming that the sent parameters have been recieved and the room properties have been updated before
+        //        automatically moving into the match scene
+        NetworkConnectionManager.Get().Invoke("TransferToMatchScene", 1.0f);
     }
 
     public void LogMaster() {
