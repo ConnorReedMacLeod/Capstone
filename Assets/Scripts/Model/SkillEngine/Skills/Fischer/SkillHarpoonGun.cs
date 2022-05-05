@@ -35,14 +35,29 @@ public class SkillHarpoonGun : Skill {
 
     //Channels should usually have situations where they should automatically cancel if their targetting becomes invalid
     public override List<Subject> GetPotentialCancelTriggers() {
-        return new List<Subject>(
 
-            );
+        //Fetch a reference to the selections that have been made for this skill
+        List<object> lstStoredSelections = ((TypeUsageChannel)typeUsage).GetUsedSelections().lstSelections;
+
+        List<Subject> lstTriggers = new List<Subject>();
+
+        //Add the recommended default triggers for the Chr we're targetting
+        ((TarChr)lstTargets[1]).AddDefaultTriggersToCompleteAsChannel(lstTriggers, (Chr)lstStoredSelections[1]);
+
+        return lstTriggers;
     }
 
     public override bool ExtraCanCompleteAsChannelChecks() {
 
+        List<object> lstStoredSelections = ((TypeUsageChannel)typeUsage).GetUsedSelections().lstSelections;
 
+        //Ensure the Chr we're targetting is generally still a legal target (i.e., not dead or on the bench - no further extensions are needed)
+        if (((TarChr)lstTargets[1]).DefaultCanCompleteAsChannelTarget((Chr)lstStoredSelections[1]) == false) {
+            Debug.LogFormat("Cancelling channel since {0} is no longer targetting a legal character ({1})", this, (Chr)lstStoredSelections[1]);
+            return false;
+        }
+
+        return true;
     }
 
 

@@ -28,7 +28,6 @@ public class ViewPosition : ViewInteractive {
         //Move their global position to our global position
         mod.chrOnPosition.view.transform.position = this.transform.position;
 
-        Debug.LogFormat("{0} is now visually on position {1}", mod.chrOnPosition, mod);
     }
 
 

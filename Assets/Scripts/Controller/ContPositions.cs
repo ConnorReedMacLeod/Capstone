@@ -358,7 +358,7 @@ public class ContPositions : Singleton<ContPositions> {
         chr.SetPosition(pos);
 
         //Send updates out for all affected character/positions
-        TriggerMovementTriggers(pos, posStarting);
+        TriggerMovementTriggers(posStarting, pos);
 
     }
 
@@ -381,6 +381,7 @@ public class ContPositions : Singleton<ContPositions> {
         //Update both characters
         if(chr1 != null) chr1.SetPosition(pos2);
         if(chr2 != null) chr2.SetPosition(pos1);
+
     }
 
     
@@ -403,7 +404,7 @@ public class ContPositions : Singleton<ContPositions> {
         SwapPositions(pos, posStarting);
 
         //Send updates out for all affected character/positions
-        TriggerMovementTriggers(pos, posStarting);
+        TriggerMovementTriggers(posStarting, pos);
 
         Debug.LogFormat("{0} is now in position {1}", chr, chr.position);
     }

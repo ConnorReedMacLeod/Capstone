@@ -181,6 +181,9 @@ public abstract class Skill {
             return false;
         }
 
+        //Note, we need to be in a channeling state, but a channel will automatically stop if we ever leave the channeling state anyway
+        Debug.Assert(chrOwner.curStateReadiness.Type() == StateReadiness.TYPE.CHANNELING);
+
         if (ExtraCanCompleteAsChannelChecks() == false) {
             Debug.Log("Cannot complete channel due to skill-specific checks");
             return false;
