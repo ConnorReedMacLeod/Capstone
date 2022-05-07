@@ -47,7 +47,7 @@ public class StateSwitchingIn : StateReadiness {
 
     public override void OnEnter() {
 
-        //When switching in, we'll apply an targetting-override for the character to stop them from being targetted by any new targetted skills
+        //When switching in, we'll apply a targetting-override for the character to stop them from being targetted by any new targetted skills
         modifierCannotBeSelected = chrOwner.pOverrideCanBeSelectedBy.AddModifier(GetCannotBeSelectedModifier());
 
     }

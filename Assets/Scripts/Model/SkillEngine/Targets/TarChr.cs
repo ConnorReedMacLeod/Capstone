@@ -102,13 +102,16 @@ public class TarChr : Target {
 
     //Performs some default checks for if a given selected character for a channel's target is still
     //  legal enough to let the channel complete.  
-    public virtual bool DefaultCanCompleteAsChannelTarget(Chr chr) {
+    public virtual bool DefaultCanCompleteAsChannelTarget(Chr chr, InputSkillSelection selectionsStored) {
         //By default, just check if the target character is still alive and in-play
         if(chr.bDead == true) {
             Debug.Log("Can't complete a channel selecting a dead character");
             return false;
         }else if(chr.position.positiontype != Position.POSITIONTYPE.BENCH) {
             Debug.Log("Can't complete a channel selecting a benched character");
+            return false;
+        }else if(chr.pOverrideCanBeSelectedBy.Get()(this, selectionsStored, true) == false) {
+            Debug.Log("Can't complete a channel since it's selection overrides have denied this character from being legally targettable");
             return false;
         }
         //TODO - consider if this should also confirm that the team the character is on hasn't changed

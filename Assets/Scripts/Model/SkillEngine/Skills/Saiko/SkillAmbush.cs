@@ -52,10 +52,11 @@ public class SkillAmbush : Skill {
 
     public override bool ExtraCanCompleteAsChannelChecks() {
 
-        List<object> lstStoredSelections = ((TypeUsageChannel)typeUsage).GetUsedSelections().lstSelections;
+        InputSkillSelection storedSelections = ((TypeUsageChannel)typeUsage).GetUsedSelections();
+        List<object> lstStoredSelections = storedSelections.lstSelections;
 
         //Ensure the Chr we're targetting is generally still a legal target (i.e., not dead or on the bench - no further extensions are needed)
-        if (((TarChr)lstTargets[1]).DefaultCanCompleteAsChannelTarget((Chr)lstStoredSelections[1]) == false) {
+        if (((TarChr)lstTargets[1]).DefaultCanCompleteAsChannelTarget((Chr)lstStoredSelections[1], storedSelections) == false) {
             Debug.LogFormat("Cancelling channel since {0} is no longer targetting a legal character ({1})", this, (Chr)lstStoredSelections[1]);
             return false;
         }
