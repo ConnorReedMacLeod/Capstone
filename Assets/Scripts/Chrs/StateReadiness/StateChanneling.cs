@@ -109,7 +109,8 @@ public class StateChanneling : StateReadiness {
         chrOwner.soulContainer.ApplySoul(soulBehaviour);
 
         if (lstPotentialChannelCancelTriggers == null) {
-
+            Debug.LogError("ERROR! Must provide a list of potential channel cancellation triggers! (Could be empty if needed)");
+            return;
         }
 
         //Add in any baseline potential cancellation triggers
