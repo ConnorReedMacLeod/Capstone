@@ -27,9 +27,12 @@ public class StateSwitchingIn : StateReadiness {
         //In addition to the base recharge, we'll also reduce the switching in timer
         nSwitchingInDuration--;
 
-        if(nSwitchingInDuration <= 0) {
+        if (nSwitchingInDuration <= 0) {
             chrOwner.SetStateReadiness(new StateFatigued(chrOwner));
         }
+
+        //Notify anyone (mostly UI stuff) that the switching in duration has changed
+        chrOwner.subSwitchingInChange.NotifyObs();
     }
 
     public override void ReadyIfNoFatigue() {
@@ -50,11 +53,15 @@ public class StateSwitchingIn : StateReadiness {
         //When switching in, we'll apply a targetting-override for the character to stop them from being targetted by any new targetted skills
         modifierCannotBeSelected = chrOwner.pOverrideCanBeSelectedBy.AddModifier(GetCannotBeSelectedModifier());
 
+        //Notify anyone (mostly UI stuff) that the switching in duration has changed
+        chrOwner.subSwitchingInChange.NotifyObs();
+
     }
 
     public override void OnLeave() {
 
         //When we've finished switching in (or potentially have gone back to the bench, we can remove our targetting-override modifier
         chrOwner.pOverrideCanBeSelectedBy.RemoveModifier(modifierCannotBeSelected);
+
     }
 }

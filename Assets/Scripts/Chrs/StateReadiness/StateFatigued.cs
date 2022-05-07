@@ -18,12 +18,12 @@ public class StateFatigued : StateReadiness {
             return;
         }
 
-        if(chrOwner.position.positiontype == Position.POSITIONTYPE.BENCH) {
-            Debug.LogFormat("Tried to Ready, but {0} is on the bench", chrOwner.sName);
-            return;
-        }
-
         if(chrOwner.nFatigue == 0) {
+            if (chrOwner.position.positiontype == Position.POSITIONTYPE.BENCH) {
+                Debug.LogFormat("Tried to Ready, but {0} is on the bench", chrOwner.sName);
+                return;
+            }
+
             //Then transition to the ready state
 
             //Leave the source as null since it's just the game rules causing the readying
