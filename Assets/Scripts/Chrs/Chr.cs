@@ -82,6 +82,7 @@ public class Chr : MonoBehaviour {
     public Subject subArmourCleared = new Subject();
     public Subject subFatigueChange = new Subject();
     public static Subject subAllFatigueChange = new Subject(Subject.SubType.ALL);
+    public Subject subSwitchingInChange = new Subject();
     public Subject subChannelTimeChange = new Subject();
 
     public Subject subLeftAnyPosition = new Subject();

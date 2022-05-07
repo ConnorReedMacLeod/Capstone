@@ -40,6 +40,7 @@ public class ViewChr : ViewInteractive {
     public GameObject goBorder;         //Border Reference
     public GameObject goPortrait;       //Portrait Reference
     public GameObject goFatigueDisplay; //Fatigue Display Reference
+    public GameObject goSwitchingInDisplay; //Switching In Display Reference
     public GameObject goChannelDisplay; //Channel Display Reference
     public GameObject goPowerDefense;   //Power Defense Display Reference
     public GameObject goPowerDisplay;   //Power Display Reference
@@ -55,6 +56,7 @@ public class ViewChr : ViewInteractive {
     public Text txtPower;               //Textfield Reference
     public Text txtDefense;             //Textfield Reference
     public Text txtFatigue;             //Fatigue Overlay Reference
+    public Text txtSwitchingInDisplay;  //Switching In Overlay Reference
     public Text txtChannelTime;         //ChannelTime Overlay Reference
 
     public SpriteMask maskPortrait;     //SpriteMask Reference
@@ -262,6 +264,7 @@ public class ViewChr : ViewInteractive {
         //        May not need to since a Chr likely won't exist without some sort of View.  
 
         mod.subFatigueChange.Subscribe(cbUpdateFatigue);
+        mod.subSwitchingInChange.Subscribe(cbUpdateSwitchingIn);
         mod.subLifeChange.Subscribe(cbUpdateLife);
         mod.pnMaxHealth.subChanged.Subscribe(cbUpdateLife);
         mod.subStatusChange.Subscribe(cbUpdateStatus);
@@ -357,6 +360,21 @@ public class ViewChr : ViewInteractive {
             txtFatigue.text = "";
             goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
         }
+    }
+
+    public void cbUpdateSwitchingIn(Object target, params object[] args) {
+        //If we're no longer in a switching in state, then we can hide the switching in display
+        if(mod.curStateReadiness.Type() != StateReadiness.TYPE.SWITCHINGIN) {
+            Debug.Log("No longer in a switching in state - hiding switching in display");
+            goSwitchingInDisplay.SetActive(false);
+            return;
+        }
+
+        //Unhide the switching in display if it isn't already visible
+        goSwitchingInDisplay.SetActive(true);
+
+        //If we're still switching in, then let's fetch the switching in duration
+        txtSwitchingInDisplay.text = ((StateSwitchingIn)mod.curStateReadiness).nSwitchingInDuration.ToString();
     }
 
     public void cbUpdateChannelTime(Object target, params object[] args) {
