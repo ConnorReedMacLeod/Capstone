@@ -27,12 +27,10 @@ public class DraftController : Singleton<DraftController> {
 
     public DraftableChrCollection draftcollection;
 
-    public const int NDRAFTEDCHRSPERPLAYER = 7;
+    public CharType.CHARTYPE[][] arDraftedChrs = new CharType.CHARTYPE[Match.NPLAYERS][];
+    public int[] arNumChrsDrafted = new int[Match.NPLAYERS];
 
-    public CharType.CHARTYPE[][] arDraftedChrs = new CharType.CHARTYPE[Player.MAXPLAYERS][];
-    public int[] arNumChrsDrafted = new int[Player.MAXPLAYERS];
-
-    public DraftedChrDisplay[] arDraftedChrDisplay = new DraftedChrDisplay[Player.MAXPLAYERS];
+    public DraftedChrDisplay[] arDraftedChrDisplay = new DraftedChrDisplay[Match.NPLAYERS];
 
     public Subject subBeginChooseLocally = new Subject();
     public Subject subEndChooseLocally = new Subject();
@@ -53,7 +51,7 @@ public class DraftController : Singleton<DraftController> {
 
 
         //Keep processing turn events while the draft isn't finished
-        while (!IsDraftPhaseOver()) {
+        while(!IsDraftPhaseOver()) {
 
             //Check if we have input waiting for us in the network buffer
             while(NetworkDraftReceiver.Get().IsCurSelectionReady() == false) {
@@ -63,7 +61,7 @@ public class DraftController : Singleton<DraftController> {
                 yield return null;
             }
             //If we were waiting on input, then clean up the waiting process
-            if (draftactionWaitingOn != null) EndWaitingOnDraftInput();
+            if(draftactionWaitingOn != null) EndWaitingOnDraftInput();
 
             //At this point, we have an input in the buffer that we are able to process
             DraftAction draftaction = GetNextDraftPhaseStep();
@@ -72,7 +70,7 @@ public class DraftController : Singleton<DraftController> {
             Debug.Log("Got a draft action of type " + draftaction.draftactionType + " for chr " + chartypeInput);
 
             //Start a coroutine to process whichever event we need to execute
-            if (draftaction.draftactionType == DraftAction.DRAFTACTIONTYPE.DRAFT) {
+            if(draftaction.draftactionType == DraftAction.DRAFTACTIONTYPE.DRAFT) {
                 //Draft the character
                 yield return StartCoroutine(CRDraftChr(draftaction.iPlayer, chartypeInput));
             } else {
@@ -119,7 +117,7 @@ public class DraftController : Singleton<DraftController> {
         for(int i = 0; i < arbChrsAvailableToDraft.Length; i++) {
             arbChrsAvailableToDraft[i] = true;
         }
-        
+
 
     }
 
@@ -140,7 +138,7 @@ public class DraftController : Singleton<DraftController> {
         Debug.Log("Drafting " + chrDrafted + " for " + iPlayer);
 
         //Ensure the draft selection has been registered in the roomoptions (maybe someone else beat us to it, but that's fine)
-        NetworkMatchSetup.SetCharacterSelection(iPlayer, arNumChrsDrafted[iPlayer], chrDrafted);
+        NetworkMatchSetup.SetDraftedCharacter(iPlayer, arNumChrsDrafted[iPlayer], chrDrafted);
 
         //Then ensure that everything locally is tracked and displayed properly
         arDraftedChrs[iPlayer][arNumChrsDrafted[iPlayer]] = chrDrafted;
@@ -232,13 +230,13 @@ public class DraftController : Singleton<DraftController> {
 
     public void WaitForDraftInput() {
         //If we're already waiting, then we don't need to do anything further
-        if (draftactionWaitingOn != null) return;
+        if(draftactionWaitingOn != null) return;
 
         //Raise the flag that we're waiting for input
         draftactionWaitingOn = GetNextDraftPhaseStep();
 
         //Check what type of input we're waiting on
-        if (NetworkMatchSetup.IsLocallyOwned(draftactionWaitingOn.iPlayer)) {
+        if(NetworkMatchSetup.IsLocallyOwned(draftactionWaitingOn.iPlayer)) {
             //Prompt the local player to select input
             subBeginChooseLocally.NotifyObs();
         } else {
@@ -252,7 +250,7 @@ public class DraftController : Singleton<DraftController> {
     public void EndWaitingOnDraftInput() {
 
         //Check what type of input we're waiting on
-        if (NetworkMatchSetup.IsLocallyOwned(draftactionWaitingOn.iPlayer)) {
+        if(NetworkMatchSetup.IsLocallyOwned(draftactionWaitingOn.iPlayer)) {
             //Let anyone (UI effects probably) know that the current player has finished their selection
             subEndChooseLocally.NotifyObs();
         } else {
@@ -262,7 +260,7 @@ public class DraftController : Singleton<DraftController> {
         //Clear the action we were waiting on
         draftactionWaitingOn = null;
     }
-    
+
 
     public void OnDraftableChrClicked(CharType.CHARTYPE chrClicked) {
 
@@ -287,12 +285,12 @@ public class DraftController : Singleton<DraftController> {
         Debug.Log("Current step of draft is " + GetNextDraftPhaseStep().draftactionType);
 
         //At this point, it's valid to pick/ban the character so send along the appropriate signal to the Master
-        if(GetNextDraftPhaseStep().draftactionType == DraftAction.DRAFTACTIONTYPE.BAN){
+        if(GetNextDraftPhaseStep().draftactionType == DraftAction.DRAFTACTIONTYPE.BAN) {
 
             Debug.Log("Sending ban of " + chrClicked);
             NetworkDraftSender.Get().SendBan(chrClicked);
 
-        } else if (GetNextDraftPhaseStep().draftactionType == DraftAction.DRAFTACTIONTYPE.DRAFT) {
+        } else if(GetNextDraftPhaseStep().draftactionType == DraftAction.DRAFTACTIONTYPE.DRAFT) {
 
             Debug.Log("Sending draft of " + chrClicked);
             NetworkDraftSender.Get().SendDraft(chrClicked);
@@ -323,8 +321,8 @@ public class DraftController : Singleton<DraftController> {
 
         //Set up an array for each draft pick # for each player
         for(int i = 0; i < arDraftedChrs.Length; i++) {
-            arDraftedChrs[i] = new CharType.CHARTYPE[NDRAFTEDCHRSPERPLAYER];
-            for(int j=0; j<arDraftedChrs[i].Length; j++) {
+            arDraftedChrs[i] = new CharType.CHARTYPE[Match.NCHRSPERDRAFT];
+            for(int j = 0; j < arDraftedChrs[i].Length; j++) {
                 arDraftedChrs[i][j] = CharType.CHARTYPE.LENGTH; //Initially set the chosen character to a flag meaning no selected character yet
             }
 

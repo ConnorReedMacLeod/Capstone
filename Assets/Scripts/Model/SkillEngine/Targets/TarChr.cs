@@ -5,14 +5,12 @@ using UnityEngine;
 public class TarChr : Target {
 
     public static int SerializeChr(Chr chr) {
-        return chr.globalid;
+        return chr.id;
     }
 
     public static Chr UnserializeChr(int nSerialized) {
-        return Chr.lstAllChrs[nSerialized];
+        return ChrCollection.Get().GetChr(nSerialized);
     }
-
-
 
     public override int Serialize(object objToSerialize) {
         return SerializeChr((Chr)objToSerialize);
@@ -33,13 +31,20 @@ public class TarChr : Target {
 
     }
 
+    public override bool CanSelect(object objSelected, InputSkillSelection selectionsSoFar) {
+        //Ask the character if they need to override the basic selection validation that we'd normally do in our TarChr checks
+        bool bCanSelect = ((Chr)objSelected).pOverrideCanBeSelectedBy.Get()(this, selectionsSoFar, base.CanSelect(objSelected, selectionsSoFar));
+
+        return bCanSelect;
+    }
+
     public override IEnumerable<object> GetSelectableUniverse() {
-        return Chr.lstAllChrs;
+        return ChrCollection.Get().GetAllLiveChrs();
     }
 
 
     public static FnValidSelection IsOtherChr(Chr chr) {
-        return (object chr2, InputSkillSelection selections) => (chr.globalid != ((Chr)chr2).globalid);
+        return (object chr2, InputSkillSelection selections) => (chr.id != ((Chr)chr2).id);
     }
 
     public static FnValidSelection IsSameTeam(Chr chr) {
@@ -55,6 +60,12 @@ public class TarChr : Target {
     }
     public static FnValidSelection IsBackliner() {
         return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype == Position.POSITIONTYPE.BACKLINE;
+    }
+    public static FnValidSelection IsInPlay() {
+        return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype != Position.POSITIONTYPE.BENCH;
+    }
+    public static FnValidSelection IsBenched() {
+        return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype == Position.POSITIONTYPE.BENCH;
     }
 
 
@@ -87,5 +98,34 @@ public class TarChr : Target {
 
         //Remove the character-click triggers
         ViewChr.subAllClick.UnSubscribe(cbClickSelectable);
+    }
+
+    //Performs some default checks for if a given selected character for a channel's target is still
+    //  legal enough to let the channel complete.  
+    public virtual bool DefaultCanCompleteAsChannelTarget(Chr chr, InputSkillSelection selectionsStored) {
+        //By default, just check if the target character is still alive and in-play
+        if(chr.bDead == true) {
+            Debug.Log("Can't complete a channel selecting a dead character");
+            return false;
+        }else if(chr.position.positiontype != Position.POSITIONTYPE.BENCH) {
+            Debug.Log("Can't complete a channel selecting a benched character");
+            return false;
+        }else if(chr.pOverrideCanBeSelectedBy.Get()(this, selectionsStored, true) == false) {
+            Debug.Log("Can't complete a channel since it's selection overrides have denied this character from being legally targettable");
+            return false;
+        }
+        //TODO - consider if this should also confirm that the team the character is on hasn't changed
+
+        return false;
+    }
+
+    //Gets the list of triggers associated with the default checks we should do to ensure 
+    //  that the targetted character is still legal enough of a target to complete a channel
+    // Note - should be paired with the checks in DefaultCanCompleteAsChannelTarget
+    public virtual void AddDefaultTriggersToCompleteAsChannel(List<Subject> lstTriggersSoFar, Chr chr) {
+
+        lstTriggersSoFar.Add(chr.subDeath);
+        lstTriggersSoFar.Add(chr.subEnteredBench);
+
     }
 }

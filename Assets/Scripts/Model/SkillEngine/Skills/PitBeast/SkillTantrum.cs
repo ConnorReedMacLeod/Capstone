@@ -50,9 +50,9 @@ public class SkillTantrum : Skill {
         public override void ClauseEffect(InputSkillSelection selections) {
 
             //First, deal damage to all enemies
-            List<Chr> lstChrEnemy = skill.chrOwner.plyrOwner.GetEnemyPlayer().GetActiveChrs();
+            List<Chr> lstChrEnemy = ChrCollection.Get().GetActiveChrsOwnedBy(skill.chrOwner.plyrOwner.GetEnemyPlayer());
 
-            for(int i = 0; i < lstChrEnemy.Count; i++) {
+            for (int i = 0; i < lstChrEnemy.Count; i++) {
                 //For each enemy, deal our dmgEnemy to them
                 ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, lstChrEnemy[i], dmgEnemy) {
                     sLabel = "WAAAAAAAHWAAHWAHHH"
@@ -60,9 +60,9 @@ public class SkillTantrum : Skill {
             }
 
             //Then damage each of our allies
-            List<Chr> lstChrAlly = skill.chrOwner.plyrOwner.GetActiveChrs();
+            List<Chr> lstChrAlly = ChrCollection.Get().GetActiveChrsOwnedBy(skill.chrOwner.plyrOwner);
 
-            for(int i = 0; i < lstChrAlly.Count; i++) {
+            for (int i = 0; i < lstChrAlly.Count; i++) {
                 //For each ally, deal our dmgAlly to them
                 ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, lstChrAlly[i], dmgAlly) {
                     sLabel = "Really, dude?"

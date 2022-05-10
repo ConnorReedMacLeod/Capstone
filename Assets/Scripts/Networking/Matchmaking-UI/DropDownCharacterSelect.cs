@@ -4,6 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
+
+//Note that this dropdown is intended to be used to quickly setup which characters are to be used in a match
+//  and in what order they should act.  This accomplishes both tasks by assigning the chosen character to be in
+//  the 'idChr'th slot of the character ordering
 public class DropDownCharacterSelect : MonoBehaviour {
 
 
@@ -11,28 +15,30 @@ public class DropDownCharacterSelect : MonoBehaviour {
     public Dropdown dropdown;
     public int idChr;
 
-    public void UpdateDropdownOptions() {
-        
+    public void UpdateDropdownOptions(CharType.CHARTYPE chartypeInitialSelection) {
+
         LibView.SetDropdownOptions(dropdown, CharType.GetAllChrNames());
 
         //Ensure the default-selected option for this dropdown is mirroring the default in the matchsetup
-        dropdown.SetValueWithoutNotify((int)NetworkMatchSetup.GetCharacterSelection(plyrselectorParent.idPlayer, idChr));
+        dropdown.SetValueWithoutNotify((int)chartypeInitialSelection);
 
         dropdown.RefreshShownValue();
     }
 
-    public void OnChrSelectChange() {
+    public void OnCharacterOrderingChange() {
 
-        Debug.Assert(0 <= idChr && idChr < 3);
+        Debug.Assert(0 <= idChr && idChr < Match.NINITIALCHRSPERTEAM);
 
-        NetworkMatchSetup.SetCharacterSelection(plyrselectorParent.idPlayer, idChr, (CharType.CHARTYPE)dropdown.value);
+        CharType.CHARTYPE chartypeSelected = (CharType.CHARTYPE)dropdown.value;
 
-        //Now that our character has been reselected, we need to load in a starting loadout for that character
-        NetworkMatchSetup.SetLoadout(plyrselectorParent.idPlayer, idChr,
-            LoadoutManager.LoadSavedLoadoutForChr(NetworkMatchSetup.GetCharacterSelection(plyrselectorParent.idPlayer, idChr), 0));
+        NetworkMatchSetup.SetCharacterOrdering(plyrselectorParent.idPlayer, idChr, chartypeSelected);
 
-        Debug.LogFormat("Changed chr to {0} with a starting loadout of {1}", NetworkMatchSetup.GetCharacterSelection(plyrselectorParent.idPlayer, idChr),
-            NetworkMatchSetup.GetLoadout(plyrselectorParent.idPlayer, idChr));
+        LoadoutManager.Loadout loadoutStarting = LoadoutManager.LoadSavedLoadoutForChr(chartypeSelected, 0);
+
+        //Now that our character for this ordering slot has been provided, we need to load in a starting loadout for that character
+        NetworkMatchSetup.SetLoadout(plyrselectorParent.idPlayer, idChr, loadoutStarting);
+
+        Debug.LogFormat("Changed chr to {0} with a starting loadout of {1}", chartypeSelected, loadoutStarting);
 
     }
 

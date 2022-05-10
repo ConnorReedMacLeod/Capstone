@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecTurnReduceCooldowns : Executable {
+//Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
 
+public class ExecSwitchCharWithChar : ExecChr {
+
+    public Chr chrSwappingWith;
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -30,37 +33,28 @@ public class ExecTurnReduceCooldowns : Executable {
     }
     // This is the end of the section that should be copied and pasted
 
-
-    public override bool isLegal() {
-        //Can't invalidate a turn effect
-        return true;
-    }
-
-
-    public void ReduceCooldowns() {
-
-        foreach(Chr chrAlive in ChrCollection.Get().GetAllLiveChrs()) {
-
-            //Reduce the cd of that character's skills
-            chrAlive.RechargeSkills();
-            
-        }
-    }
-
     public override void ExecuteEffect() {
 
-        ReduceCooldowns();
+        //Figure out what the target position should be at the time of execution (fetch the position of the character we want to swap with)
+        Position posDestination = chrSwappingWith.position;
 
-        sLabel = "Reducing Cooldowns";
-        fDelay = ContTime.fDelayInstant;
+        //Call the Switch method in the position controller
+        ContPositions.Get().SwitchChrToPosition(chrTarget, posDestination);
+
+        sLabel = chrSource.sName + " is switching to " + posDestination.ToString();
+
+        fDelay = ContTime.fDelayMinorSkill;
+    }
+
+
+    public ExecSwitchCharWithChar(Chr _chrSource, Chr _chrTarget, Chr _chrSwappingWith) : base(_chrSource, _chrTarget) {
+
+        chrSwappingWith = _chrSwappingWith;
 
     }
 
-    public ExecTurnReduceCooldowns(Chr _chrSource) : base(_chrSource) {
-
+    public ExecSwitchCharWithChar(ExecSwitchCharWithChar other) : base(other) {
+        chrSwappingWith = other.chrSwappingWith;
     }
 
-    public ExecTurnReduceCooldowns(ExecTurnReduceCooldowns other) : base(other) {
-
-    }
 }

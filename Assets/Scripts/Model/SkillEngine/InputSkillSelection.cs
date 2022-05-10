@@ -27,8 +27,8 @@ public class InputSkillSelection : MatchInput {
     // entries corresponding to selections for that skill's targets
     public InputSkillSelection(int[] arnSerializedSelections) : base(arnSerializedSelections) {
 
-        chrActing = Chr.GetTargetByIndex(arnSerializedSelections[0]);
-        skillslotSelected =   Serializer.DeserializeSkillSlot(arnSerializedSelections[1]);
+        chrActing = ChrCollection.Get().GetChr(arnSerializedSelections[0]);
+        skillslotSelected = Serializer.DeserializeSkillSlot(arnSerializedSelections[1]);
 
         Debug.Assert(skillSelected.lstTargets.Count == arnSerializedSelections.Length - 2,
             "Received " + (arnSerializedSelections.Length - 2) + " selections for a skill requiring " + skillSelected.lstTargets.Count);
@@ -36,8 +36,8 @@ public class InputSkillSelection : MatchInput {
         lstSelections = new List<object>();
 
         //For each required target, have it decode the network-provided serialization
-        for (int i = 0; i < skillSelected.lstTargets.Count; i++) {
-            Debug.Log("Adding serializtion entry " + (i + 2) + " of skill " + skillSelected.sName);
+        for(int i = 0; i < skillSelected.lstTargets.Count; i++) {
+            Debug.Log("Adding serialization entry " + (i + 2) + " of skill " + skillSelected.sName);
             // Ask the corresponding Target to decode the serialized int we've been provided
             // i+1 since the first entry of the serialized array refers to the chosen skill, and not the selections
             lstSelections.Add(skillSelected.lstTargets[i].Unserialize((int)arnSerializedSelections[i + 2], lstSelections));
@@ -65,7 +65,7 @@ public class InputSkillSelection : MatchInput {
         arnSerializedSelections[1] = Serializer.SerializeSkillSlot(skillslotSelected);
 
         //Then add all the selections afterward
-        for (int i = 0; i < skillSelected.lstTargets.Count; i++) {
+        for(int i = 0; i < skillSelected.lstTargets.Count; i++) {
             //For each Target, ask it how we should serialize the selected object we have stored
             // Note - i+1, since we're adding all selections after the used skill
             arnSerializedSelections[i + 2] = skillSelected.lstTargets[i].Serialize(lstSelections[i]);
@@ -77,11 +77,11 @@ public class InputSkillSelection : MatchInput {
     public override string ToString() {
         string s = chrActing.ToString() + " " + skillSelected.ToString() + " - ";
 
-        for (int i = 0; i < skillSelected.lstTargets.Count; i++) {
+        for(int i = 0; i < skillSelected.lstTargets.Count; i++) {
 
             //If we have a selection for this slot, fill it in with the description of that target,
             //   otherwise, just leave it blank
-            if (i < lstSelections.Count) {
+            if(i < lstSelections.Count) {
                 s += lstSelections[i].ToString() + ", ";
             } else {
                 s += "(Unselected), ";
@@ -95,7 +95,7 @@ public class InputSkillSelection : MatchInput {
     }
 
     public Target GetMostRecentCompletedTarget() {
-        if (GetIndexOfNextRequiredTarget() == 0) {
+        if(GetIndexOfNextRequiredTarget() == 0) {
             Debug.LogError("Can't get the most recently completed target, since no targets have been completed yet");
             return null;
         }
@@ -111,8 +111,8 @@ public class InputSkillSelection : MatchInput {
     }
 
     public bool HasLegallyFilledTargets() {
-        for (int i = 0; i < skillSelected.lstTargets.Count; i++) {
-            if (skillSelected.lstTargets[i].IsValidSelection(lstSelections[i], this) == false) {
+        for(int i = 0; i < skillSelected.lstTargets.Count; i++) {
+            if(skillSelected.lstTargets[i].CanSelect(lstSelections[i], this) == false) {
                 //If any of the stored selections are invalid, then this isn't an initially-viable selection
                 return false;
             }
@@ -139,7 +139,7 @@ public class InputSkillSelection : MatchInput {
 
     public void AddSelection(object objSelected) {
 
-        if (GetNextRequiredTarget().IsValidSelection(objSelected, this) == false) {
+        if(GetNextRequiredTarget().CanSelect(objSelected, this) == false) {
             Debug.LogError("Error! Tried to add selection for index " + GetIndexOfNextRequiredTarget() + " that was invalid");
             return;
         }
@@ -158,7 +158,7 @@ public class InputSkillSelection : MatchInput {
 
         //Ask each Target to randomly select a completely random choice
         //  Note - this bypasses the standard AddSelection method since it is okay to add invalid selections here
-        for (int i = 0; i < skillSelected.lstTargets.Count; i++) {
+        for(int i = 0; i < skillSelected.lstTargets.Count; i++) {
             AddPotentiallyInvalidSelection(skillSelected.lstTargets[i].GetRandomSelectable());
         }
     }
@@ -186,16 +186,16 @@ public class InputSkillSelection : MatchInput {
     }
 
     public override bool CanLegallyExecute() {
-        if (chrActing == null) return false;
-        if (skillslotSelected == null) return false;
+        if(chrActing == null) return false;
+        if(skillslotSelected == null) return false;
 
-        if (skillslotSelected.chrOwner != chrActing) {
+        if(skillslotSelected.chrOwner != chrActing) {
             Debug.Log("Tried to select " + skillslotSelected.chrOwner + "'s " + skillslotSelected + " but we want " + chrActing + " to act");
             return false;
         }
 
         //As long as we can execute the filled out skill with this selection, then we're good enough to execute this selection
-        if (skillSelected.CanSelect(this) == false) return false;
+        if(skillSelected.CanSelect(this) == false) return false;
 
         return true;
     }
@@ -215,15 +215,15 @@ public class InputSkillSelection : MatchInput {
             lstSelections = new List<object>();
 
             //If the skill can't be activated for whatever reason (like being a passive), then skip to the next attempt
-            if (skillslotSelected.chrOwner.curStateReadiness.CanSelectSkill(skillslotSelected.skill) == false) continue;
+            if(skillslotSelected.chrOwner.curStateReadiness.CanSelectSkill(skillslotSelected.skill) == false) continue;
 
             //If the skill is on cooldown, then we'll skip to the next attempt
-            if (skillslotSelected.IsOffCooldown() == false) continue;
+            if(skillslotSelected.IsOffCooldown() == false) continue;
 
             //For each target we have to fill out, get a random selectable for its targetting type
             bool bFailedSelection = false;
 
-            for (int i = 0; i < skillslotSelected.skill.lstTargets.Count; i++) {
+            for(int i = 0; i < skillslotSelected.skill.lstTargets.Count; i++) {
                 //Debug.LogFormat("Skill {0} is asking for selections for its {1}th target, {2}", skillSelected, i, skillSelected.lstTargets[i]);
                 if(skillSelected.lstTargets[i].HasAValidSelectable(this) == false) {
                     bFailedSelection = true;
@@ -233,7 +233,7 @@ public class InputSkillSelection : MatchInput {
                 lstSelections.Add(skillSelected.lstTargets[i].GetRandomValidSelectable(this));
             }
 
-            if (bFailedSelection) {
+            if(bFailedSelection) {
                 //If we failed finding a selection for some skill, then continue on in the loop to find a different skill selection
                 //Before we move on to the next selection attempt, clear out any reserved mana amounts
                 chrActing.plyrOwner.manapool.ResetReservedMana();

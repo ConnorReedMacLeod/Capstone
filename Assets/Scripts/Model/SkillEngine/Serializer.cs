@@ -19,10 +19,10 @@ public static class Serializer {
     }
 
     public static byte SerializeByte(Chr chr) {
-        return (byte)chr.globalid;
+        return (byte)chr.id;
     }
     public static Chr DeserializeChr(byte b) {
-        return Chr.lstAllChrs[b];
+        return ChrCollection.Get().GetChr(b);
     }
 
     public static byte SerializeByte(Skill skill) {
@@ -37,11 +37,11 @@ public static class Serializer {
     }
 
     public static Player DeserializePlayer(byte b) {
-        return Player.arAllPlayers[b];
+        return Match.Get().arPlayers[b];
     }
 
     public static int SerializeSkillSlot(SkillSlot skillslot) {
-        return Serializer.Serialize((byte)skillslot.chrOwner.globalid, (byte)skillslot.iSlot, 0, 0);
+        return Serializer.Serialize((byte)skillslot.chrOwner.id, (byte)skillslot.iSlot, 0, 0);
     }
 
     public static SkillSlot DeserializeSkillSlot(int nSerializedSkill) {

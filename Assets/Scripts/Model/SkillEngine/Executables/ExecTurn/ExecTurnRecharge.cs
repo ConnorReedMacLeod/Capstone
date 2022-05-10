@@ -40,21 +40,11 @@ public class ExecTurnRecharge : Executable {
     //Want to stack up a recharge executable (change fatigue/channeltime) for each character one by one
     public void RechargeChars() {
 
-        for(int i = 0; i < Match.Get().nPlayers; i++) {
-            for(int j = 0; j < Player.MAXCHRS; j++) {
-                if(Match.Get().arChrs[i][j] == null) {
-                    continue; // A character isn't actually here (extra space for characters)
-                }
+        foreach (Chr chrAlive in ChrCollection.Get().GetAllLiveChrs()) {
 
-                if(Match.Get().arChrs[i][j].bDead) {
-                    Debug.Log("skipping recharge since " + Match.Get().arChrs[i][j].sName + " is dead");
-                    continue; //The character's already dead
-                }
+            //Reduce the cd of that character's skills
+            chrAlive.curStateReadiness.Recharge();
 
-                //Ask the character's readiness state to tick down its fatigue (or channeltimer as the case may be)
-                Match.Get().arChrs[i][j].curStateReadiness.Recharge();
-
-            }
         }
     }
 

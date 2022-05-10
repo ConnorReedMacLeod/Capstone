@@ -12,7 +12,7 @@ public class StateDead : StateReadiness {
         return TYPE.DEAD;
     }
 
-    public override void Ready() {
+    public override void ReadyIfNoFatigue() {
         //Can't ready when dead
     }
 
@@ -38,10 +38,6 @@ public class StateDead : StateReadiness {
 
         //Fix our position in the priority queue (we should now be after all living characters)
         ContTurns.Get().FixSortedPriority(chrOwner);
-
-        //Once we're done swapping, this dead character should be at the end of the living section of the list
-        //so reduce the size of the living section of the list by one so they're no longer included
-        ContTurns.Get().nLiveCharacters--;
 
         //Debug.Log("nLive Characters is now " + ContTurns.Get().nLiveCharacters + " since " + chrOwner.sName + " just died");
 

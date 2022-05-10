@@ -38,8 +38,6 @@ public class ExecSwitchChar : ExecChr {
         //Figure out what the target position should be at the time of execution (relative to the character that's moving)
         Position posDestination = funcGetTargetPosition(chrTarget);
 
-        Debug.Assert(posDestination.positiontype != Position.POSITIONTYPE.BENCH);
-
         //Call the Switch method in the position controller
         ContPositions.Get().SwitchChrToPosition(chrTarget, posDestination);
 
@@ -53,6 +51,8 @@ public class ExecSwitchChar : ExecChr {
     public ExecSwitchChar(Chr _chrSource, Chr _chrTarget, Position posDestination) : this(_chrSource, _chrTarget, (chrTarget) => posDestination) {
 
     }
+
+    //Can construct an 
 
     public ExecSwitchChar(Chr _chrSource, Chr _chrTarget, Position.FuncGetPosition _funcGetPosition) : base(_chrSource, _chrTarget) {
 

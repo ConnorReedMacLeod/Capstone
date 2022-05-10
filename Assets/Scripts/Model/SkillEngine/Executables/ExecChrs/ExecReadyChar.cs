@@ -37,7 +37,7 @@ public class ExecReadyChar : ExecChr {
         Debug.Assert(chrTarget.nFatigue == 0);
 
         //Initially give the character Skill Points equal to their maximum
-        StateReady newState = new StateReady(chrTarget, chrTarget.nMaxSkillsLeft);
+        StateReady newState = new StateReady(chrTarget, Chr.nMaxSkillUsesPerActivation);
 
         //Just transition to the ready state
         chrTarget.SetStateReadiness(newState);

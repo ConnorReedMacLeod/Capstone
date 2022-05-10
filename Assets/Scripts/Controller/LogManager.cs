@@ -23,7 +23,7 @@ public class LogManager : SingletonPersistent<LogManager> {
     private bool bLoggingInfo;
 
     public override void Init() {
-        
+
     }
 
     public void InitMatchLog() {
@@ -36,7 +36,7 @@ public class LogManager : SingletonPersistent<LogManager> {
             CreateMatchLogFile();
 
             LogMatchSetup();
-        }catch(IOException e) {
+        } catch(IOException e) {
             Debug.Log("Encountered " + e);
             OnFileSharingError();
         }
@@ -54,7 +54,7 @@ public class LogManager : SingletonPersistent<LogManager> {
         //Do some verification checks to determine if this file is indeed a log file
 
         //Currently just checking that the file header is correct
-        if (File.ReadLines(string.Concat(sLOGSDIR, fileinfo.Name)).First() != sLogFileHeader) {
+        if(File.ReadLines(string.Concat(sLOGSDIR, fileinfo.Name)).First() != sLogFileHeader) {
             //Debug.Log(File.ReadLines(string.Concat(sLOGSDIR, fileinfo.Name)).First() + " isn't a valid header for a log file");
             return false;
         }
@@ -69,8 +69,8 @@ public class LogManager : SingletonPersistent<LogManager> {
         FileInfo[] arFilesInLogDir = new DirectoryInfo(sLOGSDIR).GetFiles();
         lstLogFiles = new List<FileInfo>();
 
-        foreach (FileInfo fileinfo in arFilesInLogDir) {
-            if (IsValidLogFile(fileinfo)) {
+        foreach(FileInfo fileinfo in arFilesInLogDir) {
+            if(IsValidLogFile(fileinfo)) {
                 lstLogFiles.Add(fileinfo);
             }
         }
@@ -80,7 +80,7 @@ public class LogManager : SingletonPersistent<LogManager> {
         UpdateRecognizedLogFiles();
 
         //Get a list of all log files currently in the logs folder and only keep the N newest ones
-        foreach (FileInfo fileInfo in lstLogFiles.OrderByDescending(x => x.LastWriteTime).Skip(nMAXLOGFILES - 1)) {
+        foreach(FileInfo fileInfo in lstLogFiles.OrderByDescending(x => x.LastWriteTime).Skip(nMAXLOGFILES - 1)) {
             fileInfo.Delete();
         }
 
@@ -90,7 +90,7 @@ public class LogManager : SingletonPersistent<LogManager> {
 
         System.DateTimeOffset timeCur = new System.DateTimeOffset(System.DateTime.UtcNow).ToLocalTime();
 
-        return string.Format("{0}-{1}-{2}-{3}-{4}", timeCur.Year, timeCur.Month.ToString().PadLeft(2, '0'), timeCur.Day.ToString().PadLeft(2, '0'), 
+        return string.Format("{0}-{1}-{2}-{3}-{4}", timeCur.Year, timeCur.Month.ToString().PadLeft(2, '0'), timeCur.Day.ToString().PadLeft(2, '0'),
             timeCur.Hour.ToString().PadLeft(2, '0'), timeCur.Minute.ToString().PadLeft(2, '0'));
     }
 
@@ -115,10 +115,6 @@ public class LogManager : SingletonPersistent<LogManager> {
         timeStart = new System.DateTimeOffset(System.DateTime.UtcNow).ToLocalTime();
 
         sLogfilePath = string.Format("{0}log-{1}.txt", sLOGSDIR, GetDateTime());
-
-        Debug.LogFormat("Attempting to create {0}", sLogfilePath);
-
-        Debug.LogFormat("Does the file exist?: {0}", File.Exists(sLogfilePath));
 
         //Attempt to initialize the writer
         swFileWriter = new StreamWriter(sLogfilePath, false);
@@ -149,8 +145,8 @@ public class LogManager : SingletonPersistent<LogManager> {
         LogMaster();
         LogPlayerOwners();
         LogInputTypes();
-        LogCharacterSelections(0);
-        LogCharacterSelections(1);
+        LogCharacterOrdering(0);
+        LogCharacterOrdering(1);
         LogLoadouts(0);
         LogLoadouts(1);
         LogPositionCoords(0);
@@ -169,44 +165,46 @@ public class LogManager : SingletonPersistent<LogManager> {
         foreach(string sLine in arsLogLines) {
             string[] arsSplitLine = sLine.Split(':');
 
-            switch (arsSplitLine[0]) {
-                case "po":
-                    LoadLoggedPlayerOwners(arsSplitLine);
-                    break;
+            switch(arsSplitLine[0]) {
+            case "po":
+                LoadLoggedPlayerOwners(arsSplitLine);
+                break;
 
-                case "it":
-                    LoadLoggedInputTypes(arsSplitLine);
-                    break;
+            case "it":
+                LoadLoggedInputTypes(arsSplitLine);
+                break;
 
-                case "cs":
-                    LoadLoggedCharacterSelections(arsSplitLine);
-                    break;
+            case "co":
+                LoadLoggedCharacterOrdering(arsSplitLine);
+                break;
 
-                case "lo":
-                    LoadLoggedLoadouts(arsSplitLine);
-                    break;
+            case "lo":
+                LoadLoggedLoadouts(arsSplitLine);
+                break;
 
-                case "pc":
-                    LoadLoggedPositionCoords(arsSplitLine);
-                    break;
+            case "pc":
+                LoadLoggedPositionCoords(arsSplitLine);
+                break;
 
-                case "rs":
-                    LoadLoggedRandomizationSeed(arsSplitLine);
-                    break;
+            case "rs":
+                LoadLoggedRandomizationSeed(arsSplitLine);
+                break;
 
-                case "mi":
-                    LoadLoggedMatchInput(arsSplitLine);
-                    break;
+            case "mi":
+                LoadLoggedMatchInput(arsSplitLine);
+                break;
 
-                default:
-                    //Debug.LogFormat("Nothing to load for entry: {0}", arsSplitLine[0]);
-                    break;
+            default:
+                //Debug.LogFormat("Nothing to load for entry: {0}", arsSplitLine[0]);
+                break;
             }
         }
 
         //Now that all the match setup parameters have been loaded from the log file, have the NetworkConnectionManager move us into the Match scene
-        NetworkConnectionManager.Get().TransferToMatchScene();
-
+        //We'll do a small delay just to ensure that the submitted setup information has been properly setup in the room
+        //TODO - Have a safer way of confirming that the sent parameters have been recieved and the room properties have been updated before
+        //        automatically moving into the match scene
+        NetworkConnectionManager.Get().Invoke("TransferToMatchScene", 1.0f);
     }
 
     public void LogMaster() {
@@ -223,11 +221,11 @@ public class LogManager : SingletonPersistent<LogManager> {
 
         int playerowner0, playerowner1;
 
-        if (int.TryParse(arsSplitLogs[1], out playerowner0) == false || playerowner0 < 0) {
+        if(int.TryParse(arsSplitLogs[1], out playerowner0) == false || playerowner0 < 0) {
             Debug.LogErrorFormat("Error! {0} was not a valid player owner to be loaded", arsSplitLogs[1]);
             return;
         }
-        if (int.TryParse(arsSplitLogs[2], out playerowner1) == false || playerowner1 < 0) {
+        if(int.TryParse(arsSplitLogs[2], out playerowner1) == false || playerowner1 < 0) {
             Debug.LogErrorFormat("Error! {0} was not a valid player owner to be loaded", arsSplitLogs[2]);
             return;
         }
@@ -246,11 +244,11 @@ public class LogManager : SingletonPersistent<LogManager> {
 
         int inputtype0, inputtype1;
 
-        if (int.TryParse(arsSplitLogs[1], out inputtype0) == false || inputtype0 < 0) {
+        if(int.TryParse(arsSplitLogs[1], out inputtype0) == false || inputtype0 < 0) {
             Debug.LogErrorFormat("Error! {0} was not a valid input type to be loaded", arsSplitLogs[1]);
             return;
         }
-        if (int.TryParse(arsSplitLogs[2], out inputtype1) == false || inputtype1 < 0) {
+        if(int.TryParse(arsSplitLogs[2], out inputtype1) == false || inputtype1 < 0) {
             Debug.LogErrorFormat("Error! {0} was not a valid input type to be loaded", arsSplitLogs[2]);
             return;
         }
@@ -259,40 +257,40 @@ public class LogManager : SingletonPersistent<LogManager> {
         NetworkMatchSetup.SetInputType(1, (LocalInputType.InputType)inputtype1);
     }
 
-    public void LogCharacterSelections(int iPlayer) {
+    public void LogCharacterOrdering(int iPlayer) {
 
-        for(int iChr = 0; iChr < Player.MAXCHRS; iChr++) {
-            CharType.CHARTYPE chartype = NetworkMatchSetup.GetCharacterSelection(iPlayer, iChr);
+        for(int iChr = 0; iChr < Match.NINITIALCHRSPERTEAM; iChr++) {
+            CharType.CHARTYPE chartype = NetworkMatchSetup.GetCharacterOrdering(iPlayer, iChr);
 
-            WriteToMatchLogFile(string.Format("cs:{0}:{1}:{2}:{3}", iPlayer, iChr, (int)chartype, CharType.GetChrName(chartype)));
+            WriteToMatchLogFile(string.Format("co:{0}:{1}:{2}:{3}", iPlayer, iChr, (int)chartype, CharType.GetChrName(chartype)));
         }
     }
 
-    public void LoadLoggedCharacterSelections(string[] arsSplitLogs) {
+    public void LoadLoggedCharacterOrdering(string[] arsSplitLogs) {
 
-        Debug.Assert(arsSplitLogs[0] == "cs");
+        Debug.Assert(arsSplitLogs[0] == "co");
 
         int iPlayer, iChr, nchrSelection;
 
-        if (int.TryParse(arsSplitLogs[1], out iPlayer) == false || iPlayer < 0 || iPlayer >= Player.MAXPLAYERS) {
+        if(int.TryParse(arsSplitLogs[1], out iPlayer) == false || iPlayer < 0 || iPlayer >= Match.NPLAYERS) {
             Debug.LogErrorFormat("Error! {0} was not a valid player id to be loaded", arsSplitLogs[1]);
             return;
         }
-        if (int.TryParse(arsSplitLogs[2], out iChr) == false || iChr < 0 || iChr >= Player.MAXCHRS) {
+        if(int.TryParse(arsSplitLogs[2], out iChr) == false || iChr < 0 || iChr >= Match.NINITIALCHRSPERTEAM) {
             Debug.LogErrorFormat("Error! {0} was not a valid chr id to be loaded", arsSplitLogs[2]);
             return;
         }
-        if (int.TryParse(arsSplitLogs[3], out nchrSelection) == false) {
+        if(int.TryParse(arsSplitLogs[3], out nchrSelection) == false) {
             Debug.LogErrorFormat("Error! {0} was not a valid serialized character selections to be loaded", arsSplitLogs[3]);
             return;
         }
 
-        NetworkMatchSetup.SetCharacterSelection(iPlayer, iChr, (CharType.CHARTYPE)nchrSelection);
+        NetworkMatchSetup.SetCharacterOrdering(iPlayer, iChr, (CharType.CHARTYPE)nchrSelection);
     }
 
     public void LogLoadouts(int iPlayer) {
-        
-        for(int iChr = 0; iChr < Player.MAXCHRS; iChr++) {
+
+        for(int iChr = 0; iChr < Match.NINITIALCHRSPERTEAM; iChr++) {
             LoadoutManager.Loadout loadout = NetworkMatchSetup.GetLoadout(iPlayer, iChr);
 
             string sLoadout = string.Format("lo:{0}:{1}", iPlayer, iChr);
@@ -312,13 +310,13 @@ public class LogManager : SingletonPersistent<LogManager> {
 
         Debug.Assert(arsSplitLogs[0] == "lo");
 
-        int iPlayer, iChr;                                                                  
+        int iPlayer, iChr;
 
-        if (int.TryParse(arsSplitLogs[1], out iPlayer) == false || iPlayer < 0 || iPlayer >= Player.MAXPLAYERS) {
+        if(int.TryParse(arsSplitLogs[1], out iPlayer) == false || iPlayer < 0 || iPlayer >= Match.NPLAYERS) {
             Debug.LogErrorFormat("Error! {0} was not a valid player id to be loaded", arsSplitLogs[1]);
             return;
         }
-        if (int.TryParse(arsSplitLogs[2], out iChr) == false || iChr < 0 || iChr >= Player.MAXCHRS) {
+        if(int.TryParse(arsSplitLogs[2], out iChr) == false || iChr < 0 || iChr >= Match.NINITIALCHRSPERTEAM) {
             Debug.LogErrorFormat("Error! {0} was not a valid chr id to be loaded", arsSplitLogs[2]);
             return;
         }
@@ -326,9 +324,9 @@ public class LogManager : SingletonPersistent<LogManager> {
         int[] arnSerializedLoadout = new int[arsSplitLogs.Length - 3];
 
         //Copy and translate all the logged strings into serialized ints in an array
-        for(int i=0; i<arnSerializedLoadout.Length; i++) {
-            if (int.TryParse(arsSplitLogs[i+3], out arnSerializedLoadout[i]) == false) {
-                Debug.LogErrorFormat("Error! {0} was not a valid serialized loadout entry to be loaded", arsSplitLogs[i+3]);
+        for(int i = 0; i < arnSerializedLoadout.Length; i++) {
+            if(int.TryParse(arsSplitLogs[i + 3], out arnSerializedLoadout[i]) == false) {
+                Debug.LogErrorFormat("Error! {0} was not a valid serialized loadout entry to be loaded", arsSplitLogs[i + 3]);
                 return;
             }
         }
@@ -338,7 +336,7 @@ public class LogManager : SingletonPersistent<LogManager> {
 
     public void LogPositionCoords(int iPlayer) {
 
-        for(int iChr=0; iChr < Player.MAXCHRS; iChr++) {
+        for(int iChr = 0; iChr < Match.NMINACTIVECHRSPERTEAM; iChr++) {
             Position.Coords poscoords = NetworkMatchSetup.GetPositionCoords(iPlayer, iChr);
 
             WriteToMatchLogFile(string.Format("pc:{0}:{1}:{2}:{3}", iPlayer, iChr, Position.SerializeCoords(poscoords), poscoords));
@@ -351,15 +349,15 @@ public class LogManager : SingletonPersistent<LogManager> {
 
         int iPlayer, iChr, nSerializedCoords;
 
-        if (int.TryParse(arsSplitLogs[1], out iPlayer) == false || iPlayer < 0 || iPlayer >= Player.MAXPLAYERS) {
+        if(int.TryParse(arsSplitLogs[1], out iPlayer) == false || iPlayer < 0 || iPlayer >= Match.NPLAYERS) {
             Debug.LogErrorFormat("Error! {0} was not a valid player id to be loaded", arsSplitLogs[1]);
             return;
         }
-        if (int.TryParse(arsSplitLogs[2], out iChr) == false || iChr < 0 || iChr >= Player.MAXCHRS) {
+        if(int.TryParse(arsSplitLogs[2], out iChr) == false || iChr < 0 || iChr >= Match.NMINACTIVECHRSPERTEAM) {
             Debug.LogErrorFormat("Error! {0} was not a valid chr id to be loaded", arsSplitLogs[2]);
             return;
         }
-        if (int.TryParse(arsSplitLogs[3], out nSerializedCoords) == false) {
+        if(int.TryParse(arsSplitLogs[3], out nSerializedCoords) == false) {
             Debug.LogErrorFormat("Error! {0} was not a valid serialized coordinates to be loaded", arsSplitLogs[3]);
             return;
         }
@@ -377,7 +375,7 @@ public class LogManager : SingletonPersistent<LogManager> {
 
         int nRandomizationSeed;
 
-        if (int.TryParse(arsSplitLogs[1], out nRandomizationSeed) == false) {
+        if(int.TryParse(arsSplitLogs[1], out nRandomizationSeed) == false) {
             Debug.LogErrorFormat("Error! {0} was not a valid randomization seed to be loaded", arsSplitLogs[1]);
             return;
         }
@@ -403,7 +401,7 @@ public class LogManager : SingletonPersistent<LogManager> {
 
         int iPlayerActing;
 
-        if (int.TryParse(arsSplitLogs[1], out iPlayerActing) == false || iPlayerActing < 0 || iPlayerActing >= Player.MAXPLAYERS) {
+        if(int.TryParse(arsSplitLogs[1], out iPlayerActing) == false || iPlayerActing < 0 || iPlayerActing >= Match.NPLAYERS) {
             Debug.LogErrorFormat("Error! {0} was not a valid player id to be loaded", arsSplitLogs[1]);
             return;
         }
@@ -411,8 +409,8 @@ public class LogManager : SingletonPersistent<LogManager> {
         int[] arnSerializedMatchInput = new int[arsSplitLogs.Length - 2];
 
         //Copy and translate all the logged strings into serialized ints in an array
-        for (int i = 0; i < arnSerializedMatchInput.Length; i++) {
-            if (int.TryParse(arsSplitLogs[i + 2], out arnSerializedMatchInput[i]) == false) {
+        for(int i = 0; i < arnSerializedMatchInput.Length; i++) {
+            if(int.TryParse(arsSplitLogs[i + 2], out arnSerializedMatchInput[i]) == false) {
                 Debug.LogErrorFormat("Error! {0} was not a valid serialized matchinput entry to be loaded", arsSplitLogs[i + 2]);
                 return;
             }
@@ -428,13 +426,13 @@ public class LogManager : SingletonPersistent<LogManager> {
         if(PhotonNetwork.IsMasterClient == false) return;
 
         //If we don't have any logged match inputs, then we don't need to do anything here
-        if (lstLoggedSerializedMatchInputs == null) return;
+        if(lstLoggedSerializedMatchInputs == null) return;
 
         //First, double check that the NetworkMatchSender has been started so we can ask it to send some input for us
         NetworkMatchSender.Get().Start();
 
         //If we have any loaded logged match inputs, then we can send these all to the matchnetworkreceiver's input buffer
-        for (int i=0; i < lstLoggedSerializedMatchInputs.Count; i++) {
+        for(int i = 0; i < lstLoggedSerializedMatchInputs.Count; i++) {
             //For the index, just send 0, 1, 2,... in order since we'll be starting from the very beginning of the match
             NetworkMatchSender.Get().SendInput(i, lstLoggedSerializedMatchInputs[i]);
         }
@@ -446,18 +444,18 @@ public class LogManager : SingletonPersistent<LogManager> {
 
     public void OnApplicationQuit() {
 
-        if (swFileWriter == null) return;
+        if(swFileWriter == null) return;
 
         WriteToMatchLogFile("ApplicationQuit");
 
         CloseLogFile();
 
     }
-    
+
 
     public void WriteToMatchLogFile(string sText, bool bTimestamp = false) {
         //Don't bother logging anything if we've been deactivated
-        if (bLoggingInfo == false) return;
+        if(bLoggingInfo == false) return;
 
         //Consider if the stream writer should only be opened and closed for a short time to add one line of text rather than 
         //  the current method of keeping it open at all times

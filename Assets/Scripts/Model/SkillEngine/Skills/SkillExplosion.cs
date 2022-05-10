@@ -26,7 +26,7 @@ public class SkillExplosion : Skill {
 
     public override void InitTargets() {
         TarMana.AddTarget(this, manaCost);
-        TarChr.AddTarget(this, Target.TRUE);
+        TarChr.AddTarget(this, TarChr.IsInPlay());
     }
 
     class Clause1 : ClauseSkillSelection {
@@ -48,7 +48,7 @@ public class SkillExplosion : Skill {
 
             Chr chrSelected = (Chr)selections.lstSelections[1];
 
-            List<Chr> lstChrsOnTeam = chrSelected.plyrOwner.GetActiveChrs();
+            List<Chr> lstChrsOnTeam = ChrCollection.Get().GetActiveChrsOwnedBy(chrSelected.plyrOwner);
 
             for(int i = 0; i < lstChrsOnTeam.Count; i++) {
                 ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, lstChrsOnTeam[i], dmg) {
