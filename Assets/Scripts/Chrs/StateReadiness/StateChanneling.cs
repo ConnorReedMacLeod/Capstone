@@ -115,6 +115,7 @@ public class StateChanneling : StateReadiness {
 
         //Add in any baseline potential cancellation triggers
         lstPotentialChannelCancelTriggers.Add(Chr.subAllDeath);
+        lstPotentialChannelCancelTriggers.Add(chrOwner.pOverrideCanBeSelectedBy.subChanged); //Listen for any changes to the overridden selectability conditions
 
         //Subscribe to each potential cancellation trigger 
         for(int i=0; i<lstPotentialChannelCancelTriggers.Count; i++) {
