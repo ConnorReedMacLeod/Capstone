@@ -31,19 +31,12 @@ public class ExecTurnReady : Executable {
     // This is the end of the section that should be copied and pasted
 
     public void ReadyAll() {
-        //Loop through all characters and transition any 0 fatigue characters to be ready
+        //Loop through all characters and transition any 0 fatigue characters to be ready (or whatever else their readiness state asks them to do)
 
-        for(int i = 0; i < Match.Get().nPlayers; i++) {
-            for(int j = 0; j < Player.MAXCHRS; j++) {
-                if(Match.Get().arChrs[i][j] == null) {
-                    continue; // A character isn't actually here (extra space for characters)
-                }
-
-                //Call the character's Ready handle - they'll decide what to do
-                Match.Get().arChrs[i][j].curStateReadiness.Ready();
-
-            }
+        foreach (Chr chrAlive in ChrCollection.Get().GetAllLiveChrs()) {
+            chrAlive.curStateReadiness.ReadyIfNoFatigue();
         }
+
     }
 
     public override bool isLegal() {

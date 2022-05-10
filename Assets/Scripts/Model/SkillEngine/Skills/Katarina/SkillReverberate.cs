@@ -26,7 +26,7 @@ public class SkillReverberate : Skill {
 
     public override void InitTargets() {
         TarMana.AddTarget(this, manaCost);
-        TarChr.AddTarget(this, TarChr.TRUE);
+        TarChr.AddTarget(this, TarChr.IsInPlay());
     }
 
     class Clause1 : ClauseSkillSelection {
@@ -48,9 +48,9 @@ public class SkillReverberate : Skill {
 
             Chr chrSelected = (Chr)selections.lstSelections[1];
 
-            List<Chr> lstChrsOnTeam = chrSelected.plyrOwner.GetActiveChrs();
+            List<Chr> lstChrsOnTeam = ChrCollection.Get().GetActiveChrsOwnedBy(chrSelected.plyrOwner);
 
-            for(int i = 0; i < lstChrsOnTeam.Count; i++) {
+            for (int i = 0; i < lstChrsOnTeam.Count; i++) {
                 ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, lstChrsOnTeam[i], dmg) {
                     arSoundEffects = new SoundEffect[] { new SoundEffect("Katarina/sndReverberate", 1.633f) },
                     sLabel = "And how would your hair fair in a blizzard?"

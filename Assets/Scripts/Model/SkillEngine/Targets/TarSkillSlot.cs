@@ -39,8 +39,8 @@ public class TarSkillSlot : Target {
     public override IEnumerable<object> GetSelectableUniverse() {
         List<SkillSlot> lstSkillSlotsSelectable = new List<SkillSlot>();
 
-        foreach(Chr chr in Chr.lstAllChrs) {
-            for(int i=0; i<chr.arSkillSlots.Length; i++) {
+        foreach(Chr chr in ChrCollection.Get().GetAllActiveChrs()) {
+            for(int i = 0; i < chr.arSkillSlots.Length; i++) {
                 lstSkillSlotsSelectable.Add(chr.arSkillSlots[i]);
             }
         }

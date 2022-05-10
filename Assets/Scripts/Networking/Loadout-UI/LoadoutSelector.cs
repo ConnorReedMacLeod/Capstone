@@ -9,7 +9,7 @@ public class LoadoutSelector : MonoBehaviour {
     public InputField inputfieldLoadoutName;
 
     public DropdownSkillLoadout[] ardropdownSkillLoadout = new DropdownSkillLoadout[Chr.nTotalCharacterSkills];
-    
+
     public LoadoutManager.Loadout loadoutCur;
     public Dropdown dropdownSavedLoadouts;
 
@@ -18,9 +18,7 @@ public class LoadoutSelector : MonoBehaviour {
 
     public List<SkillType.SkillTypeInfo> lstSelectableSkills;
 
-    public CharType.CHARTYPE ChrTypeSelectingFor() {
-        return NetworkMatchSetup.GetCharacterSelection(iPlayerSelectingFor, iChrSelectingFor);
-    }
+    public CharType.CHARTYPE chartypeSelectingFor;
 
     public System.Action fnOnSelectionComplete;
 
@@ -30,7 +28,7 @@ public class LoadoutSelector : MonoBehaviour {
         loadoutCur.sName = inputfieldLoadoutName.text;
 
         //Overwrite the stored loadout slot with whatever loadout is currently configured
-        LoadoutManager.SaveLoadout(ChrTypeSelectingFor(), dropdownSavedLoadouts.value, loadoutCur);
+        LoadoutManager.SaveLoadout(chartypeSelectingFor, dropdownSavedLoadouts.value, loadoutCur);
 
         //Update the LoadoutDropdown entry's name to reflect this newly saved loadout
         dropdownSavedLoadouts.options[dropdownSavedLoadouts.value].text = loadoutCur.sName;
@@ -40,7 +38,7 @@ public class LoadoutSelector : MonoBehaviour {
 
     public void LoadLoadout() {
         //Load whichever loadout slot is currently selected in the loadout dropdown
-        InitWithLoadout(LoadoutManager.LoadSavedLoadoutForChr(ChrTypeSelectingFor(), dropdownSavedLoadouts.value));
+        InitWithLoadout(LoadoutManager.LoadSavedLoadoutForChr(chartypeSelectingFor, dropdownSavedLoadouts.value));
     }
 
     public void InitWithLoadout(LoadoutManager.Loadout loadout) {
@@ -50,10 +48,10 @@ public class LoadoutSelector : MonoBehaviour {
         //Setup the general UI to reflect the new loadout
         inputfieldLoadoutName.text = loadoutCur.sName;
 
-        lstSelectableSkills = SkillType.GetSkillInfosUnderDisciplines(ChrTypeSelectingFor());
+        lstSelectableSkills = SkillType.GetSkillInfosUnderDisciplines(chartypeSelectingFor);
 
         //Loop through all the dropdown skill selectors and initialize them with what options they are set to (and their currently selectable options)
-        for (int i = 0; i < ardropdownSkillLoadout.Length; i++) {
+        for(int i = 0; i < ardropdownSkillLoadout.Length; i++) {
             //Select the appropriate skill (either equipped or benched) from the current loadout
             ardropdownSkillLoadout[i].Init(loadoutCur.lstChosenSkills[i]);
         }
@@ -67,8 +65,8 @@ public class LoadoutSelector : MonoBehaviour {
         loadoutCur.lstChosenSkills[iSkillSlot] = skilltypeNew;
 
         //Scan through our loadout skills to see if one of them already is equipped with this skill
-        for(int i=0; i<loadoutCur.lstChosenSkills.Count; i++) {
-            if (iSkillSlot == i) continue; //Skip over the skillslot that just claimed this skill
+        for(int i = 0; i < loadoutCur.lstChosenSkills.Count; i++) {
+            if(iSkillSlot == i) continue; //Skip over the skillslot that just claimed this skill
 
             //If one of our skillslots in our loadout already has this skill, instead replace it with the old
             //  skill that we were replacing (effectively swapping the two skills' positions in the loadout)
@@ -80,13 +78,15 @@ public class LoadoutSelector : MonoBehaviour {
         }
     }
 
-    public void BeginSelection(int _iPlayerSelectingFor, int _iChrSelectingFor, System.Action _fnOnSelectionComplete, LoadoutManager.Loadout loadoutToStart) {
+    public void BeginSelection(int _iPlayerSelectingFor, int _iChrSelectingFor, CharType.CHARTYPE _chartypeSelectingFor, System.Action _fnOnSelectionComplete, LoadoutManager.Loadout loadoutToStart) {
         iPlayerSelectingFor = _iPlayerSelectingFor;
         iChrSelectingFor = _iChrSelectingFor;
 
+        chartypeSelectingFor = _chartypeSelectingFor;
+
         fnOnSelectionComplete = _fnOnSelectionComplete;
 
-        txtLabel.text = string.Format("Loadout for {0}", CharType.GetChrName(ChrTypeSelectingFor()));
+        txtLabel.text = string.Format("Loadout for {0}", CharType.GetChrName(chartypeSelectingFor));
 
         //Initialize the saved loadouts dropdown
         InitSavedLoadoutsDropdown();
@@ -97,7 +97,7 @@ public class LoadoutSelector : MonoBehaviour {
     }
 
     public void InitSavedLoadoutsDropdown() {
-        LibView.SetDropdownOptions(dropdownSavedLoadouts, LoadoutManager.LoadAllLoadoutNamesForChr(ChrTypeSelectingFor()));
+        LibView.SetDropdownOptions(dropdownSavedLoadouts, LoadoutManager.LoadAllLoadoutNamesForChr(chartypeSelectingFor));
 
         dropdownSavedLoadouts.value = 0;
 

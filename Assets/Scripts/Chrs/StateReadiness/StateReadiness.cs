@@ -6,7 +6,7 @@ using UnityEngine;
 //        implements is actually a good practice
 public abstract class StateReadiness {
 
-    public enum TYPE { READY, FATIGUED, STUNNED, CHANNELING, DEAD };
+    public enum TYPE { READY, FATIGUED, STUNNED, CHANNELING, SWITCHINGIN, DEAD };
 
     public Chr chrOwner;
 
@@ -30,7 +30,7 @@ public abstract class StateReadiness {
     }
 
     //Call to transition to the ready state if we're at 0 fatigue
-    public virtual void Ready() {
+    public virtual void ReadyIfNoFatigue() {
 
         //By default, you can't transition to the ready state unless you're fatigued
 

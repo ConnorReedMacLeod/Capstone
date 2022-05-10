@@ -46,6 +46,12 @@ public class ContTime : Singleton<ContTime> {
 
     public float fMaxSelectionTime;
 
+    public static float fDelayInstant {
+        get {
+            return GetRealTimeDelay(0.0f);
+        }
+    }
+
     public static float fDelayGameEffects {
         get {
             return GetRealTimeDelay(0.5f);

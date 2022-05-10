@@ -129,7 +129,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
     //  once it's found its selection
     public void ReceiveNextSelection(object objSelection) {
 
-        if(selectionsInProgress.GetNextRequiredTarget().IsValidSelection(objSelection, selectionsInProgress) == false) {
+        if(selectionsInProgress.GetNextRequiredTarget().CanSelect(objSelection, selectionsInProgress) == false) {
             Debug.LogError("Received invalid target for " + selectionsInProgress.GetIndexOfNextRequiredTarget() + "th target");
             return;
         }

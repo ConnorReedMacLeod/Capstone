@@ -45,10 +45,9 @@ public class SkillHiss : Skill {
 
         public override void ClauseEffect(InputSkillSelection selections) {
 
+            List<Chr> lstEnemyChrs = ChrCollection.Get().GetActiveChrsOwnedBy(skill.chrOwner.plyrOwner.GetEnemyPlayer());
 
-            List<Chr> lstEnemyChrs = skill.chrOwner.plyrOwner.GetEnemyPlayer().GetActiveChrs();
-
-            for(int i = 0; i < lstEnemyChrs.Count; i++) {
+            for (int i = 0; i < lstEnemyChrs.Count; i++) {
                 ContSkillEngine.PushSingleExecutable(new ExecApplySoulChr(skill.chrOwner, lstEnemyChrs[i], new SoulSpooked(soulToCopy, lstEnemyChrs[i])) {
                     arSoundEffects = new SoundEffect[] { new SoundEffect("Sophidia/sndHiss1", 2f),
                                                      new SoundEffect("Sophidia/sndHiss2", 2f),

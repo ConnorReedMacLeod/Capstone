@@ -6,15 +6,15 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
 
     public GameObject[] arHeadshots = new GameObject[6];
 
-    public Chr[] arChrPriority {
-        get { return ContTurns.Get().arChrPriority; }
+    public List<Chr> lstChrPriority {
+        get { return ContTurns.Get().lstChrPriority; }
     }
 
     //Ensure the character in position i is correctly displayed
     public void SetHeadshot(int i) {
 
 
-        string sImgPath = "Images/Chrs/" + arChrPriority[i].sName + "/img" + arChrPriority[i].sName + "Headshot";
+        string sImgPath = "Images/Chrs/" + lstChrPriority[i].sName + "/img" + lstChrPriority[i].sName + "Headshot";
 
         Sprite sprChr = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
 
@@ -23,7 +23,7 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
 
     public void cbUpdateHeadshots(Object target, params object[] args) {
 
-        for (int i = 0; i < Player.MAXCHRS * Player.MAXPLAYERS; i++) {
+        for(int i = 0; i < arHeadshots.Length; i++) {
             SetHeadshot(i);
         }
     }
@@ -36,8 +36,8 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
         cbUpdateHeadshots(null);
     }
 
-	// Use this for initialization
-	public override void Init () {
-        
-	}
+    // Use this for initialization
+    public override void Init() {
+
+    }
 }

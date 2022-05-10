@@ -28,7 +28,7 @@ public class SkillCloudCushion : Skill {
 
     public override void InitTargets() {
         TarMana.AddTarget(this, manaCost);
-        TarChr.AddTarget(this, TarChr.IsSameTeam(chrOwner));
+        TarChr.AddTarget(this, Target.AND(TarChr.IsInPlay(), TarChr.IsSameTeam(chrOwner)));
     }
 
     class Clause1 : ClauseSkillSelection {

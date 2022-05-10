@@ -43,8 +43,6 @@ public class ExecMoveChar : ExecChr {
             return;
         }
 
-        Debug.Assert(posDestination.positiontype != Position.POSITIONTYPE.BENCH);
-
         //Call the Move method in the position controller
         ContPositions.Get().MoveChrToPosition(chrTarget, posDestination);
 

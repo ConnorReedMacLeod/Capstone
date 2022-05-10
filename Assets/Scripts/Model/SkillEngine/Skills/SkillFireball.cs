@@ -26,7 +26,7 @@ public class SkillFireball : Skill {
 
     public override void InitTargets() {
         TarMana.AddTarget(this, manaCost);
-        TarChr.AddTarget(this, TarChr.IsDiffTeam(chrOwner));
+        TarChr.AddTarget(this, Target.AND(TarChr.IsInPlay(), TarChr.IsDiffTeam(chrOwner)));
     }
 
     class Clause1 : ClauseSkillSelection {

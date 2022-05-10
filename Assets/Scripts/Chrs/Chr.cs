@@ -13,27 +13,16 @@ public class Chr : MonoBehaviour {
         IDLE                        //Default character state
     };
 
-    public enum SIZE {
-        SMALL,
-        MEDIUM,
-        LARGE,
-        GIANT
-    };
-
     public CharType.CHARTYPE chartype; //The type of character this is acting as (e.g., Fischer)
 
     public string sName;            //The name of the character
     public Player plyrOwner;        //The player who controls the character
 
-    public static List<Chr> lstChrInPlay; //A static list of the characters in play (not on the bench)
-    public static List<Chr> lstAllChrs;  //A static list of all characters
-
-    public int globalid;            //The character's unique identifier across all characters
-    public int id;                  //The character's unique identifier for this team
+    public int id;                  //The character's unique identifier (across all characters)
     public int nFatigue;            //Number of turns a character must wait before their next skill
     public StateReadiness curStateReadiness; //A reference to the current state of readiness
 
-    public int nMaxSkillsLeft;     //The total maximum number of skills a character can use in a turn (usually 1, cantrips cost 0)
+    public const int nMaxSkillUsesPerActivation = 1;     //The total maximum number of skills a character can use in a turn (usually 1, cantrips cost 0)
 
     public int nCurHealth;          //The character's current health
     public Property<int> pnMaxHealth;          //The character's max health
@@ -55,6 +44,11 @@ public class Chr : MonoBehaviour {
     public const int nUsableSkills = nEquippedCharacterSkills + 1; //Number of all skills (including generics)
     public SkillRest skillRest;  //The standard reference to the rest skill the character can use
     public const int nRestSlotId = nEquippedCharacterSkills; //Id of the skillslot containing the rest skill
+
+    //If we need extra modifiers for if we can or cannot be selected for a given skill's target, then 
+    //  we can decorate them in this property.  By default we don't do any overrides and just listen to what the TarChr says
+    public delegate bool CanBeSelectedBy(TarChr tar, InputSkillSelection selectionsSoFar, bool bCanDefaultSelect);
+    public Property<CanBeSelectedBy> pOverrideCanBeSelectedBy;
 
     public Position position;       //A reference to the position the character is on
 
@@ -88,10 +82,17 @@ public class Chr : MonoBehaviour {
     public Subject subArmourCleared = new Subject();
     public Subject subFatigueChange = new Subject();
     public static Subject subAllFatigueChange = new Subject(Subject.SubType.ALL);
+    public Subject subSwitchingInChange = new Subject();
     public Subject subChannelTimeChange = new Subject();
 
-    public Subject subLeftPosition = new Subject();
-    public Subject subEnteredPosition = new Subject();
+    public Subject subLeftAnyPosition = new Subject();
+    public Subject subEnteredAnyPosition = new Subject();
+
+    public Subject subLeftInPlayPosition = new Subject();
+    public Subject subEnteredInPlayPosition = new Subject();
+
+    public Subject subLeftBench = new Subject();
+    public Subject subEnteredBench = new Subject();
 
     public Subject subStatusChange = new Subject();
     public static Subject subAllStatusChange = new Subject(Subject.SubType.ALL);
@@ -121,18 +122,6 @@ public class Chr : MonoBehaviour {
         return "Chr(" + sName + ")";
     }
 
-    public int GetTargettingId() {
-        return globalid;
-    }
-
-    public static Chr GetTargetByIndex(int ind) {
-        return lstAllChrs[ind];
-    }
-
-    public static Chr GetRandomChr() {
-        return lstChrInPlay[Random.Range(0, lstChrInPlay.Count)];
-    }
-
     public Skill GetRandomActiveSkill() {
         return arSkillSlots[Random.Range(0, nEquippedCharacterSkills)].skill;
     }
@@ -146,23 +135,6 @@ public class Chr : MonoBehaviour {
         } else {
             return GetRandomActiveSkill();
         }
-    }
-
-    public static void RegisterChr(Chr chr) {
-        if(lstAllChrs == null) {
-            lstAllChrs = new List<Chr>(Player.MAXPLAYERS * Player.MAXCHRS);
-        }
-
-        lstAllChrs.Insert(chr.globalid, chr);
-
-        //TODO:: do something more sophisticated for this once the bench is added
-        if(lstChrInPlay == null) {
-            lstChrInPlay = new List<Chr>(Player.MAXPLAYERS * Player.MAXCHRS);
-        }
-
-        lstChrInPlay.Add(chr);
-
-
     }
 
 
@@ -192,7 +164,7 @@ public class Chr : MonoBehaviour {
 
 
     // Apply this amount of fatigue to the character
-    public void ChangeFatigue(int _nChange, bool bBeginningTurn = false) {
+    public void ChangeFatigue(int _nChange, bool bGlobalFatigueChange = false) {
         if(_nChange + nFatigue < 0) {
             nFatigue = 0;
         } else {
@@ -202,9 +174,9 @@ public class Chr : MonoBehaviour {
         subFatigueChange.NotifyObs(this);
         subAllFatigueChange.NotifyObs(this);
 
-        //TODO:: Probably delete this bBeginningTurn flag once I get a nice solution for priority handling
-        if(!bBeginningTurn) {
-            //Then this is a stun or an skills used
+        //TODO:: Probably delete this bGlobalFatigueChange flag once I get a nice solution for priority handling
+        if (bGlobalFatigueChange == false) {
+            //Then this is an individual fatigue change for a single character that may change their priority
             ContTurns.Get().FixSortedPriority(this);
             //So make sure we're in the right place in the priority list
         }
@@ -384,14 +356,12 @@ public class Chr : MonoBehaviour {
 
     // Used to initiallize information fields of the Chr
     // Call this after creating to set information
-    public void InitChr(CharType.CHARTYPE _chartype, Player _plyrOwner, int _id, LoadoutManager.Loadout loadout) {
+    public void InitChr(CharType.CHARTYPE _chartype, Player _plyrOwner, LoadoutManager.Loadout loadout) {
         chartype = _chartype;
         sName = CharType.GetChrName(chartype);
         plyrOwner = _plyrOwner;
-        id = _id;
-        globalid = id + plyrOwner.id * Player.MAXCHRS;
 
-        RegisterChr(this);
+        ChrCollection.Get().AddChr(this);
 
         //Initialize this character's disciplines based on their chartype
         InitDisciplines();
@@ -422,7 +392,7 @@ public class Chr : MonoBehaviour {
 
     public bool HasSkillEquipped(SkillType.SKILLTYPE skilltype) {
         //Loop through our skill slots and check if one of them has the desired skilltype
-        for(int i=0; i<nEquippedCharacterSkills; i++) {
+        for(int i = 0; i < nEquippedCharacterSkills; i++) {
             if(arSkillSlots[i].skill.GetSkillType() == skilltype) {
                 return true;
             }
@@ -439,7 +409,7 @@ public class Chr : MonoBehaviour {
     public void InitFromLoadout(LoadoutManager.Loadout loadout) {
 
         //Load in all the equipped skills
-        for (int i = 0; i < Chr.nEquippedCharacterSkills; i++) {
+        for(int i = 0; i < Chr.nEquippedCharacterSkills; i++) {
             arSkillSlots[i].SetSkill(loadout.lstChosenSkills[i]);
         }
 
@@ -454,8 +424,6 @@ public class Chr : MonoBehaviour {
         if(bStarted == false) {
             bStarted = true;
 
-            nMaxSkillsLeft = 1;
-
             InitSkillSlots();
 
             stateSelect = STATESELECT.IDLE;
@@ -466,6 +434,9 @@ public class Chr : MonoBehaviour {
 
             pnPower = new Property<int>(0);
             pnDefense = new Property<int>(0);
+
+            //By default, we don't override any targetting - just listen to the base response of if the target can select us
+            pOverrideCanBeSelectedBy = new Property<CanBeSelectedBy>((tar, selectionsSoFar, bCanSelectSoFar) => bCanSelectSoFar);
 
             SetStateReadiness(new StateFatigued(this));
 
