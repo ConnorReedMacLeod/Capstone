@@ -33,8 +33,8 @@ public class CameraController : MonoBehaviour {
     private float fRelocationAtIntroEnd; //Save the progress (as a (0,1) percentage) we've made by the end of the intro segment
 
     private bool bHaveTarget; //True if we are in the process of moving toward a new target
-    private Vector3 v3TargetPos;
-    private Vector3 v3StartPos;
+    private Vector3 v3Target;
+    private Vector3 v3Start;
 
 
     //Which saved location we're currently moving to
@@ -75,7 +75,7 @@ public class CameraController : MonoBehaviour {
 
             if(fTimeProgress >= 1f) {
                 //If we've reached the target, then we can snap directly to the target position and clear the target position
-                this.gameObject.transform.position = v3TargetPos;
+                this.gameObject.transform.position = v3Target;
 
                 bHaveTarget = false;
                 return;
@@ -91,16 +91,16 @@ public class CameraController : MonoBehaviour {
         }
 
         //At this point, we've updated our current progress so lerp between our starting point and our target
-        this.gameObject.transform.position = Vector3.Lerp(v3StartPos, v3TargetPos, fRelocationProgress);
+        this.gameObject.transform.position = Vector3.Lerp(v3Start, v3Target, fRelocationProgress);
 
     }
 
-    public void SetTarget(Vector3 _v3TargetPos) {
-
+    public void SetTarget(Vector3 _v3Target) {
+        
         bHaveTarget = true;
 
-        v3TargetPos = _v3TargetPos;
-        v3StartPos = this.transform.position;
+        v3Target = _v3Target;
+        v3Start = this.transform.position;
 
         fCurSpeed = 0f;
         fTimeProgress = 0f;
