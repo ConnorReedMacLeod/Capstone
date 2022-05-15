@@ -88,13 +88,9 @@ public class ContInfo : MonoBehaviour {
     public void Start() {
         if(!bStarted) {
             bStarted = true;
-            GameObject go = GameObject.FindGameObjectWithTag("Info");
-            if(go == null) {
-                Debug.LogError("ERROR! NO INFO-TAGGED OBJECT!");
-            }
-            viewInfoPanel = go.GetComponent<ViewInfoPanel>();
+
             if(viewInfoPanel == null) {
-                Debug.LogError("ERROR! NO VIEWINFOPANEL ON INFO-TAGGED OBJECT!");
+                Debug.LogError("ERROR! VIEWINFOPANEL REFERENCE NOT SET!");
             }
 
             ContLocalUIInteraction.subAllStartManualSelections.Subscribe(cbStartTargetting);

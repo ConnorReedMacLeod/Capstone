@@ -22,7 +22,7 @@ public class ViewInfoPanel : MonoBehaviour {
             //Then we need to clear the current panel and set up a new InfoSkillPanel
             ClearPanel();
 
-            goCurInfoContent = Instantiate(pfInfoSkill, transform);
+            goCurInfoContent = Instantiate(pfInfoSkill, this.transform);
             viewInfoSkill = goCurInfoContent.GetComponent<ViewInfoSkill>();
             if(viewInfoSkill == null) {
                 Debug.LogError("ERROR!  InfoSkill prefab doesn't have a viewinfoskill component!");
