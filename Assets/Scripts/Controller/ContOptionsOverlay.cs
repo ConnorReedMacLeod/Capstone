@@ -72,9 +72,10 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
 
 
     public void InitDefaultOptions() {
+
         //Load in any preset or pre-configured option settings that we cover
-        dropdownPlayer1Input.SetValueWithoutNotify((int)NetworkMatchSetup.GetInputType(0));
-        dropdownPlayer2Input.SetValueWithoutNotify((int)NetworkMatchSetup.GetInputType(0));
+        dropdownPlayer1Input.SetValueWithoutNotify((int)NetworkMatchSetup.GetInputType(0) - 1);
+        dropdownPlayer2Input.SetValueWithoutNotify((int)NetworkMatchSetup.GetInputType(1) - 1);
 
         dropdownGameSpeed.value = (int)ContTime.DELAYOPTIONS.MEDIUM;
     }

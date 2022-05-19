@@ -25,7 +25,7 @@ public class ViewManaPool : MonoBehaviour {
     public Vector3 v3TopMiddle = new Vector3(0f, 2.85f, 0f);
     public Vector3 v3MiddleLeft = new Vector3(-4.59f, 0f, 0f);
     public Vector3 v3MiddleRight = new Vector3(4.59f, 0f, 0f);
-    public Vector3 v3Offscreen = new Vector3(100f, 100f, 0f);
+    public Vector3 v3Offscreen = new Vector3(-1000f, -1000f, 0f);
 
 
     // Use this for initialization
@@ -63,9 +63,9 @@ public class ViewManaPool : MonoBehaviour {
         } else if(mod.plyr.inputController.GetInputType() == LocalInputType.InputType.AI && mod.plyr.GetEnemyPlayer().inputController.GetInputType() == LocalInputType.InputType.AI) {
             //Currently we'll put the left players mana on the screen
             if(mod.plyr.id == 0) {
-                this.transform.position = v3TopMiddle;
+                this.transform.position = v3MiddleLeft;
             } else if(mod.plyr.id == 1) {
-                this.transform.position = v3Offscreen;
+                this.transform.position = v3MiddleRight;
             }
 
         } else {
@@ -85,6 +85,9 @@ public class ViewManaPool : MonoBehaviour {
     
 
     public void DisplayAllMana() {
+
+        if (mod.manaOwned == null) return;
+
         UpdateManaText(txtManaPhysicalUsable, mod.manaOwned[Mana.MANATYPE.PHYSICAL]);
         UpdateManaText(txtManaMentalUsable, mod.manaOwned[Mana.MANATYPE.MENTAL]);
         UpdateManaText(txtManaEnergyUsable, mod.manaOwned[Mana.MANATYPE.ENERGY]);
