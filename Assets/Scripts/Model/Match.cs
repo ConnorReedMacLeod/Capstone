@@ -20,6 +20,9 @@ public class Match : MonoBehaviour {
 
     public Player[] arPlayers;
 
+    public ManaPool manapool0;
+    public ManaPool manapool1;
+
     public GameObject pfPlayer;
     public GameObject pfChr;
 
