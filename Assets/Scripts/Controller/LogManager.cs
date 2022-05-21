@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 using System.Linq;
 using Photon.Pun;
+using UnityEngine.SceneManagement;
 
 public class LogManager : SingletonPersistent<LogManager> {
 
@@ -24,6 +25,7 @@ public class LogManager : SingletonPersistent<LogManager> {
 
     public override void Init() {
 
+        SceneManager.sceneUnloaded += OnLeaveScene;
     }
 
     public void InitMatchLog() {
@@ -439,6 +441,17 @@ public class LogManager : SingletonPersistent<LogManager> {
 
         //Since we're done giving all our logged inputs to the networkreceiver, we cna clear out our locally stored lst of inputs
         lstLoggedSerializedMatchInputs = null;
+    }
+
+    void OnLeaveScene<Scene> (Scene scene) {
+
+        if(swFileWriter == null) return;
+
+        Debug.Log("Leaving scene - closing log file");
+
+        WriteToMatchLogFile("LeftScene");
+
+        CloseLogFile();
     }
 
 
