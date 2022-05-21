@@ -75,8 +75,6 @@ public class Player : MonoBehaviour {
             manapool = Match.Get().manapool1;
         }
 
-        Debug.LogError("id is " + id);
-
         manapool.SetPlayer(this);
 
     }

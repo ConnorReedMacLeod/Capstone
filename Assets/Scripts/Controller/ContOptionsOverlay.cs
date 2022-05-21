@@ -15,7 +15,7 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
     public Vector3 v3OffScreen = new Vector3(-1000f, -1000f, 0f);
 
 
-    public void cbClickRestart() {
+    public void Restart() {
 
         //Clear out any static subject lists
         Subject.ResetAllStaticSubjects();
@@ -28,13 +28,15 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
 
     public void UpdatePlyr1Input(int nInputType) {
 
-        Match.Get().arPlayers[0].SetInputType((LocalInputType.InputType)dropdownPlayer1Input.value);
-
+        Debug.Log("Updating plyr1input to " + ((LocalInputType.InputType)dropdownPlayer1Input.value + 1));
+        Match.Get().arPlayers[0].SetInputType((LocalInputType.InputType)dropdownPlayer1Input.value + 1);
+        
     }
 
     public void UpdatePlyr2Input(int nInputType) {
-
-        Match.Get().arPlayers[1].SetInputType((LocalInputType.InputType)dropdownPlayer2Input.value);
+        
+        Debug.Log("Updating plyr2input to " + ((LocalInputType.InputType)dropdownPlayer2Input.value + 1));
+        Match.Get().arPlayers[1].SetInputType((LocalInputType.InputType)dropdownPlayer2Input.value + 1);
 
     }
 

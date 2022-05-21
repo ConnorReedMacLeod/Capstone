@@ -29,7 +29,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
         Debug.Log("Prepping Match");
 
-        yield return new WaitForSeconds(ContTime.fDelayStandard);
+        yield return ContTime.Get().WaitForSeconds(ContTime.fDelayStandard);
     }
 
     public bool IsMatchOver() {
@@ -43,7 +43,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
         Debug.Log("Cleaning up Match");
 
-        yield return new WaitForSeconds(ContTime.fDelayStandard);
+        yield return ContTime.Get().WaitForSeconds(ContTime.fDelayStandard);
     }
 
     //Do any saving of results/rewards and move to a new scene

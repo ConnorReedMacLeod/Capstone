@@ -19,6 +19,9 @@ public class LocalInputHuman : LocalInputType {
         //We can only proceed with selecting a skill if it's our turn to actually
         // be using a skill - we will have had our StartSelection method called to let us
         // know we are allowed to select skills
+        
+        //Bug - if we have swapped to a newly created humaninput while skill selection has already started, then 
+        //  we don't currently initilize bCurrentlySelectingSkill to the correct value
 
         if(bCurrentlySelectingSkill == false) {
             Debug.Log("Error - can't select a skill to be used when it's not the local player's turn");
