@@ -64,7 +64,7 @@ public abstract class Executable {
 
         ContSkillEngine.Get().SpawnTimer(fDelay, sLabel);
 
-        yield return new WaitForSeconds(fDelay);
+        yield return ContTime.Get().WaitForSeconds(fDelay);
     }
 
     public Executable(Chr _chrSource) {

@@ -47,30 +47,36 @@ public class ViewManaPool : MonoBehaviour {
 
     public void PositionPanel() {
 
+        if (mod.plyr.inputController == null || mod.plyr.GetEnemyPlayer().inputController == null) {
+            //If we haven't initialized an input controller for one of the players, then don't bother
+            //  trying to reposition ourselves - when they're initialized, we'll be notified and can move then
+            return;
+        }
+
         //If both players are human
-        if(mod.plyr.inputController.GetInputType() == LocalInputType.InputType.HUMAN && mod.plyr.GetEnemyPlayer().inputController.GetInputType() == LocalInputType.InputType.HUMAN) {
+        if (mod.plyr.inputController.GetInputType() == LocalInputType.InputType.HUMAN && mod.plyr.GetEnemyPlayer().inputController.GetInputType() == LocalInputType.InputType.HUMAN) {
             //Then position the mana panels towards the sides of the screen
             if(mod.plyr.id == 0) {
-                this.transform.position = v3MiddleLeft;
+                this.transform.localPosition = v3MiddleLeft;
             } else if(mod.plyr.id == 1) {
-                this.transform.position = v3MiddleRight;
+                this.transform.localPosition = v3MiddleRight;
             }
             //If we are the only human
         } else if(mod.plyr.inputController.GetInputType() == LocalInputType.InputType.HUMAN) {
-            this.transform.position = v3TopMiddle;
+            this.transform.localPosition = v3TopMiddle;
 
             //If both players are AI
         } else if(mod.plyr.inputController.GetInputType() == LocalInputType.InputType.AI && mod.plyr.GetEnemyPlayer().inputController.GetInputType() == LocalInputType.InputType.AI) {
             //Currently we'll put the left players mana on the screen
             if(mod.plyr.id == 0) {
-                this.transform.position = v3MiddleLeft;
+                this.transform.localPosition = v3MiddleLeft;
             } else if(mod.plyr.id == 1) {
-                this.transform.position = v3MiddleRight;
+                this.transform.localPosition = v3MiddleRight;
             }
 
         } else {
             //Otherwise, put the panel offscreen
-            this.transform.position = v3Offscreen;
+            this.transform.localPosition = v3Offscreen;
         }
 
     }
