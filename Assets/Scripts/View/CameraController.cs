@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 
 //Manages the focus of the camera (provides some pre-set
-//   locations for where the camera can focus on depending on what 
-//   needs to be selected)
+//   locations for where the camera can focus on)
 public class CameraController : MonoBehaviour {
 
     //Configuration constants
@@ -17,6 +17,7 @@ public class CameraController : MonoBehaviour {
     public struct CameraLocation {
         public string sName;
         public Vector3 v3Location;
+        public KeyCode keycodeHotkey;
     }
     //Provide a public-facing inspector-editable array of saved locations for the camera
     //  - will be implemented as a dictionary when running the game
@@ -96,7 +97,7 @@ public class CameraController : MonoBehaviour {
     }
 
     public void SetTarget(Vector3 _v3Target) {
-        
+
         bHaveTarget = true;
 
         v3Target = _v3Target;
@@ -114,7 +115,7 @@ public class CameraController : MonoBehaviour {
         MoveTowardTarget();
     }
 
-    public void MoveToLocation(string sLocationName) {
+    public void SetTargetLocation(string sLocationName) {
 
         if(dictSavedCameraLocations.ContainsKey(sLocationName) == false) {
             Debug.LogErrorFormat("No saved Camera Location for {0}", sLocationName);
@@ -128,7 +129,7 @@ public class CameraController : MonoBehaviour {
     public void cbCycleToNextLocation(Object tar, params object[] args) {
         iCurLocation = (iCurLocation + 1) % dictSavedCameraLocations.Count;
 
-        MoveToLocation(arSavedCameraLocations[iCurLocation].sName);
+        SetTargetLocation(arSavedCameraLocations[iCurLocation].sName);
     }
 
     public void Start() {
@@ -138,6 +139,12 @@ public class CameraController : MonoBehaviour {
 
         foreach(CameraLocation loc in arSavedCameraLocations) {
             dictSavedCameraLocations.Add(loc.sName, loc.v3Location);
+
+            //TODONOW - fix this
+            Subject.FnCallback cbHotKey = null;
+
+            //Set up the keybinding to move to that location
+            KeyBindings.SetBinding(cbHotKey, loc.keycodeHotkey);
         }
 
         KeyBindings.SetBinding(cbCycleToNextLocation, KeyCode.L);
