@@ -22,7 +22,8 @@ public class CameraController : MonoBehaviour {
     //Provide a public-facing inspector-editable array of saved locations for the camera
     //  - will be implemented as a dictionary when running the game
     public CameraLocation[] arSavedCameraLocations;
-    private Dictionary<string, Vector3> dictSavedCameraLocations;
+    protected Dictionary<string, Vector3> dictSavedCameraLocations;
+    protected Dictionary<string, KeyCode> dictSavedCameraHotkeys;
 
     private float fMaxSpeed;
     private float fCurSpeed;
@@ -37,9 +38,6 @@ public class CameraController : MonoBehaviour {
     private Vector3 v3Target;
     private Vector3 v3Start;
 
-
-    //Which saved location we're currently moving to
-    public int iCurLocation;
 
     public void MoveTowardTarget() {
 
@@ -126,29 +124,16 @@ public class CameraController : MonoBehaviour {
 
     }
 
-    public void cbCycleToNextLocation(Object tar, params object[] args) {
-        iCurLocation = (iCurLocation + 1) % dictSavedCameraLocations.Count;
-
-        SetTargetLocation(arSavedCameraLocations[iCurLocation].sName);
-    }
-
-    public void Start() {
+    public virtual void Start() {
 
         //Take the inspector-defined list of pre-defined camera locations and turn them into a dictionary to look-up with
         dictSavedCameraLocations = new Dictionary<string, Vector3>(arSavedCameraLocations.Length);
+        dictSavedCameraHotkeys = new Dictionary<string, KeyCode>(arSavedCameraLocations.Length);
 
         foreach(CameraLocation loc in arSavedCameraLocations) {
             dictSavedCameraLocations.Add(loc.sName, loc.v3Location);
-
-            //TODONOW - fix this
-            Subject.FnCallback cbHotKey = null;
-
-            //Set up the keybinding to move to that location
-            KeyBindings.SetBinding(cbHotKey, loc.keycodeHotkey);
+            dictSavedCameraHotkeys.Add(loc.sName, loc.keycodeHotkey);
         }
-
-        KeyBindings.SetBinding(cbCycleToNextLocation, KeyCode.L);
-
 
         //Initialize our speed constants since these are all distance-independant and work as a percentage
         // of the distance we're trying to move
