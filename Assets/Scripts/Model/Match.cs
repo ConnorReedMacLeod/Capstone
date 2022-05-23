@@ -23,6 +23,9 @@ public class Match : MonoBehaviour {
     public ManaPool manapool0;
     public ManaPool manapool1;
 
+    public ManaCalendar manaCalendar0;
+    public ManaCalendar manaCalendar1;
+
     public GameObject pfPlayer;
     public GameObject pfChr;
 

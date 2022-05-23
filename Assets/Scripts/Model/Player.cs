@@ -9,9 +9,6 @@ public class Player : MonoBehaviour {
 
     public int id;
 
-    public GameObject pfManaPanel;
-    public GameObject pfManaCalendar;
-
     public LocalInputType inputController;
 
     public ManaPool manapool;
@@ -80,9 +77,12 @@ public class Player : MonoBehaviour {
     }
 
     public void SpawnManaCalendar() {
-        Debug.LogError("REMEMBER TO SHIFT THIS TO A PRE-SPAWNED UI");
-        GameObject goManaCalendar = Instantiate(pfManaCalendar, Match.Get().transform);
-        manacalendar = goManaCalendar.GetComponent<ManaCalendar>();
+
+        if(id == 0) {
+            manacalendar = Match.Get().manaCalendar0;
+        }else if(id == 1) {
+            manacalendar = Match.Get().manaCalendar1;
+        }
 
         manacalendar.SetPlayer(this);
     }
