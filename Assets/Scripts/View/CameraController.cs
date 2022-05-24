@@ -94,7 +94,7 @@ public class CameraController : MonoBehaviour {
 
     }
 
-    public void SetTarget(Vector3 _v3Target) {
+    public void SetTargetPosition(Vector3 _v3Target) {
 
         bHaveTarget = true;
 
@@ -120,7 +120,7 @@ public class CameraController : MonoBehaviour {
             return;
         }
 
-        SetTarget(dictSavedCameraLocations[sLocationName]);
+        SetTargetPosition(dictSavedCameraLocations[sLocationName]);
 
     }
 

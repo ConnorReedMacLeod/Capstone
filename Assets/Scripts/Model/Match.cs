@@ -26,8 +26,11 @@ public class Match : MonoBehaviour {
     public ManaCalendar manaCalendar0;
     public ManaCalendar manaCalendar1;
 
+    public CameraControllerMatch cameraControllerMatch;
+
     public GameObject pfPlayer;
     public GameObject pfChr;
+    public GameObject pfAdaptPanel;
 
     //TODO: Move cursor settings into their own script
     public Texture2D txCursor;                          //Cursor Texture
