@@ -64,12 +64,19 @@ public abstract class Target {
     protected virtual void OnStartLocalSelection() {
         //Don't need to do anything by default
     }
+
+    protected virtual void ShiftCameraToTarget() {
+        //By default, don't do any camera shifting, I guess
+    }
+
     public void StartLocalSelection(InputSkillSelection _selectionsSoFar) {
         //Temporarily store the currently made selections so far in case we need to retrieve them to assist in our targetting
         selectionsSoFar = _selectionsSoFar;
 
         ContGlobalInteractions.subGlobalRightClick.Subscribe(cbCancelSelectionProcess);
         OnStartLocalSelection();
+
+        ShiftCameraToTarget();
     }
     protected virtual void OnEndLocalSelection() {
         //Don't need to do anything by default

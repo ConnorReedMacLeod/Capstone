@@ -65,6 +65,52 @@ public class TarPosition : Target {
         AttemptSelection(((ViewPosition)target).mod);
     }
 
+    //Note - pretty much just copied from TarChr
+    protected override void ShiftCameraToTarget() {
+
+        bool bHasActivePlyr0 = false;
+        bool bHasActivePlyr1 = false;
+        bool bHasBenchPlyr0 = false;
+        bool bHasBenchPlyr1 = false;
+
+        //Cycle through  each selectable position and record what types of targets we see
+        foreach (Position p in GetValidSelectable(ContLocalUIInteraction.Get().selectionsInProgress)) {
+
+            if (p.PlyrIdOwnedBy() == 0) {
+                if (p.positiontype == Position.POSITIONTYPE.BENCH) {
+                    bHasBenchPlyr0 = true;
+                } else {
+                    bHasActivePlyr0 = true;
+                }
+            } else if (p.PlyrIdOwnedBy() == 1) {
+                if (p.positiontype == Position.POSITIONTYPE.BENCH) {
+                    bHasBenchPlyr1 = true;
+                } else {
+                    bHasActivePlyr1 = true;
+                }
+            }
+        }
+
+        string sCameraLocation = "Home";
+
+        if (bHasBenchPlyr0 && bHasBenchPlyr1) {
+            //If both players' benches have selectable positions, then we should zoom out to show both
+            sCameraLocation = "ZoomedOut";
+        } else if (bHasBenchPlyr0) {
+            //If we only need to look at player 0's bench, shift to the left side
+            sCameraLocation = "BenchLeft";
+        } else if (bHasBenchPlyr1) {
+            //If we only need to look at player 1's bench, shift to the right side
+            sCameraLocation = "BenchRight";
+        } else {
+            //Otherwise, just head to the center position
+            sCameraLocation = "Home";
+        }
+
+        //Send along the camera location we've chosen to the camera controller
+        Match.Get().cameraControllerMatch.SetTargetLocation(sCameraLocation);
+    }
+
     protected override void OnStartLocalSelection() {
 
         //Highlight all the targettable positions
