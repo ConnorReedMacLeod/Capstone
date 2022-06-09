@@ -181,8 +181,9 @@ public class InputSkillSelection : MatchInput {
         //Note - We are currently having each clause of a skill grab input directly from the networkreceiver buffer, but it would also
         //       be possible to copy clauses and embed the selections directly into them.  
 
-        //Do a small delay for skill animations
-        yield return new WaitForSeconds(ContTime.fDelayTurnSkill);
+        //Do a small delay for skill animations - note this uses ContTime's WaitForSeconds so that we adhere to any time-scale modifications like pausing
+        yield return ContTime.Get().WaitForSeconds(ContTime.fDelayTurnSkill);
+            
     }
 
     public override bool CanLegallyExecute() {

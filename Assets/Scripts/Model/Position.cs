@@ -110,6 +110,11 @@ public class Position : MonoBehaviour {
 
     }
 
+    public int PlyrIdOwnedBy() {
+        if (coords.iColumn < 3) return 0;
+        else return 1;
+    }
+
     public bool IsAllyOwned(Player plyr) {
         return ContPositions.Get().GetPlayerOwnerOfPosition(this) == plyr;
     }

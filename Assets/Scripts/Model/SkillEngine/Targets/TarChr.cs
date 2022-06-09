@@ -78,6 +78,51 @@ public class TarChr : Target {
         AttemptSelection(((ViewChr)target).mod);
     }
 
+    protected override void ShiftCameraToTarget() {
+
+        bool bHasActivePlyr0 = false;
+        bool bHasActivePlyr1 = false;
+        bool bHasBenchPlyr0 = false;
+        bool bHasBenchPlyr1 = false;
+
+        //Cycle through  each selectable character and record what types of targets we see
+        foreach (Chr c in GetValidSelectable(ContLocalUIInteraction.Get().selectionsInProgress)) {
+
+            if(c.plyrOwner.id == 0) {
+                if (c.position.positiontype == Position.POSITIONTYPE.BENCH) {
+                    bHasBenchPlyr0 = true;
+                } else {
+                    bHasActivePlyr0 = true;
+                }
+            }else if (c.plyrOwner.id == 1) {
+                if (c.position.positiontype == Position.POSITIONTYPE.BENCH) {
+                    bHasBenchPlyr1 = true;
+                } else {
+                    bHasActivePlyr1 = true;
+                }
+            }
+        }
+
+        string sCameraLocation = "Home";
+
+        if(bHasBenchPlyr0 && bHasBenchPlyr1) {
+            //If both players' benches have selectable characters, then we should zoom out to show both
+            sCameraLocation = "ZoomedOut";
+        } else if (bHasBenchPlyr0) {
+            //If we only need to look at player 0's bench, shift to the left side
+            sCameraLocation = "BenchLeft";
+        }else if (bHasBenchPlyr1) {
+            //If we only need to look at player 1's bench, shift to the right side
+            sCameraLocation = "BenchRight";
+        } else {
+            //Otherwise, just head to the center position
+            sCameraLocation = "Home";
+        }
+
+        //Send along the camera location we've chosen to the camera controller
+        Match.Get().cameraControllerMatch.SetTargetLocation(sCameraLocation);
+    }
+
     protected override void OnStartLocalSelection() {
 
         //Highlight all the targettable characters
@@ -88,6 +133,8 @@ public class TarChr : Target {
 
         //Set up the character-click triggers
         ViewChr.subAllClick.Subscribe(cbClickSelectable);
+
+        
     }
 
     protected override void OnEndLocalSelection() {

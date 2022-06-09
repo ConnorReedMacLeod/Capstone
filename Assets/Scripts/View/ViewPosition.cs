@@ -25,8 +25,9 @@ public class ViewPosition : ViewInteractive {
 
         if(mod.chrOnPosition == null) return;
 
-        //Move their global position to our global position
-        mod.chrOnPosition.view.transform.position = this.transform.position;
+        //Move their global position to our global position (slightly above us though)
+        Vector3 v3NewChrPosition = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z - 0.01f);
+        mod.chrOnPosition.view.transform.position = v3NewChrPosition;
 
     }
 

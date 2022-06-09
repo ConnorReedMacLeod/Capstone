@@ -82,6 +82,52 @@ public class TarSkillSlot : Target {
         AttemptSelection(((ViewSkill)target).mod.skillslot);
     }
 
+    // Mostly copied from TarChr's implementation
+    protected override void ShiftCameraToTarget() {
+
+        bool bHasActivePlyr0 = false;
+        bool bHasActivePlyr1 = false;
+        bool bHasBenchPlyr0 = false;
+        bool bHasBenchPlyr1 = false;
+
+        //Cycle through  each selectable character and record what types of targets we see
+        foreach (SkillSlot ss in GetValidSelectable(ContLocalUIInteraction.Get().selectionsInProgress)) {
+
+            if (ss.chrOwner.plyrOwner.id == 0) {
+                if (ss.chrOwner.position.positiontype == Position.POSITIONTYPE.BENCH) {
+                    bHasBenchPlyr0 = true;
+                } else {
+                    bHasActivePlyr0 = true;
+                }
+            } else if (ss.chrOwner.plyrOwner.id == 1) {
+                if (ss.chrOwner.position.positiontype == Position.POSITIONTYPE.BENCH) {
+                    bHasBenchPlyr1 = true;
+                } else {
+                    bHasActivePlyr1 = true;
+                }
+            }
+        }
+
+        string sCameraLocation = "Home";
+
+        if (bHasBenchPlyr0 && bHasBenchPlyr1) {
+            //If both players' benches have selectable positions, then we should zoom out to show both
+            sCameraLocation = "ZoomedOut";
+        } else if (bHasBenchPlyr0) {
+            //If we only need to look at player 0's bench, shift to the left side
+            sCameraLocation = "BenchLeft";
+        } else if (bHasBenchPlyr1) {
+            //If we only need to look at player 1's bench, shift to the right side
+            sCameraLocation = "BenchRight";
+        } else {
+            //Otherwise, just head to the center position
+            sCameraLocation = "Home";
+        }
+
+        //Send along the camera location we've chosen to the camera controller
+        Match.Get().cameraControllerMatch.SetTargetLocation(sCameraLocation);
+    }
+
     protected override void OnStartLocalSelection() {
 
         //TODO:: Figure out how to do good highlighting for valid skillslots
