@@ -9,9 +9,6 @@ public class Player : MonoBehaviour {
 
     public int id;
 
-    public GameObject pfManaPanel;
-    public GameObject pfManaCalendar;
-
     public LocalInputType inputController;
 
     public ManaPool manapool;
@@ -67,25 +64,25 @@ public class Player : MonoBehaviour {
         }
     }
 
-    public void SpawnManaPool() {
-        GameObject manaPanel = Instantiate(pfManaPanel, Match.Get().transform);
-        manapool = manaPanel.GetComponent<ManaPool>();
+    public void InitManaPool() {
+
+        if(id == 0) {
+            manapool = Match.Get().manapool0;
+        } else if(id == 1){
+            manapool = Match.Get().manapool1;
+        }
 
         manapool.SetPlayer(this);
 
-        //TODO: Change this, all this, to work with networking
-        if(id == 0) {
-            manaPanel.transform.position = new Vector3(0f, 2.85f, -0.4f);
-        } else {
-            //move it offscreen for now
-            manaPanel.transform.position = new Vector3(100f, 100f, -0.4f);
-        }
     }
 
     public void SpawnManaCalendar() {
 
-        GameObject goManaCalendar = Instantiate(pfManaCalendar, Match.Get().transform);
-        manacalendar = goManaCalendar.GetComponent<ManaCalendar>();
+        if(id == 0) {
+            manacalendar = Match.Get().manaCalendar0;
+        }else if(id == 1) {
+            manacalendar = Match.Get().manaCalendar1;
+        }
 
         manacalendar.SetPlayer(this);
     }
@@ -96,7 +93,7 @@ public class Player : MonoBehaviour {
         if(bStarted == false) {
             bStarted = true;
 
-            SpawnManaPool();
+            InitManaPool();
             SpawnManaCalendar();
 
         }

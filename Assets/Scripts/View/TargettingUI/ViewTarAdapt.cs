@@ -4,12 +4,19 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
-public class ViewTarAdapt : MonoBehaviour {
+public class ViewTarAdapt : Singleton<ViewTarAdapt> {
 
     public TarAdapt modTarAdapt;
     public List<SkillType.SkillTypeInfo> lstSkillTypeInfosAdaptable;
 
     public Dropdown dropdownSkillSelection;
+
+    public Vector3 v3OnScreen;
+    public Vector3 v3OffScreen;
+
+    public override void Init() {
+        MoveOffscreen();
+    }
 
     //Set the TarAdapt model that we're going to be facilitating payment for
     public void StartSelection(TarAdapt _modTarAdapt) {
@@ -24,6 +31,7 @@ public class ViewTarAdapt : MonoBehaviour {
         //Set up the submission keybinding
         KeyBindings.SetBinding(SubmitSelectedSkill, KeyCode.T);
 
+        MoveOnScreen();
     }
 
     //Clear out anything from the current selection process
@@ -34,6 +42,15 @@ public class ViewTarAdapt : MonoBehaviour {
 
         lstSkillTypeInfosAdaptable = null;
 
+        MoveOffscreen();
+    }
+
+    public void MoveOnScreen() {
+        transform.localPosition = v3OnScreen;
+    }
+
+    public void MoveOffscreen() {
+        transform.localPosition = v3OffScreen;
     }
 
     public void SetDropDownOptions(List<SkillType.SkillTypeInfo> lstSkillTypeInfo) {

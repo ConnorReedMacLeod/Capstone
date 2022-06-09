@@ -169,9 +169,20 @@ public class ContTime : Singleton<ContTime> {
         lstInvokes.RemoveAll(delegate (InvokeFunc inv) {
             return inv.fDelay <= 0f;
         });
+        
+    }
 
+    public IEnumerator WaitForSeconds(float fTime) {
 
+        while(fTime > 0f) {
+            //If we haven't yet finished our delay time, then pause until the next frame
+            yield return null;
 
+            //Decrement by the internal DeltaTime count (adheres to pausing)
+            fTime -= fDeltaTime;
+        }
+
+        //When we fall out of the loop, just return naturally
     }
 
     private void SetDeltaTime() {

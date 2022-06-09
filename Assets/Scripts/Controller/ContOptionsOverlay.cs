@@ -5,28 +5,17 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
+    
+    public Dropdown dropdownPlayer1Input;
+    public Dropdown dropdownPlayer2Input;
+    public Dropdown dropdownGameSpeed;
+    public Toggle toggleFastForward;
 
-    public ViewOptionsButton btnPlyr0Human;
-    public ViewOptionsButton btnPlyr0AI;
-    public ViewOptionsButton btnPlyr1Human;
-    public ViewOptionsButton btnPlyr1AI;
-    public ViewOptionsButton btnTimerFast;
-    public ViewOptionsButton btnTimerMedium;
-    public ViewOptionsButton btnTimerInf;
-
-    public ViewOptionsButton btnRestart;
-
-    public Toggle togFastForward;
-
-    public Subject subPlayer0SelectedInGroup = new Subject();
-    public Subject subPlayer1SelectedInGroup = new Subject();
-    public Subject subTimerSelectedInGroup = new Subject();
-
-    public Vector3 v3OnScreen = new Vector3(0f, 0f, -1f);
-    public Vector3 v3OffScreen = new Vector3(-100f, -100f, -1f);
+    public Vector3 v3OnScreen = new Vector3(0f, 0f, 0f);
+    public Vector3 v3OffScreen = new Vector3(-1000f, -1000f, 0f);
 
 
-    public void cbClickRestart(Object target, params object[] args) {
+    public void Restart() {
 
         //Clear out any static subject lists
         Subject.ResetAllStaticSubjects();
@@ -37,77 +26,36 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
     }
 
 
-    public void cbClickPlyr0Human(Object target, params object[] args) {
+    public void UpdatePlyr1Input(int nInputType) {
 
-        Match.Get().arPlayers[0].SetInputType(LocalInputType.InputType.HUMAN);
-
-        subPlayer0SelectedInGroup.NotifyObs(target);
+        Debug.Log("Updating plyr1input to " + ((LocalInputType.InputType)dropdownPlayer1Input.value + 1));
+        Match.Get().arPlayers[0].SetInputType((LocalInputType.InputType)dropdownPlayer1Input.value + 1);
+        
     }
 
-    public void cbClickPlyr0AI(Object target, params object[] args) {
+    public void UpdatePlyr2Input(int nInputType) {
+        
+        Debug.Log("Updating plyr2input to " + ((LocalInputType.InputType)dropdownPlayer2Input.value + 1));
+        Match.Get().arPlayers[1].SetInputType((LocalInputType.InputType)dropdownPlayer2Input.value + 1);
 
-        Match.Get().arPlayers[0].SetInputType(LocalInputType.InputType.AI);
-
-        subPlayer0SelectedInGroup.NotifyObs(target);
     }
 
+    public void UpdateGameSpeed(int nGameSpeed) {
 
-    public void cbClickPlyr1Human(Object target, params object[] args) {
+        ContTime.Get().SetMaxSelectionTime((ContTime.DELAYOPTIONS)dropdownGameSpeed.value);
 
-        Match.Get().arPlayers[1].SetInputType(LocalInputType.InputType.HUMAN);
-
-        subPlayer1SelectedInGroup.NotifyObs(target);
     }
-
-    public void cbClickPlyr1AI(Object target, params object[] args) {
-
-        Match.Get().arPlayers[1].SetInputType(LocalInputType.InputType.AI);
-
-        subPlayer1SelectedInGroup.NotifyObs(target);
-    }
-
-    public void cbClickTimerFast(Object target, params object[] args) {
-
-        ContTime.Get().SetMaxSelectionTime(ContTime.DELAYOPTIONS.FAST);
-
-        subTimerSelectedInGroup.NotifyObs(target);
-    }
-
-    public void cbClickTimerMedium(Object target, params object[] args) {
-
-        ContTime.Get().SetMaxSelectionTime(ContTime.DELAYOPTIONS.MEDIUM);
-
-        subTimerSelectedInGroup.NotifyObs(target);
-    }
-
-    public void cbClickTimerInf(Object target, params object[] args) {
-
-        ContTime.Get().SetMaxSelectionTime(ContTime.DELAYOPTIONS.INF);
-
-        subTimerSelectedInGroup.NotifyObs(target);
-    }
-
 
     public void OnToggleFastForward() {
-        ContTime.Get().SetManualFastForward(togFastForward.isOn);
+        ContTime.Get().SetManualFastForward(toggleFastForward.isOn);
     }
 
-    public void cbOnEnter(Object target, params object[] args) {
+    public void cbOpenOptionsOverlay(Object target, params object[] args) {
 
         //Move the overlay onto the screen
-        this.transform.position = v3OnScreen;
+        this.transform.localPosition = v3OnScreen;
 
         ContTime.Get().Pause();
-
-        //Initialize all of the button's action subscription and action groups
-        btnPlyr0Human.subClick.Subscribe(cbClickPlyr0Human);
-        btnPlyr0AI.subClick.Subscribe(cbClickPlyr0AI);
-        btnPlyr1Human.subClick.Subscribe(cbClickPlyr1Human);
-        btnPlyr1AI.subClick.Subscribe(cbClickPlyr1AI);
-        btnTimerFast.subClick.Subscribe(cbClickTimerFast);
-        btnTimerMedium.subClick.Subscribe(cbClickTimerMedium);
-        btnTimerInf.subClick.Subscribe(cbClickTimerInf);
-        btnRestart.subClick.Subscribe(cbClickRestart);
 
         //And listen for the open menu shortcut
         KeyBindings.SetBinding(cbOnLeave, KeyCode.Escape);
@@ -116,63 +64,33 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
     public void cbOnLeave(Object target, params object[] args) {
 
         //Move the overlay off of the screen
-        this.transform.position = v3OffScreen;
+        this.transform.localPosition = v3OffScreen;
 
         ContTime.Get().UnPause();
 
-        //Unsubscribe each button action
-        btnPlyr0Human.subClick.UnSubscribe(cbClickPlyr0Human);
-        btnPlyr0AI.subClick.UnSubscribe(cbClickPlyr0AI);
-        btnPlyr1Human.subClick.UnSubscribe(cbClickPlyr1Human);
-        btnPlyr1AI.subClick.UnSubscribe(cbClickPlyr1AI);
-        btnTimerFast.subClick.UnSubscribe(cbClickTimerFast);
-        btnTimerMedium.subClick.UnSubscribe(cbClickTimerMedium);
-        btnTimerInf.subClick.UnSubscribe(cbClickTimerInf);
-        btnRestart.subClick.UnSubscribe(cbClickRestart);
-
         //And listen for the open menu shortcut
-        KeyBindings.SetBinding(cbOnEnter, KeyCode.Escape);
+        KeyBindings.SetBinding(cbOpenOptionsOverlay, KeyCode.Escape);
     }
 
-
-    public void InitButtonGroups() {
-        //Set up the radio-button selection groups
-        subPlayer0SelectedInGroup.Subscribe(btnPlyr0Human.cbSelectedOptionInGroup);
-        subPlayer0SelectedInGroup.Subscribe(btnPlyr0AI.cbSelectedOptionInGroup);
-
-        subPlayer1SelectedInGroup.Subscribe(btnPlyr1Human.cbSelectedOptionInGroup);
-        subPlayer1SelectedInGroup.Subscribe(btnPlyr1AI.cbSelectedOptionInGroup);
-
-        subTimerSelectedInGroup.Subscribe(btnTimerFast.cbSelectedOptionInGroup);
-        subTimerSelectedInGroup.Subscribe(btnTimerMedium.cbSelectedOptionInGroup);
-        subTimerSelectedInGroup.Subscribe(btnTimerInf.cbSelectedOptionInGroup);
-
-    }
 
     public void InitDefaultOptions() {
 
-        //Initially Set the default options
-        btnPlyr0Human.bSelected = true;
-        subPlayer0SelectedInGroup.NotifyObs(btnPlyr0Human);
+        //Load in any preset or pre-configured option settings that we cover
+        dropdownPlayer1Input.SetValueWithoutNotify((int)NetworkMatchSetup.GetInputType(0) - 1);
+        dropdownPlayer2Input.SetValueWithoutNotify((int)NetworkMatchSetup.GetInputType(1) - 1);
 
-        btnPlyr1AI.bSelected = true;
-        subPlayer1SelectedInGroup.NotifyObs(btnPlyr1AI);
-
-        ContTime.Get().SetMaxSelectionTime(ContTime.DELAYOPTIONS.MEDIUM);
-        btnTimerMedium.bSelected = true;
-        subTimerSelectedInGroup.NotifyObs(btnTimerMedium);
+        dropdownGameSpeed.value = (int)ContTime.DELAYOPTIONS.MEDIUM;
     }
 
     public override void Init() {
         //TODO:: Decide what things should persist between scene changes (default options/keybinds)
-        InitButtonGroups();
         InitDefaultOptions();
 
         //Initially hide the menu
-        this.transform.position = v3OffScreen;
+        this.transform.localPosition = v3OffScreen;
 
         //And listen for the open menu shortcut
-        KeyBindings.SetBinding(cbOnEnter, KeyCode.Escape);
+        KeyBindings.SetBinding(cbOpenOptionsOverlay, KeyCode.Escape);
     }
 
 }

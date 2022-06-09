@@ -11,9 +11,6 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
     public Stack<Clause> stackClause = new Stack<Clause>();
     public Stack<Executable> stackExec = new Stack<Executable>();
 
-    public GameObject pfTimer;
-    public ViewTimer viewTimerCur;
-
     public const bool bDEBUGENGINE = false;
 
     public MatchInput matchinputToFillOut;  //A reference to the match input that needs to be filled out before we can progress
@@ -32,7 +29,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
         Debug.Log("Prepping Match");
 
-        yield return new WaitForSeconds(ContTime.fDelayStandard);
+        yield return ContTime.Get().WaitForSeconds(ContTime.fDelayStandard);
     }
 
     public bool IsMatchOver() {
@@ -46,7 +43,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
         Debug.Log("Cleaning up Match");
 
-        yield return new WaitForSeconds(ContTime.fDelayStandard);
+        yield return ContTime.Get().WaitForSeconds(ContTime.fDelayStandard);
     }
 
     //Do any saving of results/rewards and move to a new scene
@@ -259,22 +256,9 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         //TODO:: Consider if we should check for replacement effects and triggers at resolve-time or at stack-pushing-time
     }
 
-    //Note, this isn't a coroutine, so if you want to delay until the timer is finished, just do a WaitForSeconds after spawning the timer
     public void SpawnTimer(float fDelay, string sLabel) {
-        GameObject goTimer = Instantiate(pfTimer, Match.Get().transform); //TIMER SPAWN POSITION
-        ViewTimer viewTimer = goTimer.GetComponent<ViewTimer>();
-        if(viewTimer == null) {
-            Debug.LogError("ERROR - pfTimer doesn't have a viewTimer component");
-        }
-        viewTimer.InitTimer(fDelay, sLabel);
 
-
-        //Check if we should delete the previous timer
-        if(viewTimerCur != null) {
-            //Debug.Log("Deleting previous timer for " + viewTimerCur.sLabel);
-            Destroy(viewTimerCur.gameObject);
-        }
-        viewTimerCur = viewTimer;
+        ViewTimer.Get().InitTimer(fDelay, sLabel);
 
     }
 

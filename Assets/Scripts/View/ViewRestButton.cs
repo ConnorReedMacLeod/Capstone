@@ -18,29 +18,32 @@ public class ViewRestButton : ViewInteractive {
 
     public override void onMouseClick(params object[] args) {
 
+        base.onMouseClick(args);
+
         //If we can't actually use this button, then don't react to clicks
-        if(!ButtonVisible()) return;
+        if (!ButtonVisible()) return;
 
         subAllClick.NotifyObs(this, args);
 
-        base.onMouseClick(args);
     }
 
     public override void onMouseStartHover(params object[] args) {
 
+        base.onMouseStartHover(args);
+
         //Only do something if there's actually a character that's gonna go 
-        if(!ButtonVisible()) return;
+        if (!ButtonVisible()) return;
         subAllStartHover.NotifyObs(this, args);
 
-        base.onMouseStartHover(args);
     }
 
     public override void onMouseStopHover(params object[] args) {
 
-        if(!ButtonVisible()) return;
+        base.onMouseStopHover(args);
+
+        if (!ButtonVisible()) return;
         subAllStopHover.NotifyObs(this, args);
 
-        base.onMouseStopHover(args);
     }
 
 

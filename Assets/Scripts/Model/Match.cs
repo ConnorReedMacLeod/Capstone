@@ -20,8 +20,17 @@ public class Match : MonoBehaviour {
 
     public Player[] arPlayers;
 
+    public ManaPool manapool0;
+    public ManaPool manapool1;
+
+    public ManaCalendar manaCalendar0;
+    public ManaCalendar manaCalendar1;
+
+    public CameraControllerMatch cameraControllerMatch;
+
     public GameObject pfPlayer;
     public GameObject pfChr;
+    public GameObject pfAdaptPanel;
 
     //TODO: Move cursor settings into their own script
     public Texture2D txCursor;                          //Cursor Texture

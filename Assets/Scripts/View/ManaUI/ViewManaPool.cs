@@ -25,7 +25,7 @@ public class ViewManaPool : MonoBehaviour {
     public Vector3 v3TopMiddle = new Vector3(0f, 2.85f, 0f);
     public Vector3 v3MiddleLeft = new Vector3(-4.59f, 0f, 0f);
     public Vector3 v3MiddleRight = new Vector3(4.59f, 0f, 0f);
-    public Vector3 v3Offscreen = new Vector3(100f, 100f, 0f);
+    public Vector3 v3Offscreen = new Vector3(-1000f, -1000f, 0f);
 
 
     // Use this for initialization
@@ -47,30 +47,36 @@ public class ViewManaPool : MonoBehaviour {
 
     public void PositionPanel() {
 
+        if (mod.plyr.inputController == null || mod.plyr.GetEnemyPlayer().inputController == null) {
+            //If we haven't initialized an input controller for one of the players, then don't bother
+            //  trying to reposition ourselves - when they're initialized, we'll be notified and can move then
+            return;
+        }
+
         //If both players are human
-        if(mod.plyr.inputController.GetInputType() == LocalInputType.InputType.HUMAN && mod.plyr.GetEnemyPlayer().inputController.GetInputType() == LocalInputType.InputType.HUMAN) {
+        if (mod.plyr.inputController.GetInputType() == LocalInputType.InputType.HUMAN && mod.plyr.GetEnemyPlayer().inputController.GetInputType() == LocalInputType.InputType.HUMAN) {
             //Then position the mana panels towards the sides of the screen
             if(mod.plyr.id == 0) {
-                this.transform.position = v3MiddleLeft;
+                this.transform.localPosition = v3MiddleLeft;
             } else if(mod.plyr.id == 1) {
-                this.transform.position = v3MiddleRight;
+                this.transform.localPosition = v3MiddleRight;
             }
             //If we are the only human
         } else if(mod.plyr.inputController.GetInputType() == LocalInputType.InputType.HUMAN) {
-            this.transform.position = v3TopMiddle;
+            this.transform.localPosition = v3TopMiddle;
 
             //If both players are AI
         } else if(mod.plyr.inputController.GetInputType() == LocalInputType.InputType.AI && mod.plyr.GetEnemyPlayer().inputController.GetInputType() == LocalInputType.InputType.AI) {
             //Currently we'll put the left players mana on the screen
             if(mod.plyr.id == 0) {
-                this.transform.position = v3TopMiddle;
+                this.transform.localPosition = v3MiddleLeft;
             } else if(mod.plyr.id == 1) {
-                this.transform.position = v3Offscreen;
+                this.transform.localPosition = v3MiddleRight;
             }
 
         } else {
             //Otherwise, put the panel offscreen
-            this.transform.position = v3Offscreen;
+            this.transform.localPosition = v3Offscreen;
         }
 
     }
@@ -85,6 +91,9 @@ public class ViewManaPool : MonoBehaviour {
     
 
     public void DisplayAllMana() {
+
+        if (mod.manaOwned == null) return;
+
         UpdateManaText(txtManaPhysicalUsable, mod.manaOwned[Mana.MANATYPE.PHYSICAL]);
         UpdateManaText(txtManaMentalUsable, mod.manaOwned[Mana.MANATYPE.MENTAL]);
         UpdateManaText(txtManaEnergyUsable, mod.manaOwned[Mana.MANATYPE.ENERGY]);

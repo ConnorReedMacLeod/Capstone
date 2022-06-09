@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ViewTarMana : Singleton<ViewTarMana> {
 
@@ -8,10 +9,12 @@ public class ViewTarMana : Singleton<ViewTarMana> {
     public Mana manaToPay; //Save a reference to the mana that needs to be paid
     public Player plyrPaying; //Save a reference to the player paying the cost
 
+    public GameObject pfManaPaymentIcon;
+
     public List<GameObject> lstgoManaIcons;
 
-    public const float fManaSymbolSize = 0.2f;
-    public const float fManaSymbolSpacing = 0.12f;
+    public const float fManaSymbolSize = 10f;
+    public const float fManaSymbolSpacing = 12.5f;
 
     public GameObject goRequiredManaPosition; //The game object that will contain the mana icons that are being requested
 
@@ -20,8 +23,8 @@ public class ViewTarMana : Singleton<ViewTarMana> {
 
     public bool bCanPayCost; //Remember if we can or cannot pay the full cost we're being asked to pay
 
-    public Vector3 v3OnScreen = new Vector3(0, 0, -2.5f);
-    public Vector3 v3OffScreen = new Vector3(-100, -100, -2.5f);
+    public Vector3 v3OnScreen;
+    public Vector3 v3OffScreen;
 
     public Color colXManaIcon;
 
@@ -100,23 +103,20 @@ public class ViewTarMana : Singleton<ViewTarMana> {
 
     public GameObject AddManaIcon(Mana.MANATYPE manaType, bool bPaidFor, Mana.MANATYPE manaPaidWith = Mana.MANATYPE.EFFORT) {
 
-        GameObject goManaIcon = new GameObject(string.Format("sprManaIcon{0}", lstgoManaIcons.Count));
+        GameObject goManaIcon = Instantiate(pfManaPaymentIcon, goRequiredManaPosition.transform);  
 
-        goManaIcon.transform.parent = goRequiredManaPosition.transform;
-
-        SpriteRenderer sprRen = goManaIcon.AddComponent<SpriteRenderer>();
+        Image img = goManaIcon.GetComponent<Image>();
 
         //Assign the appropriate sprite
         LibView.AssignSpritePathToObject(GetManaIconSpritePath(manaType, bPaidFor, manaPaidWith), goManaIcon);
 
-        //Sacle the icon apropriately
-        goManaIcon.transform.localScale = new Vector3(fManaSymbolSize, fManaSymbolSize, 1);
+        RectTransform rectTransform = goManaIcon.GetComponent<RectTransform>();
+
+        //Scale the icon apropriately
+        rectTransform.sizeDelta = new Vector2(fManaSymbolSize, fManaSymbolSize);
 
         //Place the icon at the appropriate spot
-        goManaIcon.transform.localPosition = new Vector3(fManaSymbolSpacing * (0.5f + 1.5f * lstgoManaIcons.Count), 0f, 0f);
-
-        //Ensure the symbol appears ahead of the mana panel
-        sprRen.sortingOrder = 1;
+        rectTransform.localPosition = new Vector3(fManaSymbolSpacing * (0.5f + 1.5f * lstgoManaIcons.Count), 0f, 0f);
 
         lstgoManaIcons.Add(goManaIcon);
 
@@ -149,7 +149,7 @@ public class ViewTarMana : Singleton<ViewTarMana> {
 
         //Apply a colour modification to make it clear that this icon is part of an X payment, and is
         //  therefore not completely required
-        goXManaIcon.GetComponent<SpriteRenderer>().color = colXManaIcon;
+        goXManaIcon.GetComponent<Image>().color = colXManaIcon;
         
     }
 
@@ -219,16 +219,18 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         manaToSpend = null;
         manaToSpendOnEffort = null;
 
+        v3OnScreen = this.transform.localPosition;
+
         //Hide the panel offscreen until it's needed again
         MoveOffscreen();
     }
 
     public void MoveOnScreen() {
-        transform.position = v3OnScreen;
+        transform.localPosition = v3OnScreen;
     }
 
     public void MoveOffscreen() {
-        transform.position = v3OffScreen;
+        transform.localPosition = v3OffScreen;
     }
 
     public override void Init() {
@@ -244,7 +246,9 @@ public class ViewTarMana : Singleton<ViewTarMana> {
         KeyBindings.SetBinding(RemoveEnergy, KeyCode.D);
         KeyBindings.SetBinding(RemoveBlood, KeyCode.F);
 
-        
+        //Start the payment panel hidden offscreen
+        MoveOffscreen();
+
     }
 
 
