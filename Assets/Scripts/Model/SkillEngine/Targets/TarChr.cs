@@ -86,16 +86,16 @@ public class TarChr : Target {
         bool bHasBenchPlyr1 = false;
 
         //Cycle through  each selectable character and record what types of targets we see
-        foreach (Chr c in GetValidSelectable(ContLocalUIInteraction.Get().selectionsInProgress)) {
+        foreach(Chr c in GetValidSelectable(ContLocalUIInteraction.Get().selectionsInProgress)) {
 
             if(c.plyrOwner.id == 0) {
-                if (c.position.positiontype == Position.POSITIONTYPE.BENCH) {
+                if(c.position.positiontype == Position.POSITIONTYPE.BENCH) {
                     bHasBenchPlyr0 = true;
                 } else {
                     bHasActivePlyr0 = true;
                 }
-            }else if (c.plyrOwner.id == 1) {
-                if (c.position.positiontype == Position.POSITIONTYPE.BENCH) {
+            } else if(c.plyrOwner.id == 1) {
+                if(c.position.positiontype == Position.POSITIONTYPE.BENCH) {
                     bHasBenchPlyr1 = true;
                 } else {
                     bHasActivePlyr1 = true;
@@ -108,10 +108,10 @@ public class TarChr : Target {
         if(bHasBenchPlyr0 && bHasBenchPlyr1) {
             //If both players' benches have selectable characters, then we should zoom out to show both
             sCameraLocation = "ZoomedOut";
-        } else if (bHasBenchPlyr0) {
+        } else if(bHasBenchPlyr0) {
             //If we only need to look at player 0's bench, shift to the left side
             sCameraLocation = "BenchLeft";
-        }else if (bHasBenchPlyr1) {
+        } else if(bHasBenchPlyr1) {
             //If we only need to look at player 1's bench, shift to the right side
             sCameraLocation = "BenchRight";
         } else {
@@ -134,7 +134,6 @@ public class TarChr : Target {
         //Set up the character-click triggers
         ViewChr.subAllClick.Subscribe(cbClickSelectable);
 
-        
     }
 
     protected override void OnEndLocalSelection() {
@@ -154,10 +153,10 @@ public class TarChr : Target {
         if(chr.bDead == true) {
             Debug.Log("Can't complete a channel selecting a dead character");
             return false;
-        }else if(chr.position.positiontype != Position.POSITIONTYPE.BENCH) {
+        } else if(chr.position.positiontype != Position.POSITIONTYPE.BENCH) {
             Debug.Log("Can't complete a channel selecting a benched character");
             return false;
-        }else if(chr.pOverrideCanBeSelectedBy.Get()(this, selectionsStored, true) == false) {
+        } else if(chr.pOverrideCanBeSelectedBy.Get()(this, selectionsStored, true) == false) {
             Debug.Log("Can't complete a channel since it's selection overrides have denied this character from being legally targettable");
             return false;
         }
