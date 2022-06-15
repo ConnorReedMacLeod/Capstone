@@ -83,7 +83,7 @@ public class Mana {
     }
 
     public void ChangeMana(Mana.MANATYPE manaType, int nAmount = 1) {
-        if (this[manaType] + nAmount < 0) {
+        if(this[manaType] + nAmount < 0) {
             Debug.LogError("This would yield a negative mana amount for type " + manaType);
         }
         this[manaType] += nAmount;
@@ -102,12 +102,23 @@ public class Mana {
         List<MANATYPE> lstManaTypes = new List<MANATYPE>();
 
         for(int manaType = (int)MANATYPE.PHYSICAL; manaType <= (int)MANATYPE.EFFORT; manaType++) {
-            for (int i = 0; i < mana[manaType]; i++) {
+            for(int i = 0; i < mana[manaType]; i++) {
                 lstManaTypes.Add((MANATYPE)manaType);
             }
         }
 
         return lstManaTypes;
+    }
+
+    public string ToShortString() {
+        string sPhys = new string('P', arMana[(int)MANATYPE.PHYSICAL]);
+        string sMen = new string('M', arMana[(int)MANATYPE.MENTAL]);
+        string sEnergy = new string('E', arMana[(int)MANATYPE.ENERGY]);
+        string sBld = new string('B', arMana[(int)MANATYPE.BLOOD]);
+        string sEff = new string('O', arMana[(int)MANATYPE.EFFORT]);
+
+        return sPhys + sMen + sEnergy + sBld + sEff;
+
     }
 
     public string ToPrettyString() {
@@ -118,6 +129,6 @@ public class Mana {
         string sEff = new string(LibText.PrepSymbol("O"), arMana[(int)MANATYPE.EFFORT]);
 
         return sPhys + sMen + sEnergy + sBld + sEff;
-        
+
     }
 }

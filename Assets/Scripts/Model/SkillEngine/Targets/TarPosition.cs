@@ -60,6 +60,13 @@ public class TarPosition : Target {
         sTargetDescription = "Select a Position";
     }
 
+    public override string GetHistoryDescription(object objTarget) {
+        Position posSelected = (Position)objTarget;
+
+        //Add highlighting depending on if the position was allied or not
+        return LibText.AddAllegianceColour(posSelected.ToPrettyString(), skill.chrOwner.plyrOwner.id == posSelected.PlyrIdOwnedBy());
+    }
+
     public override void cbClickSelectable(Object target, params object[] args) {
         //Grab the model represented by the view and pass it off to AttemptSelection
         AttemptSelection(((ViewPosition)target).mod);
@@ -74,16 +81,16 @@ public class TarPosition : Target {
         bool bHasBenchPlyr1 = false;
 
         //Cycle through  each selectable position and record what types of targets we see
-        foreach (Position p in GetValidSelectable(ContLocalUIInteraction.Get().selectionsInProgress)) {
+        foreach(Position p in GetValidSelectable(ContLocalUIInteraction.Get().selectionsInProgress)) {
 
-            if (p.PlyrIdOwnedBy() == 0) {
-                if (p.positiontype == Position.POSITIONTYPE.BENCH) {
+            if(p.PlyrIdOwnedBy() == 0) {
+                if(p.positiontype == Position.POSITIONTYPE.BENCH) {
                     bHasBenchPlyr0 = true;
                 } else {
                     bHasActivePlyr0 = true;
                 }
-            } else if (p.PlyrIdOwnedBy() == 1) {
-                if (p.positiontype == Position.POSITIONTYPE.BENCH) {
+            } else if(p.PlyrIdOwnedBy() == 1) {
+                if(p.positiontype == Position.POSITIONTYPE.BENCH) {
                     bHasBenchPlyr1 = true;
                 } else {
                     bHasActivePlyr1 = true;
@@ -93,13 +100,13 @@ public class TarPosition : Target {
 
         string sCameraLocation = "Home";
 
-        if (bHasBenchPlyr0 && bHasBenchPlyr1) {
+        if(bHasBenchPlyr0 && bHasBenchPlyr1) {
             //If both players' benches have selectable positions, then we should zoom out to show both
             sCameraLocation = "ZoomedOut";
-        } else if (bHasBenchPlyr0) {
+        } else if(bHasBenchPlyr0) {
             //If we only need to look at player 0's bench, shift to the left side
             sCameraLocation = "BenchLeft";
-        } else if (bHasBenchPlyr1) {
+        } else if(bHasBenchPlyr1) {
             //If we only need to look at player 1's bench, shift to the right side
             sCameraLocation = "BenchRight";
         } else {
@@ -114,7 +121,7 @@ public class TarPosition : Target {
     protected override void OnStartLocalSelection() {
 
         //Highlight all the targettable positions
-        foreach (Position p in GetValidSelectable(ContLocalUIInteraction.Get().selectionsInProgress)) {
+        foreach(Position p in GetValidSelectable(ContLocalUIInteraction.Get().selectionsInProgress)) {
             //Pass along the skill we're trying to select targets for
             Debug.Log("About to let " + p + " know that it is selectable with sub " + p.subBecomesTargettable);
             Debug.Log("Selecting for " + ContLocalUIInteraction.Get().selectionsInProgress.skillslotSelected);
@@ -127,7 +134,7 @@ public class TarPosition : Target {
 
     protected override void OnEndLocalSelection() {
         //Remove highlighting from ALL Positions (just in case somehow the list of targettable positions may have changed)
-        foreach (Position p in GetSelectableUniverse()) {
+        foreach(Position p in GetSelectableUniverse()) {
             p.subEndsTargettable.NotifyObs();
         }
 
