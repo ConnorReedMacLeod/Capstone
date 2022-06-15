@@ -104,6 +104,9 @@ public abstract class Target {
 
     public string sTargetDescription;
 
+    //Get a string representing a selection made to fill this target that we can use to describe this selection in the history log
+    public abstract string GetHistoryDescription(object objTarget);
+
     //Each derived target type should subscribe/unsubscribe this to UI events for selecting their targets,
     //  then they can extract the model represented by the selected UI View component and pass it to AttemptSelection
     public abstract void cbClickSelectable(Object target, params object[] args);

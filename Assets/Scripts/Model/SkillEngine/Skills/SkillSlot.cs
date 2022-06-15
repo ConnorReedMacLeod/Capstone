@@ -56,4 +56,8 @@ public class SkillSlot {
 
         nCooldown = 0;
     }
+
+    public override string ToString() {
+        return skill.ToString();
+    }
 }

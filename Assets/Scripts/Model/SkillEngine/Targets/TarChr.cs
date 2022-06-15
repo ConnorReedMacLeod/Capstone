@@ -73,6 +73,14 @@ public class TarChr : Target {
         sTargetDescription = "Select a Character";
     }
 
+    public override string GetHistoryDescription(object objTarget) {
+        Chr chrSelected = (Chr)objTarget;
+
+        //Set the highlighting to be either green or red depending on if the target is on the same team or not
+        return LibText.AddAllegianceColour(chrSelected.sName, skill.chrOwner.plyrOwner.id == chrSelected.plyrOwner.id);
+
+    }
+
     public override void cbClickSelectable(Object target, params object[] args) {
         //Grab the model represented by the view and pass it off to AttemptSelection
         AttemptSelection(((ViewChr)target).mod);

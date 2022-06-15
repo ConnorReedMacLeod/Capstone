@@ -48,6 +48,9 @@ public class ExecStartSkill : Executable {
     public override void ExecuteEffect() {
         //Debug.Log("Notifying that a skill has started");
 
+        //Send the results of the skill about to be executed to the history panel
+        ViewHistoryPanel.Get().AddHistoryItemSkill((InputSkillSelection)NetworkMatchReceiver.Get().GetCurMatchInput());
+
         //Notify everyone that we're just about to start the effects of a skill
         chrSource.subPreExecuteSkill.NotifyObs(chrSource, skill);
         Chr.subAllPreExecuteSkill.NotifyObs(chrSource, skill);

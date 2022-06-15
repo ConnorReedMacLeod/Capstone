@@ -84,6 +84,29 @@ public class Position : MonoBehaviour {
         return string.Format("({0},{1}) ({2})", iColumn, jRow, positiontype);
     }
 
+    public string ToPrettyString() {
+        string sPrettyColumn = "";
+        string sPrettyRow = "";
+
+        if(positiontype == POSITIONTYPE.BACKLINE) {
+            sPrettyColumn = "Backline";
+        } else if(positiontype == POSITIONTYPE.FRONTLINE) {
+            sPrettyColumn = "Frontline";
+        } else if(positiontype == POSITIONTYPE.BENCH) {
+            sPrettyColumn = "Bench";
+        }
+
+        if(jRow == 0) {
+            sPrettyRow = "Top";
+        } else if(jRow == 1) {
+            sPrettyRow = "Mid";
+        } else if(jRow == 2) {
+            sPrettyRow = "Bot";
+        }
+
+        return string.Format("{0}/{1}", sPrettyRow, sPrettyColumn);
+    }
+
     public override bool Equals(object other) {
         if(other.GetType() != this.GetType()) return false;
         return this.coords.Equals(((Position)other).coords);
@@ -111,7 +134,7 @@ public class Position : MonoBehaviour {
     }
 
     public int PlyrIdOwnedBy() {
-        if (coords.iColumn < 3) return 0;
+        if(coords.iColumn < 3) return 0;
         else return 1;
     }
 
