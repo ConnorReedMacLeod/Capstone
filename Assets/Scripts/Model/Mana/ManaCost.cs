@@ -40,7 +40,7 @@ public class ManaCost {
 
     public override string ToString() {
         string sCost = pManaCost.Get().ToString();
-        if (bXCost) {
+        if(bXCost) {
             sCost += "X";
         }
 
@@ -49,7 +49,7 @@ public class ManaCost {
 
     public string ToPrettyString() {
         string sCost = pManaCost.Get().ToPrettyString();
-        if (bXCost) {
+        if(bXCost) {
             sCost += "X";
         }
 
@@ -57,7 +57,7 @@ public class ManaCost {
     }
 
     public int GetXPaid(Mana manaPaid) {
-        if (bXCost == false) return 0;
+        if(bXCost == false) return 0;
         //return the total amount of mana spent minus the total amount needed for the cost (before the X)
         return manaPaid.GetTotalMana() - pManaCost.Get().GetTotalMana();
     }

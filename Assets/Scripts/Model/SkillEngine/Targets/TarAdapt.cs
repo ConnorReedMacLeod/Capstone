@@ -8,7 +8,7 @@ public class TarAdapt : Target {
     public int iTargetSkillSlotToReplace;
 
     public override int Serialize(object objToSerialize) {
-        
+
         //Just convert the SkillType we've been passed along (converting into an int)
 
         return (int)objToSerialize;
@@ -27,7 +27,7 @@ public class TarAdapt : Target {
         TarSkillSlot tarskillslot = TarSkillSlot.AddTarget(_skill, _IsValidSkillSlot);
 
         TarAdapt tarAdapt = new TarAdapt(_skill, _IsValidAdaptSkill);
-        
+
         _skill.lstTargets.Add(tarAdapt);
 
         tarAdapt.iTargetSkillSlotToReplace = tarskillslot.iTargetIndex;
@@ -77,6 +77,10 @@ public class TarAdapt : Target {
 
     public override void InitTargetDescription() {
         sTargetDescription = "Select the skill to adapt into";
+    }
+
+    public override string GetHistoryDescription(object objTarget) {
+        return "??? skill";
     }
 
 

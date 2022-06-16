@@ -69,7 +69,7 @@ public class TarMana : Target {
     public override IEnumerable<object> GetSelectableUniverse() {
         List<Mana> lstManaPayable = new List<Mana>();
 
-        if (skill.chrOwner.plyrOwner.manapool.CanPayManaCost(manaCostRequired)) {
+        if(skill.chrOwner.plyrOwner.manapool.CanPayManaCost(manaCostRequired)) {
             //If we are capable of paying this mana cost, then add a payment of this mana cost to our lst
             lstManaPayable.Add(skill.chrOwner.plyrOwner.manapool.GetPaymentForManaCost(manaCostRequired));
         }
@@ -84,6 +84,9 @@ public class TarMana : Target {
         sTargetDescription = "Pay for the Required Manacost";
     }
 
+    public override string GetHistoryDescription(object objTarget) {
+        return ((Mana)objTarget).ToShortString();
+    }
 
     //Hooked up to the 'submit' button/trigger for after the mana payments have been selected
     public override void cbClickSelectable(Object target, params object[] args) {

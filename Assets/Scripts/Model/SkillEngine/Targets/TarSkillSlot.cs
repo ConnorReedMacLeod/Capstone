@@ -77,6 +77,14 @@ public class TarSkillSlot : Target {
         sTargetDescription = "Select a Character";
     }
 
+    public override string GetHistoryDescription(object objTarget) {
+        SkillSlot ssSelected = (SkillSlot)objTarget;
+
+        //Set the highlighting to be either green or red depending on if the target is on the same team or not
+        return LibText.AddAllegianceColour(ssSelected.ToString(), skill.chrOwner.plyrOwner.id == ssSelected.chrOwner.plyrOwner.id);
+    }
+
+
     public override void cbClickSelectable(Object target, params object[] args) {
         //Grab the model represented by the view and pass it off to AttemptSelection
         AttemptSelection(((ViewSkill)target).mod.skillslot);
@@ -91,16 +99,16 @@ public class TarSkillSlot : Target {
         bool bHasBenchPlyr1 = false;
 
         //Cycle through  each selectable character and record what types of targets we see
-        foreach (SkillSlot ss in GetValidSelectable(ContLocalUIInteraction.Get().selectionsInProgress)) {
+        foreach(SkillSlot ss in GetValidSelectable(ContLocalUIInteraction.Get().selectionsInProgress)) {
 
-            if (ss.chrOwner.plyrOwner.id == 0) {
-                if (ss.chrOwner.position.positiontype == Position.POSITIONTYPE.BENCH) {
+            if(ss.chrOwner.plyrOwner.id == 0) {
+                if(ss.chrOwner.position.positiontype == Position.POSITIONTYPE.BENCH) {
                     bHasBenchPlyr0 = true;
                 } else {
                     bHasActivePlyr0 = true;
                 }
-            } else if (ss.chrOwner.plyrOwner.id == 1) {
-                if (ss.chrOwner.position.positiontype == Position.POSITIONTYPE.BENCH) {
+            } else if(ss.chrOwner.plyrOwner.id == 1) {
+                if(ss.chrOwner.position.positiontype == Position.POSITIONTYPE.BENCH) {
                     bHasBenchPlyr1 = true;
                 } else {
                     bHasActivePlyr1 = true;
@@ -110,13 +118,13 @@ public class TarSkillSlot : Target {
 
         string sCameraLocation = "Home";
 
-        if (bHasBenchPlyr0 && bHasBenchPlyr1) {
+        if(bHasBenchPlyr0 && bHasBenchPlyr1) {
             //If both players' benches have selectable positions, then we should zoom out to show both
             sCameraLocation = "ZoomedOut";
-        } else if (bHasBenchPlyr0) {
+        } else if(bHasBenchPlyr0) {
             //If we only need to look at player 0's bench, shift to the left side
             sCameraLocation = "BenchLeft";
-        } else if (bHasBenchPlyr1) {
+        } else if(bHasBenchPlyr1) {
             //If we only need to look at player 1's bench, shift to the right side
             sCameraLocation = "BenchRight";
         } else {
