@@ -183,7 +183,7 @@ public class InputSkillSelection : MatchInput {
 
         //Do a small delay for skill animations - note this uses ContTime's WaitForSeconds so that we adhere to any time-scale modifications like pausing
         yield return ContTime.Get().WaitForSeconds(ContTime.fDelayTurnSkill);
-            
+
     }
 
     public override bool CanLegallyExecute() {

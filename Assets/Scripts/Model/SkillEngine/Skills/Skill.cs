@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Skill { 
+public abstract class Skill {
 
     public string sName;
     public string sDisplayName;
@@ -177,14 +177,14 @@ public abstract class Skill {
     public bool CanCompleteAsChannel() {
 
         //First, check if we're at least alive
-        if (chrOwner.bDead == true) {
+        if(chrOwner.bDead == true) {
             return false;
         }
 
         //Note, we need to be in a channeling state, but a channel will automatically stop if we ever leave the channeling state anyway
         Debug.Assert(chrOwner.curStateReadiness.Type() == StateReadiness.TYPE.CHANNELING);
 
-        if (ExtraCanCompleteAsChannelChecks() == false) {
+        if(ExtraCanCompleteAsChannelChecks() == false) {
             Debug.Log("Cannot complete channel due to skill-specific checks");
             return false;
         }
@@ -237,13 +237,13 @@ public abstract class Skill {
         }
 
         public override void Execute() {
-    
+
             //TODO:: Think if this is an acceptable solution, since it seems potentially narrow.  It also assumes that the mana you reserved
             //       exactly corresponds to the mana you NEED to pay.  I guess this helps with any optional costs that might get played, but I
             //       worry that it'd be possible to un-reserve mana somehow to avoid actually paying the requisite amounts for the skill's costs
 
             //We'll spend all the mana that we've reserved as part of the mana-paying process of targetting and then clear out reserved mana
-            ContSkillEngine.PushSingleExecutable(new ExecChangeMana(skill.chrOwner, skill.chrOwner.plyrOwner, 
+            ContSkillEngine.PushSingleExecutable(new ExecChangeMana(skill.chrOwner, skill.chrOwner.plyrOwner,
                 Mana.GetNegatedMana(skill.chrOwner.plyrOwner.manapool.manaReservedToPay)));
 
             skill.chrOwner.plyrOwner.manapool.ResetReservedMana();
@@ -251,7 +251,7 @@ public abstract class Skill {
 
     };
 
-    class ClausePayCooldown : ClauseSkill{
+    class ClausePayCooldown : ClauseSkill {
 
         public ClausePayCooldown(Skill _skill) : base(_skill) {
         }
@@ -262,7 +262,7 @@ public abstract class Skill {
 
         public override void Execute() {
 
-            ContSkillEngine.PushSingleExecutable(new ExecChangeCooldown(skill.chrOwner, skill.skillslot , skill.nCooldownInduced));
+            ContSkillEngine.PushSingleExecutable(new ExecChangeCooldown(skill.chrOwner, skill.skillslot, skill.nCooldownInduced));
 
         }
 
@@ -334,4 +334,8 @@ public abstract class Skill {
 
     };
 
+
+    public override string ToString() {
+        return sDisplayName;
+    }
 }
