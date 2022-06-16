@@ -31,6 +31,9 @@ public class CameraControllerMatch : CameraController {
         SetTargetLocation("ManaCalendarRight");
     }
 
+    public void cbSetLocationHistoryLog(Object tar, params object[] args) {
+        SetTargetLocation("HistoryLog");
+    }
 
     public override void Start() {
         base.Start();
@@ -43,6 +46,7 @@ public class CameraControllerMatch : CameraController {
         KeyBindings.SetBinding(cbSetLocationZoomedOut, dictSavedCameraHotkeys["ZoomedOut"]);
         KeyBindings.SetBinding(cbSetLocationManaCalendarLeft, dictSavedCameraHotkeys["ManaCalendarLeft"]);
         KeyBindings.SetBinding(cbSetLocationManaCalendarRight, dictSavedCameraHotkeys["ManaCalendarRight"]);
+        KeyBindings.SetBinding(cbSetLocationHistoryLog, dictSavedCameraHotkeys["HistoryLog"]);
 
     }
 }
