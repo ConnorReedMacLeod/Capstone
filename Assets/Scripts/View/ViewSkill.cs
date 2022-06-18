@@ -52,7 +52,7 @@ public class ViewSkill : ViewInteractive {
     //Let the Skill button know which skill it's representing
     public void SetModel(Skill _mod) {
 
-        if(mod != null) {
+        if (mod != null) {
             //If we we're previously showing an skill, then unsubscribe from it
             mod.subSkillChange.UnSubscribe(cbSkillChanged);
         }
@@ -60,32 +60,52 @@ public class ViewSkill : ViewInteractive {
         mod = _mod;
         DisplayAll();
 
-        if(mod != null) {
+        if (mod != null) {
             //If we're now subscribed to an actual skill, then subscribe to it
             mod.subSkillChange.Subscribe(cbSkillChanged);
         }
     }
 
     public override void Start() {
-        if(bStarted == false) {
+        if (bStarted == false) {
             bStarted = true;
 
             base.Start();
         }
     }
 
+    public bool ShouldHide() {
+        //If we've not using the hidden skills rule, then definitely don't hide any skills
+        if (ContOptionsOverlay.Get().bHiddenSkillsRule == false) return false;
+
+        //If the skill doesn't need to be hidden, then don't hide it
+        if (mod.pbHidden.Get() == false) return false;
+
+        //If the skill should be publicly hidden, then we just need to check if
+        // we locally own the skill and thus don't need to hide it
+        if () {
+
+        }
+
+        return true;
+    }
 
     public void DisplayIcon() {
         if(mod == null) return;
 
-        string sSprPath = "Images/Chrs/" + mod.chrOwner.sName + "/img" + mod.sName;
 
-        Sprite sprIcon = Resources.Load(sSprPath, typeof(Sprite)) as Sprite;
+        //By default, set the spritepath to be a blank hidden icon (TODO - update this graphic)
+        string sSprPath = "Images/Chrs/imgHeadshotMask";
 
-        Debug.Assert(sprIcon != null, "Could not find specificed sprite: " + sSprPath);
+        //And if we don't need to hide it, then update it to the relevent icon
+        if (ShouldHide() == false) {
+            sSprPath = "Images/Chrs/" + mod.chrOwner.sName + "/img" + mod.sName;
+        }
 
-        goIcon.GetComponent<SpriteRenderer>().sprite = sprIcon;
+        LibView.AssignSpritePathToObject(sSprPath, this.gameObject);
     }
+
+
 
     public void DisplayName() {
         if(mod == null) {

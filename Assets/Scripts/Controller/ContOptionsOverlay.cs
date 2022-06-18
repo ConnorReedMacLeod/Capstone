@@ -10,10 +10,13 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
     public Dropdown dropdownPlayer2Input;
     public Dropdown dropdownGameSpeed;
     public Toggle toggleFastForward;
+    public Toggle toggleHiddenSkills;
 
     public Vector3 v3OnScreen = new Vector3(0f, 0f, 0f);
     public Vector3 v3OffScreen = new Vector3(-1000f, -1000f, 0f);
 
+    public bool bHiddenSkillsRule;
+    public Subject subHiddenSkillsRuleChanged;
 
     public void Restart() {
 
@@ -50,6 +53,12 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
         ContTime.Get().SetManualFastForward(toggleFastForward.isOn);
     }
 
+    public void OnToggleHiddenSkills() {
+        bHiddenSkillsRule = toggleHiddenSkills.isOn;
+
+        subHiddenSkillsRuleChanged.NotifyObs();
+    }
+
     public void cbOpenOptionsOverlay(Object target, params object[] args) {
 
         //Move the overlay onto the screen
@@ -83,6 +92,8 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
     }
 
     public override void Init() {
+        subHiddenSkillsRuleChanged = new Subject();
+
         //TODO:: Decide what things should persist between scene changes (default options/keybinds)
         InitDefaultOptions();
 
