@@ -21,6 +21,8 @@ public abstract class Skill {
 
     public ManaCost manaCost;
 
+    public Property<bool> pbHidden;
+
     public List<Target> lstTargets;
 
     public List<ClauseSkillSelection> lstSkillClauses = new List<ClauseSkillSelection>();
@@ -32,6 +34,7 @@ public abstract class Skill {
     public Skill(Chr _chrOwner) {
         chrOwner = _chrOwner;
         lstTargets = new List<Target>();
+        pbHidden = new Property<bool>(true);
     }
 
     public abstract void InitTargets();
@@ -135,6 +138,9 @@ public abstract class Skill {
 
         //First pay the skill points
         PaySkillPoints();
+
+        //Now that all the effects of the skill are pushed onto the stack, we can make this skill publicly visible
+        pbHidden.SetBase(false);
     }
 
 
