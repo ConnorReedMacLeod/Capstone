@@ -38,59 +38,72 @@ public class ViewInfoSkill : MonoBehaviour {
         }
     }
 
-    public void DisplayIcon() {
-        string sSprPath = "Images/Chrs/" + mod.chrOwner.sName + "/img";
+    public void DisplayIcon(bool bHidden) {
 
-        if(mod != null) {
-            sSprPath += mod.sName;
+        if(mod == null) {
+            return;
+        }
+
+        string sSprPath = ViewSkill.sHIDDENSKILLICONPATH;
+
+        if(bHidden == false) {
+            sSprPath = "Images/Chrs/" + mod.chrOwner.sName + "/img" + mod.sName;
         }
 
         LibView.AssignSpritePathToObject(sSprPath, goIcon);
     }
 
-    public void DisplayName() {
+    public void DisplayName(bool bHidden) {
         if(mod == null) {
             txtName.text = "";
+        } else if (bHidden == true) {
+            txtName.text = "??";
         } else {
             txtName.text = mod.sDisplayName;
         }
     }
     
 
-    public void DisplayCost() {
-        if(mod == null) {
-            txtType.text = "";
+    public void DisplayCost(bool bHidden) {
+        if(mod == null || bHidden == true) {
+            txtCost.text = "";
         } else {
             txtCost.text = mod.manaCost.ToPrettyString();
         }
     }
 
-    public void DisplayType() {
+    public void DisplayType(bool bHidden) {
         if(mod == null) {
             txtType.text = "";
+        } else if (bHidden == true) {
+            txtType.text = "??";
         } else {
             txtType.text = mod.typeUsage.getName();
         }
     }
 
-    public void DisplayFatigue() {
+    public void DisplayFatigue(bool bHidden) {
         if(mod == null) {
             txtFatigue.text = "";
+        } else if (bHidden == true) {
+            txtFatigue.text = "FTG: ??";
         } else {
             txtFatigue.text = "FTG: " + mod.nFatigue.ToString();
         }
     }
 
-    public void DisplayCooldown() {
-        if(mod == null) {
+    public void DisplayCooldown(bool bHidden) {
+        if (mod == null) {
             txtCooldown.text = "";
+        } else if (bHidden == true) {
+            txtCooldown.text = "CD: ??";
         } else {
             txtCooldown.text = "CD: " + mod.nCooldownInduced.ToString();
         }
     }
 
-    public void DisplayCharges() {
-        if(mod == null) {
+    public void DisplayCharges(bool bHidden) {
+        if(mod == null || bHidden == true) {
             txtCharges.text = "";
         } else if(mod.bCharges == false) {
             txtCharges.text = "";
@@ -99,41 +112,47 @@ public class ViewInfoSkill : MonoBehaviour {
         }
     }
 
-    public void DisplayDescription1() {
-        if(mod == null || mod.lstSkillClauses.Count() <= 0) {
+    public void DisplayDescription1(bool bHidden) {
+        if (mod == null) {
+            txtDescription1.text = "";
+        } else if (bHidden == true) {
+            txtDescription1.text = "???";
+        } else if(mod.lstSkillClauses.Count() <= 0) {
             txtDescription1.text = "";
         } else {
             txtDescription1.text = mod.lstSkillClauses[0].GetDescription();
         }
     }
 
-    public void DisplayDescription2() {
-        if(mod == null || mod.lstSkillClauses.Count() <= 1) {
+    public void DisplayDescription2(bool bHidden) {
+        if(mod == null || bHidden == true || mod.lstSkillClauses.Count() <= 1) {
             txtDescription2.text = "";
         } else {
             txtDescription2.text = mod.lstSkillClauses[1].GetDescription();
         }
     }
 
-    public void DisplayDescription3() {
-        if(mod == null || mod.lstSkillClauses.Count() <= 2) {
+    public void DisplayDescription3(bool bHidden) {
+        if(mod == null || bHidden == true || mod.lstSkillClauses.Count() <= 2) {
             txtDescription3.text = "";
         } else {
             txtDescription3.text = mod.lstSkillClauses[2].GetDescription();
         }
     }
 
-    public void DisplayAll() {
-        DisplayIcon();
-        DisplayName();
-        DisplayCost();
-        DisplayType();
-        DisplayFatigue();
-        DisplayCooldown();
-        DisplayCharges();
-        DisplayDescription1();
-        DisplayDescription2();
-        DisplayDescription3();
+    public void DisplayAll(bool bHidden) {
+
+        DisplayIcon(bHidden);
+        DisplayName(bHidden);
+        DisplayCost(bHidden);
+        DisplayType(bHidden);
+        DisplayFatigue(bHidden);
+        DisplayCooldown(bHidden);
+        DisplayCharges(bHidden);
+        DisplayDescription1(bHidden);
+        DisplayDescription2(bHidden);
+        DisplayDescription3(bHidden);
+
     }
 
     //Undoes the image and border scaling set by the parent
@@ -146,8 +165,10 @@ public class ViewInfoSkill : MonoBehaviour {
 
     public void SetModel(Skill _mod) {
         mod = _mod;
+        bool bHiddenSkill = ViewSkill.ShouldHide(mod);
 
-        DisplayAll();
+        Debug.LogFormat("Displaying {0}, hidden = {1}", _mod.sDisplayName, bHiddenSkill);
+        DisplayAll(ViewSkill.ShouldHide(mod));
     }
 
 

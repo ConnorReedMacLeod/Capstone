@@ -89,6 +89,9 @@ public class ContOptionsOverlay : Singleton<ContOptionsOverlay> {
         dropdownPlayer2Input.SetValueWithoutNotify((int)NetworkMatchSetup.GetInputType(1) - 1);
 
         dropdownGameSpeed.value = (int)ContTime.DELAYOPTIONS.MEDIUM;
+
+        OnToggleFastForward();
+        OnToggleHiddenSkills();
     }
 
     public override void Init() {
