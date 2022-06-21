@@ -28,6 +28,9 @@ public class SkillSlot {
             skill.OnEquip();
         }
 
+        //Since this skill is newly added, make sure it's publicly hidden until used (though passives may not be)
+        skill.pbHidden.SetBase(skill.typeUsage.IsDefaultHidden());
+
         //Debug.Log("Skill in slot " + iSlot + " has been set to " + skill.sDisplayName);
         skill.subSkillChange.NotifyObs();
         //TODO - if a skill transforms while you're hovering over it, the tooltip doesn't instantly update to match the new skill description

@@ -17,8 +17,13 @@ public class TypeUsagePassive : TypeUsage {
     }
 
     public override bool Usable() {
-        //Passive's cannot be used
+        //Passives cannot be used
 
+        return false;
+    }
+
+    public override bool IsDefaultHidden() {
+        //Passives can't be used, and therefore, are never hidden
         return false;
     }
 
