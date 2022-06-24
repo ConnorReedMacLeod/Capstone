@@ -54,14 +54,14 @@ public class ViewSkill : ViewInteractive {
     //Let the Skill button know which skill it's representing
     public void SetModel(Skill _mod) {
 
-        if (mod != null) {
+        if(mod != null) {
             //If we we're previously showing an skill, then unsubscribe from it
             mod.subSkillChange.UnSubscribe(cbSkillChanged);
         }
 
         mod = _mod;
 
-        if (mod != null) {
+        if(mod != null) {
 
             DisplayAll(ShouldHide(mod));
 
@@ -71,7 +71,7 @@ public class ViewSkill : ViewInteractive {
     }
 
     public override void Start() {
-        if (bStarted == false) {
+        if(bStarted == false) {
             bStarted = true;
 
             base.Start();
@@ -79,17 +79,16 @@ public class ViewSkill : ViewInteractive {
     }
 
     public static bool ShouldHide(Skill skill) {
-        Debug.LogFormat("Skill to maybe hide is {0}", skill);
 
         //If we've not using the hidden skills rule, then definitely don't hide any skills
-        if (ContOptionsOverlay.Get().bHiddenSkillsRule == false) return false;
+        if(ContOptionsOverlay.Get().bHiddenSkillsRule == false) return false;
 
         //If the skill doesn't need to be hidden, then don't hide it
-        if (skill.pbHidden.Get() == false) return false;
+        if(skill.pbHidden.Get() == false) return false;
 
         //If the skill should be publicly hidden, then we just need to check if
         // we locally own the skill (and control it as a human) and thus don't need to hide it
-        if (skill.chrOwner.IsLocallyOwned() == true && skill.chrOwner.plyrOwner.inputController.GetInputType() == LocalInputType.InputType.HUMAN) return false;
+        if(skill.chrOwner.IsLocallyOwned() == true && skill.chrOwner.plyrOwner.inputController.GetInputType() == LocalInputType.InputType.HUMAN) return false;
 
         return true;
     }
@@ -102,7 +101,7 @@ public class ViewSkill : ViewInteractive {
         string sSprPath = sHIDDENSKILLICONPATH;
 
         //And if we don't need to hide it, then update it to the relevent icon
-        if (bHiddenSkill == false) {
+        if(bHiddenSkill == false) {
             sSprPath = "Images/Chrs/" + mod.chrOwner.sName + "/img" + mod.sName;
         }
 
@@ -114,7 +113,7 @@ public class ViewSkill : ViewInteractive {
     public void DisplayName(bool bHiddenSkill) {
         if(mod == null) {
             txtName.text = "";
-        } else if (bHiddenSkill == true) {
+        } else if(bHiddenSkill == true) {
             txtName.text = "???";
         } else {
             txtName.text = mod.sDisplayName;
@@ -150,7 +149,7 @@ public class ViewSkill : ViewInteractive {
     public void DisplayType(bool bHiddenSkill) {
         if(mod == null) {
             txtType.text = "";
-        } else if (bHiddenSkill == true) {
+        } else if(bHiddenSkill == true) {
             txtType.text = "??";
         } else {
             txtType.text = "[" + mod.typeUsage.getName() + "]";
@@ -168,7 +167,7 @@ public class ViewSkill : ViewInteractive {
     public void DisplayFatigue(bool bHiddenSkill) {
         if(mod == null) {
             txtFatigue.text = "";
-        } else if (bHiddenSkill == true) {
+        } else if(bHiddenSkill == true) {
             txtFatigue.text = "??";
         } else {
             txtFatigue.text = mod.nFatigue.ToString();
@@ -177,9 +176,9 @@ public class ViewSkill : ViewInteractive {
 
 
     public void DisplayCooldown(bool bHiddenSkill) {
-        if (mod == null) {
+        if(mod == null) {
             txtCooldown.text = "";
-        } else if (bHiddenSkill == true) {
+        } else if(bHiddenSkill == true) {
             txtCooldown.text = "??";
         } else {
             txtCooldown.text = mod.nCooldownInduced.ToString();
@@ -194,6 +193,6 @@ public class ViewSkill : ViewInteractive {
         DisplayCurCooldown(bHiddenSkill);
         DisplayCooldown(bHiddenSkill);
         DisplayIcon(bHiddenSkill);
-            
+
     }
 }

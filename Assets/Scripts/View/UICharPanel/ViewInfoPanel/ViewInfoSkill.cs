@@ -56,13 +56,13 @@ public class ViewInfoSkill : MonoBehaviour {
     public void DisplayName(bool bHidden) {
         if(mod == null) {
             txtName.text = "";
-        } else if (bHidden == true) {
+        } else if(bHidden == true) {
             txtName.text = "??";
         } else {
             txtName.text = mod.sDisplayName;
         }
     }
-    
+
 
     public void DisplayCost(bool bHidden) {
         if(mod == null || bHidden == true) {
@@ -75,7 +75,7 @@ public class ViewInfoSkill : MonoBehaviour {
     public void DisplayType(bool bHidden) {
         if(mod == null) {
             txtType.text = "";
-        } else if (bHidden == true) {
+        } else if(bHidden == true) {
             txtType.text = "??";
         } else {
             txtType.text = mod.typeUsage.getName();
@@ -85,7 +85,7 @@ public class ViewInfoSkill : MonoBehaviour {
     public void DisplayFatigue(bool bHidden) {
         if(mod == null) {
             txtFatigue.text = "";
-        } else if (bHidden == true) {
+        } else if(bHidden == true) {
             txtFatigue.text = "FTG: ??";
         } else {
             txtFatigue.text = "FTG: " + mod.nFatigue.ToString();
@@ -93,9 +93,9 @@ public class ViewInfoSkill : MonoBehaviour {
     }
 
     public void DisplayCooldown(bool bHidden) {
-        if (mod == null) {
+        if(mod == null) {
             txtCooldown.text = "";
-        } else if (bHidden == true) {
+        } else if(bHidden == true) {
             txtCooldown.text = "CD: ??";
         } else {
             txtCooldown.text = "CD: " + mod.nCooldownInduced.ToString();
@@ -113,9 +113,9 @@ public class ViewInfoSkill : MonoBehaviour {
     }
 
     public void DisplayDescription1(bool bHidden) {
-        if (mod == null) {
+        if(mod == null) {
             txtDescription1.text = "";
-        } else if (bHidden == true) {
+        } else if(bHidden == true) {
             txtDescription1.text = "???";
         } else if(mod.lstSkillClauses.Count() <= 0) {
             txtDescription1.text = "";
@@ -167,7 +167,7 @@ public class ViewInfoSkill : MonoBehaviour {
         mod = _mod;
         bool bHiddenSkill = ViewSkill.ShouldHide(mod);
 
-        Debug.LogFormat("Displaying {0}, hidden = {1}", _mod.sDisplayName, bHiddenSkill);
+        //Debug.LogFormat("Displaying {0}, hidden = {1}", _mod.sDisplayName, bHiddenSkill);
         DisplayAll(ViewSkill.ShouldHide(mod));
     }
 
