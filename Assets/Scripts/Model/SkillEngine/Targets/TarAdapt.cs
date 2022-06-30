@@ -80,6 +80,8 @@ public class TarAdapt : Target {
     }
 
     public override string GetHistoryDescription(object objTarget) {
+        //TODO - Consider having a mechanism to know if a skilltype (this objTarget) is
+        //       a passive or not - if it's a passive, we could just reveal the skill name directly
         return "??? skill";
     }
 

@@ -54,6 +54,9 @@ public class Player : MonoBehaviour {
         subAllInputTypeChanged.NotifyObs(this, inputtype);
     }
 
+    public bool IsLocallyOwned() {
+        return NetworkMatchSetup.IsLocallyOwned(this.id);
+    }
 
     //Get a refernce to the enemy player
     public Player GetEnemyPlayer() {

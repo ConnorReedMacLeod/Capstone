@@ -14,7 +14,7 @@ public class ViewHistoryPanel : Singleton<ViewHistoryPanel> {
 
     public void AddHistoryItemSkill(InputSkillSelection inputSkillSelection) {
 
-        Debug.LogFormat("Scrollvalue was {0}", scrollRect.verticalNormalizedPosition);
+        //Debug.LogFormat("Scrollvalue was {0}", scrollRect.verticalNormalizedPosition);
 
         //Ensure that the scrollbar progress is set to the bottom (the most recent item)
         // - note that this is done after a small delay since doing it immediately would be
