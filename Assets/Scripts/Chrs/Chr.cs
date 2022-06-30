@@ -418,6 +418,9 @@ public class Chr : MonoBehaviour {
 
     }
 
+    public bool IsLocallyOwned() {
+        return NetworkMatchSetup.IsLocallyOwned(plyrOwner.id);
+    }
 
     // Sets up fundamental class connections for the Chr
     public void Start() {

@@ -21,6 +21,11 @@ public abstract class TypeUsage {
         return true;
     }
 
+    public virtual bool IsDefaultHidden() {
+        //By default, all skills are hidden until used
+        return true;
+    }
+
     public virtual void PaySkillPoints() {
         //Ensure we're in a ready state
         Debug.Assert(skill.chrOwner.curStateReadiness.Type() == StateReadiness.TYPE.READY);
