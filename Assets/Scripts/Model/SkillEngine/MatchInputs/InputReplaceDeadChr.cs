@@ -2,92 +2,58 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputSkillSelection : MatchInput {
-    public Chr chrActing;
-    public SkillSlot skillslotSelected;
-
-    //Note: we strictly only store the skillslot that was selected (since this will always be usable
-    //      even if the skill that was in the slot was swapped to something unexpected before execution).  
-    //      We'll still provide the interface to just directly refer to the skill itself since that's convenient
-    public Skill skillSelected {
-        get { return skillslotSelected.skill; }
-    }
-
-    public List<object> lstSelections;
+public class InputReplaceDeadChr : MatchInput {
+    public Chr chrDead;
+    public Chr chrReplacingWith;
 
     //For creating a new skill selection collection to be filled out in the selection process
-    public InputSkillSelection(int _iPlayerActing, Chr _chrActing, SkillSlot _skillslotSelected) : base(_iPlayerActing) {
-        chrActing = _chrActing;
-        skillslotSelected = _skillslotSelected;
-        lstSelections = new List<object>();
+    public InputReplaceDeadChr(int _iPlayerActing, Chr _chrDead) : base(_iPlayerActing) {
+        chrDead = _chrDead;
     }
 
-    //For deserializing a network-provided serialized skill selection (including targets) into their corresponding objects
-    // By convention, the array leads with the acting character's global id, then the chosen skill slot, with the remaining
-    // entries corresponding to selections for that skill's targets
-    public InputSkillSelection(int[] arnSerializedSelections) : base(arnSerializedSelections) {
+    //For deserializing a network-provided serialized replacement selection.  This will just be a two
+    // element array that holds the serializiation of the character who died and the character replacing them
+    public InputReplaceDeadChr(int[] arnSerializedSelections) : base(arnSerializedSelections) {
 
-        chrActing = ChrCollection.Get().GetChr(arnSerializedSelections[0]);
-        skillslotSelected = Serializer.DeserializeSkillSlot(arnSerializedSelections[1]);
 
-        Debug.Assert(skillSelected.lstTargets.Count == arnSerializedSelections.Length - 2,
-            "Received " + (arnSerializedSelections.Length - 2) + " selections for a skill requiring " + skillSelected.lstTargets.Count);
 
-        lstSelections = new List<object>();
+        Debug.Assert(arnSerializedSelections.Length == 2,
+            "Received " + arnSerializedSelections.Length + " selections when we only need to receive a two characters");
 
-        //For each required target, have it decode the network-provided serialization
-        for(int i = 0; i < skillSelected.lstTargets.Count; i++) {
-            Debug.Log("Adding serialization entry " + (i + 2) + " of skill " + skillSelected.sName);
-            // Ask the corresponding Target to decode the serialized int we've been provided
-            // i+1 since the first entry of the serialized array refers to the chosen skill, and not the selections
-            lstSelections.Add(skillSelected.lstTargets[i].Unserialize((int)arnSerializedSelections[i + 2], lstSelections));
-        }
+
+        chrDead = Serializer.DeserializeChr(arnSerializedSelections[0]);
+        chrReplacingWith = Serializer.DeserializeChr(arnSerializedSelections[1]);
+
     }
 
-    public InputSkillSelection(InputSkillSelection other) : base(other) {
-        chrActing = other.chrActing;
-        skillslotSelected = other.skillslotSelected;
-        lstSelections = other.lstSelections;
+    public InputReplaceDeadChr(InputReplaceDeadChr other) : base(other) {
+        chrDead = other.chrDead;
+        chrReplacingWith = other.chrReplacingWith;
     }
 
-    public InputSkillSelection GetCopy() {
-        return new InputSkillSelection(this);
+    public InputReplaceDeadChr GetCopy() {
+        return new InputReplaceDeadChr(this);
     }
 
     public override int[] Serialize() {
 
-        int[] arnSerializedSelections = new int[skillSelected.lstTargets.Count + 2];
+        int[] arnSerializedSelections = new int[2];
 
-        //First, add the character who's set to be acting
-        arnSerializedSelections[0] = TarChr.SerializeChr(chrActing);
+        //All we need to do is serialize the character who's died, and the one we're replacing them with
+        Debug.Assert(chrDead != null);
+        Debug.Assert(chrReplacingWith != null);
 
-        //Second, add the serialization of the use skill
-        arnSerializedSelections[1] = Serializer.SerializeSkillSlot(skillslotSelected);
+        //First, add the character who died
+        arnSerializedSelections[0] = Serializer.SerializeByte(chrDead);
 
-        //Then add all the selections afterward
-        for(int i = 0; i < skillSelected.lstTargets.Count; i++) {
-            //For each Target, ask it how we should serialize the selected object we have stored
-            // Note - i+1, since we're adding all selections after the used skill
-            arnSerializedSelections[i + 2] = skillSelected.lstTargets[i].Serialize(lstSelections[i]);
-        }
+        //Then, add the character being swapped in
+        arnSerializedSelections[1] = Serializer.SerializeByte(chrReplacingWith);
 
         return arnSerializedSelections;
     }
 
     public override string ToString() {
-        string s = chrActing.ToString() + " " + skillSelected.ToString() + " - ";
-
-        for(int i = 0; i < skillSelected.lstTargets.Count; i++) {
-
-            //If we have a selection for this slot, fill it in with the description of that target,
-            //   otherwise, just leave it blank
-            if(i < lstSelections.Count) {
-                s += lstSelections[i].ToString() + ", ";
-            } else {
-                s += "(Unselected), ";
-            }
-        }
-        return s;
+        return string.Format("{0} to be replaced by {1}", chrDead.ToString(), chrReplacingWith == null ? "<no selection>" : chrReplacingWith.ToString());
     }
 
     public int GetIndexOfNextRequiredTarget() {
@@ -123,7 +89,7 @@ public class InputSkillSelection : MatchInput {
 
     public bool IsValidSelection() {
 
-        return skillSelected.CanSelect(this);
+        return chrReplacingWith != null && chrReplacingWith.position.positiontype == Position.POSITIONTYPE.BENCH;
     }
 
     public bool IsGoodEnoughToExecute() {
@@ -175,11 +141,13 @@ public class InputSkillSelection : MatchInput {
 
     public override IEnumerator Execute() {
 
-        //For a standard skill usage, we need to use the skill using the stored selections we have accrued
+        //First, we'll push a swap clause for the character we want to replace our dead one
         skillSelected.UseSkill();
 
-        //Note - We are currently having each clause of a skill grab input directly from the networkreceiver buffer, but it would also
-        //       be possible to copy clauses and embed the selections directly into them.  
+
+        //Then, before that executes, we'll formally kill the character and clear out their character slot
+
+
 
         //Do a small delay for skill animations - note this uses ContTime's WaitForSeconds so that we adhere to any time-scale modifications like pausing
         yield return ContTime.Get().WaitForSeconds(ContTime.fDelayTurnSkill);
@@ -187,16 +155,13 @@ public class InputSkillSelection : MatchInput {
     }
 
     public override bool CanLegallyExecute() {
-        if(chrActing == null) return false;
-        if(skillslotSelected == null) return false;
+        if(chrDead == null) return false;
+        if(chrReplacingWith == null) return false;
 
-        if(skillslotSelected.chrOwner != chrActing) {
-            Debug.Log("Tried to select " + skillslotSelected.chrOwner + "'s " + skillslotSelected + " but we want " + chrActing + " to act");
+        if(chrReplacingWith.position.positiontype != Position.POSITIONTYPE.BENCH) {
+            Debug.Log("Tried to select " + chrReplacingWith + " to swap in, but this character isn't on the bench");
             return false;
         }
-
-        //As long as we can execute the filled out skill with this selection, then we're good enough to execute this selection
-        if(skillSelected.CanSelect(this) == false) return false;
 
         return true;
     }
