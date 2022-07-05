@@ -24,6 +24,9 @@ public static class Serializer {
     public static Chr DeserializeChr(byte b) {
         return ChrCollection.Get().GetChr(b);
     }
+    public static Chr DeserializeChr(int n) {
+        return DeserializeChr((byte)n);
+    }
 
     public static byte SerializeByte(Skill skill) {
         return (byte)skill.skillslot.iSlot;
