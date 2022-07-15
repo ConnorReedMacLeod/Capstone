@@ -65,7 +65,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         yield return ProcessStackUntilInputNeeded();
 
         //Keep processing effects while the match isn't finished
-        while (!IsMatchOver()) {
+        while(!IsMatchOver()) {
 
             // At this point, we should have an input field that's been set up that needs to be filled out
             Debug.Assert(matchinputToFillOut != null);
@@ -73,31 +73,35 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
             bool bNeedsLocalInput = false;
 
             //If we need input, let's check if we already have input waiting in our buffer for that input
-            if (NetworkMatchReceiver.Get().IsCurMatchInputReady() == false) {
+            if(NetworkMatchReceiver.Get().IsCurMatchInputReady() == false) {
 
                 // Now that input is needed by some player, check if we locally control that player
-                if (NetworkMatchSetup.IsLocallyOwned(matchinputToFillOut.iPlayerActing)) {
+                if(NetworkMatchSetup.IsLocallyOwned(matchinputToFillOut.plyrActing.id)) {
                     bNeedsLocalInput = true;
-                    //Let the match input prepare to start gathering manual input 
-                    matchinputToFillOut.StartManualInputProcess();
+
+                    //Let the input controller decide how it wants to submit its selections for this requested input
+                    matchinputToFillOut.plyrActing.inputController.StartSelection(matchinputToFillOut);
+
                 } else {
                     //If we don't locally control the player who needs to decide an input
                     DebugDisplay.Get().SetDebugText("Waiting for foreign input");
                 }
 
                 //Wait until we have input waiting for us in the network buffer
-                while (NetworkMatchReceiver.Get().IsCurMatchInputReady() == false) {
+                while(NetworkMatchReceiver.Get().IsCurMatchInputReady() == false) {
                     //Keep spinning until we get the input we're waiting on
 
                     DebugDisplay.Get().SetDebugText("Waiting for input");
                     yield return null;
                 }
 
+                DebugDisplay.Get().SetDebugText("");
+
                 //Do any cleanup that we need to do if we were waiting on input
                 //TODO - figure out what needs to be done and under what circumstances - careful of potentially changing local input controllers
                 if(bNeedsLocalInput == true) {
-                    //Have the match input let the local input controller know that we're done with gathering input
-                    matchinputToFillOut.EndManualInputProcess();
+                    //If we were in charge of locally some selections, then we'll get our inputcontroller to cleanup anything it needs to
+                    matchinputToFillOut.plyrActing.inputController.EndSelection(matchinputToFillOut);
                 }
 
             }
@@ -135,7 +139,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
     public void HandleFastForwarding() {
         //Check if we have a stacked up number of stored inputs that we need to plow through
 
-        if (NetworkMatchReceiver.Get().HasNReadyInputs(nFASTFORWARDTHRESHOLD)) {
+        if(NetworkMatchReceiver.Get().HasNReadyInputs(nFASTFORWARDTHRESHOLD)) {
             ContTime.Get().SetAutoFastForward(true);
         } else {
             ContTime.Get().SetAutoFastForward(false);
@@ -154,7 +158,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         //Push each Clause in sequence onto the stack, and ensure that the first
         // Clause in the sequence ends up at the top of the stack
 
-        for (int i = lstClauses.Count - 1; i >= 0; i--) {
+        for(int i = lstClauses.Count - 1; i >= 0; i--) {
             PushSingleClause(lstClauses[i]);
         }
 
@@ -269,7 +273,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
     public IEnumerator ProcessStackUntilInputNeeded() {
 
         // Check if the flag has been raised to indicate we need player input to continue
-        while (matchinputToFillOut == null) {
+        while(matchinputToFillOut == null) {
             // Keep processing game-actions until we need player input
             yield return ProcessStacks();
         }
@@ -278,18 +282,18 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     public IEnumerator ProcessStacks() {
 
-        while (true) {
-            while (stackExec.Count == 0) {
+        while(true) {
+            while(stackExec.Count == 0) {
                 //If we don't have any executables to process, then we have to unpack clauses until we do have an executable
 
-                if (stackClause.Count > 0) {
+                if(stackClause.Count > 0) {
                     //If we have a clause on our stack, then unpack that to hopefully add an executable to the stack
-                    if (bDEBUGENGINE) Debug.Log("No Executables, so unpack a Clause");
+                    if(bDEBUGENGINE) Debug.Log("No Executables, so unpack a Clause");
                     ResolveClause();
                 } else {
                     //If we have no clauses on our stack, then our stack is completely empty, so we can push 
                     // a new executable for the next phase of the turn
-                    if (bDEBUGENGINE) Debug.Log("No Clauses or Executables so move to the next part of the turn");
+                    if(bDEBUGENGINE) Debug.Log("No Clauses or Executables so move to the next part of the turn");
                     ContTurns.Get().FinishedTurnPhase();
                 }
             }
@@ -297,11 +301,11 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
             //If we've gotten this far, then we know we have an executable to examine
 
             //Check if the executable on top of our stack has dealt with its pre-triggers/replacements yet
-            if (stackExec.Peek().bPreTriggered) {
+            if(stackExec.Peek().bPreTriggered) {
                 //If we've already dealt with all its pretriggers/replacements, then we're ready to actually evaluate and we can 
                 //  exit our loop
                 break;
-            } else { 
+            } else {
 
                 //Debug.Log("Performing Replacement effects and Pre-Triggers");
 
@@ -335,13 +339,13 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         //If we've gotten this far, then we know we have an executable at the top of our stack and 
         //  we are ready to process it
         yield return ResolveExec();
-        
+
     }
 
-   
+
 
     public override void Init() {
-        
+
     }
 
 }

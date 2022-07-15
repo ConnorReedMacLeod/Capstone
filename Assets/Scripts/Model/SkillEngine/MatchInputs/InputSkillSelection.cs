@@ -16,7 +16,7 @@ public class InputSkillSelection : MatchInput {
     public List<object> lstSelections;
 
     //For creating a new skill selection collection to be filled out in the selection process
-    public InputSkillSelection(int _iPlayerActing, Chr _chrActing, SkillSlot _skillslotSelected) : base(_iPlayerActing) {
+    public InputSkillSelection(Player plyrActing, Chr _chrActing, SkillSlot _skillslotSelected) : base(plyrActing) {
         chrActing = _chrActing;
         skillslotSelected = _skillslotSelected;
         lstSelections = new List<object>();
@@ -149,19 +149,6 @@ public class InputSkillSelection : MatchInput {
         lstSelections.Add(objSelected);
     }
 
-    //A version of AddSelection that doesn't freak out over an invalid selection (likely be a scripted AI)
-    public void AddPotentiallyInvalidSelection(object objSelected) {
-        lstSelections.Add(objSelected);
-    }
-
-    public void FillWithRandomSelections() {
-
-        //Ask each Target to randomly select a completely random choice
-        //  Note - this bypasses the standard AddSelection method since it is okay to add invalid selections here
-        for(int i = 0; i < skillSelected.lstTargets.Count; i++) {
-            AddPotentiallyInvalidSelection(skillSelected.lstTargets[i].GetRandomSelectable());
-        }
-    }
 
     // Gives the nth most recent selection (n=0 gives most recent)
     public object GetNthPreviousSelection(int n) {
@@ -212,7 +199,7 @@ public class InputSkillSelection : MatchInput {
             nCurSelectionAttempt++;
 
             //Select a random skill we have that's off cooldown
-            skillslotSelected = chrActing.arSkillSlots[Random.Range(0, Chr.nEquippedCharacterSkills)];
+            skillslotSelected = chrActing.arSkillSlots[ContRandomization.Get().GetRandom(0, Chr.nEquippedCharacterSkills)];
             lstSelections = new List<object>();
 
             //If the skill can't be activated for whatever reason (like being a passive), then skip to the next attempt
@@ -278,22 +265,25 @@ public class InputSkillSelection : MatchInput {
     }
 
     //Set up any UI for prompting the selection of a skill and unlock the capability for the local player to go through the 
-    //  target selection process
-    public override void StartManualInputProcess() {
+    //  target selection process for a skill
+    public override void StartManualInputProcess(LocalInputHuman localinputhuman) {
 
-        //Debug.Log("Starting manual input for skillselection");
-        //In this case, we're just going to pass off control to the local controller by letting it know we
-        //  want to be selecting a skill
-        chrActing.plyrOwner.inputController.StartSelection();
+        Debug.Log("Starting manual input for skillselection");
+
+        localinputhuman.bCurrentlySelectingSkill = true;
+
+        ContTurns.Get().chrNextReady.subBecomesActiveForHumans.NotifyObs();
     }
 
 
     //Clean up any UI for prompting the selection of a skill and re-lock the ability for the local player to go through the
     //   target selection process
-    public override void EndManualInputProcess() {
+    public override void EndManualInputProcess(LocalInputHuman localinputhuman) {
 
-        //Debug.Log("Ending manual input for skillselection");
-        //Have the localinputController clean up it's selection-related UI
-        chrActing.plyrOwner.inputController.EndSelection();
+        Debug.Log("Starting manual input for skillselection");
+
+        localinputhuman.bCurrentlySelectingSkill = false;
+
+        ContTurns.Get().chrNextReady.subEndsActiveForHumans.NotifyObs();
     }
 }

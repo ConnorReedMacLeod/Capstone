@@ -61,6 +61,11 @@ public class Position : MonoBehaviour {
             jRow = _jRow;
         }
 
+        public Coords(Coords other) {
+            iColumn = other.iColumn;
+            jRow = other.jRow;
+        }
+
         public override bool Equals(object obj) {
             if(obj.GetType() != this.GetType()) return false;
             return (((Coords)obj).iColumn == this.iColumn) && (((Coords)obj).jRow == this.jRow);

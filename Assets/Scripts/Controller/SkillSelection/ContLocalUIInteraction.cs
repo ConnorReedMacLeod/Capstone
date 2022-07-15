@@ -38,7 +38,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
         //Now end the selections process normally
         ExitSelectionsProcess();
-    } 
+    }
 
     // Ends the selections phase
     public void ExitSelectionsProcess() {
@@ -65,24 +65,24 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         // There's a bunch of checks we have to do for this though first to ensure we should be selecting this skill
 
         // Check if we're already in the process of selecting for a skill
-        if (selectionsInProgress != null) {
+        if(selectionsInProgress != null) {
             Debug.Log("We are already in the process of selecting targets for a skill, so we can't start the selections process for another skill");
             return;
         }
 
-        if (ContSkillEngine.Get().matchinputToFillOut == null) {
+        if(ContSkillEngine.Get().matchinputToFillOut == null) {
             Debug.Log("Can't select a skill since we're not waiting on any input right now");
             return;
         }
 
         //If the skill we've selected doesn't belong to the next acting character, then we can't proceed with selecting it
-        if (ContSkillEngine.Get().matchinputToFillOut.iPlayerActing != _skillSelected.chrOwner.plyrOwner.id) {
+        if(ContSkillEngine.Get().matchinputToFillOut.plyrActing != _skillSelected.chrOwner.plyrOwner) {
             Debug.Log("Can't select skills for a character who isn't currently acting");
             return;
         }
 
         // If this skill isn't owned by a locally-controlled client, then reject this selection
-        if (_skillSelected.chrOwner.plyrOwner.inputController == null) {
+        if(_skillSelected.chrOwner.plyrOwner.inputController == null) {
 
             Debug.Log("We can't select skills for a character we don't locally control");
             return;
@@ -90,13 +90,13 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
 
         // Check if it's actually got a LocalInputType that will allow us to select a skill
         // (i.e., if we have asked this locally-controlled client to select a skill for us
-        if (_skillSelected.chrOwner.plyrOwner.inputController.CanProceedWithSkillSelection() == false) {
+        if(_skillSelected.chrOwner.plyrOwner.inputController.CanProceedWithSkillSelection() == false) {
 
             Debug.Log("This character is owned by a local player, but selecting targets for a new skill is not available currently");
             return;
         }
 
-        if (((InputSkillSelection)ContSkillEngine.Get().matchinputToFillOut).chrActing != _skillSelected.chrOwner) { 
+        if(((InputSkillSelection)ContSkillEngine.Get().matchinputToFillOut).chrActing != _skillSelected.chrOwner) {
             Debug.Log("Can't start selections for a character who's not expected to be acting now");
             return;
         }
@@ -113,7 +113,7 @@ public class ContLocalUIInteraction : Singleton<ContLocalUIInteraction> {
         }
 
         //Initiallize our local selectionsInProgress to be choosing selections for the targets of the provided skill
-        selectionsInProgress = new InputSkillSelection(_skillSelected.chrOwner.plyrOwner.id, _skillSelected.chrOwner, _skillSelected.skillslot);
+        selectionsInProgress = new InputSkillSelection(_skillSelected.chrOwner.plyrOwner, _skillSelected.chrOwner, _skillSelected.skillslot);
 
         //Lock character selections (can unlock as needed depending on which targetting type we need to do)
         bCanSelectCharacters = false;

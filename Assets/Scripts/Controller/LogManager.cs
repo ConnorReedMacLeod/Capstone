@@ -385,7 +385,7 @@ public class LogManager : SingletonPersistent<LogManager> {
     }
 
     public void LogMatchInput(MatchInput matchinput) {
-        string sMatchInput = string.Format("mi:{0}", matchinput.iPlayerActing);
+        string sMatchInput = string.Format("mi:{0}", matchinput.plyrActing.id);
 
         int[] arnSerializedMatchInput = matchinput.Serialize();
 
@@ -443,7 +443,7 @@ public class LogManager : SingletonPersistent<LogManager> {
         lstLoggedSerializedMatchInputs = null;
     }
 
-    void OnLeaveScene<Scene> (Scene scene) {
+    void OnLeaveScene<Scene>(Scene scene) {
 
         if(swFileWriter == null) return;
 
