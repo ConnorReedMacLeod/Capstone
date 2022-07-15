@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class InputReplaceEmptyPos : MatchInput {
     public Position posEmpty;
@@ -178,19 +179,49 @@ public class InputReplaceEmptyPos : MatchInput {
         chrReplacingWith = null;
     }
 
+
+    public void cbOnClickSwitchableChr(Object tar, params object[] args) {
+
+        Chr chrClicked = ((ViewChr)tar).mod;
+
+        if(chrClicked.pbCanSwapIn.Get() == false) {
+            Debug.LogErrorFormat("Tried to select character {0} to swap in that isn't allowed to", chrClicked);
+
+            return;
+        }
+
+        SelectReplacingChr(chrClicked);
+
+        //Since we've found a legal character to swap in, we can submit this input to the network sender
+        NetworkMatchSender.Get().SendNextInput(this);
+    }
+
     //Set up any UI for prompting the selection of a chr to choose to replace some empty position
     public override void StartManualInputProcess(LocalInputHuman localinputhuman) {
 
         Debug.Log("Starting manual input for replaceemptypos");
-        //TODONOW
+
+        List<Chr> lstChrsCanSwapIn = ContPositions.Get().GetAlliedBenchChrs(plyrActing).Where(chr => chr.pbCanSwapIn.Get()).ToList();
+
+        //Highlight each of these chrs
+        foreach(Chr chr in lstChrsCanSwapIn) {
+            chr.view.DecideIfHighlighted(ViewChr.SelectabilityState.ALLYSELECTABLE);
+            chr.view.subMouseClick.Subscribe(cbOnClickSwitchableChr);
+        }
+
     }
 
-
-    //Clean up any UI for prompting the selection of a skill and re-lock the ability for the local player to go through the
-    //   target selection process
+    //Clean up any UI for prompting the selection of a bench character to replace an empty pos
     public override void EndManualInputProcess(LocalInputHuman localinputhuman) {
 
         Debug.Log("Ending manual input for replaceemptypos");
-        //TODONOW
+
+        List<Chr> lstChrsCanSwapIn = ContPositions.Get().GetAlliedBenchChrs(plyrActing).Where(chr => chr.pbCanSwapIn.Get()).ToList();
+
+        //Unhighlight each of these chrs
+        foreach(Chr chr in lstChrsCanSwapIn) {
+            chr.view.DecideIfHighlighted(ViewChr.SelectabilityState.NONE);
+            chr.view.subMouseClick.UnSubscribe(cbOnClickSwitchableChr);
+        }
     }
 }
