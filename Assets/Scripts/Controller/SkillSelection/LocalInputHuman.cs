@@ -25,7 +25,7 @@ public class LocalInputHuman : LocalInputType {
         //  we don't currently initilize bCurrentlySelectingSkill to the correct value
 
         if(bCurrentlySelectingSkill == false) {
-            Debug.Log("Error - can't select a skill to be used when it's not the local player's turn");
+            Debug.Log("Error - can't select a skill when we're not currently locally asked to select targets for a skill");
             return false;
         }
         return true;

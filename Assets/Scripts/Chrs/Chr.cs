@@ -37,6 +37,8 @@ public class Chr : MonoBehaviour {
     public Property<int> pnArmour;          //The character's current armour
     public int nAbsorbedArmour;             //The amount of damage currently taken by armour
 
+    public Property<bool> pbCanSwapIn;       //Can this character swap in from the bench
+
     public SkillSlot[] arSkillSlots;      //The slots for the character's currently usable skills - these keep track of the cooldowns of those skills
     public const int nEquippedCharacterSkills = 4; //Number of non-generic (non-rest) skills currently active on the character
     public const int nBenchCharacterSkills = 4; //Number of benched skills the character could adapt into
@@ -175,7 +177,7 @@ public class Chr : MonoBehaviour {
         subAllFatigueChange.NotifyObs(this);
 
         //TODO:: Probably delete this bGlobalFatigueChange flag once I get a nice solution for priority handling
-        if (bGlobalFatigueChange == false) {
+        if(bGlobalFatigueChange == false) {
             //Then this is an individual fatigue change for a single character that may change their priority
             ContTurns.Get().FixSortedPriority(this);
             //So make sure we're in the right place in the priority list
@@ -315,7 +317,7 @@ public class Chr : MonoBehaviour {
         position = _position;
     }
 
-    //Counts down the character's recharge with the timeline
+    //Counts down the character's recharge time
     public void TimeTick() {
         ChangeFatigue(-1, true);
     }
@@ -440,6 +442,7 @@ public class Chr : MonoBehaviour {
 
             //By default, we don't override any targetting - just listen to the base response of if the target can select us
             pOverrideCanBeSelectedBy = new Property<CanBeSelectedBy>((tar, selectionsSoFar, bCanSelectSoFar) => bCanSelectSoFar);
+            pbCanSwapIn = new Property<bool>(() => position.positiontype == Position.POSITIONTYPE.BENCH);
 
             SetStateReadiness(new StateFatigued(this));
 
