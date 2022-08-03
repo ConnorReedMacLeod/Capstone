@@ -13,15 +13,38 @@ public class NetworkMatchReceiver : Singleton<NetworkMatchReceiver> {
 
 
     [PunRPC]
-    void ReceiveMatchInput(int indexInput, int[] arnSerializedMatchInput) {
+    void ReceiveMatchInput(int indexInput, int[] arnSerializedMatchInput, MatchInput.MatchInputType matchinputtype) {
 
         //TODO - figure out which deserialization process should be used - always using InputSkillSelection here, but 
         //   we could pass some extra input-type enum along with the input to let us know which matchinput type we should decode into
 
         //Deserialize the passed selections
-        InputSkillSelection selectionsReceived = new InputSkillSelection(arnSerializedMatchInput);
+        MatchInput selectionsReceived = CreateMatchInput(arnSerializedMatchInput, matchinputtype);
 
         AddInputToBuffer(indexInput, selectionsReceived);
+    }
+
+
+    //Take the enum for the matchinput type and uses that to call the appropriate constructor for that type
+    // - it'd be nice if there's a cleaner way to do this, but I'm not sure how
+    MatchInput CreateMatchInput(int[] arnSerializedMatchInput, MatchInput.MatchInputType matchinputtype) {
+
+        switch(matchinputtype) {
+        case MatchInput.MatchInputType.SkillSelection:
+
+            return new InputSkillSelection(arnSerializedMatchInput);
+
+        case MatchInput.MatchInputType.ReplaceOpenPos:
+
+            return new InputReplaceEmptyPos(arnSerializedMatchInput);
+
+        default:
+
+            Debug.LogErrorFormat("Error! {0} is an unspported matchinputtype", matchinputtype);
+            break;
+        }
+
+        return null;
     }
 
 
@@ -37,7 +60,7 @@ public class NetworkMatchReceiver : Singleton<NetworkMatchReceiver> {
         }
 
         //Check if this entry in the buffer is already filled
-        if (lstMatchInputBuffer[indexInput] != null) {
+        if(lstMatchInputBuffer[indexInput] != null) {
             Debug.LogErrorFormat("ALERT! Filled index {0} received another input of {1}", indexInput, matchInput);
             return;
         }
@@ -59,11 +82,11 @@ public class NetworkMatchReceiver : Singleton<NetworkMatchReceiver> {
     public bool HasNReadyInputs(int n) {
         //Determines if we have at least n inputs waiting in our buffer that we haven't yet processed (i.e., after the current input)
 
-        for(int i=indexCurMatchInput; i<indexCurMatchInput + n; i++) {
+        for(int i = indexCurMatchInput; i < indexCurMatchInput + n; i++) {
             if(i > lstMatchInputBuffer.Count) {
                 IncreaseMatchInputsReceivedCapacity();
             }
-            if (lstMatchInputBuffer[i] == null) {
+            if(lstMatchInputBuffer[i] == null) {
                 return false;
             }
         }
@@ -78,7 +101,7 @@ public class NetworkMatchReceiver : Singleton<NetworkMatchReceiver> {
 
     // Increase the number of selections that can be stored by the default amount
     public void IncreaseMatchInputsReceivedCapacity() {
-        for (int i = 0; i < NDEFAULTSELECTIONSCAPACITY; i++) {
+        for(int i = 0; i < NDEFAULTSELECTIONSCAPACITY; i++) {
             lstMatchInputBuffer.Add(null);
         }
     }

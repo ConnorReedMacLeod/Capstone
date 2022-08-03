@@ -71,7 +71,7 @@ public class Player : MonoBehaviour {
 
         if(id == 0) {
             manapool = Match.Get().manapool0;
-        } else if(id == 1){
+        } else if(id == 1) {
             manapool = Match.Get().manapool1;
         }
 
@@ -83,7 +83,7 @@ public class Player : MonoBehaviour {
 
         if(id == 0) {
             manacalendar = Match.Get().manaCalendar0;
-        }else if(id == 1) {
+        } else if(id == 1) {
             manacalendar = Match.Get().manaCalendar1;
         }
 

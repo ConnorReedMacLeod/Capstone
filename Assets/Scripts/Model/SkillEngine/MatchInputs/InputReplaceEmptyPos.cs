@@ -36,6 +36,10 @@ public class InputReplaceEmptyPos : MatchInput {
         return new InputReplaceEmptyPos(this);
     }
 
+    public override MatchInputType GetMatchInputType() {
+        return MatchInputType.ReplaceOpenPos;
+    }
+
     public override int[] Serialize() {
 
         int[] arnSerializedSelections = new int[2];

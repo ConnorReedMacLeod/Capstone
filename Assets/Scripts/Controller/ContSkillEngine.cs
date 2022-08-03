@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//TODO - changed this name to ContGameEngine since we act upon more than just skill executions
 public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     public bool bStartedMatchLoop = false;
@@ -10,6 +11,10 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     public Stack<Clause> stackClause = new Stack<Clause>();
     public Stack<Executable> stackExec = new Stack<Executable>();
+
+    public List<Position> lstEmptiedPositions; //Track a list of positions that have been vacated that should be filled by new Chrs
+                                               // (note that we shouldn't fill empty spots that would lead to use having more characters in
+                                               //  play than the standard maximum)
 
     public const bool bDEBUGENGINE = false;
 
@@ -34,8 +39,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     public bool IsMatchOver() {
 
-        Debug.Log("IsMatchOver - not yet implemented");
-        return false;
+        return Match.Get().matchresult.GetResult() != MatchResult.RESULT.UNFINISHED;
     }
 
     //Do any closing animations for the end of a match
@@ -272,8 +276,9 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     public IEnumerator ProcessStackUntilInputNeeded() {
 
-        // Check if the flag has been raised to indicate we need player input to continue
-        while(matchinputToFillOut == null) {
+        // Check if the flag has been raised to indicate we need player input to continue (and only
+        //   continue if the match is still unfinished)
+        while(matchinputToFillOut == null && IsMatchOver() == false) {
             // Keep processing game-actions until we need player input
             yield return ProcessStacks();
         }
@@ -291,10 +296,30 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
                     if(bDEBUGENGINE) Debug.Log("No Executables, so unpack a Clause");
                     ResolveClause();
                 } else {
-                    //If we have no clauses on our stack, then our stack is completely empty, so we can push 
-                    // a new executable for the next phase of the turn
-                    if(bDEBUGENGINE) Debug.Log("No Clauses or Executables so move to the next part of the turn");
-                    ContTurns.Get().FinishedTurnPhase();
+                    //If we have no clauses on our stack, then our stack is completely empty, so we've reached the end of this turn phase
+
+                    //First, do a check to see if there's any dead characters - if so, we'll need to potentially process some more
+                    //  death-triggers before moving on to a new turn phase
+                    if(ContDeaths.Get().KillFlaggedDyingChrs() == false) {
+                        //If we haven't found any deaths, then we can finish wrapping up this phase of the turn
+                        if(bDEBUGENGINE) Debug.Log("No Clauses, Executables, or Deaths so move to the next part of the turn");
+                        ContTurns.Get().FinishedTurnPhase();
+                    } else {
+                        //Since a character died, we'll first check to see if any players have lost and update our MatchResult as appropriate
+                        Match.Get().matchresult = ContDeaths.Get().CheckMatchWinner();
+
+                        if(Match.Get().matchresult.GetResult() == MatchResult.RESULT.UNFINISHED) {
+                            if(bDEBUGENGINE) Debug.Log("Since at least one character died and the match isn't over, we'll continue to" +
+                                " process our stacks before ending the turn phase");
+
+                            continue;
+
+                        } else {
+                            //if the match is over, then we should return and gradually break out of the control flow of the main game-loop
+                            yield break;
+                        }
+
+                    }
                 }
             }
 
@@ -341,6 +366,19 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         yield return ResolveExec();
 
     }
+
+
+
+
+
+    public void AddEmptiedPosition(Position posEmptied) {
+
+        Debug.Assert(posEmptied.chrOnPosition == null);
+
+        lstEmptiedPositions.Add(posEmptied);
+
+    }
+
 
 
 
