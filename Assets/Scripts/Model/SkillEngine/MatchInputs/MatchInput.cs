@@ -4,6 +4,9 @@ using UnityEngine;
 
 public abstract class MatchInput {
 
+    public enum MatchInputType { SkillSelection, ReplaceOpenPos };
+    public abstract MatchInputType GetMatchInputType();
+
     //Store which player is responsible for filling in and executing this input
     public Player plyrActing;
 
@@ -53,4 +56,5 @@ public abstract class MatchInput {
     // If we have partially filled out some of the required input but then cancel the process, we need to be able to clear out that partial input
     //  to clean out that data so that a fresh selection process can start without any lingering stale data.  
     public abstract void ResetPartialSelection();
+
 }

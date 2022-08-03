@@ -147,8 +147,18 @@ public class Chr : MonoBehaviour {
         subChannelTimeChange.NotifyObs();
     }
 
+    public bool IsDying() {
+        if(nCurHealth <= 0) {
+            return true;
+        }
+
+        //TODO - put some insta-death trigger in
+
+        return false;
+    }
 
     public void KillCharacter() {
+        TODONOW
         if(bDead) {
             Debug.Log("Trying to kill a character thast's already dead");
             return;
@@ -162,6 +172,9 @@ public class Chr : MonoBehaviour {
 
         //Transition to the new state
         SetStateReadiness(newState);
+
+        //Flag our position as now being emptied, so it should be filled by a new character
+        ContSkillEngine.Get().AddEmptiedPosition(position);
     }
 
 
@@ -298,14 +311,26 @@ public class Chr : MonoBehaviour {
     }
 
     public void ChangeHealth(int nChange) {
-        if(nCurHealth + nChange > pnMaxHealth.Get()) {
-            nCurHealth = pnMaxHealth.Get();
-        } else if(nCurHealth + nChange <= 0) {
-            nCurHealth = 0;
+        bool bAliveBefore = nCurHealth > 0;
 
-            KillCharacter();
+        if(nCurHealth + nChange > pnMaxHealth.Get()) {
+            //Set the character's life to maximum if they would go above that
+            nCurHealth = pnMaxHealth.Get();
         } else {
             nCurHealth += nChange;
+        }
+
+        bool bAliveAfter = nCurHealth > 0;
+
+        //Check if our living/dead state has changed with this health change
+        if(bAliveBefore != bAliveAfter) {
+            if(bAliveAfter == false) {
+                //Then we just died - flag ourselves for death
+                ContDeaths.Get().AddDyingChr(this);
+            } else {
+                //Then we just went back above 0 health
+                ContDeaths.Get().RemoveDyingChr(this);
+            }
         }
 
         subLifeChange.NotifyObs(this, nChange);

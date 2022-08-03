@@ -18,6 +18,7 @@ public class ContPositions : Singleton<ContPositions> {
 
     public List<Position> lstAllPositions;
 
+
     public static int CoordsToIndex(Position.Coords coords) {
         return CoordsToIndex(coords.iColumn, coords.jRow);
     }
@@ -444,6 +445,7 @@ public class ContPositions : Singleton<ContPositions> {
         }
 
     }
+
 
     public override void Init() {
 

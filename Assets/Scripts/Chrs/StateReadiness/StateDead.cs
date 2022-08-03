@@ -32,16 +32,17 @@ public class StateDead : StateReadiness {
     }
 
     public override void OnEnter() {
+
+        TODONOW
         //Do any death-related effects
 
         chrOwner.bDead = true;
 
-        //Fix our position in the priority queue (we should now be after all living characters)
-        ContTurns.Get().FixSortedPriority(chrOwner);
+        //Remove ourselves from the turn-priority queue since we'll no longer be acting
+        ContTurns.Get().RemoveChrFromPriorityList(chrOwner);
 
         //Debug.Log("nLive Characters is now " + ContTurns.Get().nLiveCharacters + " since " + chrOwner.sName + " just died");
 
-        //After fixing priority ordering (pushing this character to the back)
 
         //TODO do a check for if the game should be over
         /*

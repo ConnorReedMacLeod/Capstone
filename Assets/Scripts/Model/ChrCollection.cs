@@ -7,8 +7,6 @@ public class ChrCollection : Singleton<ChrCollection> {
 
     public List<Chr> lstChrs;
 
-    public List<Chr>[] arCachedPlyrChrs;
-
     public override void Init() {
 
         lstChrs = new List<Chr>();
@@ -91,7 +89,6 @@ public class ChrCollection : Singleton<ChrCollection> {
     public List<Chr> GetBenchChrsOwnedBy(Player plyr) {
         return GetChrs((Chr c) => (plyr == c.plyrOwner) && (c.bDead == false) && (c.position.positiontype == Position.POSITIONTYPE.BENCH));
     }
-
 
 
     // Base Query 

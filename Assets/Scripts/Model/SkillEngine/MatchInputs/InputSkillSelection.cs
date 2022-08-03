@@ -54,6 +54,10 @@ public class InputSkillSelection : MatchInput {
         return new InputSkillSelection(this);
     }
 
+    public override MatchInputType GetMatchInputType() {
+        return MatchInputType.SkillSelection;
+    }
+
     public override int[] Serialize() {
 
         int[] arnSerializedSelections = new int[skillSelected.lstTargets.Count + 2];
