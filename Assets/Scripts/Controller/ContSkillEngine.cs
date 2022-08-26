@@ -12,9 +12,9 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
     public Stack<Clause> stackClause = new Stack<Clause>();
     public Stack<Executable> stackExec = new Stack<Executable>();
 
-    public List<Position> lstEmptiedPositions; //Track a list of positions that have been vacated that should be filled by new Chrs
-                                               // (note that we shouldn't fill empty spots that would lead to use having more characters in
-                                               //  play than the standard maximum)
+    public Queue<Position> queueEmptiedPositions; //Track a list of positions that have been vacated that should be filled by new Chrs
+                                                  // (note that we shouldn't fill empty spots that would lead to use having more characters in
+                                                  //  play than the standard maximum)
 
     public const bool bDEBUGENGINE = false;
 
@@ -119,7 +119,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
             //Make a record of which input we're going to be processing in our logs
             LogManager.Get().LogMatchInput(matchinput);
 
-            //Clear out the matchinput we prompting to be filled out
+            //Clear out the matchinput we prompted to be filled out
             matchinputToFillOut = null;
 
             //Process that match input by deferring to its execute method
@@ -285,6 +285,8 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     }
 
+    //Executes the next executable (and will unpack clauses until it finds an executable)
+    //  If no executables or clauses are left, then we'll handle the end-of-turnphase operations
     public IEnumerator ProcessStacks() {
 
         while(true) {
@@ -300,11 +302,9 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
                     //First, do a check to see if there's any dead characters - if so, we'll need to potentially process some more
                     //  death-triggers before moving on to a new turn phase
-                    if(ContDeaths.Get().KillFlaggedDyingChrs() == false) {
-                        //If we haven't found any deaths, then we can finish wrapping up this phase of the turn
-                        if(bDEBUGENGINE) Debug.Log("No Clauses, Executables, or Deaths so move to the next part of the turn");
-                        ContTurns.Get().FinishedTurnPhase();
-                    } else {
+                    if(ContDeaths.Get().KillFlaggedDyingChrs() == true) {
+
+
                         //Since a character died, we'll first check to see if any players have lost and update our MatchResult as appropriate
                         Match.Get().matchresult = ContDeaths.Get().CheckMatchWinner();
 
@@ -319,6 +319,26 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
                             yield break;
                         }
 
+                    } else if(queueEmptiedPositions.Count != 0) {
+                        //If we have at least one position that has been marked to be filled, then we'll have to collect input to fill it
+
+                        //Grab the oldest (first stacked) position to be filled
+                        Position posEmptied = queueEmptiedPositions.Dequeue();
+
+                        //And create an input request to have its owner fill that position
+                        InputReplaceEmptyPos inputRequest = new InputReplaceEmptyPos(posEmptied.PlyrOwnedBy(), posEmptied);
+
+                        //Queue up this input as needing to be resolved by the input-collected
+                        matchinputToFillOut = inputRequest;
+
+                        //Break out of this stack-processing since we don't currently have anything to process - answering this input will
+                        //  give us some new executables to process
+                        yield break;
+                    } else {
+                        //If we've processed any dying characters and there are no empty positions that still need to be filled,
+                        // then we can finish wrapping up this phase of the turn - push the next turn phase's executable and we can process that
+                        if(bDEBUGENGINE) Debug.Log("No Clauses, Executables, or Deaths so move to the next part of the turn");
+                        ContTurns.Get().FinishedTurnPhase();
                     }
                 }
             }
@@ -371,11 +391,14 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
 
 
-    public void AddEmptiedPosition(Position posEmptied) {
+    public void NotifyOfNewEmptyPosition(Position posEmptied) {
 
         Debug.Assert(posEmptied.chrOnPosition == null);
 
-        lstEmptiedPositions.Add(posEmptied);
+        //TODO - only add this position to our queue of emptied positions if this would mean we now have fewer
+        //        chrs in play than we're supposed to
+        Debug.LogError("TODO - only enque emptied positions if they'd put the team below their chr-minimum");
+        queueEmptiedPositions.Enqueue(posEmptied);
 
     }
 

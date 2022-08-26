@@ -20,7 +20,7 @@ public class StateReady : StateReadiness {
 
     public override void Recharge() {
         if(chrOwner.bDead) {
-            Debug.Log("Tried to recharge, but " + chrOwner.sName + " is dead");
+            Debug.LogError("Tried to recharge, but " + chrOwner.sName + " is dead");
             return;
         }
 

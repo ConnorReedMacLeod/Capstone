@@ -32,33 +32,9 @@ public class StateDead : StateReadiness {
     }
 
     public override void OnEnter() {
+        //Not much we have to do here - we'll already be handling much of the
+        // death-cleanup in our chr's methods.  If we leave our channeling state to enter
+        // this one, then we'll auto-cancel that channel though
 
-        TODONOW
-        //Do any death-related effects
-
-        chrOwner.bDead = true;
-
-        //Remove ourselves from the turn-priority queue since we'll no longer be acting
-        ContTurns.Get().RemoveChrFromPriorityList(chrOwner);
-
-        //Debug.Log("nLive Characters is now " + ContTurns.Get().nLiveCharacters + " since " + chrOwner.sName + " just died");
-
-
-        //TODO do a check for if the game should be over
-        /*
-          if(chrNextToBlock == null) {
-            Debug.Log("Game should end");
-            Player.subAllPlayerLost.NotifyObs(chrOwner.plyrOwner);
-            ContTime.Get().Pause();
-        } else {
-            chrOwner.plyrOwner.SetDefaultBlocker();
-        }
-
-        */
-
-        Debug.Log("Remember to dispell soul effects on dying characters");
-
-        chrOwner.subDeath.NotifyObs(chrOwner);
-        Chr.subAllDeath.NotifyObs(chrOwner);
     }
 }
