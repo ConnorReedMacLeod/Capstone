@@ -143,6 +143,10 @@ public class Position : MonoBehaviour {
         else return 1;
     }
 
+    public Player PlyrOwnedBy() {
+        return Match.Get().arPlayers[PlyrIdOwnedBy()];
+    }
+
     public bool IsAllyOwned(Player plyr) {
         return ContPositions.Get().GetPlayerOwnerOfPosition(this) == plyr;
     }

@@ -157,14 +157,19 @@ public class Chr : MonoBehaviour {
         return false;
     }
 
+    //After a character has been flagged for death, we can use this method to actually execute
+    //  the killing of the character - shouldn't be called directly, instead flag the character for death
+    //  via ContDeaths.AddDyingChr(chr);
     public void KillCharacter() {
-        TODONOW
         if(bDead) {
             Debug.Log("Trying to kill a character thast's already dead");
             return;
         }
 
-        //interrupt any channel that  we may be using 
+        //Mark ourselves as being properly dead (for the purposes of target validation, etc.)
+        bDead = true;
+
+        //interrupt any channel that we may be using 
         curStateReadiness.InterruptChannel();
 
         //Create a new death state to let our character transition to
@@ -173,8 +178,23 @@ public class Chr : MonoBehaviour {
         //Transition to the new state
         SetStateReadiness(newState);
 
-        //Flag our position as now being emptied, so it should be filled by a new character
-        ContSkillEngine.Get().AddEmptiedPosition(position);
+        //Remove all soul effects that are present on this chr
+        soulContainer.RemoveAllSoul();
+
+        TODONOW
+            Debug.Log("Remember to dispell any soul effects on other characters that require targetting this character - should be done " +
+                "on a per-soul effect basis when notified of a subDeath");
+
+
+        //Remove ourselves from the turn-priority queue since we'll no longer be acting
+        ContTurns.Get().RemoveChrFromPriorityList(this);
+
+        //Flag our position as now being emptied, so it may need to be filled by a new character
+        ContSkillEngine.Get().NotifyOfNewEmptyPosition(position);
+
+        //Notify anyone that we have died
+        subDeath.NotifyObs(this);
+        Chr.subAllDeath.NotifyObs(this);
     }
 
 

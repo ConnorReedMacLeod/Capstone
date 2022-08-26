@@ -66,16 +66,9 @@ public class ContDeaths : Singleton<ContDeaths> {
 
             if(nPlayer1DeadChrs >= Match.NCHARACTERLIVESPERTEAM) {
 
-                if(nPlayer0DeadChrs == nPlayer1DeadChrs) {
-                    //If both characters have the same number of dead characters at once, then it's a draw
-                    return new MatchResultDraw();
-                } else if(nPlayer0DeadChrs > nPlayer1DeadChrs) {
-                    //Otherwise, check which player has fewer dead characters at the end of round
-                    return new MatchResultDecisive(1);
-                } else {
-                    return new MatchResultDecisive(0);
-                }
+                Debug.LogError("Since both teams have lost enough characters to lose, the result is a draw");
 
+                return new MatchResultDraw();
 
             } else {
                 //If player 0 has enough dead chrs to lose, but player 1 doesn't, then player 1 wins

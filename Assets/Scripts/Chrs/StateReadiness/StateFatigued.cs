@@ -14,12 +14,12 @@ public class StateFatigued : StateReadiness {
 
     public override void ReadyIfNoFatigue() {
         if(chrOwner.bDead) {
-            Debug.LogFormat("Tried to Ready, but {0} is dead", chrOwner.sName);
+            Debug.LogErrorFormat("Tried to Ready, but {0} is dead", chrOwner.sName);
             return;
         }
 
         if(chrOwner.nFatigue == 0) {
-            if (chrOwner.position.positiontype == Position.POSITIONTYPE.BENCH) {
+            if(chrOwner.position.positiontype == Position.POSITIONTYPE.BENCH) {
                 Debug.LogFormat("Tried to Ready, but {0} is on the bench", chrOwner.sName);
                 return;
             }

@@ -176,10 +176,10 @@ public class TarChr : Target {
     //Gets the list of triggers associated with the default checks we should do to ensure 
     //  that the targetted character is still legal enough of a target to complete a channel
     // Note - should be paired with the checks in DefaultCanCompleteAsChannelTarget
-    public virtual void AddDefaultTriggersToCompleteAsChannel(List<Subject> lstTriggersSoFar, Chr chr) {
+    public virtual void AddDefaultTriggersToCompleteAsChannel(List<Subject> lstTriggersSoFar, Chr chrTarget) {
 
-        lstTriggersSoFar.Add(chr.subDeath);
-        lstTriggersSoFar.Add(chr.subEnteredBench);
+        lstTriggersSoFar.Add(chrTarget.subDeath);
+        lstTriggersSoFar.Add(chrTarget.subEnteredBench);
 
     }
 }
