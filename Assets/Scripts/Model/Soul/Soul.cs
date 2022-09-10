@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-//TODO probably extend this class for visible/locked/duration interactions rather than using bool flags
+//TODO probably add some extended behaviour classes for visible/locked/duration interactions rather than using bool flags
 public abstract class Soul {
 
     public Chr chrSource;     //A reference to the character that applied this soul effect
@@ -54,7 +54,7 @@ public abstract class Soul {
 
         InitSubMaxDuration();
 
-        //Intiialize triggers (whether or not there are any depends on the extending class)
+        //Initialize triggers (whether or not there are any depends on the extending class)
         InitTriggers();
 
     }
@@ -90,7 +90,7 @@ public abstract class Soul {
         if(lstTriggers != null) { //Then we have some triggers to subscribe
             //Each triggeredeffect we have should subscribe to the trigger it needs
             foreach(TriggerEffect trig in lstTriggers) {
-                if (ContSkillEngine.bDEBUGENGINE) Debug.Log("*** ADDING TRIGGER SUBSCRIPTION ***");
+                if(ContSkillEngine.bDEBUGENGINE) Debug.Log("*** ADDING TRIGGER SUBSCRIPTION ***");
                 //Let our observer manage our subscription to the trigger
                 observer.Observe(trig.sub, trig.cb);
             }

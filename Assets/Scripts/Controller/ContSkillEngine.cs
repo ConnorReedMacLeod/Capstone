@@ -300,26 +300,31 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
                 } else {
                     //If we have no clauses on our stack, then our stack is completely empty, so we've reached the end of this turn phase
 
-                    //First, do a check to see if there's any dead characters - if so, we'll need to potentially process some more
-                    //  death-triggers before moving on to a new turn phase
-                    if(ContDeaths.Get().KillFlaggedDyingChrs() == true) {
+                    //First, do a check to see if there's any dead characters - if so, we'll kill off the first death-flagged character and then reprocess the stack until
+                    //  any death triggers have been resolved and we return back here to see if there's any other death-flagged characters to deal with
+                    if(ContDeaths.Get().KillNextFlaggedDyingCharacter() == true) {
 
+                        continue;
+                    }
 
-                        //Since a character died, we'll first check to see if any players have lost and update our MatchResult as appropriate
-                        Match.Get().matchresult = ContDeaths.Get().CheckMatchWinner();
+                    //If we get to this point, then we don't have any more characters to kill off, but we may have to react to any characters that have died earlier
+                    // in this phase
 
-                        if(Match.Get().matchresult.GetResult() == MatchResult.RESULT.UNFINISHED) {
-                            if(bDEBUGENGINE) Debug.Log("Since at least one character died and the match isn't over, we'll continue to" +
-                                " process our stacks before ending the turn phase");
+                    //Let's check if the result of the match is complete now
+                    Match.Get().matchresult = ContDeaths.Get().CheckMatchWinner();
 
-                            continue;
+                    TODO
+                        //Need to figure out when we want to do this match-result check - only after resolving full batches of stack effects?
 
-                        } else {
-                            //if the match is over, then we should return and gradually break out of the control flow of the main game-loop
-                            yield break;
-                        }
+                    if(Match.Get().matchresult.GetResult() != MatchResult.RESULT.UNFINISHED) {
+                        if(bDEBUGENGINE) Debug.LogFormat("Match is over!  The result is: {0}", Match.Get().matchresult.GetResult());
 
-                    } else if(queueEmptiedPositions.Count != 0) {
+                        //if the match is over, then we should return and gradually break out of the control flow of the main game-loop
+                        yield break;
+                    }
+
+                    //If the game isn't over, then let's check if we have any remaining clean-up to do
+                    if(queueEmptiedPositions.Count != 0) {
                         //If we have at least one position that has been marked to be filled, then we'll have to collect input to fill it
 
                         //Grab the oldest (first stacked) position to be filled
