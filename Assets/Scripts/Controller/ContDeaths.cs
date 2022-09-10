@@ -6,52 +6,44 @@ using System.Linq;
 public class ContDeaths : Singleton<ContDeaths> {
 
 
-    public List<Chr> lstDyingChrs; //Tracks a list of all characters that have been flagged as dying (in order of their death 'timestamp')
+    public Queue<Chr> queueDyingChrs; //Tracks a list of all characters that have been flagged as dying (in order of their death 'timestamp')
 
 
     public override void Init() {
-        lstDyingChrs = new List<Chr>();
+        queueDyingChrs = new Queue<Chr>();
     }
 
 
     public void AddDyingChr(Chr chr) {
 
-        if(lstDyingChrs.Contains(chr)) {
-            Debug.LogFormat("{0} is already in the list of dying characters", chr);
+        if(queueDyingChrs.Contains(chr)) {
+            Debug.LogFormat("{0} is already earlier in the queue of dying characters", chr);
             return;
         }
 
-        lstDyingChrs.Add(chr);
-    }
-
-    public void RemoveDyingChr(Chr chr) {
-
-        if(lstDyingChrs.Contains(chr) == false) {
-            Debug.LogFormat("{0} are not yet in the list of dying characters", chr);
-            return;
-        }
-
-        lstDyingChrs.Remove(chr);
+        queueDyingChrs.Enqueue(chr);
     }
 
 
-    //Go through all chrs that have been flagged as dying and transition them (in order) to a dead state
+    //Find the first character that has been flagged as dying and that actually should die and push a death effect to transition them to a dead state
     // returns true/false if there are/aren't any dead characters
-    public bool KillFlaggedDyingChrs() {
+    public bool KillNextFlaggedDyingCharacter() {
 
-        bool bFoundDeadChr = false;
+        while(queueDyingChrs.Count != 0) {
+            Chr chrNextFlagged = queueDyingChrs.Dequeue();
 
-        for(int i = 0; i < lstDyingChrs.Count; i++) {
+            //If this first character is indeed supposed to die
+            if(chrNextFlagged.IsDying()) {
+                //Then let's push a death executable onto the stack to kill the character
 
-            if(lstDyingChrs[i].IsDying()) {
-                lstDyingChrs[i].KillCharacter();
-                bFoundDeadChr = true;
+                ContSkillEngine.PushSingleExecutable(new ExecKillFlaggedDyingChr(null, chrNextFlagged));
+
+                return true; //Return true that we have indeed found a character to kill
             }
         }
 
-        lstDyingChrs.Clear();
-
-        return bFoundDeadChr;
+        //If we've exited the loop, then we didn't find any characters that were supposed to die, so just return false
+        return false;
     }
 
 
