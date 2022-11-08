@@ -29,6 +29,7 @@ public class Chr : MonoBehaviour {
 
     public List<Discipline.DISCIPLINE> lstDisciplines; //The disciplines the character has access to
 
+    public Timestamp timestampDeath;           //Stores the timestamp at which this character died (or null, if they aren't dead)
     public bool bDead;                         //If the character is dead or not
 
     public Property<int> pnPower;              //The character's current power
@@ -181,8 +182,7 @@ public class Chr : MonoBehaviour {
         //Remove all soul effects that are present on this chr
         soulContainer.RemoveAllSoul();
 
-        TODONOW
-            Debug.Log("Remember to dispell any soul effects on other characters that require targetting this character - should be done " +
+        Debug.Log("Remember to dispell any soul effects on other characters that require targetting this character - should be done " +
                 "on a per-soul effect basis when notified of a subDeath");
 
 
@@ -342,15 +342,10 @@ public class Chr : MonoBehaviour {
 
         bool bAliveAfter = nCurHealth > 0;
 
-        //Check if our living/dead state has changed with this health change
-        if(bAliveBefore != bAliveAfter) {
-            if(bAliveAfter == false) {
-                //Then we just died - flag ourselves for death
-                ContDeaths.Get().AddDyingChr(this);
-            } else {
-                //Then we just went back above 0 health
-                ContDeaths.Get().RemoveDyingChr(this);
-            }
+        //Check if this health change causes us to go from living to dying
+        if(bAliveBefore == true && bAliveAfter == false) {
+            //Then we just died - flag ourselves for death
+            ContDeaths.Get().AddDyingChr(this);
         }
 
         subLifeChange.NotifyObs(this, nChange);

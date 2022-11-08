@@ -197,8 +197,10 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
         if(bDEBUGENGINE) Debug.Log("Resolving an Executable of type" + stackExec.Peek().GetType().ToString());
 
+        Executable execResolving = stackExec.Pop();
+
         //Remove the Executable from the top of the stack and execute it
-        yield return stackExec.Pop().Execute();
+        yield return execResolving.Execute();
 
     }
 
@@ -251,9 +253,10 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         return execToResolve;
     }
 
-
+    //TODO - Go through any uses of this that should instead be Clause-wrapped
     public void AddExec(Executable exec) {
 
+        //Push that executable onto the stack
         stackExec.Push(exec);
 
     }
@@ -313,9 +316,6 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
                     //Let's check if the result of the match is complete now
                     Match.Get().matchresult = ContDeaths.Get().CheckMatchWinner();
 
-                    TODO
-                        //Need to figure out when we want to do this match-result check - only after resolving full batches of stack effects?
-
                     if(Match.Get().matchresult.GetResult() != MatchResult.RESULT.UNFINISHED) {
                         if(bDEBUGENGINE) Debug.LogFormat("Match is over!  The result is: {0}", Match.Get().matchresult.GetResult());
 
@@ -373,7 +373,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
                 top = ResolveReplacements(top);
 
                 //Push the modified executable back onto the stack at the top
-                stackExec.Push(top);
+                AddExec(top);
 
                 //Now we can push all of the pre-triggers onto the stack
                 top.GetPreTrigger().NotifyObs(null, top);
