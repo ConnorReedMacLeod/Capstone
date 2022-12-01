@@ -47,6 +47,7 @@ public abstract class MatchInput {
 
     public MatchInput(Player _plyrActing) {
         plyrActing = _plyrActing;
+        Debug.LogFormat("Matchinput for player {0} created", plyrActing);
     }
 
     public MatchInput(MatchInput other) {

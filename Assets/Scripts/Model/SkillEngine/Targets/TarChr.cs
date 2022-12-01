@@ -5,6 +5,7 @@ using UnityEngine;
 public class TarChr : Target {
 
     public static int SerializeChr(Chr chr) {
+        Debug.LogError("Get rid of multiple serialization functions - should only be one for each type");
         return chr.id;
     }
 

@@ -228,6 +228,10 @@ public class Match : MonoBehaviour {
 
         Debug.Log("After InitializePriorities");
 
+        matchresult = ContDeaths.Get().CheckMatchWinner();
+
+        Debug.LogFormat("Initial match result set to {0}", matchresult);
+
         //Check if the LogManager wants to load in any starting inputs
         LogManager.Get().LoadStartingInputs();
 

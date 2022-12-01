@@ -13,13 +13,10 @@ public class NetworkMatchReceiver : Singleton<NetworkMatchReceiver> {
 
 
     [PunRPC]
-    void ReceiveMatchInput(int indexInput, int[] arnSerializedMatchInput, MatchInput.MatchInputType matchinputtype) {
+    void ReceiveMatchInput(int indexInput, int[] arnSerializedMatchInput) {
 
-        //TODO - figure out which deserialization process should be used - always using InputSkillSelection here, but 
-        //   we could pass some extra input-type enum along with the input to let us know which matchinput type we should decode into
-
-        //Deserialize the passed selections
-        MatchInput selectionsReceived = CreateMatchInput(arnSerializedMatchInput, matchinputtype);
+        //Deserialize the passed selections (and use the first entry of the serialization as the type of input we're decoding)
+        MatchInput selectionsReceived = CreateMatchInput(arnSerializedMatchInput, (MatchInput.MatchInputType)arnSerializedMatchInput[0]);
 
         AddInputToBuffer(indexInput, selectionsReceived);
     }

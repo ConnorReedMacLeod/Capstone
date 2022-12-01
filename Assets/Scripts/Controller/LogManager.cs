@@ -385,6 +385,8 @@ public class LogManager : SingletonPersistent<LogManager> {
     }
 
     public void LogMatchInput(MatchInput matchinput) {
+        Debug.Log(matchinput);
+        Debug.Log(matchinput.plyrActing);
         string sMatchInput = string.Format("mi:{0}", matchinput.plyrActing.id);
 
         int[] arnSerializedMatchInput = matchinput.Serialize();

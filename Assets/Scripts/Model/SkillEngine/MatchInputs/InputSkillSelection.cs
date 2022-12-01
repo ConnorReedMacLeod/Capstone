@@ -22,25 +22,33 @@ public class InputSkillSelection : MatchInput {
         lstSelections = new List<object>();
     }
 
-    //For deserializing a network-provided serialized skill selection (including targets) into their corresponding objects
-    // By convention, the array leads with the acting character's global id, then the chosen skill slot, with the remaining
-    // entries corresponding to selections for that skill's targets
+    //For deserializing a network-provided serialized skill selection (including targets) into their corresponding objects.
+    // The serialization array's elements are as follows:
+    // 0: The MatchInputType (as an enum)
+    // 1: The player set to act
+    // 2: The character set to act
+    // 3: The skillslot that has been selected to be used
+    // 4...: Any extra targetting arguments that the skill needs to execute
     public InputSkillSelection(int[] arnSerializedSelections) : base(arnSerializedSelections) {
 
-        chrActing = Serializer.DeserializeChr(arnSerializedSelections[0]);
-        skillslotSelected = Serializer.DeserializeSkillSlot(arnSerializedSelections[1]);
+        //Verify we are decoding an input that matches our MatchInputType
+        Debug.Assert((int)GetMatchInputType() == arnSerializedSelections[0]);
 
-        Debug.Assert(skillSelected.lstTargets.Count == arnSerializedSelections.Length - 2,
-            "Received " + (arnSerializedSelections.Length - 2) + " selections for a skill requiring " + skillSelected.lstTargets.Count);
+        plyrActing = Serializer.DeserializePlayer((byte)arnSerializedSelections[1]);
+        chrActing = Serializer.DeserializeChr(arnSerializedSelections[2]);
+        skillslotSelected = Serializer.DeserializeSkillSlot(arnSerializedSelections[3]);
+
+        Debug.Assert(skillSelected.lstTargets.Count == arnSerializedSelections.Length - 4,
+            "Received " + (arnSerializedSelections.Length - 4) + " selections for a skill requiring " + skillSelected.lstTargets.Count);
 
         lstSelections = new List<object>();
 
         //For each required target, have it decode the network-provided serialization
         for(int i = 0; i < skillSelected.lstTargets.Count; i++) {
-            Debug.Log("Adding serialization entry " + (i + 2) + " of skill " + skillSelected.sName);
+            Debug.Log("Adding serialization entry " + (i + 4) + " of skill " + skillSelected.sName);
             // Ask the corresponding Target to decode the serialized int we've been provided
             // i+1 since the first entry of the serialized array refers to the chosen skill, and not the selections
-            lstSelections.Add(skillSelected.lstTargets[i].Unserialize((int)arnSerializedSelections[i + 2], lstSelections));
+            lstSelections.Add(skillSelected.lstTargets[i].Unserialize((int)arnSerializedSelections[i + 4], lstSelections));
         }
     }
 
@@ -60,19 +68,27 @@ public class InputSkillSelection : MatchInput {
 
     public override int[] Serialize() {
 
-        int[] arnSerializedSelections = new int[skillSelected.lstTargets.Count + 2];
+        int[] arnSerializedSelections = new int[skillSelected.lstTargets.Count + 4];
 
-        //First, add the character who's set to be acting
-        arnSerializedSelections[0] = TarChr.SerializeChr(chrActing);
+        //For all serialized inputs, we will start our serialization array off with an int representing the type of input we're recording
+        arnSerializedSelections[0] = (int)GetMatchInputType();
 
-        //Second, add the serialization of the use skill
-        arnSerializedSelections[1] = Serializer.SerializeSkillSlot(skillslotSelected);
+        //Now we can start serializing the actual data for this input
+
+        //First, add the player who's set to be acting
+        arnSerializedSelections[1] = Serializer.SerializeByte(plyrActing);
+
+        //Second, add the character who's set to be acting
+        arnSerializedSelections[2] = TarChr.SerializeChr(chrActing);
+
+        //Third, add the serialization of the use skill
+        arnSerializedSelections[3] = Serializer.SerializeSkillSlot(skillslotSelected);
 
         //Then add all the selections afterward
         for(int i = 0; i < skillSelected.lstTargets.Count; i++) {
             //For each Target, ask it how we should serialize the selected object we have stored
             // Note - i+1, since we're adding all selections after the used skill
-            arnSerializedSelections[i + 2] = skillSelected.lstTargets[i].Serialize(lstSelections[i]);
+            arnSerializedSelections[i + 4] = skillSelected.lstTargets[i].Serialize(lstSelections[i]);
         }
 
         return arnSerializedSelections;
@@ -284,7 +300,7 @@ public class InputSkillSelection : MatchInput {
     //   target selection process
     public override void EndManualInputProcess(LocalInputHuman localinputhuman) {
 
-        Debug.Log("Starting manual input for skillselection");
+        Debug.Log("Ending manual input for skillselection");
 
         localinputhuman.bCurrentlySelectingSkill = false;
 

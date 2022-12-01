@@ -16,12 +16,20 @@ public class MatchResultUnfinished : MatchResult {
         return RESULT.UNFINISHED;
     }
 
+    public override string ToString() {
+        return "Match Result: Unfinished";
+    }
+
 }
 
 public class MatchResultDraw : MatchResult {
 
     public override RESULT GetResult() {
         return RESULT.DRAW;
+    }
+
+    public override string ToString() {
+        return "Match Result: Draw";
     }
 
 }
@@ -40,5 +48,9 @@ public class MatchResultDecisive : MatchResult {
 
     public int GetWinner() {
         return nPlayerIDWinner;
+    }
+
+    public override string ToString() {
+        return string.Format("MatchResult: Player {0} wins", nPlayerIDWinner);
     }
 }
