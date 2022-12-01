@@ -14,16 +14,23 @@ public class InputReplaceEmptyPos : MatchInput {
         Debug.Assert(posEmpty.positiontype != Position.POSITIONTYPE.BENCH);
     }
 
-    //For deserializing a network-provided serialized replacement selection.  This will just be a two
-    // element array that holds the serializiation of the empty position and the character to fill that position
+    //For deserializing a network-provided serialized empty-character-slot replacement selection.
+    // The serialization array's elements are as follows:
+    // 0: The MatchInputType (as an enum)
+    // 1: The player set to act
+    // 2: The empty position to be filled
+    // 3: The character chosen to fill that position
     public InputReplaceEmptyPos(int[] arnSerializedSelections) : base(arnSerializedSelections) {
 
-        Debug.Assert(arnSerializedSelections.Length == 2,
-            "Received " + arnSerializedSelections.Length + " selections when we only need to receive a two characters");
+        Debug.Assert(arnSerializedSelections.Length == 4,
+            "Received " + arnSerializedSelections.Length + " selections when we need to receive an MatchInputType, a Player, a Coords, and a Chr");
 
+        //Verify we are decoding an input that matches our MatchInputType
+        Debug.Assert((int)GetMatchInputType() == arnSerializedSelections[0]);
 
-        posEmpty = ContPositions.Get().GetPosition(Position.UnserializeCoords(arnSerializedSelections[0]));
-        chrReplacingWith = Serializer.DeserializeChr(arnSerializedSelections[1]);
+        plyrActing = Serializer.DeserializePlayer((byte)arnSerializedSelections[1]);
+        posEmpty = ContPositions.Get().GetPosition(Position.UnserializeCoords(arnSerializedSelections[2]));
+        chrReplacingWith = Serializer.DeserializeChr(arnSerializedSelections[3]);
 
     }
 
@@ -42,17 +49,25 @@ public class InputReplaceEmptyPos : MatchInput {
 
     public override int[] Serialize() {
 
-        int[] arnSerializedSelections = new int[2];
+        int[] arnSerializedSelections = new int[4];
 
-        //All we need to do is serialize the empty position, and the one we're replacing them with
+        //We'll just do some quick checks to make sure we have the correct data that we need to serialize
         Debug.Assert(posEmpty.chrOnPosition == null);
         Debug.Assert(chrReplacingWith != null);
 
-        //First, add the empty position that needs to be filled
-        arnSerializedSelections[0] = Position.SerializeCoords(posEmpty.coords);
+        //For all serialized inputs, we will start our serialization array off with an int/enum representing the type of input we're recording
+        arnSerializedSelections[0] = (int)GetMatchInputType();
 
-        //Then, add the character being swapped in
-        arnSerializedSelections[1] = Serializer.SerializeByte(chrReplacingWith);
+        //Now we can start serializing the actual data for this input
+
+        //First, add the player who is set to act
+        arnSerializedSelections[1] = Serializer.SerializeByte(plyrActing);
+
+        //Second, add the empty position that needs to be filled
+        arnSerializedSelections[2] = Position.SerializeCoords(posEmpty.coords);
+
+        //Third, add the character being swapped in
+        arnSerializedSelections[3] = Serializer.SerializeByte(chrReplacingWith);
 
         return arnSerializedSelections;
     }

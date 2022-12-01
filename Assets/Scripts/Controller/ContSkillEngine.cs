@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//TODO - changed this name to ContGameEngine since we act upon more than just skill executions
+//TODO - change this name to ContGameEngine since we act upon more than just skill executions
 public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     public bool bStartedMatchLoop = false;
@@ -12,9 +12,9 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
     public Stack<Clause> stackClause = new Stack<Clause>();
     public Stack<Executable> stackExec = new Stack<Executable>();
 
-    public Queue<Position> queueEmptiedPositions; //Track a list of positions that have been vacated that should be filled by new Chrs
-                                                  // (note that we shouldn't fill empty spots that would lead to use having more characters in
-                                                  //  play than the standard maximum)
+    public Queue<Position> queueEmptiedPositions = new Queue<Position>(); //Track a list of positions that have been vacated that should be filled by new Chrs
+                                                                          // (note that we shouldn't fill empty spots that would lead to use having more characters in
+                                                                          //  play than the standard maximum)
 
     public const bool bDEBUGENGINE = false;
 

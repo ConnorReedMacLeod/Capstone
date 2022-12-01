@@ -45,8 +45,8 @@ public class ExecTurnChooseSkills : Executable {
         //Get the character that is currently set to be acting next
         Chr chrActing = ContTurns.Get().GetNextActingChr();
 
-        //Fill the current matchinputtofill with a new blank skill selection request
-        ContSkillEngine.Get().matchinputToFillOut = new InputSkillSelection(chrActing.plyrOwner, chrActing, null);
+        //Fill the current matchinputtofill with a new blank skill selection request (just set to the character passing their turn)
+        ContSkillEngine.Get().matchinputToFillOut = new InputSkillSelection(chrActing.plyrOwner, chrActing, chrActing.skillRest.skillslot);
 
         //Note that since matchinputToFillOut is 'raised' by being non-null, then we'll stop evaluating executables until we 
         //  receive completed input from the active player

@@ -53,6 +53,23 @@ public static class Serializer {
 
         return chrUsing.arSkillSlots[iSkillSlot];
     }
+
+    public static int SerializeByte(Position.Coords coords) {
+        return ContPositions.CoordsToIndex(coords);
+    }
+
+    public static Position.Coords DeserializeCoords(int nSerializedCoords) {
+        return ContPositions.IndexToCoords(nSerializedCoords);
+    }
+
+    //We'll just be implementing the serialization of positions through their coordinates
+    public static int SerializeByte(Position pos) {
+        return SerializeByte(pos.coords);
+    }
+
+    public static Position DeserializePosition(int nSerializedPosition) {
+        return ContPositions.Get().GetPosition(DeserializeCoords(nSerializedPosition));
+    }
 }
 
 
