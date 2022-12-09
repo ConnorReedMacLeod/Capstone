@@ -4,25 +4,12 @@ using UnityEngine;
 
 public class TarSkillSlot : Target {
 
-    public static int SerializeSkillSlot(SkillSlot skillslot) {
-        return (TarChr.SerializeChr(skillslot.chrOwner) << 4) + (skillslot.iSlot);
-    }
-
-    public static SkillSlot UnserializeSkillSlot(int nSerialized) {
-        int iSkillSlot = nSerialized & (15); //select the first 4 bits
-
-        Chr chr = TarChr.UnserializeChr(nSerialized >> 4); //chop off the last 4 bits 
-
-        return chr.arSkillSlots[iSkillSlot];
-    }
-
-
     public override int Serialize(object objToSerialize) {
-        return SerializeSkillSlot((SkillSlot)objToSerialize);
+        return Serializer.SerializeByte((SkillSlot)objToSerialize);
     }
 
     public override object Unserialize(int nSerialized, List<object> lstSelectionsSoFar) {
-        return UnserializeSkillSlot(nSerialized);
+        return Serializer.DeserializeSkillSlot(nSerialized);
     }
 
     public static TarSkillSlot AddTarget(Skill _skill, FnValidSelection _IsValidSelection) {

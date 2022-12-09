@@ -143,7 +143,7 @@ public static class NetworkMatchSetup {
     }
 
     public static void SetPositionCoords(int idPlayer, int iChrSlot, Position.Coords positionCoords) {
-        ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { GetPositionCoordsKey(idPlayer, iChrSlot), Position.SerializeCoords(positionCoords) } };
+        ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { GetPositionCoordsKey(idPlayer, iChrSlot), Serializer.SerializeByte(positionCoords) } };
 
         PhotonNetwork.CurrentRoom.SetCustomProperties(hashNewProperties);
     }
@@ -153,7 +153,7 @@ public static class NetworkMatchSetup {
     }
 
     public static Position.Coords GetPositionCoords(int idPlayer, int iChrSlot) {
-        return Position.UnserializeCoords((int)PhotonNetwork.CurrentRoom.CustomProperties[GetPositionCoordsKey(idPlayer, iChrSlot)]);
+        return Serializer.DeserializeCoords((int)PhotonNetwork.CurrentRoom.CustomProperties[GetPositionCoordsKey(idPlayer, iChrSlot)]);
     }
 
 
