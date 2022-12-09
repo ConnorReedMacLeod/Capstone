@@ -5,11 +5,11 @@ using UnityEngine;
 public class TarPosition : Target {
 
     public override int Serialize(object objToSerialize) {
-        return Position.SerializeCoords(((Position)objToSerialize).coords);
+        return Serializer.SerializeByte((Position)objToSerialize);
     }
 
     public override object Unserialize(int nSerialized, List<object> lstSelectionsSoFar) {
-        return ContPositions.Get().GetPosition(Position.UnserializeCoords(nSerialized));
+        return Serializer.DeserializePosition(nSerialized);
     }
 
     public static TarPosition AddTarget(Skill _skill, FnValidSelection _IsValidSelection) {

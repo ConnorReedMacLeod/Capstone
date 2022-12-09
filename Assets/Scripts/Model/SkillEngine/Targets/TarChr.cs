@@ -14,11 +14,11 @@ public class TarChr : Target {
     }
 
     public override int Serialize(object objToSerialize) {
-        return SerializeChr((Chr)objToSerialize);
+        return Serializer.SerializeByte((Chr)objToSerialize);
     }
 
     public override object Unserialize(int nSerialized, List<object> lstSelectionsSoFar) {
-        return UnserializeChr(nSerialized);
+        return Serializer.DeserializeChr(nSerialized);
     }
 
     public static TarChr AddTarget(Skill _skill, FnValidSelection _IsValidSelection) {

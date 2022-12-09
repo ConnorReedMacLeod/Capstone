@@ -79,10 +79,10 @@ public class InputSkillSelection : MatchInput {
         arnSerializedSelections[1] = Serializer.SerializeByte(plyrActing);
 
         //Second, add the character who's set to be acting
-        arnSerializedSelections[2] = TarChr.SerializeChr(chrActing);
+        arnSerializedSelections[2] = Serializer.SerializeByte(chrActing);
 
         //Third, add the serialization of the use skill
-        arnSerializedSelections[3] = Serializer.SerializeSkillSlot(skillslotSelected);
+        arnSerializedSelections[3] = Serializer.SerializeByte(skillslotSelected);
 
         //Then add all the selections afterward
         for(int i = 0; i < skillSelected.lstTargets.Count; i++) {

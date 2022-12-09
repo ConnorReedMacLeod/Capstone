@@ -43,7 +43,7 @@ public static class Serializer {
         return Match.Get().arPlayers[b];
     }
 
-    public static int SerializeSkillSlot(SkillSlot skillslot) {
+    public static int SerializeByte(SkillSlot skillslot) {
         return Serializer.Serialize((byte)skillslot.chrOwner.id, (byte)skillslot.iSlot, 0, 0);
     }
 

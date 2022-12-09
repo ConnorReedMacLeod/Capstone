@@ -77,14 +77,6 @@ public class Position : MonoBehaviour {
 
     }
 
-    public static int SerializeCoords(Position.Coords coords) {
-        return ContPositions.CoordsToIndex(coords);
-    }
-
-    public static Position.Coords UnserializeCoords(int nSerialized) {
-        return ContPositions.IndexToCoords(nSerialized);
-    }
-
     public override string ToString() {
         return string.Format("({0},{1}) ({2})", iColumn, jRow, positiontype);
     }

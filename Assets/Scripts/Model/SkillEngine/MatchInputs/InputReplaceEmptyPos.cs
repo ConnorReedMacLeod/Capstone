@@ -29,7 +29,7 @@ public class InputReplaceEmptyPos : MatchInput {
         Debug.Assert((int)GetMatchInputType() == arnSerializedSelections[0]);
 
         plyrActing = Serializer.DeserializePlayer((byte)arnSerializedSelections[1]);
-        posEmpty = ContPositions.Get().GetPosition(Position.UnserializeCoords(arnSerializedSelections[2]));
+        posEmpty = Serializer.DeserializePosition(arnSerializedSelections[2]);
         chrReplacingWith = Serializer.DeserializeChr(arnSerializedSelections[3]);
 
     }
@@ -64,7 +64,7 @@ public class InputReplaceEmptyPos : MatchInput {
         arnSerializedSelections[1] = Serializer.SerializeByte(plyrActing);
 
         //Second, add the empty position that needs to be filled
-        arnSerializedSelections[2] = Position.SerializeCoords(posEmpty.coords);
+        arnSerializedSelections[2] = Serializer.SerializeByte(posEmpty);
 
         //Third, add the character being swapped in
         arnSerializedSelections[3] = Serializer.SerializeByte(chrReplacingWith);
