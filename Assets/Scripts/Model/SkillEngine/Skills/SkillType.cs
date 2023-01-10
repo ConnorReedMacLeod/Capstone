@@ -13,7 +13,7 @@ public static class SkillType {
     public enum SKILLTYPE {
         //TESTING
         LEECH, TRANSFUSE, KNOCKBACK, ADVANCE, BUNKER, FIREBALL, EXPLOSION, HEAL, STRATEGIZE, MANABLOSSOM,
-        RETREAT,
+        RETREAT, KILL,
 
         //Fischer
         BUCKLERPARRY, HARPOONGUN, HUNTERSQUARRY, IMPALE,
@@ -151,7 +151,7 @@ public static class SkillType {
             skillNew = new SkillBunker(chr);
             break;
         case SKILLTYPE.FIREBALL:
-                skillNew = new SkillFireball(chr);
+            skillNew = new SkillFireball(chr);
             break;
         case SKILLTYPE.EXPLOSION:
             skillNew = new SkillExplosion(chr);
@@ -170,8 +170,8 @@ public static class SkillType {
             break;
 
 
-            //Fischer
-            case SKILLTYPE.BUCKLERPARRY:
+        //Fischer
+        case SKILLTYPE.BUCKLERPARRY:
             skillNew = new SkillBucklerParry(chr);
             break;
         case SKILLTYPE.HARPOONGUN:
