@@ -135,6 +135,9 @@ public static class SkillType {
         switch(skillType) {
 
         //TESTING
+        case SKILLTYPE.KILL:
+            skillNew = new SkillKill(chr);
+            break;
         case SKILLTYPE.LEECH:
             skillNew = new SkillLeech(chr);
             break;

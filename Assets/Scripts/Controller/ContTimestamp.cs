@@ -17,11 +17,11 @@ public class ContTimestamp : Singleton<ContTimestamp> {
 
     public Timestamp ClaimTimestamp(Executable exec) {
 
-        Timestamp newTimestamp = new Timestamp(nCurTimestamp, exec);
+        curTimestamp = new Timestamp(nCurTimestamp, exec);
 
         nCurTimestamp++;
 
-        return newTimestamp;
+        return curTimestamp;
     }
 
     public override void Init() {

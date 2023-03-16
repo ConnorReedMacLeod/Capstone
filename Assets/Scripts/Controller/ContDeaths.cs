@@ -26,6 +26,8 @@ public class ContDeaths : Singleton<ContDeaths> {
 
     public void AddDyingChr(Chr chr) {
 
+        Debug.LogFormat("Adding {0} as a dying character", chr);
+
         Timestamp curTimestamp = ContTimestamp.Get().GetCurrentTimestamp();
 
         //Record the death of this chr with the current timestamp at the time of death
@@ -35,6 +37,8 @@ public class ContDeaths : Singleton<ContDeaths> {
         //Store this death timestamp in the dead character themselves so they know at
         // what time they died
         chr.timestampDeath = curTimestamp;
+
+        Debug.LogFormat("Potential death was at {0}", chr.timestampDeath);
     }
 
     //Find the first character that has been flagged as dying and that actually should die and push a death effect to transition them to a dead state

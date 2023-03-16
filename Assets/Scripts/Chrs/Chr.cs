@@ -161,7 +161,7 @@ public class Chr : MonoBehaviour {
     //After a character has been flagged for death, we can use this method to actually execute
     //  the killing of the character - shouldn't be called directly, instead flag the character for death
     //  via ContDeaths.AddDyingChr(chr);
-    public void KillCharacter() {
+    public void KillFlaggedCharacter() {
         if(bDead) {
             Debug.Log("Trying to kill a character thast's already dead");
             return;
@@ -330,14 +330,21 @@ public class Chr : MonoBehaviour {
         //maybe notify people that we've been healed
     }
 
-    public void ChangeHealth(int nChange) {
-        bool bAliveBefore = nCurHealth > 0;
 
-        if(nCurHealth + nChange > pnMaxHealth.Get()) {
+    public void ChangeHealth(int nChange) {
+        SetHealth(nCurHealth + nChange);
+    }
+
+    public void SetHealth(int nNewHealth) {
+
+        bool bAliveBefore = nCurHealth > 0;
+        int nHealthBefore = nCurHealth;
+
+        if(nNewHealth > pnMaxHealth.Get()) {
             //Set the character's life to maximum if they would go above that
             nCurHealth = pnMaxHealth.Get();
         } else {
-            nCurHealth += nChange;
+            nCurHealth = nNewHealth;
         }
 
         bool bAliveAfter = nCurHealth > 0;
@@ -348,7 +355,7 @@ public class Chr : MonoBehaviour {
             ContDeaths.Get().AddDyingChr(this);
         }
 
-        subLifeChange.NotifyObs(this, nChange);
+        subLifeChange.NotifyObs(this, nCurHealth - nHealthBefore);
     }
 
     public void SetPosition(Position _position) {

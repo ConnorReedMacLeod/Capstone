@@ -36,7 +36,7 @@ public class ExecKillFlaggedDyingChr : ExecChr {
 
         Debug.Assert(chrTarget.IsDying() == true);
 
-        chrTarget.KillCharacter();
+        chrTarget.KillFlaggedCharacter();
 
         fDelay = ContTime.fDelayStandard;
         sLabel = chrTarget.sName + " has died";
