@@ -12,4 +12,7 @@ public class Timestamp {
         exec = _exec;
     }
 
+    public override string ToString() {
+        return string.Format("{0} ({1})", nTimestamp, exec);
+    }
 }

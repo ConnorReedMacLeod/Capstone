@@ -31,26 +31,21 @@ public class SkillKill : Skill {
 
     class Clause1 : ClauseSkillSelection {
 
-        Damage dmg;
-        public int nBaseDamage = 1000;
-
         public Clause1(Skill _skill) : base(_skill) {
 
         }
 
         public override string GetDescription() {
 
-            return string.Format("Deal {0} damage to an Enemy", nBaseDamage);
+            return string.Format("Set an enemy's health to 0");
         }
 
         public override void ClauseEffect(InputSkillSelection selections) {
 
-            Chr chrSelected = (Chr)selections.lstSelections[0];
+            Chr chrSelected = (Chr)selections.lstSelections[1];
 
-            dmg = new Damage(skill.chrOwner, null, nBaseDamage);
-
-            ContSkillEngine.PushSingleExecutable(new ExecDealDamage(skill.chrOwner, chrSelected, dmg) {
-                sLabel = "Blasting them to death"
+            ContSkillEngine.PushSingleExecutable(new ExecSetHealth (skill.chrOwner, chrSelected, 0) {
+                sLabel = "Setting to 0 health"
             });
 
         }
