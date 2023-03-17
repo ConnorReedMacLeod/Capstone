@@ -124,8 +124,12 @@ public class InputReplaceEmptyPos : MatchInput {
 
     public override IEnumerator Execute() {
 
+        Debug.LogFormat("Executing a InputReplaceEmptyPos for {0}", chrReplacingWith);
+
         //We'll push a clause to swap in our replacing character to the vacant spot we've been asked to fill
         ClauseReplaceEmptyPos clauseReplaceEmptyPos = new ClauseReplaceEmptyPos(posEmpty, chrReplacingWith);
+
+        ContSkillEngine.PushSingleClause(clauseReplaceEmptyPos);
 
         //Do a small delay for animations - note this uses ContTime's WaitForSeconds so that we adhere to any time-scale modifications like pausing
         yield return ContTime.Get().WaitForSeconds(ContTime.fDelayTurnSkill);

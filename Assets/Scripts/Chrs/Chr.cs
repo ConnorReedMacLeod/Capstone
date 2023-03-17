@@ -163,12 +163,15 @@ public class Chr : MonoBehaviour {
     //  via ContDeaths.AddDyingChr(chr);
     public void KillFlaggedCharacter() {
         if(bDead) {
-            Debug.Log("Trying to kill a character thast's already dead");
+            Debug.LogError("Trying to kill a character thast's already dead");
             return;
         }
 
         //Mark ourselves as being properly dead (for the purposes of target validation, etc.)
         bDead = true;
+
+        //Add ourselves to the collection of dead characters
+        ContDeaths.Get().lstDeadChrs.Add(this);
 
         //interrupt any channel that we may be using 
         curStateReadiness.InterruptChannel();
@@ -189,8 +192,13 @@ public class Chr : MonoBehaviour {
         //Remove ourselves from the turn-priority queue since we'll no longer be acting
         ContTurns.Get().RemoveChrFromPriorityList(this);
 
+        //Save a reference to our position before we clear ourselves out of it
+        Position posVacated = position;
+
+        ContPositions.Get().DeleteChrFromPosition(this);
+
         //Flag our position as now being emptied, so it may need to be filled by a new character
-        ContSkillEngine.Get().NotifyOfNewEmptyPosition(position);
+        ContSkillEngine.Get().NotifyOfNewEmptyPosition(posVacated);
 
         //Notify anyone that we have died
         subDeath.NotifyObs(this);
