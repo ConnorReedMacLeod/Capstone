@@ -248,7 +248,6 @@ public class ContPositions : Singleton<ContPositions> {
 
         chr.SetPosition(null);
 
-        Debug.Log("TODO - delete the game object (maybe?) associated with the character");
     }
 
     // Triggers all relevent triggers for a movement of characters between the two consumed positions

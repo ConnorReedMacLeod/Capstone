@@ -16,10 +16,12 @@ public class ContDeaths : Singleton<ContDeaths> {
         }
     }
 
+    public List<Chr> lstDeadChrs;
     public Queue<DeathTimestamp> queueDyingChrs; //Tracks a list of all characters that have been flagged as dying (in order of their death 'timestamp')
 
 
     public override void Init() {
+        lstDeadChrs = new List<Chr>();
         queueDyingChrs = new Queue<DeathTimestamp>();
     }
 
@@ -47,6 +49,8 @@ public class ContDeaths : Singleton<ContDeaths> {
 
         while(queueDyingChrs.Count != 0) {
             DeathTimestamp chrNextFlaggedDyingTimestamp = queueDyingChrs.Dequeue();
+
+            Debug.LogFormat("Killing flagged character, {0}", chrNextFlaggedDyingTimestamp.chr);
 
             //If this first character is indeed supposed to die
             // (and we're also double-checking that this timestamp we're checking is indeed the most recent death
