@@ -19,6 +19,8 @@ public class ContDeaths : Singleton<ContDeaths> {
     public List<Chr> lstDeadChrs;
     public Queue<DeathTimestamp> queueDyingChrs; //Tracks a list of all characters that have been flagged as dying (in order of their death 'timestamp')
 
+    public Subject subDeadChrsChange = new Subject();
+
 
     public override void Init() {
         lstDeadChrs = new List<Chr>();
@@ -26,7 +28,7 @@ public class ContDeaths : Singleton<ContDeaths> {
     }
 
 
-    public void AddDyingChr(Chr chr) {
+    public void FlagDyingChr(Chr chr) {
 
         Debug.LogFormat("Adding {0} as a dying character", chr);
 
@@ -41,6 +43,13 @@ public class ContDeaths : Singleton<ContDeaths> {
         chr.timestampDeath = curTimestamp;
 
         Debug.LogFormat("Potential death was at {0}", chr.timestampDeath);
+    }
+
+    public void AddDeadChr(Chr chr) {
+
+        lstDeadChrs.Add(chr);
+        subDeadChrsChange.NotifyObs(chr);
+
     }
 
     //Find the first character that has been flagged as dying and that actually should die and push a death effect to transition them to a dead state

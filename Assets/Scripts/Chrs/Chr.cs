@@ -171,7 +171,7 @@ public class Chr : MonoBehaviour {
         bDead = true;
 
         //Add ourselves to the collection of dead characters
-        ContDeaths.Get().lstDeadChrs.Add(this);
+        ContDeaths.Get().AddDeadChr(this);
 
         //interrupt any channel that we may be using 
         curStateReadiness.InterruptChannel();
@@ -360,7 +360,7 @@ public class Chr : MonoBehaviour {
         //Check if this health change causes us to go from living to dying
         if(bAliveBefore == true && bAliveAfter == false) {
             //Then we just died - flag ourselves for death
-            ContDeaths.Get().AddDyingChr(this);
+            ContDeaths.Get().FlagDyingChr(this);
         }
 
         subLifeChange.NotifyObs(this, nCurHealth - nHealthBefore);
