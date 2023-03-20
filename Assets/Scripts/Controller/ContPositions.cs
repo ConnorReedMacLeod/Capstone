@@ -18,7 +18,6 @@ public class ContPositions : Singleton<ContPositions> {
 
     public List<Position> lstAllPositions;
 
-
     public static int CoordsToIndex(Position.Coords coords) {
         return CoordsToIndex(coords.iColumn, coords.jRow);
     }
@@ -243,6 +242,8 @@ public class ContPositions : Singleton<ContPositions> {
     //When a character dies or is otherwise completely removed from the playing space, then this will 
     //  completely remove them (without triggering any movement triggers)
     public void DeleteChrFromPosition(Chr chr) {
+
+        //Ensure you visually move this character away
 
         chr.position.SetChrOnPosition(null);
 
