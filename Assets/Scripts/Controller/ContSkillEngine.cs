@@ -403,7 +403,9 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         //TODO - only add this position to our queue of emptied positions if this would mean we now have fewer
         //        chrs in play than we're supposed to
         Debug.LogError("TODO - only enque emptied positions if they'd put the team below their chr-minimum");
-        queueEmptiedPositions.Enqueue(posEmptied);
+        if (posEmptied.positiontype != Position.POSITIONTYPE.BENCH) {
+            queueEmptiedPositions.Enqueue(posEmptied);
+        }
 
     }
 
