@@ -194,11 +194,12 @@ public class Chr : MonoBehaviour {
 
         //Save a reference to our position before we clear ourselves out of it
         Position posVacated = position;
-
+        
         ContPositions.Get().DeleteChrFromPosition(this);
 
         //Flag our position as now being emptied, so it may need to be filled by a new character
         ContSkillEngine.Get().NotifyOfNewEmptyPosition(posVacated);
+        
 
         //Notify anyone that we have died
         subDeath.NotifyObs(this);

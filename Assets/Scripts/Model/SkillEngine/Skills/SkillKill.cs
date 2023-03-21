@@ -14,8 +14,8 @@ public class SkillKill : Skill {
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 0, 1, 0));
 
-        nCooldownInduced = 6;
-        nFatigue = 4;
+        nCooldownInduced = 1;
+        nFatigue = 1;
 
         InitTargets();
 
@@ -26,7 +26,7 @@ public class SkillKill : Skill {
 
     public override void InitTargets() {
         TarMana.AddTarget(this, manaCost);
-        TarChr.AddTarget(this, Target.AND(TarChr.IsInPlay(), TarChr.IsDiffTeam(chrOwner)));
+        TarChr.AddTarget(this, Target.TRUE);//Target.AND(TarChr.IsInPlay(), TarChr.IsDiffTeam(chrOwner)));
     }
 
     class Clause1 : ClauseSkillSelection {

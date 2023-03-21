@@ -57,16 +57,16 @@ public class TarChr : Target {
     }
 
     public static FnValidSelection IsFrontliner() {
-        return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype == Position.POSITIONTYPE.FRONTLINE;
+        return (object chr, InputSkillSelection selections) => ((Chr)chr).bDead == false && ((Chr)chr).position.positiontype == Position.POSITIONTYPE.FRONTLINE;
     }
     public static FnValidSelection IsBackliner() {
-        return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype == Position.POSITIONTYPE.BACKLINE;
+        return (object chr, InputSkillSelection selections) => ((Chr)chr).bDead == false && ((Chr)chr).position.positiontype == Position.POSITIONTYPE.BACKLINE;
     }
     public static FnValidSelection IsInPlay() {
-        return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype != Position.POSITIONTYPE.BENCH;
+        return (object chr, InputSkillSelection selections) => ((Chr)chr).bDead == false && ((Chr)chr).position.positiontype != Position.POSITIONTYPE.BENCH;
     }
     public static FnValidSelection IsBenched() {
-        return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype == Position.POSITIONTYPE.BENCH;
+        return (object chr, InputSkillSelection selections) => ((Chr)chr).bDead == false && ((Chr)chr).position.positiontype == Position.POSITIONTYPE.BENCH;
     }
 
 
