@@ -222,15 +222,39 @@ public class InputReplaceEmptyPos : MatchInput {
     //Set up any UI for prompting the selection of a chr to choose to replace some empty position
     public override void StartManualInputProcess(LocalInputHuman localinputhuman) {
 
+        Debug.LogError("TODO - make swappable-in characters not selectable to see their skills");
         Debug.Log("Starting manual input for replaceemptypos");
 
         List<Chr> lstChrsCanSwapIn = ContPositions.Get().GetAlliedBenchChrs(plyrActing).Where(chr => chr.pbCanSwapIn.Get()).ToList();
+
+        bool bCanSwapBenchPlyr0 = false;
+        bool bCanSwapBenchPlyr1 = false;
 
         //Highlight each of these chrs
         foreach(Chr chr in lstChrsCanSwapIn) {
             chr.view.DecideIfHighlighted(ViewChr.SelectabilityState.ALLYSELECTABLE);
             chr.view.subMouseClick.Subscribe(cbOnClickSwitchableChr);
+
+
+            if (chr.plyrOwner.id == 0) {
+                bCanSwapBenchPlyr0 = true;
+            } else if (chr.plyrOwner.id == 1) {
+                bCanSwapBenchPlyr1 = true;
+            }
+            
         }
+
+        string sCameraLocation = "Home";
+
+        if(bCanSwapBenchPlyr0 && bCanSwapBenchPlyr1) {
+            sCameraLocation = "ZoomedOut";
+        }else if (bCanSwapBenchPlyr0) {
+            sCameraLocation = "BenchLeft";
+        }else if (bCanSwapBenchPlyr1) {
+            sCameraLocation = "BenchRight";
+        }
+
+        Match.Get().cameraControllerMatch.SetTargetLocation(sCameraLocation);
 
     }
 
