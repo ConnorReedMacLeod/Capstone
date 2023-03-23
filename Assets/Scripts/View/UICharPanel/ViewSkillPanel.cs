@@ -104,7 +104,7 @@ public class ViewSkillPanel : ViewInteractive {
                 arViewSkill[i].SetModel(null);
                 arV3SkillPositions[i] = arViewSkill[i].transform.localPosition;
             }
-
+            
             Chr.subAllStartSelect.Subscribe(cbChrSelected);
             Chr.subAllStartIdle.Subscribe(cbChrUnselected);
 

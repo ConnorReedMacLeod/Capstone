@@ -221,9 +221,12 @@ public class InputReplaceEmptyPos : MatchInput {
 
     //Set up any UI for prompting the selection of a chr to choose to replace some empty position
     public override void StartManualInputProcess(LocalInputHuman localinputhuman) {
-
-        Debug.LogError("TODO - make swappable-in characters not selectable to see their skills");
+        
         Debug.Log("Starting manual input for replaceemptypos");
+
+        //First, we'll just turn off the ability to click on characters to see their skills - clicking on them
+        // should instead choose them as the target to switch in
+        ContLocalUIInteraction.Get().bCanSelectCharacters = false;
 
         List<Chr> lstChrsCanSwapIn = ContPositions.Get().GetAlliedBenchChrs(plyrActing).Where(chr => chr.pbCanSwapIn.Get()).ToList();
 
@@ -262,6 +265,9 @@ public class InputReplaceEmptyPos : MatchInput {
     public override void EndManualInputProcess(LocalInputHuman localinputhuman) {
 
         Debug.Log("Ending manual input for replaceemptypos");
+
+        //Re-enable the ability to click on characters to see their skills
+        ContLocalUIInteraction.Get().bCanSelectCharacters = true;
 
         List<Chr> lstChrsCanSwapIn = ContPositions.Get().GetAlliedBenchChrs(plyrActing).Where(chr => chr.pbCanSwapIn.Get()).ToList();
 
