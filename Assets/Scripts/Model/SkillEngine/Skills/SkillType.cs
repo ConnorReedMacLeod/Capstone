@@ -13,7 +13,7 @@ public static class SkillType {
     public enum SKILLTYPE {
         //TESTING
         LEECH, TRANSFUSE, KNOCKBACK, ADVANCE, BUNKER, FIREBALL, EXPLOSION, HEAL, STRATEGIZE, MANABLOSSOM,
-        RETREAT, KILL,
+        RETREAT, KILL, MULTIKILL,
 
         //Fischer
         BUCKLERPARRY, HARPOONGUN, HUNTERSQUARRY, IMPALE,
@@ -64,6 +64,8 @@ public static class SkillType {
         { STRATEGIZE, new SkillTypeInfo (STRATEGIZE, "Strategize", new List<Discipline.DISCIPLINE> { TESTING } ) },
         { MANABLOSSOM, new SkillTypeInfo (MANABLOSSOM, "Mana Blossom", new List<Discipline.DISCIPLINE> { TESTING } ) },
         { RETREAT, new SkillTypeInfo (RETREAT, "Retreat", new List<Discipline.DISCIPLINE> { TESTING } ) },
+        { KILL, new SkillTypeInfo (KILL, "Kill", new List<Discipline.DISCIPLINE> { TESTING } ) },
+        { MULTIKILL, new SkillTypeInfo (MULTIKILL, "Multikill", new List<Discipline.DISCIPLINE> { TESTING } ) },
 
         //FISHER
         { BUCKLERPARRY, new SkillTypeInfo ( BUCKLERPARRY, "Buckler Parry", new List<Discipline.DISCIPLINE> { FISCHER } ) },
@@ -135,9 +137,6 @@ public static class SkillType {
         switch(skillType) {
 
         //TESTING
-        case SKILLTYPE.KILL:
-            skillNew = new SkillKill(chr);
-            break;
         case SKILLTYPE.LEECH:
             skillNew = new SkillLeech(chr);
             break;
@@ -171,10 +170,16 @@ public static class SkillType {
         case SKILLTYPE.RETREAT:
             skillNew = new SkillRetreat(chr);
             break;
+        case SKILLTYPE.KILL:
+            skillNew = new SkillKill(chr);
+            break;
+        case SKILLTYPE.MULTIKILL:
+            skillNew = new SkillMultikill(chr);
+            break;
 
 
-        //Fischer
-        case SKILLTYPE.BUCKLERPARRY:
+            //Fischer
+            case SKILLTYPE.BUCKLERPARRY:
             skillNew = new SkillBucklerParry(chr);
             break;
         case SKILLTYPE.HARPOONGUN:
