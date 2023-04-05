@@ -65,6 +65,16 @@ public abstract class SoulContainer : MonoBehaviour {
 
     public abstract void LetOwnerNotifySoulRemoved(Soul soulRemoved);
 
+    public void RemoveAllSoul() {
+        Debug.LogFormat("Removing all Soul effects from {0}", GetOwnerName());
+
+        while(lstSoul.Count > 0) {
+            Soul soulToRemove = lstSoul[0];
+            Debug.LogFormat("Removing {0} soul effect", soulToRemove);
+            RemoveSoul(soulToRemove);
+        }
+    }
+
     public void RemoveSoul(Soul toRemove) {
 
         bool bRemoveSuccessfully = lstSoul.Remove(toRemove);
@@ -128,7 +138,7 @@ public abstract class SoulContainer : MonoBehaviour {
         for(int i = 0; i < lstSoul.Count; i++) {
             string sVisible = "";
             string sDuration = "";
-            if (lstSoul[i].bVisible == true) {
+            if(lstSoul[i].bVisible == true) {
                 sVisible = "(Visible)";
             }
             if(lstSoul[i].bDuration == true) {

@@ -4,8 +4,11 @@ using UnityEngine;
 
 public abstract class MatchInput {
 
+    public enum MatchInputType { SkillSelection, ReplaceOpenPos };
+    public abstract MatchInputType GetMatchInputType();
+
     //Store which player is responsible for filling in and executing this input
-    public int iPlayerActing;
+    public Player plyrActing;
 
     //Each input type has to provide a way to serialize and deserialize itself
     public abstract int[] Serialize();
@@ -15,8 +18,8 @@ public abstract class MatchInput {
 
     //Each input type should extend these to provide some process by which the MatchInput information is filled out
     //  Additional functions to help with the real-time interaction with this process will likely be needed
-    public abstract void StartManualInputProcess();
-    public abstract void EndManualInputProcess();
+    public abstract void StartManualInputProcess(LocalInputHuman localinputhuman);
+    public abstract void EndManualInputProcess(LocalInputHuman localinputhuman);
 
     //Each input type should extend this to define what this input should actually do to affect the game state
     public abstract IEnumerator Execute();
@@ -42,15 +45,17 @@ public abstract class MatchInput {
     //Each input type will need to provide a way to reset to an input that will be guaranteed to be legal (as a failsafe)
     public abstract void ResetToDefaultInput();
 
-    public MatchInput(int _iPlayerActing) {
-        iPlayerActing = _iPlayerActing;
+    public MatchInput(Player _plyrActing) {
+        plyrActing = _plyrActing;
+        Debug.LogFormat("Matchinput for player {0} created", plyrActing);
     }
 
     public MatchInput(MatchInput other) {
-        iPlayerActing = other.iPlayerActing;
+        plyrActing = other.plyrActing;
     }
 
     // If we have partially filled out some of the required input but then cancel the process, we need to be able to clear out that partial input
     //  to clean out that data so that a fresh selection process can start without any lingering stale data.  
     public abstract void ResetPartialSelection();
+
 }

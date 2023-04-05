@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Can create executables like ...= new ExecLoseLife(){chrTarget = ..., nLifeLoss = ...};
-
 public class ExecLoseLife : ExecChr {
 
     public int nLifeLoss;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//TODO - change this name to ContGameEngine since we act upon more than just skill executions
 public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     public bool bStartedMatchLoop = false;
@@ -10,6 +11,10 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     public Stack<Clause> stackClause = new Stack<Clause>();
     public Stack<Executable> stackExec = new Stack<Executable>();
+
+    public Queue<Position> queueEmptiedPositions = new Queue<Position>(); //Track a list of positions that have been vacated that should be filled by new Chrs
+                                                                          // (note that we shouldn't fill empty spots that would lead to use having more characters in
+                                                                          //  play than the standard maximum)
 
     public const bool bDEBUGENGINE = false;
 
@@ -34,8 +39,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     public bool IsMatchOver() {
 
-        Debug.Log("IsMatchOver - not yet implemented");
-        return false;
+        return Match.Get().matchresult.GetResult() != MatchResult.RESULT.UNFINISHED;
     }
 
     //Do any closing animations for the end of a match
@@ -65,7 +69,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         yield return ProcessStackUntilInputNeeded();
 
         //Keep processing effects while the match isn't finished
-        while (!IsMatchOver()) {
+        while(!IsMatchOver()) {
 
             // At this point, we should have an input field that's been set up that needs to be filled out
             Debug.Assert(matchinputToFillOut != null);
@@ -73,31 +77,35 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
             bool bNeedsLocalInput = false;
 
             //If we need input, let's check if we already have input waiting in our buffer for that input
-            if (NetworkMatchReceiver.Get().IsCurMatchInputReady() == false) {
+            if(NetworkMatchReceiver.Get().IsCurMatchInputReady() == false) {
 
                 // Now that input is needed by some player, check if we locally control that player
-                if (NetworkMatchSetup.IsLocallyOwned(matchinputToFillOut.iPlayerActing)) {
+                if(NetworkMatchSetup.IsLocallyOwned(matchinputToFillOut.plyrActing.id)) {
                     bNeedsLocalInput = true;
-                    //Let the match input prepare to start gathering manual input 
-                    matchinputToFillOut.StartManualInputProcess();
+
+                    //Let the input controller decide how it wants to submit its selections for this requested input
+                    matchinputToFillOut.plyrActing.inputController.StartSelection(matchinputToFillOut);
+
                 } else {
                     //If we don't locally control the player who needs to decide an input
                     DebugDisplay.Get().SetDebugText("Waiting for foreign input");
                 }
 
                 //Wait until we have input waiting for us in the network buffer
-                while (NetworkMatchReceiver.Get().IsCurMatchInputReady() == false) {
+                while(NetworkMatchReceiver.Get().IsCurMatchInputReady() == false) {
                     //Keep spinning until we get the input we're waiting on
 
                     DebugDisplay.Get().SetDebugText("Waiting for input");
                     yield return null;
                 }
 
+                DebugDisplay.Get().SetDebugText("");
+
                 //Do any cleanup that we need to do if we were waiting on input
                 //TODO - figure out what needs to be done and under what circumstances - careful of potentially changing local input controllers
                 if(bNeedsLocalInput == true) {
-                    //Have the match input let the local input controller know that we're done with gathering input
-                    matchinputToFillOut.EndManualInputProcess();
+                    //If we were in charge of locally some selections, then we'll get our inputcontroller to cleanup anything it needs to
+                    matchinputToFillOut.plyrActing.inputController.EndSelection(matchinputToFillOut);
                 }
 
             }
@@ -111,7 +119,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
             //Make a record of which input we're going to be processing in our logs
             LogManager.Get().LogMatchInput(matchinput);
 
-            //Clear out the matchinput we prompting to be filled out
+            //Clear out the matchinput we prompted to be filled out
             matchinputToFillOut = null;
 
             //Process that match input by deferring to its execute method
@@ -135,7 +143,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
     public void HandleFastForwarding() {
         //Check if we have a stacked up number of stored inputs that we need to plow through
 
-        if (NetworkMatchReceiver.Get().HasNReadyInputs(nFASTFORWARDTHRESHOLD)) {
+        if(NetworkMatchReceiver.Get().HasNReadyInputs(nFASTFORWARDTHRESHOLD)) {
             ContTime.Get().SetAutoFastForward(true);
         } else {
             ContTime.Get().SetAutoFastForward(false);
@@ -154,7 +162,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         //Push each Clause in sequence onto the stack, and ensure that the first
         // Clause in the sequence ends up at the top of the stack
 
-        for (int i = lstClauses.Count - 1; i >= 0; i--) {
+        for(int i = lstClauses.Count - 1; i >= 0; i--) {
             PushSingleClause(lstClauses[i]);
         }
 
@@ -189,8 +197,10 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
         if(bDEBUGENGINE) Debug.Log("Resolving an Executable of type" + stackExec.Peek().GetType().ToString());
 
+        Executable execResolving = stackExec.Pop();
+
         //Remove the Executable from the top of the stack and execute it
-        yield return stackExec.Pop().Execute();
+        yield return execResolving.Execute();
 
     }
 
@@ -243,9 +253,10 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         return execToResolve;
     }
 
-
+    //TODO - Go through any uses of this that should instead be Clause-wrapped
     public void AddExec(Executable exec) {
 
+        //Push that executable onto the stack
         stackExec.Push(exec);
 
     }
@@ -268,40 +279,83 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
 
     public IEnumerator ProcessStackUntilInputNeeded() {
 
-        // Check if the flag has been raised to indicate we need player input to continue
-        while (matchinputToFillOut == null) {
+        // Check if the flag has been raised to indicate we need player input to continue (and only
+        //   continue if the match is still unfinished)
+        while(matchinputToFillOut == null && IsMatchOver() == false) {
             // Keep processing game-actions until we need player input
             yield return ProcessStacks();
         }
 
     }
 
+    //Executes the next executable (and will unpack clauses until it finds an executable)
+    //  If no executables or clauses are left, then we'll handle the end-of-turnphase operations
     public IEnumerator ProcessStacks() {
 
-        while (true) {
-            while (stackExec.Count == 0) {
+        while(true) {
+            while(stackExec.Count == 0) {
                 //If we don't have any executables to process, then we have to unpack clauses until we do have an executable
 
-                if (stackClause.Count > 0) {
+                if(stackClause.Count > 0) {
                     //If we have a clause on our stack, then unpack that to hopefully add an executable to the stack
-                    if (bDEBUGENGINE) Debug.Log("No Executables, so unpack a Clause");
+                    if(bDEBUGENGINE) Debug.Log("No Executables, so unpack a Clause");
                     ResolveClause();
                 } else {
-                    //If we have no clauses on our stack, then our stack is completely empty, so we can push 
-                    // a new executable for the next phase of the turn
-                    if (bDEBUGENGINE) Debug.Log("No Clauses or Executables so move to the next part of the turn");
-                    ContTurns.Get().FinishedTurnPhase();
+                    //If we have no clauses on our stack, then our stack is completely empty, so we've reached the end of this turn phase
+
+                    //First, do a check to see if there's any dead characters - if so, we'll kill off the first death-flagged character and then reprocess the stack until
+                    //  any death triggers have been resolved and we return back here to see if there's any other death-flagged characters to deal with
+                    if(ContDeaths.Get().KillNextFlaggedDyingCharacter() == true) {
+
+                        continue;
+                    }
+
+                    //If we get to this point, then we don't have any more characters to kill off, but we may have to react to any characters that have died earlier
+                    // in this phase
+
+                    //Let's check if the result of the match is complete now
+                    Match.Get().matchresult = ContDeaths.Get().CheckMatchWinner();
+
+                    if(Match.Get().matchresult.GetResult() != MatchResult.RESULT.UNFINISHED) {
+                        if(bDEBUGENGINE) Debug.LogFormat("Match is over!  The result is: {0}", Match.Get().matchresult.GetResult());
+
+                        //if the match is over, then we should return and gradually break out of the control flow of the main game-loop
+                        yield break;
+                    }
+
+                    //If the game isn't over, then let's check if we have any remaining clean-up to do
+                    if(queueEmptiedPositions.Count != 0) {
+                        //If we have at least one position that has been marked to be filled, then we'll have to collect input to fill it
+
+                        //Grab the oldest (first stacked) position to be filled
+                        Position posEmptied = queueEmptiedPositions.Dequeue();
+
+                        //And create an input request to have its owner fill that position
+                        InputReplaceEmptyPos inputRequest = new InputReplaceEmptyPos(posEmptied.PlyrOwnedBy(), posEmptied);
+
+                        //Queue up this input as needing to be resolved by the input-collected
+                        matchinputToFillOut = inputRequest;
+
+                        //Break out of this stack-processing since we don't currently have anything to process - answering this input will
+                        //  give us some new executables to process
+                        yield break;
+                    } else {
+                        //If we've processed any dying characters and there are no empty positions that still need to be filled,
+                        // then we can finish wrapping up this phase of the turn - push the next turn phase's executable and we can process that
+                        if(bDEBUGENGINE) Debug.Log("No Clauses, Executables, or Deaths so move to the next part of the turn");
+                        ContTurns.Get().FinishedTurnPhase();
+                    }
                 }
             }
 
             //If we've gotten this far, then we know we have an executable to examine
 
             //Check if the executable on top of our stack has dealt with its pre-triggers/replacements yet
-            if (stackExec.Peek().bPreTriggered) {
+            if(stackExec.Peek().bPreTriggered) {
                 //If we've already dealt with all its pretriggers/replacements, then we're ready to actually evaluate and we can 
                 //  exit our loop
                 break;
-            } else { 
+            } else {
 
                 //Debug.Log("Performing Replacement effects and Pre-Triggers");
 
@@ -319,7 +373,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
                 top = ResolveReplacements(top);
 
                 //Push the modified executable back onto the stack at the top
-                stackExec.Push(top);
+                AddExec(top);
 
                 //Now we can push all of the pre-triggers onto the stack
                 top.GetPreTrigger().NotifyObs(null, top);
@@ -335,13 +389,31 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
         //If we've gotten this far, then we know we have an executable at the top of our stack and 
         //  we are ready to process it
         yield return ResolveExec();
-        
+
     }
 
-   
+
+
+
+
+    public void NotifyOfNewEmptyPosition(Position posEmptied) {
+
+        Debug.Assert(posEmptied.chrOnPosition == null);
+
+        //TODO - only add this position to our queue of emptied positions if this would mean we now have fewer
+        //        chrs in play than we're supposed to
+        Debug.LogError("TODO - only enque emptied positions if they'd put the team below their chr-minimum");
+        if (posEmptied.positiontype != Position.POSITIONTYPE.BENCH) {
+            queueEmptiedPositions.Enqueue(posEmptied);
+        }
+
+    }
+
+
+
 
     public override void Init() {
-        
+
     }
 
 }

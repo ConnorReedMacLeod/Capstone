@@ -29,6 +29,7 @@ public class Chr : MonoBehaviour {
 
     public List<Discipline.DISCIPLINE> lstDisciplines; //The disciplines the character has access to
 
+    public Timestamp timestampDeath;           //Stores the timestamp at which this character died (or null, if they aren't dead)
     public bool bDead;                         //If the character is dead or not
 
     public Property<int> pnPower;              //The character's current power
@@ -36,6 +37,8 @@ public class Chr : MonoBehaviour {
 
     public Property<int> pnArmour;          //The character's current armour
     public int nAbsorbedArmour;             //The amount of damage currently taken by armour
+
+    public Property<bool> pbCanSwapIn;       //Can this character swap in from the bench
 
     public SkillSlot[] arSkillSlots;      //The slots for the character's currently usable skills - these keep track of the cooldowns of those skills
     public const int nEquippedCharacterSkills = 4; //Number of non-generic (non-rest) skills currently active on the character
@@ -145,14 +148,32 @@ public class Chr : MonoBehaviour {
         subChannelTimeChange.NotifyObs();
     }
 
+    public bool IsDying() {
+        if(nCurHealth <= 0) {
+            return true;
+        }
 
-    public void KillCharacter() {
+        //TODO - put some insta-death trigger in
+
+        return false;
+    }
+
+    //After a character has been flagged for death, we can use this method to actually execute
+    //  the killing of the character - shouldn't be called directly, instead flag the character for death
+    //  via ContDeaths.AddDyingChr(chr);
+    public void KillFlaggedCharacter() {
         if(bDead) {
-            Debug.Log("Trying to kill a character thast's already dead");
+            Debug.LogError("Trying to kill a character thast's already dead");
             return;
         }
 
-        //interrupt any channel that  we may be using 
+        //Mark ourselves as being properly dead (for the purposes of target validation, etc.)
+        bDead = true;
+
+        //Add ourselves to the collection of dead characters
+        ContDeaths.Get().AddDeadChr(this);
+
+        //interrupt any channel that we may be using 
         curStateReadiness.InterruptChannel();
 
         //Create a new death state to let our character transition to
@@ -160,6 +181,29 @@ public class Chr : MonoBehaviour {
 
         //Transition to the new state
         SetStateReadiness(newState);
+
+        //Remove all soul effects that are present on this chr
+        soulContainer.RemoveAllSoul();
+
+        Debug.Log("Remember to dispell any soul effects on other characters that require targetting this character - should be done " +
+                "on a per-soul effect basis when notified of a subDeath");
+
+
+        //Remove ourselves from the turn-priority queue since we'll no longer be acting
+        ContTurns.Get().RemoveChrFromPriorityList(this);
+
+        //Save a reference to our position before we clear ourselves out of it
+        Position posVacated = position;
+        
+        ContPositions.Get().DeleteChrFromPosition(this);
+
+        //Flag our position as now being emptied, so it may need to be filled by a new character
+        ContSkillEngine.Get().NotifyOfNewEmptyPosition(posVacated);
+        
+
+        //Notify anyone that we have died
+        subDeath.NotifyObs(this);
+        Chr.subAllDeath.NotifyObs(this);
     }
 
 
@@ -175,7 +219,7 @@ public class Chr : MonoBehaviour {
         subAllFatigueChange.NotifyObs(this);
 
         //TODO:: Probably delete this bGlobalFatigueChange flag once I get a nice solution for priority handling
-        if (bGlobalFatigueChange == false) {
+        if(bGlobalFatigueChange == false) {
             //Then this is an individual fatigue change for a single character that may change their priority
             ContTurns.Get().FixSortedPriority(this);
             //So make sure we're in the right place in the priority list
@@ -295,18 +339,32 @@ public class Chr : MonoBehaviour {
         //maybe notify people that we've been healed
     }
 
-    public void ChangeHealth(int nChange) {
-        if(nCurHealth + nChange > pnMaxHealth.Get()) {
-            nCurHealth = pnMaxHealth.Get();
-        } else if(nCurHealth + nChange <= 0) {
-            nCurHealth = 0;
 
-            KillCharacter();
+    public void ChangeHealth(int nChange) {
+        SetHealth(nCurHealth + nChange);
+    }
+
+    public void SetHealth(int nNewHealth) {
+
+        bool bAliveBefore = nCurHealth > 0;
+        int nHealthBefore = nCurHealth;
+
+        if(nNewHealth > pnMaxHealth.Get()) {
+            //Set the character's life to maximum if they would go above that
+            nCurHealth = pnMaxHealth.Get();
         } else {
-            nCurHealth += nChange;
+            nCurHealth = nNewHealth;
         }
 
-        subLifeChange.NotifyObs(this, nChange);
+        bool bAliveAfter = nCurHealth > 0;
+
+        //Check if this health change causes us to go from living to dying
+        if(bAliveBefore == true && bAliveAfter == false) {
+            //Then we just died - flag ourselves for death
+            ContDeaths.Get().FlagDyingChr(this);
+        }
+
+        subLifeChange.NotifyObs(this, nCurHealth - nHealthBefore);
     }
 
     public void SetPosition(Position _position) {
@@ -315,7 +373,7 @@ public class Chr : MonoBehaviour {
         position = _position;
     }
 
-    //Counts down the character's recharge with the timeline
+    //Counts down the character's recharge time
     public void TimeTick() {
         ChangeFatigue(-1, true);
     }
@@ -440,6 +498,7 @@ public class Chr : MonoBehaviour {
 
             //By default, we don't override any targetting - just listen to the base response of if the target can select us
             pOverrideCanBeSelectedBy = new Property<CanBeSelectedBy>((tar, selectionsSoFar, bCanSelectSoFar) => bCanSelectSoFar);
+            pbCanSwapIn = new Property<bool>(() => position.positiontype == Position.POSITIONTYPE.BENCH);
 
             SetStateReadiness(new StateFatigued(this));
 

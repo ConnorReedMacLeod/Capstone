@@ -61,6 +61,11 @@ public class Position : MonoBehaviour {
             jRow = _jRow;
         }
 
+        public Coords(Coords other) {
+            iColumn = other.iColumn;
+            jRow = other.jRow;
+        }
+
         public override bool Equals(object obj) {
             if(obj.GetType() != this.GetType()) return false;
             return (((Coords)obj).iColumn == this.iColumn) && (((Coords)obj).jRow == this.jRow);
@@ -70,14 +75,6 @@ public class Position : MonoBehaviour {
             return string.Format("({0},{1})", iColumn, jRow);
         }
 
-    }
-
-    public static int SerializeCoords(Position.Coords coords) {
-        return ContPositions.CoordsToIndex(coords);
-    }
-
-    public static Position.Coords UnserializeCoords(int nSerialized) {
-        return ContPositions.IndexToCoords(nSerialized);
     }
 
     public override string ToString() {
@@ -136,6 +133,10 @@ public class Position : MonoBehaviour {
     public int PlyrIdOwnedBy() {
         if(coords.iColumn < 3) return 0;
         else return 1;
+    }
+
+    public Player PlyrOwnedBy() {
+        return Match.Get().arPlayers[PlyrIdOwnedBy()];
     }
 
     public bool IsAllyOwned(Player plyr) {

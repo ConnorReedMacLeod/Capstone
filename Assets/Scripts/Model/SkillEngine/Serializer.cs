@@ -24,6 +24,9 @@ public static class Serializer {
     public static Chr DeserializeChr(byte b) {
         return ChrCollection.Get().GetChr(b);
     }
+    public static Chr DeserializeChr(int n) {
+        return DeserializeChr((byte)n);
+    }
 
     public static byte SerializeByte(Skill skill) {
         return (byte)skill.skillslot.iSlot;
@@ -40,7 +43,7 @@ public static class Serializer {
         return Match.Get().arPlayers[b];
     }
 
-    public static int SerializeSkillSlot(SkillSlot skillslot) {
+    public static int SerializeByte(SkillSlot skillslot) {
         return Serializer.Serialize((byte)skillslot.chrOwner.id, (byte)skillslot.iSlot, 0, 0);
     }
 
@@ -49,6 +52,23 @@ public static class Serializer {
         int iSkillSlot = Serializer.GetByte(1, nSerializedSkill);
 
         return chrUsing.arSkillSlots[iSkillSlot];
+    }
+
+    public static int SerializeByte(Position.Coords coords) {
+        return ContPositions.CoordsToIndex(coords);
+    }
+
+    public static Position.Coords DeserializeCoords(int nSerializedCoords) {
+        return ContPositions.IndexToCoords(nSerializedCoords);
+    }
+
+    //We'll just be implementing the serialization of positions through their coordinates
+    public static int SerializeByte(Position pos) {
+        return SerializeByte(pos.coords);
+    }
+
+    public static Position DeserializePosition(int nSerializedPosition) {
+        return ContPositions.Get().GetPosition(DeserializeCoords(nSerializedPosition));
     }
 }
 
