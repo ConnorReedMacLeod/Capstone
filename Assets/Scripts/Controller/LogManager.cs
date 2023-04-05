@@ -341,7 +341,7 @@ public class LogManager : SingletonPersistent<LogManager> {
         for(int iChr = 0; iChr < Match.NMINACTIVECHRSPERTEAM; iChr++) {
             Position.Coords poscoords = NetworkMatchSetup.GetPositionCoords(iPlayer, iChr);
 
-            WriteToMatchLogFile(string.Format("pc:{0}:{1}:{2}:{3}", iPlayer, iChr, Position.SerializeCoords(poscoords), poscoords));
+            WriteToMatchLogFile(string.Format("pc:{0}:{1}:{2}:{3}", iPlayer, iChr, Serializer.SerializeByte(poscoords), poscoords));
         }
     }
 
@@ -364,7 +364,7 @@ public class LogManager : SingletonPersistent<LogManager> {
             return;
         }
 
-        NetworkMatchSetup.SetPositionCoords(iPlayer, iChr, Position.UnserializeCoords(nSerializedCoords));
+        NetworkMatchSetup.SetPositionCoords(iPlayer, iChr, Serializer.DeserializeCoords(nSerializedCoords));
     }
 
     public void LogRandomizationSeed() {
@@ -385,7 +385,9 @@ public class LogManager : SingletonPersistent<LogManager> {
     }
 
     public void LogMatchInput(MatchInput matchinput) {
-        string sMatchInput = string.Format("mi:{0}", matchinput.iPlayerActing);
+        Debug.Log(matchinput);
+        Debug.Log(matchinput.plyrActing);
+        string sMatchInput = string.Format("mi:{0}", matchinput.plyrActing.id);
 
         int[] arnSerializedMatchInput = matchinput.Serialize();
 
@@ -443,7 +445,7 @@ public class LogManager : SingletonPersistent<LogManager> {
         lstLoggedSerializedMatchInputs = null;
     }
 
-    void OnLeaveScene<Scene> (Scene scene) {
+    void OnLeaveScene<Scene>(Scene scene) {
 
         if(swFileWriter == null) return;
 

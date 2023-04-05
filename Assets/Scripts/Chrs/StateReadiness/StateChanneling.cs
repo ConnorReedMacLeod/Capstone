@@ -108,7 +108,7 @@ public class StateChanneling : StateReadiness {
 
         chrOwner.soulContainer.ApplySoul(soulBehaviour);
 
-        if (lstPotentialChannelCancelTriggers == null) {
+        if(lstPotentialChannelCancelTriggers == null) {
             Debug.LogError("ERROR! Must provide a list of potential channel cancellation triggers! (Could be empty if needed)");
             return;
         }
@@ -118,7 +118,7 @@ public class StateChanneling : StateReadiness {
         lstPotentialChannelCancelTriggers.Add(chrOwner.pOverrideCanBeSelectedBy.subChanged); //Listen for any changes to the overridden selectability conditions
 
         //Subscribe to each potential cancellation trigger 
-        for(int i=0; i<lstPotentialChannelCancelTriggers.Count; i++) {
+        for(int i = 0; i < lstPotentialChannelCancelTriggers.Count; i++) {
             lstPotentialChannelCancelTriggers[i].Subscribe(cbInterruptifInvalid);
         }
 
@@ -136,7 +136,7 @@ public class StateChanneling : StateReadiness {
         ContSkillEngine.PushSingleClause(new ClauseClearStoredSelection(soulBehaviour.skillSource));
 
         //Unsubscribe from all of the potential cancellation triggers
-        for (int i = lstPotentialChannelCancelTriggers.Count-1; i >= 0; i--) {
+        for(int i = lstPotentialChannelCancelTriggers.Count - 1; i >= 0; i--) {
             lstPotentialChannelCancelTriggers[i].UnSubscribe(cbInterruptifInvalid);
         }
 

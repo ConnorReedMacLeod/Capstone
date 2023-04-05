@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecDealDamage : ExecChr {
 
-    public Damage dmg;
+//Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
+
+public class ExecKillFlaggedDyingChr : ExecChr {
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -33,33 +34,21 @@ public class ExecDealDamage : ExecChr {
 
     public override void ExecuteEffect() {
 
-        Debug.Assert(chrTarget == dmg.chrTarget);
+        Debug.Assert(chrTarget.IsDying() == true);
 
-        //Apply the stored damage to the target
-        chrTarget.TakeDamage(dmg);
+        chrTarget.KillFlaggedCharacter();
 
-        sLabel = chrSource.sName + " is harming " + chrTarget.sName + " for " + dmg.Get();
+        fDelay = ContTime.fDelayStandard;
+        sLabel = chrTarget.sName + " has died";
 
-        fDelay = ContTime.fDelayMinorSkill;
     }
 
-    //If you're always expecting the same base amount, then just have an interface that just requires an integer for the damage amount
-    public ExecDealDamage(Chr _chrSource, Chr _chrTarget, int nBaseDamage) : this(_chrSource, _chrTarget, (__chrSource, __chrTarget) => nBaseDamage) {
+    public ExecKillFlaggedDyingChr(Chr _chrSource, Chr _chrTarget) : base(_chrSource, _chrTarget) {
+
     }
 
-    public ExecDealDamage(Chr _chrSource, Chr _chrTarget, Damage.FuncBaseDamage funcBaseDamage) : base(_chrSource, _chrTarget) {
-        dmg = new Damage(_chrSource, _chrTarget, funcBaseDamage);
-    }
+    public ExecKillFlaggedDyingChr(ExecKillFlaggedDyingChr other) : base(other) {
 
-    public ExecDealDamage(Chr _chrSource, Chr _chrTarget, Damage _dmg) : base(_chrSource, _chrTarget) {
-        dmg = new Damage(_dmg);
-
-        dmg.chrSource = _chrSource;
-        dmg.chrTarget = _chrTarget;
-    }
-
-    public ExecDealDamage(ExecDealDamage other) : base(other){
-        dmg = new Damage(other.dmg);
     }
 
 }

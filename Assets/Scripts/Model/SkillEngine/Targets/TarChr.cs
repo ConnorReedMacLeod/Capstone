@@ -5,6 +5,7 @@ using UnityEngine;
 public class TarChr : Target {
 
     public static int SerializeChr(Chr chr) {
+        Debug.LogError("Get rid of multiple serialization functions - should only be one for each type");
         return chr.id;
     }
 
@@ -13,11 +14,11 @@ public class TarChr : Target {
     }
 
     public override int Serialize(object objToSerialize) {
-        return SerializeChr((Chr)objToSerialize);
+        return Serializer.SerializeByte((Chr)objToSerialize);
     }
 
     public override object Unserialize(int nSerialized, List<object> lstSelectionsSoFar) {
-        return UnserializeChr(nSerialized);
+        return Serializer.DeserializeChr(nSerialized);
     }
 
     public static TarChr AddTarget(Skill _skill, FnValidSelection _IsValidSelection) {
@@ -56,16 +57,16 @@ public class TarChr : Target {
     }
 
     public static FnValidSelection IsFrontliner() {
-        return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype == Position.POSITIONTYPE.FRONTLINE;
+        return (object chr, InputSkillSelection selections) => ((Chr)chr).bDead == false && ((Chr)chr).position.positiontype == Position.POSITIONTYPE.FRONTLINE;
     }
     public static FnValidSelection IsBackliner() {
-        return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype == Position.POSITIONTYPE.BACKLINE;
+        return (object chr, InputSkillSelection selections) => ((Chr)chr).bDead == false && ((Chr)chr).position.positiontype == Position.POSITIONTYPE.BACKLINE;
     }
     public static FnValidSelection IsInPlay() {
-        return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype != Position.POSITIONTYPE.BENCH;
+        return (object chr, InputSkillSelection selections) => ((Chr)chr).bDead == false && ((Chr)chr).position.positiontype != Position.POSITIONTYPE.BENCH;
     }
     public static FnValidSelection IsBenched() {
-        return (object chr, InputSkillSelection selections) => ((Chr)chr).position.positiontype == Position.POSITIONTYPE.BENCH;
+        return (object chr, InputSkillSelection selections) => ((Chr)chr).bDead == false && ((Chr)chr).position.positiontype == Position.POSITIONTYPE.BENCH;
     }
 
 
@@ -176,10 +177,10 @@ public class TarChr : Target {
     //Gets the list of triggers associated with the default checks we should do to ensure 
     //  that the targetted character is still legal enough of a target to complete a channel
     // Note - should be paired with the checks in DefaultCanCompleteAsChannelTarget
-    public virtual void AddDefaultTriggersToCompleteAsChannel(List<Subject> lstTriggersSoFar, Chr chr) {
+    public virtual void AddDefaultTriggersToCompleteAsChannel(List<Subject> lstTriggersSoFar, Chr chrTarget) {
 
-        lstTriggersSoFar.Add(chr.subDeath);
-        lstTriggersSoFar.Add(chr.subEnteredBench);
+        lstTriggersSoFar.Add(chrTarget.subDeath);
+        lstTriggersSoFar.Add(chrTarget.subEnteredBench);
 
     }
 }

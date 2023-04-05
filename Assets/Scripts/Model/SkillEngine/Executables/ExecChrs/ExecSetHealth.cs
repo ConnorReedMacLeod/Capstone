@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecDealDamage : ExecChr {
+public class ExecSetHealth : ExecChr {
 
-    public Damage dmg;
+    public int nNewHealth;
 
     //Note:: This section should be copy and pasted for each type of executable
     //       We could do a gross thing like 
@@ -31,35 +31,19 @@ public class ExecDealDamage : ExecChr {
     }
     // This is the end of the section that should be copied and pasted
 
+
     public override void ExecuteEffect() {
 
-        Debug.Assert(chrTarget == dmg.chrTarget);
+        chrTarget.SetHealth(nNewHealth);
 
-        //Apply the stored damage to the target
-        chrTarget.TakeDamage(dmg);
-
-        sLabel = chrSource.sName + " is harming " + chrTarget.sName + " for " + dmg.Get();
-
-        fDelay = ContTime.fDelayMinorSkill;
     }
 
-    //If you're always expecting the same base amount, then just have an interface that just requires an integer for the damage amount
-    public ExecDealDamage(Chr _chrSource, Chr _chrTarget, int nBaseDamage) : this(_chrSource, _chrTarget, (__chrSource, __chrTarget) => nBaseDamage) {
+    public ExecSetHealth(Chr _chrSource, Chr _chrTarget, int _nNewHealth) : base(_chrSource, _chrTarget) {
+        nNewHealth = _nNewHealth;
     }
 
-    public ExecDealDamage(Chr _chrSource, Chr _chrTarget, Damage.FuncBaseDamage funcBaseDamage) : base(_chrSource, _chrTarget) {
-        dmg = new Damage(_chrSource, _chrTarget, funcBaseDamage);
+    public ExecSetHealth(ExecSetHealth other) : base(other) {
+        nNewHealth = other.nNewHealth;
     }
-
-    public ExecDealDamage(Chr _chrSource, Chr _chrTarget, Damage _dmg) : base(_chrSource, _chrTarget) {
-        dmg = new Damage(_dmg);
-
-        dmg.chrSource = _chrSource;
-        dmg.chrTarget = _chrTarget;
-    }
-
-    public ExecDealDamage(ExecDealDamage other) : base(other){
-        dmg = new Damage(other.dmg);
-    }
-
 }
+

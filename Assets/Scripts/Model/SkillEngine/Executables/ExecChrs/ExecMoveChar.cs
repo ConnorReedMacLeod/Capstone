@@ -46,7 +46,7 @@ public class ExecMoveChar : ExecChr {
         //Call the Move method in the position controller
         ContPositions.Get().MoveChrToPosition(chrTarget, posDestination);
 
-        sLabel = chrSource.sName + " is moving to " + posDestination.ToString();
+        sLabel = chrTarget.sName + " is moving to " + posDestination.ToString();
 
         fDelay = ContTime.fDelayMinorSkill;
     }

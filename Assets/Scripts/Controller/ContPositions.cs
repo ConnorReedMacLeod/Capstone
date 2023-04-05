@@ -38,6 +38,14 @@ public class ContPositions : Singleton<ContPositions> {
         return lstAllPositions[CoordsToIndex(iColumn, jRow)];
     }
 
+    public Chr GetChrOnPosition(Position.Coords coords) {
+        return GetPosition(coords).chrOnPosition;
+    }
+
+    public Chr GetChrOnPosition(int iColumn, int jRow) {
+        return GetPosition(iColumn, jRow).chrOnPosition;
+    }
+
     public Player GetPlayerOwnerOfPosition(Position pos) {
         if(pos.iColumn < nCOLUMNS / 2) return Match.Get().arPlayers[0];
         else return Match.Get().arPlayers[1];
@@ -235,11 +243,12 @@ public class ContPositions : Singleton<ContPositions> {
     //  completely remove them (without triggering any movement triggers)
     public void DeleteChrFromPosition(Chr chr) {
 
+        //Ensure you visually move this character away
+
         chr.position.SetChrOnPosition(null);
 
         chr.SetPosition(null);
 
-        Debug.Log("TODO - delete the game object (maybe?) associated with the character");
     }
 
     // Triggers all relevent triggers for a movement of characters between the two consumed positions
@@ -262,7 +271,7 @@ public class ContPositions : Singleton<ContPositions> {
 
 
         //Send position-entering updates for the character we swapped with (if there is one)
-        if (chrSwappedWith != null) {
+        if(chrSwappedWith != null) {
             if(posStarting.positiontype != Position.POSITIONTYPE.BENCH) {
 
                 //If this character ended in play, but started on the bench, then we need to switch their state
@@ -271,7 +280,7 @@ public class ContPositions : Singleton<ContPositions> {
                 }
 
                 chrSwappedWith.subEnteredInPlayPosition.NotifyObs(posStarting);
-            } else if (posEnding.positiontype != Position.POSITIONTYPE.BENCH && posStarting.positiontype == Position.POSITIONTYPE.BENCH) {
+            } else if(posEnding.positiontype != Position.POSITIONTYPE.BENCH && posStarting.positiontype == Position.POSITIONTYPE.BENCH) {
                 //If this character moved from a non-bench position to a bench position, then we'll set them to a fatigued state (cancelling any channels
                 // and ending their turn if they were active) and broadcast the appropriate updates
 
@@ -282,15 +291,15 @@ public class ContPositions : Singleton<ContPositions> {
             chrSwappedWith.subEnteredAnyPosition.NotifyObs(posStarting);
         }
         //Send position-entering updates for the primary character we moved
-        if (posEnding.positiontype != Position.POSITIONTYPE.BENCH) {
+        if(posEnding.positiontype != Position.POSITIONTYPE.BENCH) {
 
             //If this character ended in play, but started on the bench, then we need to switch their state
-            if (posStarting.positiontype == Position.POSITIONTYPE.BENCH) {
+            if(posStarting.positiontype == Position.POSITIONTYPE.BENCH) {
                 chrMoved.SetStateReadiness(new StateSwitchingIn(chrMoved, Match.NSWITCHINGINDURATION));
             }
 
             chrMoved.subEnteredInPlayPosition.NotifyObs(posEnding);
-        } else if (posStarting.positiontype != Position.POSITIONTYPE.BENCH && posEnding.positiontype == Position.POSITIONTYPE.BENCH) {
+        } else if(posStarting.positiontype != Position.POSITIONTYPE.BENCH && posEnding.positiontype == Position.POSITIONTYPE.BENCH) {
             //If this character moved from a non-bench position to a bench position, then we'll set them to a fatigued state (cancelling any channels
             // and ending their turn if they were active) and broadcast the appropriate updates
 
@@ -303,12 +312,12 @@ public class ContPositions : Singleton<ContPositions> {
         posEnding.subChrLeftPosition.NotifyObs(chrSwappedWith);
         posStarting.subChrLeftPosition.NotifyObs(chrMoved);
 
-        
+
         //Send position-leaving updates for the character we swapped with (if there is one)
-        if (chrSwappedWith != null) {
-            if (posEnding.positiontype != Position.POSITIONTYPE.BENCH) {
+        if(chrSwappedWith != null) {
+            if(posEnding.positiontype != Position.POSITIONTYPE.BENCH) {
                 chrSwappedWith.subLeftInPlayPosition.NotifyObs(posEnding);
-            } else if (posEnding.positiontype == Position.POSITIONTYPE.BENCH && posStarting.positiontype != Position.POSITIONTYPE.BENCH) {
+            } else if(posEnding.positiontype == Position.POSITIONTYPE.BENCH && posStarting.positiontype != Position.POSITIONTYPE.BENCH) {
                 //If this character moved from a bench position to a non-bench position, then we'll throw the appropriate update
                 chrSwappedWith.subLeftBench.NotifyObs(posEnding);
             }
@@ -316,9 +325,9 @@ public class ContPositions : Singleton<ContPositions> {
             chrSwappedWith.subLeftAnyPosition.NotifyObs(posEnding);
         }
         //Send position-leaving updates for the primary character we moved
-        if (posStarting.positiontype != Position.POSITIONTYPE.BENCH) {
+        if(posStarting.positiontype != Position.POSITIONTYPE.BENCH) {
             chrMoved.subLeftInPlayPosition.NotifyObs(posStarting);
-        } else if (posStarting.positiontype == Position.POSITIONTYPE.BENCH && posEnding.positiontype != Position.POSITIONTYPE.BENCH) {
+        } else if(posStarting.positiontype == Position.POSITIONTYPE.BENCH && posEnding.positiontype != Position.POSITIONTYPE.BENCH) {
             //If this character moved from a bench position to a non-bench position, then we'll throw the appropriate update
             chrMoved.subLeftBench.NotifyObs(posStarting);
         }
@@ -336,11 +345,11 @@ public class ContPositions : Singleton<ContPositions> {
             return;
         }
 
-        if (posStarting == pos) {
+        if(posStarting == pos) {
             Debug.LogErrorFormat("{0} is already in position {1} - no need to do any switching", chr, pos);
         }
 
-        if (IsDiffOwnerOfPosition(posStarting, pos)) {
+        if(IsDiffOwnerOfPosition(posStarting, pos)) {
             Debug.LogError("Can't move to an opponent's position");
             return;
         }
@@ -384,7 +393,7 @@ public class ContPositions : Singleton<ContPositions> {
 
     }
 
-    
+
     //Switches a character to another different allied position (and if there's already a character in that position, 
     //  then that character will move to the consumed character's starting position)
     public void SwitchChrToPosition(Chr chr, Position pos) {
@@ -437,6 +446,7 @@ public class ContPositions : Singleton<ContPositions> {
 
     }
 
+
     public override void Init() {
 
         for(int i = 0; i < lstAllPositions.Count; i++) {
@@ -445,5 +455,5 @@ public class ContPositions : Singleton<ContPositions> {
 
         ConfirmValidPositionSetup();
     }
-    
+
 }

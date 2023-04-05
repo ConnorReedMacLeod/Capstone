@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//A class that can track a set of subjects that are being observed, and can cancel
+//  all of these observations when the set of observations is no longer needed
 public class Observer {
 
     public struct ObservingInfo {

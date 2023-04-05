@@ -5,7 +5,6 @@ using UnityEngine;
 public abstract class LocalInputType {
 
     public Player plyrOwner;
-    public bool bCurrentlySelectingSkill;
 
     public enum InputType { NONE, HUMAN, AI, SCRIPTED }
 
@@ -18,18 +17,13 @@ public abstract class LocalInputType {
         return false;
     }
 
-    public virtual void StartSelection() {
-        bCurrentlySelectingSkill = true;
-    }
+    public abstract void StartSelection(MatchInput matchInput);
+    public abstract void EndSelection(MatchInput matchInput);
 
-    public virtual void EndSelection() {
-
-        bCurrentlySelectingSkill = false;
-    }
 
     public void SelectionTimedOut() {
         Debug.Log("Warning: Master told us we timed out on our skill selection");
-        EndSelection();
+        EndSelection(ContSkillEngine.Get().matchinputToFillOut);
     }
 
     public void SetOwner(Player _plyrOwner) {

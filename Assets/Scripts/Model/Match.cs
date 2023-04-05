@@ -14,9 +14,12 @@ public class Match : MonoBehaviour {
     public const int NINITIALCHRSPERTEAM = 5;
     public const int NCHRSPERDRAFT = 7;
 
+    public const int NCHARACTERLIVESPERTEAM = 3;
     public const int NSWITCHINGINDURATION = 3;
 
     bool bStarted;                          //Confirms the Start() method has executed
+
+    public MatchResult matchresult;         //Stores the current status of who (if anyone) has won the match
 
     public Player[] arPlayers;
 
@@ -86,7 +89,7 @@ public class Match : MonoBehaviour {
 
         newChr.InitChr(chartype, player, loadout);
 
-        return newChr; 
+        return newChr;
     }
 
     void InitAllChrs() {
@@ -112,12 +115,12 @@ public class Match : MonoBehaviour {
                 if(j < NMINACTIVECHRSPERTEAM) {
                     nStartingFatigue = j * NPLAYERS + i + 1;
                 }//For characters who aren't active, their starting fatigue will just be 0
-                
+
                 chrNew.ChangeFatigue(nStartingFatigue, true);
             }
 
         }
-        
+
 
     }
 
@@ -224,6 +227,10 @@ public class Match : MonoBehaviour {
         ContTurns.Get().InitializePriorities();
 
         Debug.Log("After InitializePriorities");
+
+        matchresult = ContDeaths.Get().CheckMatchWinner();
+
+        Debug.LogFormat("Initial match result set to {0}", matchresult);
 
         //Check if the LogManager wants to load in any starting inputs
         LogManager.Get().LoadStartingInputs();
