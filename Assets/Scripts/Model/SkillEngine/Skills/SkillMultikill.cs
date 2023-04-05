@@ -22,12 +22,18 @@ public class SkillMultikill : Skill {
         lstSkillClauses = new List<ClauseSkillSelection>() {
             new Clause1(this),
             new Clause2(this),
-            new Clause3(this)
+            new Clause3(this),
+            new Clause4(this),
+            new Clause5(this),
+            new Clause6(this)
         };
     }
 
     public override void InitTargets() {
         TarMana.AddTarget(this, manaCost);
+        TarChr.AddTarget(this, Target.TRUE);
+        TarChr.AddTarget(this, Target.TRUE);
+        TarChr.AddTarget(this, Target.TRUE);
         TarChr.AddTarget(this, Target.TRUE);
         TarChr.AddTarget(this, Target.TRUE);
         TarChr.AddTarget(this, Target.TRUE);//Target.AND(TarChr.IsInPlay(), TarChr.IsDiffTeam(chrOwner)));
@@ -64,15 +70,15 @@ public class SkillMultikill : Skill {
 
         public override string GetDescription() {
 
-            return string.Format("Set a second enemy's health to 25");
+            return string.Format("Set a second enemy's health to 0");
         }
 
         public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = (Chr)selections.lstSelections[2];
 
-            ContSkillEngine.PushSingleExecutable(new ExecSetHealth(skill.chrOwner, chrSelected, 25) {
-                sLabel = "Setting to 25 health"
+            ContSkillEngine.PushSingleExecutable(new ExecSetHealth(skill.chrOwner, chrSelected, 0) {
+                sLabel = "Setting to 0 health"
             });
 
         }
@@ -93,6 +99,75 @@ public class SkillMultikill : Skill {
         public override void ClauseEffect(InputSkillSelection selections) {
 
             Chr chrSelected = (Chr)selections.lstSelections[3];
+
+            ContSkillEngine.PushSingleExecutable(new ExecSetHealth(skill.chrOwner, chrSelected, 0) {
+                sLabel = "Setting to 0 health"
+            });
+
+        }
+
+    };
+
+    class Clause4 : ClauseSkillSelection {
+
+        public Clause4(Skill _skill) : base(_skill) {
+
+        }
+
+        public override string GetDescription() {
+
+            return string.Format("Set a fourth enemy's health to 0");
+        }
+
+        public override void ClauseEffect(InputSkillSelection selections) {
+
+            Chr chrSelected = (Chr)selections.lstSelections[4];
+
+            ContSkillEngine.PushSingleExecutable(new ExecSetHealth(skill.chrOwner, chrSelected, 0) {
+                sLabel = "Setting to 0 health"
+            });
+
+        }
+
+    };
+
+    class Clause5 : ClauseSkillSelection {
+
+        public Clause5(Skill _skill) : base(_skill) {
+
+        }
+
+        public override string GetDescription() {
+
+            return string.Format("Set a fifth enemy's health to 0");
+        }
+
+        public override void ClauseEffect(InputSkillSelection selections) {
+
+            Chr chrSelected = (Chr)selections.lstSelections[5];
+
+            ContSkillEngine.PushSingleExecutable(new ExecSetHealth(skill.chrOwner, chrSelected, 0) {
+                sLabel = "Setting to 0 health"
+            });
+
+        }
+
+    };
+
+    class Clause6 : ClauseSkillSelection {
+
+        public Clause6(Skill _skill) : base(_skill) {
+
+        }
+
+        public override string GetDescription() {
+
+            return string.Format("Set a sixth enemy's health to 0");
+        }
+
+        public override void ClauseEffect(InputSkillSelection selections) {
+
+            Chr chrSelected = (Chr)selections.lstSelections[6];
 
             ContSkillEngine.PushSingleExecutable(new ExecSetHealth(skill.chrOwner, chrSelected, 0) {
                 sLabel = "Setting to 0 health"
