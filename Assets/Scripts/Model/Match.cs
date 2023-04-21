@@ -204,6 +204,10 @@ public class Match : MonoBehaviour {
 
         Debug.Log("Finished initializing players");
 
+        ContTurns.Get().InitializePriorityList();
+
+        Debug.Log("After Priority List");
+
         //Initialize characters 
         InitAllChrs();
 
@@ -223,10 +227,6 @@ public class Match : MonoBehaviour {
         Debug.Log("After initializing positions");
 
         //ContPositions.Get().PrintAllPositions();
-
-        ContTurns.Get().InitializePriorities();
-
-        Debug.Log("After InitializePriorities");
 
         matchresult = ContDeaths.Get().CheckMatchWinner();
 

@@ -7,6 +7,8 @@ public class ChrCollection : Singleton<ChrCollection> {
 
     public List<Chr> lstChrs;
 
+    public Subject subNewChr = new Subject();
+
     public override void Init() {
 
         lstChrs = new List<Chr>();

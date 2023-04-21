@@ -4,36 +4,75 @@ using UnityEngine;
 
 public class ViewPriorityList : Singleton<ViewPriorityList> {
 
-    public GameObject[] arHeadshots = new GameObject[6];
+    public GameObject pfHeadshot;
+    public Dictionary<Chr, GameObject> dictHeadshots;
 
     public List<Chr> lstChrPriority {
         get { return ContTurns.Get().lstChrPriority; }
     }
 
-    //Ensure the character in position i is correctly displayed
-    public void SetHeadshot(int i) {
+    public void AddHeadshot(Chr chr) {
 
+        Debug.LogFormat("Adding {0}'s headshot", chr);
 
-        string sImgPath = "Images/Chrs/" + lstChrPriority[i].sName + "/img" + lstChrPriority[i].sName + "Headshot";
+        GameObject newHeadshot = Instantiate(pfHeadshot, this.transform);
+
+        string sImgPath = "Images/Chrs/" + chr.sName + "/img" + chr.sName + "Headshot";
 
         Sprite sprChr = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
 
-        arHeadshots[i].GetComponent<SpriteRenderer>().sprite = sprChr;
+        newHeadshot.GetComponent<SpriteRenderer>().sprite = sprChr;
+
+        dictHeadshots.Add(chr, newHeadshot);
+
+        UpdateHeadshotPositions();
+    }
+
+    public void cbAddHeadshot(Object target, params object[] args) {
+        AddHeadshot((Chr)target);
+    }
+
+    
+
+    public void RemoveHeadshot(Chr chr) {
+        Debug.LogFormat("Remove {0}'s headshot", chr);
+
+        GameObject goHeadshotToRemove = dictHeadshots[chr];
+        dictHeadshots.Remove(chr);
+
+        Destroy(goHeadshotToRemove);
+
+        UpdateHeadshotPositions();
+    }
+
+    public void cbRemoveHeadshot(Object target, params object[] args) {
+        RemoveHeadshot((Chr)target);
+    }
+
+
+    public void UpdateHeadshotPositions() {
+
+        Debug.LogFormat("Updating headshots at time {0}", Time.timeSinceLevelLoad);
+
+        for (int i = 0; i < lstChrPriority.Count; i++) {
+            dictHeadshots[lstChrPriority[i]].transform.position = new Vector3();
+        }
     }
 
     public void cbUpdateHeadshots(Object target, params object[] args) {
 
-        for(int i = 0; i < arHeadshots.Length; i++) {
-            SetHeadshot(i);
-        }
+        UpdateHeadshotPositions();
     }
 
 
     public void InitViewPriorityList() {
+        //Subscribe to newly added characters, remove characters, or priority shuffling
+        ContTurns.Get().subChrAddedPriority.Subscribe(cbAddHeadshot);
+        ContTurns.Get().subChrRemovedPriority.Subscribe(cbRemoveHeadshot);
         ContTurns.Get().subAllPriorityChange.Subscribe(cbUpdateHeadshots);
 
         //Initially set up the headshots
-        cbUpdateHeadshots(null);
+        UpdateHeadshotPositions();
     }
 
     // Use this for initialization

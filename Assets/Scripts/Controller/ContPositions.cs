@@ -283,7 +283,8 @@ public class ContPositions : Singleton<ContPositions> {
             } else if(posEnding.positiontype != Position.POSITIONTYPE.BENCH && posStarting.positiontype == Position.POSITIONTYPE.BENCH) {
                 //If this character moved from a non-bench position to a bench position, then we'll set them to a fatigued state (cancelling any channels
                 // and ending their turn if they were active) and broadcast the appropriate updates
-
+                // and also remove this character from the priority list
+                ContTurns.Get().RemoveChrFromPriorityList(chrSwappedWith);
                 chrSwappedWith.SetStateReadiness(new StateFatigued(chrSwappedWith));
                 chrSwappedWith.subEnteredBench.NotifyObs(posStarting);
             }
@@ -302,7 +303,8 @@ public class ContPositions : Singleton<ContPositions> {
         } else if(posStarting.positiontype != Position.POSITIONTYPE.BENCH && posEnding.positiontype == Position.POSITIONTYPE.BENCH) {
             //If this character moved from a non-bench position to a bench position, then we'll set them to a fatigued state (cancelling any channels
             // and ending their turn if they were active) and broadcast the appropriate updates
-
+            // and also remove this character from the priority list
+            ContTurns.Get().RemoveChrFromPriorityList(chrMoved);
             chrMoved.SetStateReadiness(new StateFatigued(chrMoved));
             chrMoved.subEnteredBench.NotifyObs(posEnding);
         }
@@ -318,8 +320,9 @@ public class ContPositions : Singleton<ContPositions> {
             if(posEnding.positiontype != Position.POSITIONTYPE.BENCH) {
                 chrSwappedWith.subLeftInPlayPosition.NotifyObs(posEnding);
             } else if(posEnding.positiontype == Position.POSITIONTYPE.BENCH && posStarting.positiontype != Position.POSITIONTYPE.BENCH) {
-                //If this character moved from a bench position to a non-bench position, then we'll throw the appropriate update
+                //If this character moved from a bench position to a non-bench position, then we'll throw the appropriate updates
                 chrSwappedWith.subLeftBench.NotifyObs(posEnding);
+
             }
 
             chrSwappedWith.subLeftAnyPosition.NotifyObs(posEnding);

@@ -28,6 +28,8 @@ public class StateSwitchingIn : StateReadiness {
         nSwitchingInDuration--;
 
         if (nSwitchingInDuration <= 0) {
+            Debug.LogFormat("{0} has finished switching in", chrOwner);
+            ContTurns.Get().AddChrToPriorityList(chrOwner);
             chrOwner.SetStateReadiness(new StateFatigued(chrOwner));
         }
 

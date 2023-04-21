@@ -17,6 +17,8 @@ public class ContTurns : Singleton<ContTurns> {
     public Subject subNextActingChrChange = new Subject();
     public Subject subAllPriorityChange = new Subject();
     public Subject subTurnChange = new Subject();
+    public Subject subChrAddedPriority = new Subject();
+    public Subject subChrRemovedPriority = new Subject();
 
     public void NextTurn() {
         nTurnNumber++;
@@ -61,6 +63,16 @@ public class ContTurns : Singleton<ContTurns> {
         subAllPriorityChange.NotifyObs(this);
     }
 
+    public void AddChrToPriorityList(Chr chr) {
+
+        lstChrPriority.Add(chr);
+
+        //Nudge the new character into the appropriate position
+        FixSortedPriority(chr);
+
+        subChrAddedPriority.NotifyObs();
+    }
+
     public void RemoveChrFromPriorityList(Chr chr) {
 
         //Find the referenced character
@@ -86,8 +98,8 @@ public class ContTurns : Singleton<ContTurns> {
         //Now that we've reached the end of the priority list and this character is guaranteed to be at the very end,
         //   we're safe to remove them
         lstChrPriority.RemoveAt(lstChrPriority.Count - 1);
-
-        subAllPriorityChange.NotifyObs(this);
+        
+        subChrRemovedPriority.NotifyObs(this);
     }
 
     public Chr GetNextActingChr() {
@@ -128,19 +140,6 @@ public class ContTurns : Singleton<ContTurns> {
         return chrNextReady;
 
     }
-
-
-    //Copy the array of characters so we have references we can sort by priority
-    // NOTE - this assumes the characters in GetAllLiveChrs have been initialized in order of initial fatigue
-    public void InitChrPriority() {
-
-        lstChrPriority = new List<Chr>();
-
-        foreach(Chr chr in ChrCollection.Get().GetAllLiveChrs()) {
-            lstChrPriority.Add(chr);
-        }
-    }
-
 
     //This is called if we've cleared out processing the current part of the turn, 
     // so we should send a signal to the master letting them know that this player is done that
@@ -242,10 +241,9 @@ public class ContTurns : Singleton<ContTurns> {
         }
     }
 
-    public void InitializePriorities() {
+    public void InitializePriorityList() {
 
-        InitChrPriority();
-
+        lstChrPriority = new List<Chr>();
 
         nTurnNumber = 0;
 
