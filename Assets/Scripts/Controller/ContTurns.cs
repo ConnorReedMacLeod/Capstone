@@ -66,11 +66,13 @@ public class ContTurns : Singleton<ContTurns> {
     public void AddChrToPriorityList(Chr chr) {
 
         lstChrPriority.Add(chr);
+        Debug.LogFormat("{0} has been added to lstChrPriority", chr);
+
+        subChrAddedPriority.NotifyObs(chr);
 
         //Nudge the new character into the appropriate position
         FixSortedPriority(chr);
 
-        subChrAddedPriority.NotifyObs();
     }
 
     public void RemoveChrFromPriorityList(Chr chr) {
@@ -99,7 +101,7 @@ public class ContTurns : Singleton<ContTurns> {
         //   we're safe to remove them
         lstChrPriority.RemoveAt(lstChrPriority.Count - 1);
         
-        subChrRemovedPriority.NotifyObs(this);
+        subChrRemovedPriority.NotifyObs(chr);
     }
 
     public Chr GetNextActingChr() {

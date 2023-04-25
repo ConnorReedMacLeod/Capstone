@@ -235,20 +235,28 @@ public class ContPositions : Singleton<ContPositions> {
         }
 
         pos.SetChrOnPosition(chr);
-
         chr.SetPosition(pos);
+
+        //If we're initialized to a non-bench position, then we should add ourselves to the priority list
+        if (chr.position.positiontype != Position.POSITIONTYPE.BENCH) {
+            ContTurns.Get().AddChrToPriorityList(chr);
+        }
     }
 
     //When a character dies or is otherwise completely removed from the playing space, then this will 
     //  completely remove them (without triggering any movement triggers)
     public void DeleteChrFromPosition(Chr chr) {
 
-        //Ensure you visually move this character away
+        //If we're leaving in-play, then we can remove this character from the priority list
+        if (chr.position.positiontype != Position.POSITIONTYPE.BENCH) {
+            ContTurns.Get().RemoveChrFromPriorityList(chr);
+        }
 
+        //Clear out this character's position
         chr.position.SetChrOnPosition(null);
-
         chr.SetPosition(null);
 
+        
     }
 
     // Triggers all relevent triggers for a movement of characters between the two consumed positions
@@ -275,7 +283,9 @@ public class ContPositions : Singleton<ContPositions> {
             if(posStarting.positiontype != Position.POSITIONTYPE.BENCH) {
 
                 //If this character ended in play, but started on the bench, then we need to switch their state
-                if(posEnding.positiontype == Position.POSITIONTYPE.BENCH) {
+                //   and add them to the priority list
+                if (posEnding.positiontype == Position.POSITIONTYPE.BENCH) {
+                    ContTurns.Get().AddChrToPriorityList(chrSwappedWith);
                     chrSwappedWith.SetStateReadiness(new StateSwitchingIn(chrSwappedWith, Match.NSWITCHINGINDURATION));
                 }
 
@@ -295,7 +305,9 @@ public class ContPositions : Singleton<ContPositions> {
         if(posEnding.positiontype != Position.POSITIONTYPE.BENCH) {
 
             //If this character ended in play, but started on the bench, then we need to switch their state
+            //   and add them to the priority list
             if(posStarting.positiontype == Position.POSITIONTYPE.BENCH) {
+                ContTurns.Get().AddChrToPriorityList(chrMoved);
                 chrMoved.SetStateReadiness(new StateSwitchingIn(chrMoved, Match.NSWITCHINGINDURATION));
             }
 

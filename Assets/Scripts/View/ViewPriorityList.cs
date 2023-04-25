@@ -17,18 +17,18 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
 
         GameObject newHeadshot = Instantiate(pfHeadshot, this.transform);
 
-        string sImgPath = "Images/Chrs/" + chr.sName + "/img" + chr.sName + "Headshot";
-
-        Sprite sprChr = Resources.Load(sImgPath, typeof(Sprite)) as Sprite;
-
-        newHeadshot.GetComponent<SpriteRenderer>().sprite = sprChr;
+        string sImgPath = "Images/Chrs/" + chr.sName + "/img" + chr.sName + "Neutral";
+        
+        LibView.AssignSpritePathToObject(sImgPath, newHeadshot);
 
         dictHeadshots.Add(chr, newHeadshot);
+        Debug.LogFormat("{0} has been added to dictHeadshots", chr);
 
         UpdateHeadshotPositions();
     }
 
     public void cbAddHeadshot(Object target, params object[] args) {
+        Debug.LogFormat("Received cbAddHeadshot for {0}", target);
         AddHeadshot((Chr)target);
     }
 
@@ -55,7 +55,7 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
         Debug.LogFormat("Updating headshots at time {0}", Time.timeSinceLevelLoad);
 
         for (int i = 0; i < lstChrPriority.Count; i++) {
-            dictHeadshots[lstChrPriority[i]].transform.position = new Vector3();
+            dictHeadshots[lstChrPriority[i]].transform.SetSiblingIndex(i);
         }
     }
 
@@ -77,6 +77,6 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
 
     // Use this for initialization
     public override void Init() {
-
+        dictHeadshots = new Dictionary<Chr, GameObject>();
     }
 }

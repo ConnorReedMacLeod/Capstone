@@ -189,9 +189,6 @@ public class Chr : MonoBehaviour {
                 "on a per-soul effect basis when notified of a subDeath");
 
 
-        //Remove ourselves from the turn-priority queue since we'll no longer be acting
-        ContTurns.Get().RemoveChrFromPriorityList(this);
-
         //Save a reference to our position before we clear ourselves out of it
         Position posVacated = position;
         
