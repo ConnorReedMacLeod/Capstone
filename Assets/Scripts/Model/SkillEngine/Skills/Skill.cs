@@ -285,7 +285,7 @@ public abstract class Skill {
 
         public override void Execute() {
 
-            ContSkillEngine.PushSingleExecutable(new ExecChangeFatigue(skill.chrOwner, skill.chrOwner, skill.nFatigue, false));
+            ContSkillEngine.PushSingleExecutable(new ExecChangeFatigue(skill.chrOwner, skill.chrOwner, skill.nFatigue));
 
         }
 

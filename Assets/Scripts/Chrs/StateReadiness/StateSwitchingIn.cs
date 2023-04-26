@@ -8,7 +8,7 @@ using UnityEngine;
 //  - Prevents almost all executables from affecting the character (unless they are from soul effects already on the character)
 public class StateSwitchingIn : StateReadiness {
 
-    public int nSwitchingInDuration;
+    int nSwitchingInDuration;
     public LinkedListNode<Property<Chr.CanBeSelectedBy>.Modifier> modifierCannotBeSelected;
 
     public StateSwitchingIn(Chr _chrOwner, int _nSwitchingInDuration) : base(_chrOwner) {
@@ -21,19 +21,18 @@ public class StateSwitchingIn : StateReadiness {
         return TYPE.SWITCHINGIN;
     }
 
+    public override int GetPriority() {
+        return chrOwner.nFatigue + chrOwner.nSwitchingInTime;
+    }
+
     public override void Recharge() {
+        //TODO Should we be doing the base Recharge stuff like reducing fatigue?
         base.Recharge();
 
-        //In addition to the base recharge, we'll also reduce the switching in timer
-        nSwitchingInDuration--;
-
-        if (nSwitchingInDuration <= 0) {
-            Debug.LogFormat("{0} has finished switching in", chrOwner);
-            chrOwner.SetStateReadiness(new StateFatigued(chrOwner));
-        }
-
-        //Notify anyone (mostly UI stuff) that the switching in duration has changed
-        chrOwner.subSwitchingInChange.NotifyObs();
+        //By default, we just reduce fatigue by 1 (with the beginning of turn flag)
+        ContSkillEngine.Get().AddExec(new ExecChangeSwitchInTime(null, chrOwner, -1));
+        
+        
     }
 
     public override void ReadyIfNoFatigue() {
@@ -56,6 +55,9 @@ public class StateSwitchingIn : StateReadiness {
 
         //Notify anyone (mostly UI stuff) that the switching in duration has changed
         chrOwner.subSwitchingInChange.NotifyObs();
+        
+        //Set the initial switch-in duration
+        ContSkillEngine.Get().AddExec(new ExecChangeSwitchInTime(null, chrOwner, nSwitchingInDuration));
 
     }
 

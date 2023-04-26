@@ -374,7 +374,7 @@ public class ViewChr : ViewInteractive {
         goSwitchingInDisplay.SetActive(true);
 
         //If we're still switching in, then let's fetch the switching in duration
-        txtSwitchingInDisplay.text = ((StateSwitchingIn)mod.curStateReadiness).nSwitchingInDuration.ToString();
+        txtSwitchingInDisplay.text = mod.nSwitchingInTime.ToString();
     }
 
     public void cbUpdateChannelTime(Object target, params object[] args) {

@@ -20,6 +20,7 @@ public class Chr : MonoBehaviour {
 
     public int id;                  //The character's unique identifier (across all characters)
     public int nFatigue;            //Number of turns a character must wait before their next skill
+    public int nSwitchingInTime;    //Number of turns a character must wait before being able to act after switching in from the bench
     public StateReadiness curStateReadiness; //A reference to the current state of readiness
 
     public const int nMaxSkillUsesPerActivation = 1;     //The total maximum number of skills a character can use in a turn (usually 1, cantrips cost 0)
@@ -205,22 +206,42 @@ public class Chr : MonoBehaviour {
 
 
     // Apply this amount of fatigue to the character
-    public void ChangeFatigue(int _nChange, bool bGlobalFatigueChange = false) {
+    public void ChangeFatigue(int _nChange, bool bInitializing = false) {
         if(_nChange + nFatigue < 0) {
             nFatigue = 0;
         } else {
             nFatigue += _nChange;
         }
 
-        subFatigueChange.NotifyObs(this);
-        subAllFatigueChange.NotifyObs(this);
+        if (bInitializing == false) {
+            subFatigueChange.NotifyObs(this);
+            subAllFatigueChange.NotifyObs(this);
 
-        //TODO:: Probably delete this bGlobalFatigueChange flag once I get a nice solution for priority handling
-        if(bGlobalFatigueChange == false) {
-            //Then this is an individual fatigue change for a single character that may change their priority
+            //Make sure we're in the right place in the priority list
             ContTurns.Get().FixSortedPriority(this);
-            //So make sure we're in the right place in the priority list
         }
+
+    }
+
+    // Apply this amount of switch-in time to the character
+    public void ChangeSwitchInTime(int _nChange) {
+        if (_nChange + nSwitchingInTime < 0) {
+            nSwitchingInTime = 0;
+        } else {
+            nSwitchingInTime += _nChange;
+        }
+
+        subSwitchingInChange.NotifyObs(this);
+
+        //If we have no time remaining on switching in, then we can transition to a fatigued state
+        if(nSwitchingInTime == 0) {
+            Debug.LogFormat("{0} has finished switching in", this);
+            SetStateReadiness(new StateFatigued(this));
+        }
+
+        //Make sure we're in the right place in the priority list
+        ContTurns.Get().FixSortedPriority(this);
+
     }
 
     public int GetPriority() {
@@ -372,7 +393,7 @@ public class Chr : MonoBehaviour {
 
     //Counts down the character's recharge time
     public void TimeTick() {
-        ChangeFatigue(-1, true);
+        ChangeFatigue(-1);
     }
 
     public void ChangeState(STATESELECT _stateSelect) {

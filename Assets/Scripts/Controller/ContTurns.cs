@@ -34,14 +34,14 @@ public class ContTurns : Singleton<ContTurns> {
             i++;
 
             if(i == lstChrPriority.Count) {
-                Debug.LogErrorFormat("Tried to find {0} in the priority list, but they didn't exist", chr);
+                //Debug.LogErrorFormat("Tried to find {0} in the priority list, but they didn't exist", chr);
                 return;
             }
         }
 
         //First try to move ahead the character
         //If there is some character ahead and we go on a earlier turn
-        while(i > 0 && lstChrPriority[i - 1].GetPriority() > chr.GetPriority()) {
+        while (i > 0 && lstChrPriority[i - 1].GetPriority() > chr.GetPriority()) {
             //Swap these characters
             lstChrPriority[i] = lstChrPriority[i - 1];
             lstChrPriority[i - 1] = chr;
@@ -59,6 +59,7 @@ public class ContTurns : Singleton<ContTurns> {
             //And move to the next possible slot
             i++;
         }
+        
 
         subAllPriorityChange.NotifyObs(this);
     }
@@ -66,7 +67,6 @@ public class ContTurns : Singleton<ContTurns> {
     public void AddChrToPriorityList(Chr chr) {
 
         lstChrPriority.Add(chr);
-        Debug.LogFormat("{0} has been added to lstChrPriority", chr);
 
         subChrAddedPriority.NotifyObs(chr);
 

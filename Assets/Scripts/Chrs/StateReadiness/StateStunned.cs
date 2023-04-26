@@ -45,7 +45,7 @@ public class StateStunned : StateReadiness {
         Debug.LogError("Probably remove this since it prevented multiple stuns");
 
         //First, increase the fatigue value of the character
-        ContSkillEngine.Get().AddExec(new ExecChangeFatigue (null, chrOwner, nStunAmount, false));
+        ContSkillEngine.Get().AddExec(new ExecChangeFatigue (null, chrOwner, nStunAmount));
 
         //Then, add a replacement effect to cancel out any further stuns that we would take
         repStun = new Replacement() {

@@ -50,7 +50,7 @@ public class SkillRest : Skill {
             //Check if the character has any fatigue already
             if(skill.chrOwner.nFatigue == 0) {
                 //If not, then give them the rest fatigue
-                ContSkillEngine.Get().AddExec(new ExecChangeFatigue(skill.chrOwner, skill.chrOwner, nRestFatigue, false) {
+                ContSkillEngine.Get().AddExec(new ExecChangeFatigue(skill.chrOwner, skill.chrOwner, nRestFatigue) {
                     sLabel = "Resting"
                 });
             }

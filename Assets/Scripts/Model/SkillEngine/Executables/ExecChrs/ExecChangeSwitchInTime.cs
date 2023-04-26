@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecChangeFatigue : ExecChr {
+public class ExecChangeSwitchInTime : ExecChr {
 
     public int nAmount;
 
@@ -33,19 +33,19 @@ public class ExecChangeFatigue : ExecChr {
 
 
     public override void ExecuteEffect() {
-        
-        chrTarget.ChangeFatigue(nAmount);
 
-        //Debug.Log(chrTarget.sName + " is changing their fatigue by " + nAmount);
+        chrTarget.ChangeSwitchInTime(nAmount);
+
+        Debug.Log(chrTarget.sName + " is changing their switchin time by " + nAmount);
         fDelay = ContTime.fDelayMinorSkill;
-        
+
     }
 
-    public ExecChangeFatigue(Chr _chrSource, Chr _chrTarget, int _nAmount) : base(_chrSource, _chrTarget) {
+    public ExecChangeSwitchInTime(Chr _chrSource, Chr _chrTarget, int _nAmount) : base(_chrSource, _chrTarget) {
         nAmount = _nAmount;
     }
 
-    public ExecChangeFatigue(ExecChangeFatigue other) : base(other) {
+    public ExecChangeSwitchInTime(ExecChangeSwitchInTime other) : base(other) {
         nAmount = other.nAmount;
     }
 

@@ -7,6 +7,8 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
     public GameObject pfHeadshot;
     public Dictionary<Chr, GameObject> dictHeadshots;
 
+    public bool bRefreshNeeded; //If true, then we have priority changes that we should update ourselves to account for
+
     public List<Chr> lstChrPriority {
         get { return ContTurns.Get().lstChrPriority; }
     }
@@ -24,7 +26,7 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
         dictHeadshots.Add(chr, newHeadshot);
         Debug.LogFormat("{0} has been added to dictHeadshots", chr);
 
-        UpdateHeadshotPositions();
+        bRefreshNeeded = true;
     }
 
     public void cbAddHeadshot(Object target, params object[] args) {
@@ -35,14 +37,13 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
     
 
     public void RemoveHeadshot(Chr chr) {
-        Debug.LogFormat("Remove {0}'s headshot", chr);
 
         GameObject goHeadshotToRemove = dictHeadshots[chr];
         dictHeadshots.Remove(chr);
 
         Destroy(goHeadshotToRemove);
 
-        UpdateHeadshotPositions();
+        bRefreshNeeded = true;
     }
 
     public void cbRemoveHeadshot(Object target, params object[] args) {
@@ -61,7 +62,7 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
 
     public void cbUpdateHeadshots(Object target, params object[] args) {
 
-        UpdateHeadshotPositions();
+        bRefreshNeeded = true;
     }
 
 
@@ -78,5 +79,15 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
     // Use this for initialization
     public override void Init() {
         dictHeadshots = new Dictionary<Chr, GameObject>();
+        bRefreshNeeded = false;
+    }
+
+    public void Update() {
+
+        if (bRefreshNeeded) {
+            bRefreshNeeded = false;
+            UpdateHeadshotPositions();
+        }
+
     }
 }
