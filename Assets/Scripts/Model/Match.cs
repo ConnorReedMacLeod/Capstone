@@ -74,9 +74,7 @@ public class Match : MonoBehaviour {
         }
     }
 
-    // Will eventually need a clean solution to adding/removing characters
-    // while managing ids - some sort of Buffer of unused views will probably help
-    Chr InitChr(CharType.CHARTYPE chartype, Player player, LoadoutManager.Loadout loadout) {
+    public Chr InitChr(CharType.CHARTYPE chartype, Player player, LoadoutManager.Loadout loadout, Position posStart) {
 
         GameObject goChr = Instantiate(pfChr, this.transform);
         Chr newChr = goChr.GetComponent<Chr>();
@@ -88,6 +86,8 @@ public class Match : MonoBehaviour {
         newChr.Start();
 
         newChr.InitChr(chartype, player, loadout);
+
+        ContPositions.Get().InitChrToPosition(newChr, posStart);
 
         return newChr;
     }
@@ -104,9 +104,13 @@ public class Match : MonoBehaviour {
 
             for(int i = 0; i < NPLAYERS; i++) {
 
+                Position posStarting = ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoordsForChr(i, j));
+
                 Chr chrNew = InitChr(NetworkMatchSetup.GetCharacterOrdering(i, j),
                     arPlayers[i],
-                    NetworkMatchSetup.GetLoadout(i, j));
+                    NetworkMatchSetup.GetLoadout(i, j),
+                    posStarting
+                    );
 
 
                 //Initially set this character's fatigue according to their position in the CharacterOrdering setup
@@ -154,6 +158,8 @@ public class Match : MonoBehaviour {
     }
 
     public void InitAllChrPositions() {
+        Debug.LogError("Currently not executing INitAllChrPositions");
+        return;
 
         //Ensure all positions have been initialized properly
         ContPositions.Get().Start();
@@ -168,7 +174,7 @@ public class Match : MonoBehaviour {
 
                 if(j < Match.NMINACTIVECHRSPERTEAM) {
                     //If this is one of our initially active characters, then lookup their starting coords, and fetch the corresponding position from ContPositions
-                    posStart = ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoords(i, j));
+                    posStart = ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoordsForChr(i, j));
                 } else {
                     //Otherwise, they must be starting on the bench so we can define their position to be consecutive positions on the bench
                     int kBenchPosition = j - Match.NMINACTIVECHRSPERTEAM;

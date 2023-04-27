@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExecApplySoulPosition : ExecPosition {
+public class ExecSummonChrToPosition : ExecPosition {
 
-    public SoulPosition soulToApply;
+    public CharType.CHARTYPE chrtype;
+    public Player plyrOwner;
+    public LoadoutManager.Loadout loadout;
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -35,20 +37,20 @@ public class ExecApplySoulPosition : ExecPosition {
 
     public override void ExecuteEffect() {
 
-        Debug.Assert(posTarget == soulToApply.posTarget);
-
-        posTarget.soulContainer.ApplySoul(soulToApply);
+        Match.Get().InitChr(chrtype, plyrOwner, loadout, posTarget);
 
     }
 
-    public ExecApplySoulPosition(Chr _chrSource, Position _posTarget, SoulPosition _soulToApply) : base(_chrSource, _posTarget) {
-        soulToApply = _soulToApply;
-
+    public ExecSummonChrToPosition(Chr _chrSource, Position _posTarget, CharType.CHARTYPE _chrtype, Player _plyrOwner, LoadoutManager.Loadout _loadout) : base(_chrSource, _posTarget) {
+        chrtype = _chrtype;
+        plyrOwner = _plyrOwner;
+        loadout = _loadout;
     }
 
-    public ExecApplySoulPosition(ExecApplySoulPosition other) : base(other) {
-        soulToApply = other.soulToApply;
-
+    public ExecSummonChrToPosition(ExecSummonChrToPosition other) : base(other) {
+        chrtype = other.chrtype;
+        plyrOwner = other.plyrOwner;
+        loadout = other.loadout;
     }
 
 }

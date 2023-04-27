@@ -22,7 +22,8 @@ public class StateSwitchingIn : StateReadiness {
     }
 
     public override int GetPriority() {
-        return chrOwner.nFatigue + chrOwner.nSwitchingInTime;
+        //Since fatigue and switchin time both decrease each turn, the Chr will have to wait for the longer of the two to be able to act
+        return Mathf.Max(chrOwner.nFatigue, chrOwner.nSwitchingInTime);
     }
 
     public override void Recharge() {

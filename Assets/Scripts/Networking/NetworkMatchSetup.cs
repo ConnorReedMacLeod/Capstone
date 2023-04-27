@@ -138,22 +138,22 @@ public static class NetworkMatchSetup {
 
 
     // Starting Position Coords
-    public static string GetPositionCoordsKey(int idPlayer, int idChar) {
+    public static string GetPositionCoordsForChrKey(int idPlayer, int idChar) {
         return string.Format("pc{0}-{1}", idPlayer, idChar);
     }
 
-    public static void SetPositionCoords(int idPlayer, int iChrSlot, Position.Coords positionCoords) {
-        ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { GetPositionCoordsKey(idPlayer, iChrSlot), Serializer.SerializeByte(positionCoords) } };
+    public static void SetPositionCoordsForChr(int idPlayer, int iChrSlot, Position.Coords positionCoords) {
+        ExitGames.Client.Photon.Hashtable hashNewProperties = new ExitGames.Client.Photon.Hashtable() { { GetPositionCoordsForChrKey(idPlayer, iChrSlot), Serializer.SerializeByte(positionCoords) } };
 
         PhotonNetwork.CurrentRoom.SetCustomProperties(hashNewProperties);
     }
 
-    public static bool HasEntryPositionCoords(int idPlayer, int iChrSlot) {
+    public static bool HasEntryPositionCoordsForChr(int idPlayer, int iChrSlot) {
         return PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(GetLoadoutKey(idPlayer, iChrSlot));
     }
 
-    public static Position.Coords GetPositionCoords(int idPlayer, int iChrSlot) {
-        return Serializer.DeserializeCoords((int)PhotonNetwork.CurrentRoom.CustomProperties[GetPositionCoordsKey(idPlayer, iChrSlot)]);
+    public static Position.Coords GetPositionCoordsForChr(int idPlayer, int iChrSlot) {
+        return Serializer.DeserializeCoords((int)PhotonNetwork.CurrentRoom.CustomProperties[GetPositionCoordsForChrKey(idPlayer, iChrSlot)]);
     }
 
 
@@ -172,7 +172,7 @@ public static class NetworkMatchSetup {
 
                 sPlayer += string.Format("{0} ({1}), {2}\n",
                     HasEntryCharacterOrdering(i, j) ? GetCharacterOrdering(i, j).ToString() : "Null",
-                    j < Match.NMINACTIVECHRSPERTEAM ? (HasEntryPositionCoords(i, j) ? GetPositionCoords(i, j).ToString() : "Null") : "BENCH",
+                    HasEntryPositionCoordsForChr(i, j) ? GetPositionCoordsForChr(i, j).ToString() : "Null",
                     HasEntryLoadout(i, j) ? GetLoadout(i, j).ToString() : "Null");
             }
             s += sPlayer;
@@ -197,7 +197,7 @@ public static class NetworkMatchSetup {
                     Debug.LogFormat("Still waiting on loadout {1} for player {0}", i, j);
                     return false;
                 }
-                if(j < Match.NMINACTIVECHRSPERTEAM && HasEntryPositionCoords(i, j) == false) {
+                if(j < Match.NMINACTIVECHRSPERTEAM && HasEntryPositionCoordsForChr(i, j) == false) {
                     Debug.LogFormat("Still waiting on starting position {1} for player {0}", i, j);
                     return false;
                 }

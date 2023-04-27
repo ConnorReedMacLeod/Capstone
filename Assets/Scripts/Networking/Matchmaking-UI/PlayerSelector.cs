@@ -21,8 +21,8 @@ public class PlayerSelector : MonoBehaviour {
 
     //This is the standard triangle setup for both sides (one frontline in the center, plus two backliners on the flanks)
     public static Position.Coords[,] POSITIONSDEFAULT =
-        {{ new Position.Coords(1, 0), new Position.Coords(2, 1), new Position.Coords(1, 2)},
-        {new Position.Coords(4, 0), new Position.Coords(3, 1), new Position.Coords(4, 2) }};
+        {{ new Position.Coords(1, 0), new Position.Coords(2, 1), new Position.Coords(1, 2), new Position.Coords(0, 0), new Position.Coords(0, 1)},
+        {new Position.Coords(4, 0), new Position.Coords(3, 1), new Position.Coords(4, 2), new Position.Coords(5, 0), new Position.Coords(5, 1) }};
 
     public void Start() {
         lstLoadoutSelected = new List<LoadoutManager.Loadout>();
@@ -39,10 +39,7 @@ public class PlayerSelector : MonoBehaviour {
             NetworkMatchSetup.SetLoadout(idPlayer, i, LoadoutManager.LoadSavedLoadoutForChr(chartypeDefault, 0));
 
             //Set the default position of that character
-            if(i < Match.NMINACTIVECHRSPERTEAM) {
-                //We only need to define starting positions for characters who will start in-play and not on the bench
-                NetworkMatchSetup.SetPositionCoords(idPlayer, i, POSITIONSDEFAULT[idPlayer, i]);
-            }
+            NetworkMatchSetup.SetPositionCoordsForChr(idPlayer, i, POSITIONSDEFAULT[idPlayer, i]);
 
             //Ensure our character selection dropdown is initialized
             arDropdownCharSelect[i].UpdateDropdownOptions(chartypeDefault);

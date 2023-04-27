@@ -338,8 +338,8 @@ public class LogManager : SingletonPersistent<LogManager> {
 
     public void LogPositionCoords(int iPlayer) {
 
-        for(int iChr = 0; iChr < Match.NMINACTIVECHRSPERTEAM; iChr++) {
-            Position.Coords poscoords = NetworkMatchSetup.GetPositionCoords(iPlayer, iChr);
+        for(int iChr = 0; iChr < Match.NINITIALCHRSPERTEAM; iChr++) {
+            Position.Coords poscoords = NetworkMatchSetup.GetPositionCoordsForChr(iPlayer, iChr);
 
             WriteToMatchLogFile(string.Format("pc:{0}:{1}:{2}:{3}", iPlayer, iChr, Serializer.SerializeByte(poscoords), poscoords));
         }
@@ -364,7 +364,7 @@ public class LogManager : SingletonPersistent<LogManager> {
             return;
         }
 
-        NetworkMatchSetup.SetPositionCoords(iPlayer, iChr, Serializer.DeserializeCoords(nSerializedCoords));
+        NetworkMatchSetup.SetPositionCoordsForChr(iPlayer, iChr, Serializer.DeserializeCoords(nSerializedCoords));
     }
 
     public void LogRandomizationSeed() {

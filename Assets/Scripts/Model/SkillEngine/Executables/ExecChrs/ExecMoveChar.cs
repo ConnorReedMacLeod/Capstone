@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
-
 public class ExecMoveChar : ExecChr {
 
     public Position.FuncGetPosition funcGetTargetPosition;
