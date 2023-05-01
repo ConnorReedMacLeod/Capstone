@@ -11,9 +11,12 @@ using static Discipline.DISCIPLINE;
 public static class SkillType {
     //TODO - eventually look at transferring this long list to a text file - possible?  worth it?
     public enum SKILLTYPE {
+        //NULL
+        NULL,
+
         //TESTING
         LEECH, TRANSFUSE, KNOCKBACK, ADVANCE, BUNKER, FIREBALL, EXPLOSION, HEAL, STRATEGIZE, MANABLOSSOM,
-        RETREAT, KILL, MULTIKILL,
+        RETREAT, KILL, MULTIKILL, SUMMONSLIME,
 
         //Fischer
         BUCKLERPARRY, HARPOONGUN, HUNTERSQUARRY, IMPALE,
@@ -66,6 +69,7 @@ public static class SkillType {
         { RETREAT, new SkillTypeInfo (RETREAT, "Retreat", new List<Discipline.DISCIPLINE> { TESTING } ) },
         { KILL, new SkillTypeInfo (KILL, "Kill", new List<Discipline.DISCIPLINE> { TESTING } ) },
         { MULTIKILL, new SkillTypeInfo (MULTIKILL, "Multikill", new List<Discipline.DISCIPLINE> { TESTING } ) },
+        { SUMMONSLIME, new SkillTypeInfo (SUMMONSLIME, "Summon Slime", new List<Discipline.DISCIPLINE> { TESTING, SLIME } ) },
 
         //FISHER
         { BUCKLERPARRY, new SkillTypeInfo ( BUCKLERPARRY, "Buckler Parry", new List<Discipline.DISCIPLINE> { FISCHER } ) },
@@ -136,6 +140,10 @@ public static class SkillType {
 
         switch(skillType) {
 
+        case SKILLTYPE.NULL:
+            Debug.LogError("Cannot create a NULL skill!");
+            break;
+
         //TESTING
         case SKILLTYPE.LEECH:
             skillNew = new SkillLeech(chr);
@@ -175,6 +183,9 @@ public static class SkillType {
             break;
         case SKILLTYPE.MULTIKILL:
             skillNew = new SkillMultikill(chr);
+            break;
+        case SKILLTYPE.SUMMONSLIME:
+            skillNew = new SkillSummonSlime(chr);
             break;
 
 

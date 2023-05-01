@@ -45,7 +45,7 @@ public class ContInfo : MonoBehaviour {
     }
 
     public void cbRestButtonStartHover(Object target, params object[] args) {
-        DisplaySkill(ContTurns.Get().GetNextActingChr().skillRest);
+        DisplaySkill(ContTurns.Get().GetNextActingChr().arSkillSlots[Chr.iRestSkill].skill);
     }
 
     public void StopDisplaySkill(Skill sk) {
@@ -71,7 +71,7 @@ public class ContInfo : MonoBehaviour {
     }
 
     public void cbRestButtonStopHover(Object target, params object[] args) {
-        StopDisplaySkill(ContTurns.Get().GetNextActingChr().skillRest);
+        StopDisplaySkill(ContTurns.Get().GetNextActingChr().arSkillSlots[Chr.iRestSkill].skill);
     }
 
     public void SetSkillFocus(Skill _skillFocus) {

@@ -42,12 +42,14 @@ public class Chr : MonoBehaviour {
     public Property<bool> pbCanSwapIn;       //Can this character swap in from the bench
 
     public SkillSlot[] arSkillSlots;      //The slots for the character's currently usable skills - these keep track of the cooldowns of those skills
-    public const int nEquippedCharacterSkills = 4; //Number of non-generic (non-rest) skills currently active on the character
-    public const int nBenchCharacterSkills = 4; //Number of benched skills the character could adapt into
-    public const int nTotalCharacterSkills = nEquippedCharacterSkills + nBenchCharacterSkills; // Total pool of available skills for this character
-    public const int nUsableSkills = nEquippedCharacterSkills + 1; //Number of all skills (including generics)
-    public SkillRest skillRest;  //The standard reference to the rest skill the character can use
-    public const int nRestSlotId = nEquippedCharacterSkills; //Id of the skillslot containing the rest skill
+    public int nEquippedChosenSkills;  //The current number of non-generic (non-rest) skills active on the character
+    public const int nMaxEquippedChosenSkills = 4; //Maximum number of non-generic (non-rest) skills currently active on the character 
+    public int nBenchChosenSkills;     //The current number of benched skills the character could adapt into
+    public const int nMaxBenchChosenSkills = 4; //Maximum number of benched skills the character could adapt into
+    public const int nMaxTotalChosenSkills = nMaxEquippedChosenSkills + nMaxBenchChosenSkills; // Maximum total pool of available skills for this character
+    public const int nFixedGenericSkills = 1; //The number if pre-defined skills that all Chrs share 
+    public const int iRestSkill = nMaxTotalChosenSkills + 0;       //The index where the generic rest skill is stored
+    public const int nTotalSkills = nMaxTotalChosenSkills + nFixedGenericSkills; //The total number of skills available to a character 
 
     //If we need extra modifiers for if we can or cannot be selected for a given skill's target, then 
     //  we can decorate them in this property.  By default we don't do any overrides and just listen to what the TarChr says
@@ -127,7 +129,8 @@ public class Chr : MonoBehaviour {
     }
 
     public Skill GetRandomActiveSkill() {
-        return arSkillSlots[Random.Range(0, nEquippedCharacterSkills)].skill;
+        //Generate a random offset to choose the skill, then shift that index to start after all our generic skills
+        return arSkillSlots[Random.Range(0, nEquippedChosenSkills)].skill;
     }
 
     public Skill GetRandomSkill() {
@@ -135,7 +138,7 @@ public class Chr : MonoBehaviour {
         int nRand = Random.Range(0, 100);
 
         if(nRand < 25) {
-            return skillRest;
+            return arSkillSlots[iRestSkill].skill;
         } else {
             return GetRandomActiveSkill();
         }
@@ -253,7 +256,7 @@ public class Chr : MonoBehaviour {
     public void RechargeSkills() {
 
         //Only bother recharging the active skills since those will be the only ones that can be on cooldown
-        for(int i = 0; i < Chr.nEquippedCharacterSkills; i++) {
+        for(int i = 0; i < arSkillSlots.Length; i++) {
 
             //Only reduce the cooldown if it is not currently off cooldown
             if(arSkillSlots[i].nCooldown > 0) {
@@ -442,33 +445,23 @@ public class Chr : MonoBehaviour {
         //Initialize this character's disciplines based on their chartype
         InitDisciplines();
 
+        InitSkillSlots(loadout);
+
         //Initialize any loadout-specific qualities of the character
         InitFromLoadout(loadout);
 
         view.Init();
     }
 
-    public void InitGenericSkills() {
+    public void InitSkillSlots(LoadoutManager.Loadout loadout) {
+        
+        
 
-    }
-
-    public void InitSkillSlots() {
-
-        arSkillSlots = new SkillSlot[nUsableSkills];
-
-        for(int i = 0; i < nUsableSkills; i++) {
-            arSkillSlots[i] = new SkillSlot(this, i);
-        }
-
-
-        skillRest = new SkillRest(this);
-
-        arSkillSlots[nRestSlotId].SetSkill(skillRest);
     }
 
     public bool HasSkillEquipped(SkillType.SKILLTYPE skilltype) {
         //Loop through our skill slots and check if one of them has the desired skilltype
-        for(int i = 0; i < nEquippedCharacterSkills; i++) {
+        for(int i = 0; i < arSkillSlots.Length; i++) {
             if(arSkillSlots[i].skill.GetSkillType() == skilltype) {
                 return true;
             }
@@ -484,13 +477,24 @@ public class Chr : MonoBehaviour {
 
     public void InitFromLoadout(LoadoutManager.Loadout loadout) {
 
-        //Load in all the equipped skills
-        for(int i = 0; i < Chr.nEquippedCharacterSkills; i++) {
-            arSkillSlots[i].SetSkill(loadout.lstChosenSkills[i]);
+        arSkillSlots = new SkillSlot[Chr.nTotalSkills];
+
+        for (int i = 0; i < Chr.nMaxTotalChosenSkills; i++) {
+
+            //If there's not supposed to be a skill in this slot, then we can leave it blank and flag it as unused
+            if(loadout.lstChosenSkills[i] == SkillType.SKILLTYPE.NULL) {
+                Debug.Log("TODO - flag skillslots as unused in the UI");
+                arSkillSlots[i] = null;
+            } else {
+                arSkillSlots[i] = new SkillSlot(this, i);
+                arSkillSlots[i].SetSkill(loadout.lstChosenSkills[i]);
+            }
         }
 
 
-        //TODO - store all the benched skills as well
+        arSkillSlots[iRestSkill] = new SkillSlot(this, iRestSkill);
+        SkillRest skillRest = new SkillRest(this);
+        arSkillSlots[iRestSkill].SetSkill(skillRest);
 
     }
 
@@ -502,8 +506,6 @@ public class Chr : MonoBehaviour {
     public void Start() {
         if(bStarted == false) {
             bStarted = true;
-
-            InitSkillSlots();
 
             stateSelect = STATESELECT.IDLE;
 

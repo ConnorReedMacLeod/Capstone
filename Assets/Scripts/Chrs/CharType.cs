@@ -11,6 +11,8 @@ public static class CharType {
 
         DASHER, DANCER, PRANCER, VIXEN, COMET, CUPID, DONNER, BLITZEN, RUDOLPH, SANTA,
 
+        SLIME,
+
         LENGTH
     };
 
@@ -29,7 +31,7 @@ public static class CharType {
 
 
     public static Dictionary<CHARTYPE, CharTypeInfo> dictChrTypeInfos = new Dictionary<CHARTYPE, CharTypeInfo>() {
-        { CHARTYPE.FISCHER, new CharTypeInfo(CHARTYPE.FISCHER, "Fischer", new List<Discipline.DISCIPLINE>() { FISCHER, TESTING } ) },
+        { CHARTYPE.FISCHER, new CharTypeInfo(CHARTYPE.FISCHER, "Fischer", new List<Discipline.DISCIPLINE>() { FISCHER, TESTING, SLIME } ) },
         { CHARTYPE.KATARINA, new CharTypeInfo(CHARTYPE.KATARINA, "Katarina", new List<Discipline.DISCIPLINE>() { KATARINA, TESTING } ) },
         { CHARTYPE.RAYNE, new CharTypeInfo(CHARTYPE.RAYNE, "Rayne", new List<Discipline.DISCIPLINE>() { RAYNE, TESTING } ) },
         { CHARTYPE.SAIKO, new CharTypeInfo(CHARTYPE.SAIKO, "Saiko", new List<Discipline.DISCIPLINE>() { SAIKO, TESTING } ) },
@@ -46,6 +48,7 @@ public static class CharType {
         { CHARTYPE.BLITZEN, new CharTypeInfo(CHARTYPE.BLITZEN, "Blitzen", new List<Discipline.DISCIPLINE>() { TESTING } ) },
         { CHARTYPE.RUDOLPH, new CharTypeInfo(CHARTYPE.RUDOLPH, "Rudolph", new List<Discipline.DISCIPLINE>() { TESTING } ) },
         { CHARTYPE.SANTA, new CharTypeInfo(CHARTYPE.SANTA, "Santa", new List<Discipline.DISCIPLINE>() { TESTING } ) },
+        { CHARTYPE.SLIME, new CharTypeInfo(CHARTYPE.SLIME, "Slime", new List<Discipline.DISCIPLINE>() { TESTING, SLIME } ) },
     };
 
     public static string GetChrName(CHARTYPE type) {

@@ -19,6 +19,24 @@ public static class LoadoutManager {
             lstChosenSkills = _lstChosenSkills;
         }
 
+        public int NumEquippedSkills() {
+            int nSkills = 0;
+            for(int i=0; i<Chr.nMaxEquippedChosenSkills; i++) {
+                if (lstChosenSkills[i] ==  SkillType.SKILLTYPE.NULL) break;
+                nSkills++;
+            }
+            return nSkills;
+        }
+
+        public int NumBenchedSkills() {
+            int nSkills = 0;
+            for (int i = Chr.nMaxEquippedChosenSkills; i < Chr.nMaxTotalChosenSkills; i++) {
+                if (lstChosenSkills[i] == SkillType.SKILLTYPE.NULL) break;
+                nSkills++;
+            }
+            return nSkills;
+        }
+
         public override string ToString() {
             string sLoadout = string.Format("{0}:\nEquipped: {1}, {2}, {3}, {4}\nBench: {5}, {6}, {7}, {8}",
                 sName,
@@ -30,10 +48,10 @@ public static class LoadoutManager {
     }
 
     public static int[] SerializeLoadout(Loadout loadout) {
-        int[] arSerialized = new int[Chr.nTotalCharacterSkills];
+        int[] arSerialized = new int[Chr.nMaxTotalChosenSkills];
 
         int iSerialized = 0;
-        for(int i = 0; i < Chr.nTotalCharacterSkills; i++, iSerialized++) {
+        for(int i = 0; i < arSerialized.Length; i++, iSerialized++) {
             arSerialized[iSerialized] = (int)loadout.lstChosenSkills[i];
         }
 
@@ -45,7 +63,7 @@ public static class LoadoutManager {
         List<SkillType.SKILLTYPE> lstChosenSkills = new List<SkillType.SKILLTYPE>();
 
         int iDeserialized = 0;
-        for(int i = 0; i < Chr.nTotalCharacterSkills; i++, iDeserialized++) {
+        for(int i = 0; i < Chr.nMaxTotalChosenSkills; i++, iDeserialized++) {
             lstChosenSkills.Add((SkillType.SKILLTYPE)arSerialized[iDeserialized]);
         }
 
@@ -146,7 +164,7 @@ public static class LoadoutManager {
         // Fetch all the stored standard skill selections
         List<SkillType.SKILLTYPE> _lstChosenSkills = new List<SkillType.SKILLTYPE>();
 
-        for(int i = 0; i < Chr.nTotalCharacterSkills; i++) {
+        for(int i = 0; i < Chr.nMaxTotalChosenSkills; i++) {
             string sKey = GetKeySkills(chartype, iSlot, i);
 
             Debug.Assert(PlayerPrefs.HasKey(sKey), "No stored entry for " + sKey + " found");
@@ -165,7 +183,7 @@ public static class LoadoutManager {
         PlayerPrefs.SetString(GetKeyName(chartype, iSlot), loadout.sName);
 
         // Save all the standard skill selections
-        for(int i = 0; i < Chr.nTotalCharacterSkills; i++) {
+        for(int i = 0; i < Chr.nMaxTotalChosenSkills; i++) {
             PlayerPrefs.SetInt(GetKeySkills(chartype, iSlot, i), (int)loadout.lstChosenSkills[i]);
         }
     }
@@ -222,6 +240,8 @@ public static class LoadoutManager {
 
         { CharType.CHARTYPE.SANTA, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION,
             FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
+
+        { CharType.CHARTYPE.SLIME, new Loadout("Default", new List<SkillType.SKILLTYPE>() { SUMMONSLIME, LEECH }) }
 
     };
 

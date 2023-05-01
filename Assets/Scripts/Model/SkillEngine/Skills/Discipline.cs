@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class Discipline {
 
-    public enum DISCIPLINE { TESTING, FISCHER, KATARINA, PITBEAST, RAYNE, SAIKO, SOPHIDIA };
+    public enum DISCIPLINE { TESTING, FISCHER, KATARINA, PITBEAST, RAYNE, SAIKO, SOPHIDIA, SLIME };
 
 
 

@@ -157,35 +157,6 @@ public class Match : MonoBehaviour {
         }
     }
 
-    public void InitAllChrPositions() {
-        Debug.LogError("Currently not executing INitAllChrPositions");
-        return;
-
-        //Ensure all positions have been initialized properly
-        ContPositions.Get().Start();
-
-        for(int i = 0; i < Match.NPLAYERS; i++) {
-            List<Chr> lstChrsOwned = ChrCollection.Get().GetAllChrsOwnedBy(arPlayers[i]);
-
-            //Set up each team's initial positions (either by the saved selected positions for those characters, or by default bench positions)
-            for(int j = 0; j < Match.NINITIALCHRSPERTEAM; j++) {
-
-                Position posStart;
-
-                if(j < Match.NMINACTIVECHRSPERTEAM) {
-                    //If this is one of our initially active characters, then lookup their starting coords, and fetch the corresponding position from ContPositions
-                    posStart = ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoordsForChr(i, j));
-                } else {
-                    //Otherwise, they must be starting on the bench so we can define their position to be consecutive positions on the bench
-                    int kBenchPosition = j - Match.NMINACTIVECHRSPERTEAM;
-                    posStart = ContPositions.Get().GetPositionsOfTypeForPlayer(Position.POSITIONTYPE.BENCH, arPlayers[i])[kBenchPosition];
-                }
-                ContPositions.Get().InitChrToPosition(lstChrsOwned[j], posStart);
-            }
-        }
-
-    }
-
     public IEnumerator SetupMatch() {
 
         while(NetworkMatchSetup.HasAllMatchSetupInfo() == false) {
@@ -227,10 +198,6 @@ public class Match : MonoBehaviour {
         ContManaDistributer.Get().InitializeRandomReserves();
 
         Debug.Log("After initializing mana reserves");
-
-        InitAllChrPositions();
-
-        Debug.Log("After initializing positions");
 
         //ContPositions.Get().PrintAllPositions();
 

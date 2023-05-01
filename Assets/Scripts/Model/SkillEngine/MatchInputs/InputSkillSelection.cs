@@ -219,7 +219,7 @@ public class InputSkillSelection : MatchInput {
             nCurSelectionAttempt++;
 
             //Select a random skill we have that's off cooldown
-            skillslotSelected = chrActing.arSkillSlots[ContRandomization.Get().GetRandom(0, Chr.nEquippedCharacterSkills)];
+            skillslotSelected = chrActing.GetRandomSkill().skillslot;
             lstSelections = new List<object>();
 
             //If the skill can't be activated for whatever reason (like being a passive), then skip to the next attempt
@@ -261,7 +261,7 @@ public class InputSkillSelection : MatchInput {
 
     public void ResetToRestSelection() {
         chrActing = ContTurns.Get().GetNextActingChr();
-        skillslotSelected = chrActing.skillRest.skillslot;
+        skillslotSelected = chrActing.arSkillSlots[Chr.iRestSkill];
         lstSelections = new List<object>();
     }
 

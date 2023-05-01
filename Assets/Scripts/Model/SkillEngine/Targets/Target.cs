@@ -130,9 +130,21 @@ public abstract class Target {
         iTargetIndex = skill.lstTargets.Count;
     }
 
+    public static FnValidSelection AND(params FnValidSelection[] fnArgs) {
+        return (object o, InputSkillSelection selections) => {
+            for (int i = 0; i < fnArgs.Length; i++) {
+                if (fnArgs[i](o, selections) == false) return false;
+            }
+            return true;
+        };
+
+    }
+
+    /*
     public static FnValidSelection AND(FnValidSelection fn1, FnValidSelection fn2) {
         return (object o, InputSkillSelection selections) => fn1(o, selections) && fn2(o, selections);
     }
+    */
 
     public static bool TRUE(object obj, InputSkillSelection selections) { return true; }
 }

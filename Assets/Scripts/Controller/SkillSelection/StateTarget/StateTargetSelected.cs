@@ -24,7 +24,7 @@ public class StateTargetSelected : StateTarget {
 
     public void cbClickRestButton(Object target, params object[] args) {
         Debug.Log("Should make the rest button into a standard action button");
-        Skill skillRest = ContLocalUIInteraction.Get().chrSelected.skillRest;
+        Skill skillRest = ContLocalUIInteraction.Get().chrSelected.arSkillSlots[Chr.iRestSkill].skill;
         ContLocalUIInteraction.Get().ChooseSkillToSelect(skillRest);
 
     }
