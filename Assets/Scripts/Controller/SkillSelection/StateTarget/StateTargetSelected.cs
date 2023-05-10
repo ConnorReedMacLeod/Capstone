@@ -18,7 +18,14 @@ public class StateTargetSelected : StateTarget {
 
     public void cbClickSkill(Object target, params object[] args) {
 
-        ContLocalUIInteraction.Get().ChooseSkillToSelect(((ViewSkill)target).mod);
+        ViewSkill viewskillClicked = (ViewSkill)target;
+
+        if(viewskillClicked.mod == null) {
+            Debug.Log("Clicking a null skill - don't proceed with selection");
+            return;
+        }
+
+        ContLocalUIInteraction.Get().ChooseSkillToSelect(viewskillClicked.mod);
 
     }
 

@@ -16,6 +16,7 @@ public class Match : MonoBehaviour {
 
     public const int NCHARACTERLIVESPERTEAM = 3;
     public const int NSWITCHINGINDURATION = 3;
+    public const int NSUMMONSTARTINGFATIGUE = 2;
 
     bool bStarted;                          //Confirms the Start() method has executed
 
@@ -74,7 +75,7 @@ public class Match : MonoBehaviour {
         }
     }
 
-    public Chr InitChr(CharType.CHARTYPE chartype, Player player, LoadoutManager.Loadout loadout, Position posStart) {
+    public Chr InitChr(CharType.CHARTYPE chartype, Player player, LoadoutManager.Loadout loadout, int nStartingFatigue, Position posStart) {
 
         GameObject goChr = Instantiate(pfChr, this.transform);
         Chr newChr = goChr.GetComponent<Chr>();
@@ -85,7 +86,7 @@ public class Match : MonoBehaviour {
 
         newChr.Start();
 
-        newChr.InitChr(chartype, player, loadout);
+        newChr.InitChr(chartype, player, loadout, nStartingFatigue);
 
         ContPositions.Get().InitChrToPosition(newChr, posStart);
 
@@ -104,23 +105,21 @@ public class Match : MonoBehaviour {
 
             for(int i = 0; i < NPLAYERS; i++) {
 
+                //Initially set this character's fatigue according to their position in the CharacterOrdering setup
+                int nStartingFatigue = 0;
+
+                if (j < NMINACTIVECHRSPERTEAM) {
+                    nStartingFatigue = j * NPLAYERS + i + 1;
+                }//For characters who aren't active, their starting fatigue will just be 0
+
                 Position posStarting = ContPositions.Get().GetPosition(NetworkMatchSetup.GetPositionCoordsForChr(i, j));
 
                 Chr chrNew = InitChr(NetworkMatchSetup.GetCharacterOrdering(i, j),
                     arPlayers[i],
                     NetworkMatchSetup.GetLoadout(i, j),
+                    nStartingFatigue,
                     posStarting
                     );
-
-
-                //Initially set this character's fatigue according to their position in the CharacterOrdering setup
-                int nStartingFatigue = 0;
-
-                if(j < NMINACTIVECHRSPERTEAM) {
-                    nStartingFatigue = j * NPLAYERS + i + 1;
-                }//For characters who aren't active, their starting fatigue will just be 0
-
-                chrNew.ChangeFatigue(nStartingFatigue, true);
             }
 
         }

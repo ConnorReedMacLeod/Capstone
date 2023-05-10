@@ -22,7 +22,7 @@ public static class LoadoutManager {
         public int NumEquippedSkills() {
             int nSkills = 0;
             for(int i=0; i<Chr.nMaxEquippedChosenSkills; i++) {
-                if (lstChosenSkills[i] ==  SkillType.SKILLTYPE.NULL) break;
+                if (lstChosenSkills[i] == SkillType.SKILLTYPE.NULL) break;
                 nSkills++;
             }
             return nSkills;
@@ -241,7 +241,8 @@ public static class LoadoutManager {
         { CharType.CHARTYPE.SANTA, new Loadout("Default", new List<SkillType.SKILLTYPE>() { BUNKER, LEECH, KNOCKBACK, EXPLOSION,
             FIREBALL, HEAL, ADVANCE, STRATEGIZE}) },
 
-        { CharType.CHARTYPE.SLIME, new Loadout("Default", new List<SkillType.SKILLTYPE>() { SUMMONSLIME, LEECH }) }
+        { CharType.CHARTYPE.SLIME, new Loadout("Default", new List<SkillType.SKILLTYPE>() { SUMMONSLIME, LEECH, NULL, NULL,
+            NULL, NULL, NULL, NULL }) }
 
     };
 

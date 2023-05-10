@@ -41,7 +41,15 @@ public class ContInfo : MonoBehaviour {
     }
 
     public void cbSkillStartHover(Object target, params object[] args) {
-        DisplaySkill(((ViewSkill)target).mod);
+
+        ViewSkill viewskillHovered = (ViewSkill)target;
+
+        if (viewskillHovered.mod == null) {
+            Debug.Log("Hovering a null skill - no need to display any info for this");
+            return;
+        }
+
+        DisplaySkill(viewskillHovered.mod);
     }
 
     public void cbRestButtonStartHover(Object target, params object[] args) {
@@ -67,7 +75,15 @@ public class ContInfo : MonoBehaviour {
     }
 
     public void cbSkillStopHover(Object target, params object[] args) {
-        StopDisplaySkill(((ViewSkill)target).mod);
+
+        ViewSkill viewskillHovered = (ViewSkill)target;
+
+        if (viewskillHovered.mod == null) {
+            Debug.Log("Hovering a null skill - no need react to anything for this");
+            return;
+        }
+
+        StopDisplaySkill(viewskillHovered.mod);
     }
 
     public void cbRestButtonStopHover(Object target, params object[] args) {

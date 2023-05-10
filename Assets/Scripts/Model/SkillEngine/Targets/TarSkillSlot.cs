@@ -73,8 +73,16 @@ public class TarSkillSlot : Target {
 
 
     public override void cbClickSelectable(Object target, params object[] args) {
+
+        ViewSkill viewskillClicked = (ViewSkill)target;
+
+        if(viewskillClicked == null) {
+            Debug.Log("Tried to target a null skill - we won't proceed with the targetting process");
+            return;
+        }
+
         //Grab the model represented by the view and pass it off to AttemptSelection
-        AttemptSelection(((ViewSkill)target).mod.skillslot);
+        AttemptSelection(viewskillClicked.mod.skillslot);
     }
 
     // Mostly copied from TarChr's implementation

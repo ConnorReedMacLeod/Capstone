@@ -7,6 +7,7 @@ public class ExecSummonChrToPosition : ExecPosition {
     public CharType.CHARTYPE chrtype;
     public Player plyrOwner;
     public LoadoutManager.Loadout loadout;
+    public int nStartingFatigue;
 
 
     //Note:: This section should be copy and pasted for each type of executable
@@ -37,20 +38,22 @@ public class ExecSummonChrToPosition : ExecPosition {
 
     public override void ExecuteEffect() {
 
-        Match.Get().InitChr(chrtype, plyrOwner, loadout, posTarget);
+        Match.Get().InitChr(chrtype, plyrOwner, loadout, nStartingFatigue, posTarget);
 
     }
 
-    public ExecSummonChrToPosition(Chr _chrSource, Position _posTarget, CharType.CHARTYPE _chrtype, Player _plyrOwner, LoadoutManager.Loadout _loadout) : base(_chrSource, _posTarget) {
+    public ExecSummonChrToPosition(Chr _chrSource, Position _posTarget, CharType.CHARTYPE _chrtype, Player _plyrOwner, LoadoutManager.Loadout _loadout, int _nStartingFatigue) : base(_chrSource, _posTarget) {
         chrtype = _chrtype;
         plyrOwner = _plyrOwner;
         loadout = _loadout;
+        nStartingFatigue = _nStartingFatigue;
     }
 
     public ExecSummonChrToPosition(ExecSummonChrToPosition other) : base(other) {
         chrtype = other.chrtype;
         plyrOwner = other.plyrOwner;
         loadout = other.loadout;
+        nStartingFatigue = other.nStartingFatigue;
     }
 
 }

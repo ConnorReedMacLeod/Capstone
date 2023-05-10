@@ -46,7 +46,8 @@ public class SkillSummonSlime : Skill {
             Position posToSummonTo = (Position)selections.lstSelections[1];
             LoadoutManager.Loadout loadout = LoadoutManager.GetDefaultLoadoutForChar(CharType.CHARTYPE.SLIME);
 
-            ContSkillEngine.PushSingleExecutable(new ExecSummonChrToPosition(skill.chrOwner, posToSummonTo, CharType.CHARTYPE.SLIME, skill.chrOwner.plyrOwner, loadout) {
+            ContSkillEngine.PushSingleExecutable(new ExecSummonChrToPosition(skill.chrOwner, posToSummonTo, CharType.CHARTYPE.SLIME, skill.chrOwner.plyrOwner,
+                loadout, Match.NSUMMONSTARTINGFATIGUE) {
                 sLabel = "Sliming it up"
             });
 

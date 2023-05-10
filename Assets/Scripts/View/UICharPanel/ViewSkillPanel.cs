@@ -49,7 +49,7 @@ public class ViewSkillPanel : ViewInteractive {
 
             fXOffsetMultiplier *= -1;
 
-            for(int i = 0; i < 4; i++) {
+            for(int i = 0; i < arViewSkill.Length; i++) {
                 arViewSkill[i].transform.localScale = new Vector3(fXOffsetMultiplier, 1.0f, 1.0f);
             }
             this.transform.localScale = new Vector3(fXOffsetMultiplier, 1.0f, 1.0f);
@@ -67,7 +67,7 @@ public class ViewSkillPanel : ViewInteractive {
             //Move each skill to its correct (possibly flipped) location
             arViewSkill[i].transform.localPosition = arV3SkillPositions[i];
 
-            if(chrSelected != null) {
+            if(chrSelected != null && chrSelected.arSkillSlots[i] != null) {
                 arViewSkill[i].SetModel(chrSelected.arSkillSlots[i].skill);
             } else {
                 arViewSkill[i].SetModel(null);

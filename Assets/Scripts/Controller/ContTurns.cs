@@ -28,6 +28,8 @@ public class ContTurns : Singleton<ContTurns> {
 
     public void FixSortedPriority(Chr chr) {
 
+        if (lstChrPriority.Count == 0) return; //If the priority list hasn't been initiallized yet, then skip this reorginization
+
         //Find the referenced character
         int i = 0;
         while(lstChrPriority[i] != chr) {

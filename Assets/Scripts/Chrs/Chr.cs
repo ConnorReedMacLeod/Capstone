@@ -256,7 +256,7 @@ public class Chr : MonoBehaviour {
     public void RechargeSkills() {
 
         //Only bother recharging the active skills since those will be the only ones that can be on cooldown
-        for(int i = 0; i < arSkillSlots.Length; i++) {
+        for(int i = 0; i < nEquippedChosenSkills; i++) {
 
             //Only reduce the cooldown if it is not currently off cooldown
             if(arSkillSlots[i].nCooldown > 0) {
@@ -435,7 +435,7 @@ public class Chr : MonoBehaviour {
 
     // Used to initiallize information fields of the Chr
     // Call this after creating to set information
-    public void InitChr(CharType.CHARTYPE _chartype, Player _plyrOwner, LoadoutManager.Loadout loadout) {
+    public void InitChr(CharType.CHARTYPE _chartype, Player _plyrOwner, LoadoutManager.Loadout loadout, int nStartingFatigue) {
         chartype = _chartype;
         sName = CharType.GetChrName(chartype);
         plyrOwner = _plyrOwner;
@@ -445,18 +445,15 @@ public class Chr : MonoBehaviour {
         //Initialize this character's disciplines based on their chartype
         InitDisciplines();
 
-        InitSkillSlots(loadout);
+        Debug.LogErrorFormat("Setting initial fatigue to {0}", nStartingFatigue);
+
+        //Set the starting fatigue
+        ChangeFatigue(nStartingFatigue);//, true);
 
         //Initialize any loadout-specific qualities of the character
         InitFromLoadout(loadout);
 
         view.Init();
-    }
-
-    public void InitSkillSlots(LoadoutManager.Loadout loadout) {
-        
-        
-
     }
 
     public bool HasSkillEquipped(SkillType.SKILLTYPE skilltype) {
@@ -478,6 +475,9 @@ public class Chr : MonoBehaviour {
     public void InitFromLoadout(LoadoutManager.Loadout loadout) {
 
         arSkillSlots = new SkillSlot[Chr.nTotalSkills];
+
+        nEquippedChosenSkills = loadout.NumEquippedSkills();
+        nBenchChosenSkills = loadout.NumBenchedSkills();
 
         for (int i = 0; i < Chr.nMaxTotalChosenSkills; i++) {
 

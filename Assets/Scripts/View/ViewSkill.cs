@@ -80,6 +80,9 @@ public class ViewSkill : ViewInteractive {
 
     public static bool ShouldHide(Skill skill) {
 
+        //If there's no skill, then we'll show it, but it will be empty - may change with a better UI
+        if (skill == null) return false;
+
         //If we've not using the hidden skills rule, then definitely don't hide any skills
         if(ContOptionsOverlay.Get().bHiddenSkillsRule == false) return false;
 

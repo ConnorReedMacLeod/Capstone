@@ -53,8 +53,6 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
 
     public void UpdateHeadshotPositions() {
 
-        Debug.LogFormat("Updating headshots at time {0}", Time.timeSinceLevelLoad);
-
         for (int i = 0; i < lstChrPriority.Count; i++) {
             dictHeadshots[lstChrPriority[i]].transform.SetSiblingIndex(i);
         }

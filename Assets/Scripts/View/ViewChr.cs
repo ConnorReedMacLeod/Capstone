@@ -46,11 +46,6 @@ public class ViewChr : ViewInteractive {
     public GameObject goPowerDisplay;   //Power Display Reference
     public GameObject goDefenseDisplay; //Defense Display Reference
 
-    private Vector3 v3FatiguePosition;  //Fatigue Display Position
-    private Vector3 v3ChannelPosition;  //Channel Display Position
-    private Vector3 v3PowerPosition;    //Power Display Position
-    private Vector3 v3DefensePosition;	//Defense Display Position
-
     public Text txtHealth;              //Textfield Reference
     public Text txtArmour;              //Textfield Reference
     public Text txtPower;               //Textfield Reference
@@ -90,31 +85,24 @@ public class ViewChr : ViewInteractive {
             //Find the border and flip it for one of the players
             //goBorder.transform.localScale = new Vector3(1.33f, -1.33f, 1.0f);
 
-            //Find the fatigue display, and flip it to the other side of the portrai
+            //Flip the positions of UI components to the other side of the portrait
             goFatigueDisplay.transform.localPosition = new Vector3(
                 -goFatigueDisplay.transform.localPosition.x,
                 goFatigueDisplay.transform.localPosition.y,
-                goFatigueDisplay.transform.localPosition.z);
+                goFatigueDisplay.transform.localPosition.z
+                );
 
             goChannelDisplay.transform.localPosition = new Vector3(
                 -goChannelDisplay.transform.localPosition.x,
                 goChannelDisplay.transform.localPosition.y,
-                goChannelDisplay.transform.localPosition.z);
+                goChannelDisplay.transform.localPosition.z
+                );
 
             goPowerDefense.transform.localPosition = new Vector3(
                 -goPowerDefense.transform.localPosition.x,
                 goPowerDefense.transform.localPosition.y,
-                goPowerDefense.transform.localPosition.z);
-
-            /*goPowerDisplay.transform.localPosition = new Vector3(
-				-goPowerDisplay.transform.localPosition.x,
-				goPowerDisplay.transform.localPosition.y,
-				goPowerDisplay.transform.localPosition.z);*/
-
-            /*goDefenseDisplay.transform.localPosition = new Vector3(
-				-goDefenseDisplay.transform.localPosition.x,
-				goDefenseDisplay.transform.localPosition.y,
-				goDefenseDisplay.transform.localPosition.z);*/
+                goPowerDefense.transform.localPosition.z
+                );
 
             //Flip the character's soul position as well
             viewSoulContainer.transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
@@ -124,19 +112,13 @@ public class ViewChr : ViewInteractive {
             }
 
         }
-        //Fatigue and Channel positioning
-        v3FatiguePosition = goFatigueDisplay.transform.localPosition;
-        v3ChannelPosition = goChannelDisplay.transform.localPosition;
 
-        goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
-        goChannelDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
-
-        //Power and Defense positioning
-        v3PowerPosition = goPowerDisplay.transform.localPosition;
-        v3DefensePosition = goDefenseDisplay.transform.localPosition;
-
-        goPowerDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
-        goDefenseDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+        //We should update all of our UI components to ensure they're accurately reflecting the initial information of the Chr
+        UpdateFatigue();
+        UpdateChannelTime();
+        UpdatePower();
+        UpdateDefense();
+        UpdateSwitchingIn();
     }
 
     public override void onMouseClick(params object[] args) {
@@ -285,6 +267,8 @@ public class ViewChr : ViewInteractive {
         mod.subEndsActiveForHumans.Subscribe(cbOnEndsActiveForHumans);
         mod.subBecomesTargettable.Subscribe(cbOnBecomesTargettable);
         mod.subEndsTargettable.Subscribe(cbOnEndsTargettable);
+
+        Debug.LogErrorFormat("InitModel");
     }
 
     //For when it becomes this character's turn to act
@@ -337,64 +321,75 @@ public class ViewChr : ViewInteractive {
     }
 
     public void cbUpdateFatigue(Object target, params object[] args) {
+        UpdateFatigue();
+    }
+
+    public void UpdateFatigue() { 
+
         //If we're channeling, then we won't display fatigue
         if(mod.curStateReadiness.Type() == StateReadiness.TYPE.CHANNELING) {
-            /*Debug.Log("We shouldn't show fatigue when channeling");
-            txtFatigue.text = "";
-			goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
-			return;*/
+            goFatigueDisplay.SetActive(false);
+            return;
         }
 
         if(mod.curStateReadiness.Type() == StateReadiness.TYPE.DEAD) {
-            Debug.Log("We shouldn't show fatigue when dead");
-            txtFatigue.text = "";
-            goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+            goFatigueDisplay.SetActive(false);
+            return;
+        }
+
+        if(mod.nFatigue <= 0) {
+            goFatigueDisplay.SetActive(false);
             return;
         }
 
         //Otherwise, then show a non-zero fatigue value
-        if(mod.nFatigue > 0) {
-            txtFatigue.text = mod.nFatigue.ToString();
-            goFatigueDisplay.transform.localPosition = v3FatiguePosition;
-        } else {
-            txtFatigue.text = "";
-            goFatigueDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
-        }
+        txtFatigue.text = mod.nFatigue.ToString();
+        goFatigueDisplay.SetActive(true);
+
     }
 
     public void cbUpdateSwitchingIn(Object target, params object[] args) {
+        UpdateSwitchingIn();
+    }
+
+    public void UpdateSwitchingIn() { 
         //If we're no longer in a switching in state, then we can hide the switching in display
         if(mod.curStateReadiness.Type() != StateReadiness.TYPE.SWITCHINGIN) {
-            Debug.Log("No longer in a switching in state - hiding switching in display");
             goSwitchingInDisplay.SetActive(false);
             return;
         }
 
+        //If we're still switching in, then let's fetch the switching in duration
+        txtSwitchingInDisplay.text = mod.nSwitchingInTime.ToString();
+
         //Unhide the switching in display if it isn't already visible
         goSwitchingInDisplay.SetActive(true);
 
-        //If we're still switching in, then let's fetch the switching in duration
-        txtSwitchingInDisplay.text = mod.nSwitchingInTime.ToString();
     }
 
     public void cbUpdateChannelTime(Object target, params object[] args) {
+        UpdateChannelTime();
+    }
+
+    public void UpdateChannelTime() { 
         //If we're not channeling, then we won't display anything
         if(mod.curStateReadiness.Type() != StateReadiness.TYPE.CHANNELING) {
             //Debug.Log("Were notified of UpdateChannelTime, but we're not in a channeling state");
-            txtChannelTime.text = "";
-            goChannelDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+            goChannelDisplay.SetActive(false);
             return;
-
         }
 
-        //Otherwise, then the channeltime value
-        if(((StateChanneling)mod.curStateReadiness).nChannelTime > 0) {
-            txtChannelTime.text = ((StateChanneling)mod.curStateReadiness).nChannelTime.ToString();
-            goChannelDisplay.transform.localPosition = v3ChannelPosition;
-        } else {
-            txtChannelTime.text = "";
-            goChannelDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+        //If we have no channel time, then we can hide the component
+        int nChannelTime = ((StateChanneling)mod.curStateReadiness).nChannelTime;
+        if(nChannelTime <= 0) {
+            goChannelDisplay.SetActive(false);
+            return;
         }
+
+        //Otherwise, then show a non-zero fatigue value
+        txtChannelTime.text = nChannelTime.ToString();
+        goChannelDisplay.SetActive(true);
+        
     }
 
     public void cbUpdateArmour(Object target, params object[] args) {
@@ -406,29 +401,46 @@ public class ViewChr : ViewInteractive {
     }
 
     public void cbUpdatePower(Object target, params object[] args) {
-        if(mod.pnPower.Get() > 0) {
-            txtPower.text = "+" + mod.pnPower.Get().ToString();
-            goPowerDisplay.transform.localPosition = v3PowerPosition;
-        } else if(mod.pnPower.Get() < 0) {
-            txtPower.text = mod.pnPower.Get().ToString();
-            goPowerDisplay.transform.localPosition = v3PowerPosition;
-        } else {
-            txtPower.text = "";
-            goPowerDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+        UpdatePower();
+    }
+
+    public void UpdatePower() { 
+
+        int nPower = mod.pnPower.Get();
+
+        if(nPower == 0) {
+            goPowerDisplay.SetActive(false);
+            return;
         }
+
+        if(nPower > 0) {
+            txtPower.text = "+" + nPower.ToString();
+        } else { 
+            txtPower.text = nPower.ToString();
+        }
+
+        goPowerDisplay.SetActive(true);
     }
 
     public void cbUpdateDefense(Object target, params object[] args) {
-        if(mod.pnDefense.Get() > 0) {
-            txtDefense.text = "+" + mod.pnDefense.Get().ToString();
-            goDefenseDisplay.transform.localPosition = v3DefensePosition;
-        } else if(mod.pnDefense.Get() < 0) {
-            txtDefense.text = mod.pnDefense.Get().ToString();
-            goDefenseDisplay.transform.localPosition = v3DefensePosition;
-        } else {
-            txtDefense.text = "";
-            goDefenseDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+        UpdateDefense();
+    }
+
+    public void UpdateDefense() { 
+        int nDefense = mod.pnDefense.Get();
+
+        if (nDefense == 0) {
+            goDefenseDisplay.SetActive(false);
+            return;
         }
+
+        if (nDefense > 0) {
+            txtDefense.text = "+" + nDefense.ToString();
+        } else {
+            txtDefense.text = nDefense.ToString();
+        }
+
+        goDefenseDisplay.SetActive(true);
     }
 
     public void cbStartUsingSkill(Object target, params object[] args) {
