@@ -28,6 +28,8 @@ public class SoulFortissimo : SoulChr {
     }
 
     public override void ApplicationEffect() {
+        base.ApplicationEffect();
+
         //Make a Permanent SoulChangePower, and save a reference to it, so it can be removed later
         soulChangePower = new SoulChangePower(chrSource, chrTarget, skillSource, nPowerBuff);
         chrTarget.soulContainer.ApplySoul(soulChangePower);
@@ -38,6 +40,7 @@ public class SoulFortissimo : SoulChr {
     }
 
     public override void RemoveEffect() {
+        base.RemoveEffect();
 
         chrTarget.soulContainer.RemoveSoul(soulChangePower);
         chrTarget.soulContainer.RemoveSoul(soulChangeDefense);

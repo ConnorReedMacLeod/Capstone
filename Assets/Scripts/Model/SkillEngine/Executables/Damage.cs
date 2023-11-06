@@ -13,6 +13,7 @@ public class Damage {
     public delegate int FuncBaseDamage(Chr chrSource, Chr chrTarget);
     public FuncBaseDamage GetBase;
     public LibFunc.Get<int> GetPower;
+    public LibFunc.Get<int> GetPowerMult;
 
 
     //For convenience, allow a constructor that just accepts a number, rather than a function
@@ -37,22 +38,47 @@ public class Damage {
         bPiercing = _bPiercing;
 
 
-        //Store the chrSource and apply its power buff
+        //Store the chrSource and register the Power buff grabbing functions
         SetChrSource(_chrSource);
         SetChrTarget(_chrTarget);
 
     }
 
 
+    //Calculate the final damage based on the base damage method, and any Power/Defense modifiers
     public int Get() {
-        return GetBase(chrSource, chrTarget) + GetPower();
+
+        int nDamageToApply;
+        if (bPiercing || chrTarget == null) {
+            //If we pierce through all defenses, or if we have no target whose defense we can apply, then we'll just calculate our raw offensive damage
+            nDamageToApply = DamageWithNoDefense();
+        } else {
+            nDamageToApply = DamageWithAllModifiers();
+        }
+
+        nDamageToApply = Mathf.Max(0, nDamageToApply); //Ensure we don't produce a negative amount of damage
+
+        //Note - we're returning an int here, so we may be rounding fractional damage values before changing our health amount
+        return nDamageToApply;
+    }
+
+    public int DamageWithAllModifiers() {
+        return (int)(0.01f * (100 + GetPowerMult() - chrTarget.pnDefenseMult.Get()) * GetBase(chrSource, chrTarget) + (GetPower() - chrTarget.pnDefense.Get()));
+    }
+
+    //Calculate the outgoing damage with Power, but with no Defense modifiers
+    public int DamageWithNoDefense() {
+        return (int)(0.01f * (100 + GetPowerMult()) * GetBase(chrSource, chrTarget) + GetPower());
     }
 
     public void SnapShotPower() {
 
-        //If we need to snapshot, then fetch and fix the power in the GetPower function
+        //If we need to snapshot, then fetch and create a new function that just returns the Power (and PowerMult) as it is now
         int nSnapshotPower = chrSource.pnPower.Get();
         GetPower = () => nSnapshotPower;
+
+        int nSnapshotPowerMult = chrSource.pnPowerMult.Get();
+        GetPowerMult = () => nSnapshotPowerMult;
 
     }
 
@@ -60,8 +86,9 @@ public class Damage {
 
         chrSource = _chrSource;
 
-        //Set the GetPower function to fetch the chrSource's current power
+        //Set the GetPower and GetPowerMult functions to fetch the chrSource's current power at the time of calling the lambda
         GetPower = () => chrSource.pnPower.Get();
+        GetPowerMult = () => chrSource.pnPowerMult.Get();
     }
 
     public void SetChrTarget(Chr _chrTarget) {
@@ -85,6 +112,8 @@ public class Damage {
 
         //Copy the Power fetch method too
         GetPower = dmgToCopy.GetPower;
+        GetPowerMult = dmgToCopy.GetPowerMult;
+
     }
 
 

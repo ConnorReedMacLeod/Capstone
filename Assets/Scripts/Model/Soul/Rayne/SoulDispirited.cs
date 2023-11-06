@@ -26,6 +26,7 @@ public class SoulDispirited : SoulChr {
     }
 
     public override void ApplicationEffect() {
+        base.ApplicationEffect();
 
         //Loop through each skill on the targetted character
         for(int i = 0; i < Chr.nEquippedCharacterSkills; i++) {
@@ -77,6 +78,8 @@ public class SoulDispirited : SoulChr {
     }
 
     public override void RemoveEffect() {
+        base.RemoveEffect();
+
         //When removed we'll clear all the cost modifiers we've applied
         for(int i = 0; i < Chr.nEquippedCharacterSkills; i++) {
             chrTarget.arSkillSlots[i].skill.manaCost.pManaCost.RemoveModifier(arnodeCostModifier[i]);

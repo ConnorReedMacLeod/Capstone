@@ -10,6 +10,7 @@ public class Healing {
     public delegate int FuncBaseHeal(Chr chrSource, Chr chrTarget);
     public FuncBaseHeal GetBase;
     public LibFunc.Get<int> GetPower;
+    public LibFunc.Get<int> GetPowerMult;
 
     //For convenience, allow a constructor that just accepts a number, rather than a function
     public Healing(Chr _chrSource, Chr _chrTarget, int _nBase) {
@@ -33,7 +34,12 @@ public class Healing {
     }
 
     public int Get() {
-        return GetBase(chrSource, chrTarget) + GetPower();
+        return HealingWithNoDefense();
+    }
+
+    //Calculate the outgoing healing with Power, but with no Defense modifiers
+    public int HealingWithNoDefense() {
+        return (int)(0.01f * (100 + GetPowerMult()) * GetBase(chrSource, chrTarget) + GetPower());
     }
 
     public void SnapShotPower() {

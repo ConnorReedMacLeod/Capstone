@@ -23,4 +23,9 @@ public class SoulContainerChr : SoulContainer {
     public override void LetOwnerNotifySoulRemoved(Soul soulRemoved) {
         chrOwner.subSoulRemoved.NotifyObs(this, soulRemoved);
     }
+
+    public override void OnOverfillingSoul() {
+        //If we overfill a Chr's soul, then we want to SoulBreak them
+
+    }
 }

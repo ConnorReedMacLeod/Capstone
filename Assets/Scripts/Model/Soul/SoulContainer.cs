@@ -17,8 +17,8 @@ public abstract class SoulContainer : MonoBehaviour {
         //TODO:: Just make this consistently maintained so we don't have to recalculate it each time
         List<Soul> lstVisibleSoul = new List<Soul>();
 
-        for(int i = 0; i < lstSoul.Count; i++) {
-            if(lstSoul[i].bVisible == true) {
+        for (int i = 0; i < lstSoul.Count; i++) {
+            if (lstSoul[i].bVisible == true) {
                 lstVisibleSoul.Add(lstSoul[i]);
             }
         }
@@ -38,11 +38,11 @@ public abstract class SoulContainer : MonoBehaviour {
         List<Soul> lstExpiredSoul = new List<Soul>();
 
         //Search through the list from the back (most recently added) to the front
-        for(int i = lstSoul.Count - 1; i >= 0; i--) {
-            if(lstSoul[i].bDuration == true) {
+        for (int i = lstSoul.Count - 1; i >= 0; i--) {
+            if (lstSoul[i].bDuration == true) {
                 lstSoul[i].nCurDuration--;
 
-                if(lstSoul[i].nCurDuration == 0) {
+                if (lstSoul[i].nCurDuration == 0) {
                     //If this soul effect has finished its duration
 
                     //Then add it to the list of effects to be removed
@@ -52,9 +52,9 @@ public abstract class SoulContainer : MonoBehaviour {
         }
 
         //Remove each effect that was noted as having no duration left
-        foreach(Soul SoulToRemove in lstExpiredSoul) {
+        foreach (Soul SoulToRemove in lstExpiredSoul) {
             //If this soul effect somehow isn't in the list of active soul effects, don't try to remove it again
-            if(lstSoul.Contains(SoulToRemove) == false) continue;
+            if (lstSoul.Contains(SoulToRemove) == false) continue;
             RemoveSoul(SoulToRemove);
         }
 
@@ -68,7 +68,7 @@ public abstract class SoulContainer : MonoBehaviour {
     public void RemoveAllSoul() {
         Debug.LogFormat("Removing all Soul effects from {0}", GetOwnerName());
 
-        while(lstSoul.Count > 0) {
+        while (lstSoul.Count > 0) {
             Soul soulToRemove = lstSoul[0];
             Debug.LogFormat("Removing {0} soul effect", soulToRemove);
             RemoveSoul(soulToRemove);
@@ -79,7 +79,7 @@ public abstract class SoulContainer : MonoBehaviour {
 
         bool bRemoveSuccessfully = lstSoul.Remove(toRemove);
 
-        if(bRemoveSuccessfully == false) {
+        if (bRemoveSuccessfully == false) {
             Debug.Log("Couldn't remove " + toRemove.sName + " from " + toRemove.GetNameOfAppliedTo() + " since it's already removed");
             return;
         }
@@ -91,9 +91,9 @@ public abstract class SoulContainer : MonoBehaviour {
 
         LetOwnerNotifySoulRemoved(toRemove);
 
-        //Debug.Log("After removing " + toRemove.sName);
+        Debug.Log("After removing " + toRemove.sName);
 
-        if(ContSkillEngine.bDEBUGENGINE) PrintAllSoul();
+        if (ContSkillEngine.bDEBUGENGINE) PrintAllSoul();
 
     }
 
@@ -101,11 +101,11 @@ public abstract class SoulContainer : MonoBehaviour {
 
     public void ApplySoul(Soul newSoul) {
 
-        if(newSoul.bVisible == true) {
+        if (newSoul.bVisible == true) {
             //Then check if we have enough slots
             List<Soul> lstVisibleSoul = GetVisibleSoul();
 
-            if(lstVisibleSoul.Count == nMaxVisibleSoul) {
+            if (lstVisibleSoul.Count == nMaxVisibleSoul) {
                 //Then were already using all of our slots
 
                 //TODO:: Add in a check for locked events
@@ -113,6 +113,8 @@ public abstract class SoulContainer : MonoBehaviour {
                 Soul soulToRemove = lstVisibleSoul[0];
 
                 RemoveSoul(soulToRemove);
+
+                OnOverfillingSoul();
             }
 
         }
@@ -127,21 +129,25 @@ public abstract class SoulContainer : MonoBehaviour {
 
         LetOwnerNotifySoulApplied(newSoul);
 
-        if(ContSkillEngine.bDEBUGENGINE) PrintAllSoul();
+        if (ContSkillEngine.bDEBUGENGINE) PrintAllSoul();
 
     }
 
     public abstract string GetOwnerName();
 
+    public virtual void OnOverfillingSoul() {
+        //By default, we don't need to do anything extra
+    }
+
     public void PrintAllSoul() {
         Debug.Log("********** Printing all Soul for " + GetOwnerName() + "*****************");
-        for(int i = 0; i < lstSoul.Count; i++) {
+        for (int i = 0; i < lstSoul.Count; i++) {
             string sVisible = "";
             string sDuration = "";
-            if(lstSoul[i].bVisible == true) {
+            if (lstSoul[i].bVisible == true) {
                 sVisible = "(Visible)";
             }
-            if(lstSoul[i].bDuration == true) {
+            if (lstSoul[i].bDuration == true) {
                 sDuration = " with duration " + lstSoul[i].nCurDuration + "/" + lstSoul[i].pnMaxDuration.Get();
             }
             Debug.Log("[" + i + "] - " + lstSoul[i].sName + " " + sVisible + sDuration);
@@ -154,7 +160,7 @@ public abstract class SoulContainer : MonoBehaviour {
 
     // Use this for initialization
     public void Start() {
-        if(bStarted) return;
+        if (bStarted) return;
         bStarted = true;
 
         lstSoul = new List<Soul>();

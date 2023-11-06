@@ -17,6 +17,11 @@ public class Match : MonoBehaviour {
     public const int NCHARACTERLIVESPERTEAM = 3;
     public const int NSWITCHINGINDURATION = 3;
 
+    public const int NSOULBREAKDURATION = 3;
+    public const int NSOULBREAKPOWERMODIFIER = 100;
+    public const int NSOULBREAKDEFENSEMODIFIER = -100;
+
+
     bool bStarted;                          //Confirms the Start() method has executed
 
     public MatchResult matchresult;         //Stores the current status of who (if anyone) has won the match

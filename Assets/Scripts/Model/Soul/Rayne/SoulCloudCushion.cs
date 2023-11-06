@@ -21,12 +21,14 @@ public class SoulCloudCushion : SoulChr {
     }
 
     public override void ApplicationEffect() {
+        base.ApplicationEffect();
         //Make a Permanent SoulChangeDefense, and save a reference to it, so it can be removed later
         soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, skillSource, nDefenseBuff);
         chrTarget.soulContainer.ApplySoul(soulChangeDefense);
     }
 
     public override void RemoveEffect() {
+        base.RemoveEffect();
         chrTarget.soulContainer.RemoveSoul(soulChangeDefense);
     }
 
