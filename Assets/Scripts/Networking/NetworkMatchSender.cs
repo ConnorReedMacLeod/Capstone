@@ -11,7 +11,7 @@ public class NetworkMatchSender : Singleton<NetworkMatchSender> {
 
     public void SendInput(int indexInput, MatchInput matchinputToSend) {
 
-        Debug.LogFormat(LibDebug.AddColor("Sending selection: {0}", LibDebug.Col.BLUE), matchinputToSend);
+        Debug.LogFormat(LibDebug.AddColor("Sending selection #{0}: {1}", LibDebug.Col.BLUE), indexInput, matchinputToSend);
 
         photonview.RPC("ReceiveMatchInput", RpcTarget.AllBufferedViaServer, indexInput, matchinputToSend.Serialize());
 
@@ -22,7 +22,7 @@ public class NetworkMatchSender : Singleton<NetworkMatchSender> {
         //TODONOW - figure out how to get the match input type from just the serialized match input int[] - seems awkward to convert back and forth
         // -- Could just serialize the inputtype as the first entry of a int[] arSerializedMatchInput.  Seems straightforward enough
 
-        Debug.LogFormat(LibDebug.AddColor("Sending serialized selection: {0}", LibDebug.Col.BLUE), LibConversions.ArToStr(arSerializedMatchInput));
+        Debug.LogFormat(LibDebug.AddColor("Sending serialized selection #{0}: {1}", LibDebug.Col.BLUE), indexInput, LibConversions.ArToStr(arSerializedMatchInput));
 
         photonview.RPC("ReceiveMatchInput", RpcTarget.AllBufferedViaServer, indexInput, arSerializedMatchInput);
     }

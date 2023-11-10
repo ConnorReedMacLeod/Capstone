@@ -15,7 +15,7 @@ public class SoulSoulBreak : SoulChr {
         nPowerModifier = _nPowerModifier;
         nDefenseModifier = _nDefenseModifier;
 
-        sName = string.Format("Soulbreak: +{0} Power / -{1} Defense", nPowerModifier, nDefenseModifier);
+        sName = string.Format("Soulbreak: +{0}% Power / {1}% Defense", nPowerModifier, nDefenseModifier);
 
         bVisible = false;
         bRecoilWhenApplied = false;

@@ -9,7 +9,7 @@ public class SkillFireball : Skill {
         sName = "Fireball";
         sDisplayName = "Fireball";
 
-        typeUsage = new TypeUsageActive(this);
+        typeUsage = new TypeUsageCantrip(this);
 
         //Physical, Mental, Energy, Blood, Effort
         manaCost = new ManaCost(new Mana(0, 0, 1, 0, 0), true);

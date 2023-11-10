@@ -63,12 +63,14 @@ public class Damage {
     }
 
     public int DamageWithAllModifiers() {
-        return (int)(0.01f * (100 + GetPowerMult() - chrTarget.pnDefenseMult.Get()) * GetBase(chrSource, chrTarget) + (GetPower() - chrTarget.pnDefense.Get()));
+        //Debug.LogFormat("0.01f * (100 + {0} - {1}) * {2} + ({3} - {4})", GetPowerMult(), chrTarget.pnDefenseMult.Get(), GetBase(chrSource, chrTarget),
+        //    GetPower(), chrTarget.pnDefense.Get());
+        return Mathf.RoundToInt(0.01f * (100 + GetPowerMult() - chrTarget.pnDefenseMult.Get()) * GetBase(chrSource, chrTarget) + (GetPower() - chrTarget.pnDefense.Get()));
     }
 
     //Calculate the outgoing damage with Power, but with no Defense modifiers
     public int DamageWithNoDefense() {
-        return (int)(0.01f * (100 + GetPowerMult()) * GetBase(chrSource, chrTarget) + GetPower());
+        return Mathf.RoundToInt(0.01f * (100 + GetPowerMult()) * GetBase(chrSource, chrTarget) + GetPower());
     }
 
     public void SnapShotPower() {
