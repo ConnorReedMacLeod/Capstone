@@ -38,14 +38,25 @@ public class SoulSoulBreak : SoulChr {
 
     }
 
+
     public override void ApplicationEffect() {
         base.ApplicationEffect();
         //We're adding the multiplicative Power modifier to whatever existing multiplicative Power already exists
         nodePowerModifier = chrTarget.pnPowerMult.AddModifier((nPowerBelow) => this.nPowerModifier + nPowerBelow);
         nodeDefenseModifier = chrTarget.pnDefenseMult.AddModifier((nDefenseBelow) => this.nDefenseModifier + nDefenseBelow);
+
+        //Update our character's soulbreak reference to this
+        chrTarget.soulSoulBreak = this;
+        chrTarget.subSoulbreakChanged.NotifyObs();
+
     }
 
     public override void RemoveEffect() {
+
+        //Clear out our soulbreak reference
+        chrTarget.soulSoulBreak = null;
+        chrTarget.subSoulbreakChanged.NotifyObs();
+
         chrTarget.pnPowerMult.RemoveModifier(nodePowerModifier);
         chrTarget.pnDefenseMult.RemoveModifier(nodeDefenseModifier);
 

@@ -41,7 +41,7 @@ public class ExecChangeCooldown : ExecSkillslot {
 
         ssTarget.ChangeCooldown(nAmount);
 
-        fDelay = ContTime.fDelayMinorSkill;
+        fDelay = ContTime.fDelayInstant;
         sLabel = "Reducing " + ssTarget.chrOwner.sName + "'s " + ssTarget.skill.sDisplayName + " cooldown";
 
     }

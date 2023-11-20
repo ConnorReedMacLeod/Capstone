@@ -16,7 +16,7 @@ public class ContSkillEngine : Singleton<ContSkillEngine> {
                                                                           // (note that we shouldn't fill empty spots that would lead to use having more characters in
                                                                           //  play than the standard maximum)
 
-    public const bool bDEBUGENGINE = true;
+    public const bool bDEBUGENGINE = false;
 
     public MatchInput matchinputToFillOut;  //A reference to the match input that needs to be filled out before we can progress
                                             //  with the rest of the match simulation (may be filled out locally, or we can ignore it

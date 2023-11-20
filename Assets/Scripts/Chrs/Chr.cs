@@ -41,6 +41,8 @@ public class Chr : MonoBehaviour {
     public Property<int> pnArmour;          //The character's current armour
     public int nAbsorbedArmour;             //The amount of damage currently taken by armour
 
+    public SoulSoulBreak soulSoulBreak;     //A reference to the current SoulBreak instance applied to the character (if there is one)
+
     public Property<bool> pbCanSwapIn;       //Can this character swap in from the bench
 
     public SkillSlot[] arSkillSlots;      //The slots for the character's currently usable skills - these keep track of the cooldowns of those skills
@@ -103,6 +105,7 @@ public class Chr : MonoBehaviour {
     public Subject subStatusChange = new Subject();
     public static Subject subAllStatusChange = new Subject(Subject.SubType.ALL);
 
+    public Subject subSoulbreakChanged = new Subject();
     public Subject subSoulApplied = new Subject();
     public Subject subSoulRemoved = new Subject();
 
@@ -501,6 +504,8 @@ public class Chr : MonoBehaviour {
             pbCanSwapIn = new Property<bool>(() => position.positiontype == Position.POSITIONTYPE.BENCH);
 
             SetStateReadiness(new StateFatigued(this));
+
+            soulContainer.Start();
 
             view = GetComponent<ViewChr>();
             view.Start();

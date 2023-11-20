@@ -40,7 +40,12 @@ public abstract class SoulContainer : MonoBehaviour {
         //Search through the list from the back (most recently added) to the front
         for (int i = lstSoul.Count - 1; i >= 0; i--) {
             if (lstSoul[i].bDuration == true) {
+
+                //TODO - probably incorporate this into a method on the Soul - but be careful cause we want
+                //    to be able to decrement all of the soul durations, and then do a pass of removing any
+                //    soul effects that have timed out
                 lstSoul[i].nCurDuration--;
+                lstSoul[i].subDurationChanged.NotifyObs();
 
                 if (lstSoul[i].nCurDuration == 0) {
                     //If this soul effect has finished its duration
@@ -91,7 +96,7 @@ public abstract class SoulContainer : MonoBehaviour {
 
         LetOwnerNotifySoulRemoved(toRemove);
 
-        Debug.Log("After removing " + toRemove.sName);
+        //Debug.Log("After removing " + toRemove.sName);
 
         if (ContSkillEngine.bDEBUGENGINE) PrintAllSoul();
 
