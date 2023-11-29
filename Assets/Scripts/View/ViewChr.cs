@@ -45,16 +45,19 @@ public class ViewChr : ViewInteractive {
     public GameObject goPowerDefense;   //Power Defense Display Reference
     public GameObject goPowerDisplay;   //Power Display Reference
     public GameObject goDefenseDisplay; //Defense Display Reference
+    public GameObject goSoulbreak;      //Soulbreak Display Reference
 
     private Vector3 v3FatiguePosition;  //Fatigue Display Position
     private Vector3 v3ChannelPosition;  //Channel Display Position
     private Vector3 v3PowerPosition;    //Power Display Position
     private Vector3 v3DefensePosition;	//Defense Display Position
+    private Vector3 v3SoulbreakPosition;//Soulbreak Display Position
 
     public Text txtHealth;              //Textfield Reference
     public Text txtArmour;              //Textfield Reference
     public Text txtPower;               //Textfield Reference
     public Text txtDefense;             //Textfield Reference
+    public Text txtSoulbreakDuration;   //Textfield Reference
     public Text txtFatigue;             //Fatigue Overlay Reference
     public Text txtSwitchingInDisplay;  //Switching In Overlay Reference
     public Text txtChannelTime;         //ChannelTime Overlay Reference
@@ -137,6 +140,11 @@ public class ViewChr : ViewInteractive {
 
         goPowerDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
         goDefenseDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+
+        //Soulbreak positioning
+        v3SoulbreakPosition = goSoulbreak.transform.localPosition;
+
+        goSoulbreak.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
     }
 
     public override void onMouseClick(params object[] args) {
@@ -270,7 +278,10 @@ public class ViewChr : ViewInteractive {
         mod.subStatusChange.Subscribe(cbUpdateStatus);
         mod.pnArmour.subChanged.Subscribe(cbUpdateArmour);
         mod.pnPower.subChanged.Subscribe(cbUpdatePower);
+        mod.pnPowerMult.subChanged.Subscribe(cbUpdatePower);
         mod.pnDefense.subChanged.Subscribe(cbUpdateDefense);
+        mod.pnDefenseMult.subChanged.Subscribe(cbUpdateDefense);
+        mod.subSoulbreakChanged.Subscribe(cbUpdateSoulbreak);
         mod.subChannelTimeChange.Subscribe(cbUpdateChannelTime);
         mod.subDeath.Subscribe(cbUpdateDeath);
         mod.subPreExecuteSkill.Subscribe(cbStartUsingSkill);
@@ -285,6 +296,8 @@ public class ViewChr : ViewInteractive {
         mod.subEndsActiveForHumans.Subscribe(cbOnEndsActiveForHumans);
         mod.subBecomesTargettable.Subscribe(cbOnBecomesTargettable);
         mod.subEndsTargettable.Subscribe(cbOnEndsTargettable);
+
+        mod.soulContainer.subVisibleSoulUpdate.Subscribe(cbUpdateSoulbreak);
     }
 
     //For when it becomes this character's turn to act
@@ -406,28 +419,90 @@ public class ViewChr : ViewInteractive {
     }
 
     public void cbUpdatePower(Object target, params object[] args) {
-        if(mod.pnPower.Get() > 0) {
-            txtPower.text = "+" + mod.pnPower.Get().ToString();
-            goPowerDisplay.transform.localPosition = v3PowerPosition;
-        } else if(mod.pnPower.Get() < 0) {
-            txtPower.text = mod.pnPower.Get().ToString();
-            goPowerDisplay.transform.localPosition = v3PowerPosition;
-        } else {
+        int nCurPow = mod.pnPower.Get();
+        int nCurPowMult = mod.pnPowerMult.Get();
+
+        if (nCurPow == 0 && nCurPowMult == 0) {
+            //if we have no kind of power, just hide the power display and return
             txtPower.text = "";
             goPowerDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+            return;
+        }
+
+        //If we get this far, then we can move the display into a visible position, then we just need to figure out what text to display
+        goPowerDisplay.transform.localPosition = v3PowerPosition;
+
+        string sPow = string.Format("{0}{1}",
+            nCurPow > 0 ? "+" : "",
+            nCurPow);
+
+        string sPowMult = string.Format("{0}{1}%",
+            nCurPowMult > 0 ? "+" : "",
+            nCurPowMult);
+
+        if (nCurPow == 0) {
+            //then we only need to display the mult power
+            txtPower.text = sPowMult;
+        }else if (nCurPowMult == 0) {
+            //then we only need to display the flat power
+            txtPower.text = sPow;
+        } else {
+            //then we need to display both flat and mult powers
+            txtPower.text = string.Format("{0}/{1}", sPow, sPowMult);
         }
     }
 
     public void cbUpdateDefense(Object target, params object[] args) {
-        if(mod.pnDefense.Get() > 0) {
-            txtDefense.text = "+" + mod.pnDefense.Get().ToString();
-            goDefenseDisplay.transform.localPosition = v3DefensePosition;
-        } else if(mod.pnDefense.Get() < 0) {
-            txtDefense.text = mod.pnDefense.Get().ToString();
-            goDefenseDisplay.transform.localPosition = v3DefensePosition;
-        } else {
+        int nCurDef = mod.pnDefense.Get();
+        int nCurDefMult = mod.pnDefenseMult.Get();
+        
+        if (nCurDef == 0 && nCurDefMult == 0) {
+            //if we have no kind of defense, just hide the defense display and return
             txtDefense.text = "";
             goDefenseDisplay.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+            return;
+        }
+
+        //If we get this far, then we can move the display into a visible position, then we just need to figure out what text to display
+        goDefenseDisplay.transform.localPosition = v3DefensePosition;
+
+        string sDef = string.Format("{0}{1}",
+            nCurDef > 0 ? "+" : "",
+            nCurDef);
+
+        string sDefMult = string.Format("{0}{1}%",
+            nCurDefMult > 0 ? "+" : "",
+            nCurDefMult);
+
+        if (nCurDef == 0) {
+            //then we only need to display the mult defense
+            txtDefense.text = sDefMult;
+        } else if (nCurDefMult == 0) {
+            //then we only need to display the flat defense
+            txtDefense.text = sDef;
+        } else {
+            //then we need to display both flat and mult defenses
+            txtDefense.text = string.Format("{0}/{1}", sDef, sDefMult);
+        }
+
+    }
+
+    public void cbUpdateSoulbreak(Object target, params object[] args) {
+
+        //Debug.LogFormat("Updating soulbreak, mod.soulSoulBreak = {0}", mod.soulSoulBreak == null ? "null" : mod.soulSoulBreak.nCurDuration.ToString());
+
+        if (mod.soulSoulBreak == null) {
+            //Then we have nothing to display
+            txtSoulbreakDuration.text = "";
+            goSoulbreak.transform.localPosition = new Vector3(-100.0f, -100.0f, -100.0f);
+
+            return;
+        } else {
+
+            //If we have a Soulbreak instance applied to us, then we can display it along with the current duration
+            txtSoulbreakDuration.text = mod.soulSoulBreak.nCurDuration.ToString();
+            goSoulbreak.transform.localPosition = v3SoulbreakPosition;
+            return;
         }
     }
 

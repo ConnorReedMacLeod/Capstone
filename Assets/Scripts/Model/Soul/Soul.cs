@@ -29,6 +29,8 @@ public abstract class Soul {
     public Property<int> pnMaxDuration;
     public int nCurDuration;
 
+    public Subject subDurationChanged = new Subject();
+
     public List<Replacement> lstReplacements = new List<Replacement>(); //A (potentially empty) list of replacement effects for this effect
 
     public Observer observer = new Observer();

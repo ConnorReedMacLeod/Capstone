@@ -34,9 +34,14 @@ public class Chr : MonoBehaviour {
 
     public Property<int> pnPower;              //The character's current power
     public Property<int> pnDefense;            //The character's current defense
+    public Property<int> pnPowerMult;          //The character's current additional multiplicative power
+    public Property<int> pnDefenseMult;          //The character's current additional  multiplicative defense
+
 
     public Property<int> pnArmour;          //The character's current armour
     public int nAbsorbedArmour;             //The amount of damage currently taken by armour
+
+    public SoulSoulBreak soulSoulBreak;     //A reference to the current SoulBreak instance applied to the character (if there is one)
 
     public Property<bool> pbCanSwapIn;       //Can this character swap in from the bench
 
@@ -100,6 +105,7 @@ public class Chr : MonoBehaviour {
     public Subject subStatusChange = new Subject();
     public static Subject subAllStatusChange = new Subject(Subject.SubType.ALL);
 
+    public Subject subSoulbreakChanged = new Subject();
     public Subject subSoulApplied = new Subject();
     public Subject subSoulRemoved = new Subject();
 
@@ -297,16 +303,10 @@ public class Chr : MonoBehaviour {
         //Fetch the amount of damage we're going to take
         int nDamageToTake = dmgToTake.Get();
 
-        //If the damage isn't piercing, then reduce it by the defense amount
-        if(dmgToTake.bPiercing == false) {
-            //Reduce the damage to take by our defense (but ensure it doesn't go below 0)
-            nDamageToTake = Mathf.Max(0, nDamageToTake - pnDefense.Get());
-        }
-
         int nArmouredDamage = 0;
 
         if(dmgToTake.bPiercing == false) {
-            //Deal as much damage as we can (but not more than how much armour we have)
+            //Deal as much damage to the armour as we can (but not more than how much armour we have)
             nArmouredDamage = Mathf.Min(nDamageToTake, pnArmour.Get());
 
             //If there's actually damage that needs to be dealt to armour
@@ -496,11 +496,16 @@ public class Chr : MonoBehaviour {
             pnPower = new Property<int>(0);
             pnDefense = new Property<int>(0);
 
+            pnPowerMult = new Property<int>(0);
+            pnDefenseMult = new Property<int>(0);
+
             //By default, we don't override any targetting - just listen to the base response of if the target can select us
             pOverrideCanBeSelectedBy = new Property<CanBeSelectedBy>((tar, selectionsSoFar, bCanSelectSoFar) => bCanSelectSoFar);
             pbCanSwapIn = new Property<bool>(() => position.positiontype == Position.POSITIONTYPE.BENCH);
 
             SetStateReadiness(new StateFatigued(this));
+
+            soulContainer.Start();
 
             view = GetComponent<ViewChr>();
             view.Start();

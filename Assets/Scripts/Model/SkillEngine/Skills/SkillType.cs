@@ -13,7 +13,7 @@ public static class SkillType {
     public enum SKILLTYPE {
         //TESTING
         LEECH, TRANSFUSE, KNOCKBACK, ADVANCE, BUNKER, FIREBALL, EXPLOSION, HEAL, STRATEGIZE, MANABLOSSOM,
-        RETREAT, KILL, MULTIKILL,
+        RETREAT, KILL, MULTIKILL, OVERBURDEN,
 
         //Fischer
         BUCKLERPARRY, HARPOONGUN, HUNTERSQUARRY, IMPALE,
@@ -66,6 +66,7 @@ public static class SkillType {
         { RETREAT, new SkillTypeInfo (RETREAT, "Retreat", new List<Discipline.DISCIPLINE> { TESTING } ) },
         { KILL, new SkillTypeInfo (KILL, "Kill", new List<Discipline.DISCIPLINE> { TESTING } ) },
         { MULTIKILL, new SkillTypeInfo (MULTIKILL, "Multikill", new List<Discipline.DISCIPLINE> { TESTING } ) },
+        { OVERBURDEN, new SkillTypeInfo (OVERBURDEN, "Overburden", new List<Discipline.DISCIPLINE> { TESTING } ) },
 
         //FISHER
         { BUCKLERPARRY, new SkillTypeInfo ( BUCKLERPARRY, "Buckler Parry", new List<Discipline.DISCIPLINE> { FISCHER } ) },
@@ -175,6 +176,9 @@ public static class SkillType {
             break;
         case SKILLTYPE.MULTIKILL:
             skillNew = new SkillMultikill(chr);
+            break;
+        case SKILLTYPE.OVERBURDEN:
+            skillNew = new SkillOverburden(chr);
             break;
 
 

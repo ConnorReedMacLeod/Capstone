@@ -23,6 +23,8 @@ public class SoulImpaled : SoulChr {
     public int funcHealthReductionModifier(int nCurHealth) { return nCurHealth - nMaxLifeReduction; }
 
     public override void ApplicationEffect() {
+        base.ApplicationEffect();
+
         //Apply a modifier (and save a reference to the modifier node)) to reduce max health by nMaxLifeReduction
         modifierLifeReduction = chrTarget.pnMaxHealth.AddModifier(funcHealthReductionModifier);
 
@@ -34,6 +36,8 @@ public class SoulImpaled : SoulChr {
     }
 
     public override void RemoveEffect() {
+        base.RemoveEffect();
+
         chrTarget.pnMaxHealth.RemoveModifier(modifierLifeReduction);
     }
 

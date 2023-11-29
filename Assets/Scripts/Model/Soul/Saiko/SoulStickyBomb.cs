@@ -23,6 +23,8 @@ public class SoulStickyBomb : SoulChr {
     }
 
     public override void ApplicationEffect() {
+        base.ApplicationEffect();
+
         //When this effect is applied, save the power value as it is right now
         // so that future changes to the chrSource's power won't affect the damage
         dmg.SnapShotPower();
@@ -30,6 +32,7 @@ public class SoulStickyBomb : SoulChr {
 
     //Only want the damage to go off if the soul effect expires naturally 
     public override void ExpirationEffect() {
+        base.ExpirationEffect();
 
         ContSkillEngine.Get().AddExec(new ExecDealDamage(chrSource, chrTarget, dmg) {
             arSoundEffects = new SoundEffect[] { new SoundEffect("Saiko/sndStickyBombDetonate", 3.1f) },
