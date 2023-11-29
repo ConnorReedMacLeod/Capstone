@@ -15,7 +15,7 @@ public class SkillOverburden : Skill {
         manaCost = new ManaCost(new Mana(0, 0, 0, 0, 1));
 
         nCooldownInduced = 0;
-        nFatigue = 1;
+        nFatigue = 0;
 
         InitTargets();
 

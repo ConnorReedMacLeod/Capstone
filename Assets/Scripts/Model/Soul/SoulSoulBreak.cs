@@ -62,5 +62,8 @@ public class SoulSoulBreak : SoulChr {
 
         base.RemoveEffect();
 
+        //After soulbreak ends, we can clear out all of our soul
+        chrTarget.soulContainer.RemoveAllVisibleSoul();
     }
+    
 }

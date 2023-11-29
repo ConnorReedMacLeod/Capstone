@@ -103,9 +103,6 @@ public abstract class Soul {
             Replacement.Register(rep);
         }
 
-        Debug.LogFormat("Observer is {0}", observer);
-        Debug.LogFormat("ChrSource is {0}", chrSource);
-
         observer.Observe(chrSource.subDeath, cbOnChrSourceDeath);
 
         ApplicationEffect();

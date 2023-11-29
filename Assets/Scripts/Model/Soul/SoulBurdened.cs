@@ -14,7 +14,7 @@ public class SoulBurdened : SoulChr {
 
         bVisible = true;
         bDuration = true;
-        pnMaxDuration = new Property<int>(4);
+        pnMaxDuration = new Property<int>(7);
 
         nPowerDebuff = -5;
         
