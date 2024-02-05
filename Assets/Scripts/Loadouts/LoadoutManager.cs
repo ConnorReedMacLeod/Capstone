@@ -18,7 +18,7 @@ public static class LoadoutManager {
             sName = _sName;
             lstChosenSkills = _lstChosenSkills;
         }
-
+        
         public int NumEquippedSkills() {
             int nSkills = 0;
             for(int i=0; i<Chr.nMaxEquippedChosenSkills; i++) {
@@ -36,7 +36,7 @@ public static class LoadoutManager {
             }
             return nSkills;
         }
-
+        
         public override string ToString() {
             string sLoadout = string.Format("{0}:\nEquipped: {1}, {2}, {3}, {4}\nBench: {5}, {6}, {7}, {8}",
                 sName,
@@ -63,6 +63,7 @@ public static class LoadoutManager {
         List<SkillType.SKILLTYPE> lstChosenSkills = new List<SkillType.SKILLTYPE>();
 
         int iDeserialized = 0;
+
         for(int i = 0; i < Chr.nMaxTotalChosenSkills; i++, iDeserialized++) {
             lstChosenSkills.Add((SkillType.SKILLTYPE)arSerialized[iDeserialized]);
         }

@@ -7,7 +7,7 @@ public class LoadoutSelector : MonoBehaviour {
 
     public Text txtLabel;
     public InputField inputfieldLoadoutName;
-
+    
     public DropdownSkillLoadout[] ardropdownSkillLoadout = new DropdownSkillLoadout[Chr.nMaxTotalChosenSkills];
 
     public LoadoutManager.Loadout loadoutCur;

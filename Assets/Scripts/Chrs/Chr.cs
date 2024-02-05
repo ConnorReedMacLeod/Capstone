@@ -20,7 +20,9 @@ public class Chr : MonoBehaviour {
 
     public int id;                  //The character's unique identifier (across all characters)
     public int nFatigue;            //Number of turns a character must wait before their next skill
+
     public int nSwitchingInTime;    //Number of turns a character must wait before being able to act after switching in from the bench
+
     public StateReadiness curStateReadiness; //A reference to the current state of readiness
 
     public const int nMaxSkillUsesPerActivation = 1;     //The total maximum number of skills a character can use in a turn (usually 1, cantrips cost 0)
@@ -35,6 +37,8 @@ public class Chr : MonoBehaviour {
 
     public Property<int> pnPower;              //The character's current power
     public Property<int> pnDefense;            //The character's current defense
+    public Property<int> pnPowerMult;          //The character's current additional multiplicative power
+    public Property<int> pnDefenseMult;          //The character's current additional  multiplicative defense
 
     public Property<int> pnArmour;          //The character's current armour
     public int nAbsorbedArmour;             //The amount of damage currently taken by armour
@@ -50,6 +54,7 @@ public class Chr : MonoBehaviour {
     public const int nFixedGenericSkills = 1; //The number if pre-defined skills that all Chrs share 
     public const int iRestSkill = nMaxTotalChosenSkills + 0;       //The index where the generic rest skill is stored
     public const int nTotalSkills = nMaxTotalChosenSkills + nFixedGenericSkills; //The total number of skills available to a character 
+    public SkillRest skillRest;  //The standard reference to the rest skill the character can use
 
     //If we need extra modifiers for if we can or cannot be selected for a given skill's target, then 
     //  we can decorate them in this property.  By default we don't do any overrides and just listen to what the TarChr says
@@ -58,7 +63,9 @@ public class Chr : MonoBehaviour {
 
     public Position position;       //A reference to the position the character is on
 
+    public SkillRest skillrest; 
     public SoulContainerChr soulContainer; //A reference to the character's list of soul effects
+    public SoulSoulBreak soulSoulBreak;
 
     public ViewChr view;
 
@@ -103,6 +110,8 @@ public class Chr : MonoBehaviour {
     public Subject subStatusChange = new Subject();
     public static Subject subAllStatusChange = new Subject(Subject.SubType.ALL);
 
+    public Subject subSoulbreakChanged = new Subject();
+
     public Subject subSoulApplied = new Subject();
     public Subject subSoulRemoved = new Subject();
 
@@ -131,6 +140,7 @@ public class Chr : MonoBehaviour {
     public Skill GetRandomActiveSkill() {
         //Generate a random offset to choose the skill, then shift that index to start after all our generic skills
         return arSkillSlots[Random.Range(0, nEquippedChosenSkills)].skill;
+
     }
 
     public Skill GetRandomSkill() {
@@ -138,7 +148,8 @@ public class Chr : MonoBehaviour {
         int nRand = Random.Range(0, 100);
 
         if(nRand < 25) {
-            return arSkillSlots[iRestSkill].skill;
+            return skillrest;
+
         } else {
             return GetRandomActiveSkill();
         }
@@ -193,6 +204,9 @@ public class Chr : MonoBehaviour {
                 "on a per-soul effect basis when notified of a subDeath");
 
 
+        //Remove ourselves from the turn-priority queue since we'll no longer be acting
+        ContTurns.Get().RemoveChrFromPriorityList(this);
+
         //Save a reference to our position before we clear ourselves out of it
         Position posVacated = position;
         
@@ -209,20 +223,19 @@ public class Chr : MonoBehaviour {
 
 
     // Apply this amount of fatigue to the character
-    public void ChangeFatigue(int _nChange, bool bInitializing = false) {
+    public void ChangeFatigue(int _nChange) {
+
         if(_nChange + nFatigue < 0) {
             nFatigue = 0;
         } else {
             nFatigue += _nChange;
         }
 
-        if (bInitializing == false) {
-            subFatigueChange.NotifyObs(this);
-            subAllFatigueChange.NotifyObs(this);
+        subFatigueChange.NotifyObs(this);
+        subAllFatigueChange.NotifyObs(this);
 
-            //Make sure we're in the right place in the priority list
-            ContTurns.Get().FixSortedPriority(this);
-        }
+        //Make sure we're in the right place in the priority list
+        ContTurns.Get().FixSortedPriority(this);
 
     }
 
@@ -328,6 +341,7 @@ public class Chr : MonoBehaviour {
 
         if(dmgToTake.bPiercing == false) {
             //Deal as much damage as we can (but not more than how much armour we have)
+
             nArmouredDamage = Mathf.Min(nDamageToTake, pnArmour.Get());
 
             //If there's actually damage that needs to be dealt to armour
@@ -394,11 +408,6 @@ public class Chr : MonoBehaviour {
         position = _position;
     }
 
-    //Counts down the character's recharge time
-    public void TimeTick() {
-        ChangeFatigue(-1);
-    }
-
     public void ChangeState(STATESELECT _stateSelect) {
         stateSelect = _stateSelect;
 
@@ -436,6 +445,7 @@ public class Chr : MonoBehaviour {
     // Used to initiallize information fields of the Chr
     // Call this after creating to set information
     public void InitChr(CharType.CHARTYPE _chartype, Player _plyrOwner, LoadoutManager.Loadout loadout, int nStartingFatigue) {
+
         chartype = _chartype;
         sName = CharType.GetChrName(chartype);
         plyrOwner = _plyrOwner;
@@ -445,7 +455,7 @@ public class Chr : MonoBehaviour {
         //Initialize this character's disciplines based on their chartype
         InitDisciplines();
 
-        Debug.LogErrorFormat("Setting initial fatigue to {0}", nStartingFatigue);
+        //Debug.LogErrorFormat("Setting initial fatigue to {0}", nStartingFatigue);
 
         //Set the starting fatigue
         ChangeFatigue(nStartingFatigue);//, true);
@@ -456,9 +466,13 @@ public class Chr : MonoBehaviour {
         view.Init();
     }
 
+    public void InitGenericSkills() {
+
+    }
+
     public bool HasSkillEquipped(SkillType.SKILLTYPE skilltype) {
         //Loop through our skill slots and check if one of them has the desired skilltype
-        for(int i = 0; i < arSkillSlots.Length; i++) {
+        for(int i = 0; i < nEquippedChosenSkills; i++) {
             if(arSkillSlots[i].skill.GetSkillType() == skilltype) {
                 return true;
             }
@@ -473,12 +487,13 @@ public class Chr : MonoBehaviour {
     }
 
     public void InitFromLoadout(LoadoutManager.Loadout loadout) {
-
-        arSkillSlots = new SkillSlot[Chr.nTotalSkills];
+        
+        arSkillSlots = new SkillSlot[nTotalSkills];
 
         nEquippedChosenSkills = loadout.NumEquippedSkills();
         nBenchChosenSkills = loadout.NumBenchedSkills();
 
+        //First add all of the chosen skills as defined by our loadout
         for (int i = 0; i < Chr.nMaxTotalChosenSkills; i++) {
 
             //If there's not supposed to be a skill in this slot, then we can leave it blank and flag it as unused
@@ -490,8 +505,8 @@ public class Chr : MonoBehaviour {
                 arSkillSlots[i].SetSkill(loadout.lstChosenSkills[i]);
             }
         }
-
-
+        
+        //Then add in any fixed generic skills
         arSkillSlots[iRestSkill] = new SkillSlot(this, iRestSkill);
         SkillRest skillRest = new SkillRest(this);
         arSkillSlots[iRestSkill].SetSkill(skillRest);
@@ -506,7 +521,7 @@ public class Chr : MonoBehaviour {
     public void Start() {
         if(bStarted == false) {
             bStarted = true;
-
+            
             stateSelect = STATESELECT.IDLE;
 
             pnMaxHealth = new Property<int>(100);
@@ -516,11 +531,16 @@ public class Chr : MonoBehaviour {
             pnPower = new Property<int>(0);
             pnDefense = new Property<int>(0);
 
+            pnPowerMult = new Property<int>(0);
+            pnDefenseMult = new Property<int>(0);
+
             //By default, we don't override any targetting - just listen to the base response of if the target can select us
             pOverrideCanBeSelectedBy = new Property<CanBeSelectedBy>((tar, selectionsSoFar, bCanSelectSoFar) => bCanSelectSoFar);
             pbCanSwapIn = new Property<bool>(() => position.positiontype == Position.POSITIONTYPE.BENCH);
 
             SetStateReadiness(new StateFatigued(this));
+
+            soulContainer.Start();
 
             view = GetComponent<ViewChr>();
             view.Start();

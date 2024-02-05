@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
+
 public class ExecChangeFatigue : ExecChr {
 
     public int nAmount;
@@ -33,13 +35,14 @@ public class ExecChangeFatigue : ExecChr {
 
 
     public override void ExecuteEffect() {
-        
+
         chrTarget.ChangeFatigue(nAmount);
 
         //Debug.Log(chrTarget.sName + " is changing their fatigue by " + nAmount);
         fDelay = ContTime.fDelayMinorSkill;
         
     }
+
 
     public ExecChangeFatigue(Chr _chrSource, Chr _chrTarget, int _nAmount) : base(_chrSource, _chrTarget) {
         nAmount = _nAmount;

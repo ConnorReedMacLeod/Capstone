@@ -8,7 +8,8 @@ using UnityEngine;
 //  - Prevents almost all executables from affecting the character (unless they are from soul effects already on the character)
 public class StateSwitchingIn : StateReadiness {
 
-    int nSwitchingInDuration;
+    public int nSwitchingInDuration;
+
     public LinkedListNode<Property<Chr.CanBeSelectedBy>.Modifier> modifierCannotBeSelected;
 
     public StateSwitchingIn(Chr _chrOwner, int _nSwitchingInDuration) : base(_chrOwner) {
@@ -32,7 +33,6 @@ public class StateSwitchingIn : StateReadiness {
 
         //By default, we just reduce fatigue by 1 (with the beginning of turn flag)
         ContSkillEngine.Get().AddExec(new ExecChangeSwitchInTime(null, chrOwner, -1));
-        
         
     }
 

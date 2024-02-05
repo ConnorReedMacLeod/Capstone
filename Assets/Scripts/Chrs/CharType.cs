@@ -49,6 +49,7 @@ public static class CharType {
         { CHARTYPE.RUDOLPH, new CharTypeInfo(CHARTYPE.RUDOLPH, "Rudolph", new List<Discipline.DISCIPLINE>() { TESTING } ) },
         { CHARTYPE.SANTA, new CharTypeInfo(CHARTYPE.SANTA, "Santa", new List<Discipline.DISCIPLINE>() { TESTING } ) },
         { CHARTYPE.SLIME, new CharTypeInfo(CHARTYPE.SLIME, "Slime", new List<Discipline.DISCIPLINE>() { TESTING, SLIME } ) },
+
     };
 
     public static string GetChrName(CHARTYPE type) {

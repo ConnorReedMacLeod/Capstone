@@ -75,7 +75,6 @@ public class ContInfo : MonoBehaviour {
     }
 
     public void cbSkillStopHover(Object target, params object[] args) {
-
         ViewSkill viewskillHovered = (ViewSkill)target;
 
         if (viewskillHovered.mod == null) {

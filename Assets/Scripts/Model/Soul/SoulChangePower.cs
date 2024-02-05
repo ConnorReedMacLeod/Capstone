@@ -36,7 +36,9 @@ public class SoulChangePower : SoulChr {
     }
 
     public override void ApplicationEffect() {
-        base.RemoveEffect();
+        base.ApplicationEffect();
+
+        //We're adding our flat Power change to whatever the flat Power amount currently is
         nodePowerModifier = chrTarget.pnPower.AddModifier((nPowerBelow) => this.nPowerChange + nPowerBelow);
     }
 

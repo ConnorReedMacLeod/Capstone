@@ -83,6 +83,7 @@ public class TarSkillSlot : Target {
 
         //Grab the model represented by the view and pass it off to AttemptSelection
         AttemptSelection(viewskillClicked.mod.skillslot);
+
     }
 
     // Mostly copied from TarChr's implementation

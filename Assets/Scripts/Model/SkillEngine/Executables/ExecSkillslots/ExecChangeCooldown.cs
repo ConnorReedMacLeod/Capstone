@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-//Can create executables like ...= new Exec(){chrTarget = ..., nDamage = ...};
-
 public class ExecChangeCooldown : ExecSkillslot {
 
     public int nAmount;
@@ -41,7 +39,7 @@ public class ExecChangeCooldown : ExecSkillslot {
 
         ssTarget.ChangeCooldown(nAmount);
 
-        fDelay = ContTime.fDelayMinorSkill;
+        fDelay = ContTime.fDelayInstant;
         sLabel = "Reducing " + ssTarget.chrOwner.sName + "'s " + ssTarget.skill.sDisplayName + " cooldown";
 
     }

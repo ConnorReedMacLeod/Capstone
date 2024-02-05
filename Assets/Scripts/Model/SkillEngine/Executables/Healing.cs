@@ -10,6 +10,7 @@ public class Healing {
     public delegate int FuncBaseHeal(Chr chrSource, Chr chrTarget);
     public FuncBaseHeal GetBase;
     public LibFunc.Get<int> GetPower;
+    public LibFunc.Get<int> GetPowerMult;
 
     //For convenience, allow a constructor that just accepts a number, rather than a function
     public Healing(Chr _chrSource, Chr _chrTarget, int _nBase) {
@@ -33,7 +34,16 @@ public class Healing {
     }
 
     public int Get() {
-        return GetBase(chrSource, chrTarget) + GetPower();
+        return HealingWithNoDefense();
+    }
+
+    //Calculate the outgoing healing with Power, but with no Defense modifiers
+    public int HealingWithNoDefense() {
+        Debug.LogFormat("GetPowerMult():{0}",GetPowerMult());
+        Debug.LogFormat("GetBase({1}, {2}):{0}", GetBase(chrSource, chrTarget), chrSource, chrTarget);
+        Debug.LogFormat("GetPower():{0}", GetPower());
+
+        return (int)(0.01f * (100 + GetPowerMult()) * GetBase(chrSource, chrTarget) + GetPower());
     }
 
     public void SnapShotPower() {
@@ -42,6 +52,8 @@ public class Healing {
         int nSnapshotPower = chrSource.pnPower.Get();
         GetPower = () => nSnapshotPower;
 
+        int nSnapshotPowerMult = chrSource.pnPowerMult.Get();
+        GetPowerMult = () => nSnapshotPowerMult;
     }
 
     public void SetChrSource(Chr _chrSource) {
@@ -50,6 +62,7 @@ public class Healing {
 
         //Set the GetPower function to fetch the chrSource's current power
         GetPower = () => chrSource.pnPower.Get();
+        GetPowerMult = () => chrSource.pnPowerMult.Get();
     }
 
     public void SetChrTarget(Chr _chrTarget) {
@@ -67,6 +80,7 @@ public class Healing {
 
         //Copy the Power fetch method too
         GetPower = healToCopy.GetPower;
+        GetPowerMult = healToCopy.GetPowerMult;
     }
 
 

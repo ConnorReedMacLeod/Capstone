@@ -172,7 +172,7 @@ public static class NetworkMatchSetup {
 
                 sPlayer += string.Format("{0} ({1}), {2}\n",
                     HasEntryCharacterOrdering(i, j) ? GetCharacterOrdering(i, j).ToString() : "Null",
-                    HasEntryPositionCoordsForChr(i, j) ? GetPositionCoordsForChr(i, j).ToString() : "Null",
+                    j < Match.NMINACTIVECHRSPERTEAM ? (HasEntryPositionCoordsForChr(i, j) ? GetPositionCoordsForChr(i, j).ToString() : "Null") : "BENCH",
                     HasEntryLoadout(i, j) ? GetLoadout(i, j).ToString() : "Null");
             }
             s += sPlayer;
@@ -197,6 +197,7 @@ public static class NetworkMatchSetup {
                     Debug.LogFormat("Still waiting on loadout {1} for player {0}", i, j);
                     return false;
                 }
+
                 if(j < Match.NMINACTIVECHRSPERTEAM && HasEntryPositionCoordsForChr(i, j) == false) {
                     Debug.LogFormat("Still waiting on starting position {1} for player {0}", i, j);
                     return false;

@@ -16,7 +16,7 @@ public static class SkillType {
 
         //TESTING
         LEECH, TRANSFUSE, KNOCKBACK, ADVANCE, BUNKER, FIREBALL, EXPLOSION, HEAL, STRATEGIZE, MANABLOSSOM,
-        RETREAT, KILL, MULTIKILL, SUMMONSLIME,
+        RETREAT, KILL, MULTIKILL, OVERBURDEN, SUMMONSLIME,
 
         //Fischer
         BUCKLERPARRY, HARPOONGUN, HUNTERSQUARRY, IMPALE,
@@ -69,6 +69,7 @@ public static class SkillType {
         { RETREAT, new SkillTypeInfo (RETREAT, "Retreat", new List<Discipline.DISCIPLINE> { TESTING } ) },
         { KILL, new SkillTypeInfo (KILL, "Kill", new List<Discipline.DISCIPLINE> { TESTING } ) },
         { MULTIKILL, new SkillTypeInfo (MULTIKILL, "Multikill", new List<Discipline.DISCIPLINE> { TESTING } ) },
+        { OVERBURDEN, new SkillTypeInfo (OVERBURDEN, "Overburden", new List<Discipline.DISCIPLINE> { TESTING } ) },
         { SUMMONSLIME, new SkillTypeInfo (SUMMONSLIME, "Summon Slime", new List<Discipline.DISCIPLINE> { TESTING, SLIME } ) },
 
         //FISHER
@@ -139,7 +140,7 @@ public static class SkillType {
         Skill skillNew = null;
 
         switch(skillType) {
-
+            
         case SKILLTYPE.NULL:
             Debug.LogError("Cannot create a NULL skill!");
             break;
@@ -184,10 +185,12 @@ public static class SkillType {
         case SKILLTYPE.MULTIKILL:
             skillNew = new SkillMultikill(chr);
             break;
+        case SKILLTYPE.OVERBURDEN:
+            skillNew = new SkillOverburden(chr);
+            break;
         case SKILLTYPE.SUMMONSLIME:
             skillNew = new SkillSummonSlime(chr);
             break;
-
 
             //Fischer
             case SKILLTYPE.BUCKLERPARRY:

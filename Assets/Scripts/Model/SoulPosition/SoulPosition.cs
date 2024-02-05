@@ -39,6 +39,7 @@ public class SoulPosition : Soul {
     }
 
     public override void ApplicationEffect() {
+        base.ApplicationEffect();
 
         //Ensure that we're monitoring when the character on our position changes so we can update the soul affect we apply to the active character
         observer.Observe(posTarget.subChrEnteredPosition, cbChrEnteredPosition);
@@ -48,6 +49,7 @@ public class SoulPosition : Soul {
     }
 
     public override void RemoveEffect() {
+        base.RemoveEffect();
 
         //When this SoulPosition is removed, we need to remove all of the associated effects that have been placed on the character on this position
 

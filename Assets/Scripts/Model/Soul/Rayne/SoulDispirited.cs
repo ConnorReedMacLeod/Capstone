@@ -20,16 +20,15 @@ public class SoulDispirited : SoulChr {
 
         //Increase the cost by one effort
         arnCostDebuff = new int[] { 0, 0, 0, 0, 1 };
-
+        
         arnodeCostModifier = new LinkedListNode<Property<Mana>.Modifier>[Chr.nMaxEquippedChosenSkills];
 
     }
 
     public override void ApplicationEffect() {
-
+        base.ApplicationEffect();
         //Loop through each skill on the targetted character
-        for(int i = 0; i < arnodeCostModifier.Length; i++) {
-
+        for (int i = 0; i < arnodeCostModifier.Length; i++) {
             ApplyCostIncreaseToSkill(i);
         }
 
@@ -71,14 +70,18 @@ public class SoulDispirited : SoulChr {
 
         arnCostDebuff = new int[Mana.nManaTypes];
         System.Array.Copy(other.arnCostDebuff, arnCostDebuff, other.arnCostDebuff.Length);
+
         arnodeCostModifier = new LinkedListNode<Property<Mana>.Modifier>[Chr.nMaxEquippedChosenSkills];
+
         System.Array.Copy(other.arnodeCostModifier, arnodeCostModifier, other.arnodeCostModifier.Length);
 
     }
 
     public override void RemoveEffect() {
+        base.RemoveEffect();
+
         //When removed we'll clear all the cost modifiers we've applied
-        for(int i = 0; i < arnodeCostModifier.Length; i++) {
+        for (int i = 0; i < arnodeCostModifier.Length; i++) {
             chrTarget.arSkillSlots[i].skill.manaCost.pManaCost.RemoveModifier(arnodeCostModifier[i]);
         }
 

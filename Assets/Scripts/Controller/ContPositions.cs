@@ -237,10 +237,6 @@ public class ContPositions : Singleton<ContPositions> {
         pos.SetChrOnPosition(chr);
         chr.SetPosition(pos);
 
-        //If we're initialized to a non-bench position, then we should add ourselves to the priority list
-        if (chr.position.positiontype != Position.POSITIONTYPE.BENCH) {
-            ContTurns.Get().AddChrToPriorityList(chr);
-        }
     }
 
     //When a character dies or is otherwise completely removed from the playing space, then this will 
@@ -256,7 +252,6 @@ public class ContPositions : Singleton<ContPositions> {
         chr.position.SetChrOnPosition(null);
         chr.SetPosition(null);
 
-        
     }
 
     // Triggers all relevent triggers for a movement of characters between the two consumed positions
@@ -286,6 +281,7 @@ public class ContPositions : Singleton<ContPositions> {
                 //   and add them to the priority list
                 if (posEnding.positiontype == Position.POSITIONTYPE.BENCH) {
                     ContTurns.Get().AddChrToPriorityList(chrSwappedWith);
+
                     chrSwappedWith.SetStateReadiness(new StateSwitchingIn(chrSwappedWith, Match.NSWITCHINGINDURATION));
                 }
 
@@ -295,6 +291,7 @@ public class ContPositions : Singleton<ContPositions> {
                 // and ending their turn if they were active) and broadcast the appropriate updates
                 // and also remove this character from the priority list
                 ContTurns.Get().RemoveChrFromPriorityList(chrSwappedWith);
+
                 chrSwappedWith.SetStateReadiness(new StateFatigued(chrSwappedWith));
                 chrSwappedWith.subEnteredBench.NotifyObs(posStarting);
             }
@@ -308,6 +305,7 @@ public class ContPositions : Singleton<ContPositions> {
             //   and add them to the priority list
             if(posStarting.positiontype == Position.POSITIONTYPE.BENCH) {
                 ContTurns.Get().AddChrToPriorityList(chrMoved);
+
                 chrMoved.SetStateReadiness(new StateSwitchingIn(chrMoved, Match.NSWITCHINGINDURATION));
             }
 
@@ -317,6 +315,7 @@ public class ContPositions : Singleton<ContPositions> {
             // and ending their turn if they were active) and broadcast the appropriate updates
             // and also remove this character from the priority list
             ContTurns.Get().RemoveChrFromPriorityList(chrMoved);
+
             chrMoved.SetStateReadiness(new StateFatigued(chrMoved));
             chrMoved.subEnteredBench.NotifyObs(posEnding);
         }

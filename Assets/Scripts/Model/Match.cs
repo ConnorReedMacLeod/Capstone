@@ -18,6 +18,10 @@ public class Match : MonoBehaviour {
     public const int NSWITCHINGINDURATION = 3;
     public const int NSUMMONSTARTINGFATIGUE = 2;
 
+    public const int NSOULBREAKDURATION = 3;
+    public const int NSOULBREAKPOWERMODIFIER = 100;
+    public const int NSOULBREAKDEFENSEMODIFIER = -100;
+
     bool bStarted;                          //Confirms the Start() method has executed
 
     public MatchResult matchresult;         //Stores the current status of who (if anyone) has won the match
@@ -180,10 +184,6 @@ public class Match : MonoBehaviour {
 
         Debug.Log("Finished initializing players");
 
-        ContTurns.Get().InitializePriorityList();
-
-        Debug.Log("After Priority List");
-
         //Initialize characters 
         InitAllChrs();
 
@@ -197,8 +197,6 @@ public class Match : MonoBehaviour {
         ContManaDistributer.Get().InitializeRandomReserves();
 
         Debug.Log("After initializing mana reserves");
-
-        //ContPositions.Get().PrintAllPositions();
 
         matchresult = ContDeaths.Get().CheckMatchWinner();
 

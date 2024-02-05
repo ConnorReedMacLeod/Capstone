@@ -36,6 +36,8 @@ public class SoulChangeDefense : SoulChr {
 
     public override void ApplicationEffect() {
         base.ApplicationEffect();
+
+        //We're adding our flat Defense change to whatever the flat Defense amount currently is
         nodeDefenseModifier = chrTarget.pnDefense.AddModifier((nDefenseBelow) => this.nDefenseChange + nDefenseBelow);
 
     }

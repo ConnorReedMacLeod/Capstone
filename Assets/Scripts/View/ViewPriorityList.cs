@@ -12,7 +12,7 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
     public List<Chr> lstChrPriority {
         get { return ContTurns.Get().lstChrPriority; }
     }
-
+    
     public void AddHeadshot(Chr chr) {
 
         Debug.LogFormat("Adding {0}'s headshot", chr);
@@ -61,17 +61,18 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
     public void cbUpdateHeadshots(Object target, params object[] args) {
 
         bRefreshNeeded = true;
+
     }
 
 
     public void InitViewPriorityList() {
+        Debug.Log("InitViewPriorityList");
+
         //Subscribe to newly added characters, remove characters, or priority shuffling
         ContTurns.Get().subChrAddedPriority.Subscribe(cbAddHeadshot);
         ContTurns.Get().subChrRemovedPriority.Subscribe(cbRemoveHeadshot);
         ContTurns.Get().subAllPriorityChange.Subscribe(cbUpdateHeadshots);
 
-        //Initially set up the headshots
-        UpdateHeadshotPositions();
     }
 
     // Use this for initialization

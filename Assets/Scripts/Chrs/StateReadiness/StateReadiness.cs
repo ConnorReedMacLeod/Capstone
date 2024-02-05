@@ -39,7 +39,7 @@ public abstract class StateReadiness {
     //Called at the beginning of turn to reduce fatigue
     public virtual void Recharge() {
 
-        //By default, we just reduce fatigue by 1 (with the beginning of turn flag)
+        //By default, we just reduce fatigue by 1
         ContSkillEngine.Get().AddExec(new ExecChangeFatigue(null, chrOwner, -1));
 
     }

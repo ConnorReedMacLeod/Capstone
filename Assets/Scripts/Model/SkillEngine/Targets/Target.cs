@@ -129,7 +129,7 @@ public abstract class Target {
         //Save the index that this target will be placed at in the skill's target list
         iTargetIndex = skill.lstTargets.Count;
     }
-
+    
     public static FnValidSelection AND(params FnValidSelection[] fnArgs) {
         return (object o, InputSkillSelection selections) => {
             for (int i = 0; i < fnArgs.Length; i++) {
@@ -140,11 +140,6 @@ public abstract class Target {
 
     }
 
-    /*
-    public static FnValidSelection AND(FnValidSelection fn1, FnValidSelection fn2) {
-        return (object o, InputSkillSelection selections) => fn1(o, selections) && fn2(o, selections);
-    }
-    */
 
     public static bool TRUE(object obj, InputSkillSelection selections) { return true; }
 }

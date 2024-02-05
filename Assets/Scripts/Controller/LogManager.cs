@@ -363,8 +363,9 @@ public class LogManager : SingletonPersistent<LogManager> {
             Debug.LogErrorFormat("Error! {0} was not a valid serialized coordinates to be loaded", arsSplitLogs[3]);
             return;
         }
-
+        
         NetworkMatchSetup.SetPositionCoordsForChr(iPlayer, iChr, Serializer.DeserializeCoords(nSerializedCoords));
+
     }
 
     public void LogRandomizationSeed() {

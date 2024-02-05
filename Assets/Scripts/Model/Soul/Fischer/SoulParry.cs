@@ -70,6 +70,8 @@ public class SoulParry : SoulChr {
     }
 
     public override void ApplicationEffect() {
+        base.ApplicationEffect();
+        
         //Make a Permanent SoulChangeDefense, and save a reference to it, so it can be removed later
         soulChangeDefense = new SoulChangeDefense(chrSource, chrTarget, skillSource, nDefense);
         chrTarget.soulContainer.ApplySoul(soulChangeDefense);
@@ -83,6 +85,8 @@ public class SoulParry : SoulChr {
     }
 
     public override void RemoveEffect() {
+        base.RemoveEffect();
+        
         chrTarget.soulContainer.RemoveSoul(soulChangeDefense);
 
         /* removed while making this give defense rather than armour

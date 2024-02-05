@@ -27,23 +27,27 @@ public class ContTurns : Singleton<ContTurns> {
     }
 
     public void FixSortedPriority(Chr chr) {
-
-        if (lstChrPriority.Count == 0) return; //If the priority list hasn't been initiallized yet, then skip this reorginization
+        //Debug.LogFormat("Fixing priority for {0} where lstChrPriority has length {1}", chr.sName, lstChrPriority.Count);
 
         //Find the referenced character
         int i = 0;
-        while(lstChrPriority[i] != chr) {
-            i++;
-
+        while (true) {
             if(i == lstChrPriority.Count) {
-                //Debug.LogErrorFormat("Tried to find {0} in the priority list, but they didn't exist", chr);
+                //Then we've reached the end of the list and didn't find the character - so we can just add them
+                //Debug.LogFormat("Tried to find {0} in the priority list, but they didn't exist", chr);
+                AddChrToPriorityList(chr);
                 return;
             }
+            if (lstChrPriority[i] == chr) break;
+            i++;
         }
+
+        //If we've reached this point, then we know that i is set to the index of the chr we were looking for
 
         //First try to move ahead the character
         //If there is some character ahead and we go on a earlier turn
         while (i > 0 && lstChrPriority[i - 1].GetPriority() > chr.GetPriority()) {
+
             //Swap these characters
             lstChrPriority[i] = lstChrPriority[i - 1];
             lstChrPriority[i - 1] = chr;
@@ -61,12 +65,13 @@ public class ContTurns : Singleton<ContTurns> {
             //And move to the next possible slot
             i++;
         }
-        
 
         subAllPriorityChange.NotifyObs(this);
     }
-
+    
     public void AddChrToPriorityList(Chr chr) {
+
+        Debug.LogFormat("Adding {0} to priority list where subChrAddedPriority has {1} subscribers", chr.sName, subChrAddedPriority.lstCallbacks.Count);
 
         lstChrPriority.Add(chr);
 
@@ -76,7 +81,7 @@ public class ContTurns : Singleton<ContTurns> {
         FixSortedPriority(chr);
 
     }
-
+    
     public void RemoveChrFromPriorityList(Chr chr) {
 
         //Find the referenced character
@@ -102,8 +107,8 @@ public class ContTurns : Singleton<ContTurns> {
         //Now that we've reached the end of the priority list and this character is guaranteed to be at the very end,
         //   we're safe to remove them
         lstChrPriority.RemoveAt(lstChrPriority.Count - 1);
-        
         subChrRemovedPriority.NotifyObs(chr);
+
     }
 
     public Chr GetNextActingChr() {
@@ -144,7 +149,7 @@ public class ContTurns : Singleton<ContTurns> {
         return chrNextReady;
 
     }
-
+    
     //This is called if we've cleared out processing the current part of the turn, 
     // so we should send a signal to the master letting them know that this player is done that
     // phase of the turn.
@@ -245,23 +250,20 @@ public class ContTurns : Singleton<ContTurns> {
         }
     }
 
-    public void InitializePriorityList() {
-
-        lstChrPriority = new List<Chr>();
-
-        nTurnNumber = 0;
-
-        ViewPriorityList.Get().InitViewPriorityList();
-    }
 
     public void InitStartingTurnPhase() {
         curStateTurn = STATETURN.TURNEND;
+
+        nTurnNumber = 0;
     }
 
     public override void Init() {
 
         InitStartingTurnPhase();
 
+        lstChrPriority = new List<Chr>();
+
+        ViewPriorityList.Get().InitViewPriorityList();
     }
 
 

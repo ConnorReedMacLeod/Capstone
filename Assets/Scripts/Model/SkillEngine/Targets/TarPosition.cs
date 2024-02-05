@@ -34,7 +34,7 @@ public class TarPosition : Target {
     public static FnValidSelection IsPositionNotOfChr(Chr chr) {
         return (object pos, InputSkillSelection selections) => (chr.position != (Position)pos);
     }
-
+    
     public static FnValidSelection IsEmptyPosition() {
         return (object pos, InputSkillSelection selections) => (((Position)pos).chrOnPosition == null);
     }
@@ -42,7 +42,7 @@ public class TarPosition : Target {
     public static FnValidSelection IsOccupiedPosition() {
         return (object pos, InputSkillSelection selections) => (((Position)pos).chrOnPosition != null);
     }
-
+    
     public static FnValidSelection IsSameTeam(Chr chr) {
         return (object pos, InputSkillSelection selections) => (((Position)pos).IsAllyOwned(chr.plyrOwner));
     }
