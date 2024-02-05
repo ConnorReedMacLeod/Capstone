@@ -40,6 +40,10 @@ public class ExecTurnStartTurn : Executable {
         sLabel = "Beginning of Turn";
         fDelay = ContTime.fDelayStandard;
 
+        for(int i=0; i<ChrCollection.Get().lstChrs.Count; i++) {
+            Chr c = ChrCollection.Get().lstChrs[i];
+            Debug.LogFormat("{0} is in state {1} and has fatigue {2}", c, c.curStateReadiness, c.nFatigue);
+        }
     }
 
     public ExecTurnStartTurn(Chr _chrSource) : base(_chrSource) {
