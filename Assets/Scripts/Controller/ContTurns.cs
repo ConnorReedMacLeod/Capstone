@@ -28,13 +28,18 @@ public class ContTurns : Singleton<ContTurns> {
 
     public void FixSortedPriority(Chr chr) {
         //Debug.LogFormat("Fixing priority for {0} where lstChrPriority has length {1}", chr.sName, lstChrPriority.Count);
+        if (chr.position == null || chr.position.IsActivePosition() == false) {
+            //Don't need to deal with any sorted priority for characters if they're not in play
+            Debug.LogFormat("No need to fix priority for {0} since they're not in play", chr);
+            return;
+        }
 
         //Find the referenced character
         int i = 0;
         while (true) {
             if(i == lstChrPriority.Count) {
                 //Then we've reached the end of the list and didn't find the character - so we can just add them
-                //Debug.LogFormat("Tried to find {0} in the priority list, but they didn't exist", chr);
+                Debug.LogError("Tried to find {0} in the priority list, but they didn't exist", chr);
                 AddChrToPriorityList(chr);
                 return;
             }

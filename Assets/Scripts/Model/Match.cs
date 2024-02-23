@@ -90,9 +90,7 @@ public class Match : MonoBehaviour {
 
         newChr.Start();
 
-        newChr.InitChr(chartype, player, loadout, nStartingFatigue);
-
-        ContPositions.Get().InitChrToPosition(newChr, posStart);
+        newChr.InitChr(chartype, player, loadout, nStartingFatigue, posStart);
 
         return newChr;
     }

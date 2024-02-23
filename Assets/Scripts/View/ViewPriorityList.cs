@@ -5,7 +5,7 @@ using UnityEngine;
 public class ViewPriorityList : Singleton<ViewPriorityList> {
 
     public GameObject pfHeadshot;
-    public Dictionary<Chr, GameObject> dictHeadshots;
+    public Dictionary<Chr, ViewPriorityHeadshot> dictHeadshots;
 
     public bool bRefreshNeeded; //If true, then we have priority changes that we should update ourselves to account for
 
@@ -17,13 +17,12 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
 
         Debug.LogFormat("Adding {0}'s headshot", chr);
 
-        GameObject newHeadshot = Instantiate(pfHeadshot, this.transform);
+        GameObject goNewHeadshot = Instantiate(pfHeadshot, this.transform);
+        ViewPriorityHeadshot viewNewHeadshot = goNewHeadshot.GetComponent<ViewPriorityHeadshot>();
 
-        string sImgPath = "Images/Chrs/" + chr.sName + "/img" + chr.sName + "Neutral";
-        
-        LibView.AssignSpritePathToObject(sImgPath, newHeadshot);
+        viewNewHeadshot.SetChrDisplaying(chr);
 
-        dictHeadshots.Add(chr, newHeadshot);
+        dictHeadshots.Add(chr, viewNewHeadshot);
         Debug.LogFormat("{0} has been added to dictHeadshots", chr);
 
         bRefreshNeeded = true;
@@ -38,10 +37,11 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
 
     public void RemoveHeadshot(Chr chr) {
 
-        GameObject goHeadshotToRemove = dictHeadshots[chr];
+        ViewPriorityHeadshot viewHeadshotToRemove = dictHeadshots[chr];
+
         dictHeadshots.Remove(chr);
 
-        Destroy(goHeadshotToRemove);
+        viewHeadshotToRemove.DestroyHeadshot();
 
         bRefreshNeeded = true;
     }
@@ -77,7 +77,7 @@ public class ViewPriorityList : Singleton<ViewPriorityList> {
 
     // Use this for initialization
     public override void Init() {
-        dictHeadshots = new Dictionary<Chr, GameObject>();
+        dictHeadshots = new Dictionary<Chr, ViewPriorityHeadshot>();
         bRefreshNeeded = false;
     }
 

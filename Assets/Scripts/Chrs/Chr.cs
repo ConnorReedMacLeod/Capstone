@@ -139,6 +139,7 @@ public class Chr : MonoBehaviour {
 
     public Skill GetRandomActiveSkill() {
         //Generate a random offset to choose the skill, then shift that index to start after all our generic skills
+        Debug.LogFormat("Getting random skill in index range 0, {0}", nEquippedChosenSkills);
         return arSkillSlots[Random.Range(0, nEquippedChosenSkills)].skill;
 
     }
@@ -147,7 +148,10 @@ public class Chr : MonoBehaviour {
         //Sometimes throw in random selections of resting with weighted changes
         int nRand = Random.Range(0, 100);
 
+        Debug.LogFormat("Getting random skill for {0} with nRand={1}", sName, nRand);
+
         if(nRand < 25) {
+            Debug.LogFormat("Returning rest {0}", skillrest);
             return skillrest;
 
         } else {
@@ -233,7 +237,7 @@ public class Chr : MonoBehaviour {
 
         subFatigueChange.NotifyObs(this);
         subAllFatigueChange.NotifyObs(this);
-
+        
         //Make sure we're in the right place in the priority list
         ContTurns.Get().FixSortedPriority(this);
 
@@ -444,7 +448,7 @@ public class Chr : MonoBehaviour {
 
     // Used to initiallize information fields of the Chr
     // Call this after creating to set information
-    public void InitChr(CharType.CHARTYPE _chartype, Player _plyrOwner, LoadoutManager.Loadout loadout, int nStartingFatigue) {
+    public void InitChr(CharType.CHARTYPE _chartype, Player _plyrOwner, LoadoutManager.Loadout loadout, int nStartingFatigue, Position posStart) {
 
         chartype = _chartype;
         sName = CharType.GetChrName(chartype);
@@ -455,15 +459,19 @@ public class Chr : MonoBehaviour {
         //Initialize this character's disciplines based on their chartype
         InitDisciplines();
 
-        //Debug.LogErrorFormat("Setting initial fatigue to {0}", nStartingFatigue);
+        if (posStart.IsActivePosition()) {
+            ContTurns.Get().AddChrToPriorityList(this);
+        }
 
         //Set the starting fatigue
-        ChangeFatigue(nStartingFatigue);//, true);
+        ChangeFatigue(nStartingFatigue);
 
         //Initialize any loadout-specific qualities of the character
         InitFromLoadout(loadout);
-
+        
         view.Init();
+
+        ContPositions.Get().InitChrToPosition(this, posStart);
     }
 
     public void InitGenericSkills() {

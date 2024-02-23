@@ -147,6 +147,14 @@ public class Position : MonoBehaviour {
         return !IsAllyOwned(plyr);
     }
 
+    public bool IsActivePosition() {
+        return positiontype != POSITIONTYPE.BENCH;
+    }
+
+    public bool IsBench() {
+        return positiontype == POSITIONTYPE.BENCH;
+    }
+
     public Position(int _iColumn, int _jRow) : this(new Coords(_iColumn, _jRow)) {
 
     }
