@@ -113,10 +113,12 @@ public abstract class Skill {
             Debug.LogError("Tried to use skill, but the master-provided selections were invalid! : " + NetworkMatchReceiver.Get().GetCurMatchInput().ToString());
         }
 
+        //Record the most-recent timestamp as a marker for when this Chr last acted
+        chrOwner.timestampLastActed = ContTimestamp.Get().GetCurrentTimestamp();
+
         // IMPORTANT - since we're pushing these effects onto the stack, we'll want to 
         //             push them in reverse order so that we will evaluate the most recently pushed effect first
-
-
+        
 
         //Finally, add an ending marker after the skill is executed
         PushEndingMarker();

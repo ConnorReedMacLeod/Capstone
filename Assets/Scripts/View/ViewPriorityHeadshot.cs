@@ -10,7 +10,8 @@ public class ViewPriorityHeadshot : MonoBehaviour {
     
     public void SetChrDisplaying(Chr _chr) {
         if (chr != null) {
-            chr.subFatigueChange.UnSubscribe(cbTargetFatigueUpdated);
+            chr.subFatigueChange.UnSubscribe(cbTargetPriorityUpdated);
+            chr.subSwitchingInChange.UnSubscribe(cbTargetPriorityUpdated);
         }
 
         chr = _chr;
@@ -20,22 +21,38 @@ public class ViewPriorityHeadshot : MonoBehaviour {
 
             LibView.AssignSpritePathToObject(sImgPath, this.gameObject);
 
-            chr.subFatigueChange.Subscribe(cbTargetFatigueUpdated);
-            SetFatigueLabel();
+            chr.subFatigueChange.Subscribe(cbTargetPriorityUpdated);
+            chr.subSwitchingInChange.Subscribe(cbTargetPriorityUpdated);
+            UpdateLabel();
         }
 
     }
 
     public void DestroyHeadshot() {
-        chr.subFatigueChange.UnSubscribe(cbTargetFatigueUpdated);
+        chr.subFatigueChange.UnSubscribe(cbTargetPriorityUpdated);
+        chr.subSwitchingInChange.UnSubscribe(cbTargetPriorityUpdated);
         Destroy(this.gameObject);
     }
 
-    public void SetFatigueLabel() {
-        txtFatigueLabel.text = chr.nFatigue.ToString();
+    public void DisplayFatigue() {
+        txtFatigueLabel.color = Color.magenta;
+        txtFatigueLabel.text = chr.curStateReadiness.GetPriority().ToString();
     }
 
-    public void cbTargetFatigueUpdated(Object tar, params object[] args) {
-        SetFatigueLabel();
+    public void DisplaySwitchInTime() {
+        txtFatigueLabel.color = Color.green;
+        txtFatigueLabel.text = string.Format("{0}({1})", chr.curStateReadiness.GetPriority().ToString(), chr.nSwitchingInTime);
+    }
+
+    public void UpdateLabel() {
+        if(chr.curStateReadiness.Type() == StateReadiness.TYPE.SWITCHINGIN) {
+            DisplaySwitchInTime();
+        } else {
+            DisplayFatigue();
+        }
+    }
+
+    public void cbTargetPriorityUpdated(Object tar, params object[] args) {
+        UpdateLabel();
     }
 }

@@ -27,6 +27,7 @@ public class ContTurns : Singleton<ContTurns> {
     }
 
     public void FixSortedPriority(Chr chr) {
+
         //Debug.LogFormat("Fixing priority for {0} where lstChrPriority has length {1}", chr.sName, lstChrPriority.Count);
         if (chr.position == null || chr.position.IsActivePosition() == false) {
             //Don't need to deal with any sorted priority for characters if they're not in play
@@ -77,6 +78,9 @@ public class ContTurns : Singleton<ContTurns> {
     public void AddChrToPriorityList(Chr chr) {
 
         Debug.LogFormat("Adding {0} to priority list where subChrAddedPriority has {1} subscribers", chr.sName, subChrAddedPriority.lstCallbacks.Count);
+
+        //Update this character's most recent acting timestamp to the current timestamp (since they've just started being in-play)
+        chr.timestampLastActed = ContTimestamp.Get().GetCurrentTimestamp();
 
         lstChrPriority.Add(chr);
 

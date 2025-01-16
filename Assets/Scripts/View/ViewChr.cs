@@ -375,9 +375,10 @@ public class ViewChr : ViewInteractive {
         UpdateSwitchingIn();
     }
 
-    public void UpdateSwitchingIn() { 
+    public void UpdateSwitchingIn() {
+
         //If we're no longer in a switching in state, then we can hide the switching in display
-        if(mod.curStateReadiness.Type() != StateReadiness.TYPE.SWITCHINGIN) {
+        if(mod.curStateReadiness.Type() != StateReadiness.TYPE.SWITCHINGIN || mod.nSwitchingInTime == 0) {
             goSwitchingInDisplay.SetActive(false);
             return;
         }

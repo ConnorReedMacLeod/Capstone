@@ -24,6 +24,7 @@ public class Chr : MonoBehaviour {
     public int nSwitchingInTime;    //Number of turns a character must wait before being able to act after switching in from the bench
 
     public StateReadiness curStateReadiness; //A reference to the current state of readiness
+    public Timestamp timestampLastActed; //A Timestamp of when last acted or last entered play
 
     public const int nMaxSkillUsesPerActivation = 1;     //The total maximum number of skills a character can use in a turn (usually 1, cantrips cost 0)
 
@@ -62,8 +63,7 @@ public class Chr : MonoBehaviour {
     public Property<CanBeSelectedBy> pOverrideCanBeSelectedBy;
 
     public Position position;       //A reference to the position the character is on
-
-    public SkillRest skillrest; 
+    
     public SoulContainerChr soulContainer; //A reference to the character's list of soul effects
     public SoulSoulBreak soulSoulBreak;
 
@@ -151,8 +151,8 @@ public class Chr : MonoBehaviour {
         Debug.LogFormat("Getting random skill for {0} with nRand={1}", sName, nRand);
 
         if(nRand < 25) {
-            Debug.LogFormat("Returning rest {0}", skillrest);
-            return skillrest;
+            Debug.LogFormat("Returning rest {0}", skillRest);
+            return skillRest;
 
         } else {
             return GetRandomActiveSkill();
@@ -516,7 +516,7 @@ public class Chr : MonoBehaviour {
         
         //Then add in any fixed generic skills
         arSkillSlots[iRestSkill] = new SkillSlot(this, iRestSkill);
-        SkillRest skillRest = new SkillRest(this);
+        skillRest = new SkillRest(this);
         arSkillSlots[iRestSkill].SetSkill(skillRest);
 
     }

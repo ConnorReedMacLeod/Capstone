@@ -23,13 +23,13 @@ public class StateSwitchingIn : StateReadiness {
     }
 
     public override int GetPriority() {
-        //Since fatigue and switchin time both decrease each turn, the Chr will have to wait for the longer of the two to be able to act
-        return Mathf.Max(chrOwner.nFatigue, chrOwner.nSwitchingInTime);
+        //We'll add together the switch in time plus how long they'll be fatigued afterward
+        return chrOwner.nFatigue + chrOwner.nSwitchingInTime;
     }
 
     public override void Recharge() {
         //TODO Should we be doing the base Recharge stuff like reducing fatigue?
-        base.Recharge();
+        //base.Recharge();
 
         //By default, we just reduce fatigue by 1 (with the beginning of turn flag)
         ContSkillEngine.Get().AddExec(new ExecChangeSwitchInTime(null, chrOwner, -1));
